@@ -1,0 +1,21 @@
+# $Header: /cvs/stx/stx/clients/TicTacToe3D/Make.proto,v 1.4 1999-12-01 15:29:47 cg Exp $
+#
+# -------------- no need to change anything below ----------
+
+TOP=../..
+MODULE=stx
+MODULE_DIR=clients/TicTacToe3D
+PACKAGE=$(MODULE):$(MODULE_DIR)
+SUBDIRS=
+RCSSOURCES=*.st Make.proto
+
+STCOPT=$(CLIENT_STCOPT)
+
+LIBNAME=tictactoe3D
+
+OBJS =      \
+	    D3TicTacToe3DView.st  D3TicTacToePlayer.st \
+	    D3TicTacToe.st        D3TicTacToeGame.st
+
+# BEGINMAKEDEPEND
+# ENDMAKEDEPEND

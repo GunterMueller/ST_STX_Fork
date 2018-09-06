@@ -1,0 +1,15 @@
+syntax: glob
+*.so
+*.H
+*.o
+*.STH
+*.sc
+*.class
+*Init.c
+*.base
+*.orig
+*.local
+*.other
+st.chg
+makefile
+smallsense/makefile

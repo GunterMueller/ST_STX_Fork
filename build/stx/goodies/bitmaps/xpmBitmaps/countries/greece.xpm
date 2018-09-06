@@ -1,0 +1,29 @@
+/* XPM */
+static char *greece_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 20 2 1",
+/* colors */
+"a c #5155ff",
+"b c white",
+/* pixels */
+"aaaaabbaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaabbaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaabbaaaaabbbbbbbbbbbbbbbbbbbb",
+"aaaaabbaaaaabbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbaaaaaaaaaaaaaaaaaaaa",
+"bbbbbbbbbbbbaaaaaaaaaaaaaaaaaaaa",
+"aaaaabbaaaaabbbbbbbbbbbbbbbbbbbb",
+"aaaaabbaaaaabbbbbbbbbbbbbbbbbbbb",
+"aaaaabbaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+};

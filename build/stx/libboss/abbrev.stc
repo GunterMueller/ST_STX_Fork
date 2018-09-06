@@ -1,0 +1,6 @@
+BinaryIOManager BinaryIOManager stx:libboss 'System-BinaryStorage' 0
+BinaryInputManager BinaryInputManager stx:libboss 'System-BinaryStorage' 0
+BinaryObjectStorage BinaryObjectStorage stx:libboss 'System-BinaryStorage' 0
+BinaryOutputManager BinaryOutputManager stx:libboss 'System-BinaryStorage' 0
+ObsoleteObject ObsoleteObject stx:libboss 'System-BinaryStorage' 0
+stx_libboss stx_libboss stx:libboss '* Projects & Packages *' 2

@@ -1,0 +1,12 @@
+<ivysettings>
+     <properties environment="env"/>
+     <property name="ivy.executor-number" value="${env.EXECUTOR_NUMBER}" override="false" ifset="env.EXECUTOR_NUMBER"/>
+     <property name="ivy.executor-number" value="0" override="false"/>
+     <caches        
+        defaultCacheDir="${ivy.default.ivy.user.dir}/caches/${ivy.executor-number}/default"
+        resolutionCacheDir="${ivy.default.ivy.user.dir}/caches/${ivy.executor-number}/resolution"
+        />
+    <settings defaultResolver="default"/>
+    <include url="${ivy.default.settings.dir}/ivysettings.xml"/>
+    <lock-strategies>artifact-lock-nio</lock-strategies>
+</ivysettings>

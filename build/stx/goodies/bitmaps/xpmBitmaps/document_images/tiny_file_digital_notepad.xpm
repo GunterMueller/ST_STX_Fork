@@ -1,0 +1,26 @@
+/* XPM */
+static char *tiny_file_digital_notepad_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 3 1",
+/* colors */
+"a c black",
+"b c white",
+"c c none",
+/* pixels */
+"cccccccccccccccc",
+"ccccccccccccccaa",
+"aaaaaaaaaacccaaa",
+"abbbbbbbabacaaac",
+"abaaaaababbaaacc",
+"ababbbabaaaaaccc",
+"ababbbabbbaaaccc",
+"ababbbabbaaaaccc",
+"abaaaaabaaabaccc",
+"abbbbbbbaabbaccc",
+"abaaaaababbbaccc",
+"abbbbbbbbbbbaccc",
+"aaaaaaaaaaaaaccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+};

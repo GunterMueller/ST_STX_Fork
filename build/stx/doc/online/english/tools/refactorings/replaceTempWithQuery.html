@@ -1,0 +1,41 @@
+<html><head><title>Refactoring: 
+Replace Temp with Query</title></head><body>
+
+
+<H1>
+Replace Temp with Query</H1>
+<P><I><CENTER>
+You are using a temporary variable to hold the result of an expression.</CENTER></I></P>
+<P><B><CENTER>
+Extract the expression into a method. Replace all references to the temp with the expression. The new method can then be used in other methods.</CENTER></B></P>
+<PRE>
+		double basePrice = _quantity * _itemPrice;
+		if (basePrice &gt; 1000)
+			return basePrice * 0.95;
+		else
+			return basePrice * 0.98;
+</PRE><P><CENTER><IMG SRC="arrow.gif"/></CENTER></P>
+<PRE>
+		if (basePrice() &gt; 1000)
+			return basePrice() * 0.95;
+		else
+			return basePrice() * 0.98;
+...
+	double basePrice() {
+		return _quantity * _itemPrice;
+	}
+
+</PRE>
+
+
+<P>For more information see page 
+	<font color="#FF0000">120</font>
+	of <I>Refactoring</I></P>
+<h2>Additional Comments</h2><h3>Side Effects</h3>
+<P>Paul Haahr pointed out that you can't do this refactoring if the code in between the the assignment to the temp and the use of the temp changes the value of the expression that calculates the temp. In these cases the code is using the temp to snapshot the value of the temp when it's assigned. The name of the temp should convey this fact (and you should change the name if it doesn't).</P>
+<P>
+He also pointed out that it is easy to forget that creating a reference object is a side effect, while creating a value object isn't. </P>
+
+<h2>Contributors</h2><UL><LI>Paul Haahr</LI></UL>
+
+<P /><P /><P><CENTER><A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A></CENTER></P></body></html>

@@ -1,0 +1,51 @@
+# $Header: /cvs/stx/stx/clients/Clock/Make.proto,v 1.8 1999-12-01 15:29:33 cg Exp $
+#
+# -------------- no need to change anything below ----------
+
+TOP=../..
+MODULE=stx
+MODULE_DIR=clients/Clock
+PACKAGE=$(MODULE):$(MODULE_DIR)
+SUBDIRS=
+RCSSOURCES=*.st Make.proto resources/*.rs
+
+STCOPT=$(CLIENT_STCOPT)
+STCFLAGS= -H. -I. -I$(INCLUDE) $(STCOPT)
+
+#
+# programs to build
+#
+PROGS      = Clock
+
+STARTUP_CLASS=Clock
+STARTUP_SELECTOR="start"
+
+#
+# local objects
+#
+OBJS=       Clock.o     \
+	    $(TOP)/libwidg3/ClockView.o
+
+#
+# libraries
+#
+LIBOBJS=    $(LIBBASICOBJ) $(LIBCOMPOBJ) $(LIBVIEWOBJ) $(LIBWIDGOBJ)
+
+# 
+# target
+#
+Clock:
+	    $(MAKE) PROGTARGET                                                  \
+			PROG=Clock                                              \
+			EXTRA_CLASSES="Clock ClockView"                         \
+			CLASSLIBRARIES="libbasic libcomp libview libwidg"       \
+			CLASSLISTS=""
+
+#
+# another individual
+#
+$(TOP)/libwidg3/ClockView.o:
+		(cd $(TOP)/libwidg3; make ClockView.o)
+
+# BEGINMAKEDEPEND
+# ENDMAKEDEPEND

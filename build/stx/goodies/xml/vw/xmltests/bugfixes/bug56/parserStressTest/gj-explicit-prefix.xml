@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- test if the parser accepts explicit xmlns:gj namespace attributes -->
+<!DOCTYPE html SYSTEM "fake-gj.dtd">
+<html>
+    <head>
+        <title>Title</title>
+        <meta content="asdf" />
+    </head>
+    <body>
+
+        <h1>Heading Level 1</h1>
+
+        <gj:p xmlns:gj="http://localhost/fake-gj">
+            Text in namespace: &gj.namespace;.
+            <gj:em xmlns:gj="http://localhost/fake-gj">This text is emphasized</gj:em>.
+        </gj:p>
+    </body>
+</html>

@@ -1,0 +1,42 @@
+This is a very simple address & telno manager.
+
+Its not finished and might have bugs ....
+
+start with:
+
+       AddressBook start
+
+(will be autoloaded)
+
+it will create & manage a file named '.addr' in your home directory.
+To add addresses, fill out the fields, and either type <return> through
+the last field. To save the list in the address file, use save from the
+top-list-views menu.
+
+
+
+There is also an enhanced version,
+
+which needs:
+
+	InitialLabelView.st
+	AddressView.st
+   and  AddressBook2.st
+
+to be filed in; it is started with:
+
+	AddressBook2 start
+
+(
+ it has been built with a version of the interface builder,
+ which produces fixed-size fields only - thus it may look
+ somewhat strange depending on which fonts are used.
+ Its a nice example anyway.
+
+ See the popup menus in the Ort (=City)
+ field, which fills in the corresponding zip code into the PLZ (=zip)
+ field
+)
+
+All of these have to be internationalized - they where created in a
+hurry and as a demo ...

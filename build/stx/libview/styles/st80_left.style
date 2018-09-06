@@ -1,0 +1,24 @@
+; View defaultStyle:#'st80_left' 
+;
+; like st80, but with scrollbars at the left side
+; (I am used to it)
+;
+; $Header: /cvs/stx/stx/libview/styles/st80_left.style,v 1.6 1997-11-02 19:49:19 cg Exp $
+
+#include 'st80.style'
+
+comment  'old` ST80'' 3D look alike;\\with scrollbars on the left'
+
+#if (Language == #german) or:[Language == #de]
+comment  'An früheres `ST-80'' angelehnt\Verschiebebalken auf der linken Seite'
+#endif
+#if (Language == #french) or:[Language == #fr]
+comment  'Comme `ST-80'' avec les barres de défilement à gauche'
+#endif
+
+name                  #st80
+scrollBar.position     #left  
+
+
+
+

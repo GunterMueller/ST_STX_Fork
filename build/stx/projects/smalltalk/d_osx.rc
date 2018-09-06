@@ -1,0 +1,50 @@
+"*
+ * Encoding: iso8859-1
+ *
+ * $Header$
+ *
+ * MIMEType: application/x-smalltalk-source
+ *
+ * ST/X startup configuration file:
+ *
+ * display configuration - OSX (MAC-OS-10 with X-server), only tried with german keyboard)
+ *
+ * If your display is the above, create a symbolic link
+ * d_<hostname-of-display>.rc -> d_next.rc
+ *
+ *"
+
+"*
+ * view style
+ *"
+"/ View defaultStyle:#mswindowsVista.
+"/ View defaultStyle:#mswindows8.
+"/ View defaultStyle:#Adwaita.
+"/ View defaultStyle:#'macosx'.
+View defaultStyle:#'macosx_yosemite'.
+!
+
+"*
+ * keyboard mapping
+ *"
+|map|
+
+map := Display keyboardMap.
+map bindValue:#Alt to:#'Meta_L'.
+map bindValue:#Alt to:#'Meta_L'.
+
+map bindValue:(Character value:16r2260) to:#'notequal'.
+map bindValue:(Character value:16r201E) to:#'doublelowquotemark'.
+map bindValue:(Character value:16r201C) to:#'leftdoublequotemark'.
+map bindValue:(Character value:16r201D) to:#'rightdoublequotemark'.
+map bindValue:(Character value:16r2018) to:#'leftsinglequotemark'.
+map bindValue:(Character value:16r2264) to:#'lessthanequal'.
+map bindValue:(Character value:16r2265) to:#'greaterthanequal'.
+!
+
+Display buttonPressTimeForMenu:1.
+!
+
+"/ does not seem to have a good set of unicode fonts available...
+FontDescription defaultEncoding: #'iso8859-1'.
+!

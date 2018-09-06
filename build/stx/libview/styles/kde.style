@@ -1,0 +1,76 @@
+; View defaultStyle:#kde 
+;
+; kde look-alike style
+;
+;; $Header: /cvs/stx/stx/libview/styles/kde.style,v 1.5 2000-10-27 17:57:39 stefan Exp $
+
+#if Screen current hasGreyscales
+;
+; use #nearestOn to avoid dithered view backgrounds
+;
+viewGrey                (Color grey:75) exactOrNearestOn:(Screen current)
+lightColor              Color white
+shadowColor             (Color grey:25) exactOrNearestOn:(Screen current)
+mediumColor             (Color grey:50) exactOrNearestOn:(Screen current)
+slightlyDarkerGrey      (Color grey:62) exactOrNearestOn:(Screen current)
+#else
+viewGrey                Color white
+lightColor              Color grey:75
+shadowColor             Color black
+mediumColor             Color grey:50.
+slightlyDarkerGrey      =viewGrey
+#endif
+
+#include 'motif.common'
+
+comment  '`kde'' look alike.'
+
+#if (Language == #german) or:[Language == #de]
+comment  'An `kde'' angelehnter Stil'
+#endif
+#if (Language == #french) or:[Language == #fr]
+comment  'Un style qui resemble `kde'''
+#endif
+
+menuFont          Font family:'helvetica' face:'medium' style:'roman' size:12
+
+selectionFont               =menuFont
+labelFont                   =menuFont
+menuFont                    =menuFont
+
+#try this:
+#variablePanel.handleLevel    -1
+
+#or, try that:
+#variablePanel.handleLevel    0
+#variablePanel.handleColor    Color black
+#variablePanel.handleStyle    #iris 
+
+;
+; although the following is not really motif, it looks much better ...
+;
+#if Screen current hasColors   
+editField.backgroundColor           Color white
+editField.selectionBackgroundColor  Color blue darkened
+editField.selectionForegroundColor  Color white
+#else
+# if Screen current hasGrayscales not
+editField.backgroundColor           Color white
+editField.selectionBackgroundColor  Color black
+editField.selectionForegroundColor  Color white
+# endif
+#endif
+
+checkToggle.activeBackgroundColor   =slightlyDarkerGrey
+scroller.viewBackground             =slightlyDarkerGrey
+arrowButton.activeBackgroundColor   =slightlyDarkerGrey
+button.activeBackgroundColor        =slightlyDarkerGrey
+
+scrollBar.level              -1
+menuPanel.verticalInset      8
+menu.itemSpace               10
+
+menuPanel.enteredLevel             1
+menuPanel.activeLevel              -1
+
+

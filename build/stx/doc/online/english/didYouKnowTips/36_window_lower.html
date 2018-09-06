@@ -1,0 +1,28 @@
+<HTML>
+  <HEAD>
+    <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+    <TITLE>Right-Click to Lower a Window</Title>
+  </HEAD>
+  <BODY>
+
+On a Windows machine,
+your can quickly lower a window to the back
+via a <I>Right-Click</I> or <I>Shifted-Left-Click</I> into the windows's title-area.
+<BR>If you dont like this behavior,
+evaluate:
+<CODE><PRE><A type="example">
+     Display rightButtonIsLowerWindow:false
+</A></PRE></CODE>
+or:
+<CODE><PRE><A type="example">
+     Display shiftedLeftButtonIsLowerWindow:false
+</A></PRE></CODE>
+or add a corresponding line to your "<CODE>private.rc</CODE>" startup file.
+<P>
+Of course, this feature only works for ST/X windows - alien windows are not affected
+by these settings.
+<BR>
+On Unix machines, this behavior is usually already provided or configurable by the window manager.
+
+  </BODY>
+</HTML>

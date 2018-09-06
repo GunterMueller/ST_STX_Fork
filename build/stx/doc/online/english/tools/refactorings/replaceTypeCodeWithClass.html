@@ -1,0 +1,36 @@
+<html><head><title>Refactoring: 
+
+
+
+Replace Type Code with Class</title></head><body>
+
+
+<H1>
+
+
+
+Replace Type Code with Class</H1>
+<P><I><CENTER>
+
+A class has a numeric type code that does not
+affect its behavior.</CENTER></I></P>
+<P><B><CENTER>
+
+Replace the number with a new class.</CENTER></B></P>
+
+<CENTER><IMG SRC="repTypeCodeWithClass.gif"/></CENTER>	
+
+
+
+
+<P>For more information see page 
+	<font color="#FF0000">218</font>
+	of <I>Refactoring</I></P>
+<h2>Corrections</h2><h3>Privitizing the accessors for the type code</h3>
+<P> At the end of the refactoring I said that you could make those methods that use the type code, eg <I>getCode()</I>, private. I neglected to say that you first have to find the callers of those methods and change them to no longer use the code number.
+</P>
+
+<h2>Contributors</h2><UL><LI>Randy Coulman</LI>
+</UL>
+
+<P /><P /><P><CENTER><A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A></CENTER></P></body></html>

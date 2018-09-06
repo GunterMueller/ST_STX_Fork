@@ -1,0 +1,26 @@
+/* XPM */
+static char *tiny_file_binary_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 3 1",
+/* colors */
+"a c black",
+"b c white",
+"c c none",
+/* pixels */
+"cccccccccccccccc",
+"cccccccccccccccc",
+"aaaaaaaaaacccccc",
+"abbbbbbbabaccccc",
+"ababaaababbacccc",
+"ababababaaaaaccc",
+"ababaaabbbbbaccc",
+"abbbbbbbbbbbaccc",
+"ababaaabababaccc",
+"ababababababaccc",
+"ababaaabababaccc",
+"abbbbbbbbbbbaccc",
+"aaaaaaaaaaaaaccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+};

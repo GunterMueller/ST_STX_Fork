@@ -1,0 +1,19 @@
+; View defaultStyle:#'AEG_sailer'
+;
+; example for a very small change
+; - like iris style, but scrollbars are on the right side
+;
+; this is Mr. Sailers personal preference ;-)
+;
+; $Header: /cvs/stx/stx/libview/styles/oldStyles/AEG_sailer.style,v 1.5 2005-05-10 07:30:46 cg Exp $
+
+#include 'iris.style'
+
+comment  'like ''iris'';\scrollbars are on the right side'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Wie ''iris''.\Verschiebebalken aber auf der rechten Seite.'
+#endif
+
+
+scrollBar.position     #right

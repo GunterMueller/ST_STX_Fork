@@ -1,0 +1,76 @@
+; View defaultStyle:#normal 
+;
+; the good-old normal 2D style - actually not bad to work
+; with (if you are a purist). 
+; Also the best to use on black&white displays
+;
+; $Header: /cvs/stx/stx/libview/styles/normal.style,v 1.17 2002-11-18 08:41:03 penk Exp $
+
+comment  'plain good old 2D style.\No fancy decoration, but functional. Great for monochrome displays.'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Guter alter 2D Stil ohne Schnörkel & Schleifchen \Am besten für S/W Monitore'
+#endif
+#if (Language == #french) or:[Language == #fr]
+comment  'plein style 2D\Bien pour un moniteur monochrome'
+#endif
+
+is3D                            false
+name                            #normal
+
+borderWidth                     1
+viewBackground                  Color white
+popupBorderWidth                1     
+
+scrollBar.position               #left
+scrollBar.spacing                0
+scrollBar.buttonImageMargin      0
+
+scroller.viewBackground          Color grey:50
+scroller.thumbColor              Color white
+scroller.thumbInset              1
+scroller.thumbLevel              0
+scroller.thumbFrameColor         Color black
+
+miniScroller.size                2.5       "/ millimeters
+; scrollBar.neverMini              true
+
+framedBox.3DFrame                false
+
+variablePanel.showHandle         false
+
+;
+; take smaller fonts on small displays (VGA)
+;
+#if Screen current width == 640
+; take smaller fonts on VGA screens
+font               Font family:'courier' face:'medium' style:'roman' size:10
+selection.font     Font family:'helvetica' face:'medium' style:'roman' size:10
+label.font         Font family:'helvetica' face:'medium' style:'roman' size:10
+#else
+selection.font     Font family:'helvetica' face:'medium' style:'roman' size:12
+label.font         Font family:'helvetica' face:'medium' style:'roman' size:12
+menuFont           Font family:'helvetica' face:'bold' style:'roman' size:12
+#endif
+
+selection.rightArrowStyle               #solid
+selection.rightArrowLevel               0
+
+checkToggle.activeForegroundColor       Color black
+checkToggle.activeBackgroundColor       Color white
+
+menu.buttonItemSpace                    2
+
+radioButton.buttonStyle                 #round2D
+radioButton.activeLevel                 0
+radioButton.passiveLevel                0
+
+#if Screen current hasGrayscales not
+html.anchorUnderline                true
+html.anchorForegroundColor          Color black
+html.backgroundColor                Color white
+html.activeAnchorForegroundColor    Color black
+html.activeAnchorBackgroundColor    =htmlBackgroundColor
+html.visitedAnchorForegroundColor   Color black
+html.exampleAnchorForegroundColor   Color black
+#endif

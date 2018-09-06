@@ -1,0 +1,97 @@
+; $Header: /cvs/stx/stx/clients/DrawTool/DrawTool.prj,v 1.1 1999-11-23 19:37:15 cg Exp $
+;
+; Project saved 'From Smalltalk/X, Version:3.5.5 on 23-nov-1999 at 08:37:50 pm'                 
+;
+; Be careful when editing - do not corrupt the files syntax.
+; Lines starting with a semicolon are comment lines.
+; Lines ending with a backslash are concatenated with the following line.
+; Entries are key-value pairs, separated by whitespace;
+; the value is a smalltalk literal expression.
+fileFormatVersion	1
+
+;
+; general:
+;
+comment	''
+name	'stx:clients/DrawTool'
+type	#library
+package	#'stx:clients/DrawTool'
+
+;
+; repository:
+;
+repository.module	'stx'
+repository.directory	'clients/DrawTool'
+
+
+;
+; properties:
+;
+property.installDirectoryVMS	'SYS$SMALLTALKX:[PACKAGES]'
+property.make.stc.warnNonStandard	true
+property.deliverCompiledBinary	false
+property.installDirectoryWin32	'\Programme\SmalltalkX\packages'
+property.make.stc.WARNINGOPTIONS	''
+property.deliverLoadAllFile	false
+property.deliverGZipArchive	false
+property.deliverMakefiles	false
+property.make.stc.LOCALDEFINES	''
+property.installDirectoryUnix	'/opt/smalltalk/packages'
+property.make.stc.LOCALINCLUDES	''
+property.deliverZipArchive	false
+property.deliverTarArchive	false
+property.installDirectoryMacOS	''
+property.deliverSources	false
+property.make.stc.warnEOLComments	false
+property.deliverByteCode	false
+
+;
+; required packages:
+;
+prerequisites	#()
+
+;
+; required classes:
+;
+prerequisiteClasses	#()
+
+;
+; classes:
+; (for each class, one line of the form: ( #'className' [condition [fileName]] )
+; (where fileName and condition are optional)
+;
+classes	#( \
+	( #DrawView             ) \
+	( #DrawObject           ) \
+	( #DrawPolygon          ) \
+	( #DrawRectangle        ) \
+	( #DrawLine             ) \
+	( #DrawArrow            ) \
+	( #DrawEllipse          ) \
+	( #DrawCurve            ) \
+	( #DrawGroup            ) \
+	( #DrawHLine            ) \
+	( #DrawImage            ) \
+	( #DrawSpline           ) \
+	( #DrawText             ) \
+	( #DrawTool             ) \
+	( #DrawVLine            ) \
+	( #PatternMenu          ) \
+	( #DrawRectangle3D      ) \
+	( #DrawCircle           ) \
+	( #RectangularDrawObject) \
+	( #DrawRoundRectangle   ) \
+	( #LineMenu             ) \
+)
+
+;
+; methods (patches & extensions):
+; (for each method, one line of the form: ( #'className' #'methodName' )
+; (for metaclasses, #'name class' is used)
+;
+methods	#()
+
+;
+; files (for deployment):
+;
+files	#()

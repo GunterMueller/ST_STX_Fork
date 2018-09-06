@@ -1,0 +1,171 @@
+<HTML>
+<HEAD>
+<TITLE>Tutorial - Sample Programs</TITLE>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="tut_4.html"> <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="tutorial.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="tut_end.html"> <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+
+<H1><A NAME="SAMPLECODE">Sample Programs</A></H1>
+
+The following code snipplets can be executed in a workspace, or alternatively be
+copied into a class (typically a class method).
+<P>
+
+<H2><A NAME="COMPLEXITY">Complexity</A></H1>
+
+Care for an algorithms complexity; the following example demonstrates an algorithm
+with an exponential growth in CPU time.
+<P>
+The goal is to compute the number of different ways to change a dollar into
+an arbitrary number of 50, 25, 10, 5 and 1 cent coins.
+<BR>
+(I.e. one solution would be: 50 + 25 + 10 + 5 + 5 + 1 + 1 + 1 + 1 + 1)
+<P>
+
+<H3><A NAME="SAMPLE01">Version 1</A></H1>
+
+The general algorithm is:
+<UL>
+<LI>for each kind of coin,
+<UL>
+  <LI>subtract that coins value from the amount,
+  <LI>recursively compute the solutions for the remaining amount
+  <LI>add the vector defined by that coin plus the solutions to the found solutions
+</UL>
+</UL>
+
+A code for the above algorithm is straight forward:
+<A type="example" SHOWRESULT>
+<CODE><PRE>
+    |f coins solutions|
+
+    coins := #(50 25 10 5 1).
+
+    f := [:coinsAlreadyTaken :amount|
+	    |solutions t|
+
+	    amount == 0 ifTrue:[
+		Array with: coinsAlreadyTaken
+	    ] ifFalse:[
+		solutions := Set new.
+		coins do:[:cn |
+		    cn <= amount ifTrue:[
+			solutions
+			    addAll:
+				(f
+				    value:(coinsAlreadyTaken copy add:cn; yourself)
+				    value:amount-cn)
+		    ]
+		].
+		solutions
+	    ]
+	 ].
+
+    solutions := f value:#() asBag value:100.
+    solutions size
+</PRE></CODE>
+</A>
+this algorithm works and returns the correct number of solutions (292);
+<BR>
+however, be warned, it takes forever to compute it (try it overnight ;-).
+<P>
+<H3><A NAME="SAMPLE02">Version 2</A></H1>
+The obvious fix is to remember already computed changes in a cache
+(solutionForAmountAndCoins) and avoid recomputing them:
+
+<A type="example" SHOWRESULT>
+<CODE><PRE>
+    |solutionForAmountAndCoins f coins solutions|
+
+    coins := #(50 25 10 5 1).
+    solutionForAmountAndCoins := Dictionary new.
+
+    f := [:coinsAlready :amount|
+	    |solutions t|
+
+	    amount == 0 ifTrue:[
+		{ coinsAlready }
+	    ] ifFalse:[
+		t := solutionForAmountAndCoins at:amount ifAbsentPut:[Dictionary new].
+		solutions := t at:coinsAlready ifAbsent:nil.
+		solutions isNil ifTrue:[
+		    solutions := Set new.
+		    coins do:[:cn |
+			cn &lt;= amount ifTrue:[
+			    solutions
+				addAll:
+				    (f
+					value:(coinsAlready copy add:cn; yourself)
+					value:amount-cn)
+			]
+		    ].
+		    t at:coinsAlready put:solutions.
+		].
+		solutions
+	    ]
+	 ].
+
+    solutions := f value:#() asBag value:100.
+    solutions size
+</PRE></CODE>
+</A>
+
+<P>
+<H3><A NAME="SAMPLE03">Version 3</A></H1>
+Another solution (from SICP), using a slightly different algorithm is:
+<A type="example" SHOWRESULT>
+<CODE><PRE>
+    |numberOfSolutions valOfCoin cc|
+
+    valOfCoin := #(1 5 10 25 50).
+
+    cc := [:amount :kinds |
+	    amount == 0
+	      ifTrue:[ 1 ]
+	      ifFalse:[
+		amount < 0
+		  ifTrue:[ 0 ]
+		  ifFalse:[
+		    kinds == 0
+		      ifTrue:[0]
+		      ifFalse:[
+			(cc value:amount value:(kinds - 1))
+			+
+			(cc value:(amount - (valOfCoin at:kinds))
+			    value:kinds)
+		      ]
+		  ]
+	      ]
+	  ].
+
+    numberOfSolutions := cc value:100 value:5.
+    numberOfSolutions
+</PRE></CODE>
+</A>
+
+
+<HR>
+Continue in <A HREF="tut_end.html">"Smalltalk basics"</A>.
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif" ALT="[stx-logo]">
+<BR>Copyright &copy; Claus Gittinger Development & Consulting
+<BR>Copyright &copy; eXept Software AG
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.3 $ $Date: 2016-01-21 16:22:39 $
+
+</BODY>
+</HTML>

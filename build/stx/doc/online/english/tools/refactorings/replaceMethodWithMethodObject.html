@@ -1,0 +1,40 @@
+<html><head><title>Refactoring: 
+Replace Method with Method Object</title></head><body>
+
+
+<H1>
+Replace Method with Method Object</H1>
+<P><I><CENTER>
+You have a long method that uses local variables in such a way that you cannot apply 
+Extract Method 
+</CENTER></I></P>
+<P><B><CENTER>
+Turn the method into its own object so that all the local variables become fields on that object. You can then decompose the method into other methods on the same object.</CENTER></B></P>
+<PRE>
+class Order...
+	double price() {
+		double primaryBasePrice;
+		double secondaryBasePrice;
+		double tertiaryBasePrice;
+		// long computation;
+		...
+	}
+</PRE><P><CENTER><IMG SRC="arrow.gif"/></CENTER></P>
+<CENTER><IMG SRC="repMethodWithObj.gif"/></CENTER>	 
+<h2>Additional Comments</h2><h3>Using a Static Method</h3>
+<P>
+You can do this refactoring with a static method, but in this case you don't need the first field pointing back to the original object. 
+</P>
+<h3>Alternative Steps with Temps</h3>
+<P>
+Marnix Klooster suggested an alternative to the mechanics. Rather than creating fields in the Method Object for all the temps, leave the temps as temps and only turn them into fields as you need to in order to use  <A href="extractMethod.html">Extract Method</A>. It means you have to use a special form of <A href="extractMethod.html">Extract Method</A>, but may help in reducing the scope of the temps. Of course you can use <A href="reduceScopeOfVariable.html"> Reduce Scope of Variable </A> afterwards on any temp that's only used in one method.
+</P>
+
+<h2>Contributors</h2><UL><LI>Marnix Klooster</LI>
+</UL>
+
+<P>For more information see page 
+	<font color="#FF0000">135</font>
+	of <I>Refactoring</I></P>
+
+<P /><P /><P><CENTER><A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A></CENTER></P></body></html>

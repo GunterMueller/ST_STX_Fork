@@ -1,0 +1,174 @@
+<HEAD>
+<TITLE>Using the New File Browser - Directory Contents view</TITLE>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="dirTree.html">    <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">     <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="contentsView.html"> <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H2><A NAME="DIRCONTENTS" HREF="TOP.html#I_DIRCONTENTS">Directory Contents View</A></H2>
+
+<!--
+This view lists the contents of the current directory. Depending on
+the setting of the short/long list flag, either only the filenames or
+the complete files attributes are shown.
+<P>
+Depending on the setting of the show/hide hidden files flag,
+hidden files (those beginning with </CODE>'.'</CODE>) are either shown
+or not.
+<P>
+
+-->
+
+<H3><A NAME="MENU" HREF="TOP.html#I_FILELIST_MENU">File list menu functions</A></H3>
+
+<!--
+
+This popup menu offers functions that operate on the selected item(s) in the file
+list.
+<BR>
+Notice, that multiple selections are possible - if you hold down the
+<KBD>"<B>SHIFT></B>"</KBD> key while clicking on an item,
+items will be added or removed from the selection.
+<P>
+The functions are:
+<DL>
+<DT><A NAME="MENU.SPAWN">Spawn</A>
+<DD>starts another fileBrowser on the current directory,
+or in the selected directory.
+<P>
+
+<DT><A NAME="MENU.GET">Get contents</A>
+<DD>same as double click; shows the contents of the
+currently selected file in the contents view.
+<P>
+
+<DT><A NAME="MENU.INSERT">Insert contents</A>
+<DD>inserts the contents of the
+currently selected file into the contents view at the current text cursor position.
+<P>
+
+<DT><A NAME="MENU.FILEIN">FileIn</A>
+<DD>loads the selected file(s) into the system, by
+reading & evaluating Smalltalk expressions from it.
+The file must contain valid Smalltalk expressions
+in <A HREF="../../programming/fileoutFormat.html">fileOut-format</A>.
+<P>
+
+<DT><A NAME="MENU.CREATE_DIR">New Directory...</A>
+<DD>create a new (empty) directory.
+<P>
+
+<DT><A NAME="MENU.CREATE_FILE">New File...</A>
+<DD>create a new (empty) file.
+<P>
+
+<DT><A NAME="MENU.CREATE_LINK">New Hard Link...</A>
+<DD>create a hard link (unix only).
+<P>
+
+<DT><A NAME="MENU.CREATE_SYMLINK">New Symbolic Link...</A>
+<DD>create a symbolic (soft) link.
+<P>
+
+
+<!-X-
+<DT><A NAME="MENU.SHOW_INFO">show info</A>
+<DD>show file information of the selected file.
+This includes file type, owner, size and access rights.
+<P>
+
+<DT><A NAME="MENU.SHOW_FULL_INFO">show full info</A>
+<DD>same as show info, but adds some more detail to
+the file type and adds group information.
+Since it uses Unix's <CODE>'file</CODE>-command to determine
+the filetype, this may take a bit longer than the
+simple show-info.
+<P>
+
+-X->
+
+<DT><A NAME="MENU.REMOVE">Remove...</A>
+<DD>remove the currently selected file(s) and/or
+directory(s). A dialog will ask for confirmation.
+<P>
+
+<DT><A NAME="MENU.RENAME">Rename...</A>
+<DD>rename the selected file(s) or directory(s).
+A dialog will ask for the new name.
+<P>
+
+<!-X-
+<DT><A NAME="MENU.LONGLIST">display long list / display short list</A>
+<DD>toggles the format in which files are shown in the file list from short to
+long and vice versa. The default is short. It takes a bit longer to read directories
+if long format is choosen.
+<P>
+
+<DT><A NAME="MENU.SHOWALL">show all files / hide hidden files</A>
+<DD>toggles display of files whose name begins with
+a period <CODE>"."</CODE>. By default, these are not shown in the list.
+<P>
+
+<DT><A NAME="MENU.ENCODING">encoding ...</A>
+<DD>opens a dialog to specify the file encoding to use.
+<BR>
+By default, the fileBrowser assumes ISO8859-1 encoding, and tries to
+figure out a files encoding (by heuristic rules) when a file is double
+clicked. This autoselect may fail sometimes, and a specific encoding
+must be enforced via this menu.
+<P>
+
+-X->
+
+<DT><A NAME="MENU.TOOLS_EXECUTE">Tools - OS Command... (Shell/DOS Command...)</A>
+<DD>allows execution of any unix(dos) command; a popup
+box allows input of the command.
+The output of the command is inserted in the contents view
+at the cursor position.
+<P>
+
+<DT><A NAME="MENU.TOOLS_CHANGESBROWSER">Tools - Changes Browser</A>
+<DD>opens a change browser on the selected (Smalltalk-source-) file.
+<BR>Notice, that the file-format for changeFiles, st-sourceCode and visualWorks
+parcel source files (pst-files) is the same and understood by the changesBrowser.
+<P>
+
+<DT><A NAME="MENU.UPDATE">Update</A>
+<DD>reread the directory and update the file list.
+<P>
+
+This function is normally not needed, since
+the fileBrowser checks for modifications
+of the
+current directory in regular intervals, updating
+the list automatically.
+However, a manual update may be needed in certain
+situations
+(for example, if the time/dates are out of sync
+between NFS hosts) or if you do not want to wait
+for the next automatic update.
+<P>
+
+
+</DL>
+
+-->
+
+<HR>
+<A HREF="contentsView.html">Next: Contents View</A>
+<HR>
+
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif" ALT="[stx logo]">
+Copyright &copy; 2002 eXept Software AG, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+<HR>
+Doc $Revision: 1.3 $ $Date: 2016-09-14 09:41:13 $
+
+</BODY>
+</HTML>

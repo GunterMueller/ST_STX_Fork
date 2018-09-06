@@ -1,0 +1,26 @@
+This package contains tools to generate various reports.
+Currently, only SUnit test report is supported. Also, options to 
+control what to do are quite limited. More will come...
+
+To run a test suite for a package, execute following command:
+
+../../../projects/smalltalk/stx -I --quick --noBanner -f test-runner.sh \
+	-D <REPORTDIR> -r <REPORT> -p <PACKAGE> [-p <PACKAGE> [-p ... ]]
+
+Where 
+  <REPORTDIR>     is a directory where the report files are stored. 
+                  Currently the name of the file is fixed, being
+                  <PACKAGE>-<KIND>.xml. 
+  <REPORT>        Report class name. Currently, only Builder::TestReport
+                  is supported.
+  <PACKAGE>       Smalltalk/X package name for which to generate the report.
+
+
+Example: 
+
+To run Smalltalk regression tests, issue following command:
+
+../../../projects/smalltalk/stx -I --quick --noBanner  -f test-runner.st \
+	-D /tmp -r Builder::TestReport -p exept:regression
+
+When finished, you may find a report in file  /tmp/exept_regression-Test.xml 

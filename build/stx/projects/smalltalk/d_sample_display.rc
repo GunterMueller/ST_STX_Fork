@@ -1,0 +1,160 @@
+"*
+ * Encoding: iso8859-1
+ *
+ * $Header$
+ *
+ * MIMEType: application/x-smalltalk-source
+ *
+ * ST/X startup configuration file:
+ * display related configuration - generic
+ *
+ * this is a dummy script -
+ * use this file as a guide for display-specific configurations
+ * (see how display.rc figures out on what type of display we run)
+ *
+ * i.e. copy this file to d_<your_display_name>.rc and edit as needed
+ * see d_sun.rc, d_iris.rc etc. as examples
+ *"
+
+"*
+ * some X-windowManagers crash if you set
+ * the icon to a deep (i.e. depth~~1) bitmap.
+ * the default is false.
+ *"
+
+"/ Display supportsDeepIcons:true
+
+
+"*
+ * view style - uncomment the one you like most (I prefer #iris :-)
+ * (there are actually more possibilities - see style-files in the
+ *  resources directory)
+ *"
+"/ View defaultStyle:#next
+"/ View defaultStyle:#iris
+"/ View defaultStyle:#openwin
+"/ View defaultStyle:#motif
+"/ View defaultStyle:#'motif_red'
+"/ View defaultStyle:#normal
+"/ View defaultStyle:#mswindows
+"/ View defaultStyle:#st80
+"/ View defaultStyle:#greenPC
+"/ View defaultStyle:#rocky
+
+"*
+ * define keys/keyboard abbreviations etc. which are not handled by xmodmap
+ *"
+|map|
+
+map := Display keyboardMap.
+
+"
+map bindValue:#Again to:#F1.
+map bindValue:#Copy  to:#F2.
+map bindValue:#Cut   to:#F3.
+"
+
+"
+ * on some german keyboards, we get already translated characters
+ * (plus the ALT-key)
+ *"
+"
+map bindValue:$[ to:#'Alt['.
+map bindValue:$] to:#'Alt]'.
+map bindValue:${ to:#'Alt{'.
+map bindValue:$} to:#'Alt}'.
+map bindValue:$\ to:#'Alt\'.
+map bindValue:$| to:#'Alt|'.
+map bindValue:$@ to:#'Alt@'.
+"
+
+"
+ * on others, they come untranslated
+ * (plus the ALT-key)
+ *"
+"
+map bindValue:$[ to:#'Alt8'.
+map bindValue:$] to:#'Alt9'.
+map bindValue:${ to:#'Alt7'.
+map bindValue:$} to:#'Alt0'.
+map bindValue:$\ to:#'Alt?'.
+map bindValue:$| to:#'Alt<'.
+map bindValue:$@ to:#'Altq'.
+"
+!
+
+"*
+ * define the size of the screen
+ * most X-Servers do not (cannot) tell the truth ...
+ * (how should it know what size of monitor you have ?)
+ * if yours does, make the next one a comment
+ *
+ * (check out by measuring your display, and compare
+ *  the values returned by 'Display widthInMillimeter'
+ *  and 'Display heightInMillimeter')
+ *
+ * do not trust the numbers I have written below - size given
+ * should be the visible picture size, which depends on display
+ * adjusts (many monitors have hSize & vSize adjusts)
+ *
+ * you only need this definition to be exact, if you want
+ * correct sizes/ratios in the DrawTool
+ * If you leave the statements below commented, ST/X will ask
+ * the X-server and take these values.
+ *"
+
+"*
+ * this is for a  VGA gas plasma display
+ * (may also be ok for most LCD displays)
+ *"
+"
+Display heightInMillimeter:160.
+Display widthInMillimeter:212
+"
+
+"*
+ * this is for a 14' monitor ...
+ *"
+"
+Display heightInMillimeter:175.
+Display widthInMillimeter:235
+"
+
+"*
+ * this is for a 16' monitor (measured on a jvc quadsync)
+ *"
+"
+Display heightInMillimeter:208.
+Display widthInMillimeter:275
+"
+
+"*
+ * this is for a 20' (megascan) ...
+ *"
+"
+Display heightInMillimeter:279.
+Display widthInMillimeter:346
+"
+
+"*
+ * this is for a 21' (eizo flexscan) ...
+ *"
+"
+Display heightInMillimeter:275.
+Display widthInMillimeter:370
+"
+!
+
+"*
+ * uncomment if you have a b&w monitor connected to a
+ * color server (which the server wouldn't know)
+ * try 'Display visualType' to see what X thinks.
+ *"
+"/ Display hasColors:false
+
+"*
+ * uncomment to force black&white operation
+ * (makes sense on 4-plane servers)
+ *"
+"/ Display hasGreyscales:false
+!

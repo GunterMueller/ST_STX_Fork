@@ -1,0 +1,29 @@
+/* XPM */
+static char *switzerland_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 20 2 1",
+/* colors */
+"a c red",
+"b c white",
+/* pixels */
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaabbbbaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaabbbbaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaabbbbaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaabbbbaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaabbbbaaaaaaaaaaaaaaa",
+"aaaaaaaaabbbbbbbbbbbbaaaaaaaaaaa",
+"aaaaaaaaabbbbbbbbbbbbaaaaaaaaaaa",
+"aaaaaaaaabbbbbbbbbbbbaaaaaaaaaaa",
+"aaaaaaaaaaaaabbbbaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaabbbbaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaabbbbaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaabbbbaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaabbbbaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+};

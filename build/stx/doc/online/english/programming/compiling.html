@@ -1,0 +1,1362 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Compiling Classes</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="stc.man.html">    <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">  <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="primitive.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>How to Create &amp; Add Binary Classes/Libraries</H1>
+
+Notice:
+<BR>
+Most of this document has become obsolete by the availability if the package-builder.
+This tools allows for a very convenient build-process for both standalone executables
+and binary class libraries. It will generate all of the files which are described below
+automatically.
+
+
+<H2>Contents</H2>
+
+<UL>
+  <LI><A HREF="#INTRO" NAME="I_INTRO">Introduction</A>
+  <LI><A HREF="#CONFIG" NAME="I_CONFIG">Configuration Files</A>
+  <LI><A HREF="#CONFIGDEFS" NAME="I_CONFIGDEFS">What is in a Config File</A>
+  <LI><A HREF="#PACKAGEDEFS" NAME="I_PACKAGEDEFS">What is in a Package File</A>
+  <LI><A HREF="#RECOMPILING" NAME="I_RECOMPILING">Recompiling the System in Part or Fully</A>
+  <LI><A HREF="#MAKE_PROTO" NAME="I_MAKE_PROTO">What is in a Make.proto file</A>
+  <LI><A HREF="#MAKEMP" NAME="I_MAKEMP">How to get an Initial Make.proto file</A>
+  <LI><A HREF="#CLASSLIBS" NAME="I_CLASSLIBS">Creating Binary Class Libraries</A>
+  <LI><A HREF="#NEWCLASSES" NAME="I_NEWCLASSES">Adding more Classes</A>
+  <LI><A HREF="#NEWCLASSLIBS" NAME="I_NEWCLASSLIBS">Adding more Class Libraries</A>
+  <LI><A HREF="#NEWCFUNCS" NAME="I_NEWCFUNCS">Interfacing C Functions</A>
+  <LI><A HREF="#NEWCLIBS" NAME="I_NEWCLIBS">Adding C Libraries</A>
+  <LI><A HREF="#EXAMPLECSTUFF" NAME="I_EXAMPLECSTUFF">An example for C Interfacing</A>
+  <LI><A HREF="#AUTOMATIC" NAME="I_AUTOMATIC">Automatic Building</A>
+</UL>
+
+
+<A NAME="INTRO" HREF="#I_INTRO"><H2>Introduction</H2></A>
+
+The most interesting feature distinguishing <CITE>Smalltalk/X</CITE> from
+other Smalltalk implementations is the ability to create native
+object files and (possibly shared) libraries from Smalltalk classes.
+Thus, you can create and deploy pure object files, which do not contain bytecode,
+and can therefore not be decompiled (or at least: this becomes a non-trivial task).
+<P>
+These class libraries may contain embedded C-code; either for performance
+reasons or to interface to other C-libraries.
+
+<P>
+This document will give you information and a step-by-step guide on
+how to compile your classes to machine code, how to create &amp; package
+class libraries for distribution and how to include such a binary class
+library in your system.
+<P>
+Notice, that beside speed advantage and the ability to include inline
+C code, the semantic of binary compiled code is equivalent to that
+of interpreted bytecode. All language features (such as context handling,
+block handling, stack unwinding and exception handling) are available
+and perform transparent whether methods are compiled statically
+or interpreted (or compiled dynamically from bytecode by the JIT translator).
+<P>
+Compiled object files are bigger than bytecode files. Therefore, the memory
+requirements are bigger if machine compiled code is used - at least if a single
+<CITE>Smalltalk/X</CITE> application is running.
+However, on systems which support shared
+libraries, this code is shared amongst all those applications (which is not
+the case with interpreted bytecode), therefore, depending on how many such
+applications are executing, there may be a memory advantage - even with larger
+object files.
+<BR>
+Also, it must be considered, that statically compiled machine code is located
+in the code segment of the program - i.e. it will only paged into the
+physical memory when needed and requires much less memory in the objectMemory
+area - therefore, even when requiring more memory virtually,
+there is actually often less real memory required.
+<P>
+In addition, static compiled machine code is not loaded into the objectMemory,
+and therefore not to be considered by the garbage collector.
+Especially for big projects, this may reduce GC overhead considerably.
+<P>
+Another positive aspect of statically compiled machine code (in contrast to
+<VAR>just-in-time compilation</VAR>) is the guaranteed maximum response time,
+in which an invoked method is called.
+<BR>
+If methods are compiled at
+execution time, chances are non-zero, that some method(s) have to be compiled
+on the first call, and an additional delay is introduced.
+<BR>
+(unless you have visited all methods previously and the code cache is big
+enough to hold all methods
+<BR>
+- but then, the dynamic memory requirements of
+a <VAR>just-in-time</VAR> system are in the same order
+as with static compilation ...).
+<P>
+This defined behavior is the main reason for industrial users to
+prefer static over dynamic compilation.
+
+
+
+<A NAME="CONFIG" HREF="#I_CONFIG"><H2>Configuration Files</H2></A>
+
+This is only relevant for Unix systems.
+The build process for Windows systems is described below.
+<p>
+
+<CITE>Stc</CITE> can be used like any other (batch-) compiler by
+calling it directly from the UNIX/DOS command line. However, since there are
+many possible command line arguments and configuration settings that have to
+be managed, it is easier and suggested that you use <CODE>Makefiles</CODE>
+to compile classes and build systems.
+<P>
+The system as delivered includes shell scripts and <VAR>make rules</VAR> to
+handle different architectures and configurations.
+To avoid the need for rewriting all Makefiles for a new architecture,
+all relevant values have been splittet into machine dependent parts
+and project (or library) dependent part. The machine dependent parts are included
+from the configurations folder. The library contents is defined in
+"<CODE>Make.proto</CODE>" and "<CODE>Make.spec</CODE>" files.
+
+<P>
+The configurator (called "<CODE>CONFIG</CODE>") creates appropriate symbolic links
+named "<CODE>myConf</CODE>" and "<CODE>vendorConf</CODE>" in the configuration folder.
+<P>
+To do so, the configurator
+uses so called <VAR>config</VAR> and <VAR>rule</VAR> files,
+which define all architecture and configuration dependent settings.
+<P>
+Make rules are found in the "<CODE>rules</CODE>" subdirectory;
+config files in subdirectories of "<CODE>configurations</CODE>".
+<BR>
+You don't have to care for the rule files normally - they are independent
+of the configuration.
+<BR>
+The config files are organized by machine architecture and configuration.
+They define things like C-compiler flags, include paths,
+classes to be included in the building process, additional link libraries etc.
+
+<P>
+In addition, package-lists are used to control which classLibraries are to
+be built into the system.
+These are found in the "<CODE>configurations/PACKS</CODE>" subdirectory.
+<BR>
+Package lists define <B>which</B> objects should be included,
+config files define <B>how</B> these objects are built.
+
+<P>
+The generic paths of config files looks like:
+<CODE><PRE>
+    configurations/COMMON/defines
+    configurations/<VAR>architecture</VAR>/COMMON/defines
+    configurations/<VAR>architecture</VAR>/<VAR>configuration</VAR>/defines
+</PRE></CODE>
+For example, the linux definitions for linux versions above 1.0,
+with C-optimizer turned on are taken from:
+<CODE><PRE>
+    configurations/COMMON/defines
+    configurations/linux/COMMON/defines
+    configurations/linux/linux1.x-opt-xxx/defines
+</PRE></CODE>
+and so on.
+The name of the directory has no semantic meaning - its only for human
+readers. If you want to create additional configurations, please do so in a new
+subfolder. Do not change existing configuration files (because your changes will be
+lost, when you install a new version of ST/X).
+<BR>
+When a Smalltalk is built, the name of the configuration is stamped into the
+executable - look at the launcher's
+<A HREF="../misc/onlyInSTX.html" ACTION="AboutBox open">aboutBox</A>, to see the configuration
+of your system.
+
+<P>
+Summary:
+<UL>
+<LI>to setup the symbolic links for the very first time,
+use:
+<BLOCKQUOTE>
+<CODE>CONFIG</CODE> <VAR>architecture</VAR> <VAR>package</VAR> </VAR>configuration</VAR>
+</BLOCKQUOTE>
+or:
+<BLOCKQUOTE>
+<CODE>CONFIG</CODE> auto
+</BLOCKQUOTE>
+which tries to determine a reasonable configuration based on your OS-dialect.
+<P>
+To get available configurations listed
+(if you are uncertain, which architectures and/or configurations are
+available) call <CODE>CONFIG</CODE> without argument(s).
+<P>
+
+<LI>you can add new configurations (for example, to change the C-compiler's optimization options),
+by:
+<UL>
+<LI>creating a new subdirectory in
+"<CODE>configurations</CODE>/<VAR>architecture</VAR></CODE>"
+<BR>let's call it <VAR>mysystem</VAR>.
+<P>
+<LI>create a file named "<CODE>defines</CODE>" in this directory.
+Take any existing "<CODE>defines</CODE>" file from the same architecture to
+start with.
+<P>
+<LI>change back to the TOP directory
+<P>
+<LI>execute "<CODE>CONFIG</CODE> <VAR>architecture</VAR> <VAR>package</VAR> <VAR>mysystem</VAR>"
+to recursively create new <CODE>Makefiles</CODE>.
+<P>
+
+</UL>
+</UL>
+
+<A NAME="CONFIGDEFS" HREF="#I_CONFIGDEFS"><H2>What is in a Config File</H2></A>
+
+The system as delivered is already setup correctly for your machine
+- therefore, you may skip reading the next chapters, unless you plan
+to fiddle around with the C-compiler's flag settings, want to use another
+compiler, or you need to link against additional system libraries.
+<P>
+
+Remember, that for all of the following definitions, useful defaults
+are setup in
+<BR>
+<CODE>"configurations/COMMON/defines"</CODE>
+and <CODE>"configurations/<VAR>arch</VAR>/COMMON/defines"</CODE>.
+<P>
+In normal situations, no changes are required.
+However, if you need anything to be changed, do so in your configuration
+specific <VAR>config</VAR> file; <STRONG>never</STRONG> in a common one.
+<BR>
+Since later definitions overwrite previous ones, you can always change
+things by adding a define to the private defines file.
+<P>
+The following is a short extract - there are many more things that
+can (but are not required to) be changed:
+
+<CODE><PRE>
+    CC=                     defines the c-compilers name
+			    (not recommended to change)
+
+    O=.o                    extension for object files
+			    (not recommended to change;
+			     - usually ".o" on UNIX, ".obj" on MSDOS)
+
+
+    #
+    # for "make install" only:
+    #
+    DESTBINDIR=             where are binaries to be installed
+    DESTLIBDIR=             where are libraries to be installed
+    DESTINCLDIR=            where are include files to be installed
+    DESTMANDIR=             where are man pages to be installed
+
+    #
+    # for additional directories and libs (see below)
+    #
+    OTHERLIBS=              specifies names of other (c-)libraries to be
+			    included in the final link
+
+    #
+    # Xlib stuff
+    #
+    XINCLUDE=               path to X include files
+    LIBX=                   whats the name of your X-lib
+    LIBXEXT=                whats the name of your Xext-lib
+    X_LIB_DIR=              path to where X-libraries are found
+
+
+    #
+    # stc compiler flags
+    #
+    STCCONFOPT=             arguments passed to stc
+
+    #
+    # c compiler flags and (preprocessor) defines
+    #
+    DEFS=                   addidtional defines passed to the c-compiler
+    XDEFS=                  like DEFS, for XWindow-related files/classes
+
+    OPT=                    addidtional optimizer flags passed to the c-compiler
+			    (typically something like -O6 -m486 ...)
+
+    #
+    # additional individual class objects
+    #
+    EXTRA_CLASSES=          extra individual compiled classes to be
+			    included in the final link. These are classes
+			    that do not come from class libraries.
+
+    EXTRA_OBJ=              the corresponding object file names
+
+</PRE></CODE>
+
+The common configuration files define things like relative path names
+(within the <CITE>ST/X</CITE> file hierarchy), make rules etc.
+<BR>
+Most important (and of general interest) are the following definitions,
+which can be used in "<CODE>Make.proto</CODE>" files:
+
+<CODE><PRE>
+    INCLUDE=                the relative path to the include directory
+
+    STC=                    the relative path to the stc compiler
+			    (usually: $(TOP)/stc/stc, but may be redefined to refer
+			     to an <VAR>stc</VAR> in some other directory)
+
+    LIBBASICDIR=            the name of the directory where the basic classes
+			    reside. Similar definitions are found for all the
+			    other standard packages.
+
+    BIN_O=                  the suffix of individual binary object files (cc targets)
+			    ("<CODE>.o</CODE>" with unix; different on other architectures).
+			    Always use this in your "<CODE>Make.proto</CODE>" files
+			    to remain architecture independent.
+
+    O_EXT=                  the suffix of class library files (stx packages)
+			    ("<CODE>.o</CODE>" or "<CODE>.obj</CODE>" on systems
+			     which do NOT support shared libraries;
+			     "<CODE>.so</CODE>" or "<CODE>.sl</CODE>" on systems which do)
+</PRE></CODE>
+
+
+
+
+<A NAME="PACKAGEDEFS" HREF="#I_PACKAGEDEFS"><H2>What is in a Package File</H2></A>
+
+This section can be skipped - it is only of interest if
+if you want to change the set of libraries &amp; modules which are
+included in the Smalltalk executable.
+<P>
+
+As mentioned above, the package files (in "<CODE>configurations/PACKS</CODE>")
+control which class libraries and additional C libraries are to be
+built and included in the resulting executable.
+<P>
+The entries found there are:
+<CODE><PRE>
+    WORKSTAT1=                  name of the primary Display driver class
+				(typically: XWorkstation)
+
+    WORKSTAT2=                  name of the secondary Display driver class
+				(typically: GLXWorkstation)
+
+    EXTRA_CLASSES=              names of additional classes, which
+				are to be included from individual object
+				files (not class libraries)
+				Typically: XWorkstation GLXWorkstat
+
+    EXTRA_OBJ=                  names corresponding object file names
+				Typically: $(LIBVIEWDIR)/XWorkstat$(BIN_O)
+
+    OTHERLIBDIRS=               other directories, which the build process
+				should visit and `make'
+
+    CLASSLIBDIRS=               directories containing class library sources
+				and `Make.proto' files to be built.
+
+    LIBOBJS=                    names of classLibrary objects to be included
+				in the link.
+
+    LIBLIST=                    names of the packages found in above objects.
+				Typically, these correspond to the file
+				names, but in rare cases, these names could
+				differ.
+</PRE></CODE>
+
+The above information may not be up to date, when you read this document.
+<BR>
+Examine the files found in
+<CODE>configurations/PACKS</CODE> for more information.
+
+
+
+<A NAME="RECOMPILING" HREF="#I_RECOMPILING"><H2>Recompiling the System in Part or Fully</H2></A>
+
+
+Although recompilation of the complete system is easily done with:
+<BR>Unix:
+<CODE><PRE>
+	cd TOP
+	make clobber            - to clean everything
+	make                    - make a target system as set by CONFIG
+</PRE></CODE>
+<BR>Windows (Borland compiler):
+<CODE><PRE>
+	cd TOP
+	bmake clobber           - to clean everything
+	bmake                   - make a target system
+</PRE></CODE>
+<BR>Windows (VisualC compiler):
+<CODE><PRE>
+	cd TOP
+	vcmake clobber           - to clean everything
+	vcmake                   - make a target system
+</PRE></CODE>
+<BR>Windows (MinGW compiler):
+<CODE><PRE>
+	cd TOP
+	mingwmake clobber        - to clean everything
+	mingwmake                - make a target system
+</PRE></CODE>
+that takes a long time on some machines. For local changes, you will get a feeling
+of what needs to be recompiled. For example, after adding a method to
+a class in "<CODE>libbasic</CODE>", only a recompilation of that class and a relink of
+the libbasic class library is required
+and you can skip over the full remake.
+<BR>
+In this case, you can also type:
+<CODE><PRE>
+	cd libbasic
+	make (bmake / vcmake / mingwmake)
+	cd ../projects/smalltalk
+	make (bmake / vcmake / mingwmake)
+</PRE></CODE>
+which is much faster, as not all directories are visited.
+<P>
+However, whenever instance variables are added to classes which are
+subclassed somewhere else, these subclasses have to be recompiled as well.
+The makefile generator has added a dependency section to your Make.proto files - so
+only subclasses will be recompiled in the full make.
+<P>
+When new source files (i.e. new classes) are added to a classLibrary,
+add its name to the "<CODE>Make.proto</CODE>" file
+(or regenerate a new one) and type:
+<CODE><PRE>
+	...
+	cd <VAR>theDirectoryWhereTheSourceWasAdded</VAR>
+	make (bmake / vcmake / mingwmake)
+	...
+	cd ../projects/smalltalk
+	make (bmake / vcmake / mingwmake)
+</PRE></CODE>
+
+
+
+<A NAME="MAKE_PROTO" HREF="#I_MAKE_PROTO"><H2>What is in a Make.proto File</H2></A>
+
+A <CODE>Make.spec</CODE> file lists the classes to be included in a library and
+possibly subprojects (subdirectories) in which more libraries are to be built.
+<P>
+The <CODE>Make.proto</CODE> contains dependency information, additional rules
+and definitions for Unix builds.
+<CODE>Make.proto</CODE> files are not used with Windows builds - there, all information
+is contained in the <CODE>bc.mak</CODE> file
+(originally the name was short for "borland-compile", but it is now also used for VisualC
+and MinGW builds..
+
+<P>
+Since all architecture and configuration specific things are handled by the
+<VAR>config</VAR> files, <CODE>Make.proto</CODE> and <CODE>Make.spec</CODE>
+files need not (should not) include any system dependencies.
+<P>
+Therefore, <CODE>"Make.proto"</CODE> and <CODE>"Make.spec"</CODE> files are rather short.
+They only define the name of the library to be created, the subdirectories
+(if any) that should be visited and the names of the object
+files, which make up the library.
+<P>
+The required defines are:
+<CODE><PRE>
+    TOP=                            defines the position relative to the TOP
+				    directory (see example below)
+
+    ALLSUBDIRS=                     names of subdirectories, where Makefiles
+				    are to be created (if any).
+
+    SUBDIRS=                        names of subdirectories (if any), which should
+				    be visited during the build process.
+
+    LIBNAME=                        name of the class library which is to be
+				    created by this makefile.
+				    (empty, if this is not for a classlib)
+
+    all::                           default rule; usually, this simply calls
+				    for the 'classLibRule' target, which creates
+				    the required help files, object file(s) and
+				    a prelinked classLibrary (possibly a shared one).
+				    Additional C file targets should go here
+
+    OBJS=                           names all object files which are to be
+				    built and/or included in the classLibrary.
+
+</PRE></CODE>
+optional are definitions which change compilation flags:
+<CODE><PRE>
+    STCOPT=                         stc options; defaulted in COMMON/defines
+				    There is usually no need to redefine this in
+				    individual Make.proto files.
+
+    STCLOCALOPT=                    stc options to be used in addition
+				    to standard settings;
+				    additional package or optimization
+				    flags should be given here.
+				    For example: 'STCLOCALOPTS=+optspace3'
+</PRE></CODE>
+optional but highly recommended rules are:
+<CODE><PRE>
+    clean:                          a rule to cleanup all intermediate files,
+				    but not the library targets - so that the
+				    executable can be relinked without recompilation.
+				    Typically, all object files are removed here.
+
+    clobber:                        a rule to cleanup everything
+				    Ideally, the directory is left in the state it
+				    had initially.
+				    (Makefiles are usually kept)
+				    Typically, all object files and library files
+				    are removed here.
+
+    # BEGINMAKEDEPEND               the "<CODE>make mf</CODE>" rule will
+    # ENDMAKEDEPEND                 insert dependency information in between
+				    those. Always include those two keywords at
+				    the end of your proto file.
+
+</PRE></CODE>
+For example, the "<CODE>Make.proto</CODE>" for the basic class library
+looks (somewhat) like:
+<CODE><PRE>
+    TOP=..                          - its directly under TOP
+    SUBDIRS=                        - I have no subdirectories to make
+
+    LIBNAME=libbasic                - thats the name of the classlibrary
+
+    STCOPT=$(LIBBASIC_STCOPT)       - override default options
+				      (LIBBASIC_STCOPT is +optinline)
+
+    STCLOCALOPT=-P(stx:libbasic) \  - define the package of all classes
+		-warnGlobalAssign \   compiled here, turn off some warnings
+		+optinline2           and turn on more inlining
+
+
+    all::   classListRule           - default rule: create abbrev file
+				      objects, classList and a prelinked
+				      class library
+
+    OBJS=   Object.$(O) \           - names all object files which are
+	    Boolean.$(O) \            to be created from corresponding .st
+	    ...                       files. Notice the $(O) instead of .o;
+				      This allows the same Make.proto to be
+				      be used on MSDOS and Mac systems (where object
+				      files are named differently).
+
+    # BEGINMAKEDEPEND               - template for dependencies
+    # ENDMAKEDEPEND
+
+</PRE></CODE>
+
+
+<A NAME="MAKEMP" HREF="#I_MAKEMP"><H2>How to get an Initial Make.proto File</H2></A>
+
+There are three ways of optaining a <CODE>Make.proto</CODE> file;
+only the first is now recommended.
+The other 2 are for experienced hackers, who know exactly what they are doing.
+<UL>
+<LI>recommended: use the generator from within a browser or the package builder (inside the IDE)
+<P>
+<LI>dangerous: copy an existing <CODE>Make.proto</CODE> and edit as required
+<P>
+<LI>dangerous: use the <CODE>stmkmp</CODE> (<I>'st-make-makeProto'</I>) script, which is
+found in the <CODE>rules</CODE> subdirectory.
+</UL>
+
+The first method should always generate a consistent set of Make and build support files.
+It is done either via the browser's <I>"Check in build-support files"</I>
+or via the packager's build-UI.
+<P>
+The <CODE>stmkmp</CODE> scans the current directory for Smalltalk-source files
+(files ending in '.st') and generates a <CODE>Make.proto</CODE> file
+for them (it was used initially, before the UI tools were present).
+
+
+<!-- no longer
+<A NAME="MAKEMF" HREF="#I_MAKEMF"><H2>How to get an Initial Makefile</H2></A>
+
+As noted above, every Makefile as generated from a Make.proto knows how
+to regenerate itself and how to create Makefiles in subdirectories.
+<BR>However, the very first time, the Makefile must be generated manually -
+either via the CONFIG script, or via the
+<CODE>stmkmf</CODE> (<I>'st-make-makeFile'</I>) script, which is also found
+in the <CODE>rules</CODE> subdirectory.
+<P>The above mentioned <CODE>stmkmp</CODE> generates an initial Makefile
+automatically for you.
+-->
+
+
+<A NAME="CLASSLIBS" HREF="#I_CLASSLIBS"><H2>Creating Binary Class Libraries</H2></A>
+
+The following gives step-by-step information on how to add a new class
+library. For all of your new classes, this is the recommended way of
+doing things. Adding classes to existing directories may lead to problems
+and/or added work whenever a new <CITE>ST/X</CITE> release is delivered and installed:
+you would have to reedit all of your changed Make.proto files.
+<P>
+Lets assume, that your new library is to be called "<CODE>libfoo</CODE>"
+and shall contain the classes called
+<CODE>Foo</CODE>, <CODE>Bar</CODE> and <CODE>Baz</CODE>.
+<P>
+First of all, you should not package it under the "stx:" module.
+(i.e. do not create it under the "stx" folder).
+The "stx:" module prefix is reserved for the base system.
+<P>
+Use a private module prefix (usually your company name).
+This implies, that the files will be located in a sibling folder of the "stx" folder
+(i.e. a subfolder of "stx"'s parent folder).
+<P>
+In the following description, let's assume this is called "<I>myCompany</I>".
+<OL>
+
+<LI>Write the Classes
+<BR>
+Enter, test and debug the classes in the existing environment (i.e. in the browser).
+Change their package (also called project) identifier to "<I>myCompany</I>:libfoo",
+or better start separating by projects right from the start, give it a nice project name,
+and name it "<I>myCompany</I>:<I>project1</I>/libfoo".
+<P>
+Another good idea is to put classlibraries which are useful for multiple projects into
+a separate folder (such as a "<I>common</I>" folder).
+<P>
+
+<LI>Create a home for the sources
+<BR>
+Create a directory named "<I>myCompany</I>" as a sibling to the "stx" folder.
+<br>Create a subdirectory named "<I>project1</I>" under the "<I>myCompany</I>" folder.
+<br>Create a subdirectory named "libfoo" under the "<I>project1</I>" folder.
+<P>
+Be warned again: to avoid additional work and frustration,
+when a new ST/X release is installed,
+please DO NOT create your "libfoo" directory below the ST/X top.
+<P>
+Thus, your folder hierarchy should look like:
+<CODE><PRE>
+    someDir/stx/                        - home of stx
+	   ... libbasic                 - as delivered
+	   ... configurations           - as delivered
+	   ... rules
+	   ...
+
+    someDir/&lt;myCompany&gt;/common    - your common classLibs
+
+    someDir/&lt;myCompany&gt;/&lt;project1&gt;  - one of your project - beside stx
+	    ... &lt;project1&gt;/classLib1      - further subdivided if required
+	    ... &lt;project1&gt;/classLib2      - further subdivided if required
+
+    someDir/&lt;myCompany&gt;/&lt;project2&gt;  - another project - beside stx
+	    ... &lt;project2&gt;/classLib1      - further subdivided if required
+	    ... &lt;project2&gt;/classLib2      - further subdivided if required
+</PRE></CODE>
+<P>
+This setup will avoid any conflict, when additional classLibraries
+are integrated from other vendors, or a new ST/X revision is installed.
+(also, note that additional addOn packages
+as delivered by eXept (such as ASN1, OSI etc.) will
+go into "<CODE>someDir/exept/...</CODE>" and not conflict with your files.
+<P>
+After all of this, let's assume that your new directory is called:
+<CODE><PRE>
+   .../myCompany/project1/libfoo
+</PRE></CODE>
+and it is locate beside the ST/X tree, which is:
+<CODE><PRE>
+   .../stx/...
+</PRE></CODE>
+
+<P>
+<LI>Develop and debug your application
+<P>
+
+<LI>Move them to the desired package (browser's "<I>Move to Package</I>" menu function)
+<P>
+
+<LI>Create the source files
+<BR>
+Change the browser's perspective to "Package"-view
+and save your package sources using "<VAR>Save Each In...</VAR>" in the SystemBrowser.
+<P>
+Notice, that the plain "<VAR>Save</VAR>" menu function creates the files in your current
+directory (which is usually "<CODE>projects/smalltalk</CODE>").
+So please use the "<I>Save Each Into...</I>" menu function.
+Otherwise, you will have to move the files manually into "<CODE>$TOP/myCompany/libfoo</CODE>".
+<P>
+Since <CITE>stc</CITE> requires that each class is in a separate source file,
+the <VAR>fileOut-category</VAR> or <VAR>fileOut-package</VAR> functions cannot be used here
+(as they create one huge file containing all classes).
+<BR>
+Instead, use <VAR>fileOut-each</VAR>, which saves each class in a separate sourcefile.
+<P>
+Alternatively (if you have a SourceCodeManager configured),
+check the classes into the repository in the systemBrowser
+(possibly into a new module / module-package), open a terminal view (xterm / cmd-console),
+and check them out with the 'co' shell command.
+<P>
+For example, if you have a CVS repository available,
+you should check your classes into the repository directly from within the system browser
+("Check In" menu function).
+<P>
+
+<LI>Create Built-Support Files
+<BR>
+In antient times "<CODE>Make.proto</CODE>" files had to be edited manually.
+This is no longer needed. Use the browser's "Fileout Built Support Files" menu function,
+to create all required files
+(this will create <CODE>Make.proto</CODE>, <CODE>Make.spec</CODE>, <CODE>bmake</CODE>,
+<CODE>vcmake</CODE> and <CODE>mingwmake</CODE> files).
+<P>
+If you have a source code repository, you should check the built support files
+into it right from within the browser.
+<P>
+
+<!--
+You can either copy an existing "<CODE>Make.proto</CODE>",
+and change it as required, or use the "<CODE>stmkmp</CODE>" shell script,
+which automatically generates a "<CODE>Make.proto</CODE>" for all
+files ending in "<CODE>.st</CODE>" found in the current directory.
+<BR>
+(try "<CODE>stmkmp --help</CODE>" for its usage).
+<P>
+<VAR>Stmkmp</VAR> can only create simple proto files
+for class libraries - if you need rules for additional
+c-libraries, you have to edit the generated file manually.
+
+<P>
+Here is what the output of "<CODE>stmkmp</CODE>" could look like:
+<CODE><PRE>
+    #
+    # required: where are we relative to TOP
+    #
+    TOP=..
+
+    #
+    # list subdirectories to visit during make
+    #
+    SUBDIRS=
+
+    #
+    # required: the name of the resulting class library
+    #
+    LIBNAME=libfoo
+
+    #
+    # required: the module and package definition.
+    # (for package identification and repository SourceCode access)
+    #
+    PACKAGE=yourCompany:project/libfoo
+
+    #
+    # not required: the default is empty
+    # but defining a package is highly recommended
+    # (see the ProjectViews browse function ...)
+    #
+    STCLOCALOPT=-Pfoo-classes
+
+    #
+    # required: define whats to be done
+    #
+    # this says:
+    #   - build all that is required for a class library
+    # you can edit the Make.proto file and add additional
+    # targets there.
+    #
+    all::  classLibRule
+
+    #
+    # required: what are my objects
+    #
+    objs::
+		Foo.$(O)        \
+		Bar.$(O)        \
+		Baz.$(O)
+
+
+    #
+    # recommended: cleanup rules
+    #
+    clean::
+	    -rm -f *.H
+
+    clobber::
+	    -rm -f *.o
+
+    #
+    # dependency rules
+    # BEGINMAKEDEPEND - do not remove
+    # ENDMAKEDEPEND   - do not remove
+</PRE></CODE>
+
+The "<CODE>stmkmp</CODE>" command itself is found in "<CODE>rules</CODE>"
+initially; you may want to copy it to "<CODE>/usr/local/bin</CODE>" for public
+access.
+<P>
+
+<LI>Edit the generated Make.proto
+<BR>
+You should at least change the definitions of:
+<UL>
+<LI>LIBNAME
+<BR>the name of your class library
+<P>
+
+<LI>PACKAGE=
+<BR>change to &lt;yourCompany&gt;:&lt;project&gt;[/&lt;subproject&gt;]
+<BR>We recommend to mimic the directory hierarchy in your package naming -
+this makes your live much easier later.
+<BR>I.e. place the directory &lt;yourCompany&gt; beside stx and generate a top
+directory for each major project. Then, within each project, create one
+directory for each classLibrary. If required, further structure may be added,
+by adding one (or more) subproject directory levels in-between.
+<P>
+Notice, that the sourceCode repository can be configured to use different
+CVS Roots per module, and that the first component (before the colon) is
+used as module. This means, that the stx repository may be physically
+different from the repository which holds &lt;yourCompany&gt;.
+</UL>
+
+<P>
+
+<LI>Create a Makefile from the proto
+<BR>
+Normally, <VAR>stmkmp</VAR> also creates an initial "<CODE>Makefile</CODE>",
+so you are ready to enter "<CODE>make</CODE>" now.
+<BR>
+However, it fails to create the "<CODE>Makefile</CODE>", if it was not able to
+find a path to the TOP directory (because it could not find any configuration
+files then ...).
+<BR>
+If this was the case, you can use the <VAR>stmkmf</VAR> command, which
+reads configuration files from a given projects top directory name.
+(i.e. if you have installed ST/X somewhere else, or if you want to
+ use configurations different from the standard ones as provided)
+<BR>
+Try "<CODE>stmkmf --help</CODE>" to get a list of options.
+
+<P>
+If all else fails, use any other existing and valid ST/X "<CODE>Makefile</CODE>":
+<CODE><PRE>
+    cd libfoo
+    make -f &lt;somePath&gt;/libbasic/Makefile Makefile
+</PRE></CODE>
+<P>
+
+Option (only if you want to extent the basic Smalltalk system):
+<BR>
+You can also arrange for your directory to be visited automatically
+during the normal build process, by adding the "<CODE>libfoo</CODE>"
+directory to a package file (in configurations/PACKS).
+<BR>
+Do this only for ST/X base package extensions - not for your own project
+libraries.
+<P>
+To do so, take any existing package file (in "<CODE>configurations/PACKS</CODE>"),
+and add the foo library to the LIBLIST definition,
+the class libraries object file name to the LIBOBJS definition
+and finally,
+the directory name to
+the CLASSLIBDIRS definition.
+<P>
+Your package file should now look like:
+<CODE><PRE>
+    ...
+    #
+    # to make libfoo when compiling:
+    #
+    CLASSLIBDIRS= $(LIBBASICDIR) ....
+		  ...
+		  &lt;pathToFoo-directory&gt;
+
+    #
+    # to also include it when linking an executable:
+    #
+    LIBOBJS=      $(LIBBASIC) ...
+		  ...
+		  libfoo$(O_EXT)
+
+    LIBLIST=      libbasic ...
+		  ...
+		  libfoo
+</CODE></PRE>
+
+Then change to the top directory, and reconfigure ("<CODE>CONFIG</CODE>").
+<BR>
+Watch the output as makefiles are created:
+<BR>
+the added "<CODE>libfoo</CODE>" directory should be visited along with
+the other directories and a "<CODE>Makefile</CODE>" be generated there.
+<P>
+After this, every make started in the TOP directory will always include
+your <CODE>libfoo</CODE> directory.
+You will never again have to do things manually there.
+<P>
+-->
+
+<LI>Compile your library
+<BR>
+While testing, you probably do not want to start the (time consuming)
+global make in TOP, but instead only compile things local to <CODE>libfoo</CODE>.
+<CODE><PRE>
+	cd libfoo
+	make
+</PRE></CODE>
+this should (after a while) leave you with your new classLibrary <CODE>libfoo</CODE> in that directory.
+<BLOCKQUOTE>
+Depending on the architecture and/or configuration,
+the filename extension of the library varies;
+any of "<CODE>libfoo.a</CODE>", "<CODE>libfoo.obj</CODE>",
+"<CODE>libfoo.o</CODE>" or "<CODE>libfoo.so</CODE>" may be found there after the
+make. Don't care for this detail - the make rules create whatever is best
+for your architecture.
+<BR>
+(For example, on some systems archives (".a" extension)
+lead to very long link times - on those, classLibraries are prelinked,
+relocatable objects (".obj").
+Some do not allow ".obj", therefore ".o" is used.
+Finally, some support shared libraries named ".so", ".sl" or even ".dll")
+</BLOCKQUOTE>
+If you plan to pass the compiled class library to others,
+all you have to distribute is the <CODE>libfoo</CODE> object just
+created.
+<BR>
+The others (those who include your binary) must change
+their config files too,
+but only have to perform the following (and final) step.
+<P>
+
+
+<LI>Get the classes into the executable
+<BR>
+If you are on a system which supports dynamic loading (
+SGI Indy, linux a.out or ELF, SUNOS, Solaris, Unixware SYS5.4, alpha OSF1
+and WIN32 systems),
+you can attach this library to your running
+system without leaving it (use "<VAR>fileIn</VAR>" in the File Browser) or
+via the package load dialog, or programmatically, by evaluating.
+<CODE><PRE>
+    ...
+    Smalltalk loadPackage:'&lt;myCompanyName&gt;:project1/libfoo'.
+    ...
+</PRE></CODE>
+<P>
+Alternatively, you can add a line to the "<CODE>private.rc</CODE>"
+or "<CODE>startup.rc</CODE>" scripts, which loads the library at startup
+time:
+<CODE><PRE>
+    ...
+    Smalltalk fileIn:'name-of-your-class-object-file-without-suffix'.
+    ...
+</PRE></CODE>
+This is portable in that it determines the
+required file suffix itself (".so" / ".sl" or ".dll", depending on the system)
+<P>
+However, the recommended interface is loadPackage:
+<CODE><PRE>
+    ...
+    Smalltalk loadPackage:'&lt;myCompanyName&gt;:project1/libfoo'.
+    ...
+</PRE></CODE>
+because that will try hard to load the package, even if it is not compiled
+to a binary class library (i.e. it will load from sources, if no dll is present).
+
+<P>
+On all systems which do NOT support dynamic loading,
+you have to leave any running Smalltalk,
+compile your class libraries,
+relink the Smalltalk executable and start a new
+(this time with those new classes being part of the built-in classes).
+<P>
+Since saved snapshot images are (currently) unusable after a system rebuild,
+it is now time to save all your work in source form
+(i.e. <VAR>fileOut</VAR> or <VAR>checkIn</VAR> all
+other classes and make certain that you can reconstruct your universe
+later from these and/or the changes file).
+<P>
+
+The Smalltalk executable is rebuilt with:
+<CODE><PRE>
+    cd projects/smalltalk
+    make (bmake / vcmake / mingwmake)
+</PRE></CODE>
+</OL>
+
+<STRONG>Congratulations !</STRONG> you should now
+find your foo-classes in the system when starting the new executable.
+(use "<CODE>smalltalk -I"</CODE> to have it ignore any existing snapshot file.)
+<P>
+For your tests, always keep the old snapshot, Smalltalk
+executable and dlls around by copying the "projects/smalltalk" folder.
+Remember: snapshots only work with the corresponding binaries.
+
+
+
+
+
+<A NAME="NEWCLASSES" HREF="#I_NEWCLASSES"><H2>Adding more Classes</H2></A>
+
+Once you are through the above hard work,
+adding more classes is easy:
+in the system browser, select the package definition class
+(i.e. the class named "myCompany_project1_libfoo") and select the "Update Project Definitions" menu
+item, found in the "class"-"generate" menu.
+Then fileout or checkin the project (including the built support files),
+open a shell window, checkout and remake the library there.
+<P>
+As above, a remake of the Smalltalk executable itself is only required
+if your system does not support shared libraries.
+<BR>
+If it does you can even switch to the new classLibrary in the running system,
+by: unloading any old loaded classLibrary first
+(using the launcher's "System"-"Modules" dialog),
+and re-loading the new shared library.
+<P>
+WARNING:
+<BR>
+Depending on the C-Code / C-libraries you have included, this reloading
+may fail occasionally, if there are leftOver references to static data
+or functions somewhere in the C-code.
+<BR>
+This may even lead to a crash in some situations.
+<P>
+We highly recommend saving your work before any reload - over time,
+you will get a feeling for that ;-)
+
+
+<A NAME="NEWCLASSLIBS" HREF="#I_NEWCLASSLIBS"><H2>Adding more Class Libraries (to the Base System)</H2></A>
+
+Once you have written a number of private class libraries,
+you may eventually want them to be automatically loaded upon startup.
+Or, for deployable standalone applications, you may want to build an executable,
+which has them already included.
+<P>
+You have multiple choices to realize this:
+<OL>
+<LI>Define it as "Automatically Loaded on Startup"
+<br>this adds the library to a list found in your preferences file.
+Thus, it will be a personal setting, which is easily undone or extended in the future.
+However, this is not a solution for standalone executables.
+<P>
+<LI>Add an entry to a customized "start.rc" file
+<br>Both the IDE and standalone projects will read a startup script, named "appName.rc".
+The file is assumed to be present in the binary's folder.
+By adding a line like "Smalltalk loadPackage:'libfoo'" or "Smalltalk fileIn:'libfoo'",
+any custom setup is possible.
+<P>
+<LI>Build a standalone executable, which has the library already in
+<br>Add the library to the list of mandatory prerequisites and build a standalone executable.
+</OL>
+
+<!--
+leading to entries in your config file which look like:
+<CODE><PRE>
+    OTHERLIBDIRS=libfoo libfoo2 ...
+
+    PRIVATEOBJS=$(TOP)/libfoo/libfoo$(OBJNAME) \
+		$(TOP)/wherever/libfoo2$(OBJNAME) \
+		...
+
+    PRIVATE_SO=$(TOP)/libfoo/libfoo$(SO_NAME) \
+		$(TOP)/wherever/libfoo2$(SO_NAME) \
+		...
+
+    PRIVATELIBS=libfoo libfoo2 ...
+</PRE></CODE>
+
+If you are working in a group with others,
+a good strategy is to place classlibraries into a central
+directory, which can be used from anybody.
+<BR>
+In this case, all users of the class library
+(i.e. those that do not care for how these are created)
+will only need the <CODE>PRIVATE</CODE> definitions in their config file,
+NOT the <CODE>OTHERLIBDIRS</CODE> line.
+<P>
+For example, if you have placed the classlibraries to
+"<CODE>/usr/local/lib</CODE>", these other config files should
+look like:
+<CODE><PRE>
+    PRIVATEOBJS=/usr/local/lib/libfoo$(OBJNAME) \
+		/usr/local/lib/libfoo2$(OBJNAME)
+
+    PRIVATE_SO=/usr/local/lib/libfoo$(SO_NAME) \
+	       /usr/local/lib/libfoo2$(SO_NAME)
+
+    PRIVATELIBS=libfoo libfoo2
+</PRE></CODE>
+Remember again, that after every such change, your <CODE>Makefile</CODE>
+in <CODE>projects/smalltalk</CODE> has to be regenerated.
+-->
+
+
+
+<A NAME="NEWCFUNCS" HREF="#I_NEWCFUNCS"><H2>Interfacing C Functions</H2></A>
+
+To add C functions, you have various options of how to interface to them,
+and where they are located:
+<OL>
+<LI>In a separate dll, calling them as ExternalLibraryFunction
+<LI>In a separate dll, calling them via Smalltalk wrapper methods
+<LI>Inside the classlibrary, within the classes source file, calling via Smalltalk wrapper methods
+<LI>In the main.c source file, calling them as custom ExternalFunction
+<LI>Inline code in a method
+</OL>
+
+<H3>In a separate dll, calling as ExternalLibraryFunction</H3>
+
+This mechanism does not require any special build or compilation steps.
+It is used, when existing C-libraries have to be attached.
+Especially, if you do not have the source code or if it is a system dll.
+<P>
+For each function to be called, you need one wrapper method, which
+contains a single line such as:
+<CODE><PRE>
+    primStartPage:hIn
+	&lt;apicall: int32 "StartPage" (handle) module: "gdi32.dll" &gt;
+</PRE></CODE>
+this creates a Smalltalk method (typically on the class side),
+which call the "StartPage" function, with one argument of "handle" type in the
+the "gdi32.dll". The return value is an int32.
+<P>
+The good news about this is that you can call any function without a need for
+any compilation. It works with stc-compiled and with bytecode methods.
+<br>
+However, you have to correctly specify the argument- and return types,
+and on Windows also the calling convention ("api" or "c").
+<P>
+This mechanism uses the libffi foreign function interface, and has therefore a little overhead
+in calling (a few microseconds).
+<P>
+The loading of the shared library is fully automatic.
+It will be done lazily, when the very first function inside that dll is called.
+
+
+<H3>In a separate dll, calling via Smalltalk wrapper methods</H3>
+In this setup, the C function are also in a separate dll,
+but the calling is done by little wrapper methode, which convert Smalltalk objects as
+arguments and create return value objects. The library to call must be linked against the
+class library, in which the call-wrappers are.
+
+
+<H3>Inside the classlibrary, within the classes source file</H3>
+In this setup, the C function's source code is in the class source file,
+and compiled with the class. The code will be completely inside the binary class libarary,
+and no additional dll needs to be deployed or loaded.
+<P>
+For this, put the C functions into the "primitiveFunctions" section of the class source,
+and wrapper methods to call them.
+Many ST/X methods use this mechanism, to tune special cases in separate C-functions.
+Take a look at the Image- or the XWorkstation classes for concrete examples.
+(for example, some decompressors are found in the Image-class's primitiveFunctions section)
+
+<H3>In the main.c source file, calling them as custom ExternalFunction</H3>
+This is a simple "poor man's" approach to call external functions, which is kind of in-between
+the above mechanisms. It only requires the recompilation of a single file ("main.c"),
+which is recompiled aynway for stand alone applications.
+<P>
+Place the code as custom functions there, and call them via "ExternalFunction callCustomFunction:".
+
+<H3>Inline code in a method</H3>
+Here, the C-functionality is not in a separate function, but right in the method itself.
+This allows for the fastest entry into the C-code, as no separate calls or argument conversions
+are required.
+All of ST/X's primitives are written in that style
+(take a look at the Array-, String and other classes from libbasic or libview as examples).
+For details on primitive code, please read:
+<A HREF="primitive.html">``How to write primitives &amp; inline C code''</A>):
+<P>
+We recommend a combination of the "Inline" and "Code in the class library" mechanisms.
+However, this choice is only a good one for a small number of C functions,
+of which the source code is available.
+<UL>
+<LI>create a <CODE>primitiveFunctions</CODE> section to your Smalltalk
+source, define the functions there.
+<P>
+This has the advantage, that the C functions are included in the object
+module itself, so that no further libraries have to be linked in.
+Especially, if you plan to offer your binary library to others,
+this makes the distribution easier.
+<P>
+<LI>put the corresponding C source files into a subdirectory (of your
+<CODE>libfoo</CODE> directory), change the <CODE>all:</CODE> rule in
+that "<CODE>Make.proto</CODE>" to:
+<CODE><PRE>
+    all::  classLibRule myCLibs
+</PRE></CODE>
+and add a rule for the libraries:
+<CODE><PRE>
+    myCLibs::
+	(cd subdir1 ; make)
+	(cd subdir2 ; make)
+	...
+</PRE></CODE>
+For automatically generated built support files,
+you will need the specify them in an "additional_rules" method of your project definition class
+(take existing project definitions as a guideline, for example the one in stx_libview).
+<P>
+Although possible, we recommend NOT to place the C source files directly
+in the directory where your ST sources are (since you may later want
+to cleanup stc's temporary files, with "<KBD>rm *.c</KBD>" and could
+thereby delete your files by accident).
+<P>
+<LI>leave the C files somewhere totally separate, and only include the
+library in the final Smalltalk link. This is also the way to go if you
+have only binary versions of your C libraries available.
+</UL>
+
+
+
+<A NAME="NEWCLIBS" HREF="#I_NEWLIBS"><H2>Adding C Libraries</H2></A>
+
+Additional C libraries are included in the link of the Smalltalk executable
+by specifying them as "<CODE>OTHERLIBS</CODE>" in the config file.
+For example, if you have a C library called "<CODE>libUseful.a</CODE>",
+placed under <CODE>TOP/libfoo/cStuff</CODE>, the line should look like:
+<CODE><PRE>
+    OTHERLIBS=$(TOP)/libfoo/cStuff/libUseful.a
+</PRE></CODE>
+Of course, if the library is located in some standard place
+(i.e. in <CODE>/usr/lib</CODE> or </CODE>/usr/local/lib</CODE>), you
+can also write:
+<CODE><PRE>
+    OTHERLIBS=-lUseful
+</PRE></CODE>
+Read the C-compiler's and linker's man pages if you need more information on
+this.
+
+<P>
+All OTHERLIBS are linked in the order specified; thus, if you have
+dependencies between your extra libraries, these may be fixed by
+changing the order.
+For example, if you have two libraries "<CODE>libUseful1.a</CODE>"
+and "<CODE>libUseful2.a</CODE>",
+of which the second needs entries in the first,
+you will get a link error if the config define looks like:
+<CODE><PRE>
+    OTHERLIBS=$(TOP)/libfoo/cStuff/libUseful1.a \
+	      $(TOP)/libfoo/cStuff/libUseful2.a
+</PRE></CODE>
+in this case, change the order as in:
+<CODE><PRE>
+    OTHERLIBS=$(TOP)/libfoo/cStuff/libUseful2.a \
+	      $(TOP)/libfoo/cStuff/libUseful1.a
+</PRE></CODE>
+
+
+<A NAME="EXAMPLECSTUFF" HREF="#I_EXAMPLECSTUFF"><H2>An Example for C Interfacing</H2></A>
+
+In the following, an interface to C functions which are compiled
+from separate sources is shown.
+<BR>
+For the example, we assume that a directory <CODE>"libfoo"</CODE> exists,
+and the library is to be named "<CODE>libfoo</CODE>" as well.
+<BR>
+For better structuring, we place the C sources into a subdirectory of
+<CODE>"libfoo"</CODE> called <CODE>"cstuff"</CODE> and create a
+C library called "<CODE>cstuff.a</CODE>" there.
+<BR>
+The C sources are in "<CODE>libfoo/cstuff/module1.c</CODE>":
+<CODE><PRE>
+    cFuntion1() {
+	printf("here is your C function call ....\n");
+    }
+</PRE></CODE>
+and "<CODE>libfoo/cstuff/module2.c</CODE>":
+<CODE><PRE>
+    cFuntion2(arg)
+	int arg;
+    {
+	printf("here is your 2nd C funtion; the args value is %d\n");
+    }
+</PRE></CODE>
+The interface wrapping code for Smalltalk is in
+"<CODE>libfoo/CInterface.st</CODE>":
+<CODE><PRE>
+    Object subclass:#Cinterface
+	   instanceVariableNames:''
+	   classVariableNames:''
+	   poolDictionaries:''
+    !
+
+    !Cinterface class methodsFor:'C calling'!
+
+    cFuntion1
+    %{
+	cFuntion1();
+    %}
+    !
+
+    cFuntion2:argument
+    %{
+	if (__isSmallInteger(argument)) {
+	    cFuntion2( _intVal(argument) );
+	}
+    %}
+    ! !
+</PRE></CODE>
+The "<CODE>Make.proto</CODE>" to compile all of these is:
+<CODE><PRE>
+    TOP=..
+    LIBNAME=libfoo
+
+    all::   CSTUFF abbrev.stc objs genClassList $(OBJTARGET)
+
+    objs::  CInterface.$(O)
+
+    CSTUFF::
+	    (cd cstuff ; make)
+</PRE></CODE>
+The C library is built by the following rules in "<CODE>cstuff/Makefile</CODE>":
+<CODE><PRE>
+    all:    module1.o module2.o
+	    ar rv cstuff.a module1.o module2.o
+</PRE></CODE>
+Thats it, after a <KBD>"make"</KBD> in libfoo, you will find
+"<CODE>libfoo.obj</CODE>" (or "<CODE>libfoo.so</CODE>")
+and "<CODE>libfoo/cstuff.a</CODE>"
+ready for linkage.
+<P>
+To get those into the executable, your config file should have the
+definitions:
+<CODE><PRE>
+    OTHERLIBDIRS=$(TOP)/libfoo
+
+    PRIVATEOBJS=$(TOP)/libfoo/libfoo$(OBJNAME)
+
+    PRIVATE_SO=$(TOP)/libfoo/libfoo$(SO_NAME)
+
+    PRIVATELIBS=libfoo
+
+    OTHERLIBS=$(TOP)/libfoo/cstuff/cstuff.a
+</PRE></CODE>
+The files of the example can be
+found in "<CODE>doc/coding/libfoo_example</CODE>".
+<P>
+For details on the primitive wrapper code, read
+<A HREF="primitive.html">``How to write primitives &amp; inline C code''</A>.
+
+
+
+<A NAME="AUTOMATIC" HREF="#I_AUTOMATIC"><H2>Automatic building</H2></A>
+
+Automatic creation and building via the project management is being prepared.
+However, at this time, this feature is not fully implemented and things
+should be done manually.
+<P>
+Once completed, you will be able to create per project directories,
+<CODE>Make.protos</CODE> and the sources by the click of a button.
+
+
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 1995 Claus Gittinger Development &amp; Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.28 $ $Date: 2016-07-11 09:24:05 $
+</BODY>
+</HTML>

@@ -1,0 +1,81 @@
+%start Main;
+
+Main:
+    A B? 
+	{ 
+      Transcript show: 'Main1'; cr;
+                 show: '  '; show: '1'; cr;
+                 show: '  '; show: '2'; cr;
+                 show: '======================='; cr;
+                 show: '======================='; cr.
+    } ;
+
+A:
+   "a:" Digit
+    {
+      Transcript show: 'A: ';
+                 show: '2'; cr.
+      'A'.
+    };
+
+B:
+   "b:" HexaOrIntegerLiteral
+    {
+      Transcript show: 'B: ';
+                 show: '2'; cr.
+      'B'.
+    };
+
+HexaOrIntegerLiteral:
+    IntegerLiteral 
+    {
+        Transcript show: 'IntegerLiteral: ';
+                   show: '1'; cr.
+        '1'.
+    }
+    |
+    HexaLiteral 
+    {
+        Transcript show: 'HexaLiteral: ';
+                   show: '1'; cr.
+        '1'.
+    };
+
+DigitOrIntegerLiteral:
+    IntegerLiteral 
+    {
+        Transcript show: 'IntegerLiteral: ';
+                   show: '1'; cr.
+        '1'.
+    }
+    |
+    Digit 
+    {
+        Transcript show: 'Digit: ';
+                   show: '1'; cr.
+        '1'.
+    };
+
+IntegerLiteral:
+    <integer_literal>
+    {
+        Transcript show: 'IntegerLiteral: ';
+                   show: '1'; cr.
+        '1'.
+    } ;
+
+HexaLiteral:
+    <hexa_literal>
+    {
+        Transcript show: 'HexaLiteral: ';
+                   show: '1'; cr.
+        '1'.
+    } ;
+
+Digit:
+    <digit>
+    {
+        Transcript show: 'Digit: ';
+                   show: '1'; cr.
+        '1'.
+    } ;

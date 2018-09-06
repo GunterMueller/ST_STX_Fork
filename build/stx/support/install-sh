@@ -1,0 +1,860 @@
+#! /bin/sh
+
+#
+# $Header: /cvs/stx/stx/support/install-sh,v 1.23 2006-11-29 16:58:31 stefan Exp $
+#
+# Generate a zipped tar file (and optionally a self extracting shell script)
+#
+
+# set -x
+
+umask 022
+
+# Make sure we are using the right programs:
+# test -d /tools/gnu/bin && PATH=/tools/gnu/bin:${PATH}
+
+curdir=`pwd`
+progdir=`dirname $0`
+progname=`basename $0`
+case "${progdir}" in
+    /* )        # We are already absolute, OK.
+	;;
+    .* )        # Need to get an absolute pathname.
+	progdir=`( cd ${progdir}; pwd ) 2> /dev/null`
+	;;
+esac
+if test ! -d "${progdir}"; then
+	echo "${0}: \"${progdir}\" should be a directory, but is not - abort." >&2
+	exit 1
+fi
+
+debug_print () {
+	if test x${DEBUG} = xyes; then
+		echo $@ >&2
+	fi
+}
+
+ac_help=
+ac_help="$ac_help
+  --enable-stx|--disable-stx            Enable/disable install. of the Smalltalk base system."
+ac_help="$ac_help
+  --enable-MANIFEST[=FILE]              Create a MANIFEST file in file FILE[./MANIFEST]."
+ac_help="$ac_help
+  --enable-checkinto-CVS[=TAG]          Check the MANIFEST file into CVS using tag TAG."
+ac_help="$ac_help
+  --enable-self-extracting              Create a self extracting shell script instead
+					  of a .tar.gz file."
+ac_help="$ac_help
+  --with-doc                            Install the Smalltalk standard doc. only."
+ac_help="$ac_help
+  --with-full-doc                       Install the Smalltalk complete doc."
+ac_help="$ac_help
+  --use-compress                        Use compress/uncompress instead of gzip/gunzip."
+ac_help="$ac_help
+  --use-zip                             Use zip/unzip instead of gzip/gunzip."
+
+help () {
+	cat << EOF >&2
+Usage: ${progdir}/${progname} [options]
+Options: [defaults in brackets after descriptions]
+
+ These arguments MUST be passed on the command line:
+  --prefix=INSTALLDIR                   Install everything relative to INSTALLDIR
+  --install-prefix=INSTALLPREFIX        Root the temporary installation tree at INSTALLPREFIX
+  --outfile=OUTFILE                     Put resulting .tar.gz file in OUTFILE
+
+ These arguments MAY OPTIONALLY be passed on the command line:
+  --srcdir=SRCDIR                       The tree to be installed is located in SRCDIR[${srcdir}]
+  --with-addons=ADDON1,...              Install addons ADDON1,...
+EOF
+	if test -n "$ac_help"; then
+		echo "" >&2
+		echo " --enable and --with options recognized:$ac_help" >&2
+	fi
+}
+
+enable_MANIFEST=no
+enable_checkinto_CVS=no
+enable_self_extracting=no
+enable_stx=yes
+enable_links=yes
+install_prefix=
+outfile=NONE
+prefix=NONE
+srcdir=`cd ${progdir}/..; pwd`
+with_addons=
+with_doc=no
+with_full_doc=no
+verbose=no
+fileType=targz
+compressor=gzip
+compressorArgs=-c
+uncompressor=gunzip
+copier=tar
+stx_release=`cat ./RELEASE`
+QUIET=no
+
+ac_prev=
+for ac_option
+do
+	# If the previous option needs an argument, assign it.
+	if test -n "$ac_prev"; then
+		eval "$ac_prev=\$ac_option"
+		ac_prev=
+		continue
+	fi
+
+	case "$ac_option" in
+	    -*=*)
+		ac_optarg=`echo "$ac_option" | sed 's/[-_a-zA-Z0-9]*=//'`
+		;;
+	    *)
+		ac_optarg=
+		;;
+	esac
+
+	case "$ac_option" in
+	    -disable-* | --disable-*)
+		ac_feature=`echo $ac_option|sed -e 's/-*disable-//'`
+		# Reject names that are not valid shell variable names.
+		if test -n "`echo $ac_feature| sed 's/[-a-zA-Z0-9_]//g'`"; then
+			{ echo "$0: error: $ac_feature: invalid feature name" 1>&2; exit 1; }
+		fi
+		ac_feature=`echo $ac_feature| sed 's/-/_/g'`
+		eval "enable_${ac_feature}=no"
+		;;
+
+	    -enable-* | --enable-*)
+		ac_feature=`echo $ac_option|sed -e 's/-*enable-//' -e 's/=.*//'`
+		# Reject names that are not valid shell variable names.
+		if test -n "`echo $ac_feature| sed 's/[-_a-zA-Z0-9]//g'`"; then
+			{ echo "$0: error: $ac_feature: invalid feature name" 1>&2; exit 1; }
+		fi
+		ac_feature=`echo $ac_feature| sed 's/-/_/g'`
+		case "$ac_option" in
+		    *=*) ;;
+		    *) ac_optarg=yes ;;
+		esac
+		eval "enable_${ac_feature}='$ac_optarg'"
+		;;
+
+	    -help | --help | --hel | --he)
+		help
+		exit 2
+		;;
+
+	    -install-prefix | --install-prefix | --install-prefi | --install-pref | --install-pre | --install-pr | --install-p)
+		ac_prev=install_prefix
+		;;
+	    -install-prefix=* | --install-prefix=* | --install-prefi=* | --install-pref=* | --install-pre=* | --install-pr=* | --install-p=*)
+		install_prefix="$ac_optarg"
+		;;
+
+	    -app-release=* | --app-release=* )
+		stx_release="$ac_optarg"
+		;;
+
+	    -quiet=* )
+		QUIET="$ac_optarg"
+		;;
+
+	    -outfile | -o | --outfile | --outfil | --outfi | --outf | --out | --ou | --o)
+		ac_prev=outfile
+		;;
+	    -outfile=* | -o=* | --outfile=* | --outfil=* | --outfi=* | --outf=* | --out=* | --ou=* | --o=*)
+		outfile="$ac_optarg"
+		;;
+
+	    -prefix | --prefix | --prefi | --pref | --pre | --pr | --p)
+		ac_prev=prefix
+		;;
+	    -prefix=* | --prefix=* | --prefi=* | --pref=* | --pre=* | --pr=* | --p=*)
+		prefix="$ac_optarg"
+		;;
+
+	    -srcdir | --srcdir | --srcdi | --srcd | --src | --sr)
+		ac_prev=srcdir
+		;;
+	    -srcdir=* | --srcdir=* | --srcdi=* | --srcd=* | --src=* | --sr=*)
+		srcdir="$ac_optarg"
+		;;
+
+	    -with-* | --with-*)
+		ac_package=`echo $ac_option|sed -e 's/-*with-//' -e 's/=.*//'`
+		# Reject names that are not valid shell variable names.
+		if test -n "`echo $ac_package| sed 's/[-_a-zA-Z0-9]//g'`"; then
+			{ echo "$0: error: $ac_package: invalid package name" 1>&2; exit 1; }
+		fi
+		ac_package=`echo $ac_package| sed 's/-/_/g'`
+		case "$ac_option" in
+		    *=*) ;;
+		    *) ac_optarg=yes ;;
+		esac
+		eval "with_${ac_package}='$ac_optarg'"
+		;;
+
+	    -without-* | --without-*)
+		ac_package=`echo $ac_option|sed -e 's/-*without-//'`
+		# Reject names that are not valid shell variable names.
+		if test -n "`echo $ac_package| sed 's/[-a-zA-Z0-9_]//g'`"; then
+			{ echo "$0: error: $ac_package: invalid package name" 1>&2; exit 1; }
+		fi
+		ac_package=`echo $ac_package| sed 's/-/_/g'`
+		eval "with_${ac_package}=no"
+		;;
+
+	    -use-compress | --use-compress | -compress | --compress)
+		compressor=compress
+		compressorArgs=
+		uncompressor=uncompress
+		fileType=tarZ
+		;;
+
+	    -use-zip | --use-zip | -zip | --zip)
+		compressor=zip
+		compressorArgs=
+		uncompressor=unzip
+		fileType=zip
+		;;
+
+	    -use-cpio | --use-cpio | -cpio | --cpio)
+		copier=cpio
+		;;
+
+	    -use-pax | --use-pax | -pax | --pax)
+		copier=pax
+		;;
+
+	    -verbose | --verbose | --verbos | --verbo | --verb | --ver | --ve | --v)
+		verbose=yes
+		;;
+
+	    -*)
+		{ echo "$0: error: $ac_option: invalid option; use --help to show usage" 1>&2; exit 1; }
+		;;
+	esac
+done
+
+if test -n "$ac_prev"; then
+	echo "${0}: error: missing argument to --`echo $ac_prev | sed 's/_/-/g'`" >&2
+	exit 1
+fi
+
+if test "x$prefix" = xNONE; then
+	echo "${0}: error: missing prefix directory name; use --help to show usage" >&2
+	exit 1
+fi
+if test "x$install_prefix" = x; then
+	if test "x$outfile" != xNONE; then
+		echo "${0}: error: when creating an archive file, you must specify --install-prefix=...; use --help to show usage" >&2
+		exit 1
+	fi
+fi
+if test "x$enable_stx" = xno; then
+	if test "x$with_addons" = x; then
+		echo "${0}: error: you must either --enable-stx or specify addons using --with-addons=ADDON,...; use --help to show usage" >&2
+		exit 1
+	fi
+fi
+
+debug_print enable_MANIFEST="${enable_MANIFEST}"
+debug_print enable_self_extracting="${enable_self_extracting}"
+debug_print enable_stx="${enable_stx}"
+debug_print enable_links="${enable_links}"
+debug_print install_prefix="${install_prefix}"
+debug_print outfile="${outfile}"
+debug_print prefix="${prefix}"
+debug_print with_addons="${with_addons}"
+debug_print with_doc="${with_doc}"
+debug_print with_full_doc="${with_full_doc}"
+
+# set -x
+
+# Everything is relative to our parent directory:
+if test ! -d ${srcdir}; then
+	echo "${0}: \"${srcdir}\" should be a directory, but is not - abort." >&2
+	exit 1
+fi
+cd ${srcdir}
+
+# First verify all necessary files are available:
+mandatory_files="./RELEASE ./support/check/config.guess ./support/check/check-awk.awk ./support/check/squeeze-files-without-keywords.awk"
+if test x"$enable_stx" = xyes; then
+	mandatory_files="${mandatory_files} ./INSTALL.files"
+fi
+for addon in `echo ${with_addons} | tr ',' ' '` this_addon_does_not_exist; do
+	test x"${addon}" = xthis_addon_does_not_exist && break
+	mandatory_files="${mandatory_files} ../${addon}/INSTALL.files"
+done
+
+missing=
+for f in ${mandatory_files}
+do
+	test -f $f && continue
+	missing="${missing} $f"
+done
+if test -n "${missing}"; then
+	echo "${0}: at least the following files are missing:" >&2
+	echo "  " ${missing} >&2
+	exit 3
+fi
+
+# Now let's identify the system:
+guesssys="`./support/check/config.guess 2> /dev/null`"
+host_cpu=`echo $guesssys | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\1/'`
+host_vendor=`echo $guesssys | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\2/'`
+host_os=`echo $guesssys | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
+# Define a handy alias:
+case "${host_cpu}" in
+    i?86 )
+	host_cpu=i386
+	;;
+esac
+case "${host_os}" in
+    linux-gnu )
+	host_os=linux
+	;;
+    *[0-9].[0-9]*.[0-9]* )
+	host_os=`echo ${host_os} | sed -e 's,\(.*[0-9]*\)\.[0-9]*\.[0-9]*.*$,\1,'`
+	;;
+    *.[0-9]*.[0-9]* )
+	host_os=`echo ${host_os} | sed -e 's,\(.*\.[0-9]*\)\.[0-9]*.*$,\1,'`
+	;;
+esac
+host_alias=${host_cpu}-${host_os}
+
+# Do we have a "make" program for this particular system?
+if test -x ./support/binaries/${host_alias}/make
+then
+	MAKE=`pwd`/support/binaries/${host_alias}/make
+else
+	MAKE=make
+	case "${host_alias}" in
+	    *solaris2* )
+		test -x /usr/ccs/bin/make && MAKE=/usr/ccs/bin/make
+		;;
+	esac
+fi
+# Check if we have a working "make" program:
+tmpdir=${TMPDIR-/tmp}/test-make$$
+mkdir -p ${tmpdir}
+cat > ${tmpdir}/Makefile << EOF
+love:
+	@echo "not war"
+EOF
+result="`( cd ${tmpdir}; ${MAKE} love 2> /dev/null )`"
+rm -rf ${tmpdir}
+if test "${result}" != "not war"
+then
+	echo "${0}: I did not find a working \"make\" program on your system." >&2
+	echo "Please contact your system's administrator." >&2
+	exit 4
+fi
+
+# Check for a working "xargs" program:
+if test "`( echo OK | xargs echo 2> /dev/null )`" = OK; then
+	XARGS=xargs
+else
+	echo "${0}: I did not find a working \"xargs\" program on your system." >&2
+	echo "Please contact your system's administrator." >&2
+	exit 4
+fi
+
+# Check for a working "xargs" program:
+case "${enable_MANIFEST}" in
+    no )
+	AWK=false
+	IDENT=false
+	squeezeScript=/dev/null
+	;;
+    * )
+	for AWK in gawk nawk awk false
+	do
+		found_msg="`( ${AWK} < /dev/null 2>&1 )`"
+		case "${found_msg}" in
+		    "" | *[Uu]sage* )
+			;;
+		    * )
+			continue
+			;;
+		esac
+		${AWK} -f support/check/check-awk.awk < /dev/null 2> /dev/null
+		test $? -eq 0 && break
+	done
+	if test x${AWK} = xfalse; then
+		echo "${0}: I did not find a working \"awk\" program on your system." >&2
+		echo "Please contact your system's administrator." >&2
+		exit 4
+	fi
+	# We also need the "ident" and "xargs" programs:
+	if ( ident -q < /dev/null 2> /dev/null ); then
+		IDENT=ident
+	else
+		echo "${0}: I did not find a working \"ident\" program on your system." >&2
+		echo "Please contact your system's administrator." >&2
+		exit 4
+	fi
+	squeezeScript=`cd ./support/check; pwd`/squeeze-files-without-keywords.awk
+	;;
+esac
+
+debug_print MAKE="${MAKE}"
+debug_print AWK="${AWK}"
+debug_print IDENT="${IDENT}"
+debug_print XARGS="${XARGS}"
+debug_print squeezeScript="${squeezeScript}"
+
+copy_files () {
+	target="$2"
+	targetdir=$target
+	case "$1" in
+	    */ )        # Copy everything in the source directory.
+		if test ! -d $1
+		then
+		    if [ "$QUIET" != "yes" ]
+		    then
+			echo "Source directory \"${source}\" is missing!" >&2
+		    fi
+		    return 1
+		fi
+		test x${verbose} = xyes && \
+		echo "  $1 -> $target"
+		( cd $target && rm -rf $1 )
+		if [ "$1" = "doc/" ]
+		then
+		    case $copier in
+		    tar)
+			tar -cf - $1 2>/dev/null | ( cd $target; tar -xBpf - >/dev/null )
+			;;
+
+		    cpio)
+			find $1 -print | cpio -pdmu $target 2>/dev/null
+			;;
+
+		    pax)
+			pax -rw $1 $target
+			;;
+		    esac
+		else
+		    base=`basename $1`
+		    case $copier in
+		    tar)
+			(cd $1/.. ; tar -c${followlinks}f - $base 2>/dev/null) | ( cd $target; tar -xBpf - 2>/dev/null ) >/dev/null 
+			;;
+
+		    cpio)
+			(cd $1/.. ; find $base -print | cpio -pdmu $target >/dev/null 2>&1)
+			;;
+
+		    pax)
+			(cd $1/.. ; pax -rw $base $target)
+			;;
+		    esac
+		fi
+		( cd $target && rm -rf `find . -type d -name CVS -print` )
+		( cd $target && rm -rf `find . -type d -name not_delivered -print` )
+		;;
+
+	    * )
+		if [ "$1" != "" ]
+		then
+		    test x${verbose} = xyes && \
+		    echo "  $1 -> ${targetdir}"
+		    for file in $1; do
+			    test -f $file || continue
+			    case "$file" in
+				*/CVS/* )
+				    continue
+				    ;;
+				*/not_delivered/* )
+				    continue
+				    ;;
+			    esac
+			    filename=`basename $file`
+			    rm -rf ${targetdir}/${filename}
+			    test -d ${targetdir} || mkdir -p ${targetdir}
+			    cp -p $file ${targetdir}/${filename}
+		    done
+		fi
+		;;
+	esac
+}
+
+copy_list () {
+	cat $1 | while read source target attribute 
+	do
+	    if [ x"${source}" != x"#" ]
+	    then
+		if test x${attribute} = xoptional
+		then
+			ac_safe="`echo $source | tr '/' '_' | sed -e 's,[-\.],_,g' -e 's,^-,,' -e 's,_$,,'`"
+			if eval "test \"`echo '$enable_'$ac_safe`\" = yes"; then
+				:
+			else
+				test x${verbose} = xyes && \
+				echo "Skipping \"${source}\"."
+				continue
+			fi
+		fi
+		relTarget=${target}
+		if test -z "${target}" || test "${target}" = "."
+		then
+			target=${install_prefix}${prefix}/lib
+		else
+			case "${target}" in
+			    /* )
+				;;
+			    * )
+				target=${install_prefix}${prefix}/${target}
+				;;
+			esac
+		fi
+		case "${source}" in
+		    */ | *"*"* )
+			if test -d ${target}; then
+				: OK
+			elif test -f ${target}; then
+				echo "When copying multiple files, target \"${target}\" must be a directory!" >&2
+				continue
+			else
+				rm -rf ${target}
+				mkdir -p ${target}
+			fi
+			;;
+		esac
+		copy_files "${source}" "${target}"
+		if test x${attribute} = xlinkLib
+		then
+		    ln -f ${target}/*.so ${install_prefix}${prefix}/lib/lib
+		fi
+	    fi
+	done
+}
+
+trap 'test -n "${install_prefix}" && rm -rf ${install_prefix}; exit 1' 2
+
+mkdir -p ${install_prefix}${prefix}/lib 2> /dev/null
+if test $? -ne 0; then
+	echo "${0}: Could not create installation ${install_prefix}${prefix} directory - abort." >&2
+	echo "Please check permissions and/or ask your system's administrator." >&2
+	exit 4
+fi
+
+if test x${enable_stx} = xyes; then
+	# Perform a "base" installation for Smalltalk/X:
+	followlinks=h
+	(
+		copy_list INSTALL.files
+		# Patch the smalltalk start script:
+		if test -f ${install_prefix}${prefix}/bin/smalltalk
+		then
+			sed -e '/^STX=/a\
+STX_LIBDIR=\${STX_LIBDIR-'${prefix}'/lib}
+' < ${install_prefix}${prefix}/bin/smalltalk > ${install_prefix}${prefix}/bin/smalltalk.n
+			rm -f ${install_prefix}${prefix}/bin/smalltalk
+			mv ${install_prefix}${prefix}/bin/smalltalk.n   \
+			   ${install_prefix}${prefix}/bin/smalltalk
+			chmod 755 ${install_prefix}${prefix}/bin/smalltalk
+		fi
+	)
+	if test -d ./doc/. && test x"${with_doc}" = xyes -o x"${with_full_doc}" = xyes
+	then
+		# Now copy the documentation files:
+		followlinks=
+		copy_files doc/ ${install_prefix}${prefix}/lib/
+		followlinks=h
+
+		# Clobber all symbolic links:
+		rm -f ${install_prefix}${prefix}/lib/rules
+		ln -s `pwd`/rules ${install_prefix}${prefix}/lib/rules
+		rm -f ${install_prefix}${prefix}/lib/configurations
+		ln -s `pwd`/configurations ${install_prefix}${prefix}/lib/configurations
+		rm -f ${install_prefix}${prefix}/lib/doc/online/Makefile
+		ln -s Make.proto ${install_prefix}${prefix}/lib/doc/online/Makefile
+		( cd ${install_prefix}${prefix}/lib/doc/online && \
+		  ${MAKE} clobber > /dev/null 2> /dev/null )
+		# and re-create them properly:
+		( cd ${install_prefix}${prefix}/lib/doc/online && \
+		  ${MAKE} links > /dev/null 2> /dev/null )
+		rm -f ${install_prefix}${prefix}/lib/rules
+		rm -f ${install_prefix}${prefix}/lib/configurations
+		rm -f ${install_prefix}${prefix}/lib/doc/online/Makefile
+		if test x"${with_full_doc}" = xno; then
+			( cd ${install_prefix}${prefix}/lib/doc && \
+			  rm -rf coding html )
+			( cd ${install_prefix}${prefix}/lib/doc/online && \
+			  rm -rf */programming */tools )
+		fi
+	elif test -d ./doc/. && test x${verbose} = xyes
+	then
+		echo "Skipping \"doc/\" (except for the LICENCE file)."
+		copy_files doc/online/english/LICENCE_STX.html ${install_prefix}${prefix}/lib/doc/online/english
+		copy_files doc/online/english/exept* ${install_prefix}${prefix}/lib/doc/online/english
+		copy_files doc/online/english/*.gif ${install_prefix}${prefix}/lib/doc/online/english
+	fi
+fi
+
+if test x${enable_links} = xyes; then
+	rm -f ${install_prefix}${prefix}/postinstall.sh
+	cat > ${install_prefix}${prefix}/postinstall.sh << EOF_postinstall_sh
+#! /bin/sh
+
+yesno () {
+	header="\$1"
+	question="\$2"
+	while :
+	do
+		echo \${header}
+		echo "\${question}" | tr -d '\012'
+		if [ "\${QUIET}" = "yes" ]
+		then
+		    echo "yes"
+		    return 0
+		fi
+		yesno_answ=
+		read yesno_answ
+		case "\${yesno_answ}" in
+		    y* | Y* )
+			return 0
+			;;
+		    n* | N* )
+			return 1
+			;;
+		    * )
+			echo "Please answer 'y' or 'n'!"
+			;;
+		esac
+	done
+}
+
+if test -z "\$rootdir" || test ! -d "\$rootdir"; then
+	rootdir=/
+fi
+cd \$rootdir
+
+common_installdir=\`echo ${prefix} | sed -e "s,[-/]${stx_release},,"\`
+
+if test ! -d ./\${common_installdir}/bin
+then
+    do_defaultlink=yes
+elif test -x ./\${common_installdir}/bin/smalltalk
+then
+    do_defaultlink=no
+    cat - << EOF
+
+You do already have a \${common_installdir}/bin/smalltalk installed.
+If you want me to make the just installed release ${stx_release+ rel. ${stx_release}}
+your default version, I can create some symbolic links for you; otherwise,
+you can do it later with the commands
+
+	ln -f -s \${rootdir}${prefix}/bin \${common_installdir}/bin
+	ln -f -s \${rootdir}${prefix}/lib \${common_installdir}/lib
+	ln -f -s \${rootdir}${prefix}/packages \${common_installdir}/packages
+	ln -f -s \${rootdir}${prefix}/doc \${common_installdir}/doc
+EOF
+
+    if yesno "" "Do you want me to set the links? (y/n): " < /dev/tty
+    then
+	do_defaultlink=yes
+    fi
+else
+    do_defaultlink=yes
+fi
+
+if test x\${do_defaultlink} = xyes
+then
+	rm -f ./\${common_installdir}/bin  \\
+	      ./\${common_installdir}/lib  \\
+	      ./\${common_installdir}/doc  \\
+	      ./\${common_installdir}/packages
+	ln -s ${prefix}/bin ./\${common_installdir}/bin
+	ln -s ${prefix}/lib ./\${common_installdir}/lib
+	ln -s ${prefix}/doc ./\${common_installdir}/doc
+	ln -s ${prefix}/packages ./\${common_installdir}/packages
+fi
+exit 0
+EOF_postinstall_sh
+
+	chmod 755 ${install_prefix}${prefix}/postinstall.sh
+
+	# if test x"${enable_self_extracting}" = xno; then
+	#       ${install_prefix}${prefix}/postinstall.sh && \
+	#       rm -f ${install_prefix}${prefix}/postinstall.sh
+	# fi
+fi
+
+# Now install the requested add-ons:
+for addon in `echo ${with_addons} | tr ',' ' '` this_addon_does_not_exist; do
+	test x"${addon}" = xthis_addon_does_not_exist && break
+	case "$addon" in
+	    minitalk    | \
+	    smalltalk   | \
+	    tinytalk    )
+		continue
+		;;
+	esac
+
+	followlinks=h
+	( cd ../${addon}
+	  copy_list INSTALL.files
+	)
+done
+
+# set -x
+
+# Now cleanup any bogus, private stuff:
+(
+	if cd ${install_prefix}${prefix}
+	then
+	    find . -type d -name CVS -print                 | ${XARGS} rm -rf
+	    find . -type d -name not_delivered -print       | ${XARGS} rm -rf
+	fi
+)
+
+# Create the MANIFEST file if requested:
+if test x${enable_MANIFEST} != xno; then
+	case "${enable_MANIFEST}" in
+	    yes )
+		MANIFEST_file=${curdir}/MANIFEST
+		;;
+	    /* )
+		MANIFEST_file=${enable_MANIFEST}
+		;;
+	    */* )
+		MANIFEST_file=${curdir}/MANIFEST
+		;;
+	    * )
+		MANIFEST_file=${curdir}/`dirname ${enable_MANIFEST}`/MANIFEST
+		;;
+	esac
+	MANIFEST_dir=`dirname ${MANIFEST_file}`
+	if test ! -d ${MANIFEST_dir}; then
+		mkdir -p ${MANIFEST_dir}
+	fi
+
+	(
+		cd ${install_prefix}${prefix}
+		rm -f ./MANIFEST
+		find . -type f -print   \
+		| sort                  \
+		| ${XARGS} ${IDENT} -q  \
+		| ${AWK} -f ${squeezeScript} > MANIFEST
+	)
+
+	if test x"${enable_checkinto_CVS}" != xno && \
+	   test -d ${MANIFEST_dir}/CVS && \
+	   test -n "${CVSROOT}"
+	then
+		cvs update ${MANIFEST_file} > /dev/null 2> /dev/null || true
+	fi
+
+	cat /dev/null > ${MANIFEST_file}
+	cat ${install_prefix}${prefix}/MANIFEST > ${MANIFEST_file}
+
+	if test x"${enable_checkinto_CVS}" != xno && \
+	   test -d ${MANIFEST_dir}/CVS && \
+	   test -n "${CVSROOT}"
+	then
+		case "${enable_checkinto_CVS}" in
+		    yes )
+			tagname=
+			[ ${enable_stx} = yes ] && \
+			tagname="stx-${stx_release}"
+			for addon in .. `echo ${with_addons} | tr ',' ' '`; do
+				test x"${addon}" = x.. && continue
+				test -n "${tagname}" && \
+				tagname="${tagname}-"
+				tagname="${tagname}${addon}"
+			done
+			tagname="${tagname}_as_of_`date +%Y/%m/%d_%H-%M`"
+			;;
+		    * )
+			tagname="${enable_checkinto_CVS}"
+			;;
+		esac
+		tagname="`echo \"$tagname\" | sed -e 's-[\$,.:;@]-_-g'`"
+
+		export CVSROOT
+		if test x${verbose} = xyes; then
+			echo "Committing changes to ${MANIFEST_file}."
+			cvs commit -m "${tagname}" ${MANIFEST_file}
+			echo "Tagging ${MANIFEST_file} as ${tagname}."
+			cvs tag "${tagname}" ${MANIFEST_file}
+		else
+			cvs commit -m "${tagname}" ${MANIFEST_file} > /dev/null
+			cvs tag "${tagname}" ${MANIFEST_file} > /dev/null
+		fi
+	fi
+fi
+
+if test x"${outfile}" != xNONE; then
+	# And finally tar the stuff together:
+	if test -n "${install_prefix}"; then
+		cd ${install_prefix}
+	else
+		cd /
+	fi
+
+	outfiledir=`dirname ${outfile}`
+	case "${outfiledir}" in
+	    "" )
+		outfiledir=${curdir}
+		;;
+	    .* )
+		outfiledir=`(cd ${curdir}; cd ${outfiledir}; pwd) 2> /dev/null`
+		;;
+	esac
+
+	outfile_targz=${outfiledir}/`basename ${outfile}`
+	case ${fileType} in
+	    targz )
+		outfilestem=`basename ${outfile} .tar.gz`
+		;;
+	    tarZ )
+		outfilestem=`basename ${outfile} .tar.Z`
+		;;
+	    zip )
+		outfilestem=`basename ${outfile} .zip`
+		;;
+	esac
+
+	case "${enable_self_extracting}" in
+	    no )
+		selfinstallscript=
+		;;
+	    yes )
+		selfinstallscript=${outfiledir}/${outfilestem}.sh
+		;;
+	    /* )
+		selfinstallscript=${enable_self_extracting}
+		;;
+	    * )
+		selfinstallscript=${curdir}/${enable_self_extracting}
+		;;
+	esac
+	export outfile_targz selfinstallscript
+	trap 'rm -f ${outfile_targz} ${selfinstallscript}; test -n "${install_prefix}" && rm -rf ${install_prefix}; exit 1' 2
+
+	echo "Generating "${compressor}"ed tar-file ..."
+	tar -cf - .${prefix} | ${compressor} ${compressorArgs} > ${outfile_targz}
+
+	if test x"${enable_self_extracting}" != xno && \
+	   test -x ${progdir}/mk-selfinstall
+	then
+		echo "Generating self extracting shell-command-file ..."
+		${progdir}/mk-selfinstall       \
+		    --postinst=.${prefix}/postinstall.sh        \
+		    --outfile=${selfinstallscript}              \
+		    --type=${fileType}                          \
+		    --installDirMsg=${prefix}                   \
+		    ${outfile_targz}
+		rm -f ${outfile_targz}
+	fi
+
+	rm -rf .${prefix}
+	rmdir -p .`dirname ${prefix}` 2> /dev/null
+	cd /
+	test x"${install_prefix}" = x/ || rmdir -p ${install_prefix} 2> /dev/null
+fi
+
+exit 0

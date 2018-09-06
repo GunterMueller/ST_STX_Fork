@@ -1,0 +1,6 @@
+abbrev.stc              packages/stx/goodies/persistency
+*.st                    packages/stx/goodies/persistency/source       
+*.so                    packages/stx/goodies/persistency
+objbc/*.dll             bin
+objbc/*.lib             lib/libbc
+

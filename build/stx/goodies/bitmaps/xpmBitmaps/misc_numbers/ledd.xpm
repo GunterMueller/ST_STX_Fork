@@ -1,0 +1,34 @@
+/* XPM */
+static char *ledr_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"13 23 3 1",
+/* colors */
+"a c black",
+"b c #810000",
+"c c red",
+/* pixels */
+"aaaaaaaaaaaaa",
+"aaababababaaa",
+"abaabababaaca",
+"aabaababaacca",
+"ababaaaaaccca",
+"aabaaaaaaccca",
+"ababaaaaaccca",
+"aabaaaaaaccca",
+"ababaaaaaccca",
+"aabaaaaaaacca",
+"aaacccccccaca",
+"aacccccccccaa",
+"acacccccccaca",
+"accaaaaaaacca",
+"acccaaaaaccca",
+"acccaaaaaccca",
+"acccaaaaaccca",
+"acccaaaaaccca",
+"acccaaaaaccca",
+"accacccccacca",
+"acacccccccaca",
+"aacccccccccaa",
+"aaaaaaaaaaaaa",
+};
+

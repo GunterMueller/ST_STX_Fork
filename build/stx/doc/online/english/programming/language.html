@@ -1,0 +1,2802 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers Guide - Smalltalk/X Language Definition & Differences</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="fileoutFormat.html"> <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html"> <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="stForLispers.html"> <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Smalltalk/X Language Definition &amp; Differences</H1>
+
+<H2>Contents</H2>
+
+<UL>
+  <LI><A HREF="#INTRO" NAME="I_INTRO">Introduction</A>
+<P>
+  <LI><A HREF="#TEXTFILES" NAME="I_TEXTFILES">Source Text Files</A>
+  <LI><A HREF="#FILEFORMAT" NAME="I_FILEFORMAT">Stc File Format</A>
+  <UL>
+   <LI><A HREF="#CLASS_DEF" NAME="I_CLASS_DEF">Class Definition</A>
+   <LI><A HREF="#CLASS_COMMENT" NAME="I_CLASS_COMMENT">Class Comment</A>
+   <LI><A HREF="#CLASS_INSTVARS" NAME="I_CLASS_INSTVARS">Class Instance Variables</A>
+   <LI><A HREF="#METHOD_DEFS" NAME="I_METHOD_DEFS">Method Definition</A>
+   <LI><A HREF="#EXPRESSIONS" NAME="I_EXPRESSIONS">Expressions </A>
+   <LI><A HREF="#EXAMPLE" NAME="I_EXAMPLE">Example Class</A>
+  </UL>
+<P>
+  <LI><A HREF="#SEMANTIC_DETAILS" NAME="I_SEMANTIC_DETAILS">Semantic Details</A>
+  <UL>
+   <LI><A HREF="#EVAL_ORDER" NAME="I_EVAL_ORDER">Evaluation Order</A>
+   <LI><A HREF="#SIDE_EFFECTS" NAME="I_SIDE_EFFECTS">Side Effects</A>
+   <LI><A HREF="#BECOME" NAME="I_BECOME">#become</A>
+   <LI><A HREF="#LITERAL_ARRAY" NAME="I_LITERAL_ARRAY">Literal Array of a Method</A>
+   <LI><A HREF="#BUILTIN_METHODS" NAME="I_BUILTIN_METHODS">Builtin Methods</A>
+  </UL>
+<P>
+  <LI><A HREF="#EXTENSIONS" NAME="I_EXTENSIONS">Extensions to Smalltalk-80 (BlueBook definition)</A>
+  <UL>
+   <LI><A HREF="#BRACE_ARRAY" NAME="I_BRACE_ARRAY">Brace Array Constructor</A>
+   <LI><A HREF="#DIRECTIVES" NAME="I_DIRECTIVES">Compiler Directives</A>
+   <LI><A HREF="#EXCEPTION_PRAGMAS" NAME="I_EXCEPTION_PRAGMAS">VisualWorks Exception Pragmas</A>
+   <LI><A HREF="#NAMESPACES" NAME="I_NAMESPACES">Multiple Namespaces</A>
+   <LI><A HREF="#PRIVATECLASSES" NAME="I_PRIVATECLASSES">Private Classes</A>
+   <LI><A HREF="#HERESENDS" NAME="I_HERESENDS">Local ('here'-) sends</A>
+   <LI><A HREF="#PRIMITIVES" NAME="I_PRIMITIVES">Primitive Definitions</A>
+   <LI><A HREF="#METHODANNOTATIONS" NAME="I_METHODANNOTATIONS">Method Annotations</A>
+   <LI><A HREF="#RESOURCEDEFS" NAME="I_RESOURCEDEFS">Resource Definitions</A>
+   <LI><A HREF="#PRIVACY" NAME="I_PRIVACY">Method Privacy</A>
+   <LI><A HREF="#LEXICAL" NAME="I_LEXICAL">Lexical Stuff</A>
+   <UL>
+    <LI><A HREF="#BYTEARRAY_LITERALS" NAME="I_BYTEARRAY_LITERALS">ByteArray Literals</A>
+    <LI><A HREF="#IDENTIFIERS" NAME="I_IDENTIFIERS">Underline in Identifiers</A>
+    <LI><A HREF="#SYMBOLS" NAME="I_SYMBOLS">Non Alphanumeric Characters in Symbols</A>
+    <LI><A HREF="#EMPTYLOCALS" NAME="I_EMPTYLOCALS">Empty Local Variable Declaration</A>
+    <LI><A HREF="#EMPTYMETHODS" NAME="I_EMPTYMETHODS">Empty Methods</A>
+    <LI><A HREF="#LITERALCONSTS" NAME="I_LITERALCONSTS">Special 'constants' as Array Literals</A>
+    <LI><A HREF="#DOUBLECONSTS" NAME="I_DOUBLECONSTS">'Double' Constants</A>
+    <LI><A HREF="#EOLCOMMENTS" NAME="I_EOLCOMMENTS">End-of-line Comment</A>
+    <LI><A HREF="#TOKENCOMMENTS" NAME="I_TOKENCOMMENTS">Token Delimited Comment</A>
+    <LI><A HREF="#IVARREDEF" NAME="I_IVARREDEF">Redefining Instance Variables</A>
+    <LI><A HREF="#CASE_IN_VARS" NAME="I_CASE_IN_VARS">Lowercase vs. Uppercase</A>
+    <LI><A HREF="#HERE_VAR" NAME="I_HERE_VAR">The 'here' Pseudo Variable</A>
+    <LI><A HREF="#EXTENDED_BINOPS" NAME="I_EXTENDED_BINOPS">Extended Binary Operators</A>
+    <LI><A HREF="#UNICODE" NAME="I_UNICODE">Unicode String- and Character Literals</A>
+   </UL>
+ </UL>
+<P>
+ <LI><A HREF="#MORECHECKS" NAME="I_MORECHECKS">More Codechecks</A>
+<P>
+ <LI><A HREF="#LIMITATIONS" NAME="I_LIMITATIONS">Limitations</A>
+ <UL>
+   <LI><A HREF="#NOSUBCLASS" NAME="I_NOSUBCLASS">Restricted Subclassing</A>
+   <LI><A HREF="#NAMESPACE_LIMITS" NAME="I_NAMESPACE_LIMITS">Use of Namespaces and Private Classes</A>
+   <LI><A HREF="#NO_CONTINUATIONS" NAME="I_NO_CONTINUATIONS">No Continuations</A>
+ </UL>
+<P>
+ <LI><A HREF="#KNOWN_BUGS" NAME="I_KNOWN_BUGS">Known Bugs & Limitations</A>
+ <UL>
+   <LI><A HREF="#BLOCK_LOCALS" NAME="I_BLOCK_LOCALS">Block Local Variables</A>
+   <LI><A HREF="#CASCADES" NAME="I_CASCADES">Cascades Requiring Temporaries</A>
+   <LI><A HREF="#NAMECONFLICTS" NAME="I_NAMECONFLICTS">Conflicting Names of Local Variables and Structures/Typedefs</A>
+   <LI><A HREF="#ARGLIMIT" NAME="I_ARGLIMIT">Limited Number of Method & Block Arguments</A>
+   <LI><A HREF="#LOCALLIMIT" NAME="I_LOCALLIMIT">Limited Number of Method & Block Local Variables</A>
+   <LI><A HREF="#TEMPLIMIT" NAME="I_TEMPLIMIT">Limited Number of Method & Block Temporaries</A>
+   <LI><A HREF="#LINELIMIT" NAME="I_LINELIMIT">Limited Line Number Info</A>
+   <LI><A HREF="#LARGEINT_LITERAL" NAME="I_LARGEINT_LITERAL">No Large Integer Constants (pre 4.x Releases)</A>
+   <LI><A HREF="#POOLDICTS" NAME="I_POOLDICTS">No Pool Dictionaries (pre 5.3 Releases)</A>
+   <LI><A HREF="#EMPTYCHUNK" NAME="I_EMPTYCHUNK">Empty Chunks</A>
+ </UL>
+</UL>
+
+
+<H2><A NAME="INTRO" HREF="#I_INTRO">Introduction</A></H2>
+
+This document describes the source file format
+as expected by the <CITE>stc</CITE> compiler,
+language differences to <CITE>Smalltalk-80</CITE>
+and known bugs & limitations of <CITE>ST/X</CITE>.
+<P>
+One of the unique features of <CITE>Smalltalk/X</CITE> is its ability
+to compile Smalltalk code into statically compiled binary code files (shared libraries).
+The contain fully compiled machine code, and do not require dynamic compilation
+(from bytecode) at execution time.
+<P>
+This compilation scheme is NOT used while working in the browser.
+For any code which is added or modified after the initial startup,
+a traditional bytecode compiler (accelerated by a Just-In-Time compiler) is used.
+<P>
+However, the ultimate goal of your development is usually to deploy either an
+executable program, or a set of libraries as a stand-alone program.
+For this, the <CITE>stc</CITE> compiler is used.
+<P>
+
+Files processed by the <CITE>stc</CITE> (Smalltalk-to-C) compiler are usually
+generated by either filing out class code directly from the
+<A HREF="../tools/sbrowser/TOP.html">SystemBrowser</A>,
+or indirectly, by checking some class into the source code repository
+(also via the SystemBrowser) and then checking it out into a directory via
+a <CODE>"cvs update"</CODE> or <CODE>"cvs checkout"</CODE> command.
+The later could even be an automatic process, for example controlled by a
+<CITE>jenkins</CITE> build system.
+
+
+<H2><A NAME="TEXTFILES" HREF="#I_TEXTFILES">Source Text Files</A></H2>
+
+Of course, as these files are regular text files,
+you can alternatively use
+any text editing tool to edit and manipulate these files, working
+in the traditional edit-compile-link mode if you prefer.
+In this mode, think of the file as describing one class;
+comparable to programming in C++ or similar languages.
+However, before doing so, read on and be aware of some pitfalls
+(especially the chunk-format, and the resulting "!"-doubling).
+
+
+<H2><A NAME="FILEFORMAT" HREF="#I_FILEFORMAT">Stc File Format</A></H2>
+
+Files compiled by <CITE>stc</CITE> must be in Smalltalk's
+<A HREF="fileoutFormat.html">fileout format</A>
+This means that the file consists of Smalltalk expressions,
+separated by '!'-characters (the so called "chunk separator" or "bang").
+<P>
+Bangs (i.e. '!'-characters) within the text have to be doubled;
+ this need for doubling also and especially applies to exclamation marks within comments
+and string literals.
+<BR>
+Since <CITE>ST/X</CITE> replaces doubled '!'-characters by a single '!' when filing in,
+you will see only single '!'-characters in the browser.
+You have to be very careful, when editing a source file using
+the File Browser or another editor.
+<BR>
+Notice, that the SystemBrowser cares for this
+doubling when classes are filedOut - but the File Browser does not, since it
+treats Smalltalk source code files just like any other text file.
+<P>
+Currently, <CITE>stc</CITE> can only compile files which contain either one single
+class definition (with optional private classes), or a <CITE>"methods-only file"</CITE>,
+which contains methods, but no class definition.
+<P>
+The source syntax for compiled Smalltalk implements a subset of the
+messages used to create/manipulate classes and methods.
+Other expressions than those listed below are not allowed/supported.
+<P>
+The first expression in a <CITE>"class-definition file"</CITE> must be a class-definition expression;
+a <CITE>"methods-only file"</CITE> may only consist of method definions (i.e. "<I>methodsFor</I>"-expressions).
+
+
+<A NAME="CLASS_DEF" HREF="#I_CLASS_DEF"><H2>Class Definition</A> ("class-definition files" only)</H2>
+
+The <CITE>stc</CITE> compiler accepts the following (and only those) class definition
+expressions:
+
+<H3>Simple Subclassing</H3>
+
+<CODE><PRE>
+    <VAR>superclass</VAR> subclass:#<VAR>class</VAR>
+	     instanceVariableNames:'instVar1</VAR> <VAR>instVar2</VAR>...'
+	     classVariableNames:'classVar1</VAR> <VAR>classVar2</VAR>...'
+	     poolDictionaries:'<VAR>sharedPool1</VAR> <VAR>sharedPool2</VAR>...'
+	     category:'<VAR>some-category</VAR>'
+</PRE></CODE>
+  to define <VAR>class</VAR> as a subclass of <VAR>superclass</VAR>.
+<BR>
+The subclass will have indexed instance variables if (and only if)
+the superclass has indexed instance variables.
+
+<H4>Instance Variables</H4>
+  The instance variables of <VAR>class</VAR> are those of its superclass(es)
+  and additionally '<VAR>instVar1</VAR>', '<VAR>instvar2</VAR>', ...
+
+<H4>Class Variables</H4>
+
+  The class variables of <VAR>class</VAR> are those of its superclass(es)
+  and additionally '<VAR>classVar1</VAR>', '<VAR>classvar2</VAR>', ...
+<P>
+  Class variables are visible in both class- and instance methods,
+  of the defining class and of every subclass (and subclasses of subclasses).
+  Class variables are shared (unless redefined) - meaning that access is to
+  the same physical memory "slot" from both the defining class and all
+  subclasses. You can think of class variables as globals with limited
+  accessiblility: only the defining class and its subclasses 'see' them.
+<P>
+  See below for class instance variables, which are class private
+  (i.e. each class provides its own physical "slot").
+<P>
+
+<DL><DT>Notice:<DD>
+there are some classes (currently <CODE>UndefinedObject</CODE>
+and <CODE>SmallInteger</CODE>) which CANNOT be subclassed.
+<P>
+for the curious:
+<BR>
+    the reason is that instances of these are no real objects, but are marked
+    by a special tag-bit or object-pointer value.
+    Thus these instances do not have a class field in memory.
+    This makes it impossible for the VM (= virtual machine or runtime-system)
+    to know the class of such a sub-instance.
+<P>
+</DL>
+<DL><DT>Notice:<DD>
+there are some classes, to which you CANNOT add instance variables.
+<P>
+for the curious:
+<BR>
+    these are especially <CODE>Object</CODE>, <CODE>SmallInteger</CODE> and all classes which are also
+    known by the VM and/or the compiler. The reasons are:
+<P>
+<ul>
+<li>for <CODE>Object</CODE>:<br>
+<P>
+	as there are some classes which inherit from <CODE>Object</CODE>,
+	and which are not represented by pointers (i.e. <CODE>UndefinedObject</CODE> and
+	<CODE>SmallInteger</CODE>). Since these cannot have instance variables, all
+	superclasses of them may also not define any instance variables.
+	This means, that all classes between <CODE>Object</CODE> and
+	<CODE>SmallInteger</CODE>
+	(i.e.
+	<CODE>Magnitude</CODE>, <CODE>ArithmeticValue</CODE>, <CODE>Number</CODE> and <CODE>Integer</CODE>) are also not
+	allowed to have instance variables.
+<P>
+<li>for the built-in classes: (actually, the following is also true for the classes mentioned above)<br>
+<P>
+	all classes known by the VM (i.e. <CODE>Float</CODE>, <CODE>SmallInteger</CODE>,
+	<CODE>Character</CODE>,
+	<CODE>Array</CODE>, <CODE>String</CODE>, <CODE>Method</CODE>, <CODE>Block</CODE>,
+	<CODE>Class</CODE>, <CODE>Metaclass</CODE> etc.) must have a layout
+	as compiled into the VM. Since the VM accesses these instance
+	variables (and is not affected by a class change) it would use
+	wrong offsets when accessing an instance of such a changed class.
+	Since instance variables are inherited, this also affects all super-
+	classes of the above listed classes.
+	You will get an error-notification, if you try to change such a
+	class within the browser.
+</UL>
+</DL>
+
+<H4>Pool Dictionaries</H4>
+Versions prior to rel 5.3 do not allow/support poolDictionaries.
+In those versions, the <CODE>"poolDictionaries:"</CODE> argument must be an empty string.
+<BR>
+In newer versions, all pool variables of each listed
+pool are imported and visible both for class- and
+for instance methods.
+
+
+<H4>Implementation of ClassVariables</H4>
+Technically, classvariables are implemented as globals with a special name constructed
+as:
+<BLOCKQUOTE>
+       <VAR>ClassName:ClassVarName</VAR>
+</BLOCKQUOTE>
+however, you should not have to care for or depend on this,
+except for the fact that class variables are
+visible when inspecting the Smalltalk dictionary and can be accessed
+easily from C-functions as globals (named "<VAR>ClassName</VAR>_<VAR>ClassVarName</VAR>").
+<P>
+Do not depend on any specific implementation of class variables,
+the current implementation may change without notice.
+Actually, it is planned to separate classVariables from Smalltalk
+globals in future <CITE>ST/X</CITE> versions and use multiple
+dictionaries within the VM.
+
+
+
+<H3>Subclasses with Indexed Instance Variables</H3>
+
+<CODE><PRE>
+    <VAR>superclass</VAR> variableSubclass:#<VAR>class</VAR>
+	     instanceVariableNames:'<VAR>instVar1</VAR> <VAR>instVar2</VAR>...'
+	     classVariableNames:'<VAR>classVar1</VAR> <VAR>classVar2</VAR>...'
+	     poolDictionaries:'<VAR>sharedPool1</VAR>...'
+	     category:'<VAR>some-category</VAR>'
+</PRE></CODE>
+  to define <VAR>class</VAR> as a subclass of <VAR>superclass</VAR> with indexed instance
+  variables even if <VAR>superclass</VAR> had no indexed instance variables. An
+  error will be generated, if the superclass is a variableByte- or
+  variableWord class.
+<br>
+  Notice that a class may be defined with both named and indexed instance variables.
+
+<H3>Subclasses with Byte-Valued Indexed Instance Variables</H3>
+
+<CODE><PRE>
+    <VAR>superclass</VAR> variableByteSubclass:#<VAR>class</VAR>
+	     instanceVariableNames:'<VAR>instVar1 instVar2</VAR>...'
+	     classVariableNames:'<VAR>classVar1 classVar2</VAR>...'
+	     poolDictionaries:'<VAR>sharedPool1</VAR>...'
+	     category:'<VAR>some-category</VAR>'
+</PRE></CODE>
+  to define <VAR>class</VAR> as a subclass of &lt;superclass> with indexed instance
+  variables which are byte-valued (0 .. 255) integers.
+<P>
+  An error will be generated,
+  if the superclass is a variable class (i.e. has indexed instances) AND
+  it has NO byte valued elements.
+<br>
+  Notice that a class may be defined with both named and indexed instance variables.
+
+
+<H3>Subclasses with Word-Valued Indexed Instance Variables</H3>
+
+<CODE><PRE>
+    <VAR>superclass</VAR> variableWordSubclass:#<VAR>class</VAR>
+	     instanceVariableNames:'<VAR>instVar1</VAR> <VAR>instVar2</VAR>...'
+	     classVariableNames:'<VAR>classVar1</VAR> <VAR>classVar2</VAR>...'
+	     poolDictionaries:'<VAR>sharedPool1</VAR>...'
+	     category:'<VAR>some-category</VAR>'
+</PRE></CODE>
+  to define <VAR>class</VAR> as a subclass of <VAR>superclass</VAR> with indexed instance
+  variables which are word-valued (0 .. 16rFFFF) integers
+  (i.e. unsigned shorts in c-world).
+<P>
+  It is an error if <VAR>superclass</VAR> has non-word indexed instance variables.
+<br>
+  Notice that a class may be defined with both named and indexed instance variables.
+
+
+<H3>Subclasses with Float- and Double-Valued Indexed Instance Variables</H3>
+
+   use
+<CODE><PRE>
+     <VAR>superclass</VAR> variableFloatSubclass:#<VAR>class</VAR>
+	      instanceVariableNames:'<VAR>instVar1</VAR> <VAR>instVar2</VAR>...'
+	      classVariableNames:'<VAR>classVar1</VAR> <VAR>classVar2</VAR>...'
+	      poolDictionaries:'<VAR>sharedPool1</VAR>...'
+	      category:'<VAR>some-category</VAR>'
+</PRE></CODE>
+   or:
+<CODE><PRE>
+     <VAR>superclass</VAR> variableDoubleSubclass:#<VAR>class</VAR>
+	      instanceVariableNames:'<VAR>instVar1</VAR> <VAR>instVar2</VAR>...'
+	      classVariableNames:'<VAR>classVar1</VAR> <VAR>classVar2</VAR>...'
+	      poolDictionaries:'<VAR>sharedPool1</VAR>...'
+	      category:'<VAR>some-category</VAR>'
+</PRE></CODE>
+
+   to define <VAR>class</VAR> as a subclass of <VAR>superclass</VAR> with indexed instance
+   variables which are shortfloat- or doublefloat-valued rational numbers.
+   (i.e. floats and doubles in c-world).
+<P>
+ Float- and DoubleArrays were added to support 3D graphic packages (i.e. GL),
+ which use arrays of float internally to represent matrices and vectors.
+ They provide much faster access to their elements than the alternative using
+ byteArrays and floatAt:/doubleAt: access methods.
+<P>
+ Also, storage is much more dense than in arrays, since they store the values
+ directly instead of pointers to the float objects.
+<P>
+ A 1000-element floatArray will need 1000*4 + OHDR_SIZE = 4012 bytes,
+ while a  1000-float-element array needs 1000*4 + OHDR_SIZE + 1000*(12+8)
+ = 20012 bytes. (each float itself requires 8-bytes plus 12-byte header)
+<br>
+  Notice that a class may be defined with both named and indexed instance variables.
+
+
+<H3>Subclasses with Long, Signed-Word, Signed-Long Indexed Instance Variables</H3>
+
+<CODE><PRE>
+     <VAR>superclass</VAR> variableLongSubclass:#<VAR>class</VAR>
+	      instanceVariableNames:'<VAR>instVar1</VAR> <VAR>instVar2</VAR>...'
+	      classVariableNames:'<VAR>classVar1</VAR> <VAR>classVar2</VAR>...'
+	      poolDictionaries:'<VAR>sharedPool1</VAR>...'
+	      category:'<VAR>some-category</VAR>'
+</PRE></CODE>
+   or:
+<CODE><PRE>
+     <VAR>superclass</VAR> variableSignedWordSubclass:#<VAR>class</VAR>
+	      instanceVariableNames:'<VAR>instVar1</VAR> <VAR>instVar2</VAR>...'
+	      classVariableNames:'<VAR>classVar1</VAR> <VAR>classVar2</VAR>...'
+	      poolDictionaries:'<VAR>sharedPool1</VAR>...'
+	      category:'<VAR>some-category</VAR>'
+</PRE></CODE>
+   or:
+<CODE><PRE>
+     <VAR>superclass</VAR> variableSignedLongSubclass:#<VAR>class</VAR>
+	      instanceVariableNames:'<VAR>instVar1</VAR> <VAR>instVar2</VAR>...'
+	      classVariableNames:'<VAR>classVar1</VAR> <VAR>classVar2</VAR>...'
+	      poolDictionaries:'<VAR>sharedPool1</VAR>...'
+	      category:'<VAR>some-category</VAR>'
+</PRE></CODE>
+
+   to define <VAR>class</VAR> as a subclass of <VAR>superclass</VAR> with
+   long (32 bit integers in the range 0 .. 16rFFFFFFFF), signed short
+   (i.e. -16r8000 .. 16r7FFFF) and signed long (-16r80000000 .. 16r7FFFFFFF)
+   indexed instance variables.
+<BR>
+   (i.e. int, short and unsigned int in the c-world).
+<P>
+ These types were added for easier bulk data exchange with C language functions.
+ They are not currently used in Smalltalk itself.
+<br>
+  Notice that a class may be defined with both named and indexed instance variables.
+
+<P>
+Be aware, that indexable classes with float, double, signedWord, long
+and signedLong elements may (are) NOT be available on other Smalltalk implementations.
+<BR>
+Using them may make your application non portable to other systems.
+<BR>
+(however, these can be easily simulated by subclassing ByteArray and redefining the
+ access methods).
+
+
+
+<H2><A NAME="CLASS_COMMENT" HREF="#I_CLASS_COMMENT">Class Comment</A> ("class-definition files" only)</H2>
+
+  A class comment may be defined with an expression of the form:
+<CODE><PRE>
+    <VAR>ClassName</VAR> comment:'some string'
+</PRE></CODE>
+  an alternative to using a comment is to define class methods under the category <VAR>"documentation"</VAR>,
+  consisting of comments only.
+<BR>
+  Empty methods do not use ANY code space in <CITE>ST/X</CITE>,
+  and have the positive effect
+  of not eating up data space in the Smalltalk executable (which the comment does)
+
+
+<H2><A NAME="CLASS_INSTVARS" HREF="#I_CLASS_INSTVARS">Class Instance Variables</A> ("class-definition files" only)</H2>
+
+  A class may have instance variables, these MUST be declared before
+  the first class method is declared. The declaration has the form:
+<CODE><PRE>
+    <VAR>ClassName</VAR> class instanceVariableNames:'<VAR>string with varNames</VAR>'
+</PRE></CODE>
+  Do not confuse class variables with class instance variables.
+<P>
+  Only one such class-instance-variable definition is allowed per input file.
+
+
+
+
+<A NAME="METHOD_DEFS" HREF="#I_METHOD_DEFS"><H2>Method Definition</A></H2>
+
+The expressions following the class definition are to be
+method definitions of the form:
+<CODE><PRE>
+    !<VAR>ClassName</VAR> methodsFor:'<VAR>method-category</VAR>'!
+
+    aMethod
+	...
+    !
+
+    aMethod
+	...
+    !
+
+    ...
+
+    lastMethodInCategory
+	...
+    ! !
+</PRE></CODE>
+or
+<CODE><PRE>
+    !<VAR>ClassName</VAR> class methodsFor:'<VAR>category</VAR>'!
+
+    aClassMethod
+	...
+    !
+
+    ...
+
+    lastClassMethodInCategory
+	...
+    ! !
+</PRE></CODE>
+"class-definition files" may only contain method definitions for the class defined in the class definition.
+<P>
+"method-only files" may contain methods for any class - but no class definitions.
+<P>
+Instance methods and class methods may be in any order.
+<P>
+To allow compilation of classes filed out from <CITE>ENVY</CITE>, <CITE>stc</CITE>
+also recognizes the selectors <CODE>privateMethodsFor:</CODE> and
+<CODE>publicMethodsFor:</CODE>.
+In addition, the special selector <CODE>ignoredMethodsFor:</CODE>
+tells <CITE>stc</CITE> to ignore all followup methods up to an empty chunk.
+
+
+<H3>Method Syntax</H3>
+
+Method and expression syntax is &#224; la <CITE>Smalltalk-80</CITE> (with a few extensions).
+<P>
+There is a limit on the maximum number of arguments
+a method can be defined with and messages can be sent with (currently 15).
+<BR>
+This limit will be removed eventually, allowing an arbitrary number
+of arguments.
+<P>
+Other limits are:
+<UL>
+<LI>        max. 127 local variables
+<LI>        max. 31  temporaries for intermediate expression results
+<LI>        max. 300 other sends per method
+<LI>        lineNumber information (debugger) is only valid for the first 255 lines of a method.
+</UL>
+For very complicated expressions (especially when these are generated
+automatically), the temporary limit could be reached in theory.
+In practice, so far no Smalltalk code (available PD programs and
+users' application code) has ever hit those limits.
+<P>
+Since most terminals cannot display the Smalltalk assignment character
+'&lt;-' (backarrow as one character with same ascii-code as '_'),
+the scanner also accepts the character sequences ":=" (colon-equal)
+to express assignment.
+<BR>
+This is compatible to similar extensions found in other Smalltalk
+implementations. Of course, the '_' is also accepted.
+<P>
+<STRONG>Use ':='</STRONG>
+<BR>
+Support for '_' may be removed in later versions.
+Also, <CITE>Smalltalk/X</CITE>, like newer <CITE>Smalltalk-80</CITE> versions allows
+underscores in identifiers - no longer treating them as assignment.
+<P>
+Although not defined in the book, Smalltalk-80 expressions seem to require
+(blank) characters to separate tokens
+(i.e. "<CODE>Point origin: point1 corner: point2</CODE>").
+<P>
+<CITE>Smalltalk/X</CITE> does not need these
+(i.e. "<CODE>Point origin:point1 corner:point2</CODE>" is fine)
+<P>
+I do not know at the moment, if this makes any problem when porting
+<CITE>Smalltalk/X</CITE> code to other Smalltalk implementations.
+(if required, the fileOut-methods may have to be changed to add blanks)
+
+
+<H2><A NAME="EXPRESSIONS" HREF="#I_EXPRESSIONS">Assignment and init-Expressions</A></H2>
+
+In contrast to <CITE>Smalltalk-80's</CITE> fileIn format (where any expression is allowed),
+expressions other than above must be of the form:
+<CODE><PRE>
+    Smalltalk at:#<VAR>name</VAR> put:<VAR>constant</VAR>
+</PRE></CODE>
+(constant may be any integer, float, string, symbol, true, false or nil)
+<P>
+ or of the form:
+<CODE><PRE>
+    <VAR>classname</VAR> initialize
+</PRE></CODE>
+(classname must be the name of the class defined in this source-file)
+<BR>
+These expressions allow globals to be set to a predefined value at startup
+and/or class initialization.
+
+Example:
+<CODE><PRE>
+   ...
+ Smalltalk at:#MyVariable put:true !
+   ...
+</PRE></CODE>
+
+<H2><A NAME="EXAMPLE" HREF="#I_EXAMPLE">Example Class </A></H2>
+
+<CODE><PRE>
+    Point subclass:#Point3D
+	    instanceVariableNames:'z'
+	    classVariableNames:''
+	    poolDictionaries:''
+	    category:'Graphics-Primitives'
+    !
+
+    Point3D comment:'
+     this class defines a point in 3-dimensional space
+    '!
+
+    !Point3D class methodsFor:'instance creation'!
+
+    x:newX y:newY z:newZ
+	"answer a new point with coordinates newX and newY"
+	^ ((self basicNew) x:newX y:newY) z:newZ
+    ! !
+
+    !Point3D methodsFor:'accessing'!
+
+    z
+	"Answer the z coordinate"
+	^ z
+    !
+
+    z:newZ
+	"set the z coordinate"
+	z := newZ
+    ! !
+
+    !Point3D methodsFor:'printing'!
+
+    printString
+	"answer my printString"
+	^ super printString , '@' , z printString
+    ! !
+</PRE></CODE>
+
+<H2><A NAME="SEMANTIC_DETAILS" HREF="#I_SEMANTIC_DETAILS">Semantic Details</A></H2>
+
+The following only lists non obvious semantic details - for a description
+of the Smalltalk language, please refer to standard literature.
+
+<A NAME="EVAL_ORDER" HREF="#I_EVAL_ORDER"><H3>Evaluation Order</A></H3>
+
+Expression arguments and receiver are evaluated left to right,
+starting with the receiver (with exceptions as described below).
+<P>
+Smalltalk is an eager evaluating language - that is, all arguments
+are evaluated before the message send - even if not used by the called code.
+<BR>
+Lazy evaluation can be simulated partially by using blocks as arguments,
+or by special code (see the LazyValue class and its documentation).
+
+
+
+<A NAME="SIDE_EFFECTS" HREF="#I_SIDE_EFFECTS"><H3>Side Effects</A></H3>
+
+If any argument of an expression has a side effect on an instance variable,
+and the expression uses that instance variable, it is <STRONG>NOT DEFINED</STRONG>
+if the original or modified value of that instance variable is used.
+<BR>
+For example:
+<CODE><PRE>
+    Object subclass:SomeClass
+	    instanceVariableNames:'i'
+	    ...
+
+    i:aNumber
+	i := aNumber
+    !
+
+    increment
+	i := i + 1.
+	^ i
+    !
+
+    undefinedBehavior
+	^ self increment + i
+    !
+
+    undefinedBehavior2
+	^ i + self increment
+    !
+
+    test
+	Transcript showCR:'undefinedBehavior returns: '
+			  , (SomeClass new i:0) undefinedBehavior printString.
+	Transcript showCR:'undefinedBehavior2 returns: '
+			  , (SomeClass new i:0) undefinedBehavior2 printString.
+    !
+</PRE></CODE>
+in the <CODE>#undefinedBehavior</CODE> method, the value used for <VAR>i</VAR>
+in the <CODE>#+</CODE> message may or may not be the incremented value.
+<P>
+Warning:
+<BR>
+do never depend on the particular behavior of a Smalltalk or compiler;
+the semantic here is not defined. Even in <CITE>ST/X</CITE>, the behavior may differ
+between versions, or between the incremental and batch compiler.
+<BR>
+(actually, in the current <CITE>ST/X</CITE> version, the incremental compiler returns
+ 2 for the first, and 1 for the second method.
+ In contrast, <CITE>stc</CITE> compiled code returns 2 for both,
+because it does not always evaluate arguments left to right - especially
+for arithmetic operations).
+<P>
+
+Notice:
+<BR>
+this is to be considered a bug, because it conflicts with the evaluation order as defined above
+(although it is bad coding style...).
+<BR>
+In practice, there have been only very minor problems due to this in the past.
+
+
+
+<H3><A NAME="BECOME" HREF="#I_BECOME">#become</A></H3>
+
+The behavior of your program is undefined, if instance variables
+of the receiver are accessed in a method,
+after a <CODE>#become:</CODE> message was sent to the receiver.
+<BR>
+If the <CODE>#become:</CODE> changed the receiver into some other
+object with less or no instance variables, even a nonrecoverable
+fatal error may occur. Otherwise, the access will be to the
+corresponding instance variable slot as defined by the other class.
+<BR>
+For example, the following may lead to unexpected behavior
+(or even a nonrecoverable fatal error):
+<CODE><PRE>
+    Object subclass:SomeClass
+	    instanceVariableNames:'i'
+	    ...
+
+    badMethod1
+	i := 0.
+	self become:somethingElse.
+	^ i
+    !
+
+    badMethod2
+	self become:somethingElse.
+	i := 0.
+    !
+</PRE></CODE>
+The use of message sends to access the instance variables
+removes the above danger:
+<CODE><PRE>
+    Object subclass:SomeClass
+	    instanceVariableNames:'i'
+	    ...
+    i
+	^ i
+    !
+
+    i:newValue
+	i := newValue
+    !
+
+    fixedMethod1
+	self i:0.
+	self become:somethingElse.
+	^ self i
+    !
+
+    fixedMethod2
+	self become:somethingElse.
+	self i:0.
+    !
+</PRE></CODE>
+
+Notice:
+<BR>
+<VAR>ST/X</VAR> typically falls into a segmentation violation exception,
+which can be cought by an appropriate exception handler.
+
+
+
+<H3><A NAME="LITERAL_ARRAY" HREF="#I_LITERAL_ARRAY">Literal Array of a Method</A></H3>
+
+<CITE>Stc</CITE> generated code does not (currently) access the literal array; instead,
+the literal array of a method is created for the debugger (to find senders)
+only. Modifying the literal array (which is bad coding style anyway) has
+no effect on machine compiled code.
+<P>
+In contrast, bytecode-interpreted methods use the values found in the literal
+array. A modified literal array will change the behavior of the method.
+This modified behavior is not reflected in the method's source code.
+<P>
+And finally, the dynamic compiler (JITTER) generates code which accesses literals inline
+(i.e. it takes the literalArrays contents at compilation time and creates inline constant
+accesses).
+Thus, JITTED code behaves like static compiled code, in that changing the literal array does not
+affect the execution. However, since the system may chose to flush its dynamic code cache,
+and recompile at any time later, the changed literal array may eventually affect the execution then.
+<P>
+For these reasons, we highly recommend keeping the literal arrays untouched.
+<P>
+(Experts may do so, but have to ensure that the method gets recompiled, by converting a
+static compiled method into a dynamic one, and flushing the code cache entry for this method explicitly.
+
+
+
+<H3><A NAME="BUILTIN_METHODS" HREF="#I_BUILTIN_METHODS">Builtin Methods</A></H3>
+
+For a number of message sends, both the stc- and the incremental compiler
+create inline code which performs the function without doing any message send.
+<BR>
+Redefinition of any method listed below will have no effect on your
+program; also, tracing and breakpointing of these methods is not possible
+(since they are never executed).
+<P>
+In theory, many more methods could be inlined; the current set represents
+a compromise between performance (inlined code is much faster) and flexibility
+(inlined methods cannot be redefined/traced).
+<P>
+In general, only methods for which a changed semantic would make the system
+unusable or change the semantic completely in a non Ansi-Standard way, are inlined.
+With the <CITE>stc</CITE> compiler, the degree of inlining
+can be further controlled by command line arguments.
+<P>
+Inlined messages:
+<UL>
+<LI><VAR>any</VAR> <CODE>ifTrue:[ifFalse:] [ ... ]</CODE>
+<LI><VAR>any</VAR> <CODE>ifFalse:[ifTrue:] [ ... ]</CODE>
+<P>
+    with bytecode interpretation, the receiver is checked for
+    being either true or false, and an error is raised if not.
+<BR>
+    STC compiled- and just-in-time generated code simply compares the
+    receiver against true or false, showing undefined behavior if the
+    receiver is not a boolean.
+<BR>
+    (i.e. <CODE>"foo ifTrue:"</CODE> is compiled as <CODE>"foo == true ifTrue:"</CODE>
+    and <CODE>"foo ifFalse:"</CODE> is compiled as <CODE>"foo ~~ true ifTrue:"</CODE>)
+<P>
+    When debugging programs, you may want to disable just-in-time compilation,
+    to have the system check for non-boolean receivers and detect those
+    error situations.
+<P>
+    We are aware of the fact, that this different behavior is bad, and we are still looking
+    for an easy fix (which does not cost performance and does not blow up the generated
+    code too much).
+<P>
+
+<LI><CODE>[</CODE><VAR>any</VAR><CODE>] whileTrue: [ ... ]</CODE>
+<LI><CODE>[</CODE><VAR>any</VAR><CODE>] whileFalse: [ ... ]</CODE>
+<P>
+    as above for the blocks value
+<P>
+
+
+<LI><VAR>aSmallInteger</VAR><CODE> timesRepeat:[]</CODE>
+<LI><VAR>aSmallInteger</VAR><CODE> to: </CODE><VAR>aSmallInteger</VAR><CODE> do:[]</CODE>
+<LI><VAR>aSmallInteger</VAR><CODE> to: </CODE><VAR>aSmallInteger</VAR><CODE> by: </CODE><VAR>aSmallInteger</VAR><CODE> do:[]</CODE>
+<LI><VAR>aSmallInteger</VAR><CODE> + </CODE><VAR>aSmallInteger</VAR>
+<LI><VAR>aSmallInteger</VAR><CODE> - </CODE><VAR>aSmallInteger</VAR>
+<LI><VAR>aSmallInteger</VAR><CODE> * </CODE><VAR>aSmallInteger</VAR>
+<LI><VAR>aSmallInteger</VAR><CODE> // </CODE><VAR>aSmallInteger</VAR>
+<LI><VAR>aSmallInteger</VAR><CODE> bitAnd: </CODE><VAR>aSmallInteger</VAR>
+<LI><VAR>aSmallInteger</VAR><CODE> bitOr: </CODE><VAR>aSmallInteger</VAR>
+<LI><VAR>aSmallInteger</VAR><CODE> negated</CODE>
+<P>
+    arguments are checked for being smallIntegers
+    and the expression is evaluated without sending the message.
+<BR>
+    Depending on the compiler's optimization settings, this may also be
+    done partially for float or mixed float & smallInteger operands.
+<P>
+
+
+
+<LI><VAR>anArray</VAR><CODE> at: </CODE><VAR>aSmallInteger</VAR>
+<LI><VAR>anArray</VAR><CODE> at: </CODE><VAR>aSmallInteger</VAR> <CODE>put:</CODE><VAR>anObject</VAR>
+<P>
+    the array access is performed inline, if the index is within the bounds
+    and it is likely, that the argument is an array.
+<P>
+
+
+
+<LI><VAR>aString</VAR><CODE> at: </CODE><VAR>aSmallInteger</VAR>
+<LI><VAR>aString</VAR><CODE> at: </CODE><VAR>aSmallInteger</VAR> <CODE>put:</CODE><VAR>anObject</VAR>
+<P>
+    the string access is performed inline, if the index is within the bounds
+    and it is likely, that the argument is a string.
+<P>
+
+
+<LI><VAR>any</VAR><CODE> class </CODE>
+<LI><VAR>any</VAR><CODE> isMemberOf:</CODE>
+<P>
+    direct access to the objects (hidden) class slot
+<P>
+
+<LI><VAR>any</VAR><CODE> == </CODE>
+<LI><VAR>any</VAR><CODE> ~= </CODE>
+<P>
+    an identity compare produces true or false without a message send
+<P>
+
+<LI><VAR>any</VAR><CODE> isNil  </CODE>
+<LI><VAR>any</VAR><CODE> notNil </CODE>
+<P>
+    an identity compare against nil is generated
+<P>
+
+<LI><VAR>any</VAR><CODE> perform: </CODE><VAR>aMessage</VAR>
+<P>
+    inline as any message, if the argument is a constant symbol
+<P>
+
+<LI><VAR>any</VAR><CODE> yourself </CODE>
+<P>
+    no message send is generated - the receiver is directly evaluated
+<P>
+
+<LI><VAR>any</VAR><CODE> ? </CODE><VAR>anObject</VAR>
+<P>
+    the receiver is evaluated and compared
+    against nil. If nonNil, results in the receiver - otherwise the argument.
+<P>
+
+<LI><CODE>Character space</CODE>
+<LI><CODE>Character tab</CODE>
+<LI><CODE>Character value:<VAR>aSmallInteger</VAR></CODE>
+<P>
+    no message - the space-Character constant is directly returned.
+    This is also done for <CODE>tab</CODE>, <CODE>cr</CODE> and a few other
+    common character constants.
+<P>
+
+<LI><CODE>SmallInteger maxVal</CODE>
+<P>
+    no message - the maximum SmallInteger constant is directly returned.
+    This is also done for <CODE>minVal</CODE>, <CODE>maxBits</CODE> and <CODE>maxBytes</CODE>
+<P>
+
+<LI><CODE>Smalltalk isSmalltalkX</CODE>
+<P>
+    no message - the compiler knows that it is compiling ST/X code.
+    This is even propagated to any ifXXX expression using this as condition,
+    so that no code is generated for the condition and for the false branch of the
+    ifXXX expression.
+<P>
+
+
+</UL>
+
+In addition, some constructs are partially inlined - special code is generated
+to avoid a message send in common cases.
+<BR>
+Partial inlined messages:
+<UL>
+<LI><VAR>any</VAR><CODE> = </CODE><VAR>anObject</VAR>
+<P>
+    an identity test is performed first; no equality test is performed,
+    if the objects are identical and true is generated by inline code.
+<P>
+
+<LI><VAR>any</VAR><CODE> ~= </CODE><VAR>anObject</VAR>
+<P>
+    an identity test is performed first; no equality test is performed,
+    if the objects are identical and false is generated by inline code.
+<P>
+
+<LI><VAR>any</VAR><CODE> &lt; </CODE><VAR>anObject</VAR>
+<P>
+    if the arguments are SmallIntegers, the comparison is done inline.
+    Otherwise, a regular message send is generated.
+<BR>
+    The same is done for the other relational operators.
+<P>
+
+</UL>
+
+The above list may be incomplete - depending on the <CITE>ST/X</CITE> version,
+more messages could be inlined in your system.
+<P>
+
+
+<H2><A NAME="EXTENSIONS" HREF="#I_EXTENSIONS">Extensions to Smalltalk-80 (Blue Book Version)</A></H2>
+
+<H3><A NAME="BRACE_ARRAY" HREF="#I_BRACE_ARRAY">Brace Array Constructor</A></H3>
+
+The brace construct "{ expr . ... . expr }" for array instantiation at runtime
+was added as syntactic sugar to Squeak/Pharo.
+This is also supported by ST/X.
+<P>
+The construct:
+<CODE><PRE>
+    { expr1 . expr2 ... exprN }
+</PRE></CODE>
+is semantically equivalent to;
+<CODE><PRE>
+    Array with:expr1 with:expr2 ... with:exprN
+</PRE></CODE>
+for an arbitrary number of expressions.
+<P>
+This makes passing of array-arguments or the return of multiple values much easier.
+Notice that individual expressions are separated by a period (i.e. statement separator).
+
+<H3><A NAME="DIRECTIVES" HREF="#I_DIRECTIVES">Compiler Directives</A></H3>
+
+  Comments of the form:
+<CODE><PRE>
+    "{ something ... }"
+</PRE></CODE>
+  are recognized by the <CITE>stc</CITE>-compiler as directives. Since directives are
+  hidden within comments, these will be ignored by
+  other Smalltalk systems; making <CITE>ST/X</CITE> sources transferable to
+  other Smalltalks.
+
+<H4>Line Number Definition</H4>
+
+The directive:
+<CODE><PRE>
+    "{ Line: n }"
+</PRE></CODE>
+  tells <CITE>stc</CITE> that line-numbering should continue with line <VAR>n</VAR>.
+  Line numbers in following warning- and error-messages will be relative
+  to <VAR>n</VAR>.
+<BR>
+  This feature is used internally, with incremental
+  stc-compilation to machine code.
+<BR>
+  It could also be useful for
+  systems where Smalltalk is passed as an intermediate language to stc
+  (i.e. compiler-compilers or code generators) to base linenumbering on the original file.
+
+
+<H4>Symbol Definition</H4>
+
+The directive:
+<CODE><PRE>
+    "{ Symbol: <VAR>aSymbolString</VAR> }"
+</PRE></CODE>
+  tells <CITE>stc</CITE> that a primitive wants to access a symbol.
+  <CITE>Stc</CITE> includes a definition for that symbol and generates code to create the
+  symbol at startup time; within the primitive, the symbol can be refered to
+  by a C-conforming name as described in
+  <A HREF="primitive.html#ACCESS_SYMBOLS"><VAR>``How to write inline C code''</VAR></A>.
+<P>
+  Symbols can also be created using the (slower) <CODE>_MKSYMBOL()</CODE> function at
+  runtime. This also allows C-Strings to be converted to symbols.
+<BR>
+  (example:
+	in the XWorkstation-class where keypress-characters are converted to
+	symbols like <CODE>#Home</CODE>, <CODE>#Down</CODE> etc.)
+<P>
+  This directive is no longer needed and may not be supported in future versions.
+  Use the <CODE>@symbol</CODE>-mechanism,
+  since it reliefs you of the need to know about name translations.
+
+
+
+<H4>Type Hints / Declarations</H4>
+
+The directive:
+<CODE><PRE>
+    "{ Class: <VAR>className</VAR> }"
+</PRE></CODE>
+  after an instance-, class-, or local-variable declaration tells
+  <i>stc</i>, that this variable will always be assigned an object of class:
+  <VAR>className</VAR>.
+<P>
+  Various optimizations in the code are possible if the type of an object
+  is known (especially for simple types such as "SmallInteger", "Character"
+  "Point" or "String").
+<P>
+  Currently everything but <CODE>SmallInteger</CODE>, <CODE>Float</CODE>
+  and <CODE>Point</CODE>-definitions in method
+  local declarations are ignored by the compiler.
+<P>
+  Even with these type declarations, the compiler still generates code which
+  checks assignments for correct typing (i.e. an assignment of a float to a
+  SmallInteger-typed variable will generate a runtime error).
+<P>
+  With the improvements of the type-tracker and optimizations performed in <i>stc</I>,
+  this feature seems now much less useful in many situations
+  - especially, when considering the limited reusability of the generated code.
+<BR>
+  (see benchmark results of sieve/sieveWithInteger, atAllPut/atAllPut2 etc.
+   some show very small differences between the untyped and typed versions)
+<P>
+  We recommend using type hints only in performance critical code, for
+  fully debugged code.
+
+
+
+<H4>Code Gemerator Pragmas</H4>
+
+  The stc compiler's code generation strategy can be controlled on a per-class basis
+  with command line options such as "+optspace", "+optinline" etc.
+<P>
+  Sometimes, finer control (i.e. over individual methods) is needed. Comments of
+  the form:
+<CODE><PRE>
+    "{ Pragma: <VAR>keyword</VAR> }"
+</PRE></CODE>
+instruct <VAR>stc</VAR> to change its code generation startegy for a single method.
+Keyword must (currently) be one of:
+<UL>
+<LI>"<CODE>+optspeed</CODE>" or "<CODE>+optSpeed</CODE>"
+<BR>
+generate inline code for integer operations and common constructs.
+<P>
+<LI>"<CODE>+optmath</CODE>" or "<CODE>+optMath</CODE>"
+<BR>
+additionally generate inline code for floating point operations
+<P>
+<LI>"<CODE>+inlinemath</CODE>" or "<CODE>+inlineMath</CODE>"
+<BR>
+additionally generate inline code for floating point triginometric functions
+<P>
+<LI>"<CODE>+inlinemath2</CODE>" or "<CODE>+inlineMath2</CODE>"
+<BR>
+like above, but do not generate range checks on the receiver
+<BR>
+may lead to floating point exceptions when executed, if - for example -
+a negative receiver gets a square-root (#sqrt) message.
+</UL>
+
+<BR>
+  These pragmas must be placed right after a method's selector specification.
+<BR>
+  example:
+<CODE><PRE>
+    "although the whole class is complied '+optinline',
+     the following class-initialization method is compiled for space,
+     since it is only called once ..."
+
+    initialize
+	"{ Pragma: +optspace }"
+
+	....
+	....
+    !
+</PRE></CODE>
+  Changing compilation to "<CODE>+optspace</CODE>" is useful for methods which are
+  seldom called (such as class-initialization methods, which are usually invoked
+  only once during startup) or error reporting methods,
+  which are only invoked for abnormal events.
+<P>
+  The effect of pragmas can be turned off with the "<CODE>-noPragmas</CODE>" <VAR>stc</VAR>
+  command line argument - with this option, optimizations are under control
+  of command line arguments only.
+<P>
+  Currently, not all possible trigonometric function generate
+  inline code with the <VAR>inlineMath</VAR> options - there may be more
+  in the future if there is a need.
+
+
+
+<H4>Namespace Definition</H4>
+
+  A comment of the form:
+<CODE><PRE>
+    "{ NameSpace: <VAR>nameSpaceID</VAR> }"
+</PRE></CODE>
+  declares the namespace, into which the following class is to be installed.
+  It must preceede any class definition message in the source file
+  (i.e. it should be located somewhere at the files beginning).
+<BR>
+Semantic details of namespaces are described below.
+<P>
+The current projects <VAR>defaultNameSpace</VAR> is used,
+if no namespace directive is present in a loaded sourceFile.
+
+
+
+<H4>Package Definition</H4>
+
+  A comment of the form:
+<CODE><PRE>
+    "{ Package: '<VAR>package-identifier</VAR>' }"
+</PRE></CODE>
+  defines a package identifier, which is attached to all methods and classes
+  which are defined in that file.
+<P>
+  This is mostly useful, if individual methods for existing (<VAR>Smalltalk</VAR>-)
+  classes are to be filed in, and you want those to be easily identified later.
+<BR>
+  For example, the "tgen" package adds a few methods to the <CODE>Object</CODE> and
+  <CODE>Array</CODE> classes. In order to identify those later (i.e. find them
+  quickly for removal), the change file contains a line defining a package
+  identifier of <CODE>"tgen"</CODE>; therefore, all of the redefined methods
+  get this as their package identifier.
+<BR>
+  Thus, you can later use the ProjectViews <VAR>"browse"</VAR> menu item,
+  to open a browser on all those methods.
+<P>
+The current projects <VAR>defaultPackage</VAR> identifier is used,
+if no package directive is present in a loaded sourceFile.
+
+
+
+
+<A NAME="NAMESPACES" HREF="#I_NAMESPACES"><H3>Multiple Namespaces</A></H3>
+
+  Especially when filing in third party code or you are working in a big
+  team, you may encounter name conflicts
+  with class names.
+  These conflicts are very inconvenient, since (without namespaces)
+  you had to manually browse those files (before filing in)
+  and change all names - which is especially inconvenient, since the systemBrowser
+  cannot be used for this.
+<P>
+  To allow a reasonable handling of this case, <CITE>Smalltalk/X</CITE>
+  provides (starting with rel3.1) multiple namespaces,
+  which effectively allow you to have two
+  or more classes with the same name to reside in one image/executable.
+<P>
+  By default, all classes are defined in the <CODE>Smalltalk</CODE> namespace.
+<P>
+<UL>
+<LI>
+  To stc-compile a class for another namespace,
+  either add a line as:
+<CODE><PRE>
+    "{ NameSpace: <VAR>NamespaceIdentifier</VAR> }"
+</PRE></CODE>
+at the beginning of the ST-source file,
+<BR>
+or compile it with the <CITE>stc</CITE> command line argument:
+<CODE><PRE>
+    stc ... -nameSpace=NamespaceIdentifier ... file.st
+</PRE></CODE>
+<P>
+Both are equivalent, and tell <CITE>stc</CITE>,
+that all globals defined in this module are not to be
+entered into the default namespace <CODE>'Smalltalk'</CODE>,
+but instead into a space called <VAR>NamespaceIdentifier</VAR>.
+<BR>
+Also, globals used within the compiled class are first searched for in
+<VAR>NamespaceIdentifier</VAR>, THEN in the <CODE>Smalltalk</CODE> namespace.
+<BR>
+<VAR>NamespaceIdentifier</VAR> must be a single identifier starting with an
+upper-case letter; underscores are allowed, but spaces or non-alphanumeric characters
+are not.
+(i.e. since a global variable will be created for it, it must
+ be a valid global variable identifier)
+<P>
+
+<LI>
+When a sourceFile is filed in with the FileBrowser, the same mechanism
+is used if a namespace directive is present.
+<BR>
+Otherwise, the currently active project determines the <VAR>defaultNamespace</VAR>
+into which new classes are loaded. By default, this is <CODE>Smalltalk</CODE>.
+<BR>
+A projects <VAR>defaultNamespace</VAR> can be changed by selecting the
+ProjectViews <VAR>"default namespace"</VAR> popupMenu item.
+</UL>
+
+Notice, that a directive was choosen, to define a namespace within the sourceFile.
+This was done by purpose, to allow classes in a namespace to be filed out
+and loaded into another system, which does not support multiple namespaces
+(i.e. VisualWorks) - of course, there the loaded class will be placed
+into the global namespace - but at least, it is possible to
+get it loaded (unless nameConflicts arise ;-) and rename it then in the browser.
+
+<P>
+
+Example:
+<P>
+You get some code, which defines a class <CODE>"Button"</CODE>,
+which should not
+conflict with the builtin <CODE>Button</CODE> class.
+<BR>
+To allow both classes to reside in one image, either load it into
+some (say) "MyWidgets" namespace using the FileBrowser,
+or stc-compile it with:
+<CODE><PRE>
+    stc -c -NMyWidgets filename.st
+</PRE></CODE>
+
+The class defined by the module will then NOT conflict (i.e. overwrite)
+the existing <CODE>Button</CODE>.
+The loaded class will not even be visible in the <CODE>Smalltalk</CODE>
+dictionary.
+However, classes within the same namespace may refer to the new class
+as <CODE>Button</CODE>.
+
+
+
+<H3>Explicit Naming</H3>
+
+In rare cases, it may be nescessary, to access globals from different
+namespaces within one module. Consider the above case (<CODE>Button</CODE> in
+<CODE>MyWidgets</CODE>), and you need access to the original <CODE>Button</CODE> from within that
+module.
+<P>
+To access to original <CODE>Button</CODE> from within the module, you can either
+use the explicit:
+<CODE><PRE>
+    Smalltalk at:#Button
+</PRE></CODE>
+or use the (nonstandard) construct:
+<CODE><PRE>
+    Smalltalk::Button
+</PRE></CODE>
+
+To access the new Button from other modules, use either:
+<CODE><PRE>
+    MyWidgets at:#Button
+</PRE></CODE>
+or the (nonstandard):
+<CODE><PRE>
+    MyWidgets::Button
+</PRE></CODE>
+
+<P>
+For compatibility with VA and VW5.x, the dot-notation:
+<CODE><PRE>
+    MyWidgets.Button
+</PRE></CODE>
+is also supported when filing in code.
+<P>
+
+Notice:
+<BR>
+<STRONG>The following "using"-directive is not yet released (in vsn 3.1)</STRONG>
+<BR>
+(its currently being evaluated and tested).
+<P>
+
+If you don't want to change the sourcecode, you can also define the
+namespaces to use for searching in a line as:
+<CODE><PRE>
+    "{ Using: name1 name2 ... nameN }"
+</PRE></CODE>
+at the beginning of the source file, or with an stc command line
+argument (if you don't want to modify the file):
+<CODE><PRE>
+    stc ... -Uname1 -Uname2 ... -UnameN filename.st
+</PRE></CODE>
+
+The names given define the namespaces to search for globals, in the
+given order.  Thus a line:
+<CODE><PRE>
+    "{ Using: MyWidgets }"
+</PRE></CODE>
+will force searching for globals in the <CODE>MyWidgets</CODE> namespace first,
+THEN in the standard <CODE>Smalltalk</CODE> namespace;
+thus the name <CODE>Button</CODE> refers to <CODE>MyWidgets::Button</CODE> automatically.
+<P>
+
+<H3>Notes & Recommendations</H3>
+<UL>
+<LI>
+Although the above solves most name conflicts, you should still try to
+avoid name conflicts if possible - if you ever plan to port to other
+Smalltalk systems.
+<BR>
+Therefore, do not use namespaces if there are chances to get things working
+without them.
+
+
+<P>
+<LI>
+since there is currently no standard for multiple namespaces, we
+highly recommend using the explicit construct
+(i.e. <CODE>"Smalltalk at:#Button"</CODE>
+  or <CODE>"MyWidgets at:Button"</CODE>),
+since this is compatible to other Smalltalk implementations
+(i.e. it can be simulated using pool dictionaries or changing some methods).
+
+<P>
+<LI>
+If you like this feature, tell others about it - maybe <CITE>ST/X</CITE>
+sets a standard here... ;-)
+</UL>
+
+<P>
+<DL><DT>A trick:<DD>
+It is sometimes required, to add additional protocol to existing classes,
+for example, some application may like to add a <CODE>#foo</CODE> method
+to an existing base system class. If this method is only required
+within that application, AND the creation of instances of that class
+is under that applications control, the following trick encapsulates
+the added method in a nice way:
+<BR>
+Redefine the class in your namespace as:
+<CODE><PRE>
+	"{ NameSpace: MyNameSpace }"
+
+	NameOfSystemClass subclass:#NameOfSystemClass
+			...
+			...
+			...
+	&lt;added foo method here>
+</PRE></CODE>
+
+All instance creations of <CODE>"NameOfSystemClass"</CODE> (by code
+within that namespace) will now
+create instances of the modified subclass - which inherits and therefore
+mimics the original classes's behavior except for the added <CODE>foo</CODE>-method.
+<P>
+
+There is no need to add <CODE>foo</CODE> to the main class.
+<P>
+<BR>
+Of course, the above has its limitations, in that subclasses of the original
+baseclass are not affected by the new foo method - which could also be called
+a feature, since those classes are completely protected
+from any changes done in the private version ...
+</DL>
+
+<P>
+
+
+
+<DL><DT>Final note:<DD>
+The name of a namespace should not be the same as that of some other class
+(because the same mechanism is used for private classes).
+</DL>
+
+
+
+<H3><A NAME="PRIVATECLASSES" HREF="#I_PRIVATECLASSES">Private Classes</A></H3>
+
+  Starting with rel2.11, <CITE>ST/X</CITE> allows classes to be declared as
+  being private (i.e. owned) by some other class. These private classes are
+  not visible to the outside of the owning class - there may even be a
+  globally known class with the same name.
+<BR>
+  Private classes help in organizing large projects in that
+  additional information is hidden and name conflicts are avoided.
+<P>
+  Certain restrictions apply to private classes:
+<UL>
+  <LI>their package identifier and category are forced to be the same as of the owning class
+  <LI>their sourceCode must reside in the same file as the owning classes';
+      this affects especially the source code management.
+  <LI>they may not define any inline-C primitive variables, functions or includes.
+      However, if these are placed into the owning class, methods with primitive C code are allowed.
+  <LI>they cannot be filed out separately from their owning class.
+  <LI>the name of a private class may not conflict with a class variables name
+      of the owning class. If there is a conflict, the class variable takes precedence.
+  <LI>extension methods to private classes are not allowed/possible.
+      I.e. you cannot add or relace
+      methods via an extension from another package.
+</UL>
+<P>
+  Like regular classes, private classes are created by a class definition
+  expression. Additional variants of the subclass-creation messages are
+  provided for private classes:
+<CODE><PRE>
+    <VAR>superclass</VAR> subclass:#<VAR>class</VAR>
+	     instanceVariableNames:'<VAR>instVar1</VAR> <VAR>instVar2</VAR>...'
+	     classVariableNames:'<VAR>classVar1</VAR> <VAR>classVar2</VAR>...'
+	     poolDictionaries:'<VAR>sharedPool1</VAR>...'
+	     privateIn:<VAR>OwningClass</VAR>
+</PRE></CODE>
+or:
+<CODE><PRE>
+    <VAR>superclass</VAR> variableSubclass:#<VAR>class</VAR>
+	     instanceVariableNames:'<VAR>instVar1</VAR> <VAR>instVar2</VAR>...'
+	     classVariableNames:'<VAR>classVar1</VAR> <VAR>classVar2</VAR>...'
+	     poolDictionaries:'<VAR>sharedPool1</VAR>...'
+	     privateIn:<VAR>OwningClass</VAR>
+</PRE></CODE>
+and so on ...
+<BR>
+(notice the <VAR>privateIn:</VAR> keyword argument, which replaces the
+<VAR>category:</VAR> of a regular class definition)
+<P>
+  Within the owning class, any reference to <VAR>class</VAR> refers to the
+  private class - even if some other (global) class with that name exists.
+<BR>
+  A global class with the same name can be referred to as
+<CODE>"Smalltalk::</CODE><VAR>class</VAR>",
+or - if you prefer portable code -
+ with <CODE>"Smalltalk at:</CODE><VAR>class</VAR>".
+<P>
+  Technically, a special class variable is created, but its visibility is
+  limited to the owning class.
+<BR>
+  I.e. private classes are hidden from subclasses of the owning class.
+  This visibility is still to be evaluated and could be changed in future
+  versions.
+  If a private class is to be referenced by a subclass, use access methods
+  in the owners class protocol (which is better style, anyway).
+<P>
+
+Use the Systembrowser's <VAR>"new private class"</VAR> item in its
+class list menu, to get a template for private class creation.
+<P>
+
+Private classes and namespaces use the same basic mechanism - a namespace
+is actually a dummy class, providing a <VAR>home</VAR> for its classes.
+Therefore, you should also avoid any conflicts between namespace names and class
+names.
+<P>
+
+
+Recommendations:
+<BR>
+In contrast to the above described namespace mechanism and fileIn format,
+private classes use a slightly different definition format, which
+is <STRONG>NOT</STRONG> backward compatible with systems that do not
+support this feature.
+<BR>
+We therefore recommend, to not use private classes for your projects,
+but instead use namespaces,
+if you ever plan to port your application to other Smalltalk systems.
+<BR>
+Conflicts within a namespace are much easier
+to avoid than overall conflicts, and the added encapsulation provided by
+having classes absolutely private is often not needed.
+<P>
+Of course, since <CITE>ST/X's</CITE> system classes are probably never of any interest
+ to other system vendors, these can and do make use of private classes ;-)
+
+<P>
+Limitations:
+<BR>
+A class may not be a subclass of one of its private classes
+(technically, this constellation is possible to create in the browser,
+ but is not possible to fileIn).
+
+
+
+<H3><A NAME="HERESENDS" HREF="#I_HERESENDS">Local ('here'-) Sends</A></H3>
+
+  In some situations, it is strictly nescessary, that a send goes to a locally
+  defined method. For example, many private methods are supposed to be not
+  redefined by subclasses. In standard Smalltalk, there is no way for an implementor
+  of a class, to make certain that his own methods are called by self-sends, if
+  other programmers use this class as (abstract-) superclass and create subclasses
+  based on it.
+<BR>
+  To offer some safety in this situation, <CITE>Smalltalk/X</CITE> extends the
+  standard Smalltalk language with a so called <VAR>hereSend</VAR>.
+<BR>
+  It is used similiar to a super-send, using the (new) pseudovariable <CODE>"here"</CODE> as
+  receiver. The semantic of the <VAR>hereSend</VAR> is much like that of a <VAR>superSend</VAR>.
+  However, while a <VAR>superSend</VAR> starts the method lookup in the superclass of the
+  class which contains the method,
+<VAR>hereSends</VAR> start it in the class containing the method.
+<BR>
+  (A normal <VAR>self-send</VAR> starts it in the class of the receiver - independent of
+   where the method is defined.)
+<P>
+<DL><DT>Warning:<DD>
+ you should keep in mind, the using here-sends will limit the reusability
+ of your class, in that it removes the posibility to change the behavior in
+ subclasses by redefinition of methods.
+<P>
+ Also, remember that <VAR>hereSends</VAR> are a special <CITE>ST/X</CITE> feature.
+ Code using them will probably <STRONG>not</STRONG> be portable to other Smalltalk
+ implementations.
+</DL>
+
+
+
+
+<H3><A HREF="#I_EXCEPTION_PRAGMAS" NAME="EXCEPTION_PRAGMAS">VisualWorks Exception Pragmas</A></H3>
+
+  The following VisualWorks pragmas for context marking are
+  used with the exception handling system.
+  Methods marked with such a flag will mark their context accordingly when executed.
+  This allows for quicker handler finding when an exception is eventually raised
+  (the exception handler looks for the flag in the context chain,
+  instead of checking against a set of selectors).
+<BR>
+  Notice, that these only provide syntactic sugar to functionality
+  which is also provided by available context protocol
+  (which has been available and used before).
+  Thus, it is always possibly to add an explicit statement of the form:
+<CODE><PRE>
+    thisContext markForXXX
+</PRE></CODE>
+to a method's code.
+<P>
+The supported pragmas are:
+<CODE><PRE>
+    &lt;exception: #raise>
+</PRE></CODE>
+marks the context of the method as an exception-raising method.
+This has the same effect as adding the statement <CODE>"thisContext markForRaise"</CODE>
+to the beginning of the method.
+<P>
+<CODE><PRE>
+    &lt;exception: #handle>
+</PRE></CODE>
+marks the context of the method as an exception-handling method.
+This has the same effect as adding the statement <CODE>"thisContext markForHandle"</CODE>
+to the beginning of the method.
+<P>
+<CODE><PRE>
+    &lt;exception: #unwind>
+</PRE></CODE>
+marks the context of the method as an unwind-handling method.
+This has the same effect as adding the statement <CODE>"thisContext markForUnwind"</CODE>
+to the beginning of the method.
+
+<H4>ST/X Context Pragma</H4>
+
+The pragma:
+<CODE><PRE>
+    &lt;context: #return>
+</PRE></CODE>
+marks the context of the method as a possible target of a return message -
+i.e. the context will be created such that it will allow returning from
+it via the <code>#return</code> message.
+If this pragma is not used, the compilers may choose to setup the context
+for not being returnable (which is slightly faster),
+and you will get an error when attempting to return from it.
+<BR>
+Notice, that methods which contain a returning block are always setup
+as returnable, so this is only required for contexts which are subject to
+some special context manipulation
+(such as <CODE>"thisContext sender sender return"</CODE>).
+<P>
+
+
+<H3><A NAME="PRIMITIVES" HREF="#I_PRIMITIVES">Primitive Definitions</A></H3>
+
+ Definitions and declarations common to
+ all primitive code in all methods can be placed into a single global
+ primitive definition section.
+ Typically, C-include or C-define statements and/or type declarations are placed in these.
+ <BR>
+ A primitive definition is defined with:
+<CODE><PRE>
+    !<VAR>className</VAR> class primitiveDefinitions!
+
+    %{
+	... anything you like ...
+    %}
+    ! !
+</PRE></CODE>
+ The contents of this chunk will be remembered internally and included whenever
+ methods which contain primitive code are to be compiled.
+<P>
+ Additional C-functions must be declared in a <CODE>primitiveFunctions</CODE> chunk,
+ which is not included when individual methods are compiled (otherwise, you would
+ get linkage errors, due to multiple definitions of the same function).
+<BR>
+ Finally, C-variables are to be declared in a <CODE>primitiveVariables</CODE> chunk.
+<P>
+ The SystemBrowser's class menu includes items to show those
+ primitive definitions (for example, see the definitions in <CODE>ExternalStream</CODE>).
+
+
+<H3><A NAME="METHODANNOTATIONS" HREF="#I_METHODANNOTATIONS">Method Annotations</A></H3>
+
+Methods can get additional attributes via annotations.
+The syntax is similar to a resource (see below) or pragma definition, with an arbitrary keyword:
+<CODE><PRE>
+    &lt;keyword: <var>arguments...</var>&gt;
+</PRE></CODE>
+
+The annotation can be extracted from a method via the <code>#hasAnnotations</code>,
+<code>#annotations</code> and similar messages.
+Also, searching or other operations (such as marking menu methods) are possible using annotations.
+<P>
+Some classes use this feature to dynamically extract special methods.
+For example, the SOAP framework will automatically generate SOAP-call entries for methods
+marked as such.
+
+
+<H3><A NAME="RESOURCEDEFS" HREF="#I_RESOURCEDEFS">Resource Definitions</A></H3>
+
+Methods may be marked as <VAR>resource-accessing-methods</VAR> by adding
+an annotation like:
+<CODE><PRE>
+    &lt;resource #<var>resource</var>&gt;
+</PRE></CODE>
+or:
+<CODE><PRE>
+    &lt;resource #<var>resource</var> ( list of additional symbols ) &gt;
+</PRE></CODE>
+
+Both of the above forms have no semantic meaning - except for the methods
+being marked specially. This marking allows that those methods are
+easier (and especially: quicker) to locate, without a need to
+scan all of the method's source code.
+<BR>
+The launcher provides a menu item (in the <VAR>classes ..</VAR> menu),
+to quickly search for specific resource accesses and open a browser on them.
+<P>
+For example, all methods which depend on the keyboard mapping are marked
+in <CITE>ST/X</CITE> as:
+<CODE><PRE>
+    &lt;resource #keyboard&gt;
+</PRE></CODE>
+<P>
+If present, a resource definition must be at the very top of a method's
+code - before any local variable definition or
+statement (but after the method's argument specification).
+
+<P>
+Trick:
+<BR>
+Resource definitions can also be used to mark methods for yourself, or
+for your project management;
+<BR>
+a definition like:
+<CODE><PRE>
+    &lt;resource #toBeFixed&gt;
+</PRE></CODE>
+or:
+<CODE><PRE>
+    &lt;resource #toBeReviewed&gt;
+</PRE></CODE>
+may help you to locate those methods easily later.
+<P>
+Do not use resource definitions for things which is common to ALL
+of your methods (i.e. never automatically generate resources
+containing your name, date or other version information).
+<BR>
+Such information should be recorded in a method comment (ST/X already provides
+a mechanism to do this automatically: the <CODE>HistoryManager</CODE>, which
+can be enabled via the launcher's settings menu does exactly this for you).
+<P>
+If many methods are marked with a resource tag, the fast search will
+degrade into a slow overall search.
+
+
+<H4><A NAME="STANDARDRESOURCES" HREF="#I_RESOURCEDEFS">Standard Conventions</H4></A>
+
+For the <CITE>ST/X</CITE> system, we use the following conventions
+when marking a method with a resource symbol:
+<UL>
+<LI>&lt;resource: canvas&gt;
+<BR>the method returns an interface specification which describes
+a views/subviews/dialogs GUI. Typically, this is a method as generated
+by the GUI builder tool, and supposed to be used by the UIBuilder to
+generate a views components.
+<BR>
+Notice: All methods as generated by the GUI building tool are automatically marked
+with this resource flag.
+<P>
+
+<LI>&lt;resource: menu&gt;
+<BR>the method returns a menu specification which describes
+a pullDown- or popUpMenu. Typically, this is a method as generated
+by the Menu builder tool, and supposed to be used by the UIBuilder to
+generate the menu.
+<BR>
+Notice: All methods as generated by the menu building tool are automatically marked
+with this resource flag.
+<P>
+
+<LI>&lt;resource: tabList&gt;
+<BR>the method returns a tabList specification which describes
+a notebook widget's sub-components. Typically, this is a method as generated
+by the TabList builder tool,
+and supposed to be used by the UIBuilder to generate a notebook's tab list.
+<BR>
+Notice: All methods as generated by the tabList building tool are automatically marked
+with this resource flag.
+<P>
+
+<LI>&lt;resource: keyboard&gt;
+<BR>a keyboard handling method. The resource tag includes the keys which
+are handled by that method (this allows easy searching for methods which react
+to a particular key).
+<P>
+
+<LI>&lt;resource: style&gt;
+<BR>a viewStyle handling method. The resource tag includes the values
+which are extracted from the view styleSheet.
+This allows easy searching for methods which are affected
+by particular styleSheet value changes.
+<P>
+
+<LI>&lt;resource: image&gt;
+<BR>an image returning method.
+The method returns a bitmap image from an inlined constant bytearray which defines the pixel
+values. The image as defined by such methods can be edited via the image editor,
+which is opened by double clicking on the method in the browser.
+<P>
+
+<LI>&lt;resource: programImage&gt;
+<BR>an image returning method.
+The method returns a computed bitmap image
+(i.e. does not contain the pixel data
+itself as a literal array, but calls other methods).
+Such images are not editable, as the method does not itself contain the pixel data.
+<P>
+
+<LI>&lt;resource: programMenu&gt;
+<BR>the method returns a menu. These are <VAR>oldStyle</VAR> methods,
+which were written without use of the menu building tool.
+<BR>
+Over time, these will probably vanish and be replaced by more user-friendly
+methods, which are based upon the new GUI building tools.
+<P>
+
+<LI>&lt;resource: obsolete&gt;
+<BR>methods which are obsoleted can be marked as such.
+They will be marked as such in the system browser,
+and ignored by code completion helpers.
+<BR>
+Typically, methods which are going to vanish in future ST/X versions
+are kept for a migration period, but marked as obsolete during that period
+(kept for backward compatibility).
+<P>
+
+<LI>&lt;resource: needsFix&gt;
+<BR>methods which are known to need fixes/enhancements or rewrites,
+which are known to not affect the system's operation and are low in the
+bugFix/enhancement item list.
+<P>
+
+<LI>&lt;resource: example&gt;
+<BR>method is an example. Can be used to search for example code.
+Also, methods marked as example are ignored in the preRequisite-search,
+when the ProjectDefinition class calculates the preRequisites for a package.
+<P>
+
+<LI>&lt;resource: ignoreInPreRequisite&gt;
+<BR>Methods marked as such are ignored in the preRequisite-search,
+when the ProjectDefinition class calculates the preRequisites for a package.
+<P>
+
+<LI>&lt;resource: skipInDebuggersWalkBack&gt;
+<BR>When a debugger is entered (for example, when hitting an exception),
+the debugger tries to make a useful guess on which method should be the
+initially selected. Usually, helper methods from the exception handling framework
+are skipped over to present the method in which the error was reported,
+not the reporting mechanism.
+For this, framework and helper methods are marked with this annotation.
+<P>
+
+<LI>&lt;context: #return&gt;
+<BR>Needed for exception framework developers only (*).
+<Br>Marks contexts from which a return may be forced via stack unwinding
+(i.e. a method called by this method may do a "thisContext sender ... sender return").
+Because the ability to return from a method in this way requires some extra bookkeeping
+in the runtime system (saving stack and registers), optimized code is generated by the compiles
+for normal methods which do not contain returning blocks.
+Thus, these cannot be returned from using the above mechanism.
+However, methods annotated with "context: return" will do the required bookkeeping and will
+therefore be returnable.
+<P>
+
+<LI>&lt;exception: #raise / exception: #handle / exception: #unwind&gt;
+<BR>Needed for exception framework developers only (*).
+<BR>Marks contexts involved in the exception raise mechanism.
+This is an optimization used by the runtime system to walk along the context chain faster,
+when searching for particular handling and raising contexts.
+
+
+</UL>
+
+(*) "normal" programmers do not need to care for those annotations.
+They are required (and must be carefully placed) in the exception handling framework, though.
+Check these especially, if you are manipulating the exception handling code in the GenericExeption class.
+
+<H4>Other Annotations (used by frameworks)</H4>
+
+<UL>
+<LI>&lt;Rest: (GET/PUT name: 'rest-name'
+		   argument: 'argument-type'
+		   return: 'return-type'
+		   comment: '...')&gt;
+<Br>
+The REST framework will automatically generate service-call entries for methods marked this way.
+For details, take a look at the <CODE>HTTPRestService</CODE> class.
+<P>
+
+<LI>&lt;inspector2Tab&gt;
+<Br>
+marks methods which provide a page for the inspector.
+Individual classes may provide additional (typically domain-specific, and sometimes application-specific)
+pages to be shown in an inspector view. One such example is the <CODE>FileName</CODE> class,
+which offers additional pages prsenting the file's contents as a convenience.
+<P>
+
+<LI>&lt;javanative: ...&gt;
+<BR>
+used by the Java-language subsystem to mark methods which implement a native Java method.
+(if you do not know what that is, it is probably not of interest to you anyway :-)
+<P>
+
+<LI>&lt;postLoad&gt;
+<BR>
+marks methods which should be automatically called after a package has been loaded
+(with <CODE>"Smalltalk loadPackage:..."</CODE>).
+<P>
+
+<LI>&lt;timeout: seconds&gt;
+<BR>
+used by the SUnit testrunner to set a timeout on the execution of a test.
+If the test takes longer than the given number of seconds, it will be canceled and marked as failing.
+<P>
+
+<LI>&lt;ignore: &lt;ruleClass&gt; rationale:&lt;reasonString&gt; author:&lt;authorString&gt;
+<BR>
+tells lint to not run a particular lint-rule on this method.
+&lt;ruleClass&gt; is the name of the rule (i.e. RBIfNilIfNotNilReplaceRule),
+&lt;reasonString&gt; to document the reason for not checking,
+and &lt;authorString&gt; the one who added the skip annotation.
+<P>
+
+<LI>&lt;modifier: super&gt;
+<BR>
+tells lint, that this method - if redefined in a subclass - should be called via
+a super-send. I.e. that this method's execution is required for proper operation of subclass instances.
+<P>
+
+<LI>&lt;modifier: final&gt;
+<BR>
+tells lint, that this method should not be redefined in subclasses.
+In Smalltalk, final methods are considered a bad idea, and not enforced (as opposed to Java,
+where this is actually used as a performance optimization).
+Think twice.
+<P>
+
+<LI>&lt;modifier: override&gt;
+<BR>
+tells lint, that this method is supposed to redefine a method in a superclass.
+<P>
+
+</UL>
+
+
+
+<A NAME="PRIVACY" HREF="#I_PRIVACY"><H3>Method Privacy</A></H3>
+
+Beside the default of being <VAR>public</VAR>,
+methods may be <VAR>private</VAR>, <VAR>protected</VAR> or <VAR>invisible</VAR>
+in <CITE>Smalltalk/X</CITE>.
+<BR>
+The four possible visibilities are:
+<UL>
+<LI>public
+<BR>
+the method may be invoked by any other method.
+
+<P>
+<LI>private
+<BR>
+the method may only be invoked from methods within the containing class.
+If invoked from the outside (or from a subclass), a runtime privacy exception
+is raised.
+
+<P>
+<LI>protected
+<BR>
+the method may only be invoked from methods within the containing class,
+or from subclass methods.
+If invoked from the outside, a runtime privacy exception is raised.
+
+<P>
+<LI>invisible (ignored)
+<BR>
+the method is transparent to both the containing class and to
+the outside world. If a superclass implements that message, the corresponding
+superclass method is invoked - otherwise a <VAR>doesNotUnderstand</VAR>-exception is raised,
+if that message is ever received.
+</UL>
+
+Invisible methods are mostly useful to temporarily disable a method, without
+actually removing it (for example, during testing/debugging).
+<P>
+Sending via <CODE>#perform:</CODE> is always possible, since this is equivalent
+to a self-send (thus, even private and protected methods can be reached via <CODE>#perform:</CODE>).
+<P>
+Late note:
+<BR>
+We did not find this feature very useful (although many ex-c programmers asked for it in the first place),
+and are probably not going to further support it in new browser versions.
+
+
+
+<H2><A NAME="LEXICAL" HREF="#I_LEXICAL">Lexical Stuff</A></H2>
+
+Some extensions to Smalltalk as described in the blue-book were made by
+ParcPlace up to <CITE>OW4.1</CITE>.
+Some of these extensions are also available in <CITE>ST/X</CITE>.
+Additional extensions were made in Squeak (brace construct for Arrays)
+and ST/X (extended comments). All of those are documented in the following chapter.
+
+<H3><A NAME="BYTEARRAY_LITERALS" HREF="#I_BYTEARRAY_LITERALS">ByteArray Literals</A></H3>
+
+Literal byteArrays are created by enclosing the elements in <CODE>#[ .. ]</CODE>.
+The elements must be in the range 0 .. 255 (i.e. 16r00 to 16rFF).
+<BR>
+Example:
+<CODE><PRE>
+    x := #[ 1 2 3 4 ].
+
+    masks := #[ 2r10000000
+		2r01000000
+		2r00100000 ]
+</PRE></CODE>
+
+
+
+<H3><A NAME="IDENTIFIERS" HREF="#I_IDENTIFIERS">Underline in Identifiers</A></H3>
+
+The underline character is treated like a letter when encountered in an identifier.
+<BR>
+This extension was added to ST-80 with the introduction of rel4.
+<BR>
+Notice, that the underline character parsed as an assignment token in older
+ST-80 versions, which results in "<CODE>var1_var2</CODE>" being parsable
+both as a single identifier and as an assignment statement.
+<BR>
+Currently, <CITE>ST/X</CITE> parses the above as an identifier iff no space characters
+are contained in the construct. I.e. "<CODE>var1_var2</CODE>" will parse as
+a single identifier, while "<CODE>var1 _ var2</CODE>" parses as an assignment.
+<BR>
+This is compatible with most oldStyle code, but may lead to trouble if
+spaces are missing; for example, the following code fragment
+(found in the Squeak Smalltalk system)
+parses incorrectly, if the underline option is not turned off:
+<CODE><PRE>
+    |foo|
+
+    foo_ 10.
+</PRE></CODE>
+<P>
+The old-style assignment is supported to allow old Smalltalk code to be
+loaded; however, it is recommend, to <STRONG>not use</STRONG> the underline character as an assignment
+operator and convert old code to use the new syntax.
+<BR>
+Future Smalltalk/X versions may no longer support this (backward compatible construct).
+For now, you can change the behaviour in the settings dialog.
+
+<P>
+The degenerated identifier consisting of an underline alone is only
+allowed within a keyword-message selector; i.e. the following is
+legal: "<CODE>self _:1 _:2 _:3</CODE>", and compiles to a <CODE>#_:_:_:</CODE>
+message send.
+<BR>
+For portable code, you should not use this, since not all other Smalltalk implementations
+allow this.
+
+
+
+<H3><A NAME="SYMBOLS" HREF="#I_SYMBOLS">Non Alphanumeric Characters in Symbols</A></H3>
+
+Usually symbols are defined as #<VAR>xxx</VAR>,
+where <VAR>xxx</VAR> consists of a letter followed by letters or digits.
+<BR>
+There are also keyword and binary symbol literals,
+such as: <CODE>#at:put:</CODE>, <CODE>#at:</CODE> or <CODE>#+</CODE>.
+<P>
+Symbols with other characters can be specified by enclosing them in single
+quotes, where the first quote must immediately follow the '#'-character.
+<BR>
+Example:
+<CODE><PRE>
+    #'a symbol with spaces'   - spaces
+    #'123'                    - starts with a digit
+    #'hello_world'            - underscore
+</PRE></CODE>
+<P>
+Symbols with unprintable characters must be created at runtime,
+by sending <CODE>#asSymbol</CODE> to an appropriate string.
+
+
+
+<H3><A NAME="EMPTYLOCALS" HREF="#I_EMPTYLOCALS">Empty Local Variable Declaration</A></H3>
+
+The list of local variables may be empty, as in:
+<CODE><PRE>
+    myMethod
+	| |
+
+	....
+</PRE></CODE>
+the same is true for blocks:
+<CODE><PRE>
+    x := [:a | ]           - as in-the-book
+    x := [:a | | | ]       - with empty locals
+</PRE></CODE>
+
+Notice, that some Smalltalk dialects may not allow this.
+If you checked the "warn about possible incompatibilities" flag in the
+compiler settings, you will get a warning.
+
+<H3><A NAME="EMPTYMETHODS" HREF="#I_EMPTYMETHODS">Empty Methods</A></H3>
+
+a totally empty method is legal; it is equivalent to a simple <CODE>^ self</CODE>.
+<BR>
+Thus:
+<CODE><PRE>
+    myMethod1
+    !
+
+    myMethod2
+	| |
+    !
+
+    myMethod3
+	| aLocal |
+    !
+
+    myMethod4
+	"only a comment"
+    !
+
+    myMethod5
+	^ self
+    !
+</PRE></CODE>
+all behave identically (returning self).
+<BR>Please add a comment telling that the empty method
+is empty by intention, and not simply forgotten to be finished.
+
+
+
+
+<H3><A NAME="LITERALCONSTS" HREF="#I_LITERALCONSTS">Special 'constants' as Array Literals</A></H3>
+
+<CITE>Smalltalk/X</CITE> allows "nil", "true" and "false"
+to be used in literal arrays.
+Thus it is possible, to declare an array as:
+<CODE><PRE>
+    #('string1' 'string2' nil 1 1.2 false true wow)
+</PRE></CODE>
+Within an array literal, both simple identifiers AND identifiers prefixed by
+the #-character are accepted and define a symbol within that literal.
+<BR>
+However, if a symbol named 'nil', 'true' or 'false' is required as an array
+element (i.e not the value), a #-character MUST be preceeded, as in:
+<CODE><PRE>
+    #(1 2 3 #nil #true #false true)
+</PRE></CODE>
+In the above example, the 5th element will be the symbol true, while
+the last element will be the object true.
+(Which -for your confusement- is the object bound to the symbol true :-)
+
+
+
+
+<H3><A NAME="DOUBLECONSTS" HREF="#I_DOUBLECONSTS">'Double' Constants</A></H3>
+
+Although <CITE>Smalltalk/X</CITE> does not differentiate between Floats and Doubles
+  as <CITE>Smalltalk-80</CITE> does (i.e. short floats vs. double-floats),
+  float constants with a trailing "d" are accepted. However, these
+  literals will be compiled in any case into an <CITE>ST/X</CITE> Float object (which
+  is the equivalent to a Double in <CITE>ST-80</CITE>).
+<P>
+This may be changed in an upcoming version.
+Rationale:<br>
+ST/X uses double IEEE numbers in the Float class mostly for compatibility with
+Digitalk- and Squeak Smalltalks. If you really need single precision float arithmetic,
+use instances of the ShortFloat class in ST/X.
+
+
+
+
+<H3><A NAME="EOLCOMMENTS" HREF="#I_EOLCOMMENTS">End-of-line Comments</A></H3>
+
+<CITE>Smalltalk/X</CITE> allows special comments,
+which start with the character sequence:
+<CODE><PRE>
+    "/   (double-quote followed by slash)
+</PRE></CODE>
+and are treated as a comment to the end if the source-line.
+I.e. everything up to the end-of-line is ignored, even if it contains another
+comment, or comment closing character.
+Within string constants, this character sequence is ignored (i.e. not a comment).
+<P>
+Notice, that this feature is NOT compatible to other ST versions; code
+containing these to-end-of-line comments will not compile on other Smalltalks.
+<P>
+However, it simplifies porting of existing code to ST/X, since parts of the
+code can be easily commented out, by adding "/ to the beginning of each such
+line.
+<P>
+
+<!--
+<DL><DT>WARNING:<DD>
+if an upcoming ansi standard defines another character sequence for
+this kind of comments, <CITE>ST/X</CITE> may be changed without notice.
+Therefore, this feature (although very useful) should be only be used for
+temporary short-term changes or if portability is not an issue.
+</DL>
+-->
+
+<H3><A NAME="TOKENCOMMENTS" HREF="#I_TOKENCOMMENTS">Token Delimited Comments</A></H3>
+
+<CITE>Smalltalk/X</CITE> allows special comments,
+which start with an initial delimiter token sequence:
+<CODE><PRE>
+    "&lt;&lt;TOKEN   (double-quote followed by two less characters,
+		followed by an arbitrary alphanumeric token word)
+</PRE></CODE>
+The token word must be the only word on the comment start line,
+otherwise the comment is treated like a regular comment.
+This was done for backward compatibility, to e.g. allow regular comments
+like <CODE>"&lt;&lt;--- See here"</CODE>.
+<BR>
+After the token start line,
+all followup lines are treated as comment lines,
+up to a line starting with the delimiter token.
+<P>
+For example:
+<CODE><PRE>
+    "&lt;&lt;END
+    anything here, even other comments
+    or other token-delimited comments
+    END
+</PRE></CODE>
+<P>
+Notice, that this feature is NOT compatible to any other ST dialect;
+code containing these comments will likely not compile on other Smalltalks.
+However, portability chances are better, if the terminated line has the form:
+<CODE>TOKEN"</CODE> (i.e. the token is followed by a double quote).
+Such comments are recognized by other Smalltalks if NO double quote is contained inside.
+<P>
+This much simplifies the commenting of big junks of code,
+which may or may not contain any other comment in it.
+<P>
+We recommend to use such comments only temporarily and remove them
+before code is published or committed to the source repository,
+as they are definitely leading to problems when the code has to be ever ported
+to another Smalltalk dialect.
+
+<H3><A NAME="IVARREDEF" HREF="#I_IVARREDEF">Redefining Instance Variables</A></H3>
+
+Notice:
+<BR>
+<STRONG>The following has been disabled in all current versions</STRONG>
+<P>
+
+
+<CITE>Stc</CITE> allows subclasses to define instance variables with the same name
+  as already defined in superclasses. Normally, to do so is not a good idea
+  and discouraged. However, in certain situations (i.e. only a binary of the
+  subclass is available or you do not want to or may not change the source),
+  allowing this makes sense.
+<BR>
+  The flag <CODE>"-errorInstVarRedef"</CODE> tells <CITE>stc</CITE>
+to output a warning instead of an error,
+and continue with the compilation.
+<BR>
+A typical use for this flag is when you want to port a class from some other
+Smalltalk implementation, which includes an instance variable conflict due to
+a different internal implementation of one the classes superclasses in the
+original Smalltalk vs. Smalltalk/X.
+<BR>
+With this flag, this new class will access its own instance variable under
+that name (which was obviously the original intention when the class was
+written).
+This flag should be used only when porting (unmodifyable) code to ST/X -
+new classes should follow the rules.
+<P>
+
+
+
+<H3><A NAME="CASE_IN_VARS" HREF="#I_CASE_IN_VARS">Lowercase vs. Uppercase</A></H3>
+
+Normally it is required (by convention - not by language syntax) that
+all globals and class-variable names start with an upper case character,
+while instance variables and method/block args & vars start with a lower case
+character. By default, <CITE>stc</CITE> will stop compilation with an error if these rules
+are not followed. The compiler flags <CODE>"-errorLowerGlobal"</CODE> and
+<CODE>"-errorUpperLocal"</CODE> turn these into warning messages.
+(even those warnings can be turned off.)
+<BR>
+These flags should only be
+used when porting (unmodifyable) code to <CITE>ST/X</CITE> - new classes should
+follow the rules.
+
+
+
+<H3><A NAME="HERE_VAR" HREF="#I_HERE_VAR">The 'here' Pseudovariable</A></H3>
+
+<CITE>Smalltalk/X</CITE> supports another type of send beside the normal
+<VAR>'self'</VAR> and <VAR>'super'</VAR> sends: the <VAR>'here'</VAR>-send.
+<P>
+To make this extension be compatible with existing code,
+<CODE>'here'</CODE> is only
+recognized as the pseudoVariable, if no other variable named as
+<CODE>here</CODE>
+is defined in the compilation scope.
+<BR>
+Thus, if any instance-, local or argument variable exists with a
+name of <CODE>'here'</CODE>,
+the compiler will produce code for a normal send - not creating 'here'-sends.
+<P>
+<A HREF="#HERESENDS">Read</A> the above section on the semantic and use of <VAR>'here'</VAR>-sends.
+
+
+
+<H3><A NAME="EXTENDED_BINOPS" HREF="#I_EXTENDED_BINOPS">Extended Binary Operators</A></H3>
+
+Starting with release 4.1.3,
+binary operators may consist of up to 3 special characters
+(the Blue Book specified a maximum of 2 characters).
+<BR>
+Thus, it is now possible to define messages named: <CODE>#'&lt;=>'</CODE>, <CODE>#'==>'</CODE>,
+<CODE>#'==='</CODE> or even <CODE>#':=:'</CODE>.
+<P>
+Binary operators may be constructed from 1 to 3 characters from the following character set:
+<CODE><PRE>
+	-  +  *  /  \
+	=  &lt;  >  ~
+	&amp;  |  @  #
+	,  ?  !  %  :
+</PRE></CODE>
+excluded is, of course, the assignment: <CODE>#':='</CODE>, and multiple hash characters
+(for backward compatibility, ## is interpreted as the hash symbol itself).
+
+
+
+<H3><A NAME="UNICODE" HREF="#I_UNICODE">Unicode String- and Character Literals</A></H3>
+
+Starting with release 5.2, unicode is allowed in string- and character literals.
+CharacterArrays will now be instances of String, Unicode16String or Unicode32String,
+depending on the highest codepoint present in the string.
+<BR>
+The string classes have been enhanced to both handle Unicode (isNationalLetter, isUppercase,
+asUppercase etc.) and to perform automatic conversion as required.
+(For example, when concatenating 8 bit and 16bit strings).
+<BR>
+Notice that, although ST/X does handle 32 bit strings, both the X11 and the windows
+display interfaces may be still limited to 16bit strings at the time of this
+writing. Therefore, we recommend not going beyond a codepoint of 16rFFFF.
+
+<P>
+The external source code file format is now utf8.
+<P>
+For backward compatibility, ST/X marks utf8-encoded files by writing
+an encoding pragma:
+<CODE><PRE>
+	"{ Encoding: utf8 }"
+</PRE></CODE>
+near the beginning of generated source files, and detects utf8 encoded
+files by the presence of the "encoding:" string somewhere near the beginning of
+the file.
+<BR>
+If no such pragma is found in a source file, the file is assumed to be
+iso8859-1 (i.e. latin1) encoded.
+<P>
+Tools which read or write external files (i.e. the bytecode compiler,
+the external stc-compiler, Workspace and FileBrowser)
+look for and care for this pragma.
+<P>
+Please note, that this format is <B>backward compatible</B> to other (non-utf8) Smalltalks,
+and it is still possible to file-in ST/X source files into Squeak, VisualWorks etc.
+<BR>
+This is actually even possible if non-ascii characters are present in String literals,
+as these would appear in the target system as funny strings, which could (in theory) be still
+utf8 decoded (manually in the browser, or at runtime or automatically during fileIn).
+<BR>
+Sorry, but portability is lost if non-ascii Character literals are present in the filed-out code
+- these will lead to a syntax error when loaded into a non utf8 Smalltalk system.
+<BR>
+We therefore recommend to NOT use non-ascii character literals, instead use Strings wherever possible,
+and use as "(Character value:xxx)" construct (which is evaluated at compile-time by the ST/X compilers)
+when required.
+
+<P>
+Notice that the language has only been extended for String- and Character
+literals; non-ascii letters/digits are still NOT allowed for message selectors, variable-
+and class names etc.
+<BR>
+This was done by purpose - allowing this would probably make the code less readable,
+and also much less portable. Also, it is a good idea to force all programmers to
+stick to (at least) the same language in their program code (and comments).
+We'd even recommend using english (just consider, how hard it will be to read and understand
+a program written in Chinese, Russian or Czech, if you are not a native speaker).
+
+
+
+<H2><A NAME="MORECHECKS" HREF="#I_MORECHECKS">More Codechecks</A></H2>
+
+The <CITE>stc</CITE> compiler performs some more checks on your code;
+this (currently) may result in classes being accepted by the incremental
+compiler, but fail to compile with an error being reported by <CITE>stc</CITE>.
+<P>
+Additional checks performed are:
+<UL>
+<LI>local variables which are used but never assigned
+<BR>
+Example:
+<CODE><PRE>
+    !Someclass methodsFor:'foo and bar'!
+
+    foo
+	|var|
+
+	var ifTrue:[
+	    ... do something ...
+	].
+    !
+</PRE></CODE>
+or:
+<CODE><PRE>
+    bar
+	|var1 var2|
+
+	var1 := var2 + 1
+    !
+</PRE></CODE>
+if compiled using the incremental bytecode compiler, the above methods
+will lead to a runtime error (<CODE>doesNotUnderstand</CODE>),
+while <CITE>stc</CITE> refuses to compile these right away.
+<P>
+
+<LI>empty local variable declaration in methods or blocks
+<BR>
+Example:
+<CODE><PRE>
+    !Someclass methodsFor:'foo and bar'!
+
+    foo
+	||
+
+	... do something ...
+    !
+</PRE></CODE>
+<CITE>stc</CITE> will report a syntax error.
+In the <CITE>Blue Book</CITE>, it is not specified if the above is
+valid or not. Currently, the incremental bytecode compiler accepts it
+(to allow easier fileIn of alien code), while <CITE>stc</CITE> refuses
+to compile this.
+<BR>
+Future versions will be fixed to show common behavior - either both accepting or
+refusing this construct.
+</UL>
+
+
+
+
+<H2><A NAME="LIMITATIONS" HREF="#I_LIMITATIONS">Limitations</A></H2>
+
+<H3><A NAME="NOSUBCLASS" HREF="#I_NOSUBCLASS">Restricted Subclassing</A></H3>
+
+These classes cannot be subclassed:
+<UL>
+<LI><CODE>UndefinedObject</CODE>
+<LI><CODE>SmallInteger</CODE>
+<LI><CODE>True</CODE>
+<LI><CODE>False</CODE>
+</UL>
+Classes of which subclasses may not add named instance variables:
+<UL>
+<LI><CODE>Float</CODE> (restriction removed with releae 2.10.5)
+</UL>
+There are a few other classes, of which subclasses may behave strange.
+For example, instances of a <CODE>Symbol</CODE> subclass may not be
+seen as true symbols in many places; subclasses of <CODE>String</CODE>
+will return an instance of <CODE>String</CODE> when asked to copy,
+convert etc.
+<P>
+In general, be very careful in subclassing any of:
+<UL>
+<LI><CODE>Float</CODE>
+<LI><CODE>String</CODE>
+<LI><CODE>Symbol</CODE>
+<LI><CODE>Context</CODE> & <CODE>BlockContext</CODE>
+<LI><CODE>Method</CODE> & <CODE>Block</CODE>
+</UL>
+
+These restrictions also apply to the incremental byteCode compiler.
+<P>
+Late note:
+<BR>
+Some restrictions and strange behavior were removed with release 2.10.5.3;
+<BR>
+now, you can subclass <CODE>Context</CODE>, <CODE>Method</CODE>,
+<CODE>Block</CODE> and <CODE>Behavior</CODE> AND have these objects
+be treated correctly by the VM's runtime system
+(i.e. accept and treat them like other codeObjects and classObjects respectively).
+
+
+<H3><A NAME="NAMESPACE_LIMITS" HREF="#I_NAMESPACE_LIMITS">Use of Namespaces and Private Classes</A></H3>
+
+The following restrictions apply to namespaces and/or private classes:
+<UL>
+<LI>the name of a namespace may not be the same as the name of any other class
+or global variable.
+<P>
+<LI>the name of a private class may not be the same as the name of any class variable
+in its owning class.
+<P>
+<LI>although possible, we recommend to not use nested private classes
+<P>
+<LI>if a class, which is not in the default (i.e. Smalltalk-) namespace,
+is filedOut and loaded into another Smalltalk system (i.e. VisualWorks),
+the class will be installed as a regular (i.e. globally visible) class there.
+<BR>
+For portable code, namespaces should not be used or used with great care.
+
+<P>
+<LI>private classes CANNOT be filedOut and loaded into another system,
+without manually change of either the generated sourcefile,
+or the other system's scanner/parser.
+</UL>
+
+
+
+<H3><A NAME="NO_CONTINUATIONS" HREF="#I_NO_CONTINUATIONS">No Continuations</A></H3>
+
+In <CITE>ST/X</CITE>, contexts are not fully usable as continuations;
+this means for example, that a method's context cannot be restarted or resumed,
+once the context has returned.
+<BR>
+This affects and complicates implementations of backtracking algorithms,
+coroutines and other fancy control tricks.
+<P>
+It is planned for such features to be at least partially supported in future versions.
+
+
+
+<H2><A NAME="KNOWN_BUGS" HREF="#I_KNOWN_BUGS">Known Bugs & Limitations</A></H2>
+
+The current version of <CITE>ST/X</CITE> has some limitations and bugs,
+of which some are going to be removed with one of the next versions,
+others will probably remain.
+<BR>
+There are workarounds for these limitations.
+
+
+<H3><A NAME="BLOCK_LOCALS" HREF="#I_BLOCK_LOCALS">Block Local Variables</A></H3>
+
+<CITE>stc</CITE> cannot always generate inline code for blocks with locals variables.
+It will occasionally generate less performant full block calls.
+This affects the block arguments of <CODE>ifTrue:</CODE>,
+<CODE>ifFalse:</CODE>, <CODE>whileTrue:</CODE>, <CODE>whileFalse:</CODE>,
+<CODE>timesRepeat:</CODE>, <CODE>to:do:</CODE> and <CODE>to:by:do:</CODE>.
+<P>
+For <CODE>to:do:</CODE> and <CODE>to:by:do:</CODE>,
+this bug will show up only for Integer arguments
+where stc can deduce Integer types at compile time.
+<P>
+This happens if the stc compiler thinks, that there is a chance for the block to be
+exposed to the outside world via subblocks or thisContext. Often, stc is too conservative in this
+analysis.
+<DL><DT>Workaround:<DD>
+use method variables instead of block locals
+(there is no performance lost,
+since inlined blocks access method locals as fast as block locals).
+</DL>
+<STRONG>This has been fixed with release 2.10.4.</STRONG>
+
+
+
+<H3><A NAME="CASCADES" HREF="#I_CASCADES">Cascades Requiring Temporaries</A></H3>
+
+  Cascades which contain a message as the original receiver and thus need a
+  temporary to hold the result of the original send are not implemented, i.e.
+  the following code will not compile with stc:
+<CODE><PRE>
+	(anObject xxx) foo; bar; baz
+</PRE></CODE>
+  while
+<CODE><PRE>
+	anObject foo; bar; baz
+</PRE></CODE>
+will be ok.
+<P>
+<DL><DT>Workaround:<DD>
+add a temporary and keep the result of the first send there.
+Do the cascade on this temporary.
+</DL>
+<STRONG>This has been fixed with release 2.10.5.</STRONG>
+
+
+
+<H3><A NAME="NAMECONFLICTS" HREF="#I_NAMECONFLICTS">Conflicting Names of Local Variables and Structures/Typedefs</A></H3>
+
+  Names of C-Structures, structure fields and typedefs may not conflict with the
+  names of method or block local variables. "stc" will produce wrong code,
+  leading to a syntax error in the C-compilation phase.
+
+  Example:
+<CODE><PRE>
+    !MyClass class primitiveDefinitions!
+
+    %{
+	struct abc {
+	    int field1;
+	    char field2;
+	};
+    %}
+    ! !
+
+    !MyClass methodsFor:'foo'!
+
+    method
+	|local1 field2|
+	...
+</PRE></CODE>
+will lead to an error, since the name <VAR>field2</VAR>
+is used both in a c-structure
+and as a method local.
+This may also happen with other C-names (i.e. typedefs,
+structure names, enum values etc.) Care should be taken, since these
+name conflicts may also be due to some <CODE>#define</CODE> in an included
+C header file.
+<P>
+Compiling code with such conflicts will usualy lead to errors in the
+C-compilation phase. Since <CITE>stc</CITE> does not parse (and understand) the structure of primitive code, it will not notice this conflict.
+<P>
+<DL><DT>Workaround:<DD>
+rename the local variables.
+</DL>
+
+
+
+<H3><A NAME="ARGLIMIT" HREF="#I_ARGLIMIT">Limited Number of Method & Block Arguments</A></H3>
+
+Currently, there is a limit of 15 arguments to methods.
+It is NOT possible to evaluate methods with more arguments
+by using <CODE>perform:withArguments:</CODE>.
+<BR>
+The number of block arguments is limited to 7.
+<P>
+<DL><DT>Workaround:<DD>
+If more argument values have to be passed, the arguments should be put into
+a collection, or other special object, which is then passed as argument.
+</DL>
+
+
+
+<H3><A NAME="LOCALLIMIT" HREF="#I_LOCALLIMIT">Limited Number of Method & Block Locals</A></H3>
+
+Currently (and maybe forever) there is a maximum of 127 local variables in
+both methods and blocks.
+Although this limit is hard to reach for normal code, it may show up when
+Smalltalk code is created automatically - i.e. by some translators.
+<P>
+A suggested workaround is to create some collection and put local values into
+that.
+
+
+
+
+<H3><A NAME="TEMPLIMIT" HREF="#I_TEMPLIMIT">Limited Number of Method & Block Temporaries</A></H3>
+
+In the code created by <CITE>stc</CITE>, nested expressions evaluate their
+intermediate results into (anonymous) temporary variables. These are placed
+into the context (and could, theoretically be inspected).
+<P>
+There is (currently) a limit of 31 temporaries, leading to a maximum
+expression nesting of 31 (since for every nesting level, one such temporary
+is needed).
+<P>
+The compiler is reusing temporaries as much as possible, so this limit is
+hardly ever reached - if it does, rewrite the complicated expression, using
+method locals as explicit temporaries.
+<P>
+<DL><DT>Workaround:<DD>
+Simplify the expression(s). Use local variables as explicit temporaries.
+</DL>
+
+
+
+<H3><A NAME="LINELIMIT" HREF="#I_LINELIMIT">Limited Line Number Info</A></H3>
+
+For interpreted bytecode, there is a limit of 255 lines, for which
+line number information can be recorded.
+Larger methods can be compiled, but no debugging line number information
+is available for code after the 255th line.
+(the reason is of course, that a byte is used for lineNumber information;
+ we do not want to waste more memory and/or use a more complicated variable
+ number encoding scheme)
+<BR>
+When encountered in the debugger, all lines above the 255th line
+are highlighted (since the debugger cannot tell exactly, where the programs
+state of execution is).
+<BR>
+This limitation is relaxed to 32767 in stc.
+<P>
+<DL><DT>Workaround:<DD>
+There is no workaround - simplify your methods.
+<BR>
+In practice, such long methods are very rare - mostly appearing in
+automatically generated code (which is not subject of debugging anyway ;-).
+</DL>
+
+
+
+
+<H3><A NAME="LARGEINT_LITERAL" HREF="#I_LARGEINT_LITERAL">No Large Integer Constants</A></H3>
+
+<STRONG>This has been completely fixed with release 4.x:
+<BR>
+LargeInteger constants with any radix are supported,
+up to a maximum value of 2^1023-1
+</STRONG>
+<P>
+
+<STRONG>This has been partially fixed with release 2.10.6:
+<BR>
+LargeInteger constants with radix 2, 8, 10 and 16 are now supported,
+up to a maximum value of 2^1023-1
+</STRONG>
+<P>
+
+<CITE>Stc</CITE> cannot currently generate LargeInteger constants.
+Versions before 2.10.2 did not even detect overflow in integer constants,
+silently generating wrong code.
+<CITE>Stc</CITE> versions after 2.10.2 will quit compilation with an error.
+<BR>
+You have to make sure, that your integer constants fit into 31 bits
+(including the sign-bit, this gives 30bits of absolute value).
+Thus, the following code will lead to a compilation error:
+<CODE><PRE>
+    |v|
+
+    v := 16r12345678.          "ok, fits into 31 bits"
+    v printNL.
+
+    v := 16r87654321.          "not ok, does not fit into 31 bits"
+    v printNL.
+</PRE></CODE>
+The built-in incremental compiler DOES handle large integer constants
+correctly; the above only applies to <CITE>stc</CITE>-compilation.
+<P>
+<DL><DT>Workaround:<DD>
+(this is only a temporary workaround; later versions of stc will be able
+to handle & generate large constants.)
+<P>
+Add a class variable (such as MYLONGCONST) and initialize it in the
+classes <CODE>#initialize</CODE> method from a string.
+<BR>
+I.e. instead of:
+<CODE><PRE>
+    ...
+    x := 12345678901234567890.
+    ...
+</PRE></CODE>
+use:
+<CODE><PRE>
+    ...
+    classVariableNames:'MYCONST'
+    ...
+
+    initialize
+    MYCONST := '12345678901234567890' asInteger.
+    ...
+
+    ...
+    x := MYCONST.
+    ...
+</PRE></CODE>
+</DL>
+
+
+
+
+
+<H3><A NAME="POOLDICTS" HREF="#I_POOLDICTS">No Pool Dictionaries</A></H3>
+
+Up to vsn 5.3.x, <CITE>ST/X</CITE> does not support pool dictionaries.
+<P>
+Starting with release 5.3, SharedPools are implemented as classes whose
+class variables are imported and visible by other classes.
+The pools are defined as subclass of <CODE>SharedPool</CODE>,
+and the values should be set in the sharedPool's <CODE>#initialize</CODE> method.
+<BR>
+See <CODE>OpenGLConstants</CODE> as an example.
+<P>
+As a side effect of the implementation (in the current 5.3 release), any classes' set of classVariable can be imported
+by another class as a sharedPool.
+Do not depend on this, as this feature may be removed without notice in future versions.
+<P>
+<DL><DT>Workaround (for pre 5.3 systems):<DD>
+Use a dictionary stored in a class or global variable.
+<BR>
+Access your poolVariables as
+<CODE><PRE>
+    <VAR>myDict</VAR> at:<VAR>name</VAR>
+</PRE></CODE>
+Initialize the dictionary in the classes' initialize method using:
+<CODE><PRE>
+    <VAR>myDict</VAR> at:<VAR>name1</VAR> put:<VAR>value</VAR>.
+	...
+    <VAR>myDict</VAR> at:<VAR>nameN</VAR> put:<VAR>value</VAR>.
+</PRE></CODE>
+
+</DL>
+
+
+<H3><A NAME="EMPTYCHUNK" HREF="#I_EMPTYCHUNK">Empty Chunks</A></H3>
+
+<CITE>Stc</CITE> cannot (currently) handle empty chunks.
+This means, that it is not possible to compile a file which contains code as:
+<CODE><PRE>
+    ...
+
+    "
+     commented out method definition
+    "
+    !
+
+    ...
+</PRE></CODE>
+instead, you have to include the chunk separator ('!') in the comment:
+<CODE><PRE>
+    ...
+    "
+     commented out method definition
+    !
+    "
+
+    ...
+</PRE></CODE>
+This is of course incompatible with the Smalltalk fileOut format definition
+and will be fixed in later <CITE>stc</CITE> versions.
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 1995 Claus Gittinger Development &amp; Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.78 $ $Date: 2017-02-07 17:58:37 $
+
+</BODY>
+</HTML>

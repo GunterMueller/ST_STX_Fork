@@ -1,0 +1,64 @@
+% comments 
+\definecolor{light-red}{rgb}{1, 0.2, 0.2}
+\newcommand{\comment}[1]{}
+
+% Comment following in final release !!!
+\renewcommand{\comment}[1]{$\blacktriangleright$ \textit{#1}$\blacktriangleleft$}{}
+
+\newcommand\ab[1]{\comment{{\em Alex}: #1}}
+\newcommand\jv[1]{\comment{{\em Jan}: #1}}
+\newcommand\michal[1]{\comment{{\em Michal}: #1}}
+\newcommand{\todo}[1]{\comment{\colorbox{light-red}{TODO:} #1}}
+
+% project names/logos
+
+\newcommand\perseus{{\sc Perseus}\xspace}
+\newcommand\perseusvm{{\sc Perseus VM}\xspace}
+\newcommand\cellstore{{\sc CellStore}\xspace}
+\newcommand\xquery{{\sc CellStore}/{\em XQuery}\xspace}
+\newcommand\selfp{Self/{\sc P}\xspace}
+\newcommand\smalltalkp{Smalltalk/{\sc P}\xspace}
+\newcommand\dotnet{{\sc .Net}\xspace}
+
+% Smalltalk Code 
+
+
+
+\newcommand{\stCode}[1]{\texttt{#1}}
+\newcommand{\stMethod}[1]{\texttt{#1}}
+\newcommand{\stClass}[1]{\texttt{#1}}
+\newcommand{\stSep}{\texttt{>>}}
+\newcommand{\stAssoc}{$\rightarrow$}
+\newcommand{\stAssign}{$\leftarrow$}
+\newcommand{\stBar}{$\mid$}
+\newcommand{\stSelector}{$\gg$}
+\newcommand{\stRet}{$\uparrow$\xspace}
+
+
+\newcommand{\eg}{\emph{e.g.,}\xspace}
+\newcommand{\ie}{\emph{i.e.,}\xspace}
+\newcommand{\etal}{\emph{et al.}\xspace}
+\newcommand{\co}[1]{{\texttt{#1}\xspace}}
+
+
+\newcounter{thelineno}
+
+\newcommand{\lineno}{\addtocounter{thelineno}{1}{\tiny\sf\arabic{thelineno}}\>}
+
+\newenvironment{code}
+    {\small\tt%
+     \setcounter{thelineno}{0}%
+     \begin{tabbing}xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill}
+    {%\hrule%
+     \end{tabbing}}
+
+
+\newcommand{\icode}[1]{{\small\tt #1}}
+
+
+%\renewcommand{\paragraph}[1]{{\noindent\textbf{#1}\\}}
+
+
+
+
+

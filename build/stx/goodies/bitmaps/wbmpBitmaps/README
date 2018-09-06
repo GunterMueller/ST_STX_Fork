@@ -1,0 +1,7 @@
+Test files for the WBMPReader.
+
+These are in Wireless Application Protocol Bitmap Format,
+which is a bitmap format optimized for mobile computing devices.
+(that's what they say:
+but there is not much optimized here - it is basically
+a dimension followed by the monochrome bits, uncompressed)

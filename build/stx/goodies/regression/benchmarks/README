@@ -1,0 +1,2 @@
+run with:
+    stx -I --load CollectionBenchmarks.st --run CollectionBenchmarks

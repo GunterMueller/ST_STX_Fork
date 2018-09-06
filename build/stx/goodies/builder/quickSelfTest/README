@@ -1,0 +1,13 @@
+A quick selftest running non-GUI after a jenkins build
+
+to start:
+    sh run.sh
+
+or
+    run.bat (windows)
+
+executes the tests found in ~/exept/regression/*
+and generates a junit-xml compatible output file 'testresult.xml',
+(to be consumed by jenkins).
+
+Also some metric info is written to 'metrics.xml'

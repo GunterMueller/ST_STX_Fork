@@ -1,0 +1,184 @@
+*******************************************************
+
+WORK IN PROGRESS
+
+*******************************************************
+
+A short note on ODBC interfacing under UNIX:
+    many dataBases provide an ODBC interface library
+    (typically as a dll/sharedObject or as a library-archive).
+    These provide the typical ODBC Api-Entries, such as SQLAlloc, SQLExecute etc.
+    However, all of them are bound to and are specific for a single database,
+    such as MySQL, Adabas, Oracle etc.
+
+    In addition, there exists a thing called DriverManager, which provides the same
+    API towards the application, but wraps multiple "per-database" interface libraries.
+    This allows for multiple (different) database interface libraries to be used
+    simultanously.
+
+    This Smalltalk ODBC interface can be used both with and without a DriverManager.
+    Without a driver manager:
+       only the single database that has been linked in is accessible
+       (i.e. mySQL, adabas, oracle etc.).
+       It will be impossible to access any other database via odbc from st/x.
+       (Due to function name conflicts, it is NOT possible to bind multiple
+	of those libraries with STX).
+
+    With a driver manager:
+       the driver manager is able to dynamically load/unload the concrete odbc
+       interface-library as required per dataSource.
+       Multiple different databases can be accessed via odbc.
+
+    We highly recommend the use of either the unixODBC or iODBC managers,
+    which are avalable as open source via "http://www.unixodbc.org" and
+    "http://www.iodbc.org" resp..
+
+
+Currently, this code has been tested and is known to work with the following
+ODBC-libraries/ODBC driver managers:
+    name        is-it-a-driver?         comment(s)
+----------------------------------------------------
+    unixODBC        yes                 recommended; ===>>> use unixODBC2.2.7
+					2.2.6 and below have a bug in SQLConnect
+					in that a call to CHECK_SQLGETENVATTR is missing
+					in __connect_part_one, which leads to a segmentation
+					violation with some drivers (myODBC, for example).
+
+    iODBC           yes                 recommended
+
+    mySQL/myODBC    no                  tested
+
+    msWindows-      yes                 untested;
+    -ODBC                               however, compiles ok and executes most
+					of the testCases in ODBCTests.
+
+    SYBASE          no                  used to work a long time ago,
+					but has not been tested for a while.
+
+    ADABAS          no                  used to work a long time ago,
+					but has not been tested for a while.
+
+If you want to experiment with the current release,
+AND you do have a lib different from the above ODBC libs,
+please have a look at (and edit manually) the Make.proto
+file, to specify the name/and or location of the required
+db-library files (and a bunch of other defines).
+
+Notice, we cannot deliver a fully linked library for any database,
+for licence reasons - you must get the DB interface library from elsewhere.
+
+Sorry for those inconveniences ...
+
+
+HOW TO MAKE:
+------------
+
+MS-Windows
+    simply execute "bmake"
+    it should link-in the "odbc.dll", using "odbc.lib" found in $(BCC)\lib
+    or $(BCC)\lib\PSDK.
+    Do not forget to configure some dataSources using microsofts ODBC-setup dialog.
+
+Prerequisites (Unix/Linux):
+    For iODBC:
+	unless already installed on your system,
+	download either the source or binary (rpm) package and install
+	as required.
+	For iformation on how to configure drivers and dataSources, have a look
+	at "http://www.iodbc.org"
+
+    For UnixODBC:
+	download the unixODBC source package (tar file) from
+	    "http://www.unixodbc.org"
+	(We used the current version, unixODBC-2.2.7)
+	Unpack the archive, configure and make.
+	Install the shared libraries via "make install".
+	If your unix/linux already includes the unixODBC libraries,
+	ensure that its based upon (at least) version 2.2.7;
+	if not, upgrade as described above.
+
+	Be aware, that the qt package set is required on your machine,
+	if you plan to use the DriverManager and DataManager applications
+	which are provided with the unixODBC package.
+	Without these apps the setup of drivers and dataSources is much more
+	complicated.
+	The qt package can be downloaded from "http://www.trolltech.com".
+
+	Also, keep in mind that the unixODBC provides merely an interface to
+	various concrete odbc libraries (such as postgresSQL, oracle or myODBC).
+	Except for the text-file interface, unixODBC does not provide a "real"
+	database (however, the textfile-API is good enough for testing).
+	For real applications, you might want to download the mySQL package and
+	install it along with the myODBC library.
+
+	If you do not have qt installed, take the following prototype configurations
+	to start with (read the unixODBC documentation for more info):
+
+	Sample driver descriptions for "/usr/local/etc/odbcinst.ini"
+	and "/usr/local/etc/odbc.ini" are found in the sampleConfigs subDirectory.
+
+Building the smalltalk interface library:
+  Step1:
+    edit the "WHICH_ODBC=" - line near the beginning of
+    the Make.proto file, to reflect the ODBC library which is
+    to be used.
+
+    For UnixODBC:
+	WHICH_ODBC=unixodbc
+
+    For myODBC/mySQL:
+	WHICH_ODBC=myodbc
+
+    For ADABAS:
+	WHICH_ODBC=adabas
+
+	if your ADABAS is not installed in /ADABAS-ENTRY,
+	edit the "ADABAS_HOME=" entry as required.
+
+
+  Step2:
+    recreate the Makefile from the Make.proto:
+
+    either via (if you already have a Makefile here):
+	make mf
+
+    or (if there is no Makefile yet):
+	../../rules/stmkmf
+
+  Step3:
+    generate a libodbc.so:
+	make
+
+  Step4:
+    For ADABAS:
+	export DBROOT=<whereever your adabase has been installed)
+
+    - start smalltalk/x.
+    - fileIn (via the fileBrowser) the libdb.so-library (in the parent directory)
+       and the libodbc.so-library.
+
+
+  Step5:
+    if you want these libraries to be linked into your ST/X
+    system (so you dont need the fileIn),
+    change the Make.proto file in projects/smalltalk to include
+    the libdb.so and libodbc.so.
+
+    As a recommended alternative, create a symbolic link or copy
+    the libdb.so/libodbc.so libraries to somewhere along the LD_LIBRARY_PATH or
+    ST/X lib-path,
+    and add the following lines to your 'patches' or 'private.rc' file:
+	Smalltalk fileInClassLibrary:'libdb'.
+	Smalltalk fileInClassLibrary:'libodbc'.
+
+  Step6:
+    try the testcases in SQL::ODBCTests.
+    And/or open up the ODBC-Browser-Application named SQL::ODBCDataManager.
+    (you should see your dataSources in the left tree).
+
+
+Future:
+    We are aware of the fact, that this API is still very inconvenient
+    for a smalltalk programmer and plan to add some data modeler
+    on top of this, which will generate the database object classes
+    automatically for you.

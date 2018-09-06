@@ -1,0 +1,199 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X GUI classes - Bitmap images</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="color.html"> <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html#I_COLLECTIONS"> <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="view.html"> <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<P>
+Classes of main interest are:
+<UL>
+<LI> <A HREF="#IMAGE" NAME="I_IMAGE">Image</A>
+<LI> <A HREF="#IMAGEREADER" NAME="I_IMAGEREADER">ImageReader</A>
+</UL>
+
+<H2><A NAME="IMAGE" HREF=#I_IMAGE">Image - bitmap images</A></H2>
+<P>
+
+<CITE>Smalltalk/X</CITE> supports black & white, greyscale and color images with
+resolutions of 1, 2, 4, 8, 16, 24 and 32 bits per pixel.
+Independent of
+its depth, any image may have a photometric of greyScale, palette
+(i.e. uses a color lookup table) or trueColor.
+<P>
+When displayed, images are approximated (i.e. dithered)
+if the displays capabilities force this.
+For example, conversion of color images to dithered black & white or
+greyscale images is done automatically.
+<P>
+Images can be imported (i.e. loaded from a file)
+in a number of formats; among others, the common formats
+are supported:
+<UL>
+<LI>PNG, JPG, GIF
+<LI>BMP, PCX, PBM, Targa
+<LI>TIFF, Targa, FAX G3
+<LI>OS/2 and Windows Icon and Bitmap formats
+<LI>X Bitmap, X Pixmap and X window dump formats (XBM, XPM and XWD)
+<LI>Sun icon and Sun raster format
+<LI>old Smalltalk-80 form file format
+</UL>
+Export of images (i.e. saving to a file) is supported in PNG, BMP, GIF, TIFF, XBM and XPM formats;
+other formats may be added upon request (or provided by third parties).
+<P>
+Some image manipulation functionality is provided by the Image classes;
+for example, flip, rotate, shrink and magnify (by arbitrary factors).
+<P>
+Typical uses:
+<P>
+<UL>
+<LI> creation (loading a file):
+<CODE><PRE>
+<VAR>anImage</VAR> := Image fromFile:<VAR>fileName</VAR>
+</PRE></CODE>
+
+<LI> magnification:
+<CODE><PRE>
+<VAR>magnifiedImage</VAR> := <VAR>anImage</VAR> magnifiedBy:<VAR>scalePoint</VAR>
+</PRE></CODE>
+
+<LI>  using as a views background:
+<CODE><PRE>
+<VAR>aView</VAR> viewBackground:<VAR>anImage</VAR>
+</PRE></CODE>
+
+<LI>  using as a topViews icon:
+<CODE><PRE>
+<VAR>aTopView</VAR> icon:<VAR>anImage</VAR>
+</PRE></CODE>
+
+<LI> displaying in a view (or graphicsContext):
+<CODE><PRE>
+<VAR>aView</VAR> displayImage:<VAR>anImage</VAR>
+</PRE></CODE>
+</UL>
+
+<P>
+Example:
+<A TYPE="example">
+<CODE><PRE>
+    (Image fromFile:'../../goodies/bitmaps/gifImages/garfield.gif') inspect
+</PRE></CODE>
+</A>
+as icon:
+<A TYPE="example">
+<CODE><PRE>
+    |myView|
+
+    myView := StandardSystemView new.
+    myView extent:200@200.
+    myView icon:(Image fromFile:'../../goodies/bitmaps/xbmBitmaps/TicTacToe.xbm').
+    myView open
+</PRE></CODE>
+</A>
+as view background:
+<A TYPE="example">
+<CODE><PRE>
+    |myView|
+
+    myView := View new.
+    myView viewBackground:((Image fromFile:'../../goodies/bitmaps/xbmBitmaps/TicTacToe.xbm') magnifiedBy:1.5).
+    myView open
+</PRE></CODE>
+</A>
+as drawing pens color:
+<A TYPE="example">
+<CODE><PRE>
+    |myView|
+
+    myView := View new.
+    myView extent:200@200.
+    myView openAndWait.
+
+    myView paint:((Image fromFile:'../../goodies/bitmaps/xbmBitmaps/TicTacToe.xbm') magnifiedBy:0.3).
+    myView lineWidth:10.
+    myView displayLineFrom:10@10 to:100@100.
+    myView displayLineFrom:100@10 to:10@100.
+</PRE></CODE>
+</A>
+another drawing pens color:
+<A TYPE="example">
+<CODE><PRE>
+    |myView|
+
+    myView := View new.
+    myView extent:400@200.
+    myView openAndWait.
+
+    myView paint:(Image fromFile:'../../goodies/bitmaps/xpmBitmaps/countries/argentina.xpm') on:(Color yellow).
+    myView font:(Font family:'helvetica' face:'bold' size:64).
+    myView displayOpaqueString:'hello' at:50@50.
+</PRE></CODE>
+</A>
+Notice, that it may take some time to load images from a file, and
+also to allocate colors and convert the image for the display device.
+<BR>
+Therefore, images are usually kept in some instance or class variable
+and reused (cached). The above examples are somewhat unrealistic.
+<P>
+Press here for more details about:
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:Image backRef:'image.html'">
+<CODE>Image</CODE></A>.
+<P>
+
+
+
+<H2><A NAME="IMAGEREADER" HREF=#I_IMAGEREADER">ImageReader - Bitmap Image I/O</A></H2>
+<P>
+ImageReader is itself an abstract class; concrete subclasses care for the various
+supported image formats.
+Although the names of these classes imply readers, most of them also support writing
+of bitmap images. For example, PNG, GIF, TIFF and BMP files can also be written.
+<BR>
+As an example, the following code reads an image in GIF-format, and writes
+it into another file in the BMP format:
+<A TYPE="example">
+<CODE><PRE>
+    |img|
+
+    img := Image fromFile:'../../goodies/bitmaps/gifImages/garfield.gif'.
+    img saveAs:'garfield.bmp'.
+</PRE></CODE>
+</A>
+if programmed as above, the format is choosen by the saveAs: method acording to the files
+extension. This may not always be the correct choice.
+An explicit reader should be used, if in doubt:
+<A TYPE="example">
+<CODE><PRE>
+    |img|
+
+    img := Image fromFile:'../../goodies/bitmaps/gifImages/garfield.gif'.
+    WindowsIconReader save:img onFile:'garfield.foo'.
+</PRE></CODE>
+</A>
+<P>
+Press here for more details about:
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:ImageReader backRef:'image.html'">
+<CODE>ImageReader</CODE></A>.
+
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif">
+Copyright © 1995 Claus Gittinger Development & Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.22 $ $Date: 2016-01-21 16:22:39 $
+</BODY>
+</HTML>

@@ -1,0 +1,51 @@
+Subdirectories of this directory contain the source
+of some applications and demo programs.
+
+(
+ the directory name 'clients' is somewhat historic, from times
+ when the development system did not exist, and the 'clients' were
+ linked, standalone executable X-client programs...
+)
+
+Most stuff here is outdated, some programs have been written 20years ago
+and not or minimally maintained since then.
+
+There are:
+
+    AddrBook            a simple address & telno application
+
+    Animation           walking man & rotating globes
+
+    Clock               an xclock replacement
+
+    Demos               more small demos
+			look for WindowTreeView
+
+    DirView             a finder like directory view
+
+    DocTool             document view, can display RTF files,
+			text and images
+
+    DrawTool            a mac-draw like drawing program (nice)
+
+    GLdemos             GL-interface demos for SGI workstations
+			and vogl-GL simulator
+
+    LogicTool           digital logic simulation (nice)
+
+    MailTool            another mail reader
+
+    NewsTool            another news reader
+
+    Tetris              have fun
+    TicTacToe           have fun
+
+NO WARRANTY
+All of these programs are demo clients or goodies.
+They are not meant as finished applications, but instead
+are to be used as HOW-TO examples.
+If any does not work as expected, dont blame the author,
+but instead fix the problem and return the fix to cg@ssw.de.
+
+I will try to update and maintain these programs but there is
+no guarantee.

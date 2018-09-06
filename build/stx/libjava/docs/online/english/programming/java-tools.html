@@ -1,0 +1,54 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Java Support - Tools</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="java-getting-started.html">   <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="java.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="java-interop.html">  <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Java Support - Tools</H1>
+
+<h2>JUnit Integration</h2>
+
+<p>
+  STX:LIBJAVA automatically recognizes <a href="http://www.junit.org">JUnit</a> test cases (and <a href="http://sourceware.org/mauve/">Mauve</a> testlets too, but you aren't using those probably :) when loaded and makes them accessible from standard Smalltalk/X Test Runner. Create Junit 3 or JUnit 4 test case, compile it and load it into STX:LIBJAVA. Test Runner can be opened by selecting the button on Smalltalk Launcher.
+</p>
+
+<p>
+  You might use <code>Java loadClassesIn: '/home/m/anyDirectory'</code>, which automatically adds that directory to the classpath and then loads all classes (therefore test cases too) in that directory into STX:LIBJAVA. Java must be initialized to use that method.
+</p>
+
+
+<h2>Groovy Workspace</h2>
+
+<p>
+  <a href="http://groovy.codehaus.org">Groovy</a> is a dynamic language running on top of the Java, which syntax is backward compatible with Java. It includes an evaluator written in Java, which is used in Smalltalk/X workspace.You can evaluate any valid Groovy code in the workspace. <i>Aren't we running Groovy code, which runs on Java, which runs on stx:libjava, which runs on Smalltalk/X, which is written in C?</i>
+</p>
+
+<p>
+ Select Groovy from the workspace menu and insert arbitrary Groovy code (preferably magical 3 + 4), and hit <b>alt+p</b> to <b>print</b> the result or <b>alt+d</b> to <b>do it</b>. 
+</p>
+
+<p>
+  <b>Note:</b> you can see Java in the menu too, but currently it uses Groovy. This is work in progress and dynamic (re)compilation of Java code is going to be a feature of stx:libjava very soon.
+</p>
+
+<h2>More to be written...</h2>
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt> , <tt>&lt;stxlibjava-dev@googlegroups.com&gt;</tt>
+</ADDRESS>
+
+<HR>
+CVS: $Id: java-tools.html,v 1.5 2015-03-20 12:08:02 vrany Exp $
+</BODY>
+</HTML>

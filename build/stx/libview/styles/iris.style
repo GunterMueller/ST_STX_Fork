@@ -1,0 +1,36 @@
+; View defaultStyle:#iris
+;
+; silicon graphics style
+; (somwehat like motif, but with smooth edges and bells&whistles)
+;
+; $Header: /cvs/stx/stx/libview/styles/iris.style,v 1.32 2015-03-02 10:25:58 cg Exp $
+
+name                            #iris
+
+comment                 'Silicon graphics'' Iris look alike'
+previewFileName         'viewStyleSample_iris.png'
+
+#if (Language == #german) or:[Language == #de]
+comment  'an Silicon Graphics Iris angelehnter Stil'
+#endif
+
+#if (Language == #french) or:[Language == #fr]
+comment  'un style qui résemble Silicon Graphics Irix'
+#endif
+
+#if Screen current hasGreyscales
+viewGrey                        (Color grey:67) exactOrNearestOn:(Screen current)
+veryLightGray                   (Color veryLightGray) exactOrNearestOn:(Screen current)
+darkGray                        (Color darkGray) exactOrNearestOn:(Screen current)
+mediumGray                      (Color gray:50) exactOrNearestOn:(Screen current)
+#else
+viewGrey                        Color white
+lightColor                      Color grey:50
+veryLightGray                   Color veryLightGray
+darkGray                        Color darkGray
+mediumGray                      Color gray:50
+#endif
+
+#include 'iris.common'
+
+miniScroller.size               2.5     "/ in millimeters

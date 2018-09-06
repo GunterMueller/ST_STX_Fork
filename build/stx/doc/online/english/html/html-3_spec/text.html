@@ -1,0 +1,57 @@
+<title>Overview of Character-Level Elements</title> <h1>Overview of
+Character-Level Elements</h1>
+
+<B>Permitted Context:</B> %text<BR>
+<B>Content Model:</B> %text
+
+<p>Character level elements are used to specify either the structural
+meaning or the physical appearence of marked text without causing a
+paragraph break. Like most other elements, character level elements
+include both start and end tags. Only the characters between the tags
+are effected. For example:
+
+<pre>    This is &lt;EM&gt;emphasized&lt;/EM&gt; text.</pre>
+
+<p>Highlighting elements are allowed within the content of other
+highlighting elements, but implementations are not required to render
+these nested highlighting elements distinctly from non-nested elements.
+For example, implementations may render the following two cases
+identically:
+
+<pre>    plain &lt;B&gt;bold &lt;I&gt;italic&lt;/I&gt;&lt;/B&gt;</pre>
+<pre>    plain &lt;B&gt;bold &lt;/B&gt;&lt;I&gt;italic&lt;/I&gt;</pre>
+
+<p>Some character highlighting styles are more explicit than others
+about how they should be physically represented. Designate the
+information type rather than the character format wherever possible,
+unless for example, it is necessary to refer to the text as in "The
+italic parts are mandatory".
+
+<H3>Permitted Attributes</h3>
+
+<DL> <DT>ID <DD>An SGML identifier used as the target for hypertext
+links or for naming particular elements in associated style sheets.
+Identifiers are NAME tokens and must be unique within the scope of the
+current document.
+
+<DT>LANG <DD>This is one of the ISO standard language abbreviations,
+e.g. "en.uk" for the variation of English spoken in the United Kingdom.
+It can be used by parsers to select language specific choices for
+quotation marks, ligatures and hypenation rules etc. The language
+attribute is composed from the two letter language code from ISO 639,
+optionally followed by a period and a two letter country code from ISO
+3166.
+
+<DT>CLASS <DD>This a space separated list of SGML NAME tokens and is
+used to subclass tag names. By convention, the class names are
+interpreted hierarchically, with the most general class on the left and
+the most specific on the right, where classes are separated by a
+period. The CLASS attribute is most commonly used to attach a different
+style to some element, but it is recommended that where practical class
+names should be picked on the basis of the element's semantics, as this
+will permit other uses, such as restricting search through documents by
+matching on element class names. The  conventions for choosing class
+names are outside the scope of this specification.
+</DL>
+
+<!--NewPage-->

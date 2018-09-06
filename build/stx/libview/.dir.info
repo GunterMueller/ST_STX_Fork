@@ -1,0 +1,38 @@
+This directory contains the low level view and support classes.
+They are compiled by stc into the library 'libview'.
+These classes provide the minimum support for any application with graphical
+user interface - however, some stuff has been moved into an extra directory
+(libview2). Now, all medium level interfacing (mostly Model support, Layout
+and Imagereaders) is found there. This allows for simple applications 
+(which do not need models but instead use the old action-block schemes)
+to be linked without libview2.
+
+Depending on the configuration and capabilities of your Operating-
+System, the resulting classlibrary is one of:
+
+	libview.a      - an archive
+	libview.olb    - an archive (vms)
+
+	libview.obj    - a prelinked object library
+
+	libview.so     - a shared object
+	libview.dll    - a shared object (windows)
+
+the library includes init code (libview_Init) for all of its components.
+
+
+Things you can do here:
+
+    make                compile all classes, producing libview
+
+    make objs           compile all required object files
+
+    make install        compile all and install in DESTLIBDIR
+
+    make qinstall       only install - assumes binaries are up-to-date 
+
+    make check          syntax check only over all .st files
+
+    make <file>.o       compile <file>.st to object-file
+
+    make <file>.c       compile <file>.st to c intermediate

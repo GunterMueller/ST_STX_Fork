@@ -1,0 +1,185 @@
+<HTML>
+<HEAD>
+<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<TITLE>Quick Start Guide</TITLE>
+</HEAD>
+
+<BODY>
+<H1>Quick Start Guide</H1>
+
+Hello, welcome to Smalltalk/X!
+<P>
+When <CITE>ST/X</CITE> is started initially,
+it opens two windows for you:
+the <I>Launcher</I> and a <i>System Workspace</i>
+(in which you will probably read this text right now).
+<br>The Launcher is your central place to open other Smalltalk tools and to display status information and
+information messages.
+<br>
+Workspaces are little editor-like windows,
+into which code can be typed for immediate evaluation.
+Use it for code which is to be thrown away later,
+not for writing code which is to be kept longer.
+To extend or modify the system by writing new code,
+or to write your own applications,
+the <i>SystemBrowser</i> tool is used (which is described later).
+
+<P>
+Things you should do now:
+
+<UL>
+<LI>Read the <A HREF="getStart/quickIntro.html">"Show me what is Cool" introduction</A>
+<LI>Read the <A HREF="getStart/TOP.html">"Detailed Getting Started" document</A>
+
+<LI>Adjust the settings to your personal style
+<DL>
+
+<DT>
+Look & Feel:
+<DD>
+    <CITE>ST/X</CITE> supports multple view styles, which more or less mimic
+    existing Window Systems (Windows, Linux, Motif, Irix etc.).
+    The view style can be changed via the Launcher's
+<br>
+	<I>"System" - "Settings" - "ViewStyle" - "Style"</I> - dialog.
+<br>
+    Currently, the prettiest styles are the <b>'mswindowsxp'</b>, <b>'mswindowsvista'</b>
+    and <b>'adwaita'</b> styles
+    - even for non Windows/Linux systems.
+<br>If you are a nostalgic type and remember the 90s with their Silicon Graphics Workstations,
+    try the <b>'sgMotif'</b> style (just kidding).
+<P>
+
+<DT>
+  Font:
+<DD>
+	If you work a lot with non-latin1 characters (i.e. cyrillic, japanese etc.),
+	select an appropriate unicode font (use the font-selection dialog from either the
+	Launcher or via a TextView's popup menu). Notice that many unicode fonts do not
+	include the full set of characters (look at the "Hello"-page to check).
+<P>
+
+<DT>
+  Editor:
+<DD>
+	The editor's behavior can be adjusted in many ways. These settings are found
+	in the Launcher's
+<br>
+	<I>"System" - "Settings" - "Tools" - "Editor"</I> - dialog.
+<br>
+	For example, tab stops can be changed to be either multiples of 4 or 8.
+	All of <CITE>ST/X</CITE>'s source code uses a 4-spaces tab, so it is the recommended setting.
+	Have a look at the other settings there too.
+	Keyboard focus behavior (focus follows mouse) and some modifier key settings
+	are adjusted in <I>"System" - "Settings" - "ViewStyle"</I>.
+<P>
+
+<DT>
+Keyboard & Shurtcuts:
+<DD>
+    The default keyboard mapping is described in the <I>"Keyboard.wsp"</I> workspace.
+    The Launcher's settings dialog also contains a page which displays (but does not
+    allow to change) the current keyboard mapping.
+    If you don't like it, have a look (and edit) the "<code>keyboard.rc</code>" file.
+    This file is consulted at startup time and can also be reloaded after a change
+    via the fileBrowser's "<I>fileIn</I>"-function.
+<P>
+
+<DT>
+Language:
+<DD>
+    For lack of resources and language competence, only German, English and Spanish
+    are fully supported. A lot of Chinese and some rudimentary French, Italian etc. are present,
+    but definitely not complete.
+    Notice, that some of the existing translations are only provided to give a hint
+    on how it is done and to give editors something to start with
+    (read <A NAME="BACK_BE_NICE" HREF="#BE_NICE>"be nice"</A> at the end).
+    All language strings are found in the
+	<CODE>"lib*/resources/*.rs"</CODE>-files;
+    there you will find per-package translations for individual languages.
+    Language files can be edited either in any unicode-aware editor,
+    or the <CITE>ST/X</CITE> FileBrowser,
+    or the <CITE>ST/X</CITE> language tool which is opened via the Launcher's "System"-menu.
+<P>
+    If you add or fix anything there, we would be very happy,
+    if you'd send us your changes - we will incorporate them into the next release.
+    Make sure that your chosen font is able to display those characters
+    (especially if you edit Greek, Russian or a far-east language translations).
+<P>
+    Sorry: <CITE>ST/X</CITE> does not (yet) support right-to-left text display
+    (i.e. Hebrew and Arabic). Be patient - maybe someone pays us to do it in the future.
+<P>
+
+<DT>
+  Recommended:
+<DD>
+	After you have changed your preferences, be sure to save them (a file named "<code>settings.stx</code>" will be written).
+	<B>Otherwise, the settings are only used for the current session</B>.
+	Also, you should save a snapshot image (Launcher's <I>"File" - "Save Image"</I> menu)
+	for faster startup the next time.
+	You can always start <CITE>ST/X</CITE> with the "-I" command line argument to
+	ignore the snapshot image and force a fresh start. Or, start with "-i &lt;fileName&gt;" to resume an
+	older saved state.
+</DL>
+<LI>Learn to use some of the Tools.</LI>
+  The most useful ones are:
+<UL>
+<LI>        <A HREF="tools/misc/TOP.html#WORKSPACE">Workspace</A>
+<LI>        <A HREF="tools/newbrowser/TOP.html">SystemBrowser</A>
+<LI>        <A HREF="tools/cbrowser/TOP.html">ChangesBrowser</A>
+<LI>        <A HREF="tools/fbrowserV2/TOP.html">FileBrowser</A>
+<LI>        <A HREF="tools/misc/TOP.html#INSPECTOR">Inspector</A>
+</UL>
+  Get used to them.
+  As a beginner, please read the <A HREF="getStart/TOP.html">"Tutorial for Beginners"</A>
+  in the online documentation. This describes enough of the tools and Smalltalk language for
+  a smooth start.
+<P>
+  By the way: to reopen a window containing this text, open a workspace
+  and select the <I>"New System Workspace"</I> item in its <I>"File"</I> menu.
+  Alternatively, press the Launcher's workspace icon and wait for the pull down menu to appear
+ (keep the button pressed).
+<P>
+
+<LI>Learn Smalltalk by writing little demo programs
+<BR>  See the "Reading List" in the online documentation;
+    we recommend reading Ivan Tomek's interactive
+<A HREF="../../books/JoyOfST/IntroToST.html">"Introduction to ST"</A>.
+  These documents can also be reached via the <I>"Help" - "ST/X Online Documentation"</I>-menu of the Launcher.
+  Then proceed to the "Reading List" and have a look for the Programmer's Documentation.
+<P>
+
+<LI>Save your work
+<BR>  Save a snapshot (Launcher's <I>"File" - "Save Image"</I>-menu) and/or fileOut your classes from
+  time to time. Have a look at the ChangesBrowser, which is your life saver in case of
+  desaster. For real work, you should set up a source code repository, and checkin classes there.
+  The classic source code management system used with <CITE>ST/X</CITE> is CVS, but there is also support for Perforce,
+  SVN and Mercurial. You can directly checkin/our classes from within the browser.
+<P>
+
+<LI>Communicate
+<BR>  Talk to others - there is a very active Smalltalk community.
+  See comp.lang.smalltalk, various Smalltalk related webSites and various mailing lists.
+  We have also setup an <CITE>ST/X</CITE> specific forum at "forum.exept.de".
+<P>
+
+<LI><A HREF="#BACK_BE_NICE" NAME="BE_NICE>Be Nice</A>
+<BR>    If you are able to provide translations for the UI (menu items, labels and strings),
+	I would be very happy, if you'd sit down for an hour or so, type in the translations,
+	for greek, russian, etc. and send me the result.
+	See the files under the "<code>lib*/resources</code>" directories for how this is done, and what is missing.
+	Even fragments will help - I'll merge them into the next release.
+	Think about returning something this way - you get <CITE>ST/X</CITE> for free, so an hour or so
+	should not be too much time to spend.
+<P>
+
+<LI> Don't Panic
+<P>
+
+
+<LI>Always
+<BR><B>Have fun</B>
+</UL>
+
+</BODY>
+</HTML>

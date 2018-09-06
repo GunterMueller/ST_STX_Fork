@@ -1,0 +1,294 @@
+<?xml version="1.0"?>
+<!--
+     Licensed to the Apache Software Foundation (ASF) under one or more
+     contributor license agreements.  See the NOTICE file distributed with
+     this work for additional information regarding copyright ownership.
+     The ASF licenses this file to You under the Apache License, Version 2.0
+     (the "License"); you may not use this file except in compliance with
+     the License.  You may obtain a copy of the License at
+    
+          http://www.apache.org/licenses/LICENSE-2.0
+    
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+  -->
+<document>
+  <properties>
+    <title>Commons Pool Changes</title>
+  </properties>
+  <body>
+  <release version="1.5.6" date="TBD" description="This is a patch release, including bugfixes only.">
+    <action dev="markt" type="fix" issue="POOL-179" due-to="Axel Grossmann">
+      Correctly handle an InterruptedException when waiting for an object from
+      the pool.
+    </action>
+    <action dev="markt" type="fix" issue="POOL-180">
+      Only stop tracking objects for a key when there are no idle objects, no
+      active objects and no objects being processed.
+    </action>
+    <action dev="markt" type="update" issue="POOL-181">
+      Make BaseObjectPool.isClosed() public.
+    </action>
+    <action dev="markt" type="fix" issue="POOL-184" dut-to="Adrian Nistor">
+      Correct bug that could lead to inappropriate pool starvation when evict()
+      and borrowObject() are called concurrently.
+    </action>
+    <action dev="markt" type="fix" due-to="psteitz">
+      Fix performance issues when object destruction has latency.
+    </action>
+  </release>
+  <release version="1.5.5" date="2010-09-10" description=
+     "This is a patch release, including bugfixes, documentation improvements and some deprecations
+      in preparation for pool 2.0.">
+    <action dev="psteitz" type="update" issue="POOL-169">
+      In preparation for pool 2.0, deprecated direct access to protected fields
+      and setFactory methods.  In pool 2.0, pool object factories will be immutable.
+    </action>
+    <action dev="psteitz" type="fix" issue="POOL-158">
+      Made GenericKeyedObjectPool._minIdle volatile.
+    </action>
+    <action dev="markt" type="fix" issue="POOL-161">
+      Made the default context class loader for the eviction thread the same loader that loads
+      the library to prevent memory leaks in multiple class loader environments.
+    </action>
+    <action dev="sebb" type="update" issue="POOL-166">
+      GenericKeyedObjectPool.destroy could use entrySet() rather than keySet() followed by get()
+    </action>
+    <action dev="psteitz" type="fix" issue="POOL-157" due-to="David Hu">
+      GenericObjectPool and GenericKeyedObjectPool setFactory methods destroy idle instances
+      in the pool by contract. Prior to the fix for this issue, newly set factories were being
+      used to destroy idle instances, rather than the factories used to create them.  The 
+      setFactory methods have also been deprecated, to be removed in version 2.0.
+    </action>
+    <action dev="sebb" type="update" issue="POOL-156">
+      ObjectPool classes can ignore Throwable. Added consistent handling for Throwables
+      that are normally swallowed including always re-throwing certain Throwables (e.g. ThreadDeath).
+    </action>
+    <action dev="markt" type="fix" issue="POOL-162">
+      When waiting threads are interrupted, GOP, GKOP may leak capacity.
+    </action>
+    <action dev="psteitz" type="fix" issue="POOL-154" due-to="Glen Mazza">
+      Documentation for the close method in GenericObjectPool and GenericKeyedObjectPool
+      incorrectly states that this method does not clear the pool.
+    </action>
+  </release>
+  <release version="1.5.4" date="2009-11-20" description=
+ "This is a patch release containing a fix for POOL-152, a regression
+introduced in version 1.5.">
+    <action dev="markt" type="fix" issue="POOL-152" due-to="Bushov Alexander">
+      GenericObjectPool can block forever in borrowObject when the pool is exhausted and a newly created
+      object fails validation. When borrowing an object if a new object is created but validate fails,
+      the latch should not be returned to the queue as an exception will be thrown.
+    </action>
+  </release>
+  <release version="1.5.3" date="2009-09-21" description=
+"This is a patch release containing a fix for POOL-149, a regression
+introduced in version 1.5.">
+    <action dev="markt" type="fix" issue="POOL-149" due-to="Shuyang Zhou">
+      Fix case where a thread could end up waiting indefinitely even if objects
+      were available. Also fixes a couple of leaks in the internal processing
+      object count that could lead to pool exhaustion.
+    </action>
+  </release>
+  <release version="1.5.2" date="2009-07-12" description=
+"This is a patch release containing fixes for POOL-146 and POOL-147, regressions
+introduced in version 1.5.">
+    <action dev="markt" type="fix" issue="POOL-146">
+      Handle the case where one key has reached maxActive but other keys have not.
+      Prior to the fix for this issue, threads waiting on objects from keyed pools
+      still having instances available could be blocked by a thread requesting an
+      instance from an exhausted pool.
+    </action>
+    <action dev="markt" type="fix" issue="POOL-147" due-to="Giambattista Bloisi">
+      Fix case where a thread could end up waiting indefinitely even if objects
+      were available.
+    </action>
+    <action dev="markt" type="fix" issue="POOL-145">
+      Ensure that the GenericKeyedObjectPool idle object evictor does not visit the
+      same instance more than once per eviction run.
+    </action>
+  </release>
+  <release version="1.5.1" date="2009-06-16" description=
+"This is a patch release containing a fix for POOL-144, a regression introduced
+in version 1.5.">
+    <action dev="markt" type="fix" issue="POOL-144">
+      When exhausted action is set to WHEN_EXHAUSTED_BLOCK, maxwait is positive and
+      client threads time out waiting for idle objects, capacity can be "leaked"
+      from GenericObjectPools and GeneritCkeyedObjectPools. 
+    </action>
+  </release>
+  <release version="1.5" date="2009-06-10" description=
+"This is a maintenance release including several important bug fixes. This release
+is source and binary compatible with versions 1.3 and 1.4 of commons pool. In addition
+to resolving some important concurrency-related bugs (POOL-135, POOL-125, POOL-29
+POOL-107) this release implements a fairness algorithm to ensure that threads waiting
+for available object instances from GenericObjectPools and GenericKeyedObjectPools are served
+in request arrival order.">
+    <action dev="markt" type="fix" issue="POOL-139" due-to="Sebastian Bazley">
+      StackKeyedObjectPool.getNumActive() needs to be synchronized.
+    </action>
+    <action dev="markt" type="fix" issue="POOL-137" due-to="Sebastian Bazley">
+      Inconsistent synchronization in GenericObjectPool; constant fields should be final.
+    </action>
+    <action dev="markt" type="fix" issue="POOL-75" due-to="Takayuki Kaneko and Gordon Mohr">
+       GenericObjectPool not FIFO with respect to borrowing threads.
+    </action>
+    <action dev="markt" type="fix" issue="POOL-135">
+      _numActive > _maxActive under load
+    </action>
+    <action dev="markt" type="fix" issue="POOL-125">
+      Insufficient control over concurrent access to pooled objects by Evictor, client threads.
+    </action>
+    <action dev="markt" type="fix" issue="POOL-107">
+      Number of connections created has crossed more than maxActive.
+    </action>
+    <action dev="markt" type="fix" issue="POOL-122">
+      java.util.Timer in EvictionTimer does not recover from OutOfMemoryError in Evictor.
+    </action>
+    <action dev="markt" type="fix" issue="POOL-133">
+      Failed object creation may result in invalid active count in GKOP.
+    </action>
+  </release>
+  <release version="1.4" date="2008-01-15" description=
+"This is a maintenance release including numerous bug fixes. This release
+is source and binary compatible with version 1.3 of commons pool, but
+there are some behavior changes introduced to resolve bugs, remove ambiguity
+or improve robustness. Among these are the change in default behavior of
+GenericObjectPool and GenericKeyedObjectPool from FIFO back to LIFO queues
+(as in 1.2 and earlier). The LIFO/FIFO behavior is now configurable. Some of
+the extra synchronization included in version 1.3 was removed / refactored to
+improve performance. The javadoc has also been made more complete and explicit.
+See the detailed list of changes below for specifics on fixed bugs and behavior
+changes in Commons Pool 1.4. This version of Commons Pool depends only on
+JDK version 1.3 or higher. Classes implementing pools are all intended to be
+threadsafe.">
+      <action dev="sandymac" type="fix">
+        Fixed constructor which was ignoring maxTotal parameter: 
+          GenericKeyedObjectPool(KeyedPoolableObjectFactory factory, int maxActive, byte whenExhaustedAction,
+          long maxWait, int maxIdle, int maxTotal, boolean testOnBorrow, boolean testOnReturn,
+          long timeBetweenEvictionRunsMillis, int numTestsPerEvictionRun, long minEvictableIdleTimeMillis,
+          boolean testWhileIdle)
+      </action>
+      <action dev="sandymac" type="fix">
+        Changed StackKeyedObjectPool to discard stalest, not freshest, idle object when maxSleeping is reached.
+      </action>
+      <action dev="psteitz" type="fix" issue="POOL-102" due-to="John Sumsion">
+        Allowed blocked threads in GenericObjectPool borrowObject to be interrupted.
+      </action>
+      <action dev="psteitz" type="fix" issue="POOL-86">
+        Fixes to address idle object eviction and LIFO/FIFO behavior reported
+        in POOL-86. Made LIFO/FIFO behavior configurable for GenericObjectPool and
+        GenericKeyedObjectPool, with default set back to LIFO (reverting to 1.2 behavior).
+        Fixed GOP, GKOP evict method and added tests to ensure objects are visited in
+        oldest-to-youngest order. Changed backing store for GOP, GKOP pools back to Commons
+        Collections CursorableLinkedList (brought this class in, repackaged with package scope).
+      </action>
+      <action dev="psteitz" type="fix" issue="POOL-110" due-to="Alexander Pogrebnyak">
+        Changed the default setting for Config.softMinEvictableIdleTimeMillis to
+        GenericObjectPool.DEFAULT_SOFT_MIN_EVICTABLE_IDLE_TIME_MILLIS (was
+        being incorrectly defaulted to DEFAULT_MIN_EVICTABLE_IDLE_TIME_MILLIS).
+      </action>
+      <action dev="psteitz" type="fix" issue="POOL-97" due-to="Mark Thomas">
+         Added a wrapper for the shared idle object eviction timer for all
+         pools. The wrapper class wraps the Timer and keeps track of how many
+         pools are using it. If no pools are using the timer, it is canceled.
+         This prevents a thread being left running which, in application server
+         environments, can lead to memory leaks and/or prevent applications
+         from shutting down or reloading cleanly.
+      </action>
+      <action dev="psteitz" type="fix" issue="POOL-93"  
+      due-to="Mark Thomas">
+        Reduced synchronization in GenericObjectPool, GenericKeyedObjectPool.
+        Factory method activations within synchronized blocks were causing
+        performance problems in DBCP and other applications where factory
+        methods could block. Fixes both POOL-93 and POOL-108.
+      </action>
+      <action dev="psteitz" type="fix" issue="POOL-113">
+        Made _testOnBorrow, _testOnReturn volatile and removed synchronization
+        in associated getters and setters in GenericObjectPool,
+        GenericKeyedObjectPool. Made getNumIdle synchronized in
+        StackKeyedObjectPool. 
+      </action>
+      <action dev="psteitz" type="fix" issue="POOL-116">
+        Fixed an error in the GenericKeyedObjectPool constructor that takes
+        a Config instance as a parameter. The minIdle setting in the Config
+        was being ignored by the constructor.
+      </action>
+      <action def="psteitz" type="fix" issue="POOL-117">
+        Made behavior on instance validation failure consistent across pools,
+        eliminating possible infinite loops in StackObjectPool,
+        StackKeyedObjectPool, SoftReferenceObjectPool when factory fails to
+        create valid objects. 
+      </action>
+      <action dev="sandymac" type="update">
+        When no factory has been defined, addObject now throws 
+        IllegalStateExecption instead of NullPointerException for all pools.
+      </action>
+      <action dev="sandymac" type="update">
+        SoftReferenceObjectPool. Improved the accuracy of getNumIdle by
+        "pruning" references to objects that have been garbage collected.
+      </action>
+      <action dev="sandymac" type="update">
+        GenericObjectPool, GenericKeyedObjectPool, SoftReferenceObjectPool,
+        StackObjectPool. Eliminated IllegalStateExceptions when the following
+        operations are attempted on a closed pool: getNumActive, getNumIdle, 
+        returnObject, invalidateObject.  In each case, the operation is allowed
+        to proceed, reporting the state of the pool that is being shut down, or
+        destroying objects returning to the closed pool.
+      </action>
+      <action dev="sandymac" type="update">
+        StackObjectPool, SoftReferenceObjectPool, GenericKeyedObjectPool. Allowed
+        borrowObject to continue (either examining additional idle instances or
+        with makeObject) when an exception is encountered activating an idle
+        object instead of propagating the exception to the client.  Also made
+        addObject propagate (not swallow) exceptions when passivating newly
+        created instances. 
+      </action>
+      <action dev="psteitz" type="update">
+        StackKeyedObjectPool. Added validation check for objects returned
+        from borrowObject. 
+      </action>
+      <action dev="sandymac" type="update">
+        BaseObjectPool, BaseKeyedObjectPool. Instead of throwing 
+        UnsupportedOperationException, the base class implementations
+        of getNumIdle and getNumActive return negative values. The
+        base implementation of close in BaseObjectPool no longer throws
+        IllegalStateException when invoked on an already closed pool.
+      </action>
+      
+    </release>
+
+    <release version="1.3" date="2006-04-06" description="1.x bugfix release">
+      <action type="fix">A large number of bug fixes. See release notes for changes.</action>
+    </release>
+
+    <release version="1.2" date="2004-06-07" description="bugfixes">
+      <action dev="dirkv" type="fix">
+           GenericKeyedObjectPoolFactory Config Constructor is incorrect
+      </action>
+      <action dev="dirkv" type="fix">
+        Not possible to extend GenericObjectPool.returnObject() without affecting addObject()
+      </action>
+    </release>
+
+    <release version="1.1" date="2003-10-20" description="bugfixes">
+      <action type="fix">A lot of corner cases were fixed</action>
+      <action type="fix">Performance improvement by optimizing pool synchronization, the critical code paths were optimized by reducing pool synchronization but we also added more synchronization where needed</action>
+      <action type="fix">New minIdle feature: the minimum number of objects allowed in the pool before the evictor thread (if active) spawns new objects. (Note no objects are created when: numActive + numIdle >= maxActive)</action>
+      <action type="fix">New maxTotal feature: a cap on the total number of instances controlled by a pool. Only for GenericKeyedObjectPool where maxActive is a cap on the number of active instances from the pool (per key).</action>
+      <action type="fix">UML Class and sequence diagrams</action>
+      <action type="fix">See bugzilla for more changes</action>
+    </release>
+
+    <release version="1.0.1" date="2002-08-12">
+      <action type="fix">No change log available.</action>
+    </release>
+
+    <release version="1.0" date="2002-05-04">
+      <action type="add">No change log available.</action>
+    </release>
+  </body>
+</document>

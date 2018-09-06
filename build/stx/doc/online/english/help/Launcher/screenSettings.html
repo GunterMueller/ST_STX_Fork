@@ -1,0 +1,233 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Help - Display Screen Setting</Title>
+</HEAD>
+
+<BODY>
+
+<H1>Display Screen Settings</H1>
+
+
+<H2><A NAME="INDEX">Help index</A></H2>
+
+<UL>
+<LI><A HREF="#SCREEN_SIZE">Visible Screen Area</A>
+<LI><A HREF="#SCREEN_USABLE_AREA">Limit Usable Screen Area</A>
+<LI><A HREF="#SCREEN_COLOR">Color Monitor</A>
+<LI><A HREF="#FIXCOLORS">Fix Color Palette</A>
+<LI><A HREF="#FIXGRAYCOLORS">Fix Gray Color Palette</A>
+<LI><A HREF="#DITHERING">Image Display</A>
+<LI><A HREF="#GRAYICONS">Allow Color/Grayscale Icons</A>
+<LI><A HREF="#CLIPENCODING">Clipboard Encoding</A>
+<LI><A HREF="#CLIPLIMIT">Clipboard Buffer Size Limit</A>
+<LI><A HREF="#MORE_INFO">Further Reading</A>
+</UL>
+
+<HR>
+
+<H2><A NAME="SCREEN_SIZE" HREF="#INDEX">Visible Screen Area</A></H2>
+
+The values specified here are used to compute the screen's actual resolution (pixel per inch)
+This information is needed by some of ST/X's drawing windows to scale the output to the printed paper's size,
+in order to get a 1:1 correct scaling of its graphics (i.e. to have 1cm on the screen being 1cm on the paper).
+It is not required in most ST/X applications.
+You should enter the size of the visible area (i.e. excluding any black frame of the screen).
+<P>
+If your display simulates a bigger virtual screen (i.e. an XFree server
+with a bigger virtual screen), the size of the overall screen area must
+to be entered (i.e. including the invisible part).
+<BR>
+This is because <CITE>ST/X</CITE> computes the resolution from the given screenSize and the display extent (in pixels).
+However, there is usually no way to get information about the physical dimensions.
+<P>
+The exact resolution is required if you want 1:1 display of graphics;
+for example, the DrawTool demo program adjusts its scaling to draw its figure in the actual (paper) size.
+<BR>
+Also, the PostscriptGraphicsContext class needs those values,
+to adjust the printing scale and to compute font sizes for systems which do not provide postscript font metrics.
+<BR>
+Finally, some popup dialogs compute their default extent to be sized a certain number of millimeters or inches.
+<P>
+
+If the common-sizes list does not include a valid dimension for your actual monitor,
+you should specify the size by entering the numeric values.
+<P>
+Notice, that <CITE>ST/X</CITE> asks the display (i.e. the Xserver / Windows)
+about the screen dimensions. However, in practice, often the values as returned
+are not realistic.
+<P>
+To have the screens size be set automatically at startup time,
+add a line such as:
+<CODE><PRE>
+    Screen default widthInMillimeter:xxx; heightInMillimeter:yyy.
+</PRE></CODE>
+to your
+<CODE>"display.rc"</CODE> file
+(or to a display-specific <CODE>"d_xxx.rc"</CODE> file).
+
+
+<H2><A NAME="SCREEN_USABLE_AREA" HREF="#INDEX">Limit Usable Screen Area</A></H2>
+Use this to force a limit on the area used by ST/X widget classes.
+Especially affects the boundary in which new windows, dialogs and popup menus are
+shown.
+<P>
+Use this if you have a screen recorder active, which records some upper-left part of
+your screen area, or if you have a beamer (secondary video output) attached,
+and the graphics device has changed the resolution without telling the XServer about it
+(or the XServer is ignoring that information). Especially the MAC XServer shows that behavior, in that
+it still reports a screen area of the primary screen, although the resolution has been changed
+when the external monitor was attached.
+
+
+<H2><A NAME="SCREEN_COLOR" HREF="#INDEX">Color Monitor</A></H2>
+
+Clear this checkBoxes mark, if you have a black & white monitor attached
+to a color graphics card (or color X server).
+<BR>
+(Although <VAR>ST/X</VAR> asks the display about its color capabilities,
+this question cannot be answered correctly in the above situation.)
+<BR>
+As specified in the styleSheet files, <CITE>Smalltalk/X</CITE> chooses
+different colors for cursors, selection highlighting etc. to assert use of contrasting colors.
+Especially clear this, if you are running on a black & white laptop with a color VGA Xserver.
+<P>
+This setting originated in the 80's, when many displays were still b&amp;w.
+Today, those are almost forgotten.
+
+<H2><A NAME="FIXCOLORS" HREF="#INDEX">Fix Color Palette</A></H2>
+
+This flag only affects graphic displays which use a limited (256-) color palette.
+<P>
+If enabled, <CITE>Smalltalk/X</CITE> preallocates 6x6x4 colors and
+only uses those when bitmap images are displayed.
+If disabled, colors are allocated as required.
+<BR>
+Enabling the fix colorMap, usually results in suboptimal image quality,
+but the system will never run out of colors
+- also, some colors remain to be used by other applications.
+<P>
+If disabled, your display may run out of available colors when images are displayed;
+this might affect both Smalltalk itself and other graphical applications.
+<P>
+Since no colors have to be allocated from the display,
+image rendering is much faster if the fixColor option is enabled.
+<BR>
+Especially, when viewing many images (for example: with the HTML browser).
+
+<P>
+On trueColor displays (i.e. 5x5x6 or even 8x8x8 available colors),
+the above situation cannot happen - there, this setting is disabled.
+<BR>
+Therefore, if you have a choice when setting up your display hardware,
+we recommend using the trueColor mode, if possible.
+<P>
+This setting originated in the 90's, when most color displays were using an 8bit
+palette mapping scheme. Today, those are almost forgotten.
+
+
+
+<H2><A NAME="FIXGRAYCOLORS" HREF="#INDEX">Fix Gray Color Palette</A></H2>
+
+The same as above, for gray colors.
+<BR>
+If enabled, grayscale images can be rendered faster and <CITE>ST/X</CITE>
+will not run out of gray colors when images are rendered.
+<P>
+This setting originated in the 80's and 90's, when many displays were still using
+a greyscale b&amp;w screen (NeXt, for example).
+Today, those are almost forgotten.
+
+
+
+<H2><A NAME="DITHERING" HREF="#INDEX">Image Display</A></H2>
+
+Selects the algorithm used to approximate colors in an image,
+which are not available in the displays colormap.
+<BR>
+Typically, you can choose between <VAR>nearest paint</VAR>, which will choose
+the nearest available color and <VAR>error diffusion</VAR> which also takes
+the nearest color, but spreads the resulting error over surrounding pixels.
+<BR>
+The <VAR>error diffusion</VAR> algorithm usually results in higher quality
+image display, but is slightly slower.
+<P>
+A good compromise between speed and image display quality is obtained
+by using a fix color palette combined with the error diffusion algorithm.
+<BR>
+This will not run out of colors AND provides reasonably good image quality.
+<P>
+Owners of trueColor (i.e. 24bit/pixel) systems are lucky: they do not suffer
+from the limited color problem and do not have to care for those settings.
+<P>
+This setting originated in the 80's and 90's, when many displays were still using
+limited color or even greyscale screens.
+Today, those are almost forgotten.
+
+
+
+<H2><A NAME="GRAYICONS" HREF="#INDEX">Allow Color/Grayscale Icons</A></H2>
+
+If disabled, grayscale or color icons are automatically converted to b&amp;w
+dithered images, when used as window icon.
+<BR>
+This automatism was added for Xservers/window-managers which crash,
+when a non-monochrome icon bitmap is installed.
+<P>
+Typically, this error does not exist in newer (X11R5 and later) Xservers.
+
+
+
+<H2><A NAME="CLIPENCODING" HREF="#INDEX">Clipboard Encoding</A></H2>
+
+This setting is only needed, when 16-bit strings are pasted
+from the clipboard on systems which do not pass the clipBoards encoding
+(i.e. some applications on the XWindow system).
+<BR>
+As each 16-bit character application may encode its clipBoard strings
+in different ways, <CITE>ST/X</CITE> is prepared to convert it according
+to the value defined here.
+<P>
+For example, when pasting japanese text which was selected in a netscape
+browser, use <CODE>"EUC"</CODE> clipboard encoding.
+<P>
+For 'normal' ascii and iso8859 strings, this should be left as <VAR>"untranslated"</VAR>
+(this is the default).
+
+
+
+<H2><A NAME="CLIPLIMIT" HREF="#INDEX">Clipboard Buffer Size Limit</A></H2>
+
+Whenever text is deleted or copied in a textView, ST/X copies the affected text to
+the displays clipBoard. Some XServers are known to crash, if the size of this text exceeds
+a certain limit or if the XServer runs out of memory due to swap space limitations.
+<BR>
+This field sets a maximum on the clipBoard size - text longer than this are
+NOT copied to the displays clipBoard.
+
+
+
+
+<H2><A NAME="MORE_INFO" HREF="#INDEX">Further Reading</A></H2>
+
+<P>
+For more information, read <A HREF="../../custom/TOP.html">
+<VAR>"Configuration & Customization"</VAR></A>.
+
+<P>
+<P>
+
+
+
+<HR>
+<P>
+<P>
+Copyright &copy;  Claus Gittinger Development & Consulting, all rights reserved
+<P>
+<P>
+
+<HR>
+Doc $Revision: 1.17 $ $Date: 2016-09-14 09:41:12 $
+
+</BODY>
+</HTML>

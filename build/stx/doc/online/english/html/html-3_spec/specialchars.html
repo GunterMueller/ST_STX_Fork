@@ -1,0 +1,143 @@
+<TITLE>Special Characters</TITLE>
+<H1>Special Characters</H1>
+
+<P>This section contains information of how user agents should treat
+control characters and other special characters.
+
+<H3>Character Data</H3>
+
+<P>The characters between the tags represent text encoded according to
+ISO 8859/1 8-bit single-byte coded graphic  character set  known as
+Latin Alphabet No. 1, or simply Latin-1. There are 256 character
+positions in the Latin-1 encoding. Latin-1 includes characters from
+most Western European languages. It consists of the space character,
+186 characters that form a subset of the graphic characters in ISO
+6937/2 (1983), and four additional characters that are intended for
+inclusion in ISO 6937/2. For more information, see Character Sets
+
+<P>The lower 128 character positions include a space, 33 control
+characters, the 26 upper- and lowercase letters of the english
+alphabet, 10 numerals and 32 other printing characters This subset,
+functionally identical to ASCII, is defined by ISO 646 7-bit coded
+character set for information interchange, also known as the
+International Reference Version. ISO 646 is identical in most respect
+to the ANSI standard for ASCII (American Standard Code for Information
+Interchange). The only significant difference between ISO 646 and ASCII
+is the specific names assigned to the control characters which occupy
+positions 00-31 and 127
+
+<P>The upper 128 positions include a non-breaking space, a soft hyphen
+indicator, 93 graphical characters, 8 unassigned characters, and 25
+control characters. The non-breaking space and soft hyphen indicator
+are not recognized and interpreted by all HTML browsers, and their use
+is discouraged
+
+<P>There are 58
+character positions which are occupied by control characters. See the
+discussion for details on the interpretation of control characters.
+Because certain special characters are subject to interpretation and
+special processing, information providers and browser implementors
+should follow these guidelines
+
+<P>Certain characters may not be
+accessible from your keyboard, or some part of your system (i.e.
+translation software) may not be equipped to deal with 8-bit character
+codes. HTML and many WWW browsers provide character entity references 
+and  numerical character references  to facilitate the entry and
+interpretation of characters by name and by numerical position.
+
+<P>Because certain characters will be interpreted as  markup,  they
+should be"escaped"; that is, represented by markup -- numeric character
+or entity references.
+<HR>
+
+<H2>Special Characters</H2>
+
+<P>Certain characters are taken to have special meaning within the
+context of an HTML document. There are two printing characters which
+may be interpreted by the browser to have an effect of the format of
+the text:
+
+<H3>Space</H3>
+
+<UL>
+<LI>Interpreted as a word space in all contexts except &lt;PRE&gt;.
+<LI>Interpreted as a no-break space within &lt;PRE&gt;.
+</UL>
+
+<P>The character entities <tt>&amp;ensp;</tt> and <tt>&amp;emsp;</tt>
+denote an en space and an em space respectively, where an en space is
+half the point size and an em space is equal to the point size of the
+current font. For fixed pitch fonts, the user agent can treat the en
+space as being equivalent to a single space character, and the em space
+as being equuivalent to two space characters.
+
+<H3>Non-breaking Space (&amp;nbsp;)</H3>
+
+This should be treated in the same way as the space character
+(ASCII character code 32 decimal), except that the user agent should
+never break lines at this point. It is useful when you want to ensure
+that neigbouring words always stay together and don't get split across
+lines.
+
+<H3>Hyphen</H3>
+
+<UL>
+<LI>Interpreted as a hyphen glyph in all contexts.
+<LI>Interpreted as a potential word space by hyphenation engine.
+</UL>
+
+<P>The character entities <tt>&amp;endash;</tt> and
+<tt>&amp;emdash;</tt> denote dash marks with the same widths as the
+&amp;ensp; and &amp;emsp; entities respectively.
+<HR>
+
+<H2>Control Characters</H2>
+
+<P>Control characters are non-printable characters that are typically
+used for communication and device control, as format effectors, and as
+information separators.
+
+<P>In SGML applications, the use of control characters is limited in
+order to maximize the chance of sucessful interchange over heterogenous
+networks and operating systems. In HTML, there are only three control
+characters which are used. The remaining 55 control characters are
+shunned and should not appear in an HTML document. The valid control
+characters and their interpretation are:
+
+<H3>Horizontal Tab (HT - 9 dec) </H3>
+
+<UL>
+<LI>Interpreted as a word space in all contexts except &lt;PRE&gt;.
+<LI>Within &lt;PRE&gt;, the tab should be interpreted to shift the
+    horizontal column position to the next position which is a multiple of
+    8 on the same line; that is,  col := (col+8) mod 8.
+</UL>
+
+<H3>Line Feed (LF - 10 dec)</H3>
+
+<UL>
+<LI>Interpreted as a word space in all contexts except &lt;PRE&gt;.
+<LI>Within &lt;PRE&gt;, the tab should be interpreted as a shift to the
+    start of a new line; that is,  col := 0; row := row+1
+</UL>
+
+<H3>Carriage Return (CR - 13 dec) </H3>
+<UL>
+<LI>Interpreted as a word space in all contexts except &lt;PRE&gt;. <P>
+<LI>Within &lt;PRE&gt;, the tab should be interpreted as a shift to the start of the line; that is,  col := 0;<P>
+</UL>
+
+<HR>
+
+<H2>Numeric Character References </H2>
+
+<P>Any printing character within the 8-bit character encoding of ISO
+8859/1 (256 character positions) or the 7-bit character encoding of ISO
+646 (128 character positions) may be represented within the text of an
+HTML document by a numeric character reference, e.g. <tt>&amp;#233;</tt>
+is a small e with an acute accent. It is recommended that character
+entity references such as <tt>&amp;eacute;</tt> are used in preference to
+numberic character references.
+
+<!--NewPage-->

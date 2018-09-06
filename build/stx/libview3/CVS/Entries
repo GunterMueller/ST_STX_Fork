@@ -1,0 +1,23 @@
+/.cvsignore/1.6/Fri Jan 11 16:04:10 2013//
+/ArcMorph.st/1.12/Tue Sep 29 11:27:51 2009//
+/ArcMorphSpec.st/1.20/Mon Jul 30 15:28:35 2018//
+/DisplayObjectComponentSpec.st/1.19/Tue Nov 28 18:21:18 2017//
+/LineSegmentMorph.st/1.8/Wed Feb 22 17:58:15 2017//
+/LineSegmentMorphSpec.st/1.11/Tue Nov 28 18:21:35 2017//
+/Make.proto/1.9/Fri Mar  1 13:26:11 2013//
+/Make.spec/1.10/Fri Mar  1 13:26:08 2013//
+/Makefile.init/1.3/Fri Mar  1 13:26:15 2013//
+/Morph.st/1.14/Wed Feb 22 17:58:29 2017//
+/RectangleMorph.st/1.4/Mon May 11 23:57:41 2009//
+/RectangleMorphSpec.st/1.9/Tue Nov 28 18:21:25 2017//
+/SketchMorph.st/1.3/Wed Jun 10 20:39:30 2009//
+/SketchMorphSpec.st/1.9/Sat Jul 28 08:07:29 2018//
+/abbrev.stc/1.9/Fri Mar  1 13:26:21 2013//
+/bc.mak/1.13/Thu Jun  9 18:16:41 2016//
+/bmake.bat/1.3/Fri Mar  1 13:26:24 2013//
+/libInit.cc/1.9/Fri Mar  1 13:26:39 2013//
+/libview3.rc/1.10/Fri Mar  1 13:26:36 2013//
+/mingwmake.bat/1.3/Fri Mar  1 13:26:33 2013//
+/stx_libview3.st/1.27/Wed Feb 22 15:38:18 2017//
+/vcmake.bat/1.4/Fri Mar  1 13:26:27 2013//
+D

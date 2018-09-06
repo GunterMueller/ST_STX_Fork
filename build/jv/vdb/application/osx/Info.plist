@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTP PLIST 1.0//EN" "http//www.apple.com/DTDs/ProperyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+<key>CFBundlePackageType</key>
+<string>APPL</string>
+<key>CFBundleExecutable</key>
+<string>vdb.do</string>
+<key>CFBundleShortVersionString</key>
+<string>8.0.32767.32767</string>
+<key>CFBundleName</key>
+<string>vdb.do</string>
+<key>CFBundleInfoDictionaryVersion</key>
+<string>6.0</string>
+<key>LSMinimumSystemVersion</key>
+<string>10.6</string>
+<key>CFBundleIdentifier</key>
+<string>jv.vdb</string>
+<key>CFBundleVersion</key>
+<string>8.0.32767.32767</string>
+</dict>
+</plist>

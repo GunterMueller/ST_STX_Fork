@@ -1,0 +1,200 @@
+<html>
+<head>
+<title>Refactoring: 
+Convert Static to Dynamic Construction</title>
+</head>
+<body>
+<H1>
+Convert Static to Dynamic Construction</H1>
+<P>
+<B> Refactoring contributed by 
+	
+Gerard M. Davison </B>
+</P>
+<P>
+<I>
+<CENTER>
+You have classes that have static compile time dependencies on classes that can only be built on a specific platform.
+</CENTER>
+</I>
+</P>
+<P>
+<B>
+<CENTER>
+Make use of the java.lang.reflect to break the static dependency.
+</CENTER>
+</B>
+</P>
+
+<PRE>
+<PRE>
+
+   import org.davison.data.jdbc.JDBCProvider;
+
+   .
+   .
+   .
+
+
+   DataProvider dp = new JDBCProvider();
+
+</PRE>
+</PRE>
+<P>
+<CENTER>
+<IMG SRC="arrow.gif"></CENTER>
+</P>
+<PRE>
+
+
+   try
+   {
+      DataProvider dp = (DataProvider)
+         Class.forName("org.davison.data.jdbc.JDBCProvider").newInstance();
+   }
+   catch (IllegalAccessException iae)
+   {
+      // Convert exception to error to preseve the interface.
+      //
+      
+      throw new IllegalAccessError(iae.getMessage());
+   }
+   catch (InstantiationException ie)
+   {
+      // Convert exception to error to preseve the interface.
+      //
+      
+      throw new InstantiationError(ie.getMessage());      
+   }
+   catch (ClassNotFoundException cnfe)
+   {
+      // Convert exception to error to preseve the interface.
+      //
+
+      throw new NoClassDefFoundError(cnfe.getMessage());
+   }
+
+
+</PRE>
+<h2>Motivation</h2>
+<P>
+In some cases you have to provide drivers to provide different functionality depending on the situation. You might have classes that on a given platform need to access some sun.* classes to perform a specific function. For example a class to access WinHelp needs to get the window handle via the sun.awt.windows.WWindowPeer classes.
+</P>
+<P>
+There might also be the desire to only provide certian functionality to a given sub-set of users. This is the equivalent of being able to compile out code without having to alter the source or use pre-compilers.
+</P>
+<P>
+This method can be used with good effect with application frameworks where you do not know which class need to be used at compile time.
+</P>
+
+
+<h2>Mechanics</h2>
+<UL>
+<LI>Identify the place where the different classes are instantiated. If there is more than one place, you might like to make use of code consolidation refactorings to create one entry point.</LI>
+<LI>Make sure that there is a common interface and method of construction. Utilise Extract Interface or use Extract Superclass to create a suitable abstraction to work with.</LI>
+<LI>Replace the class selection process with one that instead selects for the string name of the class in question.</LI>
+<LI>Remove any import statements that refere the the classes being constructed. </LI>
+<LI>Add code in to load and instantiate the class. For more parameterised contructors, make use of the java.lang.reflect package.</LI>
+<LI>Deal with any excpetion generated.</LI>
+<LI>You are now ready to compile and test the code. Make sure that any dependant code is also tested properly.</LI>
+<LI>The refactoring is complete, but you should make sure that this run-time dependency is properly documented and that all developers know to instantiate the classes using the new or altered method.</LI>
+</UL>
+<h2>Example</h2>
+<UL>
+<P>
+Start with this code:
+</P>
+
+<PRE>
+
+   import org.davison.data.jdbc.JDBCProvider;
+
+   .
+   .
+   .
+
+   DataProvider dp = new JDBCProvider();
+
+
+</PRE>
+
+<P>
+First we have to change the selection code to return a class name rather than an actual instance. We can safely remove the import statement that referes to this class.
+</P>
+
+<PRE>
+
+   Class.forName("org.davison.data.jdbc.JDBCProvider")
+
+</PRE>
+<P>
+We can now instantiate the class, in this simple case the constructor has no parameters, so we do not have to make use of the extended java.lang.reflect package.
+</P>
+<PRE>
+
+
+      DataProvider dp = (DataProvider)
+         Class.forName("org.davison.data.jdbc.JDBCProvider").newInstance();
+
+
+</PRE>
+
+
+<P>
+We no have to add the code to deal with the possible exception cases. Here I have chosen to convert them to the equivalent Java Errors in order to maintain the interface. If this is not required then simpler code is possible.
+</P>
+<PRE>
+
+
+   try
+   {
+      DataProvider dp = (DataProvider)
+         Class.forName("org.davison.data.jdbc.JDBCProvider").newInstance();
+   }
+   catch (IllegalAccessException iae)
+   {
+      // Convert exception to error to preseve the interface.
+      //
+      
+      throw new IllegalAccessError(iae.getMessage());
+   }
+   catch (InstantiationException ie)
+   {
+      // Convert exception to error to preseve the interface.
+      //
+      
+      throw new InstantiationError(ie.getMessage());      
+   }
+   catch (ClassNotFoundException cnfe)
+   {
+      // Convert exception to error to preseve the interface.
+      //
+
+      throw new NoClassDefFoundError(cnfe.getMessage());
+   }
+
+
+</PRE>
+
+
+<P>
+Compile and test at this point as we have code that is complete. 
+</P>
+<P>
+When this is finished and all dependent classes are re-tested, the refactoring is complete.
+</P>
+
+</UL>
+
+
+<P>
+</P>
+<P>
+</P>
+<P>
+<CENTER>
+<A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A>
+</CENTER>
+</P>
+</body>
+</html>

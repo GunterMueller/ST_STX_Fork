@@ -1,0 +1,492 @@
+<HTML>
+<HEAD>
+<!--$url-minder-options$ owner=royalef@aol.com --> 
+  <TITLE>Making Animated GIFs (part 2 of 3)</TITLE>
+</HEAD>
+<BODY background="recycpap.jpg" BGCOLOR=#FFFFFF TEXT=#000000 VLINK=#000040
+LINK=#0000FF ALINK=#FF0000 >
+<! ================ REV3 Standard Header! ================ >
+<P>
+<A NAME="top"></A>
+<TABLE ALIGN=right>
+  <TR ALIGN=center VALIGN="bottom">
+    <TD><A NAME="top"><A HREF="gifmake.htm">
+      <IMG SRC="backarrw.gif" height=60 width=60 border=0 ALT="Previous Page"><BR>
+      <FONT SIZE="2">[Previous]</FONT></A></A></TD>
+    <TD><A HREF="find.htm"><IMG SRC="4wayarrw.gif" height=50 width=50 border=0
+	  align="absmiddle" ALT="Search &amp; Find"><BR>
+      <FONT SIZE="2">[Find]</FONT></A></TD>
+    <TD><A HREF="gifmakg.htm"><IMG SRC="forwarrw.gif" height=60 width=60 border=0
+	  ALT="Previous Page" align="top"><BR>
+      <FONT SIZE="2">[Next]</FONT></A></TD>
+  </TR>
+</TABLE>
+<P align=left>
+<FONT SIZE="2" COLOR="BLUE"><B>Royal Frazier's</B></FONT><BR>
+<IMG SRC="g-gifani.gif" align="top"><BR>
+<A HREF="mirrors.htm"><FONT SIZE="2">- MIRROR sites: closer, faster, non-English
+-</FONT></A> <BR clear=all>
+<P align=center>
+<A HREF="royal.htm">[Home]</A> <A HREF="gifanim.htm">[Introduction]</A> 
+<A HREF="find.htm">[Find]</A> <A HREF="urlmindr.htm">[UrlMinder]</A> 
+<A HREF="userguid.htm">[Viewing]</A> 
+<A HREF="toolbox.htm">[Software]</A> <A HREF="gifmake.htm"><NOBR>[How to
+make GIF Animations]</NOBR></A> <A HREF="gifhtml.htm">[HTML]</A> 
+<A HREF="conserva.htm">[Smaller GIFs]</A> <A HREF="topten.htm">[Common Problems]</A> 
+<A HREF="problem.htm">[GIF Bugs]</A> <A HREF="gifabout.htm">[Technical]</A> 
+<A HREF="http://members.aol.com/royalef1/galframe.htm">[Gallery]</A> 
+<A HREF="aboutgaw.htm">[About]</A><P ALIGN=center>
+<P><I>If you have a few minutes, please fill out the <A HREF="http://members.aol.com/royalef1/survey.htm" TARGET="_TOP">Visitor Survey</A>. It will help in making this site better.</I><BR>
+  <HR size="3" noshade>
+<H2>
+  Constructing Animations, part two
+</H2>
+<UL>
+  <LI>
+    PART ONE : <A HREF="gifmake.htm">Preparing All the Pieces</A>
+  <LI>
+    <A HREF="gifmake.htm#thoughts">Some Thoughts about GIF Animations on the
+    Web</A>
+  <LI>
+    <A HREF="gifmake.htm#sequence">Making a Sequence of Animations</A>
+  <LI>
+    <A HREF="gifmake.htm#tips">Scattered Tips &amp; Tricks</A>
+</UL>
+<UL>
+  <LI>
+    PART TWO : <A HREF="gifmakf.htm">Making a Basic Animation</A>
+  <LI>
+    <A HREF="gifmakf.htm#create">Creating A GIF89A Animation File</A>
+</UL>
+<UL>
+  <LI>
+    PART THREE : <A HREF="gifmakg.htm">Netscape Extensions and Troubleshooting</A>
+  <LI>
+    <A href="gifmakg.htm#looping">Making a Animated GIF loop in Netscape 2.0</A>
+  <LI>
+    <A HREF="gifmakg.htm#trouble">Troubleshooting</A>
+</UL>
+<P>
+<B>NOTE:</B> <I>Due to excessive size, this tutorial is now in three parts.</I>
+  <HR>
+<A name="create"></A><IMG SRC="anicon4.gif" ALIGN=right BORDER=0 width=100
+    height=85>
+<H4>
+  Creating A GIF89a Animation File
+</H4>
+<P>
+Start GIF Construction Set. (Register it to prevent a hideous fate from befalling
+you.)
+<P>
+There are two ways to start a GIF Animation file
+<P>
+ONE WAY TO START AN ANIMATION GIF
+<OL>
+  <LI>
+    Select FILE/OPEN from the menu and select your first GIF.
+  <LI>
+    Now Select FILE/SAVE AS and rename the GIF to it’s final animation name.
+    Click on OK DON’T PRESS [ENTER]!!! [ENTER] CANCELS!
+</OL>
+<P>
+SECOND WAY (I prefer this way) TO START AN ANIMATION GIF
+<OL>
+  <LI>
+    Select FILE/NEW from the menu. A blank GIF Block list with only a HEADER
+    will appear.
+  <LI>
+    Start inserting images.
+</OL>
+<P>
+Why do I prefer it, here’s why:
+<P>
+The first image you bring in, should be the one to make the global palette.
+Even if you delete that image from the file afterwards. Why? Here’s my reasoning
+(If it is flawed someone please tell me) The global palette should contain
+the widest range of colors for all of the images. So I would think that if
+you have a frame where a rainbow of colors bursts open, insert that image
+first so that wide palette will be covered.
+<P>
+On a particularly troublesome set of images I found that color shifts were
+being introduced along the way. Especially with whites turning gray, greenish
+or yellow. I solved it by creating a composite bitmap of all the major images
+in the animations. Everything on a single large bitmap. I inserted that and
+created the Global Color table from it. I then discarded the image and began
+inserting the actual images in order. No more color shifts.
+<P>
+<B>GIF89A HEADER &amp; LOGICAL SCREEN DESCRIPTOR BLOCK</B>
+<P>
+<IMG SRC="star90.gif" ALIGN=left WIDTH=90 HEIGHT=90 HSPACE=5>Every GIF stars
+with these two blocks. GIF Con lumps these two blocks into one. The Screen
+Block defines the extremities of the displayed GIF. A blank GIF has a default
+size of 640 by 480 pixels, width by height. This is the size of a standard
+VGA screen on an IBM Compatible computer. This logical screen is the amount
+of space Netscape will give to your image when displayed. This star uses
+a 90x90 logical screen to display a 60x60 image of a star. Notice the right-hand
+and lower
+borders.<BR clear=all>
+<IMG SRC="star.gif" ALIGN=left WIDTH=120 HEIGHT=120 HSPACE=5><IMG SRC="star.gif"
+    WIDTH=60 HEIGHT=60 HSPACE=5><IMG SRC="star.gif" WIDTH=30 HEIGHT=30 HSPACE=5>(NOTE:
+Netscape's IMG tag attributes: HEIGHT &amp; WIDTH, can scale a single image
+to any size. The scaling however, is based on the logical screen size.) These
+three star all have the same source file (STAR.GIF 59x59) but have been scaled
+to display at different sizes. Other browsers don't pay attention to logical
+screen or Netscape's HEIGHT &amp; WIDTH attributes.
+<P>
+<PRE>    HEADER GIF89A Screen (640x480)
+</PRE>
+<P>
+<IMG align="right" SRC="gcs-head.gif" width=420 height=387 hspace=10>The
+size should be shrunk, typically to the largest dimensions of the inserted
+images. By this, I mean find the largest width out of all the files and use
+that. Then find the largest height of all the images and use that. Don't
+assume all your images are the same size. Most of the time they are not.
+<IMG SRC="bug.gif" ALIGN=left>Inserting a image larger than the screen size
+will cause a <FONT COLOR="RED">GPF in Netscape</FONT>. Also, remember that
+this is your movie screen. Move part of an image off an edge and that part
+of it will not display in Netscape. GIF Con will show you the screen area
+by using a dotted lines to define it. Anything that falls outside the dotted
+lines, when viewed in GIFCon, will not be displayed elsewhere.
+<P>
+INSERT AN IMAGE
+<P>
+<IMG align="left" SRC="gcs-bloc.gif" width=150 height=237 hspace=10>Click
+the INSERT button. Click on the IMAGE button. A file dialog box opens. Find
+your image file, or type its name in. DO NOT HIT [ENTER]! That CANCELS in
+version 1.0c! Click on the OK button. <BR clear=right>
+<P>
+If any colors in the image are not represented by the global palette, a dialog
+box will pop up with up to six choices. You must choose one of the active
+choices (inactive choices are grayed out). True color, 24-bit images, are
+internally converted to 256 color images in GIF Construction Set. GIF does
+not support more than 256 colors.
+<P>
+<A NAME="palette"></A><B>Check out the <A HREF="gifphoto.htm">Image Palette
+page</A> for photographic examples of the following options.</B>
+<P>
+<P>
+<B>USE A LOCAL PALETTE</B>
+<P>
+This increases the files size by as much as 779 bytes. A new palette of colors
+is generated for this image only. The only problem I see is some 256-color
+displays may not handle too many palette swaps very well. You may see what
+appears to be a colorful negative images, or flashes on screen.
+<P>
+<P>
+<B>USE A LOCAL GREY PALETTE</B>
+<P>
+This inserts a palette that is composed of 256 levels of gray. Color #0 is
+black, color #1 is white, and #2 through #255 range from near-black to almost
+white. You can use this to convert a color image to grayscale. Though, because
+of sorted palettes this method of conversion will often leave the image very
+dark.
+<P>
+<P>
+<B>REMAP IMAGE TO THE GLOBAL PALETTE</B>
+<P>
+Similar to DITHER below. GIFCon simply replaces colors absent in the global
+palette with one that is closest to it. REMAP is not a good option for
+photographic images.
+<P>
+<P>
+<B>DITHER IMAGE TO THE GLOBAL PALETTE</B>
+<P>
+This means that GIFCon will repaint your image to make up for colors that
+are not in the global palette. This may include using a dot of red and a
+dot of orange next to eachother to get that odd brownish-orange color you
+used. This is known as dithering. This is best for photo-like images. Some
+detail may be lost.
+<P>
+<P>
+<B>USE AS THE GLOBAL PALETTE</B>
+<P>
+You only get this option once. One image can have its palette copied into
+the global palette. Once done, you can’t choose another. For this reason
+I suggest picking your global palette first, rather than do it as an
+afterthought.
+<P>
+<P>
+<B>USE AS IS (MAY CAUSE COLOR SHIFTS)</B>
+<IMG SRC="bug.gif" ALIGN=left width=36 height=43>
+<P>
+This option causes a <FONT COLOR="RED">GPF in GIFCon</FONT> when I go to
+save. Be very cautious if attempting to use it. What this means is what every
+color #0 is use that color. Whatever color#253 is use that color. You see
+GIFs work like a color by number set. If a particular pixel is color #197,
+the decoder goes to the color palette, finds #197 as paints the pixel that
+color. USE AS IS will simply use the GLOBAL palette. This option often does
+not work.
+<P>
+<P>
+<B>FIFTEEN BIT QUANTIZE</B>
+<P>
+This option will produce more attractive images if your palette requires
+color matching and remapping. However it’s also pretty slow, especially on
+older machines. It does, however produce smoother gradients, and more exact
+representations of higher color images.
+<P>
+If you are running into real problems with color variances that cause GIF
+Con to perform color shifts, here's a solution. Create a bitmap that is a
+composite of all the pieces of animation, a large bitmap. Insert that composite
+into GIF Con so that it picks a palette that covers all the variation in
+the images. Then delete the image, and insert the sequence of animation remapping
+to the available colors.
+<P>
+The IMAGE BLOCK will now appear on the Block List. It will show how big the
+image is in pixels (width by height) and how many colors are in the image.
+<P>
+<PRE>
+    HEADER GIF89A Screen (640x480)
+    IMAGE 503 x 86, 256 colours
+</PRE>
+<P>
+<IMG align="right" SRC="gcs-imag.gif" width=420 height=487 hspace=10>
+<P>
+If the image is wider or taller than your screen, adjust your logical screen
+to hold it. For the previous example it should be adjusted to read:
+<P>
+<PRE>
+    HEADER GIF89A Screen (503x86)
+    IMAGE 503 x 86, 256 colours
+</PRE>
+<P>
+Let’s edit the image block and see what options we have. Select it on the
+list, and hit the EDIT button.
+<P>
+You can specify the X &amp; Y position of the image, relative to the SCREEN
+area defined in the HEADER GIF89A Screen Block. Zero (0) left and zero (0)
+top means the image starts at the upper-left hand corner of where the GIF
+is placed on your web page. A top of 12 means the images starts 12 pixels
+down. A left of 25 means the image is displayed 25 pixels to the right. Negative
+values are not allowed, so if you have an image that should move left, start
+with a number higher than zero and decrease the number to show movement to
+the left. The same is true for moving up, negative top values are not allowed.
+<IMG SRC="bug.gif" ALIGN=left width=36 height=43>GIFCon has a bug that
+misinterprets these values. WIth a zero top and zero left, images are inserted
+1 pixels down and 1 pixel to the right. Netscape does not make this error.
+<P>
+<B>INTERLACED IMAGES</B>
+<P>
+In the Image Block you can specify an interlaced image. Interlaced images
+in an animation may not interlace past the first frame. My first animation
+was interlaced for every frame. I would consistently see interlacing occur
+on the first image, but not on any of the subsequent frames. A GIF must be
+set to be SAVED as interlaced, to be displayed at interlaced.
+<A NAME="control"></A>
+<P>
+<B>GRAPHIC CONTROL EXTENSION BLOCK</B>
+<P>
+<IMG align="right" SRC="gcs-cont.gif" width=380 height=307 hspace=10>Control
+Blocks can be inserted into the GIF file. Only one should be inserted before
+each image. It should be placed immediately before the image it is meant
+to control. Let’s INSERT a CONTROL BLOCK before the image we just inserted.
+Click on the block ABOVE the image (probably a header block if you’re following
+the tutorial). Whenever you insert, the new block will always appear just
+below what is highlighted on the current list of blocks. Hit the INSERT button,
+choose CONTROL.
+<P>
+<PRE>    HEADER GIF89A Screen (503x86)
+    CONTROL
+    IMAGE 503 x 86, 256 colours
+</PRE>
+<P>
+Let's edit that CONTROL Block by either selecting it and hitting the EDIT
+button, or double-clicking on it. <A NAME="transparent"></A>
+<P>
+<P>
+<B>Transparency</B>
+<P>
+Now you get to specify a color to be transparent. Click on the check box
+for transparency. The default transparency color is 0 (usually black). By
+clicking on a color, you get to see the current palette associated with this
+image. Select the color that should be replace with transparency. If you
+see multiple instances of the desired color (this happens often with white)
+choose the first instance of it in the map (reading left to right and down).
+In version 1.0F and later, an eyedropper feature is provided. With this you
+can simply point to the color you want to be transparent. This is much easier.
+You should use the VIEW button to verify that the transparency has the desired
+effect. Only one color can be transparent per image.
+<P>
+<A HREF="gifmakf1.htm#transparent"><IMG SRC="s-backgr.gif" ALIGN=left WIDTH=59
+    HEIGHT=59 HSPACE=5 VSPACE=5></A>You must insert a control block with transparency
+set before every image to get an animation with a consistently transparent
+background. Control blocks only affect the first image that follows it. If
+you have an HTML-defined background, you must have a control block before
+the FIRST image with transparency set. EVEN if it doesn't need it, set it
+and point it to some color. IF the FIRST image, is preceded by a Control
+Block WITH transparency ON, Navigator will recognize the HTML-defined background.
+Otherwise, it uses the color set in the Navigator menus for the background.
+This is usually a gray.
+<P>
+Lastly, For transparent animations to work you <B>MUST</B> use
+<A HREF="#removal"><I>remove by background</I></A> for EVERY frame unless
+you want a trail of previous images left on th screen. If <I>remove by
+previous</I> is implemented, this will become an alternate choice. Until
+then use "background".
+<P>
+<IMG SRC="bug.gif" ALIGN=left width=36 height=43>There is a bug in Transparency
+with frames. My <A HREF="windweb.htm">Link Cruiser</A> page often displays
+the white background of the logo, rather than transparently displaying the
+background JPeG image. This only occurs in this framed instance. It is a
+problem in beta6.
+<P>
+<P>
+<B>Wait for User Input</B>
+<P>
+This would normally cause a pause that would wait for some form of input
+from the user (or an expired timed delay) before preceding. Netscape ignores
+this.
+<P>
+<P>
+<A HREF="#transparent"><IMG SRC="s-timed.gif" WIDTH=59 HEIGHT=59 HSPACE=5
+    VSPACE=5 ALIGN=LEFT></A><B>Delay</B>
+<P>
+This Delay is measured erroneously in seconds by GIFCon before version 1.0G.
+It should be 1/100ths of a second. This makes it near impossible to test
+time delays in earlier versions of GIFCon. <A HREF="toolbox.htm#gifcon">Get
+1.0G</A> from the Alchemy Mindworks site. Netscape handles the timing this
+way: display the IMAGE, waits the desired time, performs the removal. The
+next control or image block then takes over. This is correct according to
+the GIF specifications. The star should revolve over 12 seconds. The afterimages
+occur because the remove by is set to nothing (<A HREF="#removal">see
+below</A>).
+<P>
+<IMG SRC="bug.gif" ALIGN=left width=36 height=43>GIF Construction Set fixed
+the timing problems in 1.0G but introduced <FONT COLOR="RED">a serious
+problem</FONT> by supporting Looping. When viewing and animation in GIF Con
+you cannot interrupt the rendering on a frame. That is, as it is drawing
+a frame, it ignores input. During delays you can ESCape to stop an animation
+from playing. If you implement an animation WITHOUT delays, DO NOT PLAY IT
+IN GIF Con 1.0G. If you have a loop in it, you will never be able to stop
+it. You will have to Control-Alt-Delete and reboot your computer.
+<P>
+<IMG SRC="bug.gif" ALIGN=left width=36 height=43>Netscape 2.0 does have some
+problems with this. Beta3 will hang on any timed delay in a GIF. Beta4 through
+the final version for Windows contains a bug that prevents the GIF from playing
+faster than 34/100ths of a second between images. Also note that if you have
+a long delay, like two seconds, the STOP button will gray out and Netscape
+will stop taking processor time to play the GIF. When the long time delay
+is up, the STOP button becomes available again, and Netscape begins executing
+the remainder of the GIF. While this is not a bug, it prevents you from stopping
+the execution of the animation while it is idle.
+<P>
+<P>
+<A NAME="removal"></A><B>Remove by</B>
+<P>
+This determines what is done with the IMAGE after the time delay or user
+input has occurred. There are four actions. <BR clear=left>
+<P>
+<A HREF="gifmakf1.htm#removal"><IMG SRC="s-nothin.gif" ALIGN=left WIDTH=59
+    HEIGHT=59 HSPACE=5></A><I>Nothing</I> - Don’t do anything. When overwriting
+the entire frame with the succeeding frame this is the best and quickest
+choice. “Nothing is done with the image” This will cause afterimages in
+transparent images though. <BR clear=left>
+<P>
+<A HREF="gifmakf1.htm#removal"><IMG SRC="s-leave.gif" ALIGN=left WIDTH=59
+    HEIGHT=59 HSPACE=5></A><I>Leave As Is</I>. - Same as Nothing. Under other
+circumstances these two options may be treated differently. <BR clear=left>
+<P>
+<A HREF="gifmakf1.htm#removal"><IMG SRC="s-previ.gif" ALIGN=left WIDTH=59
+    HEIGHT=59 HSPACE=5></A><I>Previous Image</I> - This is supposed to restore
+the image to the way it look before this image was laid down. Netscape
+doesn’t support this yet (2.0beta5). It is the same as Nothing for now. You
+can emulate this by restoring the wiped out area yourself with small cropped
+<A HREF="gifmake.htm#patches">"patches"</A> of the original image
+<BR clear=left>
+<P>
+<A HREF="gifmakf1.htm#removal"><IMG SRC="s-backgr.gif" ALIGN=left WIDTH=59
+    HEIGHT=59 HSPACE=5></A><I>Background</I> - Paint the background of the Netscape
+browser over the image's area. This is normally gray. It is set in the Navigator
+Menu under, OPTIONS, GENERAL PREFERENCES, COLORS. You say you want your
+HTML-defined BACKGROUND or BGCOLOR to be used? Well it is a little
+unconventional, but the first image needs to be preceded by a CONTROL block
+with transparency turned on (any color-doesn't matter.) Then the HTML set
+background GIF/color will be painted over the image’s removal area. Use this
+with transparent animations.
+<P>
+<B>Creating A Stream of Images</B>
+<P>
+Okay, so now you've inserted your first image, it's time to create that "stream
+of images" that GIF allows us. With the last IMAGE BLOCK in GIF Construction
+Set highlighted, you now want to insert the second image in the series, then
+the third, then the fourth, then the fifth, etc. Like this...
+<P>
+<PRE>
+    HEADER GIF89A Screen (503x86)   &lt;- Check width and height
+    CONTROL
+    IMAGE 503 x 86, 256 colours
+    IMAGE 502 x 86, 256 colours
+    IMAGE 499 x 86, 256 colours
+    IMAGE 501 x 89, 256 colours     &lt;- Note height (89)
+    IMAGE 504 x 88, 256 colours     &lt;- Note width (504)
+</PRE>
+<P>
+Notice that the example images I used here are changing shape slightly. Image
+#4 is the tallest at 89 pixels, and image #5 is the widest at 504 pixels.
+Both of those dimensions exceed our Screen (503x86) so we need to increase
+the Logical Screen in the Header accordingly or risk a GPF in Netscape. If
+you need to position each image within the logical screen, you will need
+to EDIT each image. Yes it's tedious, but if you need to, you need to. If
+these images have a transparency color, you will need to insert a Control
+block before each and every one. Now, here's a little short cut. Unless you
+need to alter the timing on the individual images, you will probably have
+a series of identical control blocks: same transparent color, same time delay,
+same removal by. If you set one Control Block, you can EDIT/COPY it into
+the clipboard. Then click on the first image (so the next will be inserted
+at the right point.) Now With your hands on the keyboard... [ALT]+E, P, [down
+arrow] ...and repeat. You can put this in a macro if you have a real long
+one with a lot of images. These three keystrokes, will insert the copied
+Control Block, after it is inserted, the Control Block will be highlighted.
+The down arrow will highlight the next image. This is the perfect point to
+insert the next Control block. Once you get the rhythm down, inserting twenty
+or thirty of these is a snap. Deleting them can be done the same way. What
+you will end up with is something similar to this...
+<P>
+<PRE>
+    HEADER GIF89A Screen (504x89)
+    LOOP                             &lt;- 1.0b versions before 1.0G of GIFCon
+    CONTROL                             APPLICATION-DEFINED will show instead
+    IMAGE 503 x 86, 256 colours         of LOOP.
+    CONTROL
+    IMAGE 502 x 86, 256 colours
+    CONTROL
+    IMAGE 499 x 86, 256 colours
+    CONTROL
+    IMAGE 501 x 89, 256 colours
+    CONTROL
+    IMAGE 504 x 88, 256 colours
+</PRE>
+<P>
+This is what a animated GIF should look like when you're finished. Note the
+LOOP, is what you will see when the GIF is set up to loop. Let's get onto
+that. 
+  <HR>
+<P>
+Any ideas, suggestions,utilities, or examples, please mail them over for
+inclusion in this page.
+<P>
+<A HREF="mailto.htm">Royal Frazier</A> <BR CLEAR=ALL>
+<P align=center>
+(<A HREF="#top">Go to the TOP of PAGE for MENUS</A>) 
+<P align=center>
+<!-- BEGIN LINKEXCHANGE CODE -->
+<a href="http://ad.linkexchange.com/X231197/gotoad.map" 
+target="_top">
+<img width=440 height=40 border=1 ismap 
+alt="LinkExchange"
+src="http://ad.linkexchange.com/X231197/logoshowad?free"></a>
+<br><font size=1><a href="http://www.linkexchange.com/" 
+target="_top">
+LinkExchange Member</a></font><br>
+<!-- END LINKEXCHANGE CODE  -->  <HR size=4 noshade>
+<TABLE CELLPADDING=0 CELLSPACING=0 BORDER=0 WIDTH=100%>
+  <TR>
+    <TD width="40%"><FONT SIZE="1" COLOR="GRAY">Copyright 1996,1997 Royal E.
+      Frazier Jr.</FONT></TD>
+    <TD width=20% align=center><IMG src="http://members.aol.com/cgi-bin/counter?royalef/ctutor/gifmakf"
+	  width=68 height=20></TD>
+    <TD width=40% align=right><FONT SIZE="1" COLOR="GRAY">Last Updated: March
+      1997</FONT></TD>
+  </TR>
+</TABLE>
+</BODY></HTML>

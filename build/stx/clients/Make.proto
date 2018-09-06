@@ -1,0 +1,39 @@
+#
+# $Header: /cvs/stx/stx/clients/Make.proto,v 1.18 2017-06-08 14:32:11 cg Exp $
+#
+
+TOP=..
+
+MODULE=stx
+MODULE_DIR=clients
+RCSSOURCES=Make.proto
+LINKSOURCES=Make.proto
+
+#
+# subdirs where sources are found
+#
+ALLSUBDIRS=GLdemos AddrBook Animation \
+	   Clock Demos GuessingGame MailTool NewsTool \
+	   DrawTool LogicTool TicTacToe Tetris \
+	   TicTacToe3D Tools DataViewer PingPong
+
+#
+# subdirs where binaries are made
+#
+# subdirectories where targets are to be made:
+SUBDIRS= DrawTool
+
+all::
+
+tar:
+	(cd $(TOP); tar cvfh DISTRIB/clients.tar \
+					clients/.dir.info \
+					clients/Make.proto \
+					clients/*/Make.proto \
+					clients/*/.dir.info \
+					clients/*/*.st \
+					clients/*/*.defs \
+					clients/*/*.data \
+					clients/*/resources \
+					clients/*/examples \
+					clients/*/bitmaps )

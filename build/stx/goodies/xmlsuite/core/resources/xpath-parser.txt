@@ -1,0 +1,136 @@
+
+
+LocationPath    :    RelativeLocationPath  'RLP'            			{XMLv2::XPathExprTreeNode new add: RLP ruleId: #rule_1_1. }   
+			| AbsoluteLocationPath 'ALP'           			{XMLv2::XPathExprTreeNode new add: ALP ruleId: #rule_1_2.};
+    
+AbsoluteLocationPath :    
+			   "/" RelativeLocationPath  'RLP' 	 			{XMLv2::XPathExprTreeNode new add: (XMLv2::XPathExprTreeNode new synthetizedValue: '/') ruleId: #rule_2_1; addToSubnodes: RLP.}
+			|  "/"									{XMLv2::XPathExprTreeNode new add: (XMLv2::XPathExprTreeNode new synthetizedValue: '/') ruleId: #rule_2_2.}
+                        | AbbreviatedAbsoluteLocationPath 'AALP' 		{XMLv2::XPathExprTreeNode new add: AALP ruleId: #rule_2_3.} ; 
+			
+			
+RelativeLocationPath :    
+			   Step 'Step'	 						{XMLv2::XPathExprTreeNode new add: Step ruleId: #rule_3_1.} 
+			| RelativeLocationPath 'RLP'  "/" Step 'Step' 		{XMLv2::XPathExprTreeNode new add: RLP ruleId: #rule_3_2;  addToSubnodes: (XMLv2::XPathExprTreeNode new synthetizedValue: '/'); addToSubnodes: Step.} 
+                        | AbbreviatedRelativeLocationPath 	'ARLP'		{XMLv2::XPathExprTreeNode new add: ARLP ruleId: #rule_3_3.} ;
+     
+Step                 :    AxisSpecifier 'AS' NodeTest 'NT' Predicate*  'PR'   	{XMLv2::XPathExprTreeNode new add: AS ruleId: #rule_4_1; addToSubnodes: NT; addToSubnodes: PR.} 
+                        | "." 									{XMLv2::XPathExprTreeNode new id: #rule_4_2; synthetizedValue: '.' .} 
+			| ".." 									{XMLv2::XPathExprTreeNode new id: #rule_4_3; synthetizedValue: '..' .} 
+			|   <NCName> 'NCN' Predicate*  'PR'   			{XMLv2::XPathExprTreeNode new add: (XMLv2::XPathExprTreeNode new synthetizedValue: (NCN value asString)) ruleId: #rule_4_4; addToSubnodes: PR.};
+			
+    
+AxisSpecifier        :    AxisName 'AN' "::"   					{XMLv2::XPathExprTreeNode new id: #rule_5_1; synthetizedValue: (AN value asString),'::'.} 
+                        | "@"									{XMLv2::XPathExprTreeNode new id: #rule_5_2; synthetizedValue: '@' .} ;
+ 
+AxisName             : "ancestor"     							{'ancestor'.}
+                        | "ancestor-or-self"    						{'ancestor-or-self'.}
+                        | "attribute"   							{'attribute'.}
+                        | "child"       							{'child'.}
+                        | "descendant"  							{'descendant'.}
+                        | "descendant-or-self"  					{'descendant-or-self'.}
+                        | "following"   							{'following'.}
+                        | "following-sibling"   						{'following-sibling'.}
+                        | "namespace"   							{'namespace'.}
+                        | "parent"      							{'parent'.}
+                        | "preceding"   							{'preceding'.}
+                        | "preceding-sibling"   						{'preceding-sibling'.}
+                        | "self" 								{'self'.} ;
+ 
+NodeTest             :    NameTest   'NT'   						{XMLv2::XPathExprTreeNode new add: NT ruleId: #rule_6_1.} 
+                        | NodeType 'NTY' "(" ")"    					{XMLv2::XPathExprTreeNode new id: #rule_6_2; synthetizedValue: (NTY value asString), '()'.} 
+                        | "processing-instruction(" <Literal> 'LIT' ")" 		{XMLv2::XPathExprTreeNode new id: #rule_6_3; synthetizedValue: 'processing-instruction(',(LIT value asString),')'.} ;      
+
+NodeType       :    "comment"       							{'comment'.}
+                         | "text"        							{'text'.}
+                         | "processing-instruction"      				{'processing-instruction'.}
+                         | "node" 								{'node'.} ;     
+
+Predicate            :    "[" PredicateExpr 'PE' "]" 					{XMLv2::XPathExprTreeNode new add: (XMLv2::XPathExprTreeNode new synthetizedValue: '[') ruleId: #rule_7_1 ;
+													addToSubnodes: PE;
+													addToSubnodes: (XMLv2::XPathExprTreeNode new synthetizedValue: ']').} ;  					
+    
+PredicateExpr        :    Expr 'EXPR'							{ EXPR. } ;
+   
+AbbreviatedAbsoluteLocationPath    : "//" RelativeLocationPath 'RLP'	{XMLv2::XPathExprTreeNode new add: (XMLv2::XPathExprTreeNode new synthetizedValue: '//') ruleId: #rule_8_1;  addToSubnodes: RLP.};       
+    
+AbbreviatedRelativeLocationPath    : 
+			RelativeLocationPath 'RLP' "//" Step 'Step' 		{XMLv2::XPathExprTreeNode new add: RLP ruleId: #rule_9_1;  addToSubnodes: (XMLv2::XPathExprTreeNode new synthetizedValue: '//')  ; addToSubnodes: Step.} ;  
+  
+Expr                 :    OrExpr 'OEXPR' 						{ OEXPR. } ;
+
+ PrimaryExpr         :    VariableReference 'VR'   					{ VR. }     
+                        | "(" Expr 'EXPR' ")"  						{XMLv2::XPathExprTreeNode new add: (XMLv2::XPathExprTreeNode new synthetizedValue: '(' ) ruleId: #rule_10_1;  addToSubnodes: EXPR;  addToSubnodes: (XMLv2::XPathExprTreeNode new synthetizedValue: ')').} 
+                        | <Literal>  'LiteralToken'   					{XMLv2::XPathExprTreeNode new id: #rule_10_2; synthetizedValue: (LiteralToken value asString) .} 
+                        | <Number> 'NumberToken'       				{XMLv2::XPathExprTreeNode new id: #rule_10_3; synthetizedValue: (NumberToken value asString) .} 
+                        | FunctionCall 'FC'						{ FC. } ;
+ 
+FunctionCall 	:    
+	FunctionName "(" Argument ( "," Argument )* ")"  			{XMLv2::XPathExprTreeNode new add: '1' ruleId: #rule_11_1;
+													addToSubnodes: (XMLv2::XPathExprTreeNode new synthetizedValue: '(' ) ;
+													addToSubnodes: '2';
+													addToSubnodes:(XMLv2::XPathExprTreeNode new synthetizedValue: ',' ) ;
+													addToSubnodes: '3';
+													addToSubnodes: (XMLv2::XPathExprTreeNode new synthetizedValue: ')' ).}     
+    |	FunctionName 'FN' "(" ")"							{XMLv2::XPathExprTreeNode new add: FN ruleId: #rule_11_2; addToSubnodes: (XMLv2::XPathExprTreeNode new synthetizedValue: '()' ).};
+   
+Argument             :    Expr 'EXPR'							{ EXPR.} ;
+   
+UnionExpr            : PathExpr    'PEXPR'						{ PEXPR. }     
+                        | UnionExpr 'UEXPR' "|" PathExpr 'PEXPR'			{XMLv2::XPathExprTreeNode new add: UEXPR ruleId: #rule_12_1;  
+													addToSubnodes:  (XMLv2::XPathExprTreeNode new synthetizedValue: '|' );
+													addToSubnodes: PEXPR.} ; 
+   
+PathExpr             :    LocationPath   'LP'						{ LP. } 			
+                        | FilterExpr    'FEXPR'						{ FEXPR. } 
+                        | FilterExpr 'FIXPR' "/" RelativeLocationPath  'RLP'	{XMLv2::XPathExprTreeNode new add: FIXPR ruleId: #rule_13_1; addToSubnodes: (XMLv2::XPathExprTreeNode new synthetizedValue: '/' ); addToSubnodes: RLP.}
+                        | FilterExpr 'FEXPR' "//" RelativeLocationPath 'RLP'   	{XMLv2::XPathExprTreeNode new add: FEXPR ruleId: #rule_13_2; addToSubnodes: (XMLv2::XPathExprTreeNode new synthetizedValue: '//' );  addToSubnodes: RLP.} ;
+
+  
+FilterExpr           :    PrimaryExpr  'PREXPR'					{ PREXPR. }  						
+                        | FilterExpr 'FIXPR' Predicate 'PRE'				{XMLv2::XPathExprTreeNode new add: FIXPR ruleId: #rule_14_1;  addToSubnodes: PRE.};
+   
+OrExpr               :    AndExpr 'AEXPR'						{ AEXPR. } 
+                        | OrExpr 'OEXPR' "or" AndExpr 'AEXPR'			{XMLv2::XPathExprTreeNode new add: OEXPR ruleId: #rule_15_1; addToSubnodes: (XMLv2::XPathExprTreeNode new synthetizedValue: ' or ' );  addToSubnodes: AEXPR.};
+  
+AndExpr              :    EqualityExpr   'EEXPR' 					{ EEXPR. } 
+                        | AndExpr 'AEXPR' "and" EqualityExpr 'EEXPR'		{XMLv2::XPathExprTreeNode new add: AEXPR ruleId: #rule_16_1; addToSubnodes: (XMLv2::XPathExprTreeNode new synthetizedValue: ' and ' );  addToSubnodes: EEXPR.};
+   
+EqualityExpr         :    RelationalExpr  'REXPR'					{ REXPR. } 
+                        | EqualityExpr 'EEXPR' "="  RelationalExpr 'REXPR'	{XMLv2::XPathExprTreeNode new add: EEXPR ruleId: #rule_17_1; addToSubnodes: (XMLv2::XPathExprTreeNode new synthetizedValue: '=' );  addToSubnodes: REXPR.}
+                        | EqualityExpr 'EEXPR' "!=" RelationalExpr 'REXPR'    	{XMLv2::XPathExprTreeNode new add: EEXPR ruleId: #rule_17_2; addToSubnodes: (XMLv2::XPathExprTreeNode new synthetizedValue: '!=' );  addToSubnodes: REXPR.};
+    
+RelationalExpr       :    AdditiveExpr  'ADEXPR' 					{ ADEXPR. } 
+                        | RelationalExpr 'REXPR' "<"   AdditiveExpr  'AEXPR'	{XMLv2::XPathExprTreeNode new add: REXPR ruleId: #rule_18_1; addToSubnodes: (XMLv2::XPathExprTreeNode new synthetizedValue: '<' );  addToSubnodes: AEXPR.}
+                        | RelationalExpr 'REXPR' ">"   AdditiveExpr  'AEXPR'      {XMLv2::XPathExprTreeNode new add: REXPR ruleId: #rule_18_2; addToSubnodes: (XMLv2::XPathExprTreeNode new synthetizedValue: '>' );  addToSubnodes: AEXPR.}
+                        | RelationalExpr 'REXPR' "<=" AdditiveExpr  'AEXPR'      {XMLv2::XPathExprTreeNode new add: REXPR ruleId: #rule_18_3; addToSubnodes: (XMLv2::XPathExprTreeNode new synthetizedValue: '<=' );  addToSubnodes: AEXPR.}
+                        | RelationalExpr 'REXPR' ">=" AdditiveExpr  'AEXPR' 	{XMLv2::XPathExprTreeNode new add: REXPR ruleId: #rule_18_4; addToSubnodes: (XMLv2::XPathExprTreeNode new synthetizedValue: '>=' );  addToSubnodes: AEXPR.};
+   
+AdditiveExpr         :    MultiplicativeExpr 'MEXPR'				{ MEXPR. } 
+                        | AdditiveExpr 'AEXPR' "+" MultiplicativeExpr 'MEXPR'   {XMLv2::XPathExprTreeNode new add: AEXPR ruleId: #rule_19_1; addToSubnodes: (XMLv2::XPathExprTreeNode new synthetizedValue: '+' );  addToSubnodes: MEXPR.}
+                        | AdditiveExpr 'AEXPR' "-" MultiplicativeExpr 'MEXPR' 	{XMLv2::XPathExprTreeNode new add: AEXPR ruleId: #rule_19_2; addToSubnodes: (XMLv2::XPathExprTreeNode new synthetizedValue: '-' );  addToSubnodes: MEXPR.};
+
+MultiplicativeExpr   :    UnaryExpr 'UEXPR'      					{ UEXPR. } 
+                        | MultiplicativeExpr 'MEXPR' "*"     UnaryExpr 'UEXPR'	{XMLv2::XPathExprTreeNode new add: MEXPR ruleId: #rule_20_1; addToSubnodes: (XMLv2::XPathExprTreeNode new synthetizedValue: '*' );  addToSubnodes: UEXPR.}
+                        | MultiplicativeExpr 'MEXPR' "div"   UnaryExpr 'UEXPR'   {XMLv2::XPathExprTreeNode new add: MEXPR ruleId: #rule_20_2; addToSubnodes: (XMLv2::XPathExprTreeNode new synthetizedValue: 'div' );  addToSubnodes: UEXPR.}
+                        | MultiplicativeExpr 'MEXPR' "mod" UnaryExpr 'UEXPR' 	{XMLv2::XPathExprTreeNode new add: MEXPR ruleId: #rule_20_3; addToSubnodes: (XMLv2::XPathExprTreeNode new synthetizedValue: 'mod' );  addToSubnodes: UEXPR.};
+  
+UnaryExpr            :    UnionExpr 'UNEXPR'					{ UNEXPR. }       
+                        | "-" UnaryExpr 'UNEXPR'					{XMLv2::XPathExprTreeNode new add: (XMLv2::XPathExprTreeNode new synthetizedValue: '-' ) ruleId: #rule_21_1; addToSubnodes: UNEXPR.} ;
+  
+FunctionName         :     NodeType 'NTY'						{XMLv2::XPathExprTreeNode new id: #rule_22_1; synthetizedValue: (NTY value asString).}
+				| <NCName> ":" <NCName> 				{XMLv2::XPathExprTreeNode new id: #rule_22_2; synthetizedValue: ('1' value asString , ':' ,'2' value asString ).}
+			        | <NCName> 'NCN'					{XMLv2::XPathExprTreeNode new id: #rule_22_3; synthetizedValue: (NCN value asString).};				
+
+  
+VariableReference  :        "$" <NCName> ":" <NCName> 			{XMLv2::XPathExprTreeNode new id: #rule_23_1; synthetizedValue: ('$' , '1' value asString , ':' ,'2' value asString ).}
+			        | "$" <NCName> 'NCN'					{XMLv2::XPathExprTreeNode new id: #rule_23_2; synthetizedValue: ('$' ,NCN value asString).};   
+
+
+NameTest             :    "*"     							{XMLv2::XPathExprTreeNode new id: #rule_24_1; synthetizedValue: '*'.}  
+                        | <NCName> 'NCN' ":" "*"        				{XMLv2::XPathExprTreeNode new id: #rule_24_2; synthetizedValue: (NCN value asString , ':*').}
+                        | <NCName> ":" <NCName> 					{XMLv2::XPathExprTreeNode new id: #rule_24_3; synthetizedValue: ('1' value asString , ':' ,'2' value asString ).}
+			| <NCName> 'NCN'						{XMLv2::XPathExprTreeNode new id: #rule_24_4; synthetizedValue: (NCN value asString).};
+			
+		
+ 	

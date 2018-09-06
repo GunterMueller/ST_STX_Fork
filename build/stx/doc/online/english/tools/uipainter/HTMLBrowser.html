@@ -1,0 +1,173 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+   <META NAME="Author" CONTENT="Thomas Zwick, eXept software AG, Germany">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.04 [en] (X11; I; Linux 2.0.30 i586) [Netscape]">
+   <TITLE>The HTML Browser Widget</TITLE>
+</HEAD>
+<BODY>
+<A HREF="TextEditor.html" NOPRINT><IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="The Text Editor Widget" NOSAVE HEIGHT=30 WIDTH=30></A><A HREF="TOP.html#TABLEOFTHEWIDGETS" NOPRINT><IMG SRC="../../../icons/DocsUpArrow.gif" ALT="Table of the Widgets" NOSAVE HEIGHT=30 WIDTH=30></A>
+<BR><FONT FACE="Times New Roman,Times">&nbsp;</FONT>&nbsp;
+<HR ALIGN=LEFT WIDTH="100%">
+<H1>
+<FONT SIZE=+4>The HTML Browser Widget</FONT></H1>
+<IMG SRC="../../../pictures/GUIPainterWidgetHTMLBrowser.gif" ALT="A View of a HTML Browser Widget" NOSAVE HEIGHT=95 WIDTH=206>
+<P>View Class: <TT>HTMLView</TT>
+<BR>Spec Class: <TT>HTMLViewSpec</TT>
+
+<P>The<B> HTML Browser Widget</B> is used to provide displaying and browsing
+capabilities for HTML-documents. For more detailed information see document
+"<A HREF="../htmlViewer/TOP.html">The ST/X HTML Viewer</A>".
+<BR>&nbsp;
+<H3>
+
+<HR ALIGN=LEFT WIDTH="100%"></H3>
+
+<H3>
+The <I>Basics</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>ID</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Unique symbolic name (ID) of the HTML browser.</B>&nbsp;
+<BR>This ID can be used by the application to access the widget
+via <TT>"builder>>componentAt:#ID"</TT>.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Document</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for holding
+the file name of the document</B>&nbsp;
+<BR>It should return a&nbsp;
+
+<P><TT>&nbsp;&nbsp;&nbsp; - String</TT> instance (only for static behavior)&nbsp;
+<BR><TT>&nbsp;&nbsp;&nbsp; - <A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance with a <TT>String</TT> instance&nbsp;
+
+<P>The <TT>String</TT> instance contains the file name of the document.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Popup Menu Selector</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for the building
+of a popup menu for the HTML browser.</B>&nbsp;
+<BR>It should return a menu spec.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Popup Menu Performer</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for sending
+the messages of the popup menu items to an object.</B>&nbsp;
+<BR>It should return an object which is able to receive the messages.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Menu Editor</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Opens a <A HREF="MenuEditor.html">Menu
+Editor</A> on the application class and the defined selector.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Vertical Scroll Bar</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the HTML browser provides
+vertical scrolling capabilities.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Vertical Mini Scroll Bar</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the HTML browser uses
+a small vertical scroll bar.</B>&nbsp;
+<BR>This attributes can only be set, if the attribute <I>Vertical Scroll
+Bar</I> is turned on.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Horizontal Scroll Bar</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the HTML browser provides
+horizontal scrolling capabilities.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Horizontal Mini Scroll Bar</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the HTML browser uses
+a small horizontal scroll bar.</B>&nbsp;
+<BR>This attributes can only be set, if the attribute <I>Horizontal Scroll
+Bar</I> is turned on.</TD>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Auto Hide</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Controls autoHiding of scrollbars</B>.
+<BR>If on, scrollbars hide themself, if the contents is smaller than
+the scrolled view.
+<BR>If off, scrollBars never hide themSelf.
+<BR>If set to default, the autoHide feature is controlled by the viewStyle
+<BR>and scrollbars behave "natural" for the operating system.
+<BR>(true for windows, false for most unix-styles).
+</TD>
+</TR>
+</TABLE>
+&nbsp;<TT>*&nbsp; = ValueHolder, AspectAdaptor, BufferedValueHolder, RangeAdaptor,
+TriggerValue</TT>
+
+<P>&nbsp;
+<H3>
+The <I>Details</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Initially Disabled</B></TD>
+
+<TD ALIGN=LEFT VALIGN=TOP BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that
+the HTML browser is initially disabled.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Initially Invisible</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the HTML browser is initially
+invisible.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Can Tab</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the HTML browser can
+be reached by tabbing.</B></TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>&nbsp;
+<H3>
+The <I>Help</I> Section:</H3>
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="HelpTool.html">Using the Help Tool</A>"
+<BR>&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Layout</I> Section:</H3>
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="LayoutTool.html">The Layout of the Widgets</A>"
+<BR>&nbsp;
+<BR>&nbsp;
+
+<P>
+<HR>
+
+<P><IMG SRC="../../../icons/stx.gif" ALT="[stx-logo]" NOSAVE NOPRINT HEIGHT=48 WIDTH=47 ALIGN=CENTER>
+<BR><TT>Copyright &copy; 1998 eXept Software AG, all rights reserved</TT>
+<BR>
+<HR>
+</BODY>
+</HTML>

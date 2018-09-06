@@ -1,0 +1,24 @@
+/* XPM */
+static char *CheckOn14Win_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"13 13 4 1",
+/* colors */
+"a c white",
+"b c black",
+"c c #808080",
+"d c #C0C0C0",
+/* pixels */
+"cccccccccccca",
+"cbbbbbbbbbbda",
+"cbaaaaaaaaada",
+"cbaaaaaaabada",
+"cbaaaaaabbada",
+"cbabaaabbbada",
+"cbabbabbbaada",
+"cbabbbbbaaada",
+"cbaabbbaaaada",
+"cbaaabaaaaada",
+"cbaaaaaaaaada",
+"cddddddddddda",
+"aaaaaaaaaaaaa",
+};

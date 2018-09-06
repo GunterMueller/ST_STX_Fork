@@ -1,0 +1,219 @@
+; View defaultStyle:#iris
+;
+; silicon graphics style
+; (somwehat like motif, but with smooth edges and bells&whistles)
+;
+; $Header$
+
+is3D                            true
+
+borderWidth                     0
+viewBackground                  =viewGrey
+
+#if (Screen current serverVendor = 'microsoft')
+popup.shadow                    false
+#else
+popup.shadow                    true
+#endif
+popup.level                     1
+popup.borderWidth               1
+
+#if (Screen current serverVendor = 'microsoft')
+font                             Font family:'courier' size:10
+#endif
+
+text.font                        Font family:'courier' size:12
+text.lightColor                  =viewGrey
+
+text.alternativeSelectionForegroundColor    Color black
+text.alternativeSelectionBackgroundColor    (Color redByte:150 "255" greenByte:255 blueByte:100 "204")
+
+#if Screen current hasColors
+textSelection.foregroundColor    Color black
+textSelection.backgroundColor    Color green
+#endif
+
+textCursor.foregroundColor       Color white
+#if Screen current hasColors
+textCursor.backgroundColor       Color red
+#else
+textCursor.backgroundColor       Color black
+#endif
+
+#if (Screen current hasColors and:[Screen current depth > 4])
+transcript.foregroundColor       =veryLightGray
+transcript.backgroundColor       Color red:0 green:0 blue:25
+transcript.cursorForegroundColor =transcript.backgroundColor
+transcript.cursorBackgroundColor Color green
+#else
+transcript.foregroundColor       Color white
+transcript.backgroundColor       Color black
+transcript.cursorForegroundColor =transcript.backgroundColor
+transcript.cursorBackgroundColor =transcript.foregroundColor
+#endif
+
+#if Screen current hasColors
+; editField.backgroundColor           Color red:100 green:75 blue:75
+; editField.backgroundColor           (Color scaledRed:16rB9B9 scaledGreen:16r8E8E scaledBlue:16r8E8E) exactOrNearestOn:(Screen current)
+editField.backgroundColor           (Color scaledRed:16rB9B9 scaledGreen:16r8E8E scaledBlue:16r8E8E) exactOrNearestOn:(Screen current)
+editField.selectionBackgroundColor  Color white
+editField.selectionForegroundColor  Color black
+#endif
+
+#if (Screen current serverVendor = 'Silicon Graphics' and:[(Font family:'screen' face:'bold' style:'roman' size:16) existsOn:Screen current])
+editField.font                   Font family:'screen' face:'bold' style:'roman' size:16
+#else
+editField.font                   Font family:'courier' face:'medium' style:'roman' size:12
+#endif
+
+#if (Screen current serverVendor = 'microsoft')
+variableFont                     Font family:'helvetica' face:'medium' style:'roman' size:10
+#else
+variableFont                     Font family:'helvetica' face:'medium' style:'roman' size:12
+#endif
+selection.font                   =variableFont
+label.font                       =variableFont
+
+#if Screen current hasColors
+toggle.showLamp                  true
+toggle.lampColor                 Color yellow
+checkToggle.checkColor           Color red
+checkToggle.bitmapFile           'CheckOnColor.xpm'
+checkToggle.labelOverMargin      true
+checkToggle.activeBackgroundColor =viewGrey
+radioButton.showLamp             false
+#endif
+
+scroller.level                   -1
+scroller.thumbLevel              3
+scroller.thumbColor              =viewGrey
+#if Screen current hasGreyscales
+scroller.thumbEnteredColor       =veryLightGray
+#endif
+scroller.thumbEdgeStyle          #soft
+scroller.NTallyMarks             3
+scroller.tallyLevel              1
+scroller.ghostColor              =mediumGray
+scroller.ghostLevel              -1
+#if Screen current hasGreyscales not
+scroller.viewBackground          Color white
+#endif
+scroller.middleButtonJump        true
+
+slider.NTallyMarks               1
+slider.tallyLevel                1
+
+button.edgeStyle                 #soft
+button.activeLevel               -1
+button.passiveLevel              3
+button.disabledForegroundColor   =darkGray
+#if Screen current hasGreyscales
+button.enteredBackgroundColor    =veryLightGray
+button.activeBackgroundColor     nil
+button.activeForegroundColor     Color black
+#else
+button.enteredBackgroundColor    Color white
+button.activeForegroundColor     Color white
+button.activeBackgroundColor     Color black
+#endif
+
+#if (Screen current serverVendor = 'Silicon Graphics')
+menu.font                        Font family:'helvetica' face:'bold' style:'oblique' size:10
+#else
+menu.font                        Font family:'helvetica' face:'bold' style:'roman' size:12
+#endif
+
+#if (Screen current serverVendor = 'microsoft')
+menu.font                        Font family:'helvetica' face:'bold' style:'roman' size:10
+text.font                        Font family:'courier' size:10
+variableFont                     Font family:'helvetica' face:'medium' style:'roman' size:10
+selection.font                   =variableFont
+label.font                       =variableFont
+#endif
+
+noteBook.halfLightColor          Color red
+noteBook.halfShadowColor         Color green
+noteBook.shadowColor             =darkGray
+noteBook.lightColor              =veryLightGray
+"/ noteBook.foregroundColor           Color red
+"/ noteBook.disabledForegroundColor   Color red darkened
+noteBook.canvasFrameLevel          1
+noteBook.edgeStyle                 #soft
+
+menu.hilightBackgroundColor      Color white
+menu.hilightForegroundColor      Color black
+menu.hilightLevel                1
+; menuShowAccelerators            false
+#if Screen current hasColors
+menu.checkColor                  Color red
+#endif
+menu.mainMenu.tabable            true
+menu.extraMargin                    2
+menu.suppressSeparatingLinesInToolbar        true
+;menu.buttonPassiveLevel        1
+;menu.buttonActiveLevel         -1
+;menu.buttonEnteredLevel        1
+
+pullDownMenu.font                =menu.font
+pullDownMenu.menuLevel           2
+pullDownMenu.level               1
+;; pullDownMenu.level               0
+pullDownMenu.hilightLevel        2
+pullDownMenu.edgeStyle           #soft
+
+variablePanel.handleColor        =darkGray
+#if Screen current hasGreyscales
+variablePanel.handleEnteredColor =veryLightGray
+#endif
+variablePanel.barHeight          10
+
+activeHelp.backgroundColor         Color yellow lightened
+activeHelp.borderWidth             2
+
+#if Screen current hasGrayscales not
+html.anchorUnderline                true
+html.anchorForegroundColor          Color black
+html.backgroundColor                Color white
+html.activeAnchorForegroundColor    Color black
+html.activeAnchorBackgroundColor    =html.backgroundColor
+html.visitedAnchorForegroundColor   Color black
+html.exampleAnchorForegroundColor   Color black
+#endif
+
+#if Screen current width > 800
+
+viewSpacing                      3 "/ pixels
+arrowButton.downFormFile         'ScrollDn.14.xbm'
+arrowButton.upFormFile           'ScrollUp.14.xbm'
+arrowButton.leftFormFile         'ScrollLt.14.xbm'
+arrowButton.rightFormFile        'ScrollRt.14.xbm'
+comboView.downFormFile           'ComboDn.14.xbm'
+
+#endif
+
+
+
+#if Screen current width <= 800
+
+viewSpacing                      2 "/ pixels
+arrowButton.downFormFile         'ScrollDn.12.xbm'
+arrowButton.upFormFile           'ScrollUp.12.xbm'
+arrowButton.leftFormFile         'ScrollLt.12.xbm'
+arrowButton.rightFormFile        'ScrollRt.12.xbm'
+comboView.downFormFile           'ComboDn.12.xbm'
+
+#endif
+
+
+
+#if Screen current width <= 640
+
+arrowButton.downFormFile         'ScrollDn.8.xbm'
+arrowButton.upFormFile           'ScrollUp.8.xbm'
+arrowButton.leftFormFile         'ScrollLt.8.xbm'
+arrowButton.rightFormFile        'ScrollRt.8.xbm'
+comboView.downFormFile           'ComboDn.8.xbm'
+
+#endif
+
+comboView.button.activeLevel    -1

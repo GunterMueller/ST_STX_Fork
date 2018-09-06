@@ -1,0 +1,24 @@
+/* XPM */
+static char *RadioOff_w95_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"12 12 5 1",
+/* colors */
+"a c black",
+"b c #808080",
+"c c #DFDFDF",
+"d c white",
+"e c none",
+/* pixels */
+"eeeebbbbeeee",
+"eebbaaaabbee",
+"ebaaddddaade",
+"ebaddddddcde",
+"baddddddddcd",
+"baddddddddcd",
+"baddddddddcd",
+"baddddddddcd",
+"ebaddddddcde",
+"ebccddddccde",
+"eeddccccddee",
+"eeeeddddeeee",
+};

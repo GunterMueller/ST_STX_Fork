@@ -1,0 +1,39 @@
+<title>Banners</title>
+<h1>Banners</h1>
+
+<B>Permitted Context:</B> the start of the BODY element<BR>
+<B>Content Model:</B> %Body.Content
+
+<p>The BANNER element is used for corporate logos, navigation aids,
+disclaimers and other information which shouldn't be scrolled with the
+rest of the document. It provides an alternative to using the
+<a href="dochead.html#banners">LINK</a>element in the document head
+to reference an externally defined banner.
+
+<H3>Permitted Attributes</h3>
+
+<DL> <DT>ID <DD>An SGML identifier used as the target for hypertext
+links or for naming particular elements in associated style sheets.
+Identifiers are NAME tokens and must be unique within the scope of the
+current document.
+
+<DT>LANG <DD>This is one of the ISO standard language abbreviations,
+e.g. "en.uk" for the variation of English spoken in the United Kingdom.
+It can be used by parsers to select language specific choices for
+quotation marks, ligatures and hypenation rules etc. The language
+attribute is composed from the two letter language code from ISO 639,
+optionally followed by a period and a two letter country code from ISO
+3166.
+
+<DT>CLASS <DD>This a space separated list of SGML NAME tokens and is
+used to subclass tag names. By convention, the class names are
+interpreted hierarchically, with the most general class on the left and
+the most specific on the right, where classes are separated by a
+period. The CLASS attribute is most commonly used to attach a different
+style to some element, but it is recommended that where practical class
+names should be picked on the basis of the element's semantics, as this
+will permit other uses, such as restricting search through documents by
+matching on element class names. The  conventions for choosing class
+names are outside the scope of this specification.
+</DL>
+<!--NewPage-->

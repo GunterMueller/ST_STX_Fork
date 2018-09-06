@@ -1,0 +1,88 @@
+# Makefile for zlib -- MINGW Compiler
+#
+
+USEMINGW=1
+!undef USEBC
+!undef USEVC
+!undef USELCC
+!undef USETCC
+
+!include ..\..\rules\stdHeader_bc
+
+# optional build flags
+!ifdef USEMINGW64
+LOC=-m64
+!else
+LOC=-m32
+!endif
+
+# variables
+STATICLIB = bz2lib.lib
+SHAREDLIB = bz2lib1.dll
+IMPLIB    = bz2dll.lib
+
+CC = "$(MINGWBINDIR)\gcc"
+AS = "$(MINGWBINDIR)\as"
+AR = "$(MINGWBINDIR)\ar"
+CFLAGS  = $(LOC) -O
+ASFLAGS = -coff
+LDFLAGS =
+ARFLAGS = r
+RCFLAGS = /dWIN32 /r
+
+OBJS = $(OUTDIR)blocksort.$(O) $(OUTDIR)huffman.$(O) \
+       $(OUTDIR)crctable.$(O) $(OUTDIR)randtable.$(O) \
+       $(OUTDIR)compress.$(O) $(OUTDIR)decompress.$(O) \
+       $(OUTDIR)bzlib.$(O)
+
+
+# targets
+#all: $(STATICLIB) $(SHAREDLIB) $(IMPLIB) \
+#     example.exe minigzip.exe example_d.exe minigzip_d.exe
+
+all: $(OUTDIR) $(STATICLIB)
+
+full:: all
+
+cleanup:
+	-del *.$(O)
+
+$(OUTDIR):
+	-mkdir $(OUTDIR:/=)
+
+$(STATICLIB): $(OBJS) $(OBJA)
+	$(AR) $(ARFLAGS) -o $@ $(OBJS)
+
+$(IMPLIB): $(SHAREDLIB)
+
+$(SHAREDLIB): bz2lib.def $(OBJS) $(OBJA)
+	$(LINK32) $(LDFLAGS) \
+	  -shared -o $@ $(OBJS) $(OBJA)
+
+.c.$(O):
+	$(CC) -c $(CFLAGS) "$(SYS_INCL)" -o $*.$(O) $<
+
+.asm.$(O):
+	$(AS) -c $(ASFLAGS) $<
+
+$(OBJS): bzlib.h bzlib_private.h
+
+bz2lib.res: bz2lib.rc
+	$(RC) $(RCFLAGS) /fo$@ bz2lib.rc
+
+
+# cleanup
+clean:
+	-del $(OUTDIR)*.$(O) $(OUTDIR)*.$(LIB)
+	-del $(IMPLIB)
+	-del *.$(O)
+	-del *.res
+	-del *.exp
+	-del *.exe
+	-del foo.gz
+
+clobber: clean
+	-rmdir /s /q objbc
+	-rmdir /s /q objvc
+	-rmdir /s /q objlcc
+	-rmdir /s /q objtcc

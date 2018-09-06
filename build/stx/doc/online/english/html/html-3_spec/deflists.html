@@ -1,0 +1,116 @@
+<TITLE>Definition Lists</TITLE> <H1>DL - Definition Lists</H1>
+
+<B>Permitted Context:</B> %Body.Content, %flow, %block<BR> <B>Content
+Model:</B> Optional <a href="listheader.html">list header</a>(LH),
+followed by one or more <a href="termname.html">terms</a>(DT) and <a
+href="termdef.html">definitions</a>(DD).
+
+<P>A definition list is a list of terms and corresponding definitions.
+Definition lists are typically formatted with the term on the left with
+the definition following on the right or on the next line. The
+definition text is typically indented with respect to the term.
+
+<P>An alternative format places the term left aligned in a wide margin
+and the definition on one or more lines to the right of the term. If
+the DT term does not fit in the DT column (one third of the display
+area), it may be extended across the page with the DD section moved to
+the next line, or it may be wrapped onto successive lines of the left
+hand column.
+
+
+<P>The opening list tag must be &lt;DL&gt;. It is followed by an optional
+list header (&lt;LH&gt;caption&lt;/LH&gt;) and then by term names
+(&lt;DT&gt;) and definitions (&lt;DD&gt;). For example:
+
+<PRE>&lt;DL&gt;
+&lt;LH&gt;List Header&lt;/LH&gt;
+&lt;DT&gt;Term 1&lt;dd&gt;This is the definition of the first term.
+&lt;DT&gt;Term 2&lt;dd&gt;This is the definition of the second term.
+&lt;/DL&gt;</PRE>
+
+<P>which could be rendered as:
+
+<h3>List Header</h3>
+<dl>
+<dt>Term 1<dd>This is the definition of the first term.
+<dt>Term 2<dd>This is the definition of the second term.
+</dl>
+
+<P>The definition list element can take the COMPACT attribute, which
+suggests that a compact rendering be used, and is appropriate if the
+list elements are small and/or the entire list is large.
+
+<P><B>Note:</B> Use the <a href="notes.html">NOTE element</a> when you
+want to have an indented note. The practice of using &lt;DD&gt; elements
+without corresponding &lt;DT&gt; elements is deprecated.
+
+<H3>Permitted Attributes for the DL Element</h3>
+
+<DL> <DT>ID <DD>An SGML identifier used as the target for hypertext
+links or for naming particular elements in associated style sheets.
+Identifiers are NAME tokens and must be unique within the scope of the
+current document.
+
+<DT>LANG <DD>This is one of the ISO standard language abbreviations,
+e.g. "en.uk" for the variation of English spoken in the United Kingdom.
+It can be used by parsers to select language specific choices for
+quotation marks, ligatures and hypenation rules etc. The language
+attribute is composed from the two letter language code from ISO 639,
+optionally followed by a period and a two letter country code from ISO
+3166.
+
+<DT>CLASS <DD>This a space separated list of SGML NAME tokens and is
+used to subclass tag names. By convention, the class names are
+interpreted hierarchically, with the most general class on the left
+and the most specific on the right, where classes are separated by a
+period. The CLASS attribute is most commonly used to attach a
+different style to some element, but it is recommended that where
+practical class names should be picked on the basis of the element's
+semantics, as this will permit other uses, such as restricting search
+through documents by matching on element class names. The  conventions
+for choosing class names are outside the scope of this specification.
+
+<DT>CLEAR <DD>This attribute is common to all block-like elements. When
+text flows around a figure or table in the margin, you sometimes want
+to start an element like a header, paragraph or list below the figure
+rather than alongside it. The CLEAR attribute allows you to move down
+unconditionally:<BR><BR>
+
+<DL>
+<DT>clear=left<DD>move down until left margin is clear
+<DT>clear=right<DD>move down until right margin is clear
+<DT>clear=all<DD>move down until both margins are clear
+</DL>
+
+<P>Alternatively, you can decide to place the element alongside the
+figure just so long as there is enough room. The minimum width needed
+is specified as:<BR><BR>
+
+<DL>
+<DT>clear="40 en"<DD>move down until there is at least 40 en units free
+<DT>clear="100 pixels"<DD>move down until there is at least 100 pixels
+free
+</DL>
+
+<P>The style sheet (or browser defaults) may provide default minimum
+widths for each class of block-like elements.
+
+<DT>COMPACT <DD>The presence of this attribute indicates the user agent
+should use reduced interitem spacing. The COMPACT attribute may also
+reduce the width of the left-hand (DT) column.
+
+<p>In practice, there are several ways to increase the compactness of
+lists: reduced vertical interitem spacing, smaller font size, or even
+to avoid line breaks between items. This is best handled through
+associated style sheets and the class attribute.
+
+<P>The opening list tag must be DL COMPACT. It must be immediately
+followed by the first term (DT). For example:
+
+<PRE>&lt;DL compact&gt;
+&lt;DT&gt;Term&lt;DD&gt;This is the first definition in compact format.
+&lt;DT&gt;Term&lt;DD&gt;This is the second definition in compact format.
+&lt;/DL&gt;</PRE>
+
+</DL>
+<!--NewPage-->

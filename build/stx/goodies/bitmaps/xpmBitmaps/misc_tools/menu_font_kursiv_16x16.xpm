@@ -1,0 +1,26 @@
+/* XPM */
+static char *menu_font_kursiv_16x16_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 3 1",
+/* colors */
+"a c black",
+"b c #DCE2F3",
+"c c none",
+/* pixels */
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"ccccccaaaacaaacc",
+"cccccccaaccacccc",
+"ccccccaaccaccccc",
+"ccccccaacacccccc",
+"cccccaaaaccccccc",
+"cccccaacaacccccc",
+"ccccaaccaacccccc",
+"ccccaacccaaccccc",
+"cccaaaacaaaacccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+};

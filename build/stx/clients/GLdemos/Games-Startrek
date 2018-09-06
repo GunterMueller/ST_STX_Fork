@@ -1,0 +1,3646 @@
+'From Smalltalk/X, Version:2.10.3 on 23-aug-1994 at 12:21:59 am'!
+
+Object subclass:#GameObject
+	 instanceVariableNames:'name posX posY posZ'
+	 classVariableNames:''
+	 poolDictionaries:''
+	 category:'Games-Startrek'
+!
+
+GameObject comment:'
+'!
+
+!GameObject class methodsFor:'instance creation'!
+
+new
+    ^ self basicNew initialize
+! !
+
+!GameObject class methodsFor:'documentation'!
+
+documentation
+"
+    pos         - position in space
+"
+! !
+
+!GameObject methodsFor:'drawing'!
+
+drawFullDetailIn:aView
+    self drawIn:aView
+
+!
+
+drawPositionIn:aView
+    aView color:(GLXView white).
+    aView v3fX:posX y:posY z:posZ.
+
+
+
+
+!
+
+drawIn:aView
+    self subclassResponsibility
+! !
+
+!GameObject methodsFor:'accessing'!
+
+positionZ
+    ^ posZ
+!
+
+positionY
+    ^ posY
+!
+
+positionX
+    ^ posX.
+!
+
+positionX:x y:y z:z
+    posX := x.
+    posY := y.
+    posZ := z.
+!
+
+name:aString
+    name := aString
+!
+
+position
+    ^ FloatArray with:posX with:posY with:posZ
+
+! !
+
+!GameObject methodsFor:'simulation'!
+
+simulationStep:fractionOfASecond
+!
+
+handleCollisionWith:anotherObject
+    'bang ' print. self class name print. ' <-> ' print.
+    anotherObject class name printNL.
+! !
+
+!GameObject methodsFor:'initialization'!
+
+initialize
+    posX := posY := posZ := 0.0.
+! !
+
+!GameObject methodsFor:'queries'!
+
+isStarOrPlanet
+    ^ false
+!
+
+isStar
+    ^ false
+! !
+
+'From Smalltalk/X, Version:2.10.3 on 23-aug-1994 at 12:21:59 am'!
+
+GameObject subclass:#SphericObject
+	 instanceVariableNames:'color radius objectId'
+	 classVariableNames:''
+	 poolDictionaries:''
+	 category:'Games-Startrek'
+!
+
+!SphericObject methodsFor:'drawing'!
+
+basicDrawAtX:x y:y z:z in:aView
+    aView color:color.
+
+    "
+     on a real GL, we draw a sphere ...
+    "
+    aView device supportsLight ifTrue:[
+"/        objectId isNil ifTrue:[
+"/            objectId := KnownObjects size + 1.
+"/            KnownObjects add:objectId.
+"/            aView makeObject:objectId.
+"/            aView sphDraw:(FloatArray with:x with:y with:z with:radius).
+"/            aView drawObject.
+"/            aView closeObject.
+"/        ].
+        aView sphDrawX:x y:y z:z radius:radius.
+        ^ self.
+    ].
+
+    "
+     on vogl, we draw a circle. This is not at all exact,
+     but much faster ...
+    "
+"
+aView rotX print. ' ' print.
+aView rotY print. ' ' print.
+aView rotZ printNL.
+"
+
+    aView pushMatrix.
+    aView translateX:x y:y z:z.
+"/    aView rotateZ:(aView rotZ negated).
+aView rotateX:aView rotY.
+aView rotateY:aView rotZ.
+aView rotateZ:aView rotX.
+    aView circlefX:0 y:0 radius:radius.
+
+"/    aView translateX:x y:y z:z.
+"/    aView rotateZ:(aView rotZ negated).
+"/    aView rotateY:(aView rotY negated). 
+"/    aView rotateX:(aView rotX negated). 
+"/    aView circlefX:0.0 y:0.0 radius:radius.
+    aView popMatrix.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+!
+
+drawIn:aView
+    |r a z step|
+
+    self basicDrawAtX:posX y:posY z:posZ in:aView
+
+
+
+
+
+
+
+
+
+
+!
+
+drawPositionIn:aView
+    aView color:color.
+    aView v3fX:posX y:posY z:posZ.
+
+
+
+
+
+! !
+
+!SphericObject methodsFor:'accessing'!
+
+collisionDistance
+    ^ radius
+!
+
+radius:r
+    radius := r
+
+!
+
+color:aColorIndex
+    color := aColorIndex
+! !
+
+'From Smalltalk/X, Version:2.10.3 on 23-aug-1994 at 12:21:59 am'!
+
+Model subclass:#Startrek
+	 instanceVariableNames:'fastSimulationProcess mediumSimulationProcess
+                backgroundSimulationProcess objects localObjects localDistances
+                starShip'
+	 classVariableNames:''
+	 poolDictionaries:''
+	 category:'Games-Startrek'
+!
+
+!Startrek class methodsFor:'startup'!
+
+start
+    |aGame aView|
+
+    aGame := self new initialize.
+
+    aView := StartrekView new.
+    aView model:aGame.
+    aView open.
+
+    aGame starShip glAccess:(aView shipView).
+
+    "
+     Startrek start
+    "
+
+
+
+
+
+
+
+! !
+
+!Startrek methodsFor:'accessing'!
+
+objects 
+    ^ objects
+!
+
+starShip
+    ^ starShip
+!
+
+localDistances
+    ^ localDistances
+
+
+!
+
+localObjects 
+    ^ localObjects
+
+! !
+
+!Startrek methodsFor:'simulation'!
+
+findLocalObjects
+    "
+     the background process
+    "
+
+    |newLocalObjects newLocalDistances localDistanceLimit 
+     shipX shipY shipZ dist|
+
+    localDistanceLimit := 500000.
+
+    "
+     collect local object (those are the interesting ones
+    "
+    newLocalObjects := OrderedCollection new:(localObjects size).
+    newLocalDistances := OrderedCollection new:(localObjects size).
+    objects do:[:o |
+        shipX := starShip positionX.
+        shipY := starShip positionY.
+        shipZ := starShip positionZ.
+        dist := ((o positionX - shipX) asFloat squared
+                + (o positionY - shipY) asFloat squared
+                + (o positionZ - shipZ) asFloat squared) sqrt.
+        dist < localDistanceLimit ifTrue:[
+            newLocalObjects add:o.
+            newLocalDistances add:dist
+        ].
+    ].
+
+    localObjects := newLocalObjects.
+    localDistances := newLocalDistances.
+
+    'distance computation cycle' printNL.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+!
+
+mediumSimulation
+    |deltaT t0 t1 cyclesToSlow slowCycles|
+
+    "
+     mediumRedraw every 4th of a second;
+     slowRedraw every second
+    "
+    cyclesToSlow := slowCycles := 4.
+
+    "
+     the simulation process
+    "
+
+    t0 := Time millisecondClockValue.
+    [true] whileTrue:[
+        t1 := OperatingSystem millisecondTimeAdd:t0 and:250.
+        (Delay untilMilliseconds:t1) wait.
+
+        self changed:#mediumRedraw.
+
+        cyclesToSlow := cyclesToSlow - 1.
+        cyclesToSlow == 0 ifTrue:[
+            self changed:#slowRedraw.
+            cyclesToSlow := slowCycles.
+        ].
+        t0 := t1.
+    ]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+!
+
+fastSimulation
+    |deltaT delay t0 t1 fractionOfASecond|
+
+    "
+     the simulation process
+    "
+    t0 := Time millisecondClockValue.
+    deltaT := 0.
+    delay := 50.
+
+    [true] whileTrue:[
+        fractionOfASecond := deltaT / 1000.0.
+        objects do:[:o |
+            o simulationStep:fractionOfASecond 
+        ].
+        starShip simulationStep:fractionOfASecond .
+        self changed:#fastRedraw.
+
+        "
+         how long did it take to do the redraw ?
+        "
+        t1 := Time millisecondClockValue.
+        delay := OperatingSystem millisecondTimeDeltaBetween:t1 and:t0.
+"/ delay printNL.
+        delay := (delay max:10) min:50.
+
+        "
+         wait for next step
+        "
+        (Delay forMilliseconds:delay) wait.
+        Processor yield.
+
+        "
+         get the real time difference since last update
+         for simulationStep
+        "
+        deltaT := OperatingSystem 
+                        millisecondTimeDeltaBetween:(Time millisecondClockValue)
+                        and:t0.
+        t0 := t1.
+    ]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+!
+
+startSimulation
+    self findLocalObjects.
+
+    "
+     fork off the fast-redraw process
+     that one runs at high prio, for smooth movements
+     (even when other views are busy).
+    "
+    fastSimulationProcess := [
+        self fastSimulation
+    ] forkAt:10.
+
+    "
+     fork off the simulation process
+    "
+    mediumSimulationProcess := [
+        self mediumSimulation
+    ] forkAt:3.
+
+    "
+     and a background process to do
+     some preprocessing
+    "
+    backgroundSimulationProcess := [
+        self backgroundProcessing
+    ] forkAt:1.
+
+
+
+
+
+
+
+
+!
+
+stopSimulation
+    "
+     fork off the simulation process
+    "
+
+    fastSimulationProcess notNil ifTrue:[
+        fastSimulationProcess terminate.
+        fastSimulationProcess := nil
+    ].
+    mediumSimulationProcess notNil ifTrue:[
+        mediumSimulationProcess terminate.
+        mediumSimulationProcess := nil
+    ].
+    backgroundSimulationProcess notNil ifTrue:[
+        backgroundSimulationProcess terminate.
+        backgroundSimulationProcess := nil
+    ].
+    starShip release
+
+
+
+
+!
+
+backgroundProcessing 
+    "
+     the background process
+    "
+    [true] whileTrue:[
+        self findLocalObjects
+    ]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+! !
+
+!Startrek methodsFor:'initialization'!
+
+initialize
+    super initialize.
+
+    starShip := StarShip new.
+    starShip name:'starship'.
+    starShip positionX:0.0 y:0.0 z:0.0.
+    starShip positionX:1000.0 y:1000.0 z:1000.0.
+
+    self initializeObjects
+
+
+
+
+
+!
+
+initializeStars
+    |s p rnd|
+
+    "the sun"
+    s := Star new.
+    s positionX:0 y:0 z:-5000.
+    s color:(GLXView white).
+    s radius:100.0.
+    objects add:s.
+
+    "venus "
+    p := Planet new.
+    p star:s distance:200 axis:3.
+    p color:(GLXView cyan).
+    p radius:17.
+    p deltaAngle:6.
+    objects add:p.
+
+    "the earth"
+    p := Planet new.
+    p star:s distance:230 axis:0.
+    p color:(GLXView blue).
+    p radius:20.
+    objects add:p.
+
+    "mars"
+    p := Planet new.
+    p star:s distance:350 axis:-6.
+    p color:(GLXView red).
+    p radius:15.
+    p deltaAngle:2.
+    objects add:p.
+
+
+    "local group - along z axis"
+
+    s := Star new.
+    s positionX:0 y:0 z:-15000.
+    s color:(GLXView yellow).
+    s radius:200.
+    objects add:s.
+
+    s := Star new.
+    s positionX:0 y:0 z:-30000.
+    s color:(GLXView red).
+    s radius:500.
+    objects add:s.
+
+    s := Star new.
+    s positionX:0 y:0 z:10000.
+    s color:(GLXView blue).
+    s radius:150.
+    objects add:s.
+
+    s := Star new.
+    s positionX:0 y:0 z:-100000.
+    s color:(GLXView cyan).
+    s radius:250.
+    objects add:s.
+
+    s := Star new.
+    s positionX:0 y:0 z:-1000000.
+    s color:(GLXView magenta).
+    s radius:400.
+    objects add:s.
+
+
+    "local group - along x axis"
+    s := Star new.
+    s positionX:-5000 y:0 z:0.
+    s color:(GLXView yellow).
+    s radius:100.
+    objects add:s.
+
+    s := Star new.
+    s positionX:-15000 y:0 z:0.
+    s color:(GLXView yellow).
+    s radius:200.
+    objects add:s.
+
+    s := Star new.
+    s positionX:-30000 y:0 z:0.
+    s color:(GLXView red).
+    s radius:500.
+    objects add:s.
+
+    s := Star new.
+    s positionX:10000 y:0 z:0.
+    s color:(GLXView blue).
+    s radius:150.
+    objects add:s.
+
+    s := Star new.
+    s positionX:-100000 y:0 z:0.
+    s color:(GLXView cyan).
+    s radius:250.
+    objects add:s.
+
+    s := Star new.
+    s positionX:-1000000 y:0 z:0.
+    s color:(GLXView magenta).
+    s radius:400.
+    objects add:s.
+
+
+    "local group - along y axis"
+    s := Star new.
+    s positionX:0 y:-5000 z:0.
+    s color:(GLXView yellow).
+    s radius:100.
+    objects add:s.
+
+    s := Star new.
+    s positionX:0 y:-15000 z:0.
+    s color:(GLXView yellow).
+    s radius:200.
+    objects add:s.
+
+    s := Star new.
+    s positionX:0 y:-30000 z:0.
+    s color:(GLXView red).
+    s radius:500.
+    objects add:s.
+
+    s := Star new.
+    s positionX:0 y:10000 z:0.
+    s color:(GLXView blue).
+    s radius:150.
+    objects add:s.
+
+    s := Star new.
+    s positionX:0 y:-100000 z:0.
+    s color:(GLXView cyan).
+    s radius:250.
+    objects add:s.
+
+    s := Star new.
+    s positionX:0 y:-1000000 z:0.
+    s color:(GLXView magenta).
+    s radius:400.
+    objects add:s.
+
+
+    "some distant objects"
+
+    s := Star new.
+    s positionX:-10000000 y:-10000000 z:-10000000.
+    s color:(GLXView white).
+    s radius:1000.
+    objects add:s.
+
+    s := Star new.
+    s positionX:-10000000 y:-10000000 z:10000000.
+    s color:(GLXView white).
+    s radius:1000.
+    objects add:s.
+
+    s := Star new.
+    s positionX:-10000000 y:10000000 z:-10000000.
+    s color:(GLXView white).
+    s radius:1000.
+    objects add:s.
+
+    s := Star new.
+    s positionX:10000000 y:-10000000 z:-10000000.
+    s color:(GLXView white).
+    s radius:1000.
+    objects add:s.
+
+    s := Star new.
+    s positionX:10000000 y:-10000000 z:10000000.
+    s color:(GLXView white).
+    s radius:1000.
+    objects add:s.
+
+    s := Star new.
+    s positionX:10000000 y:10000000 z:10000000.
+    s color:(GLXView white).
+    s radius:1000.
+    objects add:s.
+
+
+    "a bunch of far-away random stars
+    "
+" "
+    rnd := Random new.
+    1 to:1000 do:[:index |
+        |x y z|
+
+        x := rnd next.
+        y := rnd next.
+        z := rnd next.
+        s := Star new.
+        s positionX:(x*10000000) rounded +10000000 
+                  y:(y*10000000) rounded+10000000 
+                  z:(z*10000000) rounded+10000000.
+        s color:(GLXView green).
+        s radius:1000.
+        objects add:s.
+    ]
+" "     
+
+
+
+
+
+
+
+
+!
+
+initializeObjects
+    |o|
+
+    objects := OrderedCollection new.
+
+    self initializeStars.
+
+    o := StarBase new.
+    o positionX:50.0 y:50.0 z:50.
+    objects add:o.
+
+
+
+
+
+! !
+
+'From Smalltalk/X, Version:2.10.3 on 23-aug-1994 at 12:21:59 am'!
+
+SphericObject subclass:#Star
+	 instanceVariableNames:''
+	 classVariableNames:''
+	 poolDictionaries:''
+	 category:'Games-Startrek'
+!
+
+!Star methodsFor:'queries'!
+
+isStarOrPlanet
+    ^ true
+!
+
+isStar
+    ^ true
+! !
+
+'From Smalltalk/X, Version:2.10.3 on 23-aug-1994 at 12:21:59 am'!
+
+GameObject subclass:#MovingGameObject
+	 instanceVariableNames:'speed acceleration'
+	 classVariableNames:''
+	 poolDictionaries:''
+	 category:'Games-Startrek'
+!
+
+MovingGameObject comment:'
+'!
+
+!MovingGameObject class methodsFor:'documentation'!
+
+documentation
+"
+    vi         - velocity in space units per second
+"
+! !
+
+!MovingGameObject methodsFor:'accessing'!
+
+speed
+    ^ speed
+
+
+
+!
+
+speed:v
+    speed := v.
+    self changed:#speed 
+
+
+
+
+
+!
+
+acceleration:a 
+   acceleration := a.
+   self changed:#acceleration 
+
+
+
+! !
+
+!MovingGameObject methodsFor:'simulation '!
+
+simulationStep:fractionOfASecond 
+    acceleration ~= 0 ifTrue:[
+        speed := speed + (acceleration * fractionOfASecond)
+    ].
+
+
+
+! !
+
+!MovingGameObject methodsFor:'initialization'!
+
+initialize
+    super initialize.
+    acceleration := speed := 0.0.
+
+
+! !
+
+'From Smalltalk/X, Version:2.10.3 on 23-aug-1994 at 12:21:59 am'!
+
+Object subclass:#Autopilot
+	 instanceVariableNames:'ship anyGoal speedGoal headingGoal pitchGoal rollGoal xGoal yGoal
+                zGoal'
+	 classVariableNames:''
+	 poolDictionaries:''
+	 category:'Games-Startrek'
+!
+
+!Autopilot class methodsFor:'instance creation'!
+
+new
+    ^ self basicNew initialize
+! !
+
+!Autopilot methodsFor:'accessing'!
+
+rollGoal:aNumber
+    aNumber isNil ifTrue:[
+        rollGoal := nil
+    ] ifFalse:[
+        anyGoal := true.
+        rollGoal := aNumber.
+        rollGoal < 0 ifTrue:[rollGoal := rollGoal + 360].
+        rollGoal > ship roll ifTrue:[
+            rollGoal - ship roll > 180 ifTrue:[
+                rollGoal := rollGoal - 360
+            ]
+        ].
+    ]
+
+
+
+
+
+
+!
+
+speedGoal:aNumber
+    anyGoal := true.
+    speedGoal := aNumber
+
+!
+
+pitchGoal:aNumber
+    aNumber isNil ifTrue:[
+        pitchGoal := nil
+    ] ifFalse:[
+        anyGoal := true.
+        pitchGoal := aNumber.
+        pitchGoal < 0 ifTrue:[pitchGoal := pitchGoal + 360].
+        pitchGoal > ship pitch ifTrue:[
+            pitchGoal - ship pitch > 180 ifTrue:[
+                pitchGoal := pitchGoal - 360
+            ]
+        ].
+    ]
+
+
+
+
+
+!
+
+headingGoal:aNumber
+    aNumber isNil ifTrue:[
+        headingGoal := nil
+    ] ifFalse:[
+        anyGoal := true.
+        headingGoal := aNumber.
+        headingGoal < 0 ifTrue:[headingGoal := headingGoal + 360].
+        headingGoal > ship heading ifTrue:[
+            headingGoal - ship heading > 180 ifTrue:[
+                headingGoal := headingGoal - 360
+            ]
+        ].
+    ]
+
+
+
+!
+
+ship:aStarship
+    ship := aStarship
+! !
+
+!Autopilot methodsFor:'simulation'!
+
+simulationStep:fractionOfASecond
+    |speed a acceleration pulse heading pitch roll delta d|
+
+    anyGoal ifFalse:[^ self].
+
+    speedGoal notNil ifTrue:[
+"while testing: immediate stop"
+ship acceleration:0.
+ship impulse:0.
+ship speed:speedGoal.
+speedGoal := nil.
+"
+        speed := ship speed.
+        speed ~= speedGoal ifTrue:[
+            a := ((speed - speedGoal) / 10) negated.
+            acceleration := (a * 100) asInteger / 100.0.
+            pulse := a - acceleration.
+            ship acceleration:acceleration.
+            ship impulse:pulse.
+        ] ifFalse:[
+            speedGoal := nil.
+            ship acceleration:0.0.
+            ship impulse:0.0.
+        ]
+"
+    ].
+
+    headingGoal notNil ifTrue:[
+        heading := ship heading.
+        heading ~= headingGoal ifTrue:[
+            d := (heading - headingGoal) abs.
+            d > 180 ifTrue:[heading := heading - 360. d := (d - 360) abs].
+            d > 10 ifTrue:[
+                delta := (ship dHeading abs max:d) min:45.0.
+            ] ifFalse:[
+                delta := (ship dHeading abs + 3.0) min:45.0.
+                delta := ((d / 2) abs min:delta) max:0.1.
+            ].
+            heading > headingGoal ifTrue:[
+                ship dHeading:delta negated
+            ] ifFalse:[
+                ship dHeading:delta
+            ]
+        ] ifFalse:[
+            headingGoal := nil.
+            ship dHeading:0.0.
+        ].
+    ].
+
+    pitchGoal notNil ifTrue:[
+        pitch := ship pitch.
+        pitch ~= pitchGoal ifTrue:[
+            d := (pitch - pitchGoal) abs.
+            d > 180 ifTrue:[pitch := pitch - 360. d := (d - 360) abs].
+            d > 10 ifTrue:[
+                delta := (ship dPitch abs max:d) min:45.0.
+            ] ifFalse:[
+                delta := (ship dPitch abs + 3.0) min:45.0.
+                delta := ((d / 2) abs min:delta) max:0.1.
+            ].
+            pitch > pitchGoal ifTrue:[
+                ship dPitch:delta negated
+            ] ifFalse:[
+                ship dPitch:delta
+            ].
+        ] ifFalse:[
+            pitchGoal := nil.
+            ship dPitch:0.0.
+        ].
+    ].
+
+    rollGoal notNil ifTrue:[
+        roll := ship roll.
+        roll ~= rollGoal ifTrue:[
+            d := (roll - rollGoal) abs.
+            d > 180 ifTrue:[roll := roll - 360. d := (d - 360) abs].
+            d > 10 ifTrue:[
+                delta := (ship dRoll abs max:d) min:45.0.
+            ] ifFalse:[
+                delta := (ship dRoll abs + 3.0) min:45.0.
+                delta := ((d / 2) abs min:delta) max:0.1.
+            ].
+            roll > rollGoal ifTrue:[
+                ship dRoll:delta negated
+            ] ifFalse:[
+                ship dRoll:delta
+            ].
+        ] ifFalse:[
+            rollGoal := nil.
+            ship dRoll:0.0.
+        ].
+    ].
+
+    (rollGoal isNil
+    and:[headingGoal isNil
+    and:[pitchGoal isNil
+    and:[rollGoal isNil
+    and:[speedGoal isNil]]]]) ifTrue:[
+        anyGoal := false
+    ].
+
+
+
+
+
+
+
+
+
+
+
+
+! !
+
+!Autopilot methodsFor:'initialization'!
+
+initialize
+    anyGoal := false.
+! !
+
+'From Smalltalk/X, Version:2.10.3 on 23-aug-1994 at 12:22:00 am'!
+
+SphericObject subclass:#Planet
+	 instanceVariableNames:'myStar angle deltaAngle distance rAxis'
+	 classVariableNames:''
+	 poolDictionaries:''
+	 category:'Games-Startrek'
+!
+
+!Planet methodsFor:'drawing'!
+
+drawFullDetailIn:aView
+    |v|
+
+    aView pushMatrix.
+    "
+     get to my star
+    "
+    aView translateX:myStar positionX y:myStar positionY z:myStar positionZ.
+
+    "
+     rotate to my phase
+    "
+    aView rotateZ:rAxis.
+    aView rotateY:angle.
+
+aView color:color.
+
+"/ aView beginLine.
+"/ aView v3f:#(0.0 0.0 0.0).
+"/ aView v3f:(Array with:0.0 with:0.0 with:distance ).
+"/ aView endLine.
+
+    "
+     move away from star
+    "
+    aView translateX:0.0 y:0.0 z:distance.
+
+    "
+     and draw ...
+    "
+    aView rotateZ:rAxis negated.
+    aView rotateY:angle negated.
+    self basicDrawAtX:0.0 y:0.0 z:0.0 in:aView.
+
+    aView popMatrix.
+
+    "
+     need the position for depth-sort (in shipView)
+     use GL functions for that (they ought to be highly tuned - dont they ?)
+    "
+    aView pushMatrix.
+    aView loadIdentityMatrix.
+    aView rotateZ:rAxis.
+    aView rotateY:angle.
+    aView translateX:0.0 y:0.0 z:distance.
+
+    "
+     get position (relative to origin)
+    "
+    v := FloatArray new:16.
+    aView getMatrix:v.
+    posX := (v at:13) + myStar positionX.
+    posY := (v at:14) + myStar positionY.
+    posZ := (v at:15) + myStar positionZ.
+    aView popMatrix.
+
+"/ color = GLXView blue ifTrue:[
+"/ distance print. '   ' print.
+"/ myStar positionX rounded print.  ' ' print.
+"/ myStar positionY rounded print. ' ' print.
+"/ myStar positionZ rounded print. '    ' print.
+
+"/ posX rounded print. ' ' print.
+"/ posY rounded print. ' ' print.
+"/ posZ rounded printNL.
+"/ ].
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+!
+
+drawIn:aView
+    ^ self
+
+
+
+
+
+
+
+
+
+
+
+
+
+! !
+
+!Planet methodsFor:'simulation'!
+
+simulationStep:fractionOfASecond
+    super simulationStep:fractionOfASecond.
+    angle := angle + (deltaAngle * fractionOfASecond).
+    (angle >= 360) ifTrue:[angle := angle - 360].
+
+
+
+
+
+! !
+
+!Planet methodsFor:'accessing'!
+
+star:aStar distance:d axis:a
+    myStar := aStar.
+    distance := d.
+    rAxis := a.
+    angle := 0.
+    deltaAngle := 3.0.
+    "
+     take stars position as initial
+    "
+    posX := myStar positionX.
+    posY := myStar positionY.
+    posZ := myStar positionZ
+
+
+!
+
+deltaAngle:d
+    deltaAngle := d.
+
+
+
+! !
+
+!Planet methodsFor:'queries'!
+
+isStarOrPlanet
+    ^ true
+
+
+
+!
+
+isStar
+    ^ false
+
+
+
+! !
+
+'From Smalltalk/X, Version:2.10.3 on 23-aug-1994 at 12:22:00 am'!
+
+GLXView subclass:#RadarView
+	 instanceVariableNames:'rX rY rZ viewDistanceLimit otherView showFieldOfView displayAll
+                needRedraw zoom aspectString'
+	 classVariableNames:''
+	 poolDictionaries:''
+	 category:'Games-Startrek'
+!
+
+!RadarView methodsFor:'updates'!
+
+update:something
+    "
+     updates from model (starStrek-game)
+    "
+    something == #fastRedraw ifTrue:[
+        ^ self
+    ].
+    something == #slowRedraw ifTrue:[
+        needRedraw := true.
+        ^ self
+    ].
+    something == #mediumRedraw ifTrue:[
+        needRedraw ifTrue:[
+            needRedraw := false.
+            self redraw.
+        ].
+        ^ self
+    ].
+
+    "
+     updates from starShip
+    "
+    (something == #pitch 
+    or:[something == #heading
+    or:[something == #roll 
+    or:[something == #position]]]) ifTrue:[
+        "
+         do not redraw right now, but remember the need
+         for next mediumRedraw.
+         This will behave better in case of fast movements.
+        "
+        needRedraw := true.
+        ^ self
+    ].
+
+
+    "
+     updates from shipView
+    "
+    (something == #fieldOfView) ifTrue:[
+        needRedraw := true.
+        ^ self
+    ].
+
+    "
+     debugging ...
+    "
+"/    'radarView: ' print. something printNL.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+! !
+
+!RadarView methodsFor:'events'!
+
+keyPress:key x:x y:y
+    key == $f ifTrue:[
+        "toggle field-of view - display"
+        showFieldOfView := showFieldOfView not.
+        self redraw.
+    ].
+    key == $s ifTrue:[
+        "toggle star-only - display"
+        displayAll := displayAll not.
+        self redraw.
+    ].
+    key == $z ifTrue:[
+        zoom := zoom * 2.
+        self redraw.       "2 redraw (because of double buffer"
+        self redraw
+    ].
+    key == $Z ifTrue:[
+        zoom := zoom / 2.
+        self redraw.
+        self redraw
+    ].
+
+
+
+
+
+! !
+
+!RadarView methodsFor:'drawing'!
+
+redraw
+    |ship m aspect n fov ol pX pY pZ v distX distY distZ dist limit objects|
+
+    shown ifFalse:[^ self].
+
+    self color:Black.    
+    self clear.        
+    model isNil ifTrue:[
+        ^ self
+    ].
+
+    aspect := width/height.
+    v := viewDistanceLimit.
+    n := v negated.
+    limit := (v * aspect) / zoom.
+
+    device glxOrthoLeft:(n * aspect) / zoom 
+                  right:limit 
+                 bottom:n / zoom
+                    top:v / zoom
+                   near:n / zoom
+                    far:v / zoom
+                     in:drawableId.
+
+
+    showFieldOfView ifTrue:[
+        otherView notNil ifTrue:[
+            self pushMatrix.
+
+            rY ~= 0.0 ifTrue:[
+                "sideview"
+                self rotateZ:rY.
+            ] ifFalse:[
+                rX ~= 0 ifTrue:[
+                    "topView is already ok"
+                    "/ self rotateZ:rX negated.
+                ]
+            ].
+
+            self color:Green.
+            fov := otherView fieldOfView // 2.
+            ol := otherView viewDistanceLimit.
+            self arcX:0.0 y:0.0 
+                 radius:ol
+                 startAngle:900 - fov 
+                   endAngle:900 + fov.
+        
+            self pushMatrix.
+            self rotateZ:fov / 10.
+            self beginLine.
+            self v3f:#(0.0 0.0 0.0).
+            self v3f:(Array with:0.0 with:ol with:0.0).
+            self endLine.
+
+            self rotateZ:(fov / 10 * 2) negated.
+            self beginLine.
+            self v3f:#(0.0 0.0 0.0).
+            self v3f:(Array with:0.0 with:ol  with:0.0).
+            self endLine.
+            self popMatrix.
+
+            self popMatrix.
+        ].
+    ].
+
+    "
+     ship position & front view rotated by my rotation
+    "
+    ship := model starShip.
+
+    self rotateX:rX y:rY z:0.0.
+    self multMatrix:ship shipRotation.
+
+    pX := ship positionX. 
+    pY := ship positionY. 
+    pZ := ship positionZ.
+
+    self translateX:pX negated y:pY negated z:pZ negated.
+
+limit := 10000000.
+    limit <= 500000 ifTrue:[
+        objects := model localObjects
+    ] ifFalse:[
+        objects := model objects
+    ].
+
+    displayAll ifTrue:[
+        "all objects"
+        zoom > 32 ifTrue:[
+            zoom > 64 ifTrue:[
+                model localObjects with:model localDistances do:[:anObject :aDistance |
+                    aDistance < limit ifTrue:[
+                        anObject drawFullDetailIn:self.
+                    ]
+                ]
+            ] ifFalse:[
+                model localObjects with:model localDistances do:[:anObject :aDistance |
+                    aDistance < limit ifTrue:[
+                        anObject drawIn:self.
+                    ]
+                ]
+            ]
+        ] ifFalse:[
+            self beginPoint.
+            objects do:[:anObject |
+                anObject drawPositionIn:self.
+            ].
+            self endPoint
+        ]
+    ] ifFalse:[
+        "only artifical objects"
+
+        zoom > 32 ifTrue:[
+            objects do:[:anObject |
+                anObject isStarOrPlanet ifFalse:[
+                    anObject drawIn:self.
+                ].
+            ]
+        ] ifFalse:[
+            self beginPoint.
+            objects do:[:anObject |
+                anObject isStarOrPlanet ifFalse:[
+                    anObject drawPositionIn:self.
+                ].
+            ].
+            self endPoint
+        ].
+    ].
+
+    self swapBuffers
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+! !
+
+!RadarView methodsFor:'accessing'!
+
+showFieldOfView:aBoolean
+    showFieldOfView := aBoolean
+
+
+!
+
+otherView:aView
+    otherView := aView
+
+!
+
+viewRotateX:x y:y z:z
+    rX := x.
+    rY := y.
+    rZ := z.
+
+!
+
+viewDistanceLimit:aLimit
+    viewDistanceLimit := aLimit
+! !
+
+!RadarView methodsFor:'initialization'!
+
+initialize
+    super initialize.
+    type := #colorIndexDoubleBuffer.
+
+    rX := rY := rZ := 0.0.
+    viewDistanceLimit := 200000.
+    showFieldOfView := false.
+    displayAll := true.
+    needRedraw := true.
+    zoom := 1.0
+
+
+
+
+
+! !
+
+'From Smalltalk/X, Version:2.10.3 on 23-aug-1994 at 12:22:00 am'!
+
+GameObject subclass:#RotatingGameObject
+	 instanceVariableNames:'angle deltaRot'
+	 classVariableNames:''
+	 poolDictionaries:''
+	 category:'Games-Startrek'
+!
+
+!RotatingGameObject methodsFor:'simulation'!
+
+simulationStep:fractionOfASecond
+    super simulationStep:fractionOfASecond.
+    angle := angle + (deltaRot * fractionOfASecond).
+    (angle >= 360) ifTrue:[angle := angle - 360].
+
+
+! !
+
+!RotatingGameObject methodsFor:'initialization'!
+
+initialize
+    super initialize.
+    angle := 0.
+    deltaRot := 0.
+
+! !
+
+'From Smalltalk/X, Version:2.10.3 on 23-aug-1994 at 12:22:00 am'!
+
+RotatingGameObject subclass:#StarBase
+	 instanceVariableNames:'radius depth'
+	 classVariableNames:''
+	 poolDictionaries:''
+	 category:'Games-Startrek'
+!
+
+!StarBase methodsFor:'drawing'!
+
+drawIn:aView
+    |r a z step|
+
+    aView color:aView class white.
+
+    aView pushMatrix.
+    aView translateX:posX y:posY z:posZ.
+    aView rotateZ:angle.
+
+    "
+     create the rings
+    "
+    aView circleX:0.0 y:0.0 radius:5.
+    aView circleX:0.0 y:0.0 radius:radius.
+
+    aView pushMatrix.
+    aView translateX:0.0 y:0.0 z:depth.
+    aView circleX:0.0 y:0.0 radius:5.
+    aView circleX:0.0 y:0.0 radius:radius.
+    aView popMatrix.
+
+    "
+     draw the spikes
+    "
+    1 to:20 do:[:i |
+        aView beginLine.
+        aView v3f:#(5.0 0.0 0.0).
+        aView v3fX:radius y:0.0 z:0.0.
+        aView endLine.
+        aView beginLine.
+        aView v3f:#(5.0 0.0 1).
+        aView v3fX:radius y:0.0 z:1.
+        aView endLine.
+        aView rotateZ:18
+    ].
+
+    aView popMatrix.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+!
+
+markPositionIn:aView
+    aView color:(GLXView white).
+    aView pushMatrix.
+    aView translateX:posX y:posY z:posZ.
+    aView beginLine.
+    aView v3f:#(-10000 0.0 0.0).
+    aView v3f:#(10000 0.0 0.0).
+    aView endLine.
+    aView beginLine.
+    aView v3f:#(0.0 -10000 0.0).
+    aView v3f:#(0.0 10000 0.0).
+    aView endLine.
+    aView popMatrix
+
+
+
+! !
+
+!StarBase methodsFor:'accessing'!
+
+collisionDistance
+    ^ 0
+! !
+
+!StarBase methodsFor:'initialization'!
+
+initialize
+    super initialize.
+    deltaRot := 3.0.
+    radius := 10.
+    depth := 1.
+
+! !
+
+'From Smalltalk/X, Version:2.10.3 on 23-aug-1994 at 12:22:00 am'!
+
+MovingGameObject subclass:#StarShip
+	 instanceVariableNames:'roll pitch heading dHeading dRoll dPitch glAccess pulse autoPilot
+                shipRotation'
+	 classVariableNames:''
+	 poolDictionaries:''
+	 category:'Games-Startrek'
+!
+
+StarShip comment:'
+'!
+
+!StarShip class methodsFor:'documentation'!
+
+documentation
+"
+    roll        - roll around axis of ship (z-axis if looking out of window)
+    pitch       - pitch (around y axis)
+    heading     - heading (around x-axis)
+"
+! !
+
+!StarShip methodsFor:'accessing'!
+
+shipRotation
+    shipRotation isNil ifTrue:[
+        self getShipRotation
+    ].
+    ^ shipRotation
+
+!
+
+roll
+    ^ roll
+
+
+!
+
+heading
+"/    heading > 180 ifTrue:[
+"/        ^ heading - 360
+"/    ].
+    ^ heading
+
+!
+
+pitch
+    ^ pitch
+!
+
+keepDirection
+    dHeading := 0.0.
+    dPitch := 0.0.
+    dRoll := 0.0.
+    autoPilot headingGoal:nil.
+    autoPilot pitchGoal:nil.
+    autoPilot rollGoal:nil.
+
+
+
+
+
+!
+
+moreLeft
+    dPitch := (dPitch - 3.0) max:-45.
+"/    roll := dPitch * 2.
+"/    self changed:#roll
+
+
+
+
+
+!
+
+moreDown
+    dHeading := (dHeading + 3.0).
+
+
+
+!
+
+moreUp
+    dHeading := (dHeading - 3.0).
+
+
+
+!
+
+moreRight
+    dPitch := (dPitch + 3.0) min:45.
+"/    roll := dPitch * 2.
+"/    self changed:#roll
+
+
+
+
+!
+
+impulse:p 
+    |oldPulse|
+
+    oldPulse := pulse.
+    pulse := (p * 100) asInteger / 100.0.
+    pulse ~= oldPulse ifTrue:[
+        self changed:#impulse
+    ]
+
+
+
+
+
+
+
+!
+
+acceleration:a 
+    |oldAcc|
+
+    oldAcc := acceleration.
+    super acceleration:a.
+    oldAcc ~= acceleration ifTrue:[
+        self changed:#acceleration
+    ]
+
+
+
+
+
+!
+
+setAcceleration:a 
+    autoPilot speedGoal:nil.
+    self acceleration:a
+
+
+
+
+
+
+!
+
+getShipRotation
+    "
+     get ships initial rotation matrix
+    "
+    (glAccess pushMatrix) ifFalse:[self halt].
+    glAccess loadIdentityMatrix.
+    glAccess rotateX:heading.
+    glAccess rotateY:pitch.
+    glAccess rotateZ:roll.
+
+    shipRotation := FloatArray new:16.
+    (glAccess getMatrix:shipRotation)  ifFalse:[self halt].
+    glAccess popMatrix.
+
+
+
+
+
+!
+
+glAccess:aGLView
+    glAccess := aGLView.
+
+
+
+!
+
+setImpulse:a 
+    autoPilot speedGoal:nil.
+    self impulse:a
+
+
+
+
+
+
+!
+
+dPitch
+    ^ dPitch
+
+!
+
+dPitch:delta
+    dPitch := (delta min:45) max:-45.
+
+
+
+
+
+!
+
+impulse
+   ^ pulse
+
+
+
+
+
+
+!
+
+moreRollLeft
+    dRoll := (dRoll - 3.0) max:-45.
+
+
+
+
+
+
+!
+
+moreRollRight
+    dRoll := (dRoll + 3.0) min:45.
+
+
+
+
+
+!
+
+dRoll
+    ^ dRoll
+
+
+!
+
+dHeading:delta
+    dHeading := (delta min:45) max:-45
+
+
+
+!
+
+dHeading
+    ^ dHeading
+
+
+!
+
+engineOff
+    self acceleration:0.
+    self impulse:0.
+    autoPilot speedGoal:nil.
+
+!
+
+warp 
+   ^ acceleration
+
+
+
+
+
+
+!
+
+dRoll:delta
+    dRoll := (delta min:45) max:-45.
+
+
+
+
+
+!
+
+heading:h
+    |oldHeading|
+
+self halt.
+    oldHeading := heading.
+    heading := (h + 360) rem:360.
+    oldHeading ~= heading ifTrue:[
+        shipRotation := nil.
+        self shipRotation.
+        self changed:#heading
+    ]
+
+
+
+!
+
+pitch:p
+    |oldPitch|
+
+self halt.
+    oldPitch := pitch.
+    pitch := (p + 360) rem:360.
+    pitch ~= oldPitch ifTrue:[
+        shipRotation := nil.
+        self getShipRotation.
+        self changed:#pitch
+    ].
+
+
+
+
+!
+
+roll:r 
+    |oldRoll|
+
+self halt.
+    oldRoll := roll.
+    roll := (r + 360) rem:360.
+    roll ~= oldRoll ifTrue:[
+        shipRotation := nil.
+        self getShipRotation.
+        self changed:#roll
+    ]
+
+
+
+!
+
+turnHorizontal:anglePerSecond
+    dHeading := anglePerSecond
+!
+
+turnVertical:anglePerSecond
+    dPitch := anglePerSecond
+! !
+
+!StarShip methodsFor:'simulation '!
+
+simulationStep:fractionOfASecond
+    |v prevSpeed oldX oldY oldZ a oldPitch oldHeading oldRoll anyPosChange 
+     anyOrientationChange rX rY rZ|
+
+    autoPilot simulationStep:fractionOfASecond.
+
+    prevSpeed := speed.
+    super simulationStep:fractionOfASecond .
+    pulse ~= 0.0 ifTrue:[
+        speed := speed + ((pulse/100 * fractionOfASecond)).
+    ].
+    speed := (speed * 1000) asInteger / 1000.0.
+    prevSpeed ~= speed ifTrue:[
+        self changed:#speed
+    ].
+
+    shipRotation isNil ifTrue:[
+        self getShipRotation
+    ].
+
+    (dRoll ~= 0.0
+    or:[dHeading ~= 0.0
+    or:[dPitch ~= 0.0]]) ifTrue:[
+        glAccess pushMatrix.
+        glAccess loadIdentityMatrix.
+
+        anyOrientationChange := false.
+
+        dRoll ~= 0.0 ifTrue:[
+            oldRoll := roll.
+            rZ := dRoll * fractionOfASecond.
+            glAccess rotateZ:rZ.
+
+            roll := (roll + rZ).
+            roll := (roll + 360) rem:360.
+            roll := (roll * 100) rounded / 100.0.
+            oldRoll ~= roll ifTrue:[
+                self changed:#roll.
+                anyOrientationChange := true
+            ]
+        ].
+        dPitch ~= 0.0 ifTrue:[
+            oldPitch := pitch.
+            rY := dPitch * fractionOfASecond.
+            glAccess rotateY:rY.
+
+            pitch := (pitch + rY).
+            pitch := (pitch + 360) rem:360.
+            pitch := (pitch * 100) rounded / 100.0.
+            oldPitch ~= pitch ifTrue:[
+                self changed:#pitch.
+                anyOrientationChange := true
+            ]
+        ].
+        dHeading ~= 0.0 ifTrue:[
+            oldHeading := heading.
+            rX := (dHeading * fractionOfASecond).
+            glAccess rotateX:rX.
+
+            heading := (heading + rX) .
+            heading := (heading + 360) rem:360.
+            heading := (heading * 100) rounded / 100.0.
+            oldHeading ~= heading ifTrue:[
+                self changed:#heading.
+                anyOrientationChange := true.
+            ]
+        ].
+
+        "
+         now, rotate current view by the above computed
+         delta rotation(s)
+        "
+        glAccess multMatrix:shipRotation.
+        "
+         get the new ship-view matrix
+        "
+        glAccess getMatrix:shipRotation.
+        glAccess popMatrix.
+
+        anyOrientationChange ifTrue:[
+            self changed:#orientation
+        ]
+    ].
+
+    speed ~= 0.0 ifTrue:[
+        oldX := posX.
+        oldY := posY.
+        oldZ := posZ.
+
+        v := speed negated. "the delta"
+        "
+         read Foley on whats going on here ...
+        "
+        posX := posX + ((shipRotation at:3) * v).
+        posY := posY + ((shipRotation at:7) * v).
+        posZ := posZ + ((shipRotation at:11) * v).
+
+        anyPosChange := false.
+        oldX ~= posX ifTrue:[
+            self changed:#positionX.
+            anyPosChange := true.
+        ].
+        oldY ~= posY ifTrue:[
+            self changed:#positionY.
+            anyPosChange := true.
+        ].
+        oldZ ~= posZ ifTrue:[
+            self changed:#positionZ.
+            anyPosChange := true.
+        ].
+        anyPosChange ifTrue:[
+            self changed:#position
+        ]
+    ].
+
+
+
+
+
+! !
+
+!StarShip methodsFor:'accessing-autopilot'!
+
+haltShip
+    autoPilot speedGoal:0.0
+
+!
+
+autoSetPitch:aNumber
+    autoPilot pitchGoal:aNumber
+
+
+
+
+
+!
+
+autoSetHeading:aNumber 
+    autoPilot headingGoal:aNumber
+
+
+
+
+!
+
+autoSetRoll:aNumber
+    autoPilot rollGoal:aNumber
+
+
+
+
+
+
+!
+
+autoSetSpeed:aNumber 
+    autoPilot speedGoal:aNumber
+
+
+
+! !
+
+!StarShip methodsFor:'initialization'!
+
+initialize
+    |v|
+
+    super initialize.
+
+    roll := pitch := heading := 0.0.
+    dRoll := dPitch := dHeading := 0.
+
+    pulse := 0.0.
+
+    autoPilot := Autopilot new.
+    autoPilot ship:self.
+
+
+
+
+
+
+
+
+
+! !
+
+'From Smalltalk/X, Version:2.10.3 on 23-aug-1994 at 12:22:00 am'!
+
+StandardSystemView subclass:#StartrekView
+	 instanceVariableNames:'shipView gameView topRadarView sideRadarView controlPanel
+                hOrientationView vOrientationView rOrientationView warpSlider
+                pulseSlider speedLabel headingLabel pitchLabel rollLabel
+                posXLabel posYLabel posZLabel warpLabel pulseLabel speedField
+                warpField pulseField pitchField headingField rollField posXField
+                posYField posZField needPositionXUpdate needPositionYUpdate
+                needPositionZUpdate needRollUpdate needHeadingUpdate
+                needPitchUpdate needSpeedUpdate needWarpUpdate needPulseUpdate'
+	 classVariableNames:''
+	 poolDictionaries:''
+	 category:'Games-Startrek'
+!
+
+!StartrekView methodsFor:'drawing'!
+
+redraw
+
+! !
+
+!StartrekView methodsFor:'changes'!
+
+update:something
+"/    something == #heading ifTrue:[
+"/        hOrientationView update:something.
+"/        vOrientationView update:something.
+"/        ^ self
+"/    ].
+
+    (something == #fastRedraw) ifTrue:[
+        ^ self
+    ].
+    (something == #slowRedraw) ifTrue:[
+        ^ self
+    ].
+    (something == #speed) ifTrue:[
+        needSpeedUpdate := true.
+        ^ self
+    ].
+    (something == #impulse) ifTrue:[
+        needPulseUpdate := true.
+        ^ self
+    ].
+    (something == #warp) ifTrue:[
+        needWarpUpdate := true.
+        ^ self
+    ].
+    (something == #positionX) ifTrue:[
+        needPositionXUpdate := true.
+        ^ self
+    ].
+    (something == #positionY) ifTrue:[
+        needPositionYUpdate := true.
+        ^ self
+    ].
+    (something == #positionZ) ifTrue:[
+        needPositionZUpdate := true.
+        ^ self
+    ].
+    (something == #roll) ifTrue:[
+        needRollUpdate := true.
+        ^ self
+    ].
+    (something == #pitch) ifTrue:[
+        needPitchUpdate := true.
+        ^ self
+    ].
+    (something == #heading) ifTrue:[
+        needHeadingUpdate := true.
+        ^ self
+    ].
+    something == #mediumRedraw ifTrue:[
+        needPositionXUpdate ifTrue:[
+            needPositionXUpdate := false.
+            self changed:#positionX
+        ].
+        needPositionYUpdate ifTrue:[
+            needPositionYUpdate := false.
+            self changed:#positionY
+        ].
+        needPositionZUpdate ifTrue:[
+            needPositionZUpdate := false.
+            self changed:#positionZ
+        ].
+        needRollUpdate ifTrue:[
+            needRollUpdate := false.
+            self changed:#roll 
+        ].
+        needPitchUpdate ifTrue:[
+            needPitchUpdate := false.
+            self changed:#pitch 
+        ].
+        needHeadingUpdate ifTrue:[
+            needHeadingUpdate := false.
+            self changed:#heading 
+        ].
+        needSpeedUpdate ifTrue:[
+            needSpeedUpdate := false.
+            self changed:#speed 
+        ].
+        needPulseUpdate ifTrue:[
+            needPulseUpdate := false.
+            self changed:#impulse 
+        ].
+        needWarpUpdate ifTrue:[
+            needWarpUpdate := false.
+            self changed:#warp 
+        ].
+        ^ self
+    ].
+
+    super update:something
+
+
+
+
+
+
+
+
+
+
+! !
+
+!StartrekView methodsFor:'accessing'!
+
+pitch 
+    ^ model starShip pitch 
+!
+
+positionY
+    ^ model starShip positionY
+!
+
+heading 
+    ^ model starShip heading 
+!
+
+positionZ
+    ^ model starShip positionZ
+!
+
+positionX
+    ^ model starShip positionX
+!
+
+speed 
+    ^ model starShip speed 
+
+!
+
+roll 
+    ^ model starShip roll 
+!
+
+shipView
+    ^ shipView
+!
+
+model:aModel
+    |ship labelsModel|
+
+    super model:aModel.
+
+    ship := aModel starShip.
+
+    shipView model:aModel.
+    "
+     when ship changes orientation/position, this one needs to know
+    "
+    ship addDependent:shipView.
+
+    topRadarView model:aModel.
+    "
+     when ship changes orientation/position, this one needs to know
+    "
+    ship addDependent:topRadarView.
+    "
+     when shipView changes field-of-view, this one needs to know
+    "
+    shipView addDependent:topRadarView.
+
+    sideRadarView model:aModel.
+    ship addDependent:sideRadarView.
+    shipView addDependent:sideRadarView.
+
+    controlPanel model:ship.
+    hOrientationView model:ship. aModel addDependent:hOrientationView.
+    vOrientationView model:ship. aModel addDependent:vOrientationView.
+    rOrientationView notNil ifTrue:[
+        rOrientationView model:ship. aModel addDependent:rOrientationView.
+    ].                              
+
+    "
+     could use model:ship for all of those;
+     we lead the change through self, to buffer changes and
+     delay them until slowRedraw-time
+    "
+"/    labelsModel := ship.
+    labelsModel := self.
+    ship addDependent:self.
+
+    speedLabel model:labelsModel.
+    warpLabel model:labelsModel.
+    pulseLabel model:labelsModel.
+    pitchLabel model:labelsModel.
+    headingLabel model:labelsModel.
+    rollLabel model:labelsModel.
+    posXLabel model:labelsModel.
+    posYLabel model:labelsModel.
+    posZLabel model:labelsModel.
+    speedField model:labelsModel.
+    warpField model:labelsModel.
+    pulseField model:labelsModel.
+    pitchField model:labelsModel.
+    headingField model:labelsModel.
+    rollField model:labelsModel.
+    posXField model:labelsModel.
+    posYField model:labelsModel.
+    posZField model:labelsModel.
+
+    labelsModel changed:#position.
+    labelsModel changed:#positionX.
+    labelsModel changed:#positionY.
+    labelsModel changed:#positionZ.
+    labelsModel changed:#roll.
+    labelsModel changed:#pitch.
+    labelsModel changed:#heading.
+
+
+
+
+
+
+
+!
+
+impulse 
+    ^ model starShip impulse 
+
+!
+
+autoSetPitch:aString 
+    model starShip autoSetPitch:(Number readFromString:aString)
+
+!
+
+autoSetHeading:aString 
+    model starShip autoSetHeading:(Number readFromString:aString)
+
+
+!
+
+warp 
+    ^ model starShip warp 
+
+!
+
+autoSetSpeed:aString 
+    model starShip autoSetSpeed:(Number readFromString:aString)
+
+
+!
+
+autoSetRoll:aString 
+    model starShip autoSetRoll:(Number readFromString:aString)
+
+
+!
+
+autoSetPosX:aString 
+    model starShip autoSetPosX:(Number readFromString:aString)
+
+
+!
+
+setImpulse:aString 
+    model starShip setImpulse:(Number readFromString:aString)
+
+
+
+
+!
+
+autoSetPosY:aString 
+    model starShip autoSetPosY:(Number readFromString:aString)
+
+
+!
+
+autoSetPosZ:aString 
+    model starShip autoSetPosZ:(Number readFromString:aString)
+
+
+!
+
+setAcceleration:aString 
+    model starShip setAcceleration:(Number readFromString:aString)
+
+
+
+! !
+
+!StartrekView methodsFor:'initialization'!
+
+initialize 
+    |frame frame2 labelFrame enterFrame label pulseSlider stopButton offButton
+     smallFont controlFrame buttonPanel|
+
+    super initialize.
+
+    self label:'Startrek'.
+
+    "------------------------------------------------------"
+
+    frame := View origin:(0.0 @ 0.0)      "just for the level ..."
+                  corner:(1.0 @ 0.75)     "since GL views have no levels"
+                      in:self.
+    frame level:-1.
+
+    shipView := ShipView origin:(0.0 @ 0.0)
+                         corner:(1.0 @ 1.0)
+                             in:frame.
+
+    "------------------------------------------------------"
+
+    controlFrame := View origin:(0.0 @ 0.75)
+                         corner:(1.0 @ 1.0)
+                             in:self.
+
+    "------------------------------------------------------"
+
+    frame := View origin:(0.0 @ 0.0)      "for the level"
+                  corner:(0.2 @ 1.0)
+                      in:controlFrame.
+    frame level:-1.
+
+    label := Label label:'top' in:frame.
+    label level:0.
+    label origin:(0.0 @ 0.0)
+          corner:(1.0 @ label height).
+
+    topRadarView := RadarView origin:(0.0 @ 0.0)
+                              corner:(1.0 @ 1.0)
+                                  in:frame.
+    topRadarView topInset:(label height).
+    topRadarView viewRotateX:90.0 y:0.0 z:0.0.
+    topRadarView otherView:shipView .
+    topRadarView showFieldOfView:true.
+
+    "------------------------------------------------------"
+
+    frame := View origin:(0.2 @ 0.0)
+                  corner:(0.4 @ 1.0)
+                      in:controlFrame.
+    frame level:-1.
+
+    label := Label label:'side' in:frame.
+    label level:0.
+    label origin:(0.0 @ 0.0)
+          corner:(1.0 @ label height).
+
+    sideRadarView := RadarView origin:(0.0 @ 0.0)
+                               corner:(1.0 @ 1.0)
+                                   in:frame.
+    sideRadarView topInset:(label height).
+    sideRadarView viewRotateX:0.0 y:90.0 z:0.0.
+    sideRadarView otherView:shipView .
+    sideRadarView showFieldOfView:true.
+
+    "------------------------------------------------------"
+
+    frame := View origin:(0.4 @ 0.0)
+                  corner:(0.55 @ 1.0)
+                      in:controlFrame.
+
+    label := Label label:'control' in:frame.
+    label level:0.
+    label origin:(0.0 @ 0.0)
+          corner:(1.0 @ label height).
+
+    controlPanel := ShipControlPanel
+                    origin:(0.0 @ 0.0)
+                    corner:(1.0 @ 1.0)
+                        in:frame.
+    controlPanel topInset:(label height).
+
+    "------------------------------------------------------"
+
+    frame := View origin:(0.55 @ 0.0)
+                  corner:(0.65 @ 1.0)
+                      in:controlFrame.
+
+    label := Label label:'warp' in:frame.
+    label level:0.
+    label origin:(0.0 @ 0.0)
+          corner:(1.0 @ label height).
+
+    frame2 := HorizontalPanelView
+                origin:(0.0 @ 0.0)
+                corner:(1.0 @ 1.0)
+                    in:frame.
+    frame2 topInset:(label height).
+
+    warpSlider := Slider in:frame2.
+    warpSlider extent:(20 @ 1.0).
+    warpSlider topInset:(label height).
+    warpSlider thumbOrigin:100.
+    warpSlider scrollAction:[:value | 
+        model starShip setAcceleration:(100 - value)
+    ].
+
+    "------------------------------------------------------"
+
+    frame := View origin:(0.65 @ 0.0)
+                  corner:(0.75 @ 1.0)
+                      in:controlFrame.
+
+    label := Label label:'pulse' in:frame.
+    label level:0.
+    label origin:(0.0 @ 0.0)
+          corner:(1.0 @ label height).
+
+    frame2 := HorizontalPanelView
+                origin:(0.0 @ 0.0)
+                corner:(1.0 @ 1.0)
+                    in:frame.
+    frame2 topInset:(label height).
+
+    pulseSlider := Slider in:frame2.
+    pulseSlider extent:(20 @ 1.0).
+    pulseSlider topInset:(label height).
+    pulseSlider thumbOrigin:100.
+    pulseSlider scrollAction:[:value | 
+        model starShip setImpulse:100 - value
+    ].
+
+    "------------------------------------------------------"
+
+    buttonPanel := VerticalPanelView
+                        origin:(0.62 @ 0.2)     "overlaps"
+                        corner:(0.68 @ 0.8)
+                            in:controlFrame.
+
+    offButton := Button form:(Image fromFile:'bitmaps/off.xbm') in:buttonPanel.
+    offButton action:[
+        warpSlider thumbOrigin:100.
+        pulseSlider thumbOrigin:100.
+        model starShip engineOff.
+    ].
+
+    stopButton := Button form:(Image fromFile:'bitmaps/stop.xbm') in:buttonPanel.
+    stopButton enteredForegroundColor:Color red.
+    stopButton action:[model starShip haltShip].
+
+    "------------------------------------------------------"
+
+    labelFrame := VerticalPanelView
+                      origin:(0.77 @ 0.0)
+                      corner:(0.79 @ 1.0)
+                          in:controlFrame.
+    labelFrame level:0.
+
+    frame := VerticalPanelView 
+                 origin:(0.79 @ 0.0)
+                 corner:(0.84 @ 1.0)
+                     in:controlFrame.
+    frame level:0.
+
+    enterFrame := VerticalPanelView 
+                      origin:(0.84 @ 0.0)
+                      corner:(0.89 @ 1.0)
+                          in:controlFrame.
+    enterFrame level:0.
+
+    smallFont := (Font family:'courier' face:'medium' style:'roman' size:7).
+
+    label := Label label:'v:' in:labelFrame.
+    label font:smallFont.
+    label adjust:#right.
+
+    speedLabel := Label label:'0' in:frame.
+    speedLabel font:smallFont.
+    speedLabel extent:(1.0 @ speedLabel height).
+    speedLabel adjust:#left.
+    speedLabel aspect:#speed.
+
+    speedField := EditField in:enterFrame.
+    speedField font:smallFont.
+    speedField extent:(1.0 @ speedLabel "speedField" height).
+    speedField aspect:#autoSetSpeed:.
+
+    label := Label label:'w:' in:labelFrame.
+    label font:smallFont.
+    label adjust:#right.
+
+    warpLabel := Label label:'0' in:frame.
+    warpLabel font:smallFont.
+    warpLabel extent:(1.0 @ warpLabel height).
+    warpLabel adjust:#left.
+    warpLabel aspect:#warp.
+
+    warpField := EditField in:enterFrame.
+    warpField font:smallFont.
+    warpField extent:(1.0 @ warpLabel "warpField" height).
+    warpField aspect:#setAcceleration:.
+
+
+    label := Label label:'p:' in:labelFrame.
+    label font:smallFont.
+    label adjust:#right.
+
+    pulseLabel := Label label:'0' in:frame.
+    pulseLabel font:smallFont.
+    pulseLabel extent:(1.0 @ pulseLabel height).
+    pulseLabel adjust:#left.
+    pulseLabel aspect:#impulse.
+
+    pulseField := EditField in:enterFrame.
+    pulseField font:smallFont.
+    pulseField extent:(1.0 @ pulseLabel "pulseField" height).
+    pulseField aspect:#setImpulse:.
+
+
+    label := Label label:'<:' in:labelFrame.
+    label font:smallFont.
+    label adjust:#right.
+
+    pitchLabel := Label label:'0' in:frame.
+    pitchLabel font:smallFont.
+    pitchLabel extent:(1.0 @ pitchLabel height).
+    pitchLabel adjust:#left.
+    pitchLabel aspect:#pitch.
+
+    pitchField := EditField in:enterFrame.
+    pitchField font:smallFont.
+    pitchField extent:(1.0 @ pitchLabel "pitchField" height).
+    pitchField aspect:#autoSetPitch:.
+
+
+    label := Label label:'^:' in:labelFrame.
+    label font:smallFont.
+    label adjust:#right.
+
+    headingLabel := Label label:'0' in:frame.
+    headingLabel font:smallFont.
+    headingLabel extent:(1.0 @ headingLabel height).
+    headingLabel adjust:#left.
+    headingLabel aspect:#heading.
+
+    headingField := EditField in:enterFrame.
+    headingField font:smallFont.
+    headingField extent:(1.0 @ headingLabel "headingField" height).
+    headingField aspect:#autoSetHeading:.
+
+
+    label := Label label:'|:' in:labelFrame.
+    label font:smallFont.
+    label adjust:#right.
+
+    rollLabel := Label label:'0' in:frame.
+    rollLabel font:smallFont.
+    rollLabel extent:(1.0 @ rollLabel height).
+    rollLabel adjust:#left.
+    rollLabel aspect:#roll.
+
+    rollField := EditField in:enterFrame.
+    rollField font:smallFont.
+    rollField extent:(1.0 @ rollLabel "rollField" height).
+    rollField aspect:#autoSetRoll:.
+
+
+    label := Label label:'x:' in:labelFrame.
+    label font:smallFont.
+    label adjust:#right.
+
+    posXLabel := Label label:'0' in:frame.
+    posXLabel font:smallFont.
+    posXLabel extent:(1.0 @ posXLabel height).
+    posXLabel adjust:#left.
+    posXLabel aspect:#positionX.
+
+    posXField := EditField in:enterFrame.
+    posXField font:smallFont.
+    posXField extent:(1.0 @ posXLabel "posXField" height).
+    posXField aspect:#autoSetPosX:.
+
+
+    label := Label label:'y:' in:labelFrame.
+    label font:smallFont.
+    label adjust:#right.
+
+    posYLabel := Label label:'0' in:frame.
+    posYLabel font:smallFont.
+    posYLabel extent:(1.0 @ posYLabel height).
+    posYLabel adjust:#left.
+    posYLabel aspect:#positionY.
+
+    posYField := EditField in:enterFrame.
+    posYField font:smallFont.
+    posYField extent:(1.0 @ posYLabel "posYField" height).
+    posYField aspect:#autoSetPosY:.
+
+
+    label := Label label:'z:' in:labelFrame.
+    label font:smallFont.
+    label adjust:#right.
+
+    posZLabel := Label label:'0' in:frame.
+    posZLabel font:smallFont.
+    posZLabel extent:(1.0 @ posZLabel height).
+    posZLabel adjust:#left.
+    posZLabel aspect:#positionZ.
+
+    posZField := EditField in:enterFrame.
+    posZField font:smallFont.
+    posZField extent:(1.0 @ posZLabel "posZField" height).
+    posZField aspect:#autoSetPosZ:.
+
+
+    "------------------------------------------------------"
+    frame := View origin:(0.9 @ 0.0)
+                  corner:(1.0 @ 0.333)
+                      in:controlFrame.
+    frame level:-1.
+    vOrientationView := OrientationView
+                                origin:(0.0 @ 0.0)
+                                corner:(1.0 @ 1.0)
+                                    in:frame.
+    vOrientationView aspect:#pitch.
+
+    "------------------------------------------------------"
+
+    frame := View origin:(0.9 @ 0.333)
+                  corner:(1.0 @ 0.667)
+                      in:controlFrame.
+    frame level:-1.
+    hOrientationView := OrientationView
+                                origin:(0.0 @ 0.0)
+                                corner:(1.0 @ 1.0)
+                                    in:frame.
+    hOrientationView aspect:#heading.
+
+    "------------------------------------------------------"
+
+
+    frame := View origin:(0.9 @ 0.667)
+                  corner:(1.0 @ 1.0)
+                      in:controlFrame.
+    frame level:-1.
+    rOrientationView := OrientationView
+                                origin:(0.0 @ 0.0)
+                                corner:(1.0 @ 1.0)
+                                    in:frame.
+    rOrientationView aspect:#orientation.
+
+    "------------------------------------------------------"
+
+    needPositionXUpdate := needPositionYUpdate := needPositionZUpdate := false.
+    needPitchUpdate := needRollUpdate := needHeadingUpdate := false.
+    needSpeedUpdate := needWarpUpdate := needPulseUpdate := false.
+
+    "
+     StartrekView new open
+    "
+
+
+
+
+!
+
+realize
+    super realize.
+    model startSimulation
+! !
+
+!StartrekView methodsFor:'destroying'!
+
+destroy
+    super destroy.
+    model stopSimulation
+! !
+
+'From Smalltalk/X, Version:2.10.3 on 23-aug-1994 at 12:22:00 am'!
+
+View subclass:#ShipControlPanel
+	 instanceVariableNames:'upButton downButton leftButton rightButton leaveButton
+                rollRightButton rollLeftButton'
+	 classVariableNames:''
+	 poolDictionaries:''
+	 category:'Games-Startrek'
+!
+
+!ShipControlPanel methodsFor:'initialization'!
+
+initialize
+    super initialize.
+
+    upButton := ArrowButton upIn:self.
+    downButton := ArrowButton downIn:self.
+    leftButton := ArrowButton leftIn:self.
+    rightButton := ArrowButton rightIn:self.
+    rollRightButton := Button in:self.
+    rollLeftButton := Button in:self.
+    leaveButton := Button in:self.
+
+    upButton origin:(0.33 @ 0.0) corner:(0.67 @ 0.33).
+    downButton origin:(0.33 @ 0.67) corner:(0.67 @ 1.0).
+    leftButton origin:(0.0 @ 0.33) corner:(0.33 @ 0.67).
+    rightButton origin:(0.67 @ 0.33) corner:(1.0 @ 0.67).
+    leaveButton origin:(0.33 @ 0.33) corner:(0.67 @ 0.67).
+    rollRightButton origin:(0.0 @ 0.67) corner:(0.33 @ 1.0).
+    rollLeftButton origin:(0.67 @ 0.67) corner:(1.0 @ 1.0).
+
+    upButton activeBackgroundColor:Color red.
+    downButton activeBackgroundColor:Color red.
+    leftButton activeBackgroundColor:Color red.
+    rightButton activeBackgroundColor:Color red.
+    leaveButton activeBackgroundColor:Color red.
+    rollRightButton activeBackgroundColor:Color red.
+    rollLeftButton activeBackgroundColor:Color red.
+
+    upButton autoRepeat.
+    downButton autoRepeat.
+    leftButton autoRepeat.
+    rightButton autoRepeat.
+    rollRightButton autoRepeat.
+    rollLeftButton autoRepeat.
+
+    upButton action:[model moreUp].
+    downButton action:[model moreDown].
+    leftButton action:[model moreLeft].
+    rightButton action:[model moreRight].
+    leaveButton action:[model keepDirection].
+    rollRightButton action:[model moreRollRight].
+    rollLeftButton action:[model moreRollLeft].
+
+    "
+     ShipControlPanel new open
+    "
+
+
+
+
+
+
+
+! !
+
+!ShipControlPanel methodsFor:'keyboard control'!
+
+keyPress:key x:x y:y
+    key == #CursorUp ifTrue:[
+        upButton turnOn.
+        device synchronizeOutput.
+        model moreUp.
+        upButton turnOff.
+    ].
+    key == #CursorDown ifTrue:[
+        downButton turnOn.
+        device synchronizeOutput.
+        model moreDown.
+        downButton turnOff.
+    ].
+    key == #CursorLeft ifTrue:[
+        leftButton turnOn.
+        device synchronizeOutput.
+        model moreLeft.
+        leftButton turnOff.
+    ].
+    key == #CursorRight ifTrue:[
+        rightButton turnOn.
+        device synchronizeOutput.
+        model moreRight.
+        rightButton turnOff.
+    ].
+    key == $0 ifTrue:[
+        model setAcceleration:0.
+    ].
+    key == $1 ifTrue:[
+        model setAcceleration:1.
+    ].
+    key == $2 ifTrue:[
+        model setAcceleration:2.
+    ].
+
+
+
+
+
+! !
+
+'From Smalltalk/X, Version:2.10.3 on 23-aug-1994 at 12:22:00 am'!
+
+GLXView subclass:#OrientationView
+	 instanceVariableNames:'lastValue needRedraw'
+	 classVariableNames:''
+	 poolDictionaries:''
+	 category:'Games-Startrek'
+!
+
+!OrientationView methodsFor:'drawing'!
+
+redraw
+    |m viewAspect value|
+
+    shown ifFalse:[^ self].
+
+    self color:Black.    
+    self clear.        
+    model isNil ifTrue:[
+        self swapBuffers.
+        ^ self
+    ].
+
+    viewAspect := width / height.
+    device glxOrtho2Left:(-0.5 * viewAspect) 
+                   right:0.5 * viewAspect 
+                  bottom:-0.5 
+                     top:0.5 
+                      in:drawableId.
+
+    self color:White.
+
+    aspectSymbol ~~ #orientation ifTrue:[
+        value := model perform:aspectSymbol.
+    ].
+
+    "
+     model position & front view
+    "
+    aspectSymbol == #heading ifTrue:[
+        "show heading"
+        self rotateX:0.0 y:0.0 z:value negated.
+        "
+         draw the ship from the side
+        "
+        self beginLine.
+        self v3f:#( 0.20  0.0 0.0).  "center engine line"
+        self v3f:#(-0.07 0.0 0.0).
+        self endLine.
+        self beginLine.
+        self v3f:#( 0.15  0.0 0.0). "center-to-control "
+        self v3f:#( 0.2  0.1 0.0).
+        self endLine.
+        self beginLine.
+        self v3f:#( 0.06  0.2 0.0). "engine"
+        self v3f:#( -0.44  0.2 0.0).
+        self endLine.
+        self beginLine.
+        self v3f:#( -0.09 0.2 0.0)."center-to-engine" 
+        self v3f:#( -0.05 0.0 0.0).
+        self endLine.
+        self beginClosedLine.      "control"
+        self v3f:#( 0.15 0.1 0.0). 
+        self v3f:#( 0.25 0.1 0.0). 
+        self v3f:#( 0.29 0.13 0.0). 
+        self v3f:#( 0.31 0.13 0.0). 
+        self v3f:#( 0.35 0.1 0.0). 
+        self v3f:#( 0.45 0.1 0.0). 
+        self v3f:#( 0.45 0.09 0.0). 
+        self v3f:#( 0.35 0.09 0.0). 
+        self v3f:#( 0.3 0.05  0.0).
+        self v3f:#( 0.25 0.09 0.0). 
+        self v3f:#( 0.15 0.09 0.0). 
+        self v3f:#( 0.15 0.1 0.0). 
+        self endClosedLine.
+    ] ifFalse:[
+        (aspectSymbol == #pitch) ifTrue:[
+            self rotateX:0.0 y:0.0 z:value  negated.
+            "
+             draw the ship from top
+            "
+            self beginLine.
+            self v3f:#(0.0  0.25 0.0). "center line"
+            self v3f:#(0.0 -0.07 0.0).
+            self endLine.
+            self beginLine.
+            self v3f:#( 0.2  0.1 0.0). "right engine"
+            self v3f:#( 0.2 -0.4 0.0).
+            self endLine.
+            self beginLine.
+            self v3f:#(-0.2  0.1 0.0). "left engine"
+            self v3f:#(-0.2 -0.4 0.0).
+            self endLine.
+            self beginLine.
+            self v3f:#(-0.2 -0.05 0.0). 
+            self v3f:#( 0.0 -0.01 0.0).
+            self v3f:#( 0.2 -0.05 0.0).
+            self endLine.
+            self circlefX:0.0 y:0.3 radius:0.15.   
+        ] ifFalse:[
+            (aspectSymbol == #roll) ifTrue:[
+                self rotateX:0.0 y:0.0 z:value negated.
+                "
+                 draw the ship from back
+                "
+                self circlefX:0.0 y:-0.15 radius:0.04.   
+                self circlefX:0.2 y:0.15 radius:0.02.   
+                self circlefX:-0.2 y:0.15 radius:0.02.   
+                self beginClosedLine.
+                self v3f:#( -0.15 0.0 0.0). 
+                self v3f:#( -0.05 0.0 0.0). 
+                self v3f:#( -0.01 0.03 0.0). 
+                self v3f:#( 0.01 0.03 0.0). 
+                self v3f:#( 0.05 0.0 0.0). 
+                self v3f:#( 0.15 0.0 0.0). 
+                self v3f:#( 0.15 -0.01 0.0). 
+                self v3f:#( 0.05 -0.01 0.0). 
+                self v3f:#( 0.0 -0.05  0.0).
+                self v3f:#( -0.05 -0.01 0.0). 
+                self v3f:#( -0.15 -0.01 0.0). 
+                self v3f:#( -0.15 0.0 0.0). 
+                self endClosedLine.
+                self beginLine.
+                self v3f:#(-0.2 0.15 0.0).
+                self v3f:#(0.0 -0.15 0.0).
+                self v3f:#(0.2 0.15 0.0).
+                self endLine.
+                self beginLine.
+                self v3f:#(0.0 -0.15 0.0).
+                self v3f:#(0.0 -0.05 0.0).
+                self endLine.
+            ] ifFalse:[
+
+"/                self multMatrix:(model shipRotation).
+
+               self rotateY:model pitch negated.
+               self rotateX:model heading negated.
+               self rotateZ:model roll negated.
+                self rotateX:-90.
+
+                "
+                 draw the complete ship
+                "
+                self beginLine.
+                self v3f:#(0.0  0.25 -0.1). "center line"
+                self v3f:#(0.0 -0.07 -0.1).
+                self endLine.
+                self beginLine.
+                self v3f:#( 0.2  0.1 0.2). "right engine"
+                self v3f:#( 0.2 -0.4 0.2).
+                self endLine.
+                self beginLine.
+                self v3f:#(-0.2  0.1 0.2). "left engine"
+                self v3f:#(-0.2 -0.4 0.2).
+                self endLine.
+                self beginLine.
+                self v3f:#(-0.2 -0.05 0.2)."engine-center-engine" 
+                self v3f:#( 0.0 -0.01 -0.1).
+                self v3f:#( 0.2 -0.05 0.2).
+                self endLine.
+                self beginLine.
+                self v3f:#( 0.0 0.2 -0.1)."center-control" 
+                self v3f:#( 0.0 0.3 0.0).
+                self endLine.
+
+                self beginLine.
+                self v3f:#(-0.15 0.3 0.0). "control as line (circle vanishes if seen from side)"
+                self v3f:#(0.15  0.3 0.0).
+                self endLine.
+                self beginLine.
+                self v3f:#(0.0 0.15 0.0). "control as line (circle vanishes if seen from side)"
+                self v3f:#(0.0 0.45 0.0).
+                self endLine.
+                self circlefX:0.0 y:0.3 radius:0.15.   
+            ]
+        ]
+    ].
+    self swapBuffers
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+! !
+
+!OrientationView methodsFor:'updates'!
+
+update:something
+    something == #mediumRedraw ifTrue:[
+        needRedraw ifTrue:[
+            needRedraw := false.
+            self redraw.
+        ].
+        ^ self
+    ].
+
+    something == aspectSymbol ifTrue:[
+        needRedraw := true.
+        ^ self.
+    ].
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+! !
+
+!OrientationView methodsFor:'events'!
+
+exposeX:x y:y width:w height:h
+    needRedraw := true
+
+
+
+
+
+
+
+! !
+
+!OrientationView methodsFor:'initialization'!
+
+initialize
+    super initialize.
+    type := #colorIndexDoubleBuffer.
+    needRedraw := true.
+
+
+
+
+! !
+
+'From Smalltalk/X, Version:2.10.3 on 23-aug-1994 at 12:22:00 am'!
+
+GLXView subclass:#ShipView
+	 instanceVariableNames:'viewDistanceLimit zoom zoomLabel rX rY rZ needRedraw'
+	 classVariableNames:''
+	 poolDictionaries:''
+	 category:'Games-Startrek'
+!
+
+ShipView comment:'
+simple GL demo - see class method #documentation
+'!
+
+!ShipView class methodsFor:'defaults'!
+
+defaultExtent
+    "used by superclass"
+
+    ^ 500 @ 500
+! !
+
+!ShipView class methodsFor:'documentation'!
+
+documentation
+"
+    a very simple GL view;
+    sets up a transformation and draws some simple objects.
+    with every redraw, some objects are rotated a bit around.
+
+    The mouse can be used to move the viewpoint:
+        move left/right turns left/right,
+        move forward/backward turns up/down
+
+    startup:
+        GLDemo7 open
+"
+! !
+
+!ShipView methodsFor:'accessing'!
+
+rotY
+    ^ rY
+!
+
+rotZ
+    ^ rZ
+!
+
+rotX
+    ^ rX
+! !
+
+!ShipView methodsFor:'drawing'!
+
+redraw
+    |ship pX pY pZ detailDistanceList fullDetailDistanceList farDrawList detailDrawList fullDetailDrawList
+     n fov farLimit detailLimit fullDetailLimit |
+
+    "
+     define perspective-viewing
+        0.0                                   200.0
+    eye                                   
+        near                                  far
+    <)  -------------+------+-----------------+-------------------+
+                     \      \                  \                   \
+                      \      \                  \                   \
+                       \      \                  \                   \
+                        +------+                  \                   \
+                                                   \                   \
+                                                    \                   \
+                                                     \                   \
+                                                      \                   \
+                                                       +-------------------+
+
+         ---> negative z coordinates
+    "
+
+    shown ifFalse:[^ self].
+
+    self color:Black.    
+    self clear.
+
+    model isNil ifTrue:[
+        self swapBuffers.
+        ^ self
+    ].
+
+    ship := model starShip.
+
+    fov := 450 // zoom.
+    "
+     only objects within farLimit are shown
+    "
+    farLimit := (viewDistanceLimit * zoom) asInteger.
+    "
+     only objects within detailLimit are shown in detail
+    "
+    detailLimit := farLimit * 0.5.
+    "
+     only objects within fullDetailLimit are shown in full detail
+    "
+    fullDetailLimit := detailLimit / 2.
+
+    self perspectiveFovy:fov
+                  aspect:(width / height) 
+                    near:0.0 
+                     far:farLimit. 
+
+
+    pX := ship positionX.
+    pY := ship positionY.
+    pZ := ship positionZ.
+
+    "
+     setup eye ...
+    "
+    self multMatrix:(ship shipRotation).
+    self translateX:pX negated y:pY negated z:pZ negated.
+
+    rX := ship heading.
+    rY := ship pitch.
+    rZ := ship roll.
+
+    detailDistanceList := OrderedCollection new.
+    fullDetailDistanceList := OrderedCollection new.
+
+    farDrawList := OrderedCollection new:100.
+    detailDrawList := OrderedCollection new:50.
+    fullDetailDrawList := OrderedCollection new:10.
+
+    "
+     collect distance data
+    "
+    model localObjects with:model localDistances do:[:anObject :aDistance |
+        |oX oY oZ distX distY distZ distance|
+
+        aDistance <= farLimit ifTrue:[
+            "
+             have to recompute distance;
+             the localDistance data is never up-to-date
+            "
+            oX := anObject positionX.
+            oY := anObject positionY.
+            oZ := anObject positionZ.
+
+            distance := ((pX - oX) squared 
+                         + (pY - oY) squared 
+                         + (pZ - oZ) squared) sqrt.
+            distance <= farLimit ifTrue:[
+                distance < detailLimit ifTrue:[
+                    distance < fullDetailLimit ifTrue:[
+                        fullDetailDistanceList add:distance.
+                        fullDetailDrawList add:anObject.
+                    ] ifFalse:[
+                        detailDistanceList add:distance.
+                        detailDrawList add:anObject.
+                    ]
+                ] ifFalse:[
+                    farDrawList add:anObject.
+                ]
+            ]
+        ].
+    ].
+
+    "
+     distant objects are only drawn as points
+    "
+    self beginPoint.
+    farDrawList do:[:anObject |
+        anObject drawPositionIn:self.
+    ].
+    self endPoint.
+
+    "
+     detailed objects
+     draw reverse (sorted by distance) to simulate z-buffer
+    "
+    detailDistanceList sortWith:detailDrawList.
+    detailDrawList reverseDo:[:anObject |
+"/ anObject class name print. ' ' print. anObject position printNL.
+        anObject drawIn:self.
+    ].
+
+    "sort reverse"
+    fullDetailDistanceList sort:[:a :b | a > b] with:fullDetailDrawList.
+    fullDetailDrawList with:fullDetailDistanceList do:[:anObject :distance |
+        distance < anObject collisionDistance ifTrue:[
+            anObject handleCollisionWith:model starShip
+        ].
+
+"/ anObject class name print. ' ' print. anObject position printNL.
+        anObject drawFullDetailIn:self.
+    ].
+
+    self swapBuffers
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+! !
+
+!ShipView methodsFor:'updates'!
+
+update:something
+    something == #fastRedraw ifTrue:[
+        self redraw.
+        ^ self
+    ].
+
+
+
+
+
+
+! !
+
+!ShipView methodsFor:'queries'!
+
+viewDistanceLimit
+    ^ viewDistanceLimit * zoom
+
+!
+
+fieldOfView
+    ^ 450 // zoom
+
+
+! !
+
+!ShipView methodsFor:'events'!
+
+exposeX:x y:y width:w height:h
+    needRedraw := true
+
+
+
+!
+
+keyPress:key x:x y:y
+    key == $z ifTrue:[
+        zoom < 8 ifTrue:[
+            zoom := zoom * 2.
+            self changed:#fieldOfView
+        ]
+    ].
+    key == $Z ifTrue:[
+        zoom > (1/2) ifTrue:[
+            zoom := zoom / 2.
+            self changed:#fieldOfView
+        ]
+    ].
+    key == $i ifTrue:[
+        self inspect
+    ]
+
+
+
+
+!
+
+buttonRelease:button x:x y:y
+    self disableMotionEvents.
+
+
+
+
+!
+
+buttonPress:button x:x y:y
+    self enableMotionEvents.
+
+
+
+!
+
+buttonMotion:state x:x y:y
+    |dX dY|
+    state ~~ 0 ifTrue:[
+        dX := (x - (width // 2)).
+        dY := (y - (height // 2)).
+        dX ~~ 0 ifTrue:[
+            'mH' print. dX printNL.
+            "assume, we  have a field of view of 80 degrees .."
+            "we start a turn of the pressed degree per second"
+            model starShip dHeading:(dX / width) * 40.
+        ].
+        dY ~~ 0 ifTrue:[
+            'mV' print. dY printNL.
+            "assume, we  have a field of view of 60 degrees .."
+            model starShip dPitch:(dY / height) * 30.
+        ].
+    ]
+
+
+
+
+
+
+
+! !
+
+!ShipView methodsFor:'initialization'!
+
+initialize
+    super initialize.
+    type := #colorIndexDoubleBuffer.
+    viewDistanceLimit := 50000.
+
+    zoom := 1.0.
+    needRedraw := false.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+!
+
+realize 
+    super realize.
+    type := #colorIndexDoubleBuffer.
+
+    self enableButtonEvents.
+    self enableButtonMotionEvents.
+
+    self cursor:Cursor crossHair.     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+! !
+

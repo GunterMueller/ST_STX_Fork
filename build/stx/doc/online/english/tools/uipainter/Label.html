@@ -1,0 +1,230 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+   <META NAME="Author" CONTENT="Thomas Zwick, eXept software AG, Germany">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.04 [en] (X11; I; Linux 2.0.30 i586) [Netscape]">
+   <TITLE>The Label Widget</TITLE>
+</HEAD>
+<BODY>
+<A HREF="TOP.html#TABLEOFTHEWIDGETS" NOPRINT><IMG SRC="../../../icons/DocsUpArrow.gif" ALT="Table of the Widgets" NOSAVE HEIGHT=30 WIDTH=30></A><A HREF="EntryField.html" NOPRINT><IMG SRC="../../../icons/DocsRightArrow.gif" ALT="The Entry Field Wigdet" NOSAVE HEIGHT=30 WIDTH=30></A>
+<BR>&nbsp;
+<HR ALIGN=LEFT WIDTH="100%">
+<H1>
+<FONT SIZE=+4>The Label Widget</FONT></H1>
+<IMG SRC="../../../pictures/GUIPainterWidgetLabel.gif" ALT="A View of a Label Widget" NOSAVE HEIGHT=24 WIDTH=207>
+<P>View Class: <TT>Label</TT>
+<BR>Spec Class: <TT>LabelSpec</TT>
+
+<P>The<B> Label Widget</B> is used to provide text output capabilities.
+The text string cannot be edited. Usually, they are used in conjunction
+with <A HREF="EntryField.html">Entry Field Widgets</A>.
+<BR>&nbsp;
+<H3>
+
+<HR ALIGN=LEFT WIDTH="100%"></H3>
+
+<H3>
+The <I>Basics</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>ID</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Unique symbolic name (ID) of the label.&nbsp;</B>&nbsp;
+<BR>This ID can be used by the application to access the widget
+via <TT>"builder>>componentAt:#ID"</TT>.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Label</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>String of the label.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Label Is Image</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the string of the label
+is taken as selector.</B>&nbsp;
+<BR>The selector is sent to the application in order to get an <TT>Image</TT>
+instance. The method can either fetch an image from a file or contain an
+image resource specification which can be defined by using the <A HREF="ImageEditor.html">Image
+Editor</A>.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Translate Label</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the string of the label
+is translated by the resource file to a national language string.</B></TD>
+</TR>
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Details</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Font</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the font style of the label.</B>&nbsp;
+<BR>After selecting the check toggle the font style can be chosen by selecting
+one of the Family/Face/Style/Size buttons. If no font style is selected,
+the label takes its default font style from the style sheet.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>FG-Color</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the foreground color of the label.</B>&nbsp;
+<BR>After selecting the check toggle the foreground color can be chosen
+by selecting the desired colored button. 
+<BR>If no color&nbsp; is selected (i.e. the checkToggle is off),
+the label takes its default foreground color from the style sheet.
+<BR>Notice, that a fgChannel valueHolder may provide a different
+color, and overwrite this setting.
+</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>BG-Color</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the background color of the label.</B>&nbsp;
+<BR>After selecting the check toggle the background color can be chosen
+by selecting the desired colored button. 
+<BR>If no color&nbsp; is selected (i.e. the checkToggle is off),
+the label takes its default background color from the style sheet.
+<BR>Notice, that a bgChannel valueHolder may provide a different
+color, and overwrite this setting.
+</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Border</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the width of the border.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Level</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the width of the 3D-border.</B>&nbsp;
+<BR>Positive values provide a raising,&nbsp;
+<BR>negative values provide a lowering of the label.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Justification</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the justification of the logo/string
+inside the label area.</B><BR>
+Possible values are:<BR>
+<B>left</B> (show logo left-adjusted),<BR>
+<B>right</B> (show logo right-adjusted),<BR>
+<B>center</B> (show logo centered),<BR>
+<B>centerEach</B> (like center, but center each line of a multipline logo),<BR>
+<B>centerLeft</B> (like center, but show left adjusted if logo does not fit),<BR>
+<B>centerRight</B> (like center, but show right adjusted if logo does not fit),<BR>
+<B>leftRight</B> (like left, but show right adjusted if logo does not fit),<BR>
+<B>rightLeft</B> (like right, but show left adjusted if logo does not fit),<BR>
+<BR>The last four are useful to make certain, that the most interesting part of the<BR>
+label is shown, in case it does not fit. (for example: a file names right part)
+</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Resize For Label</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off whether the label recomputes
+its layout, if the extent of the string has changed.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Initially Invisible</B></TD>
+
+<TD ALIGN=LEFT VALIGN=TOP BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that
+the label is initially invisible.</B></TD>
+</TR>
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Channels</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Label</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for the string
+of the label.</B>&nbsp;
+<BR>It should return a <TT><A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance with a <TT>String</TT> instance.&nbsp;
+<BR>It is used to provide a dynamically changing of the label.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>FG-Color</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding controlling the
+foreground color of the label.</B>&nbsp;
+<BR>If left blank, the fgColor is defined 
+by the above static color setting
+or the styleSheet.
+<BR>if specified, the binding should return a&nbsp;
+
+<P>&nbsp;&nbsp;&nbsp; - <TT>Color</TT> instance&nbsp; (static behavior)&nbsp;
+<BR>&nbsp;&nbsp;&nbsp; - <TT>Block</TT> evaluating to a <TT>Color</TT> (halfway static behavior).&nbsp;
+<BR>&nbsp;&nbsp;&nbsp; - <TT><A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance with a <TT>Color</TT> instance.&nbsp;
+
+<P>A value model can be used to provide a dynamically changing of the foreground color.
+<BR>A block will be evaluated once, at build time.
+</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>BG-Color</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding controlling the background
+color of the label.</B>&nbsp;
+<BR>If left blank, the bgColor is defined 
+by the above static color setting
+or the styleSheet.
+<BR>if specified, the binding should return a&nbsp;
+
+<P>&nbsp;&nbsp;&nbsp; - <TT>Color</TT> instance&nbsp; (static behavior)&nbsp;
+<BR>&nbsp;&nbsp;&nbsp; - <TT>Block</TT> evaluating to a <TT>Color</TT> (halfway static behavior).&nbsp;
+<BR>&nbsp;&nbsp;&nbsp; - <TT><A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance with a <TT>Color</TT> instance.&nbsp;
+
+<P>A value model can be used to provide a dynamically changing of the foreground color.
+<BR>A block will be evaluated once, at build time.
+</TR>
+</TABLE>
+&nbsp;* = <TT>ValueHolder</TT>, <TT>AspectAdaptor</TT>, <TT>BufferedValueHolder</TT>,
+<TT>RangeAdaptor</TT>, <TT>TriggerValue</TT>
+
+<P>&nbsp;
+<H3>
+The <I>Help</I> Section:</H3>
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="HelpTool.html">Using the Help Tool</A>"
+<BR>&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Layout</I> Section:</H3>
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="LayoutTool.html">The Layout of the Widgets</A>"
+<BR>&nbsp;
+<BR>&nbsp;
+
+<P>
+<HR>
+
+<P><IMG SRC="../../../icons/stx.gif" ALT="[stx-logo]" NOSAVE NOPRINT HEIGHT=48 WIDTH=47 ALIGN=CENTER>
+<BR><TT>Copyright &copy; 1998 eXept Software AG, all rights reserved</TT>
+<BR>
+<HR>
+</BODY>
+</HTML>

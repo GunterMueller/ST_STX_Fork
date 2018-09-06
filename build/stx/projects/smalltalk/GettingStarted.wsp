@@ -1,0 +1,54 @@
+Quick User Guide to Get Started
+===============================
+
+1) Adjust Settings
+  Useful:
+	If you work a lot with non-latin1 characters (i.e. cyrillic, japanese etc.),
+	select an appropriate unicode font (use the font-selection dialog from either the
+	Launcher or via a TextViews popupMenu). Notice that many fonts do not include the full
+	set of characters (even if the ones that are present are correctly uni-coded).
+  Nice:
+	If you are able to provide translations for the UI (menu items, labels and strings),
+	I would be very happy, if you'd sit down for an hour or so, type in the translations,
+	for greek, russian, etc. and send me the result.
+	See the files under the 'lib*/resources' directories for how this is done, and what is missing.
+	Even fragments will help - I'll merge them into the next release.
+	Think about returning something this way - you get ST/X for free, so an hour or so
+	should not too much time to spend.
+
+  Recommended:
+	After you have changed your preferences, save a snapshot image
+	(Launchers "File-Save Image" menu) for faster startup the next time.
+	You can always start ST/X with the "-I" command line argument to
+	ignore the snapshot image and force a fresh start.
+
+2) Learn some of the Tools
+  The tols which are most heavily used initially are:
+	Workspace
+	SystemBrowser
+	ChangesBrowser
+	FileBrowser
+  Get used to them.
+  As a beginner, please read the "Tutorial for Beginners" in the online documentation.
+
+3) Learn Smalltalk / Write little demo programs
+  See the "Reading List" in the online documentation; we recommend reading Ivan Tomek's
+  "Joy of Smalltalk" and also work through the "Introduction to ST" interactive document.
+  Both can be reached via the "Help - Online Documentation" menu. Then proceed to the
+  "Reading List" and have a look for the Programmers Documentation.
+
+4) Save your work
+  Save a snapshot (launchers "File-Save Image" menu) and/or fileOut your classes from
+  time to time. Have a look at the ChangesBrowser, which is your life saver in case of
+  desaster.
+
+5) Communicate
+  Talk to others - there is a very active Smalltalk community.
+  See comp.lang.smalltalk, various Smalltalk related webSites and various mailing lists.
+  We have also setup an ST/X specific forum at "forum.exept.de".
+
+6) Don't Panic
+
+
+Always)
+   Have fun

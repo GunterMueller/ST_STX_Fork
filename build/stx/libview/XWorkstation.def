@@ -1,0 +1,11 @@
+LIBRARY         XWorkstat
+DESCRIPTION     'Smalltalk/X X11 Display Interface'
+VERSION         3.5
+CODE            EXECUTE READ 
+DATA            READ WRITE
+SECTIONS
+    INITCODE    READ EXECUTE 
+    INITDATA    READ WRITE
+EXPORTS 
+    _XWorkstation_Init
+

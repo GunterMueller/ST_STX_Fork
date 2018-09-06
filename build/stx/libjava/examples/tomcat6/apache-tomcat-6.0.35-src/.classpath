@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="**/.svn/**|org/apache/tomcat/util/net/puretls/|org/apache/naming/factory/webservices/" kind="src" output="output/classes" path="java"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="src" output="output/build/webapps/examples/WEB-INF/classes" path="webapps/examples/WEB-INF/classes"/>
+	<classpathentry kind="src" output="output/build/webapps/examples_small/WEB-INF/classes" path="webapps/examples_small/WEB-INF/classes"/>
+	<classpathentry kind="src" output="output/build/lib" path="java-extras"/>
+	<classpathentry kind="src" output="output/build/webapps/workspace/WEB-INF/classes" path="webapps/workspace/WEB-INF/classes"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
+	<classpathentry kind="lib" path="/usr/share/java/ant.jar"/>
+	<classpathentry exported="true" kind="con" path="GROOVY_DSL_SUPPORT"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/stx.libjava"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/stx.libjava.libs"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/stx.libjava.tools"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/stx.libjava.experiments"/>
+	<classpathentry kind="output" path="output/classes"/>
+</classpath>

@@ -1,0 +1,240 @@
+<html>
+<head>
+<title>Refactoring: 
+Move Class</title>
+</head>
+<body>
+<H1>
+Move Class</H1>
+<P>
+<B> Refactoring contributed by 
+	
+Gerard M. Davison </B>
+</P>
+<P>
+<I>
+<CENTER>
+You have a class that is in a package that contains other classes that it is not related to in function. 
+</CENTER>
+</I>
+</P>
+<P>
+<B>
+<CENTER>
+Move the class to a more relavent package. Or create a new package if requried for future use.
+</CENTER>
+</B>
+</P>
+
+<PRE>
+<PRE>
+
+class org.davison.ui.TextThing
+class org.davison.ui.TextProcessor
+class org.davison.log.Logger
+
+depends on 
+
+class org.davison.ui.StringUtil
+
+</PRE>
+</PRE>
+<P>
+<CENTER>
+<IMG SRC="arrow.gif"></CENTER>
+</P>
+<PRE>
+
+
+class org.davison.ui.TextThing
+class org.davison.ui.TextProcessor
+class org.davison.log.Logger
+
+depends on
+
+class org.davison.util.StringUtil
+
+
+</PRE>
+<h2>Motivation</h2>
+<P>
+Classes are often created in a packages close to where they are being used, this can make sense until the class starts to be re-used by other parts of the product. The package in question might also have just become too big. (I have a preference that my packages never have more than about 10 classes)
+</P>
+<P>
+It is often better to move to this class to a package more related to it in form or function. This can help remove complex package level dependencies and make it easier for developers to find and re-use classes.
+</P>
+<P>
+If there are many dependencies for the class within its own package, then Extract Class could be used first to split out the relavent parts.
+</P>
+<P>
+Another example where is this used often is to move String resource objects into sub a res package to simplify localisation compilation.
+</P>
+
+
+<h2>Mechanics</h2>
+<UL>
+<LI>Move the class to its new folder on the source tree.</LI>
+<LI>Remove any class files generated from compiling this class at its old location.</LI>
+<LI>Alter the package statement in the source file to reflect the new package.</LI>
+<LI>Create import statements for any dependant classes in original package. </LI>
+<LI>Compile and test the class in its new package, updateing and moving unit tests as required using this same method.</LI>
+<LI>Alter, and create in some cases, the import statements on any dependee class. Note this is easier if wide imports are not used.</LI>
+<LI>Check for classes that might dymanically instantiate this class using java.lang.reflect or the ResourceBundle api. Also look for code that might reference this class as an absolute class literal.</LI>
+<LI>Compile and test all code that was dependant on the original class.</LI>
+<LI>Consider applying <A href="extractPackage.html">
+Extract Package</A> when you have many classes of different functionality in a given package.</LI>
+</UL>
+<h2>Example</h2>
+<UL>
+<P>
+Lets look at the header of StringUtil</P>
+
+<PRE>
+
+package org.davison.ui
+
+// imports
+
+public class StringUtil
+
+...
+
+</PRE>
+<P>
+We move the file and change the package header.
+</P>
+<PRE>
+
+package org.davison.util
+
+// imports
+
+public class StringUtil
+
+...
+
+</PRE>
+<P>
+I can now compile and unit test this class in its new package. If the unit tests are in a different package class file then they might need to be updated.
+</P>
+<P>
+I can now go on to update the dependant classes. For example here I update the import statements, I have not used a wide imports in this example but the principle is the same.
+</P>
+<PRE>
+
+
+
+package org.davison.log
+
+// imports
+
+import org.davison.ui.StringUtils;
+
+// more imports
+
+public class Logger
+
+...
+
+</PRE>
+<P>
+This becomes:
+</P>
+<PRE>
+
+
+package org.davison.log
+
+// imports
+
+import org.davison.util.StringUtils;
+
+// more imports
+
+public class Logger
+
+...
+
+
+</PRE>
+
+<P>
+Again compile and test this new class with the imports.
+</P>
+<P>
+As mentioned before there are other ways of dynamically loading classes. You may have to look for class literals and strings constants containing the fully qualified name of the old class.
+</P>
+<PRE>
+
+
+
+// A class literal
+
+public Class m_utils = org.davison.ui.StringUtils.class;
+
+// A dynamically loaded class
+
+public Class m_utils = Class.forName("org.davison.ui.StringUtils");
+
+// A loaded resource bundle
+
+public ResourceBundle m_bundle = ResourceBundle.getBundle(
+   "org.davison.ui.StringUtils");
+
+
+
+</PRE>
+
+<P>
+These can be fixed using simple find and replaces, these dynamic examples will also be found using the units tests for all classes.
+</P>
+
+
+<PRE>
+
+
+
+// A class literal, this will be found by the compiler.
+
+public Class m_utils = org.davison.util.StringUtils.class;
+
+// A dynamically loaded class
+
+public Class m_utils = Class.forName("org.davison.util.StringUtils");
+
+// A loaded resource bundle
+
+public ResourceBundle m_bundle = ResourceBundle.getBundle(
+   "org.davison.util.StringUtils");
+
+
+
+</PRE>
+
+
+<P>
+One all static and dynamic cases have been dealt with, and all unit tests have run. The refactoring is complete.
+</P>
+
+
+</UL>
+
+<h2>Additional Comments</h2>
+<P>Consider using a tool to do this. See <A href="http://users.snip.net/~aseguin/chrisdown.html">Chris Sequin's refactory </A>or <A href="http://www.woodenchair.com/">Woodenchair</A>
+</P>
+<P>
+<I>--Martin Fowler</I>
+</P>
+
+
+<P>
+</P>
+<P>
+</P>
+<P>
+<CENTER>
+<A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A>
+</CENTER>
+</P>
+</body>
+</html>

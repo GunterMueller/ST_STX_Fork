@@ -1,0 +1,9 @@
+# $Header: /cvs/stx/stx/doc/online/english/Make.proto,v 1.2 2003-01-23 11:34:31 ab Exp $
+#
+
+#--------- no need to modify anything below -------
+
+TOP=../../..
+ALLSUBDIRS=
+
+RCSSOURCES=*.gif *.xbm

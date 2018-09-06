@@ -1,0 +1,40 @@
+; View defaultStyle:#'motif_blue' 
+;
+; blue'ish motif
+;
+; another demo - not good to work with
+; (thats how the views look in the style-guide ;-)
+;
+; on VGA displays, where the colors are a bit darkish,
+; use motif_blue_light
+;
+; $Header: /cvs/stx/stx/libview/styles/motif_blue.style,v 1.8 1999-10-27 13:28:03 stefan Exp $
+
+#if Screen current hasGreyscales
+viewGrey                            Color red:22 green:30 blue:67 
+shadowColor                         =viewGrey darkened darkened
+lightColor                          =viewGrey lightened
+mediumColor                         =viewGrey darkened
+#endif
+
+#include 'motif.common'
+
+label.foregroundColor                Color white
+
+comment  'like `motif'' with blueish colors\(seen in motif style-guide)'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Wie 'motif'', aus der ``blauen Phase''''\(gesehen im motif style-guide)'
+#endif
+#if (Language == #french) or:[Language == #fr]
+comment  'Comme 'motif'', (la ``phase bleu'''')'
+#endif
+
+
+selection.foregroundColor            Color white
+selection.backgroundColor            =mediumColor
+selection.shadowColor                Color black
+selection.hilightForegroundColor     =mediumColor
+selection.hilightBackgroundColor     Color white
+
+pullDownMenu.hilightForegroundColor  Color white

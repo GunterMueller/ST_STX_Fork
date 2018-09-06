@@ -1,0 +1,26 @@
+/* XPM */
+static char *menu_cut_16x16_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 3 1",
+/* colors */
+"a c black",
+"b c #000080",
+"c c none",
+/* pixels */
+"cccccccccccccccc",
+"ccccccacccaccccc",
+"ccccccacccaccccc",
+"ccccccacccaccccc",
+"ccccccaacaaccccc",
+"cccccccacacccccc",
+"cccccccaaacccccc",
+"ccccccccaccccccc",
+"cccccccbabcccccc",
+"cccccccbcbbbcccc",
+"cccccbbbcbccbccc",
+"ccccbccbcbccbccc",
+"ccccbccbcbccbccc",
+"ccccbccbccbbcccc",
+"cccccbbccccccccc",
+"cccccccccccccccc",
+};

@@ -1,0 +1,24 @@
+; View defaultStyle:#motif_ncd 
+;
+; silicon graphics style with smaller fonts
+;
+; $Header: /cvs/stx/stx/libview/styles/motif_ncd.style,v 1.2 1997-11-02 19:49:05 cg Exp $
+
+#include 'motif.style'
+
+comment  '''motif'' look alike\with smaller fonts (for NCD x-terminals)' 
+
+#if (Language == #german) or:[Language == #de]
+comment  'An ''motif'' angelehnter Stil,\mit kleineren Zeichensätzen (für NCD x-terminals).'
+#endif
+
+variableFont     Font family:'helvetica' size:10
+textFont         Font family:'courier' size:10
+
+editField.font    =textFont
+selection.font    =variableFont
+label.font        =variableFont
+menu.font         =variableFont
+pullDownMenu.font =variableFont
+
+

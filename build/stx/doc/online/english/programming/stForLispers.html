@@ -1,0 +1,1048 @@
+<HTML>
+<!encoding: utf8 -->
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Smalltalk for Lispers (Schemers)</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="language.html">   <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">  <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="stForJavaGuys.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Smalltalk for Lispers (Schemers)</H1>
+
+
+<H3>Introduction</H3>
+
+Besides the fundamental difference of function-oriented versus object oriented,
+Smalltalk shares a lot of other aspects, ideas and mechanisms with the Lisp
+programming language and systems, in particular with Scheme.
+This document shows some of them.
+<P>
+Please try to understand them - even if you are
+not a lisper, and even though some of them seem to be of academic interest only ;-)
+<BR>
+It may also be very interesting to read, if you are a smalltalker !
+
+
+
+<H3>Top-level and Read-Eval-Print-Loop (REPL)</H3>
+
+Although present in some ST versions,
+this is usually deeply hidden behind a graphical user interface, and called "doIt".
+<P>
+Try opening a workspace and enter some expressions there (aka: select and "doIt").
+<P>
+In <cite>Smalltalk/X</cite>, a "real" Read-Eval-Print-Loop is entered when either the
+display connection cannot be established, or by the "startup.rc"-file explicitely demanding for it,
+or if <cite>ST/X</cite> is started with the
+"<code>--eval</code>" or the "<code>--repl</code>"
+command line option .
+<BR>
+Also, a debug REPL can be entered by pressing CTRL-c (Interrupt-Key) into the terminal (console) window,
+from which <cite>ST/X</cite> was started.
+
+<H3>Garbage Collection</H3>
+
+As in Lisp, Smalltalk completely handles all administrative jobs with respect to allocation
+and reclaiming of memory storage used for objects, stack, functions, classes and methods.
+<BR>
+It also cares for automatic finalization (i.e. closing and freeing) of underlying operating system resources,
+for example when a
+handle to an open file is reclaimed (in this case, the underlying file is closed)
+or when a graphic resource is no longer referenced (eg. a bitmap handle is freed).
+
+
+<H3>Atoms</H3>
+
+Like Lisp, Smalltalk provides atomic character strings,
+called "<cite>symbols</cite>". In Smalltalk, these behave much like strings,
+with the exception of being read-only (i.e. their character elements
+cannot be changed) and being unique
+(i.e. they can be compared using the identity compare operator #'==',
+as opposed to strings, which should be compared using the equality operator #'=').
+<BR>
+The Smalltalk message "<code>asSymbol</code>" corresponds to the Scheme "<code>string->symbol</code>" function.
+<P>
+In addition, numbers (floats, fractions and integers) and array literals
+are very similar to the corresponding Lisp types.
+
+<H3>Cons Cells and Lists</H3>
+
+Standard Smalltalk does not define or mandate objects similar to lists or cons cells,
+although these could be easily added as library functions (and are in <cite>ST/X</cite>).
+<BR>
+A standard syntax for literal conses has not been defined,
+and will probably never be, as lists
+do not play that dominant role in Smalltalk as they do in Lisp
+(however, there are classes like Association, LinkedList, etc. which provide some of the
+cons cell functionality. And <cite>ST/X</cite> actually includes a Cons class)
+
+
+<H3>Literals</H3>
+Much like in Lisp, literal constants are compiler generated objects (values).
+There are numbers, strings, symbols, characters, arrays and byteArrays.
+<!--
+<P>
+The syntax is:
+<TABLE>
+<TR><TD>Type</TD><TD>Smalltalk</TD><TD>Lisp</TD></TR>
+<TR><TD>String</TD><TD>'...'</TD><TD>'...'</TD></TR>
+<TR><TD>Integer</TD><TD>1234</TD><TD>1234</TD></TR>
+<TR><TD>hex integer</TD><TD>16rAFFE</TD><TD>#xAFFE</TD></TR>
+<TR><TD>binary integer</TD><TD>2r0101</TD><TD>#b0101</TD></TR>
+<TR><TD>Symbol</TD><TD>#foo</TD><TD>'foo</TD></TR>
+<TR><TD>Symbol</TD><TD>#'with space'</TD><TD>'with\ space ???</TD></TR>
+</TABLE>
+-->
+
+<H3>Blocks vs. Lambdas</H3>
+
+In addition, Smalltalk provides block-literals, which are partially initialized
+lambda objects:
+the code is created at compile time, whilst the environment (closure)
+is created at execution time. The implementation details vary among the different Smalltalk
+systems, but in general, the semantic is the same as that of lambda functions in Scheme.
+
+
+<H3>Values</H3>
+
+Like Lisp's, Smalltalk objects are values. Like in Lisp, there is no concept of
+memory or storage - everything is (a reference to) an object.
+<BR>
+As in Lisp, only references are passed around (and - unlike pure Lisp - sometimes
+stored into other objects).
+
+
+<H3>eq and equal</H3>
+
+Translate directly to the identity operator #'==' and the equality operator #'='.
+The identity operator #'==' is defined for every object (in the inherited Object superclass) and
+never redefined (actually, most Smalltalk compilers even inline that operation, effectively
+preventing it technically from ever being redefined).
+<BR>
+The equality operator #'=' is typically redefined to compare an object's contents vs. another
+object's contents.
+
+<P>
+In Lisp:
+<CODE><PRE>
+    (eq? 'aaa 'aaa)      -> #t
+    (eq? "aaa" "aaa")    -> #f (see note below)
+    (equal? 'aaa 'aaa)   -> #t
+    (equal? "aaa" "aaa") -> #t
+</PRE></CODE>
+In Smalltalk:
+<CODE><PRE>
+    #aaa == #aaa         -> true
+    'aaa' == 'aaa'       -> false (see note below)
+    #aaa = #aaa          -> true
+    'aaa' = 'aaa'        -> true
+</PRE></CODE>
+even the possible bugs are similar:
+In Lisp:
+<CODE><PRE>
+    (eq? 1 1.0)        -> #f
+    (eqv? 1 1.0)       -> #t
+    (equal? 1 1.0)     -> #t / #f (undefined?)
+    (= 1 1.0)          -> #t
+
+    (eq? (1/3) (3/9))    -> #f
+    (eqv? (1/3) (3/9))   -> #t
+    (equal? (1/3) (3/9)) -> #t / #f (undefined?)
+    (= (1/3) (3/9))      -> #t
+</PRE></CODE>
+In Smalltalk:
+<CODE><PRE>
+    1 == 1.0             -> false
+    1 = 1.0              -> true
+    1 closeTo: 0.999999  -> true
+
+    (1/3) == (3/9)       -> false
+    (1/3) = (3/9)        -> true
+    (1/3) closeTo: (3/9) -> true
+</PRE></CODE>
+
+Note: some compilers generate code which shares constants within a compilation unit.
+This means, that sometimes you might get a true answer here, because the compiler reuses the
+string literal, making them "identical".
+<P>
+
+As a consequence of eq/== vs. equal/=, there are variations of other
+functions, which depend on the comparison method used:
+<BR>
+In Lisp:
+<CODE><PRE>
+    (memq? ...)      - compare using eq?
+    (member? ...)    - compare using equal?
+    (assq? ...)      - find association using eq?
+    (assoc? ...)     - find association using equal?
+</PRE></CODE>
+In Smalltalk:
+<CODE><PRE>
+    coll includesIdentical:el   - compare using ==
+    coll includes:el            - compare using =
+    IdentityDictionary at:key   - find in hashtable using == (identity)
+    Dictionary at:key           - find in hashtable using = (equality)
+</PRE></CODE>
+
+
+<H3>Variables</H3>
+
+Much like in Lisp, variables are simple bindings, which associate names with objects.
+These associations are collected in so called environments (technically, a kind of Dictionary)
+in a scoped fashion.
+Inner scopes can access or overwrite bindings for variables which are defined in outer scopes.
+<BR>
+The outermost scope is a globally visible environment (i.e. accessible from everywhere) and is
+called "Smalltalk". A method's or block's environment is kept in an object called "Context".
+These hold additional reflection information (such as "who called be", and "what is my code")
+in addition to the pure binding information. Contexts roughly correspond to Scheme's continuations.
+
+<P>
+<cite>Smalltalk/X</cite> provides the following scoped variable environments:
+<PRE>
+  Smalltalk (globals, all classes)
+    Namespace (visible in all members)
+      ClassVariables (visible in a class and all of its subclasses; shared among class and subclasses)
+	ClassInstanceVariables (visible in all methods of a class, private in each class)
+	InstanceVariables (visible in all methods of an instance)
+	  MethodArguments (visible within a single method)
+	     MethodLocals (visible within a single method)
+	       BlockArguments (visible within a block)
+		 BlockVariables (visible within a block)
+		   &lt;nested block arguments and variables&gt;
+    SharedPools (visible in all classes which announce interest in a particular pool)
+    WorkspaceVariables (visible in all workspaces for DoIts)
+      DoItVariables (visible in a single DoIt-evaluation)
+</PRE>
+The special Workspace- and DoIt- environments are only visible inside so called "<VAR>workspaces</VAR>",
+which are user interfaces for read-eval-print interpreters.
+<P>
+
+
+<H3>Arithmetic</H3>
+
+is virtually identical from a semantic viewpoint. Big integers in Lisp:
+<CODE><PRE>
+    (* 123456789012345678901234567890 123456789012345678901234567890)
+	-> 15241578753238836750495351562536198787501905199875019052100
+</PRE></CODE>
+correspond to LargeIntegers in Smalltalk:
+<CODE><PRE>
+    123456789012345678901234567890 * 123456789012345678901234567890
+</PRE></CODE>
+<P>
+there are fractions (rational numbers) which are exact and are reduced.
+In Lisp:
+<CODE><PRE>
+    (* (/ (/ 1 3) 3) 9)   -> 1
+</PRE></CODE>
+versus Smalltalk:
+<CODE><PRE>
+    ((1 / 3) / 3) * 9     -> 1
+</PRE></CODE>
+<P>
+In Smalltalk, arithmetic operators are actually simple message sends (aka. the language
+does not imply any particular semantics into those messages).
+Any method name (i.e. "operator") can be redefined and is comparable to a
+generic function in lisp.
+Therefore, no precedence or associativeness is implied; much like in Lisp, these are simply evaluated
+from left to right.
+<BR>
+i.e.
+<CODE><PRE>
+    1 + 2 * 3
+</PRE></CODE>
+evaluates to 9 (left to right).
+
+
+<H3>BuiltIn Types</H3>
+
+Smalltalk does not (directly) provide a builtIn type comparable to
+Lisp's dotted pairs (lists). If required, these must be added via a Cons class,
+or simulated using other collections (OrderedCollections, Sets etc.).
+<P>
+Other types are (almost) directly mapped:
+<TABLE BORDER>
+<TR>
+  <TH>Class/<BR>Type</TH><TH> </TH><TH>Lisp</TH><TH>Smalltalk</TH>
+</TR>
+<TR>
+  <TD> </TD><TD> <TD> </TD></TD><TD> </TD>
+</TR>
+<TR>
+  <TD>Boolean</TD><TD> </TD><TD>#t<BR>#f</TD><TD>true<BR>false</TD>
+</TR>
+<TR>
+  <TD>String</TD><TD> </TD><TD>"foo"</TD><TD>'foo'</TD>
+</TR>
+<TR>
+  <TD>Character</TD><TD> </TD><TD>#\x</TD><TD>$x</TD>
+</TR>
+<TR>
+  <TD>Integer</TD><TD> </TD><TD>1234<br>#xFF</TD><br>#b0101</TD><TD>13452<br>2rFF<br>2r0101</TD>
+</TR>
+<TR>
+  <TD>Float</TD><TD> </TD><TD>1.4e3</TD><TD>1.4e3</TD>
+</TR>
+<TR>
+  <TD>Fraction</TD><TD> </TD><TD>1/3</TD><TD>1/3</TD>
+</TR>
+<TR>
+  <TD>Decimal</TD><TD> </TD><TD></TD><TD>1.4s3</TD>
+</TR>
+<TR>
+  <TD>Symbolic Atom</TD><TD> </TD><TD>'foo</TD><TD>#'foo'</TD>
+</TR>
+<TR>
+  <TD>Cons</TD><TD> </TD><TD>a . b</TD><TD> as Cons class</TD>
+</TR>
+<TR>
+  <TD>List</TD><TD> </TD><TD>(a ... b)</TD><TD> as Cons class</TD>
+</TR>
+<TR>
+  <TD>nil</TD><TD> </TD><TD>nil<BR>()</TD><TD>nil</TD>
+</TR>
+<TR>
+  <TD>Array</TD><TD> </TD><TD>#(a b...)</TD><TD>#(a b...)</TD>
+</TR>
+<TR>
+  <TD> </TD><TD> </TD><TD>(vector ..)</TD><TD>{a. b. ...}</TD>
+</TR>
+<TR>
+  <TD>ByteArray</TD><TD> </TD><TD> #u8[b1 b2...]</TD><TD>#[b1 b2...]</TD>
+</TR>
+<TR>
+  <TD>Function</TD><TD> </TD><TD>(lambda (x) body)</TD><TD>[:x | body]</TD>
+</TR>
+</TABLE>
+<P>
+
+Notice:
+<BR>
+Conses can easily be added. Or, be replaced by associations (a-&gt;b), which are
+present and standardized in all Smalltalk implementations.
+<cite>Smalltalk/X</cite> contains a Cons class.
+<P>
+
+Notice:
+<BR>
+ByteArrays do not really add any semantic functionality - they can be easily simulated using
+regular arrays. However, they require less memory and are therefore useful to represent bulk data.
+More such specialized bulk-data holder collections might exist in a particular Smalltalk dialect;
+look for classes like "FloatArray", "IntegerArray" etc.
+<P>
+
+Notice:
+<BR>
+The brace array constructor "{...}" generates an array-instance,
+by evaluating its list element expressions at run time.
+In contrast to the "#(...)" construct, which defines a literal which
+is constructed from other literal constants at compile time.
+In Lisp, the corresponding would be "#(...)" as opposed to "(vector ...)".
+
+
+<H3>Lambda</H3>
+
+A Smalltalk block is what you know as a lambda. Blocks allow pretty much the same as
+lambdas do in Lisp: they are first class objects, which means, that they can be passed as argument,
+stored as value in variables or returned as value of other blocks or methods.
+<BR>
+Where a Lisp-lambda is explicitely evaluated,
+is a Smalltalk-block evaluated by sending it a #value: message.
+<BR>
+The corresponding code for defining a function in Lisp:
+<CODE><PRE>
+    (lambda (a b c) (... expression...))
+</PRE></CODE>
+becomes:
+<CODE><PRE>
+    [:a :b :c | ... expression...]
+</PRE></CODE>
+to evaluate such a function, place it in the function position of an expression
+in Lisp:
+<CODE><PRE>
+    (someFunction 1234)
+</PRE></CODE>
+becomes sending a value or value: message to the block in Smalltalk:
+<CODE><PRE>
+    aBlock value:1234
+</PRE></CODE>
+<P>
+Like Lisp functions, blocks can be nested and access their statically enclosing scope's variables.
+
+
+<P>
+For example, the following Lisp code:
+<CODE><PRE>
+    (define make-adder
+	(lambda (n)
+	    (lambda (x)
+		(+ x n))))
+
+    (define add-two (make-adder 2))
+
+    (add-two 1)
+
+    -> 3
+</PRE></CODE>
+<P>
+translates almost directly into the Smalltalk code:
+
+<CODE><PRE>
+    makeAdder := [:n | [:x | x + n]].
+
+    addTwo := makeAdder value:2.
+
+    addTwo value:1
+    -> 3
+</PRE></CODE>
+Notes / Description:
+<BLOCKQUOTE>
+- makeAdder is a lambda which evaluates to a lambda.
+<BR>- Lambdas are closures; i.e. they remember their defining environment.
+<BR>- in Smalltalk, a block corresponds to a lambda; it is evaluated by
+sending it a #value message.
+<BR>
+- hyphens are not valid in Smalltalk-identifiers,
+ the names have been translated according to Smalltalk conventions
+<BR>- makeAdder is a block which evaluates to a block.
+<BR>- Blocks are closures; i.e. they remember their defining environment.
+</BLOCKQUOTE>
+
+Much like lambdas in Lisp, Smalltalk blocks are used as functional arguments for map-like
+operations (<CODE>do:, collect:, select:, detect:, findFirst:</CODE> etc),
+or to control behavior (sort-order, catch-behavior, exception handling) etc.
+<BR>
+The Lisp expression to generate a list of squared values:
+<CODE><PRE>
+    (map values (lambda (x) (x * x))
+</CODE></PRE>
+is written in Smalltalk as:
+<CODE><PRE>
+    values collect:[:x | x * x]
+</CODE></PRE>
+
+
+<P>
+
+As another demonstration (and proof) of how blocks behave like lambdas,
+the following snipplet implements memoised block (functions).
+<BR>
+A memoised block remembers the value which was previously returned for some
+given argument, and immediately returns it without recomputing the value.
+
+<A type="example"><CODE><PRE>
+    Workspace addWorkspaceVariable:'FAC'.    "/ not needed , if you enable
+    Workspace addWorkspaceVariable:'MEMO'.   "/ "autodefine workspace" in the workspace's
+    Workspace addWorkspaceVariable:'MFAC'.   "/ settings.
+
+    "/ a block(-function), which returns factorial(n)
+    FAC := [:n | n factorial ].
+
+    "/ a block(-function),
+    "/  which generates and returns a memoised version if a given block(-function)
+    "/ notice that the memory (table) is inside a closure, and an inner function
+    "/ is returned. The table is completely hidden from the outside world.
+    MEMO := [:fun |
+		|table|
+
+		table := Dictionary new.
+		[:arg | table at:arg ifAbsentPut:[ fun value:arg ] ]
+	   ].
+
+    "/ generate a memoised version of FAC
+    MFAC := MEMO value:FAC.
+
+    "/ see if they compute the same values...
+    Transcript show:'FAC(10):' ; showCR: ( FAC value:10 ).
+    Transcript show:'MFAC(10):' ; showCR: ( MFAC value:10 ).
+
+    "/ see how long it takes -
+    "/ - the first time:
+    Transcript show:'FAC time:' ; showCR: ( Time millisecondsToRun:[ FAC value: 10000 ] ).
+    Transcript show:'MFAC time:' ; showCR: ( Time millisecondsToRun:[ MFAC value: 10000 ] ).
+
+    "/ - the next time(s):
+    Transcript show:'FAC time:' ; showCR: ( Time millisecondsToRun:[ FAC value: 10000 ] ).
+    Transcript show:'MFAC time:' ; showCR: ( Time millisecondsToRun:[ MFAC value: 10000 ] ).
+</PRE></CODE></A>
+
+and a memoised version of the fibionacci function:
+
+<A type="example"><CODE><PRE>
+    FIB := [:arg | arg fib ].
+
+    MFIB := MEMO value: FIB.
+
+    Transcript show:'FIB(10):' ; showCR: ( FIB value:10 ).
+    Transcript show:'MFIB(10):' ; showCR: ( MFIB value: 10 ).
+
+    "/ see how long it takes -
+    "/ - the first time:
+    Transcript show:'FIB time:' ; showCR: ( Time millisecondsToRun:[ FIB value: 10000 ] ).
+    Transcript show:'MFIB time:' ; showCR: ( Time millisecondsToRun:[ MFIB value: 10000 ] ).
+
+    "/ - the next time(s):
+    Transcript show:'FIB time:' ; showCR: ( Time millisecondsToRun:[ FIB value: 10000 ] ).
+    Transcript show:'MFIB time:' ; showCR: ( Time millisecondsToRun:[ MFIB value: 10000 ] ).
+</PRE></CODE></A>
+
+
+<h3>Control</h3>
+There is a slight difference here: were Lisp uses a non-evaluating
+nlambda or special forms like <CODE>(if ...)</CODE> or <CODE>(cond ...)</CODE>,
+Smalltalk uses blocks, which are passed as unevaluated (lambdas) and evaluated as required.
+<br>
+That means that in Lisp, the called function controls evaluation of its arguments,
+whereas in ST, arguments are always evaluated, and the programmer has to explicitely
+pass a block argument where lazy or partial evaluation is required.
+We could call this "programmer controlled lazy evaluation".
+<P>
+
+<TABLE BORDER>
+<TR>
+  <TD>Lisp</TD><TD>Smalltalk</TD>
+</TR>
+<TR>
+  <TD> </TD><TD> </TD>
+</TR>
+<TR>
+  <TD>(if cond expr1 expr2)</TD><TD>cond ifTrue:[expr1] ifFalse:[expr2]</TD>
+</TR>
+<TR>
+  <TD>(cond ...)</TD><TD>no direct replacement<BR>use nested ifs or self send</TD>
+</TR>
+<TR>
+  <TD>(case ...)</TD><TD>no direct replacement<BR>use self send</TD>
+</TR>
+<TR>
+  <TD>(do ...)</TD><TD>whileTrue: / whileFalse: / doWhile: / loop etc.</TD>
+</TR>
+<TR>
+  <TD>(map f l1 l2)</TD><TD>collect: / collect:with: / collect:with:with:</TD>
+</TR>
+<TR>
+  <TD>(for-each ...)</TD><TD>do:</TD>
+</TR>
+<TR>
+  <TD>(fold ...)</TD><TD>inject:into:</TD>
+</TR>
+</TABLE>
+
+
+
+
+
+
+
+<P>
+An example for lambdas/blocks, computing the Pascal triangle:
+<CODE><PRE>
+    (define (pascal n)
+     (if (eq? n 1)
+	'(1)
+	(let* ((pn-1 (pascal (- n 1)))
+	      (shL (append '(0) pn-1))
+	      (shR (append pn-1 '(0))))
+	     (map + shL shR))))
+
+    (pascal 15)
+    -> (1 14 91 364 1001 2002 3003 3432 3003 2002 1001 364 91 14 1)
+</PRE></CODE>
+and here thress versions in Smalltalk.
+The first using a recursive block:
+<CODE><PRE>
+    |pascal|
+    pascal := [:n |
+		    n == 1 ifTrue:[
+			#(1)
+		    ] ifFalse:[
+			|pn_1 shL shR|
+
+			pn_1 := pascal value:(n - 1).
+			shL := #(0) , pn_1.
+			shR := pn_1 , #(0).
+			shL with:shR collect:[:a :b | a + b]
+		    ]
+	       ].
+    pascal value:15
+    -> #(1 14 91 364 1001 2002 3003 3432 3003 2002 1001 364 91 14 1)
+</PRE></CODE>
+The second implements it as an instance method of the Integer class:
+<CODE><PRE>
+    >> in SmallInteger
+
+    pascal
+	|pascalOfnMinus1 shL shR|
+
+	self == 1 ifTrue:[
+	    ^ #(1)
+	].
+
+	pascalOfnMinus1 := (self - 1) pascal.
+	shL := #(0) , pascalOfnMinus1.
+	shR := pascalOfnMinus1 , #(0).
+	^ shL with:shR collect:[:a :b | a + b]
+
+    15 pascal
+    -> #(1 14 91 364 1001 2002 3003 3432 3003 2002 1001 364 91 14 1)
+</PRE></CODE>
+The third as a class method in any class (maybe a private example/demos class):
+<CODE><PRE>
+    >> in Demo
+
+    pascal:n
+	|pascalOfnMinus1 shL shR|
+
+	self == 1 ifTrue:[
+	    ^ #(1)
+	].
+
+	pascalOfnMinus1 := self pascal:n-1.
+	shL := #(0) , pascalOfnMinus1.
+	shR := pascalOfnMinus1 , #(0).
+	^ shL with:shR collect:[:a :b | a + b]
+
+    Demo pascal:15
+    -> #(1 14 91 364 1001 2002 3003 3432 3003 2002 1001 364 91 14 1)
+</PRE></CODE>
+
+
+(Notice, that the Smalltalk versions return an array instead of a list)
+
+
+<H3>Returning Multiple Values</H3>
+In Scheme, you pass a continuation (lambda) which expects multiple arguments,
+and pass the values back from the called function with "(values ...)". This actually
+invokes the value-receiving lambda in the caller. Conceptionally, "(values ...)" peeks at
+the caller to detect that a multi-arg lambda is there, although this is technically usually
+optimized by clever compilers.
+<P>
+A similar scheme is used in Smalltalk, where a multiple-value-receiving
+block is passed as argument to the called function.
+<P>
+The scheme call:
+<PRE><CODE>
+    (call-with-values
+	(lambda ()
+	    (values 1 2 3 4))
+	(lambda (a b c d)
+	    ... values-consumer-code ...
+	)
+    )
+s</CODE></PRE>
+is written in Smalltalk as:
+<PRE><CODE>
+    rcvr someMethodWithMultipleValuesInto:[:a b c d |
+	    ... values-consumer-code ...
+    ]
+</CODE></PRE>
+where "someMethodWithMultipleValuesInto:" gets the lambda as argument,
+and invokes it with:
+<PRE><CODE>
+    someMethodWithMultipleValuesInto:valuesConsumer
+	...
+	valuesConsumer valueWith:... with:... with:... with:...
+</CODE></PRE>
+
+In Smalltalk, this block is explicitly invoked in the caller,
+whereas it is implicitly invoked by "(values ...)" in Scheme.
+<BR>
+Another difference is that in Scheme, the invocation is in tail position
+w.r.t the calling function, whereas it is a block invocation from within the
+called function in Smalltalk.
+As tail-call-optimization is not obligatory in Smalltalk (but sometimes offered as a
+compiler/optimization option), this is usually not an issue to Smalltalk programmers.
+
+<H2><A NAME="LAMBDA_CALCULUS">For the curious: Lambda Calculus in Smalltalk</A></H2>
+
+The following (somewhat academic example) proves, that Smalltalk blocks
+are powerful enough to directly implement the functional lambda calculus.
+<BR>
+This chapter implements booleans, conditional testing, numbers and
+some arithmetic operations directly as block (lambda) functions.
+<p>
+
+In the lambda-calculus,
+a function with formal parameter x and body B is denoted as:
+<PRE>
+    lambda x.B.</CODE>
+</PRE>
+In Smalltalk, as a block, and write:
+<CODE><PRE>
+    [:x | B]
+</PRE></CODE>
+To apply the function F to an argument a,
+the usual lambda-calculus notation is just
+<CODE><PRE>
+    (F a).
+</PRE></CODE>
+<BR>
+in Smalltalk, write:
+<CODE><PRE>
+    F value:a
+</PRE></CODE>
+<P>
+Thus, if we apply the lambda
+<CODE><PRE>
+    lambda x.x
+</PRE></CODE>
+to the argument 5,
+as in
+<CODE><PRE>
+    ( lambda x.x 5 )
+</PRE></CODE>
+we get back the original 5.
+In Smalltalk, this becomes:
+<CODE><PRE>
+    [:x | x] value:5
+</PRE></CODE>
+
+
+Smalltalk requires variables to be declared before used;
+therefore, variables must be declared either globally with:
+<CODE><PRE>
+    Smalltalk at:x put:nil.
+</PRE></CODE>
+or as a workspace variable with:
+<CODE><PRE>
+    Workspace addWorkspaceVariable:x.
+</PRE></CODE>
+Workspace variables are preferable, as they do not interfere or overwrite
+any existing Smalltalk global. For little snipplet scripts like these,
+it is a good idea to enable the "automatic workspace variable" feature of your
+workspace window. Then, any undefined variable is automatically created and visible
+inside all workspaces.
+<P>
+So, now we can assign our lambdas to a variable:
+<br>(Hint: you can click on the dark-red code snipplets below to evaluate them)
+
+<A type="example"><CODE><PRE>
+    Workspace addWorkspaceVariable:#IDENTITY.
+
+    IDENTITY := [:x | x].
+</PRE></CODE></A>
+and apply it as in:
+<A type="example" SHOWRESULT info="click to show the result"><CODE><PRE>
+    IDENTITY value:'hello world'
+</PRE></CODE></A>
+
+Now let us define some operations in this lambda calculus, which
+only allows functions and invocations of them.
+To make things further complicated, lambda-invocation is only allowed
+with a single argument. However, that is not a problem, as we can "simulate" a two-argument
+function, by a function of one arg, which returns another function of one arg.
+This is called "currying",
+and in some functional languages a very common and well known
+paradigma (by the way: not named after the meal, but the mathematican Haskell Curry).
+<br>
+For example, a two-arg function <CODE>P(x,y)</CODE>,
+which returns the sum of its two arguments, can be written as the one-arg function:
+<CODE><PRE>
+    P := [:x |
+	    [:y |
+		x + y ]].
+</PRE></CODE>
+and called with:
+<CODE><PRE>
+    (P value:5) value:10
+</PRE></CODE>
+In plain english words: P called with arg x, returns a function which expects an arg
+y, and adds the original x to this y.
+Therefore, in the call, the "(P value:5)" returns a function which adds 5 to its argument.
+<P>
+Notice, that the above can only be done in a language which supports closures, as the
+function returned by "(P value:5)" must somehow remember (close over) the passed in "x"
+argument value, and provide a prober value in its inner expression "x+y".
+<P>
+
+<P>
+Lets start with the definition of booleans and conditional execution:
+<A type="example"><CODE><PRE>
+    Workspace addWorkspaceVariable:#T.
+    Workspace addWorkspaceVariable:#F.
+    Workspace addWorkspaceVariable:#IF.
+
+    T := [:x |
+	    [:y |
+		x ]].
+
+    F := [:x |
+	    [:y |
+		y]].
+
+    IF := [:b |
+	    [:x |
+	      [:y |
+		 (b value:x) value:y]]].
+</PRE></CODE></A>
+True is defined as a function which, when given two arguments (x and y) returns the first one (x).
+False as a function which, when given two arguments (x and y) returns the second one (y).
+Finally, IF is a function which passes the two alternatives to its boolean argument.
+<br>
+
+Lets try the above:
+<A type="example" SHOWRESULT info="click to show the result"><CODE><PRE>
+    ((IF value:T) value:'then') value:'else'.
+</PRE></CODE></A>
+<A type="example" SHOWRESULT info="click to show the result"><CODE><PRE>
+    ((IF value:F) value:'then') value:'else'.
+</PRE></CODE></A>
+
+<P>
+
+Next, we add negation and printing support for our convenience (not part of lambda calculus):
+<BR>
+here are the definitions:
+<A type="example"><CODE><PRE>
+    Workspace addWorkspaceVariable:#NOT.
+    Workspace addWorkspaceVariable:#printBool.
+
+    NOT := [:b | ((IF value:b) value:F) value:T ].
+    printBool := [:f | ((IF value:f) value:'true') value:'false' ]
+</PRE></CODE></A>
+
+and some invocations:
+<A type="example" SHOWRESULT info="click to show the result"><CODE><PRE>
+    printBool value:T
+</PRE></CODE></A>
+<A type="example" SHOWRESULT info="click to show the result"><CODE><PRE>
+    printBool value:F
+</PRE></CODE></A>
+<A type="example" SHOWRESULT info="click to show the result"><CODE><PRE>
+    printBool value:(NOT value:T)
+</PRE></CODE></A>
+<A type="example" SHOWRESULT info="click to show the result" ><CODE><PRE>
+    printBool value:(NOT value:F)
+</PRE></CODE></A>
+
+
+<P>
+Then, we define pairs. These are often used to represent data structures;
+in Lisp, they are the fundamental objects.
+They are required for our definition of numbers which follows below.
+<br>
+<A type="example"><CODE><PRE>
+    Workspace addWorkspaceVariable:#PAIR.
+    Workspace addWorkspaceVariable:#FIRST.
+    Workspace addWorkspaceVariable:#SECOND.
+
+    PAIR := [:a |
+	      [:b |
+		 [:f | (f value:a) value:b] ]].
+
+    FIRST := [:p | p value:T].
+    SECOND := [:p | p value:F].
+</PRE></CODE></A>
+Wow, you might think: we don't even need memory; all is in the function (and actually the closure).
+PAIR is defined as a function which closes over its arguments, and later allows for
+either value to be retrieved by calling it with an appropriate selector (here, a boolean).
+The function returned by PAIR returns its first (closed-over) original argument if true
+is passed in, the value if the second original argument, if false is given.
+Thus, the "getters" FIRST and SECOND are simply calling that "pair-function".
+<P>
+That is really something you should lean back and think about for a moment:
+there is a "duality of objects (memory) and closures". Of course, that does not mean,
+that you can remove the memory from your machine - somewhere deep down in the Lisp- or
+Smalltalk impleemntation,
+closures are actually represented
+by memory cells, which hold on the original function arguments.
+<P>
+Try it:
+
+<A type="example" SHOWRESULT info="click to show the result" ><CODE><PRE>
+    FIRST value:  ((PAIR value:1) value:2)
+</PRE></CODE></A>
+<A type="example" SHOWRESULT info="click to show the result" ><CODE><PRE>
+    SECOND value: ((PAIR value:1) value:2)
+</PRE></CODE></A>
+
+Now, we define natural numbers; starting with zero and a check:
+<A type="example"><CODE><PRE>
+    Workspace addWorkspaceVariable:#ZERO.
+    Workspace addWorkspaceVariable:#IS_ZERO.
+
+    ZERO := (PAIR value:T) value:T.
+
+    IS_ZERO := [:n | FIRST value:n].
+</PRE></CODE></A>
+
+and then, recursively, all integers above:
+<A type="example"><CODE><PRE>
+    Workspace addWorkspaceVariable:#SUCC.
+    Workspace addWorkspaceVariable:#PRED.
+
+    SUCC := [:n | (PAIR value:F) value:n].
+    PRED := [:n | SECOND value:n].
+</PRE></CODE></A>
+
+let's try some:
+<A type="example"><CODE><PRE>
+    Workspace addWorkspaceVariable:#ONE.
+    Workspace addWorkspaceVariable:#TWO.
+
+    ONE := SUCC value:ZERO.
+    TWO := SUCC value:ONE.
+</PRE></CODE></A>
+and see if they compare to ZERO:
+
+<A type="example" SHOWRESULT info="click to show the result" ><CODE><PRE>
+    printBool value:(IS_ZERO value:ZERO).
+</PRE></CODE></A>
+<A type="example" SHOWRESULT info="click to show the result" ><CODE><PRE>
+    printBool value:(IS_ZERO value:ONE).
+</PRE></CODE></A>
+<A type="example" SHOWRESULT info="click to show the result" ><CODE><PRE>
+    printBool value:(IS_ZERO value:(PRED value:ONE)).
+</PRE></CODE></A>
+<A type="example" SHOWRESULT info="click to show the result" ><CODE><PRE>
+    printBool value:(IS_ZERO value:(PRED value:(PRED value:TWO))).
+</PRE></CODE></A>
+
+again, only for our convenience, we add a utility to print numbers:
+<A type="example"><CODE><PRE>
+    Workspace addWorkspaceVariable:#IS_ZERO_asBoolean.
+    Workspace addWorkspaceVariable:#convert_bool.
+    Workspace addWorkspaceVariable:#convert_number_helper.
+    Workspace addWorkspaceVariable:#convert_number.
+
+    convert_bool := [:f | ((IF value:f) value:true) value:false ].
+    IS_ZERO_asBoolean := [:n | convert_bool value:(IS_ZERO value:n) ].
+
+    convert_number_helper := [:n :v|
+		      (IS_ZERO_asBoolean value:n) ifTrue:[
+			  v
+		      ] ifFalse:[
+			  convert_number_helper value:(PRED value:n) value:v + 1.
+		      ].
+		   ].
+
+    convert_number := [:n | convert_number_helper value:n value:0 ].
+</PRE></CODE></A>
+and give it a try:
+<A type="example" SHOWRESULT info="click to show the result" ><CODE><PRE>
+    convert_number value:ZERO
+</PRE></CODE></A>
+<A type="example" SHOWRESULT info="click to show the result" ><CODE><PRE>
+    convert_number value:ONE
+</PRE></CODE></A>
+<A type="example" SHOWRESULT info="click to show the result" ><CODE><PRE>
+    convert_number value:TWO
+</PRE></CODE></A>
+<A type="example" SHOWRESULT info="click to show the result" ><CODE><PRE>
+    convert_number value:(SUCC value:TWO)
+</PRE></CODE></A>
+<A type="example" SHOWRESULT info="click to show the result" ><CODE><PRE>
+    convert_number value:(FIRST value:((PAIR value:TWO) value:ONE))
+</PRE></CODE></A>
+
+the Y combinator, which is required for recursion.
+<BR>
+Since Smalltalk is strict (i.e. always evaluating its arguments),
+this is a bit tricky and you can now start to bump your head against the nearest wall ...
+<A type="example"><CODE><PRE>
+    Workspace addWorkspaceVariable:#Y.
+    Workspace addWorkspaceVariable:#FORCE.
+
+    Y := [:f |
+	    [:x |
+	      [:y |
+		 f value:(x value:x)]]
+	    value:
+	      [:x |
+		[:y |
+		  f value:(x value:x)]]].
+
+    FORCE := [:x | x].
+</PRE></CODE></A>
+
+now, we are ready to define addition:
+
+<A type="example"><CODE><PRE>
+    Workspace addWorkspaceVariable:#A.
+    Workspace addWorkspaceVariable:#ADD.
+
+    A := [:g |
+	    [:a |
+	       [:b |
+		   (((IF value:(IS_ZERO value:a))
+		     value:( [:x | b] ))
+		     value:( [:x | ((g value:FORCE)
+				      value:(PRED value:a))
+				      value:(SUCC value:b)])) value:FORCE]]].
+    ADD := (Y value:A) value:FORCE.
+</PRE></CODE></A>
+
+and see if our system can add two numbers:
+<A type="example" SHOWRESULT info="click to show the result" ><CODE><PRE>
+    convert_number value: ( (ADD value:ZERO) value:ZERO )
+</PRE></CODE></A>
+<A type="example" SHOWRESULT info="click to show the result" ><CODE><PRE>
+    convert_number value: ( (ADD value:ZERO) value:ONE )
+</PRE></CODE></A>
+<A type="example" SHOWRESULT info="click to show the result" ><CODE><PRE>
+    convert_number value: ( (ADD value:ONE) value:ONE )
+</PRE></CODE></A>
+<A type="example" SHOWRESULT info="click to show the result" ><CODE><PRE>
+    |two four|
+    two   := (ADD value:ONE) value:ONE.
+    four  := (ADD value:two) value:two.
+    eight := (ADD value:four) value:four.
+    convert_number value: ( (ADD value:eight) value:four )
+</PRE></CODE></A>
+
+adding equality of two numbers, is now straight forward:
+
+<A type="example"><CODE><PRE>
+    Workspace addWorkspaceVariable:#E.
+    Workspace addWorkspaceVariable:#EQ.
+
+    E := [:g |
+	    [:a |
+	       [:b |
+		   (((IF value:(IS_ZERO value:a))
+		     value:( [:x | (IS_ZERO value:b)] ))
+		     value:( [:x | ((g value:FORCE)
+				      value:(PRED value:a))
+				      value:(PRED value:b)])) value:FORCE]]].
+    EQ := (Y value:E) value:FORCE.
+</PRE></CODE></A>
+
+is 2 = 2 ?
+<A type="example" SHOWRESULT info="click to show the result" ><CODE><PRE>
+    printBool value: ( (EQ value:TWO) value:TWO )
+</PRE></CODE></A>
+is 1 = 2 ?
+<A type="example" SHOWRESULT info="click to show the result" ><CODE><PRE>
+    printBool value: ( (EQ value:ONE) value:TWO )
+</PRE></CODE></A>
+is (1+1) = 2 ?
+<A type="example" SHOWRESULT info="click to show the result" ><CODE><PRE>
+    printBool value: ((EQ value:((ADD value:ONE) value:ONE)) value:TWO )
+</PRE></CODE></A>
+
+We leave it as an excercise to the reader to add subtraction, multiplication,
+factorials, non-natural numbers etc.
+Also, a few algorithms on lists might be useful here...
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 2002 Claus Gittinger, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.41 $
+<br>
+Last modification: $Date: 2017-09-01 10:58:02 $
+</BODY>
+</HTML>

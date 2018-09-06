@@ -1,0 +1,27 @@
+Some clocks:
+
+        ClockView       a clockView helper class
+
+        Clock           the Clock application
+
+        Clock2          like Clock, but adds an animated icon
+
+        RoundClock      a clock with a round shape
+
+        RoundClock2     like RoundClock, but icon is also round
+
+
+start with:
+
+        Clock start
+
+        RoundClock start
+
+
+(classes will be autoloaded)
+
+These programs where written before processes have been implemented
+in Smalltalk/X. Therefore, they use the timeout-block feature.
+They should be rewritten to fork a subprocess for animation.
+
+

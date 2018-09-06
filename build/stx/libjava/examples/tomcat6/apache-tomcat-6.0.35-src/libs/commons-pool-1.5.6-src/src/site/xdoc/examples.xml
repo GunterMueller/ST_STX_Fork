@@ -1,0 +1,176 @@
+<?xml version="1.0"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<document>
+   <properties>
+      <title>Examples</title>
+      <author email="dev@commons.apache.org">Commons Documentation Team</author>
+      <author email="rwaldhoff@apache.org">Rodney Waldhoff</author>
+      <revision>$Id: examples.xml,v 1.5 2015-03-20 12:08:11 vrany Exp $</revision>
+   </properties>
+
+   <body>
+      <section name="A Simple Pool Client">
+       <p>
+        Suppose you're writing a set of <code>java.io.Reader</code> utilities, and would like to
+        provide a method for dumping the contents of a <code>Reader</code> to a <code>String</code>.
+        Here's the code for the <code>ReaderUtil</code>, implemented without an <code>ObjectPool</code>:
+       </p>
+<source>
+import java.io.Reader; 
+import java.io.IOException; 
+ 
+public class ReaderUtil { 
+    public ReaderUtil() { 
+    } 
+ 
+    /** 
+     * Dumps the contents of the {@link Reader} to a 
+     * String, closing the {@link Reader} when done. 
+     */ 
+    public String readToString(Reader in) throws IOException { 
+        StringBuffer buf = new StringBuffer(); 
+        try { 
+            for(int c = in.read(); c != -1; c = in.read()) { 
+                buf.append((char)c); 
+            } 
+            return buf.toString(); 
+        } catch(IOException e) { 
+            throw e; 
+        } finally { 
+            try { 
+                in.close(); 
+            } catch(Exception e) { 
+                // ignored 
+            } 
+        } 
+    } 
+}
+</source>
+       <p>
+        For the sake of this example, let's assume we want to to pool the <code>StringBuffer</code>s 
+        used to buffer the <code>Reader</code>'s contents. (A pool of <code>StringBuffer</code>s 
+        may or may not be useful in practice. We're just using it as a simple example here.)
+       </p>
+       <p>
+        Let's further assume that a complete pool implementation will be provided via 
+        a constructor. (We'll show you how to create such an implementation in just a moment.)  
+        Then to use the pool we simply call <code>borrowObject</code> to obtain the buffer, and
+        then call <code>returnObject</code> when we're done with it.
+        Then a <code>ReaderUtil</code> implementation using a pool of <code>StringBuffer</code>s might look 
+        like this:
+       </p>
+<source>
+import org.apache.commons.pool.ObjectPool;
+import java.io.Reader; 
+import java.io.IOException; 
+ 
+public class ReaderUtil { 
+    private ObjectPool pool;
+ 
+    public ReaderUtil(ObjectPool pool) { 
+        this.pool = pool;
+    } 
+ 
+    /** 
+     * Dumps the contents of the {@link Reader} to a 
+     * String, closing the {@link Reader} when done. 
+     */ 
+    public String readToString(Reader in) throws IOException { 
+        StringBuffer buf = null;
+        try { 
+            buf = (StringBuffer)(pool.borrowObject());
+            for(int c = in.read(); c != -1; c = in.read()) { 
+                buf.append((char)c); 
+            } 
+            return buf.toString(); 
+        } catch(IOException e) { 
+            throw e; 
+        } catch(Exception e) {
+            throw new RuntimeException("Unable to borrow buffer from pool" + 
+                    e.toString());
+        } finally { 
+            try { 
+                in.close(); 
+            } catch(Exception e) { 
+                // ignored 
+            } 
+            try {
+                if(null != buf) {
+                    pool.returnObject(buf);
+                }
+            } catch(Exception e) {
+                // ignored
+            }
+        } 
+    } 
+}
+</source>
+      <p>
+       Since we've constrained ourselves to the <code>ObjectPool</code> interface, an arbitrary pool 
+       implementation (returning, in our case, <code>StringBuffer</code>s) can be used.  When a different
+       or "better" pool implemenatation comes along, we can simply drop it into our <code>ReaderUtil</code>
+       without changing a line of code.  
+      </p>
+      </section>
+      <section name="A PoolableObjectFactory">
+       <p>
+        Recall that Pool provides a simple toolkit for creating object pools.  The 
+        <code>PoolableObjectFactory</code> interface is an important part of this toolkit.
+        <code>PoolableObjectFactory</code> defines lifecycle methods for pooled objects. 
+        We can use it to separate the kinds of objects that are pooled and how they are 
+        created, persisted, or destroyed, from the pooling algorithm itself.
+       </p>
+       <p>
+        Suppose we have an <code>ObjectPool</code> implementation that accepts a 
+        <code>PoolableObjectFactory</code> (for example, any of the implementations in the
+        <code>org.apache.commons.pool.impl</code> package).  Then we need only provide 
+        the factory implemenation in order to pool a new kind of object.  
+       </p>
+       <p>
+        Here's a <code>PoolableObjectFactory</code> implementation that creates
+        <code>StringBuffer</code>s as used above.
+       </p>
+<source>
+import org.apache.commons.pool.BasePoolableObjectFactory; 
+ 
+public class StringBufferFactory extends BasePoolableObjectFactory { 
+    // for makeObject we'll simply return a new buffer 
+    public Object makeObject() { 
+        return new StringBuffer(); 
+    } 
+     
+    // when an object is returned to the pool,  
+    // we'll clear it out 
+    public void passivateObject(Object obj) { 
+        StringBuffer buf = (StringBuffer)obj; 
+        buf.setLength(0); 
+    } 
+     
+    // for all other methods, the no-op  
+    // implementation in BasePoolableObjectFactory 
+    // will suffice 
+}
+</source>
+      <p>
+       We can, for example, use this factory with the <code>StackObjectPool</code> to instantiate our
+       <code>ReaderUtil</code> as follows:
+      </p>
+<source>new ReaderUtil(new StackObjectPool(new StringBufferFactory()))</source>
+      </section>
+   </body>
+</document>

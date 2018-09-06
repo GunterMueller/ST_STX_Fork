@@ -1,0 +1,417 @@
+./java/io/FileOutputStream.java:    private native void open(String name) throws FileNotFoundException;
+./java/io/FileOutputStream.java:    private native void openAppend(String name) throws FileNotFoundException;
+./java/io/FileOutputStream.java:    public native void write(int b) throws IOException;
+./java/io/FileOutputStream.java:    private native void writeBytes(byte b[], int off, int len) throws IOException;
+./java/io/FileOutputStream.java:    private native void close0() throws IOException;
+./java/io/FileOutputStream.java:    private static native void initIDs();
+./java/io/UnixFileSystem.java:    private native String canonicalize0(String path) throws IOException;
+./java/io/UnixFileSystem.java:    public native int getBooleanAttributes0(File f);
+./java/io/UnixFileSystem.java:    public native boolean checkAccess(File f, int access);
+./java/io/UnixFileSystem.java:    public native long getLastModifiedTime(File f);
+./java/io/UnixFileSystem.java:    public native long getLength(File f);
+./java/io/UnixFileSystem.java:    public native boolean setPermission(File f, int access, boolean enable, boolean owneronly);
+./java/io/UnixFileSystem.java:    public native boolean createFileExclusively(String path)
+./java/io/UnixFileSystem.java:    private native boolean delete0(File f);
+./java/io/UnixFileSystem.java:    public native String[] list(File f);
+./java/io/UnixFileSystem.java:    public native boolean createDirectory(File f);
+./java/io/UnixFileSystem.java:    private native boolean rename0(File f1, File f2);
+./java/io/UnixFileSystem.java:    public native boolean setLastModifiedTime(File f, long time);
+./java/io/UnixFileSystem.java:    public native boolean setReadOnly(File f);
+./java/io/UnixFileSystem.java:    public native long getSpace(File f, int t);
+./java/io/UnixFileSystem.java:    private static native void initIDs();
+./java/io/ObjectInputStream.java:    private static native ClassLoader latestUserDefinedLoader();
+./java/io/FileSystem.java:    public static native FileSystem getFileSystem();
+./java/io/Console.java:    private static native String encoding();
+./java/io/Console.java:    private static native boolean echo(boolean on) throws IOException;
+./java/io/Console.java:    private native static boolean istty();
+./java/io/ObjectStreamClass.java:    private static native void initNative();
+./java/io/ObjectStreamClass.java:    private native static boolean hasStaticInitializer(Class cl);
+./java/io/FileInputStream.java:    private native void open(String name) throws FileNotFoundException;
+./java/io/FileInputStream.java:    public native int read() throws IOException;
+./java/io/FileInputStream.java:    private native int readBytes(byte b[], int off, int len) throws IOException;
+./java/io/FileInputStream.java:    public native long skip(long n) throws IOException;
+./java/io/FileInputStream.java:    public native int available() throws IOException;
+./java/io/FileInputStream.java:    private static native void initIDs();
+./java/io/FileInputStream.java:    private native void close0() throws IOException;
+./java/io/FileDescriptor.java:    public native void sync() throws SyncFailedException;
+./java/io/FileDescriptor.java:    private static native void initIDs();
+./java/io/RandomAccessFile.java:    private native void open(String name, int mode)
+./java/io/RandomAccessFile.java:    public native int read() throws IOException;
+./java/io/RandomAccessFile.java:    private native int readBytes(byte b[], int off, int len) throws IOException;
+./java/io/RandomAccessFile.java:    public native void write(int b) throws IOException;
+./java/io/RandomAccessFile.java:    private native void writeBytes(byte b[], int off, int len) throws IOException;
+./java/io/RandomAccessFile.java:    public native long getFilePointer() throws IOException;
+./java/io/RandomAccessFile.java:    public native void seek(long pos) throws IOException;
+./java/io/RandomAccessFile.java:    public native long length() throws IOException;
+./java/io/RandomAccessFile.java:    public native void setLength(long newLength) throws IOException;
+./java/io/RandomAccessFile.java:    private static native void initIDs();
+./java/io/RandomAccessFile.java:    private native void close0() throws IOException;
+./java/lang/ref/Finalizer.java:    static native void invokeFinalizeMethod(Object o) throws Throwable;
+./java/lang/Runtime.java:    public native int availableProcessors();
+./java/lang/Runtime.java:    public native long freeMemory();
+./java/lang/Runtime.java:    public native long totalMemory();
+./java/lang/Runtime.java:    public native long maxMemory();
+./java/lang/Runtime.java:    public native void gc();
+./java/lang/Runtime.java:    private static native void runFinalization0();
+./java/lang/Runtime.java:    public native void traceInstructions(boolean on);
+./java/lang/Runtime.java:    public native void traceMethodCalls(boolean on);
+./java/lang/ProcessEnvironment.java:    private static native byte[][] environ();
+./java/lang/SecurityManager.java:    protected native Class[] getClassContext();
+./java/lang/SecurityManager.java:    private native ClassLoader currentClassLoader0();
+./java/lang/SecurityManager.java:    protected native int classDepth(String name);
+./java/lang/SecurityManager.java:    private native int classLoaderDepth0();
+./java/lang/SecurityManager.java:    private native Class currentLoadedClass0();
+./java/lang/Class.java:    private static native void registerNatives();
+./java/lang/Class.java:    public native boolean isInstance(Object obj);
+./java/lang/Class.java:    public native boolean isAssignableFrom(Class<?> cls);
+./java/lang/Class.java:    public native boolean isInterface();
+./java/lang/Class.java:    public native boolean isArray();
+./java/lang/Class.java:    public native boolean isPrimitive();
+./java/lang/Class.java:    private native String getName0();
+./java/lang/Class.java:    native ClassLoader getClassLoader0();
+./java/lang/Class.java:    public native Class<? super T> getSuperclass();
+./java/lang/Class.java:    public native Class<?>[] getInterfaces();
+./java/lang/Class.java:    public native Class<?> getComponentType();
+./java/lang/Class.java:    public native int getModifiers();
+./java/lang/Class.java:    public native Object[] getSigners();
+./java/lang/Class.java:    native void setSigners(Object[] signers);
+./java/lang/Class.java:    private native Object[] getEnclosingMethod0();
+./java/lang/Class.java:    public native Class<?> getDeclaringClass();
+./java/lang/Class.java:    private native java.security.ProtectionDomain getProtectionDomain0();
+./java/lang/Class.java:    native void setProtectionDomain0(java.security.ProtectionDomain pd);
+./java/lang/Class.java:    static native Class getPrimitiveClass(String name);
+./java/lang/Class.java:    private native String getGenericSignature();
+./java/lang/Class.java:    private native byte[] getRawAnnotations();
+./java/lang/Class.java:    native ConstantPool getConstantPool();
+./java/lang/Class.java:    private native Field[]       getDeclaredFields0(boolean publicOnly);
+./java/lang/Class.java:    private native Method[]      getDeclaredMethods0(boolean publicOnly);
+./java/lang/Class.java:    private native Constructor[] getDeclaredConstructors0(boolean publicOnly);
+./java/lang/Class.java:    private native Class[]   getDeclaredClasses0();
+./java/lang/Class.java:    private static native boolean desiredAssertionStatus0(Class clazz);
+./java/lang/Shutdown.java:    static native void halt0(int status);
+./java/lang/Shutdown.java:    private static native void runAllFinalizers();
+./java/lang/UNIXProcess.java:    private native int waitForProcessExit(int pid);
+./java/lang/UNIXProcess.java:    private static native void destroyProcess(int pid);
+./java/lang/UNIXProcess.java:    private static native void initIDs();
+./java/lang/reflect/Array.java:    public static native int getLength(Object array)
+./java/lang/reflect/Array.java:    public static native Object get(Object array, int index)
+./java/lang/reflect/Array.java:    public static native boolean getBoolean(Object array, int index)
+./java/lang/reflect/Array.java:    public static native byte getByte(Object array, int index)
+./java/lang/reflect/Array.java:    public static native char getChar(Object array, int index)
+./java/lang/reflect/Array.java:    public static native short getShort(Object array, int index)
+./java/lang/reflect/Array.java:    public static native int getInt(Object array, int index)
+./java/lang/reflect/Array.java:    public static native long getLong(Object array, int index)
+./java/lang/reflect/Array.java:    public static native float getFloat(Object array, int index)
+./java/lang/reflect/Array.java:    public static native double getDouble(Object array, int index)
+./java/lang/reflect/Array.java:    public static native void set(Object array, int index, Object value)
+./java/lang/reflect/Array.java:    public static native void setBoolean(Object array, int index, boolean z)
+./java/lang/reflect/Array.java:    public static native void setByte(Object array, int index, byte b)
+./java/lang/reflect/Array.java:    public static native void setChar(Object array, int index, char c)
+./java/lang/reflect/Array.java:    public static native void setShort(Object array, int index, short s)
+./java/lang/reflect/Array.java:    public static native void setInt(Object array, int index, int i)
+./java/lang/reflect/Array.java:    public static native void setLong(Object array, int index, long l)
+./java/lang/reflect/Array.java:    public static native void setFloat(Object array, int index, float f)
+./java/lang/reflect/Array.java:    public static native void setDouble(Object array, int index, double d)
+./java/lang/reflect/Array.java:    private static native Object newArray(Class componentType, int length)
+./java/lang/String.java:    public native String intern();
+./java/lang/Throwable.java:    public synchronized native Throwable fillInStackTrace();
+./java/lang/Throwable.java:    private native int getStackTraceDepth();
+./java/lang/Throwable.java:    private native StackTraceElement getStackTraceElement(int index);
+./java/lang/Thread.java:    private static native void registerNatives();
+./java/lang/Thread.java:    public static native Thread currentThread();
+./java/lang/Thread.java:    public static native void yield();
+./java/lang/Thread.java:    public static native void sleep(long millis) throws InterruptedException;
+./java/lang/Thread.java:    private native void start0();
+./java/lang/Thread.java:    private native boolean isInterrupted(boolean ClearInterrupted);
+./java/lang/Thread.java:    public final native boolean isAlive();
+./java/lang/Thread.java:    public native int countStackFrames();
+./java/lang/Thread.java:    public static native boolean holdsLock(Object obj);
+./java/lang/Thread.java:    private native static StackTraceElement[][] dumpThreads(Thread[] threads);
+./java/lang/Thread.java:    private native static Thread[] getThreads();
+./java/lang/Thread.java:    private native void setPriority0(int newPriority);
+./java/lang/Thread.java:    private native void stop0(Object o);
+./java/lang/Thread.java:    private native void suspend0();
+./java/lang/Thread.java:    private native void resume0();
+./java/lang/Thread.java:    private native void interrupt0();
+./java/lang/Float.java:    public static native int floatToRawIntBits(float value);
+./java/lang/Float.java:    public static native float intBitsToFloat(int bits);
+./java/lang/StrictMath.java:    public static native double sin(double a);
+./java/lang/StrictMath.java:    public static native double cos(double a);
+./java/lang/StrictMath.java:    public static native double tan(double a);
+./java/lang/StrictMath.java:    public static native double asin(double a);
+./java/lang/StrictMath.java:    public static native double acos(double a); 
+./java/lang/StrictMath.java:    public static native double atan(double a);
+./java/lang/StrictMath.java:    public static native double exp(double a);
+./java/lang/StrictMath.java:    public static native double log(double a);
+./java/lang/StrictMath.java:    public static native double log10(double a);
+./java/lang/StrictMath.java:    public static native double sqrt(double a);
+./java/lang/StrictMath.java:    public static native double cbrt(double a);
+./java/lang/StrictMath.java:    public static native double IEEEremainder(double f1, double f2);
+./java/lang/StrictMath.java:    public static native double ceil(double a);
+./java/lang/StrictMath.java:    public static native double floor(double a);
+./java/lang/StrictMath.java:    public static native double atan2(double y, double x);
+./java/lang/StrictMath.java:    public static native double pow(double a, double b);
+./java/lang/StrictMath.java:    public static native double sinh(double x);
+./java/lang/StrictMath.java:    public static native double cosh(double x);
+./java/lang/StrictMath.java:    public static native double tanh(double x);
+./java/lang/StrictMath.java:    public static native double hypot(double x, double y);
+./java/lang/StrictMath.java:    public static native double expm1(double x);
+./java/lang/StrictMath.java:    public static native double log1p(double x);
+./java/lang/System.java:    private static native void registerNatives();
+./java/lang/System.java:    private static native void setIn0(InputStream in);
+./java/lang/System.java:    private static native void setOut0(PrintStream out);
+./java/lang/System.java:    private static native void setErr0(PrintStream err);
+./java/lang/System.java:    public static native long currentTimeMillis();
+./java/lang/System.java:    public static native long nanoTime();
+./java/lang/System.java:    public static native int identityHashCode(Object x);
+./java/lang/System.java:    private static native Properties initProperties(Properties props);
+./java/lang/System.java:    public static native String mapLibraryName(String libname);
+./java/lang/Object.java:    private static native void registerNatives();
+./java/lang/Object.java:    public final native Class<?> getClass();
+./java/lang/Object.java:    public native int hashCode();
+./java/lang/Object.java:    protected native Object clone() throws CloneNotSupportedException;
+./java/lang/Object.java:    public final native void notify();
+./java/lang/Object.java:    public final native void notifyAll();
+./java/lang/Object.java:    public final native void wait(long timeout) throws InterruptedException;
+./java/lang/Compiler.java:    private static native void initialize();
+./java/lang/Compiler.java:    private static native void registerNatives();
+./java/lang/Compiler.java:    public static native boolean compileClass(Class<?> clazz);
+./java/lang/Compiler.java:    public static native boolean compileClasses(String string);
+./java/lang/Compiler.java:    public static native Object command(Object any);
+./java/lang/Compiler.java:    public static native void enable();
+./java/lang/Compiler.java:    public static native void disable();
+./java/lang/Double.java:    public static native long doubleToRawLongBits(double value);
+./java/lang/Double.java:    public static native double longBitsToDouble(long bits);
+./java/lang/Package.java:    private static native String getSystemPackage0(String name);
+./java/lang/Package.java:    private static native String[] getSystemPackages0();
+./java/lang/ClassLoader.java:    private static native void registerNatives();
+./java/lang/ClassLoader.java:    private native void resolveClass0(Class c);
+./java/lang/ClassLoader.java:    private native Class findBootstrapClass(String name);
+./java/lang/ClassLoader.java:    private native final Class findLoadedClass0(String name);
+./java/lang/ClassLoader.java:        native void load(String name);
+./java/lang/ClassLoader.java:        native long find(String name);
+./java/lang/ClassLoader.java:        native void unload();
+./java/lang/ClassLoader.java:    private static native AssertionStatusDirectives retrieveDirectives();
+./java/nio/MappedByteBuffer.java:    private native boolean isLoaded0(long address, long length, int pageSize);
+./java/nio/MappedByteBuffer.java:    private native int load0(long address, long length, int pageSize);
+./java/nio/MappedByteBuffer.java:    private native void force0(long address, long length);
+./java/text/Bidi.java:    private static native int nativeGetDirectionCode(int cp);
+./java/awt/Component.java:     * parents of an associated native component (the outer class).
+./java/awt/Component.java:    private static native void initIDs();
+./java/awt/Font.java:    private static native void initIDs();
+./java/awt/Font.java:    private native void pDispose();
+./java/awt/Color.java:    private static native void initIDs();
+./java/awt/JobAttributes.java:        public static final DialogType NATIVE = new DialogType(I_NATIVE);
+./java/awt/Insets.java:    private static native void initIDs();
+./java/awt/ScrollPane.java:    private static native void initIDs();
+./java/awt/TextField.java:    private static native void initIDs();
+./java/awt/image/ComponentSampleModel.java:    static private native void initIDs();
+./java/awt/image/ColorModel.java:     * AWT package have a native method, initIDs(), which initializes
+./java/awt/image/ColorModel.java:    private static native void initIDs();
+./java/awt/image/Raster.java:    static private native void initIDs();
+./java/awt/image/SampleModel.java:    static private native void initIDs();
+./java/awt/image/Kernel.java:    private static native void initIDs();
+./java/awt/image/SinglePixelPackedSampleModel.java:    private static native void initIDs();
+./java/awt/image/IndexColorModel.java:    static private native void initIDs();
+./java/awt/image/BufferedImage.java:    static private native void initIDs();
+./java/awt/Label.java:    private static native void initIDs();
+./java/awt/MenuComponent.java:    private static native void initIDs();
+./java/awt/event/NativeLibLoader.java:     * package (sun.awt.image) have a native method, initIDs(),
+./java/awt/event/MouseEvent.java:    private static native void initIDs();
+./java/awt/event/KeyEvent.java:    private static native void initIDs();
+./java/awt/event/InputEvent.java:    private static native void initIDs();
+./java/awt/Scrollbar.java:    private static native void initIDs();
+./java/awt/Frame.java:    private static native void initIDs();
+./java/awt/Window.java:    private static native void initIDs();
+./java/awt/TextArea.java:    private static native void initIDs();
+./java/awt/Checkbox.java:    private static native void initIDs();
+./java/awt/Event.java:    private static native void initIDs();
+./java/awt/ScrollPaneAdjustable.java:    private static native void initIDs();
+./java/awt/FileDialog.java:    private static native void initIDs();
+./java/awt/Container.java:    private static native void initIDs();
+./java/awt/Button.java:    private static native void initIDs();
+./java/awt/Menu.java:    private static native void initIDs();
+./java/awt/MenuBar.java:    private static native void initIDs();
+./java/awt/Cursor.java:    private static native void initIDs();
+./java/awt/Cursor.java:    private native static void finalizeImpl(long pData);
+./java/awt/Dialog.java: * A dialog may have its native decorations (i.e. Frame & Titlebar) turned off
+./java/awt/Dialog.java:    private static native void initIDs();
+./java/awt/CheckboxMenuItem.java:    private static native void initIDs();
+./java/awt/SplashScreen.java:    private native static void _update(long splashPtr, int[] data, int x, int y, int width, int height, int scanlineStride);
+./java/awt/SplashScreen.java:    private native static boolean _isVisible(long splashPtr);
+./java/awt/SplashScreen.java:    private native static Rectangle _getBounds(long splashPtr);
+./java/awt/SplashScreen.java:    private native static long _getInstance();
+./java/awt/SplashScreen.java:    private native static void _close(long splashPtr);
+./java/awt/SplashScreen.java:    private native static String _getImageFileName(long splashPtr);
+./java/awt/SplashScreen.java:    private native static String _getImageJarName(long SplashPtr);
+./java/awt/SplashScreen.java:    private native static boolean _setImageData(long SplashPtr, byte[] data);
+./java/awt/AWTEvent.java:    private static native void initIDs();
+./java/awt/AWTEvent.java:    private native void nativeSetSource(ComponentPeer peer);
+./java/awt/MenuItem.java:    private static native void initIDs();
+./java/awt/FontMetrics.java:    private static native void initIDs();
+./java/awt/KeyboardFocusManager.java:    private static native void initIDs();
+./java/awt/TrayIcon.java:    private static native void initIDs();
+./java/awt/Dimension.java:    private static native void initIDs();
+./java/awt/Toolkit.java:     * given a native component (eg the direct parent may be lightweight).
+./java/awt/Toolkit.java:    private static native void initIDs();
+./java/awt/Toolkit.java:     * AWT package have a native method, initIDs(), which initializes
+./java/awt/Rectangle.java:    private static native void initIDs();
+./java/util/prefs/FileSystemPreferences.java:    private  static native int unlockFile0(int lockHandle); 
+./java/util/prefs/FileSystemPreferences.java:    private static native int chmod(String fileName, int permission);
+./java/util/TimeZone.java:    private static native String getSystemGMTOffsetID();
+./java/util/ResourceBundle.java:    private static native Class[] getClassContext();
+./java/util/zip/ZipFile.java:    private static native void initIDs();
+./java/util/zip/ZipFile.java:    private static native long open(String name, int mode, long lastModified);
+./java/util/zip/ZipFile.java:    private static native int getTotal(long jzfile);
+./java/util/zip/ZipFile.java:    private static native void freeEntry(long jzfile, long jzentry);
+./java/util/zip/ZipFile.java:    private static native int getMethod(long jzentry);
+./java/util/zip/ZipFile.java:    private static native long getNextEntry(long jzfile, int i);
+./java/util/zip/ZipFile.java:    private static native void close(long jzfile);
+./java/util/zip/ZipFile.java:    private static native long getCSize(long jzentry);
+./java/util/zip/ZipFile.java:    private static native long getSize(long jzentry);
+./java/util/zip/ZipFile.java:    private static native String getZipMessage(long jzfile);
+./java/util/zip/Deflater.java:    private static native void initIDs();
+./java/util/zip/Deflater.java:    private native static long init(int level, int strategy, boolean nowrap);
+./java/util/zip/Deflater.java:    private native int deflateBytes(long addr, byte[] b, int off, int len);
+./java/util/zip/Deflater.java:    private native static int getAdler(long addr);
+./java/util/zip/Deflater.java:    private native static long getBytesRead(long addr);
+./java/util/zip/Deflater.java:    private native static long getBytesWritten(long addr);
+./java/util/zip/Deflater.java:    private native static void reset(long addr);
+./java/util/zip/Deflater.java:    private native static void end(long addr);
+./java/util/zip/CRC32.java:    private native static int update(int crc, int b);
+./java/util/zip/CRC32.java:    private native static int updateBytes(int crc, byte[] b, int off, int len);
+./java/util/zip/Inflater.java:    private native static void initIDs();
+./java/util/zip/Inflater.java:    private native static long init(boolean nowrap);
+./java/util/zip/Inflater.java:    private native int inflateBytes(long addr, byte[] b, int off, int len)
+./java/util/zip/Inflater.java:    private native static int getAdler(long addr);
+./java/util/zip/Inflater.java:    private native static long getBytesRead(long addr);
+./java/util/zip/Inflater.java:    private native static long getBytesWritten(long addr);
+./java/util/zip/Inflater.java:    private native static void reset(long addr);
+./java/util/zip/Inflater.java:    private native static void end(long addr);
+./java/util/zip/ZipEntry.java:    private static native void initIDs();
+./java/util/zip/ZipEntry.java:    private native void initFields(long jzentry);
+./java/util/zip/Adler32.java:    private native static int update(int adler, int b);
+./java/util/concurrent/atomic/AtomicLong.java:    private static native boolean VMSupportsCS8();
+./java/util/logging/FileHandler.java:    private static native boolean isSetUID();
+./java/util/jar/JarFile.java:    private native String[] getMetaInfEntryNames();
+./java/security/AccessController.java:    public static native <T> T doPrivileged(PrivilegedAction<T> action);
+./java/security/AccessController.java:    private static native AccessControlContext getStackAccessControlContext();
+./java/security/AccessController.java:    static native AccessControlContext getInheritedAccessControlContext();
+./java/sql/DriverManager.java:    private static native ClassLoader getCallerClassLoader();
+./java/net/InetAddress.java:    private static native void init();
+./java/net/InetAddress.java:    static native boolean isIPv6Supported();
+./java/net/PlainSocketImpl.java:	 * The native socketGetOption() knows about 3 options.
+./java/net/PlainSocketImpl.java:    private native void socketCreate(boolean isServer) throws IOException;
+./java/net/PlainSocketImpl.java:    private native void socketConnect(InetAddress address, int port, int timeout)
+./java/net/PlainSocketImpl.java:    private native void socketBind(InetAddress address, int port)
+./java/net/PlainSocketImpl.java:    private native void socketListen(int count)
+./java/net/PlainSocketImpl.java:    private native void socketAccept(SocketImpl s)
+./java/net/PlainSocketImpl.java:    private native int socketAvailable()
+./java/net/PlainSocketImpl.java:    private native void socketClose0(boolean useDeferredClose)
+./java/net/PlainSocketImpl.java:    private native void socketShutdown(int howto)
+./java/net/PlainSocketImpl.java:    private static native void initProto();
+./java/net/PlainSocketImpl.java:    private native void socketSetOption(int cmd, boolean on, Object value)
+./java/net/PlainSocketImpl.java:    private native int socketGetOption(int opt, Object iaContainerObj) throws SocketException;
+./java/net/PlainSocketImpl.java:    private native int socketGetOption1(int opt, Object iaContainerObj, FileDescriptor fd) throws SocketException;
+./java/net/PlainSocketImpl.java:    private native void socketSendUrgentData(int data)
+./java/net/Inet6AddressImpl.java:    public native String getLocalHostName() throws UnknownHostException;
+./java/net/Inet6AddressImpl.java:    public native String getHostByAddr(byte[] addr) throws UnknownHostException;
+./java/net/Inet6AddressImpl.java:    private native boolean isReachable0(byte[] addr, int scope, int timeout, byte[] inf, int ttl, int if_scope) throws IOException;
+./java/net/Inet6Address.java:    private static native void init();
+./java/net/PlainDatagramSocketImpl.java:    protected synchronized native void bind0(int lport, InetAddress laddr)
+./java/net/PlainDatagramSocketImpl.java:    protected native void send(DatagramPacket p) throws IOException;
+./java/net/PlainDatagramSocketImpl.java:    protected synchronized native int peek(InetAddress i) throws IOException;
+./java/net/PlainDatagramSocketImpl.java:    protected synchronized native int peekData(DatagramPacket p) throws IOException;
+./java/net/PlainDatagramSocketImpl.java:    protected synchronized native void receive0(DatagramPacket p)
+./java/net/PlainDatagramSocketImpl.java:    protected native void setTimeToLive(int ttl) throws IOException;
+./java/net/PlainDatagramSocketImpl.java:    protected native int getTimeToLive() throws IOException;
+./java/net/PlainDatagramSocketImpl.java:    protected native void setTTL(byte ttl) throws IOException;
+./java/net/PlainDatagramSocketImpl.java:    protected native byte getTTL() throws IOException;
+./java/net/PlainDatagramSocketImpl.java:    private native void join(InetAddress inetaddr, NetworkInterface netIf)
+./java/net/PlainDatagramSocketImpl.java:    private native void leave(InetAddress inetaddr, NetworkInterface netIf)
+./java/net/PlainDatagramSocketImpl.java:    private native void datagramSocketCreate() throws SocketException;
+./java/net/PlainDatagramSocketImpl.java:    private native void datagramSocketClose();
+./java/net/PlainDatagramSocketImpl.java:    private native void socketSetOption(int opt, Object val)
+./java/net/PlainDatagramSocketImpl.java:    private native Object socketGetOption(int opt) throws SocketException;
+./java/net/PlainDatagramSocketImpl.java:    private native void connect0(InetAddress address, int port) throws SocketException;
+./java/net/PlainDatagramSocketImpl.java:    private native void disconnect0(int family);
+./java/net/PlainDatagramSocketImpl.java:    private native static void init();
+./java/net/DatagramPacket.java:    private native static void init();
+./java/net/SocketInputStream.java:    private native static void init();
+./java/net/Inet4AddressImpl.java:    public native String getLocalHostName() throws UnknownHostException;
+./java/net/Inet4AddressImpl.java:    public native String getHostByAddr(byte[] addr) throws UnknownHostException;
+./java/net/Inet4AddressImpl.java:    private native boolean isReachable0(byte[] addr, int timeout, byte[] ifaddr, int ttl) throws IOException;
+./java/net/Inet4Address.java:    private static native void init();
+./java/net/NetworkInterface.java:    native static NetworkInterface getByIndex(int index) 
+./java/net/NetworkInterface.java:    private native static NetworkInterface[] getAll() 
+./java/net/NetworkInterface.java:    private native static NetworkInterface getByName0(String name) 
+./java/net/NetworkInterface.java:    private native static NetworkInterface getByInetAddress0(InetAddress addr) 
+./java/net/NetworkInterface.java:    private native static long getSubnet0(String name, int ind) throws SocketException;
+./java/net/NetworkInterface.java:    private native static Inet4Address getBroadcast0(String name, int ind) throws SocketException;
+./java/net/NetworkInterface.java:    private native static boolean isUp0(String name, int ind) throws SocketException;
+./java/net/NetworkInterface.java:    private native static boolean isLoopback0(String name, int ind) throws SocketException;
+./java/net/NetworkInterface.java:    private native static boolean supportsMulticast0(String name, int ind) throws SocketException;
+./java/net/NetworkInterface.java:    private native static boolean isP2P0(String name, int ind) throws SocketException;
+./java/net/NetworkInterface.java:    private native static byte[] getMacAddr0(byte[] inAddr, String name, int ind) throws SocketException;
+./java/net/NetworkInterface.java:    private native static int getMTU0(String name, int ind) throws SocketException;
+./java/net/NetworkInterface.java:    private static native void init();
+./java/net/SocketOutputStream.java:    private native static void init();
+./com/sun/corba/se/internal/io/LibraryManager.java:    native private static int getMajorVersion();
+./com/sun/corba/se/internal/io/LibraryManager.java:    native private static int getMinorVersion();
+./com/sun/corba/se/internal/io/LibraryManager.java:    private static native boolean setEnableOverride(Class targetClass, Object instance);
+./com/sun/corba/se/internal/io/IIOPInputStream.java:    private static native void throwExceptionType(Class c, String message);
+./com/sun/corba/se/internal/io/IIOPInputStream.java:    private static native void setObjectField(Object o, Class c, String fieldName, String fieldSig, Object v);
+./com/sun/corba/se/internal/io/IIOPInputStream.java:    private static native void setBooleanField(Object o, Class c, String fieldName, String fieldSig, boolean v);
+./com/sun/corba/se/internal/io/IIOPInputStream.java:    private static native void setByteField(Object o, Class c, String fieldName, String fieldSig, byte v);
+./com/sun/corba/se/internal/io/IIOPInputStream.java:    private static native void setCharField(Object o, Class c, String fieldName, String fieldSig, char v);
+./com/sun/corba/se/internal/io/IIOPInputStream.java:    private static native void setShortField(Object o, Class c, String fieldName, String fieldSig, short v);
+./com/sun/corba/se/internal/io/IIOPInputStream.java:    private static native void setIntField(Object o, Class c, String fieldName, String fieldSig, int v);
+./com/sun/corba/se/internal/io/IIOPInputStream.java:    private static native void setLongField(Object o, Class c, String fieldName, String fieldSig, long v);
+./com/sun/corba/se/internal/io/IIOPInputStream.java:    private static native void setFloatField(Object o, Class c, String fieldName, String fieldSig, float v);
+./com/sun/corba/se/internal/io/IIOPInputStream.java:    private static native void setDoubleField(Object o, Class c, String fieldName, String fieldSig, double v);
+./com/sun/corba/se/internal/io/IIOPInputStream.java:    private static native void readObject(Object obj, Class asClass, Object ois);
+./com/sun/corba/se/internal/io/IIOPInputStream.java:    private static native void setObjectFieldOpt(Object o, long fieldID, Object v);
+./com/sun/corba/se/internal/io/IIOPInputStream.java:    private static native void setBooleanFieldOpt(Object o, long fieldID, boolean v);
+./com/sun/corba/se/internal/io/IIOPInputStream.java:    private static native void setByteFieldOpt(Object o, long fieldID, byte v);
+./com/sun/corba/se/internal/io/IIOPInputStream.java:    private static native void setCharFieldOpt(Object o, long fieldID, char v);
+./com/sun/corba/se/internal/io/IIOPInputStream.java:    private static native void setShortFieldOpt(Object o, long fieldID, short v);
+./com/sun/corba/se/internal/io/IIOPInputStream.java:    private static native void setIntFieldOpt(Object o, long fieldID, int v);
+./com/sun/corba/se/internal/io/IIOPInputStream.java:    private static native void setLongFieldOpt(Object o, long fieldID, long v);
+./com/sun/corba/se/internal/io/IIOPInputStream.java:    private static native void setFloatFieldOpt(Object o, long fieldID, float v);
+./com/sun/corba/se/internal/io/IIOPInputStream.java:    private static native void setDoubleFieldOpt(Object o, long fieldID, double v);
+./com/sun/corba/se/internal/io/IIOPOutputStream.java:    private static native void throwExceptionType(Class c, String message);
+./com/sun/corba/se/internal/io/IIOPOutputStream.java:    private static native Object getObjectFieldOpt(Object o, long fieldID);
+./com/sun/corba/se/internal/io/IIOPOutputStream.java:    private static native boolean getBooleanFieldOpt(Object o, long fieldID);
+./com/sun/corba/se/internal/io/IIOPOutputStream.java:    private static native byte getByteFieldOpt(Object o, long fieldID);
+./com/sun/corba/se/internal/io/IIOPOutputStream.java:    private static native char getCharFieldOpt(Object o, long fieldID);
+./com/sun/corba/se/internal/io/IIOPOutputStream.java:    private static native short getShortFieldOpt(Object o, long fieldID);
+./com/sun/corba/se/internal/io/IIOPOutputStream.java:    private static native int getIntFieldOpt(Object o, long fieldID);
+./com/sun/corba/se/internal/io/IIOPOutputStream.java:    private static native long getLongFieldOpt(Object o, long fieldID);
+./com/sun/corba/se/internal/io/IIOPOutputStream.java:    private static native float getFloatFieldOpt(Object o, long fieldID);
+./com/sun/corba/se/internal/io/IIOPOutputStream.java:    private static native double getDoubleFieldOpt(Object o, long fieldID);
+./com/sun/corba/se/internal/io/IIOPOutputStream.java:    private static native void writeObject(Object obj, Class asClass, Object oos) throws IllegalAccessException;
+./com/sun/corba/se/internal/io/ObjectStreamClass.java:    private static native boolean hasStaticInitializer(Class cl);
+./com/sun/java/swing/plaf/gtk/GTKNativeStyle.java:    private native int native_get_xthickness(int widgetType);
+./com/sun/java/swing/plaf/gtk/GTKNativeStyle.java:    private native int native_get_ythickness(int widgetType);
+./com/sun/java/swing/plaf/gtk/GTKNativeStyle.java:    private native Object native_get_class_value(int widgetType, String key);
+./com/sun/java/swing/plaf/gtk/GTKNativeStyle.java:    private native String native_get_pango_font_name(int widgetType);
+./com/sun/java/swing/plaf/gtk/GTKNativeStyle.java:    private native Dimension native_get_image_dimension(int widgetType, int state);
+./com/sun/java/swing/plaf/gtk/GTKNativeEngine.java:    private native Object native_get_gtk_setting(int property);
+./com/sun/java/swing/plaf/gtk/GTKNativeEngine.java:    private native void nativeStartPainting(int w, int h);
+./com/sun/java/swing/plaf/gtk/GTKNativeEngine.java:    private native int nativeFinishPainting(int[] buffer, int width, int height);
+./com/sun/java/swing/plaf/gtk/GTKNativeEngine.java:    private native void native_switch_theme();
+./com/sun/imageio/plugins/jpeg/JPEGImageWriter.java:    private native long initJPEGImageWriter();
+./com/sun/imageio/plugins/jpeg/JPEGImageWriter.java:    private native void abortWrite(long structPointer);
+./com/sun/imageio/plugins/jpeg/JPEGImageWriter.java:    private native void resetWriter(long structPointer);
+./com/sun/imageio/plugins/jpeg/JPEGImageWriter.java:    private static native void disposeWriter(long structPointer);
+./com/sun/imageio/plugins/jpeg/JPEGImageReader.java:    private native long initJPEGImageReader();
+./com/sun/imageio/plugins/jpeg/JPEGImageReader.java:    private native void setOutColorSpace(long structPointer, int id);
+./com/sun/imageio/plugins/jpeg/JPEGImageReader.java:    private native void abortRead(long structPointer);
+./com/sun/imageio/plugins/jpeg/JPEGImageReader.java:    private native void resetLibraryState(long structPointer);
+./com/sun/imageio/plugins/jpeg/JPEGImageReader.java:    private native void resetReader(long structPointer);
+./com/sun/imageio/plugins/jpeg/JPEGImageReader.java:    private static native void disposeReader(long structPointer);
+./com/sun/imageio/plugins/png/PNGImageReader.java:            // native (non-GC visible) resources. This is normally implicitly
+./com/sun/security/auth/module/UnixSystem.java:    private native void getUnixInfo();
+./com/sun/security/auth/module/NTSystem.java:    private native void getCurrent(boolean debug);
+./com/sun/security/auth/module/SolarisSystem.java:    private native void getSolarisInfo();
+./javax/tools/JavaCompiler.java: * is the file manager that is native to the tool (or built-in).  The

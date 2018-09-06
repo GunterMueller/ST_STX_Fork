@@ -1,0 +1,30 @@
+| xtermTitleUpdater |
+xtermTitleUpdater := [
+(((OperatingSystem getEnvironment:'TERM')  = 'xterm')
+    or: [((OperatingSystem getEnvironment:'TERM')  = 'rxvt')])
+    ifTrue:
+	[Stdout
+	    nextPutAll: #[8r033 8r135 8r060 8r073] asString;
+	    nextPutAll: 'Smalltalk/X ';
+	    nextPutAll: Smalltalk versionString.
+	ObjectMemory imageName ifNotNil:
+		[| image |
+		image := ObjectMemory imageName.
+		(image includes: $/) ifTrue:
+		    [image := image copyFrom: (image lastIndexOf: $/) + 1].
+		Stdout
+		    nextPutAll: ' - ';
+		    nextPutAll: image].
+	Stdout
+	    nextPut: 8r007 asCharacter]].
+
+
+Smalltalk addStartBlock: xtermTitleUpdater.
+Smalltalk addImageStartBlock: xtermTitleUpdater.
+ObjectMemory addDependent:
+    (Smalltalk at: #XTermTitleUpdater put:
+	(InterestConverter
+	    destination: xtermTitleUpdater
+	    selector: #value
+	    aspect: #finishedSnapshot)).
+

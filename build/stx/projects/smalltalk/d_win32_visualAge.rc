@@ -1,0 +1,69 @@
+"*
+ * Encoding: iso8859-1
+ *
+ * $Header$
+ *
+ * MIMEType: application/x-smalltalk-source
+ *
+ * ST/X startup configuration file:
+ * display configuration - windowsNT / windows95 with V'age key bindings.
+ *"
+!
+StandardSystemView takeFocusWhenMapped:true.
+!
+
+"/
+"/ here, fixup the keyboard mapping for
+"/ windows feel - especially,
+"/     change           from            to
+"/     cut/copy/paste   ALT-[XCV]       CTRL-[XCV]
+"/     HOME-key         BeginOfText     BeginOfLine
+"/     END-key          EndOfText       EndOfLine
+"/     F1-key           Again           Help
+"/     F3-key                           FindAgain
+"/     F4-key                           CommentSelection
+"/     F5-key                           UncommentSelection
+"/     F8-key                           (replace-) Again
+"/     UserInterrupt    CTRL-C          BREAK/PAUSE
+
+|map|
+
+map := Display keyboardMap.
+
+'d_win32.rc [info]: changing keyboard to win95 defaults...' infoPrintCR.
+'d_win32.rc [info]: (CTRL-C is now COPY - unix ST/X users should have a look at d_win32.rc)' infoPrintCR.
+
+map bindValue:#UserInterrupt to:#Pause.
+map bindValue:#Copy          to:#Ctrlc.
+map bindValue:#Cut           to:#Ctrlx.
+map bindValue:#Paste         to:#Ctrlv.
+map bindValue:#BeginOfLine   to:#Home.
+map bindValue:#EndOfLine     to:#End.
+map bindValue:#SelectAll     to:#Ctrla.
+map bindValue:#Accept        to:#Ctrls.
+map bindValue:#Find          to:#Ctrlf.
+map bindValue:#DoIt          to:#Ctrle.
+map bindValue:#PrintIt       to:#Ctrld.         "evaluate and paste result"
+map bindValue:#InspectIt     to:#Ctrlq.         "evaluate and paste result"
+
+
+map bindValue:#Format        to:#CtrlF.
+
+
+map bindValue:#LearnKeyboardMacro    to:#CtrlL.
+map bindValue:#ExecuteKeyboardMacro  to:#CtrlM.
+
+map bindValue:#Help          to:#F1.
+map bindValue:#Rename        to:#F2.
+map bindValue:#Again         to:#F8.
+map bindValue:#FindAgain     to:#F3.   "/ search again in same direction
+map bindValue:#CommentSelection   to:#F4.
+map bindValue:#UncommentSelection to:#F5.
+"/ map bindValue:#CodeCompletion     to:#F2.
+
+"/ map bindValue:#Cmdc          to:#Cmdc.
+"/ map bindValue:#Cmdx          to:#Cmdx.
+"/ map bindValue:#Cmdv          to:#Cmdv.
+
+map bindValue:#Menu          to:#Appl.
+!

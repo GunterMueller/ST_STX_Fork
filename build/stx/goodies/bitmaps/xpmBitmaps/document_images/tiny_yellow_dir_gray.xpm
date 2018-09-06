@@ -1,0 +1,24 @@
+/* XPM */
+static char *tiny_yellow_dir_gray[] = {
+	"16 16 3 1",
+	". c none",
+	"b c black  m black g4 black",
+	"y c yellow m white g4 grey80",
+	"................",
+	"................",
+	"................",
+	"..bbbb..........",
+	".byyyyb.........",
+	"bbbbbbbbbbbbbb..",
+	"bybybybybybybb..",
+	"bbybybybybybyb..",
+	"bybybybybybybb..",
+	"bbybybybybybyb..",
+	"bybybybybybybb..",
+	"bbybybybybybyb..",
+	"bbbbbbbbbbbbbb..",
+	"................",
+	"................",
+	"................",
+};      
+

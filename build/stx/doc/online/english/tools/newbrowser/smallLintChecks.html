@@ -1,0 +1,404 @@
+<HTML>
+<HEAD>
+<TITLE>Smalllint Rules</TITLE>
+</HEAD>
+
+<BODY>
+
+<H1 ALIGN="CENTER"><em>Small</EM>lint Rules </H1>
+
+<HR>
+
+<P>This file describes the different rules in the <A
+HREF="Lint.html"><EM>Small</EM>lint tool</A> which is part of the
+<A HREF="./">Refactoring Browser</A>. <I>Small</I>lint has over 60 rules that
+are broken into <B>Lint checks</B> and <B>Transformations</B>. The
+Transformations section has several predefined transformations that you
+may want to use on your code. Once a transformation is run, a window will
+open allowing you to select which transformed methods you wish to accept.
+The Lint checks section is further divided into five parts: <a
+href="#bugs">Bugs</a>, <a href="#pbugs">Possible Bugs</a>, <a
+href="#unnec">Unnecessary code</a>, <a href="#intention">Intention
+revealing</a>, and <a href="#misc">Miscellaneous</a>.
+If you have a rule that you would like to add, please <A HREF="mailto:brant@cs.uiuc.edu,droberts@cs.uiuc.edu">mail us</A>.</P>
+
+<HR size=4>
+<H2><a name="bugs">Bugs:</a></H2>
+<hr>
+<H3>Messages sent but not implemented </H3>
+
+<P>Checks for messages that are sent by a method, but no class in the system implements such a message. These will certainly cause a <CODE>doesNotUnderstand:</CODE> message when they are executed. </P>
+
+
+
+<H3>Overrides a "special" message </H3>
+
+<P>Checks that a class does not override a message that is essential to the base system. For example, if you override the <CODE>class</CODE> method from object, you are likely to crash your image. You can modify which methods are checked by editing the methods <CODE>BasicLintRule&gt;&gt;classShouldNotOverride</CODE> and <CODE>BasicLintRule&gt;&gt;metaclassShouldNotOverride.</CODE> </P>
+
+
+
+<H3>References an undeclared variable </H3>
+
+<P>Checks for references to a variable in the <CODE>Undeclared</CODE> dictionary. If you remove a variable from a class that is accessed by a method, you will create an undeclared variable reference for those methods that accessed the variable. </P>
+
+
+
+<H3>Self/Super sends not implemented </H3>
+<P>This is similar to the "Message sent but not implemented" check, but only checks messages sent to <CODE>self</CODE> or <CODE>super</CODE> since these can be statically typed. </P>
+
+
+
+<H3>Subclass responsibility not defined </H3>
+<P>Checks that all <CODE>subclassResponsibility</CODE> methods are defined in all leaf classes. </P>
+
+
+
+<H3>Uses A | B = C instead of A | (B = C)</H3>
+
+<P>Checks precedence ordering of &amp; and | with equality operators. Since | and &amp; have the same precedence as =, there are common mistakes where parenthesis are missing around the equality operators. </P>
+
+
+
+<H3>Uses True/False instead of true/false </H3>
+
+<P>Checks for uses of the classes <CODE>True</CODE> and <CODE>False</CODE> instead of the objects <CODE>true</CODE> and <CODE>false</CODE>. </P>
+
+
+
+<H3>Variable used, but not defined anywhere </H3>
+
+<P>This check is similar to the "References an undeclared variable" check, but it looks for variables that are not defined in the class or in the undeclared dictionary. You probably had to work hard to get your code in this state. </P>
+
+<HR size=4>
+
+<H2><a name="pbugs">Possible bugs:</a></H2>
+
+<HR>
+
+<H3>Assignment inside unwind blocks should be outside</H3>
+
+<P>Checks assignment to a variable that is the first statement inside the value block that is also used in the unwind block. For example, the following code places the assignment of <CODE>inputStream</CODE> inside the <CODE>valueNowOrOnUnwindDo:</CODE> block when it should be outside: </P>
+<PRE>
+<CODE>&#9;methodName
+&#9;&#9;| inputStream |
+&#9;&#9;[inputStream := 'test' asFilename readStream.
+&#9;&#9;self parse: inputStream]
+&#9;&#9;&#9;valueNowOrOnUnwindDo: [inputStream close]</PRE>
+</CODE><P>Although the file handling routines should be wrapped with a <CODE>valueNowOrOnUnwindDo:</CODE>, wrapping the assignment of <CODE>inputStream</CODE> does not do anything. If the code cannot open the file there is no need to try to close <CODE>nil</CODE> (which is what <CODE>inputStream</CODE> is since it hasn't been assigned). This code should be rewritten as: </P>
+<PRE>
+<CODE>&#9;methodName
+&#9;&#9;| inputStream |
+&#9;&#9;inputStream := 'test' asFilename readStream.
+&#9;&#9;[self parse: inputStream]
+&#9;&#9;&#9;valueNowOrOnUnwindDo: [inputStream close]</PRE>
+</CODE><P>Not only does this fix a possible bug that occurs when closing <CODE>nil</CODE>, it also eliminates the full block that was necessary with the assignment in the previous version. </P>
+
+
+<H3>Defines = but not hash</H3>
+
+<P>Checks that all classes that define <CODE>=</CODE> also define <CODE>hash</CODE>. If <CODE>hash</CODE> is not defined then the instances of the class might not be able to be used in sets since equal element must have the same hash. </P>
+
+
+<H3>Has class instance variable but no initialize method</H3>
+
+<P>Checks that all classes that have class instance variables also have an initialize method. This makes sure that all class instance variables are initialized properly when the class is filed-into a new image. </P>
+
+<H3>Instance variable overridden by temporary variable</H3>
+
+<P>Finds methods that have block are temporary variables that override an instance variable. This causes problems if you want to use the instance variable inside the method. </P>
+
+<H3>Missing super sends</H3>
+
+<P>Checks that some methods contain a super message send. Some methods should always contain a super message send. For example, the <CODE>postCopy</CODE> method should always contain a "<CODE>super postCopy</CODE>". The list of methods that should contain super message sends is in <CODE>BasicLintRule&gt;&gt;superMessages</CODE>. </P>
+
+<H3>Modifies collection while iterating over it</H3>
+
+<P>Checks for <CODE>remove:</CODE>'s of elements inside of collection iteration methods such as <CODE>do:</CODE>. These can cause the <CODE>do:</CODE> method to break since it will walk of the end of the collection. The common fix for this problem is to <CODE>copy</CODE> the collection before iterating over it. </P>
+
+<H3>Number addDependent: messages &gt; removeDependent:</H3>
+
+<P>Check that the number of <CODE>addDependent:</CODE> message sends in a class is less than or equal to the number of <CODE>removeDependent:</CODE> messages. If there are more <CODE>addDependent:</CODE> messages that may signify that some dependents are not being released, which may lead to memory leaks. </P>
+
+<H3>Possible missing "; yourself"</H3>
+
+<P>Checks for missing "<CODE>; yourself</CODE>" cascaded message send for cascaded messages that are used. This helps locate common coding mistakes such as "<CODE>anArray := (Array new: 2) at: 1 put: 1; at: 2 put: 2</CODE>". In this example, <CODE>anArray</CODE> would be assigned to 2 not the array object. </P>
+
+<H3>Possible three element point (e.g., <CODE>x @ y + q @ r</CODE>) </H3>
+
+<P>Checks arithmetic statements for possible three element points (i.e., a point that has another point in its x or y part). </P>
+
+<H3>References an abstract class</H3>
+
+<P>Checks for references to classes that have subclassResponsibility methods. Such references might be creating instances of the abstract class or more commonly being used as the argument to an isKindOf: message which is considered bad style.</P>
+
+<H3>Returns a boolean and non boolean</H3>
+
+<P>Checks for methods that return a boolean value (<CODE>true</CODE> or <CODE>false</CODE>) and return some other value such as (<CODE>nil</CODE> or <CODE>self</CODE>). If the method is suppose to return a boolean, then this signifies that there is one path through the method that might return a non-boolean. If the method doesn't need to return a boolean, you should probably rewrite it to return some non-boolean value since other programmers reading your method might assume that it returns a boolean. </P>
+
+<H3>Returns value of ifTrue:/ifFalse: without ifFalse:/ifTrue: block</H3>
+
+<P>Check for methods that return the value of an <CODE>ifTrue:</CODE> or <CODE>ifFalse:</CODE> message. These statements return <CODE>nil</CODE> when the block is not executed. For example, the following code will return <CODE>nil</CODE> when <CODE>aBoolean</CODE> is <CODE>false</CODE>. </P>
+<PRE>
+<CODE>&#9;methodName
+&#9;&#9;^aBoolean ifTrue: [0]</PRE>
+</CODE><P>If the code should return <CODE>nil</CODE> when <CODE>aBoolean</CODE> is <CODE>false</CODE>, then it should probably be written as: </P>
+<PRE>
+<CODE>&#9;methodName
+&#9;&#9;^aBoolean
+&#9;&#9;&#9;ifTrue: [0]
+&#9;&#9;&#9;ifFalse: [nil]</PRE>
+</CODE>
+
+<H3>Sends different super message</H3>
+
+<P>Checks for methods whose source sends a different super message. A common example of this is in creation methods. You might define a method such as: </P>
+<PRE>
+<CODE>&#9;createInstance
+&#9;&#9;^super new initialize</PRE>
+</CODE><P>If the <CODE>new</CODE> method is not defined in the class, you should probably rewrite this to use self instead. Also, if the <CODE>new</CODE> method is defined, you might question why you need to use the superclass' <CODE>new</CODE> method instead of <CODE>new</CODE> method defined in the class. </P>
+
+<H3>Subclass of class that has instance variable but doesn't define copyEmpty</H3>
+
+<P>Checks that all subclasses of the Collection classes that add an instance variable also redefine the <CODE>copyEmpty</CODE> method. This method is used when the collection grows. It copies over the necessary instance variables to the new larger collection. </P>
+
+<H3>Temporaries read before written</H3>
+
+<P>Checks that all temporaries are assigned before they are used. This can help find possible paths through the code where a variable might be unassigned when it is used. </P>
+
+<H3>Uses the result of an add: message</H3>
+
+<P>Check for possible uses of the result returned by an <CODE>add:</CODE> or <CODE>addAll:</CODE> messages. These messages return their arguments not the receiver. As a result, may uses of the results are wrong. </P>
+
+<hr size=4>
+<h2><a name="unnec">Unnecessary code</a></h2>
+<hr>
+
+<H3>Block immediately evaluated</H3>
+
+<P>Check for blocks that are immediately evaluated. Since the block is immediately evaluated, there is no need for the statements to be in a block. </P>
+
+<H3>Check for same statements at end of ifTrue:ifFalse: blocks </H3>
+
+<P>Checks for <CODE>ifTrue:ifFalse:</CODE> blocks that have the same code at the beginning or end. While you might not originally write such code, as it is modified, it is easier to create such code. Instead of having the same code in two places, you should move it outside the blocks. </P>
+
+<H3>Class not referenced</H3>
+
+<P>Check if a class is referenced either directly or indirectly by a symbol. If a class is not referenced, it can be removed. </P>
+
+<H3>Instance variables not read AND written</H3>
+
+<P>Checks that all instance variables are both read and written. If an instance variable is only read, you can replace all of the reads with nil, since it couldn't have been assigned a value. If the variable is only written, then we don't need to store the result since we never use it. This check does not work for the data model classes since they use the <CODE>instVarAt:put:</CODE> messages to set instance variables. </P>
+
+<H3>Method just sends super message</H3>
+
+<P>Check for methods that just forward the message to its superclass. These methods can be removed. </P>
+
+<H3>Methods equivalently defined in superclass</H3>
+
+<P>Check for methods that are equivalent to their superclass methods. Such methods don't add anything to the computation and can be removed since the superclass's method will work just fine. </P>
+
+<H3>Methods implemented but not sent</H3>
+
+<P>Check for methods that are never sent. If a method is not sent, it can be removed. </P>
+
+<H3>Unnecessary = true</H3>
+
+<P>Check for a =, ==, ~=, or ~~ message being sent to true/false or with true/false as the argument. Many times these can be eliminated since their receivers are already booleans. For example, "anObject isFoo == false" could be replaced with "anObject isFoo not" if isFoo always returns a boolean.  Sometimes variables might refer to true, false, and something else, but this is considered bad style since the variable has multiple types. </P>
+
+<H3>Variable referenced in only one method and always assigned first</H3>
+
+<P>Checks for instance variables that might better be defined as temporary variables. If an instance variable is only used in one method and it is always assigned before it is used, then that method could define that variable as a temporary variable of the method instead (assuming that the method is not recursive). </P>
+
+<H3>Variables not referenced</H3>
+
+<P>Check for variables not referenced. If a variable is not used in a class, it should be deleted. </P>
+
+<hr size=4>
+<H2><a name="intention">Intention revealing:</a></H2>
+<HR>
+
+<H3>Assignment to same variable at the end of ifTrue:ifFalse: blocks</H3>
+
+<P>Checks for ifTrue:ifFalse: blocks that assign the same variable at the end of the block. Instead of having the assignment being in both blocks, we can instead assign the variable the result of the ifTrue:ifFalse: message. For example, this code:</P>
+<PRE>&#9;aBoolean
+&#9;&#9;ifTrue: [foo := true]
+&#9;&#9;ifFalse: [foo := anotherBoolean]</PRE>
+<P>could be rewritten to:</P>
+<PRE>&#9;foo := aBoolean
+&#9;&#9;ifTrue: [true]
+&#9;&#9;ifFalse: [anotherBoolean]</PRE>
+<P>Once we have simplified the expression by pulling the assignment out of the blocks, then we could see that the code is equivalent to:</P>
+<PRE>&#9;foo := aBoolean or: [anotherBoolean]</PRE>
+
+
+<H3>Guarding clauses</H3>
+
+<P>Checks for <CODE>ifTrue:</CODE> or <CODE>ifFalse:</CODE> conditions at end of methods that have two or more statements inside their blocks. Such code might better represent the true meaning of the code if they returned <CODE>self</CODE> instead. For example, the following code: </P>
+<PRE>
+<CODE>&#9;methodName
+&#9;&#9;a isNil
+&#9;&#9;&#9;ifFalse:
+&#9;&#9;&#9;&#9;[self doSomething.
+&#9;&#9;&#9;&#9;self doAnotherThing.
+&#9;&#9;&#9;&#9;self doSomethingElse]</PRE>
+</CODE><P>might be better represented by: </P>
+<PRE>
+<CODE>&#9;methodName
+&#9;&#9;a isNil ifTrue: [^self].
+&#9;&#9;self doSomething.
+&#9;&#9;self doAnotherThing.
+&#9;&#9;self doSomethingElse</PRE>
+</CODE><P>In the first method, <CODE>a</CODE> not being <CODE>nil</CODE> looks like the exception, but most likely <CODE>a</CODE> being <CODE>nil</CODE> is the exception which is more obvious in the second method. </P>
+
+<H3>ifTrue:/ifFalse: returns instead of and:/or:'s</H3>
+
+<P>Checks for common <CODE>ifTrue:</CODE> returns that could be simplified. For example, </P>
+<CODE><PRE>
+&#9;foo
+&#9;&#9;aCondition ifTrue: [^false].
+&#9;&#9;^true</PRE>
+</CODE><P>can be simplified to: </P>
+<CODE><PRE>
+&#9;foo
+&#9;&#9;^aCondition not</PRE>
+</CODE>
+
+<H3>Method defined in all subclasses, but not in superclass</H3>
+
+<P>Checks classes for methods that are defined in all subclasses, but not defined in self. Such methods should most likely be defined as <CODE>subclassResponsibility</CODE> methods to help document the class. Furthermore, this check helps to find similar code that might be occurring in all the subclasses that should be pulled up into the superclass. </P>
+
+<H3>Sends add:/remove: to external collection</H3>
+
+<P>Checks for methods that appear to be modifying a collection that is owned by another object. Such modifications can cause problems especially if other variables are modified when the collection is modified. For example, CompositePart must set the container's of all its parts when adding a new component.</P>
+
+<H3>Unnecessary size check</H3>
+
+<P>Check for code that checks that a collection is non-empty before sending it an iteration message (e.g., <CODE>do:</CODE>, <CODE>collect:</CODE>, etc.). Since the collection iteration messages work for empty collections, we do not need to clutter up our method with the extra <CODE>size</CODE> check. </P>
+
+<H3>Uses "size = 0" or "= nil" instead of "isEmpty" or "isNil"</H3>
+
+<P>Checks for people using equality tests instead of the message sends. Since the code "<CODE>aCollection size = 0</CODE>" works for all objects, it is more difficult for someone reading such code to determine that "<CODE>aCollection</CODE>" is a collection. Whereas , if you say "<CODE>aCollection isEmpty</CODE>" then <CODE>aCollection</CODE> must be a collection since <CODE>isEmpty</CODE> is only defined for collections. </P>
+
+<H3>Uses at:ifAbsent: instead of at:ifAbsentPut:</H3>
+
+<P>Checks for uses of <CODE>at:ifAbsent:</CODE> when you could use the shorter <CODE>at:ifAbsentPut:</CODE> message. For example, the <CODE>code "aDictionary at: aKey ifAbsent: [aDictionary at: aKey put: anObject]</CODE>" should be rewritten <CODE>as "aDictionary at: aKey ifAbsentPut: [anObject]</CODE>". The <A HREF="Rewrite.html">rewrite rule documentation</A> shows how to convert uses of the <CODE>at:ifAbsent:</CODE> message to use <CODE>at:ifAbsentPut:</CODE>. </P>
+
+<H3>Uses detect:ifNone: instead of contains:</H3>
+
+<P>Checks for the common code fragment: "<CODE>(aCollection detect: [:each | 'some condition'] ifNone: [nil]) ~= nil</CODE>". VisualWorks 2.0 added a contains: method that can simplify this code to "<CODE>aCollection contains: [:each | 'some condition']</CODE>". Not only is the <CODE>contains:</CODE> variant shorter, it better signifies what the code is doing. </P>
+
+<H3>Uses do: instead of collect: or select:'s</H3>
+
+<P>Checks for people using the <CODE>do:</CODE> method instead of using the <CODE>collect:</CODE> or <CODE>select:</CODE> methods. This often occurs with new people writing code. They will often write code such as: </P>
+<PRE>
+<CODE>&#9;| newCollection |
+&#9;newCollection := OrderedCollection new.
+&#9;aCollection do: [:each | newCollection add: each doSomething].
+&#9;^newCollection</PRE>
+</CODE><P>instead of using the <CODE>collect:</CODE> method: </P>
+<PRE>
+<CODE>&#9;^aCollection collect: [:each | each doSomething]</PRE>
+</CODE><P>The <CODE>collect:</CODE> and <CODE>select:</CODE> variants express the source code's intentions better. </P>
+
+<H3>Uses do: instead of contains: or detect:'s</H3>
+
+<P>Checks for people using the <CODE>do:</CODE> method instead of using the <CODE>contains:</CODE> or detect<CODE>:</CODE> methods.</P>
+
+<H3>Uses ifTrue:/ifFalse: instead of min: or max:</H3>
+
+<P>Checks for uses of ifTrue:/ifFalse: when it could be transformed to use min: or max:. For example, this code:</P>
+<PRE>&#9;a &lt; b  ifTrue: [a] ifFalse: [b]</PRE>
+<P>can be rewritten as:</P>
+<PRE>&#9;a min: b</PRE>
+
+<H3>Uses to:do: instead of do:, with:do:, or timesRepeat:</H3>
+
+<P>Checks for people using <CODE>to:do:</CODE> when a <CODE>do:</CODE>, <CODE>with:do:</CODE> or <CODE>timesRepeat:</CODE> should be used. </P>
+
+<H3>Uses whileTrue: instead of to:do:</H3>
+
+<P>Checks for people using <CODE>whileTrue: when the shorter to:do: would work. For example, this common C-like code:</P>
+</CODE><PRE>&#9;i := 1.
+&#9;[i &lt;= size]
+&#9;&#9;whileTrue:
+&#9;&#9;&#9;["self do something with i".
+&#9;&#9;&#9;i := i + 1]</PRE>
+<P>can be written as:</P>
+<PRE>&#9;1 to: size do: [:i | "self do something with i"]</PRE>
+
+<hr size=4>
+<H2><a name="misc">Miscellaneous:</a></H2>
+<HR>
+
+<H3>Doesn't use the result of a yourself message</H3>
+
+<P>Check for methods sending the yourself message when it is not necessary. For example, the following statement doesn't need the yourself message, since it is not used:</P>
+<PRE>&#9;aCollection addAll: #(a b c); yourself</PRE>
+<P>Now if this statement was assigned to a variable, then you would need to cascade the yourself message in order to get the value of aCollection.</P>
+
+<H3>Inspect instances of "A + B * C" might be "A + (B * C)"</H3>
+
+<P>Checks for methods that might have precedence problems. People that are used to other languages precedence order often make mistakes when writing Smalltalk code since in Smalltalk all binary operations are performed left-to-right. </P>
+
+<H3>Instance variables defined in all subclasses</H3>
+
+<P>Checks classes for instance variables that are defined in all subclasses. Many times you might want to pull the instance variable up into the class so that all the subclasses do not have to define it. </P>
+
+<H3>Long methods</H3>
+
+<P>Returns all methods that have BasicLintRule class&gt;&gt;longMethodSize number of statements. This check counts statements, not lines.</P>
+
+<H3>Methods with full blocks</H3>
+
+<P>Lists methods that contain full blocks or create a context with the "<CODE>thisContext</CODE>" keyword. These methods are a place where inefficiencies can creep in. For example, a common reason why a full block is created is because a block assigns a temporary variable that is not defined inside the block. If the temporary variable is only used inside the block, then the definition of the temporary should be moved inside the block. The "move to inner scope" refactoring will automatically perform this, if you select it from the browser's code tool. </P>
+
+<H3>Non-blocks in ifTrue:/ifFalse: messages</H3>
+
+<P>Checks for methods that don’t use blocks in the ifTrue:ifFalse messages. People new to Smalltalk might write code such as: "aBoolean ifTrue: (self doSomething)" instead of the correct version: "aBoolean ifTrue: [self doSomething]". Even if these pieces of code are correct, they cannot be optimized by the compiler. </P>
+
+<H3>Redundant class name in selector</H3>
+
+<P>Checks for the class name in a selector. This is redundant since to call the you must already refer to the class name. For example, <CODE>openHierarchyBrowserFrom:</CODE> is a redundant name for <CODE>HierarchyBrowser</CODE>. </P>
+
+<H3>Refers to class name instead of "self class"</H3>
+
+<P>Checks for classes that have their class name directly in the source instead of "<CODE>self class</CODE>". The <CODE>self class</CODE> variant allows you to create subclasses without needing to redefine that method. </P>
+
+<H3>Sends "questionable" message</H3>
+
+<P>Check methods that send messages that perform low level things. You might want to limit the number of such messages in your application. For example, using <CODE>become:</CODE> throughout your application might not be the best thing. Also, messages such as <CODE>isKindOf:</CODE> can signify a lack of polymorphism. You can change which methods are "questionable" by editing the <CODE>BasicLintRule&gt;&gt;badSelectors</CODE> method. </P>
+
+<H3>String concatenation instead of streams</H3>
+
+<P>Check for people using string concatenation inside some iteration message. Since string concatenation is O(n^2), it is better to use streaming since it is O(n) - assuming that n is large enough. </P>
+
+<H3>Unnecessary assignment or return in block</H3>
+
+<P>Checks <CODE>valueNowOrOnUnwindDo:</CODE>, <CODE>valueOnUnwindDo:</CODE>, and <CODE>showWhile:</CODE> blocks for assignments or returns that are the last statement in the block. These assignments or returns can be moved outside the block since these messages return the value of the block. For example, the code: </P>
+<PRE>
+<CODE>&#9;methodName
+&#9;&#9;| bos |
+&#9;&#9;bos := BinaryObjectStorage onOld: 'test' asFilename readStream.
+&#9;&#9;[^bos next]
+&#9;&#9;&#9;valueNowOrOnUnwindDo: [bos close]</PRE>
+</CODE><P>can be rewritten as: </P>
+<PRE>
+<CODE>&#9;methodName
+&#9;&#9;| bos |
+&#9;&#9;bos := BinaryObjectStorage onOld: 'test' asFilename readStream.
+&#9;&#9;^[bos next]
+&#9;&#9;&#9;valueNowOrOnUnwindDo: [bos close]</PRE>
+</CODE><P>Having the assignment or return inside the block will require the VM to create a full block. Full blocks run much slower than copying or optimized blocks. </P>
+
+<H3>Utility methods</H3>
+
+<P>List methods that have one or more arguments and do no refer to self or an instance variable. These methods might be better defined in some other class or as class methods. </P>
+
+<H3>Variable is only assigned a single literal value</H3>
+
+<P>If a variable is only assigned a single literal value then that variable is either nil or that literal value. If the variable is always initialized with that literal value, then you could replace each variable reference with a message send to get the value. If the variable can also be nil, then you might want to replace that variable with another that stores true or false depending on whether the old variable had been assigned.</P>
+
+<hr size=4>
+<EM><P>Comments or suggestions can be sent to </EM><A HREF="mailto:brant@cs.uiuc.edu,droberts@cs.uiuc.edu"><I>brant@cs.uiuc.edu</I></A><EM> and </EM><A HREF="mailto:brant@cs.uiuc.edu,droberts@cs.uiuc.edu"><I>droberts@cs.uiuc.edu</I></A><EM>. <BR>
+Last updated on 29-Apr-97. </P></EM></BODY>
+</HTML>

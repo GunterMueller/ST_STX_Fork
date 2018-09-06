@@ -1,0 +1,148 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+   <META NAME="Author" CONTENT="Thomas Zwick, eXept software AG, Germany">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.04 [en] (X11; I; Linux 2.0.30 i586) [Netscape]">
+   <TITLE>The Tool Bar Widget</TITLE>
+</HEAD>
+<BODY>
+<A HREF="TOP.html#TABLEOFTHEWIDGETS" NOPRINT><IMG SRC="../../../icons/DocsUpArrow.gif" ALT="Table of the Widgets" NOSAVE HEIGHT=30 WIDTH=30></A><A HREF="PopUpList.html" NOPRINT><IMG SRC="../../../icons/DocsRightArrow.gif" ALT="The Popup List Widget" NOSAVE HEIGHT=30 WIDTH=30></A>
+<BR>&nbsp;
+<HR ALIGN=LEFT WIDTH="100%">
+<H1>
+<FONT SIZE=+4>The Tool Bar Widget</FONT></H1>
+<IMG SRC="../../../pictures/GUIPainterWidgetToolBar.gif" ALT="A View of the Tool Bar Widget" NOSAVE HEIGHT=34 WIDTH=97>
+<P>View Class: <TT>MenuPanel</TT>
+<BR>Spec Class: <TT>MenuPanelSpec</TT>
+
+<P>The <B>Tool Bar Widget </B>is used to provide horizontal or vertical
+tool bar capabilities. Originally, the <TT>MenuPanel</TT> class (the view
+class of the widget) was introduced for menu bars and popup menus, but
+it can also be used for tool bars. Therefore, the components of the tool
+bar are defined by using the <A HREF="MenuEditor.html">Menu Editor.</A>
+<BR>&nbsp;
+<BR>&nbsp;
+<H3>
+
+<HR ALIGN=LEFT WIDTH="100%"></H3>
+
+<H3>
+The <I>Basics</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>ID</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Unique symbolic name (ID) of the tool bar.&nbsp;</B>&nbsp;
+<BR>This ID can be used by the application to access the widget
+via <TT>"builder>>componentAt:#ID"</TT>.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Selector</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for the building
+of the tool bar items.</B>&nbsp;
+<BR>It should return a menu spec.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Performer</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for sending
+the messages of the tool bar items to an object.</B>&nbsp;
+<BR>It should return an object which is able to receive the messages.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Menu Editor</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Opens a <A HREF="MenuEditor.html">Menu
+Editor</A> on the application class and the defined selector.</B></TD>
+</TR>
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Details</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Font</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the font style of the tool bar's
+labels.</B>&nbsp;
+<BR>After selecting the check toggle the font style can be chosen by selecting
+one of the Family/Face/Style/Size buttons. If no font style is selected,
+the tool bar takes its default font style from the style sheet.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Has Vertical Layout&nbsp;</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the tool bar has a vertical
+layout.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Show Separating Lines</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the items are separated
+by lines.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Can Tab</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the tool bar can be reached
+by tabbing.</B></TD>
+</TR>
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Channels</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Enable</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for en-/disabling
+the tool bar.</B>&nbsp;
+<BR>It should return a&nbsp;
+
+<P>&nbsp;&nbsp;&nbsp; - <TT>Boolean</TT> instance** (only for static behavior)&nbsp;
+<BR>&nbsp;&nbsp;&nbsp; - <TT><A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance with a <TT>Boolean</TT> instance**&nbsp;
+
+<P>A value model is used to provide a dynamically changing of the ability
+of the tool bar.</TD>
+</TR>
+</TABLE>
+<TT>*&nbsp; = ValueHolder, AspectAdaptor, BufferedValueHolder, RangeAdaptor,
+TriggerValue</TT>
+<BR><TT>** = true, false</TT>
+
+<P>&nbsp;
+<H3>
+The <I>Help</I> Section:</H3>
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="HelpTool.html">Using the Help Tool</A>"
+<BR>&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Layout</I> Section:</H3>
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="LayoutTool.html">The Layout of the Widgets</A>"
+<BR>&nbsp;
+<BR>&nbsp;
+
+<P>
+<HR>
+
+<P><IMG SRC="../../../icons/stx.gif" ALT="[stx-logo]" NOSAVE NOPRINT HEIGHT=48 WIDTH=47 ALIGN=CENTER>
+<BR><TT>Copyright &copy; 1998 eXept Software AG, all rights reserved</TT>
+<BR>
+<HR>
+</BODY>
+</HTML>

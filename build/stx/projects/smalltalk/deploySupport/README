@@ -1,0 +1,6 @@
+osx_Info.plist:
+    needed for the stx.dmg (IDE APP package)
+
+osx_Distribution:
+    needed for the stx.pkg (runtime package for standalone programs)
+

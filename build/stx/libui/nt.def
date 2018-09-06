@@ -1,0 +1,11 @@
+LIBRARY         libwidg2
+DESCRIPTION     'Smalltalk/X UI Spec Classes'
+VERSION         3.5
+CODE            EXECUTE READ 
+DATA            READ WRITE
+SECTIONS
+    INITCODE    READ EXECUTE 
+    INITDATA    READ WRITE
+EXPORTS 
+    _libui_Init @1
+IMPORTS

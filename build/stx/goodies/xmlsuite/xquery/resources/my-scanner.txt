@@ -1,0 +1,12 @@
+<whitespace> : \s+;
+<char> : [a-zA-Z];
+<digit> : [0-9] | [x];
+<hexa_char> : [a-fA-F];
+
+<digits> : [0-9]+;
+<hexa_chars> : [a-fA-F]+;
+
+<integer_literal> : <digits>;
+<hexa_literal> : ([0-9] | <hexa_char>)+;
+
+<element_content_char> : <char> | <digit>;

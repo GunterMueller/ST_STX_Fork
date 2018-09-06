@@ -1,0 +1,107 @@
+<HTML>
+<HEAD>
+<TITLE>Tutorial - Deploying an Application</TITLE>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="tut_7.html"> <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="tutorial.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="tut_8.html"> <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<P>
+
+<H1><A NAME="SHARING">Sharing your Work with Others</A></H1>
+
+This document gives some advice on how to share code with other Smalltalkers;
+both other Smalltall/X and other dialects.
+
+
+<H2><A NAME="OVERVIEW">Overview: Mechanisms to Share Code</A></H2>
+
+<UL>
+
+<LI>Portability Issues
+<LI>ChangeFile Exchange
+<LI>FileOut / FileIn
+<LI>Shared Repository
+<LI>Monticello
+
+</UL>
+
+
+<H2><A NAME="PORTABILITY">Portability Issues</A></H2>
+
+Skip this, if you only intent to give your code to other Smalltalk/X users.
+
+<H3>Namespaces</H3>
+Squeak does not support namespaces. To be able to move code to Squeak/Pharo or VisualAge, you
+have to move classes out of their namespace and possibly give them a prefix to avoid
+class name conflicts in the target system. A good workaround is to prepend the classes
+original namespace as prefix. I.e. rename "MyNamespace::Foo" into "MyNamespaceFoo".
+<P>
+VisualWorks uses a different namespace scheme ("Namespace.Name" instead of "Namespace::Name").
+As there is currently no automatic rewrite tool for this, it is recommended to use the above
+renaming strategy as well and move the classes into their target namespace once you have them
+ported.
+
+<P>
+The static code checking tools (in the browser) contains a search rule for namespace uses.
+
+<H3>Identifiers</H3>
+Squeak/Pharo does not allow for underline characters in identifiers and selector names.
+You have to rename all of them before exporting.
+<P>
+The static code checking tools (in the browser) contains 3 search rules for this
+(underline in class/instvar names, underlines in locals and underlines in selector).
+
+
+
+<H2><A NAME="CHANGEFILE_EXCHANGE">ChangeFile Exchange</A></H2>
+
+The easiest mechanism is to pass a changeFile (or part of it) to your target system,
+and open a changeList tool there. There, you can browse and inspect individual changes and
+get a chance to skip or modify things before they are loaded.
+As this becomes quite tedious for big files, use this for a small number of changes and patches.
+
+
+<H2><A NAME="FILEOUT_FILEIN">FileOut / FileIn</A></H2>
+
+Fileout each individual class from the browser, and either fileIn in the target system,
+or open a changeList there (on the class files) and load them incrementally.
+
+
+<H2><A NAME="SHARED_REPOSITORY">Shared Repository</A></H2>
+
+Using a shared source code repository allows for classes to be checked in on one side and
+checked out on the other. This will probably only work seamless if both systems are Smalltalk/X
+dialects. For VisualWorks interchange, a StoreSCM class exists, but it has not been maintained and
+updated to the current Cincom version, after they changed their DB layout recently. So this may need
+a bit of additional work.
+
+
+
+<H2><A NAME="MONTICELLO">Monticello</A></H2>
+
+ST/X is able to generate monticelllo packages, which can be loaded into Squak/Pharo systems.
+
+
+<P>
+<P>
+<HR>
+Continue in <A HREF="tut_8.html">"More Smalltalk"</A>.
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif" ALT="[stx-logo]">
+<BR>Copyright &copy; Claus Gittinger Development & Consulting
+<BR>Copyright &copy; eXept Software AG
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.2 $ $Date: 2013-03-25 14:55:30 $
+
+</BODY>
+</HTML>

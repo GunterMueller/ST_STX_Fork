@@ -1,0 +1,367 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+   <META NAME="Author" CONTENT="Claus Gittinger, eXept software AG, Germany">
+   <TITLE>The List Widget</TITLE>
+</HEAD>
+<BODY>
+<A HREF="TOP.html#TABLEOFTHEWIDGETS" NOPRINT><IMG SRC="../../../icons/DocsUpArrow.gif" ALT="Table of the Widgets" NOSAVE HEIGHT=30 WIDTH=30></A>
+<A HREF="Table.html" NOPRINT><IMG SRC="../../../icons/DocsRightArrow.gif" ALT="The Table Wigdet" NOSAVE HEIGHT=30 WIDTH=30></A>
+<BR>&nbsp;
+<HR ALIGN=LEFT WIDTH="100%">
+<H1>
+<FONT SIZE=+4>The List Widget</FONT></H1>
+<IMG SRC="../../../pictures/GUIPainterWidgetList2.gif" ALT="A View of a List Widget" NOSAVE HEIGHT=24 WIDTH=207>
+<P>View Class: <TT>SequenceView</TT>
+<BR>Spec Class: <TT>SequenceViewSpec</TT>
+
+<P>The<B> List Widget</B> is used to display a list of text items,
+from which individual items can be selected.
+<BR>&nbsp;
+<H3>
+
+<HR ALIGN=LEFT WIDTH="100%"></H3>
+
+<H3>
+The <I>Basics</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>ID</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Unique symbolic name (ID) of the widget.&nbsp;</B>&nbsp;
+<BR>This ID can be used by the application to access the widget
+<BR>via "<TT>builder>>componentAt:#</TT><I>ID</I>".</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Model</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for the widgets model.
+</B><BR>Typically, the name of a method implemented in the
+application,
+<BR> which returns the model.
+<BR>The model can be either a SelectionInList instance
+<BR>(which holds both the list and the selection),
+<BR>
+or a
+<TT><A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance, holding the selection alone.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>List</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for the lists contents.
+</B><BR>Typically, the name of a method implemented in the
+application,
+<BR> which returns the list; usually, either a collection or
+<BR><TT><A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance, holding some collection.
+<BR>
+For constant lists, the field may also specify an array-literal,
+<BR>containing the lists string items.
+(i.e. #('item1' 'item2' 'item3' ...)
+</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Index</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>If on, the selection is kept as an
+index (or a collection of indices).
+<BR>
+If off, the selection holds the selected item itself (or a collection
+of items).
+</TD>
+</TR>
+</TABLE>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Popup Menu Selector</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for the building
+of a popup menu for the list widget.</B>&nbsp;
+<BR>It should return a menu spec or a menu.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Popup Menu Performer</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for sending
+the messages of the popup menu items to an object.</B>&nbsp;
+<BR>It should return an object which is able to receive the messages
+<BR>as specified in the menu items.
+<BR>If blank, the application gets the menu messages.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Menu Editor</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Opens a Menu Editor on the popup menu
+spec.
+</TR>
+
+</TABLE>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Vertical Scroll Bar</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the list widget
+provides vertical scrolling capabilities.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Vertical Mini Scroll Bar</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the list widget
+uses a small vertical scroll bar.</B>&nbsp;
+<BR>This attributes can only be set, if the attribute <I>Vertical Scroll
+Bar </I>is turned on.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Horizontal Scroll Bar</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the list widget
+provides horizontal scrolling capabilities.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Horizontal Mini Scroll Bar</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the list widget
+uses a small horizontal scroll bar.</B>&nbsp;
+<BR>This attributes can only be set, if the attribute <I>Horizontal Scroll
+Bar</I> is turned on.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Auto Hide</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Controls autoHiding of scrollbars</B>.
+<BR>If on, scrollbars hide themself, if the contents is smaller than
+the scrolled view.
+<BR>If off, scrollBars never hide themSelf.
+<BR>If set to default, the autoHide feature is controlled by the viewStyle
+<BR>and scrollbars behave "natural" for the operating system.
+<BR>(true for windows, false for most unix-styles).
+</TD>
+
+</TABLE>
+
+
+
+
+
+
+&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Details1</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Font</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the font style of the widget.</B>&nbsp;
+<BR>After selecting the check toggle the font style can be chosen by selecting
+one of the Family/Face/Style/Size buttons. If no font style is selected,
+the widget takes its default font style from the style sheet.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>FG-Color</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the foreground color of the widget.</B>&nbsp;
+<BR>After selecting the check toggle the foreground color can be chosen
+by selecting the desired colored button. If no color&nbsp; is selected,
+the widget takes its default foreground color from the style sheet.</TD></TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>BG-Color</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the background color of the widget.</B>&nbsp;
+<BR>After selecting the check toggle the background color can be chosen
+by selecting the desired colored button. If no color&nbsp; is selected,
+the widget takes its default background color from the style sheet.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Border</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the width of the border.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Level</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the width of the 3D-border.</B>&nbsp;
+<BR>Positive values provide a raising,&nbsp;
+<BR>negative values provide a lowering of the widget.</TD>
+</TR>
+</TABLE>
+
+
+
+&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Details2</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR NOSAVE>
+<TD><B>Allow multiple selections</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>If off, only a single item may be selected,
+<BR>
+If off, multiple items may be selected (shift-click),
+<BR>
+and the selection will consist of a collection.
+</B></TD>
+</TR>
+
+<TR NOSAVE>
+<TD><B>Initially Disabled</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the widget is initially
+disabled.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Initially Invisible</B></TD>
+<TD ALIGN=LEFT VALIGN=TOP BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that
+the widget is initially invisible.</B></TD>
+</TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Can Tab</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the widget can be reached
+by tabbing.</B></TD>
+</TR>
+
+
+</TABLE>
+
+
+
+
+
+&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Channels</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Enable</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for en-/disabling
+the widget.</B>&nbsp;
+<BR>It should return a&nbsp;
+
+<P>&nbsp;&nbsp;&nbsp; - <TT>Boolean</TT> instance** (only for static behavior)&nbsp;
+<BR>&nbsp;&nbsp;&nbsp; - <TT><A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance with a <TT>Boolean</TT> instance**&nbsp;
+
+<P>A value model is used to provide a dynamically changing of the ability
+of the widget.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Dbl-Click</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for a valueHolder
+which gets notified of double clicks.</B>&nbsp;
+<BR>It should return one of&nbsp;
+
+<P>&nbsp;&nbsp;&nbsp; - <TT>Block</TT>
+instance which will be evaluated on double click
+<BR>&nbsp;&nbsp;&nbsp; - <TT><A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance which gets an index-value on double click.
+
+</TD>
+</TR>
+
+</TABLE>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Selected</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Method invoked when the selection changes.</B>
+&nbsp;
+<BR>This defines the name of a method in the application,
+<BR>
+which will be invoked whenever the selection changes.
+
+<P>Using a callback may be more convenient than adding a change interest
+on the model (i.e. defining a notification with #onChange:send:to:).</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Dbl-Click</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Method invoked on double click.</B>&nbsp;
+<BR>This defines the name of a method in the application,
+<BR>
+which will be invoked whenever the user double clicks on an item.
+
+</TD>
+</TR>
+
+
+
+
+
+
+</TABLE>
+
+
+
+
+
+
+&nbsp;* = <TT>ValueHolder</TT>, <TT>AspectAdaptor</TT>, <TT>BufferedValueHolder</TT>,
+<TT>RangeAdaptor</TT>, <TT>TriggerValue</TT>
+<BR><TT>** = true, false</TT>
+
+<P>&nbsp;
+
+<H3>
+The <I>Drag & Drop</I> Section:</H3>
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="DragAndDrop.html">Implementing Drag and Drop</A>"
+<BR>&nbsp;
+<BR>&nbsp;
+
+
+
+<H3>
+The <I>Help</I> Section:</H3>
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="HelpTool.html">Using the Help Tool</A>"
+<BR>&nbsp;
+<BR>&nbsp;
+
+
+
+<H3>
+The <I>Layout</I> Section:</H3>
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="LayoutTool.html">The Layout of the Widgets</A>"
+<BR>&nbsp;
+<BR>&nbsp;
+
+<P>
+<HR>
+
+<P><IMG SRC="../../../icons/stx.gif" ALT="[stx-logo]" NOSAVE NOPRINT HEIGHT=48 WIDTH=47 ALIGN=CENTER>
+<BR><TT>Copyright &copy; 1998 eXept Software AG, all rights reserved</TT>
+<BR>
+<HR>
+</BODY>
+</HTML>

@@ -1,0 +1,30 @@
+; View defaultStyle:#motif2
+;
+; just a demo:
+; like motif, but with a brighter grey
+;
+; $Header: /cvs/stx/stx/libview/styles/motifLight.style,v 1.2 1999-10-27 13:28:03 stefan Exp $
+
+#if Screen current hasGreyscales
+viewGrey                (Color grey:80) exactOrNearestOn:(Screen current) 
+lightColor              (Color grey:100) exactOrNearestOn:(Screen current)
+shadowColor             (Color grey:50) exactOrNearestOn:(Screen current)
+mediumColor             (Color grey:67) exactOrNearestOn:(Screen current)
+#else
+viewGrey                Color white
+lightColor              Color grey:25
+shadowColor             Color black
+mediumColor             Color grey:50.
+#endif
+
+#include 'motif.common'
+
+comment  'Like `motif'' style.\\With brighter viewBackground.'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Wie `motif'', mit hellerem Hintergrund'
+#endif
+#if (Language == #french) or:[Language == #fr]
+comment  'Comme `motif'', avec des couleurs differentes'
+#endif
+

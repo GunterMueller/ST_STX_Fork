@@ -1,0 +1,92 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Help - Debugger Settings</Title>
+</HEAD>
+
+<BODY>
+
+<H1>Debugger Settings</H1>
+
+<H2><A NAME="INDEX">Help Index</A></H2>
+
+<UL>
+  <LI><A HREF="#NOTIFIER">Show Error Notifier</A>
+  <LI><A HREF="#VERBOSEBACKTRACE">Verbose Backtrace in Debugger</A>
+  <LI><A HREF="#HIDESUPPORTCODE">Hide Support Code (Implementation of Enumerations, Exceptions, etc.)</A>
+  <LI><A HREF="#USENEWLAYOUT">Use New Layout</A>
+  <LI><A HREF="#ALLOW_ERROR_REPORT">Allow Send of Error Reports from Debugger</A>
+</UL>
+<P>
+
+<HR>
+
+<H2><A NAME="NOTIFIER" HREF="#INDEX">Show Error Notifier (Before Opening a Debugger)</A></H2>
+
+Controls if, in case of an unhandled exception, the debugView
+should be opened immediately or instead, a notifier should come
+up asking the user.
+<BR>
+If turned on, an error notifier will be opened, which shows the top
+5 contexts of the calling chain and gives a chance of
+<VAR>proceeding</VAR>, <VAR>aborting</VAR> or <VAR>debugging</VAR>.
+<P>
+Developers might prefer the default, which is to go into the debugger
+immediately (saves another confirmation-click).
+
+
+<H2><A NAME="VERBOSEBACKTRACE" HREF="#INDEX">Verbose Backtrace in Debugger</A></H2>
+
+The debugView may show the context backtrace (i.e. the calling chain)
+either in a dense mode, where intermediate contexts (such as
+<CODE>"Block &#187; value"</CODE> and some other less
+interesting stuff) are hidden, or in verbose mode, where all contexts
+are shown.
+<P>
+This toggle controls the default, to be used by a debugView initially.
+<BR>
+(Notice, that the debugViews popUpMenu always allows the mode of to be
+changed later.)
+<P>
+Most people prefer the dense mode, which shows a less confusing, compact backtrace.
+
+
+<H2><A NAME="HIDESUPPORTCODE" HREF="#INDEX">Hide Support Code (Implementation of Enumerations, Exceptions, etc.)</A></H2>
+
+Similar to the above flag, the debugger will hide intermediate contexts,
+ which implement enumeration or exception handling or similar code.
+(in the collection and exception hierarchies).
+For example, when a method calls the "select:" method, intermediate contexts in the collection (such as do:) are skipped,
+and only the caller and the called block are shown.
+
+<P>
+Most people (especially beginners) prefer these contexts to be hidden.
+
+
+<H2><A NAME="USENEWLAYOUT" HREF="#INDEX">Use New Layout</A></H2>
+
+Toggles between the new layout (single-step buttons in the middle) and the old layout
+(buttons at the top).
+
+<H2><A NAME="ALLOW_ERROR_REPORT" HREF="#INDEX">Allow Send of Error Reports from Debugger</A></H2>
+
+Simply enables the debugger's "Report Error" menu items. This function will send a backtrace and
+exception information via email to exept, as a bug report.
+
+<P>
+<P>
+
+
+
+<HR>
+<P>
+<P>
+Copyright &copy;  Claus Gittinger Development & Consulting, all rights reserved
+<P>
+<P>
+
+<HR>
+Doc $Revision: 1.10 $ $Date: 2000/02/14 14:26:16 $
+
+</BODY>
+</HTML>

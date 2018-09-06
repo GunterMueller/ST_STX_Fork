@@ -1,0 +1,11 @@
+makefile
+.dependencies
+classList.stc
+.listOfSTfiles
+objbc
+MAKE0000.*
+*.STH
+objvc
+objmingw
+*.res
+*.c

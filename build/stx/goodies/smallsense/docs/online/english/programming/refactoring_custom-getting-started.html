@@ -1,0 +1,149 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - API for custom code generators and refactorings - getting started</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="refactoring_custom-installation.html">   <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="refactoring_custom.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="#">  <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>API for custom code generators and refactorings - getting started</H1>
+
+<p>
+This page describes how to create new code generator class.
+Further documentation can be found inside classes and methods comments.
+Existing code generator/refactoring classes has class (static) method "description"
+which should reveal the class purpose.
+</p>
+
+
+<h2>How to create new code generator class</h2>
+
+<p>
+Right-click somewhere in the class list within system browser and click
+on "Generate - Custom -&gt; New Code Generator". Insert some class name
+and click on Ok button. Now you should have new class created with generated
+method stubs containg "self shouldImplement".
+</p> 
+
+<h2>Implement required methods</h2>
+
+<p>
+Here we show a few examples how required methods can be implemented.
+Each method has documentation comment which describes its purpose.
+</p>
+
+<h3>Class (static) methods</h3>
+
+<pre class="code-snippet">
+label
+    "Returns show label describing the receiver. This label
+     is used in UI as menu item/tree item label."
+
+    ^ 'Mark class as abstract'
+    
+description
+    "Returns more detailed description of the receiver"
+
+    ^ 'Mark class as abstract (by implementing class method #isAbstract)'
+
+availableInContext:aCustomContext
+    "Returns true if the generator/refactoring is available in given
+     context, false otherwise.
+     
+     Called by the UI to figure out what generators / refactorings
+     are available at given point. See class CustomContext for details."
+
+    ^ aCustomContext selectedClasses notEmptyOrNil
+
+availableInPerspective:aCustomPerspective
+    "Returns true if the generator/refactoring is available in given
+     perspective, false otherwise.
+     
+     Called by the UI to figure out what generators / refactorings
+     to show"
+
+    "Allows to locate generator in class/method/package/... context sub-menu.
+    See class CustomPerspective and its subclasses."
+    ^ aCustomPerspective isClassPerspective
+</pre>
+
+<h3>Instance methods</h3>
+
+<pre class="code-snippet">
+buildInContext: aCustomContext
+    "Creates a method isAbstract for selected classes"
+    
+    | classes |
+
+    classes := aCustomContext selectedClasses.
+    classes do: [ :class |
+        | metaclass className |
+
+        metaclass := class theMetaclass.
+        className := class theNonMetaclass name.
+
+        (metaclass includesSelector: #isAbstract) ifFalse:[  
+            self compile: ('isAbstract
+    ^ self == %1' bindWith: className) forClass: metaclass inCategory: 'testing'
+        ].   
+    ]
+    
+configureInContext:aCustomContext
+    "Optional method which is called only in interactive mode.
+    Allows to open the dialog-box in which an user can enter custom values.
+    This particular dialog asks for test method name."
+
+    aCustomContext selectedMethods do:[:selectedMethod |
+        | selector |
+
+        selector := selectedMethod selector asSymbol.
+        (testMethodSelectors includesKey: selector) ifFalse: [ 
+            testMethodSelectors 
+                at: selector 
+                put: (self createTestMethodSelectorFor: selector).
+        ].
+
+        dialog 
+            addSelectorNameEntryOn:(DictionaryAdaptor new
+                                        subject:testMethodSelectors; 
+                                        aspect:selector)
+            labeled:selector asString
+            validateBy:nil.
+    ].
+
+    dialog addButtons.
+    dialog open.
+</pre>
+
+<h2>How to create new refactoring class</h2>
+
+<p>
+The process is same as described for code generator class, but you need to
+select "Generate -&gt; New Refactoring" in context menu instead.
+Code example below uses code expression replacements which is
+well documented in
+<a href="http://live.exept.de/doc/online/english/help/Browser/RBSearchPatterns.html">Code Search Patterns</a>.
+</p>
+
+<pre class="code-snippet">
+buildInContext: aCustomContext
+    "Performs a refactoring within given context scope.
+    This code replaces selected code in code editor with
+    translation call."
+
+    refactoryBuilder 
+          replace:'`@expression'
+          with:'(resources string: (`@expression))'
+          inContext:aCustomContext
+</pre>
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+
+</BODY>
+</HTML>

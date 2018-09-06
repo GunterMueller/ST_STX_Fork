@@ -1,0 +1,79 @@
+# $Header: /cvs/stx/stx/support/DLD/Make.proto,v 1.8 1999-09-24 10:37:28 cg Exp $
+#
+
+#--------- no need to modify anything below -------
+
+TOP=../..
+SUBDIRS=
+SUPPRESS_LOCAL_ABBREVS="yes"
+
+RCSSOURCES=Make.proto \
+	   dld-3.2.5/*.[ch] dld-3.2.5/COPYING dld-3.2.5/ChangeLog dld-3.2.5/Makefile.* \
+	   dld-3.2.5/README dld-3.2.5/TODO \
+	   dl-1.6/*.[ch] dl-1.6/*.man dl-1.6/Makefile.* dl-1.6/README
+
+LINKSOURCES=Make.proto
+
+all::
+	@-echo "*** nothing done here."
+	@-echo "*** must be done from top makefile (via SUPPORT_EXTRA_TARGETS)"
+
+clean::
+	@-if [ -d $(DLD_REL_DIR) ]; then      \
+	    (cd $(DLD_REL_DIR); rm -f *.o);   \
+	fi
+
+clobber::
+	@-if [ -d $(DLD_REL_DIR) ]; then        \
+	    (cd $(DLD_REL_DIR); rm -f *.o *.a); \
+	fi
+
+libdld:
+	-( cd $(DLD_REL_DIR); make -f $(MAKEFILE_DLD) CC="$(CC)" CFLAGS="$(DLD_CFLAGS)" )
+
+libbfd:
+	-(cd $(BFD_REL_DIR); make -f $(MAKEFILE_BFD) CC="$(CC)" CFLAGS="$(CFLAGS)" )
+
+#
+# 'manually' link these, since the Make.proto automatism stops here
+#
+doNFSTreeLink::
+	@-if [ -d $(NFSROOT)/$(RELPATH)/dld-3.2.5 ]; then \
+	    echo "  -> dld-3.2.5 ..."; \
+	    test -d dld-3.2.5 || mkdir dld-3.2.5;       \
+	    (cd dld-3.2.5 ; ln -s $(NFSROOT)/$(RELPATH)/dld-3.2.5/*.[ch] . 2> /dev/null);       \
+	    (cd dld-3.2.5 ; ln -s $(NFSROOT)/$(RELPATH)/dld-3.2.5/Make* . 2> /dev/null);        \
+	    (cd dld-3.2.5 ; ln -s $(NFSROOT)/$(RELPATH)/dld-3.2.5/READ* . 2> /dev/null);        \
+	fi
+	@-if [ -d $(NFSROOT)/$(RELPATH)/dl-1.6 ]; then \
+	    echo "  -> dl-1.6 ..."; \
+	    test -d dl-1.6 || mkdir dl-1.6; \
+	    (cd dl-1.6 ; ln -s $(NFSROOT)/$(RELPATH)/dl-1.6/*.[ch] . 2> /dev/null);     \
+	    (cd dl-1.6 ; ln -s $(NFSROOT)/$(RELPATH)/dl-1.6/Make* . 2> /dev/null);      \
+	    (cd dl-1.6 ; ln -s $(NFSROOT)/$(RELPATH)/dl-1.6/READ* . 2> /dev/null);      \
+	fi
+	@-if [ -d $(NFSROOT)/$(RELPATH)/binutils/bfd ]; then \
+	    echo "  -> binutils/bfd"; \
+	    test -d binutils || mkdir binutils; \
+	    (cd binutils; ln -s $(NFSROOT)/$(RELPATH)/binutils/config* . 2> /dev/null); \
+	    (cd binutils; ln -s $(NFSROOT)/$(RELPATH)/binutils/move-if-change . 2> /dev/null);  \
+	    (cd binutils; ln -s $(NFSROOT)/$(RELPATH)/binutils/Makefile.in . 2> /dev/null);     \
+	    (cd binutils; ln -s $(NFSROOT)/$(RELPATH)/binutils/include . 2> /dev/null); \
+	    test -d binutils/bfd || mkdir binutils/bfd; \
+	    (cd binutils/bfd; ln -s $(NFSROOT)/$(RELPATH)/binutils/bfd/*.[ch] . 2> /dev/null);  \
+	    (cd binutils/bfd; ln -s $(NFSROOT)/$(RELPATH)/binutils/bfd/config* . 2> /dev/null); \
+	    (cd binutils/bfd; ln -s $(NFSROOT)/$(RELPATH)/binutils/bfd/hosts . 2> /dev/null);   \
+	    (cd binutils/bfd; ln -s $(NFSROOT)/$(RELPATH)/binutils/bfd/Makefile.in . 2> /dev/null);     \
+	    (cd binutils/bfd; ln -s $(NFSROOT)/$(RELPATH)/binutils/bfd/VERSION . 2> /dev/null); \
+	    (cd binutils/bfd; cp $(NFSROOT)/$(RELPATH)/binutils/bfd/Makefile . ); \
+	    test -d binutils/libiberty || mkdir binutils/libiberty; \
+	    (cd binutils/libiberty; ln -s $(NFSROOT)/$(RELPATH)/binutils/libiberty/*.c . 2> /dev/null); \
+	    (cd binutils/libiberty; ln -s $(NFSROOT)/$(RELPATH)/binutils/libiberty/*.h . 2> /dev/null); \
+	    (cd binutils/libiberty; ln -s $(NFSROOT)/$(RELPATH)/binutils/libiberty/*.in . 2> /dev/null);        \
+	    (cd binutils/libiberty; ln -s $(NFSROOT)/$(RELPATH)/binutils/libiberty/config . 2> /dev/null);      \
+	    (cd binutils/libiberty; ln -s $(NFSROOT)/$(RELPATH)/binutils/libiberty/*.def . 2> /dev/null);       \
+	    (cd binutils/libiberty; cp $(NFSROOT)/$(RELPATH)/binutils/libiberty/Makefile . ); \
+	    (cd binutils/libiberty; cp $(NFSROOT)/$(RELPATH)/binutils/libiberty/config.table . ); \
+	    (cd binutils/libiberty; cp $(NFSROOT)/$(RELPATH)/binutils/libiberty/config . ); \
+	    (cd binutils; configure); \
+	fi

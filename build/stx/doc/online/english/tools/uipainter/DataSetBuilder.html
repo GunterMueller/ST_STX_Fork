@@ -1,0 +1,650 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+   <META NAME="Author" CONTENT="eXept software AG, Germany">
+   <TITLE>Using the Data Set Builder</TITLE>
+</HEAD>
+<BODY>
+<A HREF="TOP.html" NOPRINT><IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="Using the GUI Painter" NOSAVE HEIGHT=30 WIDTH=30></A><A HREF="../TOP.html" NOPRINT><IMG SRC="../../../icons/DocsUpArrow.gif" ALT="Programming Tools" NOSAVE HEIGHT=30 WIDTH=30></A><A HREF="ImageEditor.html" NOPRINT><IMG SRC="../../../icons/DocsRightArrow.gif" ALT="Using the Image Editor" NOSAVE HEIGHT=30 WIDTH=30></A>
+<BR>&nbsp;
+<HR ALIGN=LEFT WIDTH="100%">
+<H1>Using the Data Set Builder (Table Column Editor)</H1>
+
+<H2>Index</H2>
+
+<UL>
+<LI>
+<A HREF="#INTRO">Introduction</A></LI>
+
+<LI>
+<A HREF="#START">Starting the Data Set Builder</A></LI>
+
+<LI>
+<A HREF="#TOOLBAR">Functions of the Data Set Builder</A></LI>
+
+<LI>
+<A HREF="#SPEC">Editing a Column</A></LI>
+
+<LI>
+<A HREF="#FORMATSTRINGS">Format Strings</A></LI>
+
+</UL>
+
+<H2><HR ALIGN=LEFT WIDTH="100%"></H2>
+
+<H2><A NAME="INTRO"></A>Introduction</H2>
+The Data Set Builder of <I>ST/X</I> allows you to edit or modify a table description which is used by
+the table view. The table view has a list of rows whereby each row contains a number of cells. A cell is
+specified by its column description.
+
+<BR>A column is an object which is obligated
+to provide all the functionality defined through to the table description. For each column
+the user is able to define its behavior and visibility. The editor also provides a <I>Code Generator</I>
+to create a Row class which implements the columns description and their default code.
+
+<P>The Data Set Builder generates a resource method of the table specification
+in the category <I>tableColumns specs</I> of the class protocol, which returns
+a symbolic representation (literal array) of the table components and their
+behavior. The table methods are invoked by the <TT>UIBuilder</TT>
+when the application's window is created for those widgets which define
+a table aspect.
+
+<H2><HR ALIGN=LEFT WIDTH="100%"></H2>
+
+<H2><A NAME="START"></A>Starting the Data Set Builder</H2>
+Typically, a data set builder is opened from the UIPainter, by clicking on the "Table Column Editor" button
+in a DataSetViews "Basics" attribute page.
+However, it can also be opened
+<UL>
+<LI>
+by double-clicking in a <A HREF="../sbrowser/TOP.html">System Browser</A>
+on a resource
+method&nbsp;(<IMG SRC="../../../pictures/TableColumnsIcon.gif" ALT="An icon representing a table resource method" NOSAVE HEIGHT=11 WIDTH=13>)
+containing a table specification</LI>
+
+<LI>
+by evaluating one of</LI>
+
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<TT>DataSetBuilder open</TT>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<TT>DataSetBuilder openOnClass:</TT><I>anApplicationClass</I> <TT>andSelector:</TT><I>aMenuSelector</I></UL>
+&nbsp;After startup, a Data Set Builder appears as shown in next figure:
+
+<P><IMG SRC="../../../pictures/DataSetBuilder.gif" ALT="A View of a Data Set Builder" NOSAVE HEIGHT=430 WIDTH=590>
+
+
+<H2><HR ALIGN=LEFT WIDTH="100%"></H2>
+
+<H2><A NAME="TOOLBAR"></A>Functions of the Data Set Builder</H2>
+The Data Set Builder offers all functions for loading, saving, and modifying
+table specifications. The basic functions can be accessed both by the menu
+and the tool bar. The basic functions are as follows:
+<BR>&nbsp;
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFFFFF" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP BGCOLOR="#FFCC00" NOSAVE>
+<TD NOSAVE><B><FONT SIZE=+1>Menu</FONT></B></TD>
+<TD><B><FONT SIZE=+1>Button</FONT></B></TD>
+<TD><B><FONT SIZE=+1>Description</FONT></B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>File/Load</I></TD>
+<TD><IMG SRC="../../../pictures/NewButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+<TD>Discard all changes and continue with a new
+<BR>empty table description.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>File/Load</I></TD>
+<TD><IMG SRC="../../../pictures/LoadButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+<TD>Opens a dialog to load a table spec from a class.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>File/Save</I></TD>
+<TD><IMG SRC="../../../pictures/SaveButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+<TD>Saves the current table spec.&nbsp;</TD>
+</TR>
+
+<TR NOSAVE>
+<TD COLSPAN="3" NOSAVE></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Edit/Cut</I></TD>
+<TD><IMG SRC="../../../pictures/CutButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+<TD>Cuts the selected column(s) and places it to the clipboard.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Edit/Copy</I></TD>
+<TD><IMG SRC="../../../pictures/CopyButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+<TD NOSAVE>Copies the selected column(s) to the clipboard.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Edit/Paste</I></TD>
+<TD><IMG SRC="../../../pictures/PasteButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+<TD>Pastes the contents of the clipboard.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Edit/Delete</I></TD>
+<TD><IMG SRC="../../../pictures/DeleteButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+<TD>Deletes the selected column(s) without placing
+<BR>it into the clipboard.</TD>
+</TR>
+
+
+<TR NOSAVE>
+<TD COLSPAN="3" NOSAVE></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Edit/Move Up</I></TD>
+<TD><IMG SRC="../../../pictures/MoveUpButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+<TD>Moves the selected column one step up.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Edit/Move Down</I></TD>
+<TD><IMG SRC="../../../pictures/MoveDownButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+<TD>Moves the selected column one step down.&nbsp;</TD>
+</TR>
+
+<TR NOSAVE>
+<TD COLSPAN="3" NOSAVE></TD>
+</TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Add/New Column</I></TD>
+<TD><IMG SRC="../../../pictures/DataSetColumnNew.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+<TD>Adds a new column after the current selected column.&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<BR>&nbsp;
+<BR>Further, there are additional functions from the menu:
+<BR>&nbsp;
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFFFFF" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1><I>File</I> Menu</FONT></B></TD>
+<TD BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1>Description</FONT></B></TD>
+</TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Save As</I></TD>
+<TD>Opens a dialog to select a class and selector in order to save
+<BR>the current table spec.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Pick Columns...</I></TD>
+<TD>Changes the cursor to cross hair for moving it over another table view to
+<BR>load its table spec.&nbsp;</TD>
+</TR>
+
+<TR>
+<TD><I>Exit</I></TD>
+<TD>Exits the Data Set Builder.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+
+
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFFFFF" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1><I>Generate</I> Menu</FONT></B></TD>
+<TD BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1>Description</FONT></B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Define Row Class...</I></TD>
+<TD>Opens a dialog to define the Row class which will implement
+<BR>all methods derived from the table spec.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Browse Row Class</I></TD>
+<TD>Opens a System Browser on the Row class.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Browse Class</I></TD>
+<TD>Opens a System Browser on the application class.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Generate Code</I></TD>
+<TD>Generates and installs code in the Row class.</TD>
+</TR>
+
+
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFFFFF" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1><I>History</I> Menu</FONT></B></TD>
+<TD BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1>Description</FONT></B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>...</I></TD>
+<TD>Switch to a table spec derived from the history of previous loaded specs.&nbsp;</TD>
+</TR>
+
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+
+
+<BR>The editing of the table and its column's is described in the next chapter.
+
+<H2><HR ALIGN=LEFT WIDTH="100%"></H2>
+
+<H2><A NAME="SPEC"></A>Editing a Column</H2>
+
+<P>After creating or loading a table specification the columns are displayed
+on the left and top side of the Data Set Builder. To see or modify the specification
+of a specific column, click on that column.
+<BR><BR>There are 6 categories for which you can change the behavior of a column.
+<UL>
+<LI>
+<B><FONT SIZE=+1>Basics</FONT></B></LI>
+
+<BR>&nbsp;
+<BR>Headline:
+<BR>&nbsp;
+
+<TABLE BORDER WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>ID</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Unique identifier of the column (optional).</B>&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Label</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>The label of the headline.</B>&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Font</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Set the font of the headline (optional).</B>
+<BR>On default the font derives from the table view.&nbsp;</TD>
+</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Type</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Define the visual renderer of the headline.</B>&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Align</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Adjust the label left, right or center</B>.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Label Is Image</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off label access (optional).</B>
+<BR>If on, the label is actually a selector which is performed on
+<BR>the application to access the drawable label.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Translate Label</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off label translation behavior (optional).</B>
+<BR>Translate the label via the application classes resource file
+<BR>(i.e. national strings).&nbsp;</TD>
+</TR>
+
+</TABLE>
+
+<BR>Cell Type:
+<BR>&nbsp;
+
+<TABLE BORDER WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Visual renderer</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Visual renderer used in none editing mode.</B>&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Editor</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Define the editor of the cell</B>
+<BR>Editor opened on the cell. If <I>None</I> is
+selected, the cell is readonly.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Align</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Adjust the label left, right or center.</B>&nbsp;</TD>
+</TR>
+
+</TABLE>
+
+<BR>&nbsp;
+<LI>
+<B><FONT SIZE=+1>Values:</FONT></B></LI>
+<BR>&nbsp;
+
+<BR>Value Selectors:
+<BR>&nbsp;
+
+<TABLE BORDER WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Read</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Method invoked to get the value.</B>
+<BR>The value returned is set to the editing model and
+<BR>in case that the <I>Print</I> selector is unspecified used for drawing.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Write</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Method invoked to write back the value from the editing model.</B>
+<BR>required if an editor is defined (see <I>Editor</I>).&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Converter</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Method invoked to get a type converter on the editing model (optional).</B>
+&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Print</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Method invoked to get the drawable value. (optional)</B>
+<BR>Returns the label to be displayed, a string, a collection of strings or a bitmap.
+<BR>If the selector is unspecified, the value of the invoked <I>Read</I> selector is displayed.&nbsp;</TD>
+</TR>
+
+</TABLE>
+
+<BR>Menu:
+<BR>&nbsp;
+
+<TABLE BORDER WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Selector</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Method invoked to get the menu for the clicked cell (optional).</B>
+<BR>If the method is unspecified or returns nil, the application will be asked for the menu.&nbsp;</TD>
+</TR>
+
+</TABLE>
+
+<BR>Combo List/Box Selectors:
+<BR>&nbsp;
+
+<TABLE BORDER WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Choices</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Method invoked to retrieve the list of choices (optional).</B>
+<BR>Returns the list used by the ComboList or ComboBox (see Editor-Type).&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Editable</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Method invoked for ComboBoxes only (optional).</B>
+<BR>Turn on/off that the input field of the ComboBox is editable. &nbsp;</TD>
+</TR>
+
+</TABLE>
+
+
+<BR>&nbsp;
+<LI>
+<B><FONT SIZE=+1>Format:</FONT></B></LI>
+<BR>&nbsp;
+
+<TABLE BORDER WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Input Type</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Specified type converter used by the input field (optional).</B>&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Max Size</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Maximum size of the string which can be typed into the editor field (optional).</B>&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Text Format</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Format string specifying the output format of the cell text (optional).</B>&nbsp;</TD>
+</TR>
+
+</TABLE>
+<P>
+<H3><A NAME="FORMATSTRINGS">Format Strings</A></H3>
+Useful format strings are:
+<TABLE BORDER>
+<TR><TD>Class</TD><TD>Format</TD><TD>Comment</TD><TD>More Info</TD></TR>
+<TR><TD>Numbers</TD><TD>%&lt;n&gt;d</TD><TD>C-Printf style decimal format</TD><TD>see C-language printf<BR>or CharacterArray printf_printArgFrom:to:withData:</TD></TR>
+<TR><TD> </TD><TD>%&lt;n&gt;x</TD><TD>C-Printf style hex format</TD></TR>
+<TR><TD> </TD><TD>%&lt;n&gt;.&lt;m&gt;f</TD><TD>C-Printf style float format</TD></TR>
+<TR><TD> </TD><TD>%&lt;n&gt;.&lt;m&gt;f</TD><TD>C-Printf style float format</TD></TR>
+<TR></TR>
+<TR><TD>Time</TD><TD>%h:%m:%s</TD><TD>Hour, minute, seconds</TD><TD>AbstractTime printFormatDocumentation</TD></TR>
+<TR></TR>
+<TR><TD>Date</TD><TD>%day:%month:%year</TD><TD>Day, Month, Year</TD><TD>AbstractTime printFormatDocumentation</TD></TR>
+</TABLE>
+
+<P>
+<LI>
+<B><FONT SIZE=+1>Selection:</FONT></B></LI>
+<BR>&nbsp;
+
+<BR>Headline:
+<BR>&nbsp;
+
+<TABLE BORDER WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Selector</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Message invoked if the headline was clicked (optional).</B>&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Argument</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>optional argument to the click on headline method (optional).</B>&nbsp;</TD>
+</TR>
+
+</TABLE>
+
+<BR>Cell:
+<BR>&nbsp;
+
+<TABLE BORDER WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Is Selectable</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that all cells in a column are selectable</B>.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Selector</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Message invoked during selecting a cell (optional).</B>
+<BR>Turns on/off the selectability for a specific cell.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Show Selection HighLightened</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Message invoked during drawing a selected cell (optional).</B>
+<BR>Turns on/off the highligthing for a specific selected cell.&nbsp;</TD>
+</TR>
+
+</TABLE>
+
+<BR>Double Click Action:
+<BR>&nbsp;
+
+<TABLE BORDER WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Selector</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Message invoked on double click (optional).</B>
+<BR>name of the message which will be invoked whenever the user double
+<BR>clicks on the cell. If no method is specified, the application might
+<BR>be informed through to the double click action of the table widget.
+</TR>
+
+</TABLE>
+
+
+
+<BR>&nbsp;
+<LI>
+<B><FONT SIZE=+1>Frame:</FONT></B></LI>
+<BR>&nbsp;
+
+<BR>Separators:
+<BR>&nbsp;
+
+<TABLE BORDER WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Show Row Separator</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off the visibility of the horizontal cell separator.</B>&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Selector</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Message invoked during drawing a cell (optional).</B>
+<BR>Turns on/off the visibility of the horizontal cell separator for the specific cell.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Show Column Separator</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off the visibility of the vertical cell separator.</B>&nbsp;</TD>
+</TR>
+
+</TABLE>
+
+<BR>Dimensions:
+<BR>&nbsp;
+
+<TABLE BORDER WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Column Width</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Set an absolute or relative width (optional).</B>
+<BR>On default the width of the cells is computed by their drawable values.
+&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Minimum Width</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Minimum required width measured in pixels (optional).</B>
+<BR>Only visible if the <I>Column Width</I> is unspecified.
+&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Row Height</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Set the absolute height of the cell (optional).</B>
+<BR>On default the height of the cells is computed by their drawable values.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Compute Width From Items</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turn on/off the automatic width computing.</B>
+<BR>If on, the required <I>Column Width</I> will be ignorred.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Is Resizeable</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turn on/off the resizeability of a column.</B>
+<BR>If on, the user can resize the column by moving
+<BR>he mouse on the separator at the headline.
+&nbsp;</TD>
+</TR>
+
+</TABLE>
+
+
+
+
+
+
+<BR>&nbsp;
+<LI>
+<B><FONT SIZE=+1>Colors:</FONT></B></LI>
+<BR>&nbsp;
+
+<BR>Headline:
+<BR>&nbsp;
+
+<TABLE BORDER WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Foreground</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Define the foreground color of the headline</B>
+<BR>If no color is specified, the used foreground color derives from the style sheet.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Background</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Define the background color of the headline</B>
+<BR>If no color is specified, the used background color derives from the style sheet.&nbsp;</TD>
+</TR>
+
+</TABLE>
+
+<BR>Cell:
+<BR>&nbsp;
+
+<TABLE BORDER WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Foreground</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Define the foreground color for all cells in the column</B>
+<BR>If no color is specified, the used foreground color derives from the style sheet.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Background</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Define the background color for all cells in the column</B>
+<BR>If no color is specified, the used background color derives from the style sheet.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>FG-Selector</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Message invoked during drawing a cell (optional).</B>
+<BR>Returns the foreground color for a specific cell. If the method
+<BR>is unspecified or returns nil, the default foreground color is used.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>BG-Selector</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Message invoked during drawing a cell (optional).</B>
+<BR>Returns the background color for a specific cell. If the method
+<BR>is unspecified or returns nil, the default background color is used.&nbsp;</TD>
+</TR>
+
+</TABLE>
+
+
+&nbsp;
+</UL>
+<HR>
+
+<P><IMG SRC="../../../icons/stx.gif" ALT="[stx-logo]" NOSAVE NOPRINT HEIGHT=48 WIDTH=47 ALIGN=CENTER>
+<BR><TT>Copyright &copy; 1998 eXept Software AG, all rights reserved</TT>
+<BR>
+<HR>
+</BODY>
+</HTML>

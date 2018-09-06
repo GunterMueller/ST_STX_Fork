@@ -1,0 +1,11 @@
+LIBRARY         libbasic3
+DESCRIPTION     'Smalltalk/X Basic classes 3'
+VERSION         3.5
+CODE            EXECUTE READ SHARED
+DATA            READ WRITE
+SECTIONS
+    INITCODE    READ EXECUTE SHARED
+    INITDATA    READ WRITE
+    RODATA      READ SHARED
+EXPORTS 
+    _libbasic3_Init

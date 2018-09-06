@@ -1,0 +1,910 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Smalltalk Performance</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="constraintSolver.html">     <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="GC.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Smalltalk Performance - Myths and Facts</H1>
+
+  This document should clearify some myths about Smalltalk performance.
+
+<P>
+
+<H2>Contents</H2>
+
+<UL>
+  <LI><A HREF="#INTRO" NAME="I_INTRO">Introduction</A>
+  <LI><A HREF="#PART1" NAME="I_PART1">Part1 - Micro Benchmarks</A>
+    <UL>
+      <LI><A HREF="#SENDSPEED" NAME=I_SENDSPEED">Message send speed</A>
+      <LI><A HREF="#MEMORYSPEED" NAME=I_MEMORYSPEED">Memory management speed</A>
+      <LI><A HREF="#GRAPHICSPEED" NAME=I_GRAPHICSPEED">Graphic display speed</A>
+    </UL>
+<P>
+  <LI><A HREF="#PART2" NAME="I_PART2">Part2 - Medium Level Benchmarks</A>
+    <UL>
+      <LI><A HREF="#ARRAYLIST" NAME=I_ARRAYLIST">ArrayList/OrderedCollection speed</A>
+      <LI><A HREF="#HASHTABLE" NAME=I_HASHTABLE">Hashtable vs. Dictionary</A>
+      <LI><A HREF="#SUMMARY" NAME=I_SUMMARY">Summary</A>
+    </UL>
+<P>
+  <LI><A HREF="#GRAPHICSPEED" NAME="I_GRAPHICSPEED">Graphic Display Speed</A>
+</UL>
+
+<H2><A HREF="#I_INTRO" NAME="INTRO">Introduction</A></H2>
+
+  Historically, Smalltalk was considered to be a programming language
+  with lots of internal overhead, leading to slow programs.
+<BR>
+  I think most of those are myths and held by peole who do not really knwo what
+  they are talking about.
+  This document should give you some background facts to at least base
+  the discussion on up-to-date facts.
+<P>
+  It is NOT (I repeat: NOT) meant to start another language war;
+  however, those who like these wars should at least base the discussion upon
+  facts instead of rumors ..
+<P>
+  Please: Leave me alone in such a language war - its a waste of time.
+
+<P>
+  Although the following concentrates on performance,
+  there are many other things beside raw speed to consider:
+<UL>
+<LI>does the system support or hinder the programmer in getting his work done
+<LI>how much of her time spends a programmer with tasks NOT related to the problem
+(i.e. writing low level code, such as linkedlist implementations, memory management functions,
+hashing functions, collection search loops, sorting functions etc.)
+<LI>how often is he <CITE>``reinventing the wheel''</CITE>
+(i.e. does the system really support code reuse)
+<LI>how much time is spent debugging; what is the average time to repair a bug
+<LI>... many more, not listed here; add your own
+</UL>
+
+
+
+<H2>Speed comparison with other languages - does it make sense ?</H2>
+
+Comparing programming languages is hard to do;
+especially, comparing Smalltalk to non object oriented languages (C)
+rarely makes sense.
+<BR>
+(Remember the times when Pascal or C came up first - remember the language wars
+ between Assembler lovers and C freaks ?)
+<P>
+  It may be better to compare Smalltalk to other object oriented languages, such
+  as Java, C++, Ada9x, CLOS or Eiffel - to name a few.
+<P>
+  If comparing C programs, a programming technique similar to that used in
+  object oriented languages should be used - for example, by simulating message sends
+  by indirect function calls (btw: this is how C++ does it).
+<P>
+  For a real comparison, a full application should be written in the various
+  languages, and its performance be judged.
+<BR>
+  MicroBenchmarks which concentrate on a single feature or language construct,
+  are seldom directly related to the overall speed.
+<BR>
+  However, without them, reproducable
+  measurements are difficult to acquire;
+  therefore,
+  you will see some microBenchmarks in the following chapters.
+
+
+
+<H2><A HREF="#I_PART1" NAME="PART1">Part1 - Micro Benchmarks</A></H2>
+
+<H2><A HREF="#I_SENDSPEED" NAME="SENDSPEED">Message send speed</A></H2>
+
+  At first, people tend to think that message lookup
+  is too slow, and that systems which do <VAR>runtime method lookup</VAR>
+  cannot be fast (by definition).
+<P>
+  This is definitely no longer true with modern Smalltalk implementations,
+  which heavily use caching to avoid most lookup operations.
+  Especially, with the help of
+  inline caching (see <A HREF=../overview/literature.html#[5]>Unger [5]</A>), most message sends are reduced to an indirect
+  function call and an additional compare instruction.
+<BR>
+  As shown below, caching reduces Smalltalk's message send speed
+  to roughly the speed of
+  (compile-time resolved) virtual function calls in C++ or indirect function calls in C.
+<P>
+  We acknowledge the fact that a direct function call is still faster than
+  an indirect one - therefore, the speed of C function calls,
+  C++ non-virtual function calls
+  (or even: inline code) can never be reached in Smalltalk
+  (which is not completely true: read documentation on the Self language).
+<BR>
+  However, once we abandon message sends, we are leaving the object oriented
+  arena - even C++ fans come to the insight that - for flexibility &amp; reuse -
+  most functions should be virtual functions
+  (some must be for proper operation to be guaranteed - which may make things
+   a bit tricky occasionally).
+
+<P>
+  The Benchmark:
+<BR>
+  Although originally written to benchmark function calling speed in lisp systems,
+  the <CITE>tak</CITE> benchmark results are also a good indicator for non polymorph
+  message send speed.
+<BR>
+  The tak function (or method) calls itself recursively; except for a bit of
+  integer arithmetic (subtracting the constant `one'),
+  all it does is function calling / message sending.
+<BR>
+  When executed, it is recursively invoked 63609 times and performs 47706 subtract operations.
+<P>
+The following table lists some execution times.
+<BR>
+  BTW: It is interesting to see, that modern systems are far better
+  than systems we used to work on a few years ago ...
+<BR>
+  ... and considered them to be fast at those times ;-).
+<BR>
+  So, today, interpreted Smalltalk on a low price PC is more than 3 times faster
+  than compiled C on a much more expensive Vax 11/780.
+
+<CODE><PRE>
+   System               Language                       Time (ms)      Notes
+
+   VAX  11/750          Franz Lisp (slowest)           47600          generic arithmetic
+   VAX  11/750          PSL (portable std. Lisp)        7100          generic arithmetic
+   VAX  11/750          Franz Lisp                      3600          fixnum arithmetic
+   Symbolics LM2        Lisp                            2905
+   VAX  11/750          C                               2400
+   68k                  C                               1900          unknown clock; probably 8Mhz
+   VAX  11/750          Franz Lisp (best)               1900          fixnum arithmetic (lfc)
+   VAX  11/750          PSL (portable std. Lisp)        1400          inum arithmetic
+   VAX  11/780          C                               1350
+   VAX  11/780          Franz Lisp                      1100          fixnum arithmetic (lfc)
+   68k                  Assembler                        700          unknown clock; probably 8Mhz
+   Dorado               Interlisp                        526
+   LMI Lambda           microcompiled Lisp               450
+   Symbolics 3600       Lisp                             430
+   i586/100             ST/X interpreted bytecode        376          (*)
+   i586/100             ST/X compiled (-O) (Float args)  167          (**)
+   i586/100             ST/X compiled                     55          (*)
+   Cray-1               PSL (portable std. Lisp)          44
+   i586/100             ST/X compiled (-O)                32          (*)
+   i586/100             ST/X JIT compiled bytecode        31          (*)
+   i586/100             ST/X compiled (-O +optContext)    30          (***)
+   i586/100             C (gcc2.6.3)                      26.9        (*) double version
+   i586/100             C++ (gcc2.6.3)                    26.7        (*)
+   i586/100             C (gcc2.6.3 -O)                   23.8        (*) double version
+   i586/100             C++ (gcc2.6.3 -O)                 21.87       (*)
+   i586/100             C (gcc2.6.3)                      15.5        (*)
+   i586/100             C (gcc2.6.3 -O)                   12          (*)
+   P3/700               ST/X JIT compiled bytecode        4.6         (*)
+
+</PRE></CODE>
+<BLOCKQUOTE>
+(*)  Except for the times marked as (*), the numbers are taken from:
+<BR>
+   <CITE>``Performance and Evaluation of Lisp Systems</CITE>'', by Richard P Gabriel, MIT Press
+<P>
+(**) You cannot do this on inum/fixnum arithmetic Lisps; you have to write a separate
+	function (virtual function) in C/C++ in order to support double args.
+<P>
+(***) <CODE>+optContext</CODE> generates code where
+the full debugging information (i.e. context chain) is available as usual, but the machines full
+register set is not saved with every method invokation. The consequence is that
+methods are not restartable in the debugger (they are abortable &amp; interruptable, though)
+</BLOCKQUOTE>
+
+
+<P>
+Now that is interesting: although this little program does almost nothing else
+than message sending (there is a tiny bit of arithmetic), the Smalltalk speed is about
+2.5 times slower (30ms vs. 12ms) than that of C (on the i586).
+<BR>
+C is almost twice as fast as C++ (which also has to perform an indirect function call),
+but Smalltalk is only about 30% slower than C++ (for reasons described below).
+<P>
+Times are achanging: today, ST/X on a Pentium is faster than compiled lisp on a Cray-1
+used to be a few years ago :-))
+<BR>
+[big smily here; I don't know any details about the PSL implementation].
+<P>
+
+
+
+The ST/X compiler does a bunch of optimizations in order to reduce most overhead;
+the remaining difference in execution time is probably not related to
+message sending, but instead due to:
+
+<UL>
+
+<LI>context chain management
+<BR>
+In order to be able to interrupt the program at any time, AND show useful information
+in the debugger, some context information has to be kept.
+<BR>
+This requires a few additional instructions to be executed upon entry to a method.
+<BR>
+Other systems keep this information outside of the program
+(typically in a symbol table) and use an external symbolic debugger to present
+this to the user.
+<P>
+
+<LI>arithmetic range &amp; overflow check and polymorph arithmetic
+<BR>
+The Smalltalk code has to be prepared for arguments being nonIntegers or arithmetic
+to leave the range of valid integers (in the subtract operation) .
+<BR>
+Notice, that the Smalltalk
+code also works (unchanged) if executed with float or fractional arguments
+(actually, with anything that understands arithmetic messages).
+<BR>
+This requires a type check and overflow check to be performed for all arithmetic on
+arguments or other variables, of which the compiler cannot determine the range of possibe values.
+<BR>
+These checks add a few instructions to every arithmetic operation;
+in a benchmark which only consists of sends and subtracts,
+the percentage of this overhead is obviously larger than in more complex operations.
+
+<P>
+For example, try:
+"<CODE>TakBenchmark takX:18.0 Y:12.0 Z:6.0</CODE>"
+<BR>
+The execution time of this is listed as <CITE>``Float args''</CITE> in the above list.
+Notice, that this heavily allocates float objects - the increased execution time is mostly
+due to the allocation of them.
+<BR>
+The execution times of a corresponding C version (using doubles instead of ints) is listed in
+the table as <CITE>double version</CITE>
+<P>
+
+<LI>interruptability
+<BR>
+The Smalltalk code is prepared to execute in a multithreaded environment, and
+is interruptable, suspendable, restartable &amp; resumable. This may not seem obvious at first
+sight, but implies certain restrictions on the generated code.
+<BR>
+For example, interrupts have to be remembered, and shortly after handled at <VAR>safe</VAR> places
+in the code (by software checking for any pending interrupts).
+<BR>
+Many other systems (C, C++) do not support this (if not carefully coded by the programemr),
+and their memory management (especially: instantiation &amp; freeing)
+is often not threadSafe or interruptSafe.
+<BR>
+(try <CODE>new()</CODE> in a signal handler, which interrupted another <CODE>new()</CODE>)
+<BR>
+Turning off  method restartablility saves some 8-10% of method invokation overhead;
+the ST/X compiler offers this as an option.
+</UL>
+
+
+
+<H3>Summary: Message send speed myth</H3>
+
+From the above, it should be clear that message sends are NOT critical in most situations.
+<BR>
+I admit, that above example is a special case, were ST/X's caches work best.
+Things look a bit different, if sends are highly polymorph at the calling side.
+<BR>
+However, statistics showed that these polymorph sends are rather uncommon,
+and polymorph messages are handled by another cache which
+provides adequate speed for those as well (although not as fast as the inline cache).
+
+<P>
+<H3>Benchmark code</H3>
+
+
+For those who want to measure this on their own machine, here is the code:
+<BR>
+<HR>
+C implementation:
+<PRE><CODE>
+main() {
+    int i;
+
+    for (i=0; i&lt;1000; i++) {
+	tak(18, 12, 6);
+    }
+}
+
+tak(x, y, z) {
+    if (y >= x) return z;
+    return
+	tak(
+	    tak(x-1, y, z),
+	    tak(y-1, z, x),
+	    tak(z-1, x, y));
+}
+</CODE></PRE>
+(execute it with <CODE>"time a.out"</CODE> and divide the resulting time by 1000)
+
+<P>
+<HR>
+C++ implementation:
+<PRE><CODE>
+class Tak {
+    public :
+	Tak () { }
+	~Tak () { }
+
+	virtual int tak ( int x, int y, int z );
+};
+
+int Tak::tak ( int x, int y, int z )
+{
+    if (y >= x) return z;
+
+    return
+	tak(
+	    tak(x-1, y, z),
+	    tak(y-1, z, x),
+	    tak(z-1, x, y));
+}
+
+main() {
+    Tak p;
+
+    for (int i=0; i&lt;1000; i++) {
+	p.tak(18, 12, 6);
+    }
+}
+</CODE></PRE>
+(execute it with <CODE>"time a.out"</CODE> and divide the resulting time by 1000)
+
+<P>
+<HR>
+Lisp implementation:
+<PRE><CODE>
+(define tak (x y z)
+	(if (not (&lt; y z))
+		z
+		(tak (tak (1- x) y z)
+		     (tak (1- y) z x)
+		     (tak (1- z) x y))))
+
+
+(tak 18 12 6)
+</CODE></PRE>
+
+<P>
+<HR>
+Smalltalk implementation:
+<PRE><CODE>
+!TakBenchmark class methodsFor:'benchmarking'!
+
+takX:x Y:y Z:z
+    y &lt; x ifFalse:[
+	^ z
+    ] ifTrue:[
+	^ self
+	      takX: (self takX:(x - 1) Y:y Z:z)
+		 Y: (self takX:(y - 1) Y:z Z:x)
+		 Z: (self takX:(z - 1) Y:x Z:y)
+    ]
+
+    "
+      Time millisecondsToRun:[
+	 TakBenchmark takX:18 Y:12 Z:6
+      ]
+    "
+    "On a fast machine:
+      (Time millisecondsToRun:[
+	 100 timesRepeat:
+	    [ TakBenchmark takX:18 Y:12 Z:6 ]
+      ]) / 100.0
+    "
+</CODE></PRE>
+
+
+
+
+<H2><A HREF="#I_MEMORYSPEED" NAME="MEMORYSPEED">Memory management speed</A></H2>
+
+Second-most to its runtime method lookup, Smalltalk used to be blamed for its
+automatic memory management.
+(no longer - with the arrival of Java and C#, this discussion has now ceased.
+It seems that most opponents simply did not know what they were talking about...
+... some of them are now even actively promoting garbage collection (sigh).
+
+<BR>
+The following microBenchmark was written to especially stress the memory system.
+
+<P>
+
+The Benchmark:
+<BR>
+The benchmark builds up a linked list consisting of 1000 elements, and frees
+them afterwards. The benchmark is executed 1000 times, for a total of 1 million
+created elements. Each created element has a size of (at least) 8 bytes.
+<P>
+Notice, that in C++ and Smalltalk, the actual size of the allocated objects is bigger,
+in C++, there is a need to store a reference to the virtual function table (at least),
+bringing the overall memory usage to (at least) 12Mb.
+<P>
+Depending on the internals of the underlying <CODE>malloc() / free()</CODE> algorithm,
+additional (invisible) allocation overhead can be expected both in C and C++.
+<P>
+In Smalltalk, every object includes a header containing its size, class and additional information;
+the headers size is 12 bytes. The header includes all required information (i.e. there is no other hidden
+allocation overhead).
+Therefore, an overall of 20Mb is allocated in the ST/X run.
+<P>
+Notice also, that no freeing of the objects is required in Smalltalk - the system does this
+automatically for you.
+During the run, several garbage collects occur in Smalltalk - the execution time
+includes those.
+
+<P>
+This is a very artifical benchmark, but probably the shortest and easiest way to
+built some dynamic structure and release it afterwards. In other words:
+probably the shortest way to measure the memory management system alone.
+<BR>
+In real world systems, much more would be done - especially, the created elements
+would be initialized ...
+<P>
+
+Here are some execution times (all done on the same system, using the same gcc compiler):
+<CODE><PRE>
+   System               Language                   Time (ms)
+
+   i586                 ST/X interpreted           10702
+   i586                 C++ (gcc2.6.3)              3500
+   i586                 C++ (gcc2.6.3) virtual      3490
+   i586                 C++ (gcc2.6.3) inline       3005
+   i586                 C++ (gcc2.6.3 -O6) virtual  2850
+   i586                 C++ (gcc2.6.3 -O6)          2840
+   i586                 C++ (gcc2.6.3 -O6) inline   2490  (-O6 slower than -O; how comes this ?)
+   i586                 ST/X JIT compiled bytecode  2467
+   i586                 C++ (gcc2.6.3 -O)           2460
+   i586                 C++ (gcc2.6.3 -O) inline    2460
+   i586                 ST/X compiled               2224
+   i586                 ST/X compiled (-O6)         2042
+   i586                 C (gcc2.6.3)                1770
+   i586                 C (gcc2.6.3 -O)             1670
+   i586                 C (gcc2.6.3 -O6)            1620
+</PRE></CODE>
+(inline) - means: compile with -DINLINE
+<P>
+
+<H3>Summary: Memory management speed</H3>
+
+Well, I guess the above should clearify things.
+<BR>
+In this particular benchmark, ST/X's memory manager is faster than the C++ version
+AND includes automatic memory reclamation.
+<P>
+To be fair, I have to admit that these numbers are only valid for short term
+memory - memory which survives for a long time (i.e. finds its way into a higher
+generation of the memory hierarchy) is slower reclaimed.
+<BR>
+However, in practice, most of the allocated objects are reclaimed shortly
+after allocation, so the above results should be true for most real world applications.
+<P>
+Most Smalltalk implementations allow further tuning / adjustment of the allocation policy
+parameters, to give hints about abnormal allocation behavior to the memory management.
+The above numbers were taken with a default setup (system adjusts its parameters itself)
+<P>
+For example, changing a single parameter in ST/X's memory policy (newSpaceSize)
+can further reduce the execution time (down to 1845),
+which is almost the C speed.
+<BR>
+We do not recommend doing this (because it has effects on other parts of the system,
+especially affecting real time response),
+but it shows that there is much more to understanding automatic memory management systems.
+
+<P>
+On the other hand: in real world applications, mechanisms based upon <CODE>malloc()/free()</CODE> may
+suffer from their own problems which are not shown by this simple benchmark:
+<UL>
+<LI>
+If freeLists are used internally, there may be increased overhead when searching for free
+chunks, or when merging chunks while freeing a piece of memory.
+<P>
+<LI>
+Buddy systems tend to waste more than the above mentioned 4 bytes.
+<P>
+<LI>
+All of them may fragment their memory, again leading to waste of memory.
+It may be interesting to measure things with randomly sized objects.
+<P>
+<LI>
+Most are not threadSafe or interruptSafe. I.e. trying to malloc/free in a signal handler
+may lead to big trouble. You either have to be very careful, rewrite the memory
+allocator or use locking (i.e. critical regions &amp; semaphores).
+If locks are added, performance goes down and/or your program gets more complicated.
+<P>
+<LI>
+C/C++ programmers will argue that in high performance systems, less memory is
+allocated on the heap; instead, stack objects are used, which do not suffer from
+any malloc/free overhead. This may be true for small scale systems - all big systems
+I have seen so far use a (propriety) framework for object management - often using
+suboptimal representations &amp; algorithms to get around memory leak problems
+(envelope-letter systems, copying collections, reference counting etc.).
+<BR>
+Its those systems to compare - not the artificial hello-world programs !
+
+<LI>
+As usual: manual memory management tends to lead to programming errors
+- you know the consequences.
+<BR>
+Again - a 30% faster CPU may be far cheaper than a programming
+team wasting its time in implementing object management frameworks.
+</UL>
+
+
+<CODE>TODO: measure long term memory behavior</CODE>
+
+
+<H3>Benchmark code</H3>
+
+
+For those who want to measure this on their own machine, here is the code:
+<BR>
+<HR>
+C implementation:
+<PRE><CODE>
+struct link {
+    int          value;
+    struct link *next;
+};
+
+main() {
+    int i;
+
+    for (i=0; i&lt;1000; i++) {
+	benchalloc();
+    }
+}
+
+benchalloc() {
+    struct link *link, *next;
+    struct link *anchor = (struct link *)0;
+    int i;
+
+    for (i=0; i&lt;1000; i++) {
+	link = (struct link *) malloc(sizeof(struct link));
+	link->value = i;
+	link->next = anchor;
+	anchor = link;
+    }
+
+    for (link = anchor; link; link=next) {
+	next = link->next;
+	free(link);
+    }
+}
+</CODE></PRE>
+(execute it with <CODE>"time a.out"</CODE> )
+
+<P>
+<HR>
+C++ implementation:
+<PRE><CODE>
+class Link {
+    int          value;
+    Link        *next;
+
+    public :
+		Link () {};
+	virtual ~Link() {};
+#ifdef INLINE
+	inline  void setNext(Link *l)   { next = l; };
+	inline Link *getNext()          { return next; };
+	inline void setValue(int v)     { value = v; };
+	inline int getValue()           { return value; };
+#else
+# ifdef VIRTUAL
+	virtual void setNext(Link *);
+	virtual Link *getNext();
+	virtual void setValue(int);
+	virtual int getValue();
+# else
+	void setNext(Link *);
+	Link *getNext();
+	void setValue(int);
+	int getValue();
+# endif
+#endif
+};
+
+#ifndef INLINE
+void Link::setValue(int v)
+{
+    value = v;
+}
+
+int Link::getValue ()
+{
+    return value;
+}
+
+void Link::setNext(Link *l)
+{
+    next = l;
+}
+
+Link *Link::getNext()
+{
+    return next;
+}
+#endif /* not INLINE */
+
+void
+benchAlloc() {
+    Link *link, *next;
+    Link *anchor = (Link *)0;
+
+    for (int i=0; i&lt;1000; i++) {
+	link = new Link;
+	link->setValue(i);
+	link->setNext(anchor);
+	anchor = link;
+    }
+
+    for (link = anchor; link; link = next) {
+	next = link->getNext();
+	delete link;
+    }
+}
+
+main() {
+    for (int i=0; i&lt;1000; i++) {
+	benchAlloc();
+    }
+}
+
+
+</CODE></PRE>
+(execute it with <CODE>"time a.out"</CODE>)
+
+<P>
+<HR>
+Smalltalk implementation:
+<PRE><CODE>
+
+!LinkedListBenchmark class methodsFor:'benchmarking'!
+
+buildList
+    |anchor link|
+
+
+    anchor := nil.
+    1 to:1000 do:[:i |
+	link := ValueLink basicNew value:i.
+	link nextLink:anchor.
+	anchor := link.
+    ]
+
+    "
+     Time millisecondsToRun:[
+	1000 timesRepeat:[LinkedListBenchmark buildList]
+     ]
+    "
+</CODE></PRE>
+
+
+<H2><A HREF="#I_PART2" NAME="PART2">Medium Level Benchmarks</A></H2>
+
+Here are some more recent (2014) benchmarks which compare the speed of
+some utility classes in Smalltalk against a modern, highly optimizing hospot
+Java implementation.
+All were executed on the same hardware (a 2.6Ghz CoreI7 Macbook Pro).
+
+<H3><A HREF="#I_ARRAYLIST" NAME="ARRAYLIST">ArrayList vs. OrderedCollection</A></H3>
+
+The benchmark creates a dynamic array and fills it with 1mio
+values (Integers from 1 to 1000000).
+<P>
+Notice, that in Smalltalk, the 1-to-1 translated, hand-coded initialization code
+is not what an experienced Smalltalk would use;
+alternative versions are shown and measured as well.
+<P>
+The code is:
+<P>
+Java:
+<code><pre>
+    long t1 = System.currentTimeMillis();
+    for(int j = 0; j &lt; 10; ++j) {
+	List&lt;Integer&gt; list = new ArrayList&lt;Integer&gt;();
+	for(int i = 0; i&lt;1000000; ++i) {
+	    list.add(i);
+	}
+    }
+    long t2 = System.currentTimeMillis();
+    System.out.println("Time taken: " + (t2 - t1) / 10.0);
+</pre></code>
+<P>
+Java preallocated ArrayList:
+<code><pre>
+    ...
+	List&lt;Integer&gt; list = new ArrayList&lt;Integer&gt;(1000000);
+	for(int i = 0; i &lt; 1000000; ++i) {
+	    list.add(i);
+	}
+    ...
+</pre></code>
+
+<P>
+Smalltalk V1 (hand-coded, naive loop):
+<code><pre>
+    Transcript showCR:(
+	Time millisecondsToRun:[
+	    |c|
+	    10 timesRepeat:[
+		c := OrderedCollection new.
+		1 to:1000000 do:[:i | c add:i].
+	    ].
+	]
+    ]) / 10
+</pre></code>
+<P>
+Smalltalk preallocated V1 (hand-coded, naive loop):
+<code><pre>
+    ...
+	    |c|
+	    10 timesRepeat:[
+		c := OrderedCollection new:1000000.
+		1 to:1000000 do:[:i | c add:i].
+	    ].
+    ...
+</pre></code>
+<P>
+<P>
+Smalltalk V2 (better code):
+<code><pre>
+    ...
+	    |c|
+	    10 timesRepeat:[
+		(1 to:1000000) asOrderedCollection
+	    ].
+    ...
+</pre></code>
+<P>
+Timings:
+<table border>
+<tr> <td>Java</td>                      <td align="right">139</td> </tr>
+<tr> <td>Java preallocated</td>         <td align="right">123</td> </tr>
+<tr> <td>Smalltalk v1</td>              <td align="right">177</td> </tr>
+<tr> <td>Smalltalk v1 preallocated</td> <td align="right">171</td> </tr>
+<tr> <td>Smalltalk v2</td>              <td align="right">60</td> </tr>
+</table>
+
+
+<H3><A HREF="#I_HASHTABLE" NAME="HASHTABLE">Hashtable vs. Dictionary</A></H3>
+
+The benchmark creates a hashtable and fills it either
+with 1mio unique values or with of subset of 10000 values.
+This tests HashTable, hashing and boxing (which you have to use in Java).
+Notice, that in Smalltalk, every integer is always boxed.
+<P>
+To get a feeling of the amount of time spent in string handling
+vs. hashtable handling, the code is written both for string and integer keys.
+<P>
+The code is:
+<P>
+Java 1mio string values (variant 1):
+<code><pre>
+    Hashtable&lt;String, Integer&gt; h = new Hashtable&lt;String, Integer&gt;();
+    for(Integer i = 0; i &lt; 1000000; ++i) {
+	h.put(i.toString(), i);
+    }
+</pre></code>
+<P>
+Java 1mio string values (variant 2):
+<code><pre>
+    Hashtable&lt;String, Integer&gt; h = new Hashtable&lt;String, Integer&gt;();
+    for(int i = 0; i &lt; 1000000; ++i) {
+	h.put(Integer.toString(i), i);
+    }
+</pre></code>
+<P>
+Java 10k string values:
+<code><pre>
+    Hashtable&lt;String, Integer&gt; h = new Hashtable&lt;String, Integer&gt;();
+    for(int i = 0; i &lt; 1000000; ++i) {
+	h.put(Integer.toString(i % 10000), i);
+    }
+</pre></code>
+<P>
+Java 1mio integer values:
+<code><pre>
+    Hashtable&lt;String, Integer&gt; h = new Hashtable&lt;String, Integer&gt;();
+    for(Integer i = 0; i &lt; 1000000; ++i) {
+	h.put(i, i);
+    }
+</pre></code>
+<P>
+Java 10k integer values:
+<code><pre>
+    Hashtable&lt;String, Integer&gt; h = new Hashtable&lt;String, Integer&gt;();
+    for(int i = 0; i &lt; 1000000; ++i) {
+	h.put(new Integer(i % 10000), i);
+    }
+</pre></code>
+
+<P>
+Smalltalk 1mio values:
+<code><pre>
+    h := Dictionary new.
+    1 to:1000000 do:[:i | h at:i printString put:i].
+</pre></code>
+<P>
+<br>A variant is to use a bulk-initializing method, for example:
+<code><pre>
+    h := Dictionary withKeys:(1 to:1000000) andValues:(1 to:1000000).
+</pre></code>
+<P>
+Smalltalk 10k values:
+<code><pre>
+    h := Dictionary new.
+    1 to:1000000 do:[:i | h at:(i \\ 10000) printString put:i].
+</pre></code>
+
+<P>
+<P>
+
+Timings:
+<table border>
+<tr> <td>Java 1mio string variant1</td>         <td align="right">1413</td> </tr>
+<tr> <td>Java 1mio string variant2</td>         <td align="right">1481</td> </tr>
+<tr> <td>Java 10k string</td>                   <td align="right">132</td> </tr>
+<tr> <td>Java 1mio integer</td>                 <td align="right">412</td> </tr>
+<tr> <td>Java 10k integer</td>                  <td align="right">47</td> </tr>
+<tr> <td>Smalltalk 1mio string</td>             <td align="right">3788</td> </tr>
+<tr> <td>Smalltalk 10k string</td>              <td align="right">619</td> </tr>
+<tr> <td>Smalltalk 1mio integer</td>            <td align="right">926</td> </tr>
+<tr> <td>Smalltalk 1mio variant</td>            <td align="right">568</td> </tr>
+<tr> <td>Smalltalk 10k integer</td>             <td align="right">364</td> </tr>
+</table>
+
+<H3><A HREF="#I_SUMMARY" NAME="SUMMARY">Summary</A></H3>
+
+It must be admitted that Java collection classs are usually faster,
+unless specialized methods of the Smalltalk class library are used
+(which for many part do not exist in the corresponding Java class libs).
+<P>
+However, this is not really suprising,
+considering the amount of work (man years) which went into
+the Java hot spot compiler as compared to the amount which went into ST/X (a one man show).
+
+
+
+<H2><A HREF="#I_GRAPHICSPEED" NAME="GRAPHICSPEED">Graphic Display Speed</A></H2>
+
+Both the earliest and the newest Smalltalk implementations use
+their own graphic drawing mechanism - they assume direct control
+over the displays pixel memory and perform all drawing on the pixel level.
+<P>
+There are good reasons for doing this - the old systems did it since there were
+no fancy graphic controllers and pixel graphics was a recent invention.
+<BR>
+The modern Smalltalk implementation (i.e.: squeak) does this for flexibility -
+who else is able to let a 3d animated bunny hover above a browser window,
+rotating in the z-dimension around the x-axis ?
+<P>
+Smalltalks for comercial use (as opposed to academic testbeds) typically interface
+to the graphics system via higher level APIs - typically X11 or WinAPI.
+<BR>
+The overhead introduced by Smalltalk is marginal and graphical display of text, lines
+or any other graphics primitive which is directly supported by the API is almost
+as fast compared to programs implemented in other languages.
+
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 1995 Claus Gittinger Development &amp; Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.33 $ $Date: 2016-07-18 11:53:49 $
+</BODY>
+</HTML>

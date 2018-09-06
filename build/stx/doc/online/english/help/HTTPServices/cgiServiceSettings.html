@@ -1,0 +1,85 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Help - Documentation for the CGI Service</Title>
+</HEAD>
+<Body>
+
+<H1>CGI Service Settings</H2>
+
+The CGI-service allows for other programs to be called upon receive of
+a request, and return the output of that other program as a web response.
+<P>
+The called program can be a script (shell, perl, python etc.) or
+any other arbitrary program.
+
+
+
+
+<H2><A NAME="INDEX">Help index</A></H2>
+
+<UL>
+<LI><A HREF="#ROOT_DIR">Service Root Directory</A>
+<LI><A HREF="#DEFAULT_FILENAME">Default Filename</A>
+<LI><A HREF="#MAX_CACHE_SIZE">Max Cache Size</A>
+<LI><A HREF="#MAX_CACHE_DOCUMENT_SIZE">Max Cache Document Size</A>
+<LI><A HREF="#MAX_CACHE_EXPIRATION_DELTA">Max Cache Expiration Delta</A>
+<LI><A HREF="#EXPIRATION_DELTA">Expiration Delta</A>
+</UL>
+
+<HR>
+
+<H2><A NAME="ROOT_DIR" HREF="#INDEX">Service Root Directory</A></H2>
+
+    Specifies the directory which holds the cgi service's script files.
+<br>
+    Some example-scripts are found in <CODE>"$(STX_HOME)/goodies/webServer/data/sampleServerDir/cgi-bin"</CODE>,
+    so this directory can be used to play with initially.
+<P>
+    Scripts must have the execute permission set (unix: <CODE>"chmod +x"</CODE>) in order to be
+    executable by the webserver.
+<p>
+
+<H2><A NAME="DEFAULT_FILENAME" HREF="#INDEX">Default Filename</A></H2>
+
+    Name of a script-file or name of a document-file which is to be
+    used if the requested file is not found.
+<BR>
+    If left empty, an error response will be generated for such a request.
+<P>
+    An example-script to play with is <CODE>"default.cgi"</CODE>, found in the above example directory.
+
+<P>
+
+<H2><A NAME="MAX_CACHE_SIZE" HREF="#INDEX">Max Cache Size</A></H2>
+
+    See <A HREF="fileServiceSettings.html#MAX_CACHE_SIZE">FileService</A>
+<P>
+
+<H2><A NAME="MAX_CACHE_DOCUMENT_SIZE" HREF="#INDEX">Max Cache Document Size</A></H2>
+
+    See <A HREF="fileServiceSettings.html#MAX_CACHE_DOCUMENT_SIZE">FileService</A>
+<P>
+
+<H2><A NAME="MAX_CACHE_EXPIRATION_DELTA" HREF="#INDEX">Max Cache Expiration Delta</A></H2>
+
+    See <A HREF="fileServiceSettings.html#MAX_CACHE_EXPIRATION_DELTA">FileService</A>
+<P>
+
+<H2><A NAME="EXPIRATION_DELTA" HREF="#INDEX">Expiration Delta</A></H2>
+
+    See <A HREF="fileServiceSettings.html#EXPIRATION_DELTA">FileService</A>
+
+
+<HR>
+<P>
+<P>
+Copyright &copy; 2003 eXept Software AG, all rights reserved
+<P>
+<P>
+
+<HR>
+Doc $Revision: 1.4 $ $Date: 2004-09-23 14:12:17 $
+
+</BODY>
+</HTML>

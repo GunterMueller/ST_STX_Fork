@@ -1,0 +1,38 @@
+This directory contains some more (less frequently used) basic classes.
+Which support program development.
+They are included in a standard smalltalk, but can be left out in a
+final applications.
+
+Compiled by stc into the library 'libbasic3'.
+
+Depending on the configuration and capabilities of your Operating-
+System, the resulting classlibrary is either:
+
+        libbasic3.a      - an archive
+
+        libbasic3.obj    - a prelinked object library
+
+        libbasic3.so     - a shared object
+
+the library includes init code (libbasic3_Init) for all of its components.
+
+
+Things you can do here:
+
+    make                compile all classes, producing libbasic3
+
+    make objs           compile object files
+
+    make install        compile all and install in DESTLIBDIR
+
+    make qinstall       only install - assumes binaries are up-to-date 
+
+    make check          syntax check only over all .st files
+
+    make <file>.o       compile <file>.st to object-file
+
+    make <file>.c       compile <file>.st to c intermediate
+
+    make clean
+
+    make clobber

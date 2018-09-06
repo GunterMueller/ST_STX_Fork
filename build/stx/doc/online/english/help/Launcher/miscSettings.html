@@ -1,0 +1,340 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Help - Misc Settings</Title>
+</HEAD>
+
+<BODY>
+
+<H1>Misc other Settings</H1>
+
+<H2><A NAME="INDEX">Help index</A></H2>
+
+<H3>Gui Related Settings</H3>
+<UL>
+  <LI><A HREF="#ACOUSTICSIGNALS">Enable Acoustic Signals</A>
+  <LI><A HREF="#ACCELS_IN_MENUS">Accelerator keys in menus</A>
+<P>
+  <LI><A HREF="#FOCUS_FOLLOWS_MOUSE">Focus Follows Mouse</A>
+  <LI><A HREF="#TAKE_FOCUS">Take Focus when Mapped</A>
+  <LI><A HREF="#RETURN_FOCUS">Boxes Return Focus</A>
+  <LI><A HREF="#RAISE_ON_CLICK">Raise & Activate on Click</A>
+<P>
+  <LI><A HREF="#MOUSEWHEEL_FOCUS_FOLLOWS_MOUSE">Mousewheel Focus Follows Mouse</A>
+  <LI><A HREF="#CTRL_MOUSEWHEEL_IS_ZOOM">CTRL-Mousewheel is Zoom</A>
+<P>
+  <LI><A HREF="#WINDOW_LABEL_FORMAT">Window Label Format</A>
+<!--  <LI><A HREF="#HOSTNAME_IN_LABELS">Hostname in window labels</A>   -->
+</UL>
+
+<H3>Additional Gui Related Settings</H3>
+<UL>
+  <LI><A HREF="#USENATIVEWIDGETS">Use Native Widgets (Experimental)</A>
+  <LI><A HREF="#USENATIVEDIALOGS">Use Native Dialogs (Experimental)</A>
+  <LI><A HREF="#USENATIVEFILEDIALOGS">Use Native File Dialogs (Experimental)</A>
+<P>
+  <LI><A HREF="#POPUP_SHADOWS">Shadows under Popup Views</A>
+  <LI><A HREF="#TOOLTIP_CARTOON">Cartoon Style Tooltips</A>
+  <LI><A HREF="#OPAQUE_PANEL_RESIZE">Opaque Variable Panel Resize</A>
+  <LI><A HREF="#OPAQUE_TABLE_RESIZE">Opaque Table Column Resize</A>
+<P>
+  <LI><A HREF="#SELECT_ON_RIGHT_PRESS">Select on Right-Button-Press</A>
+  <LI><A HREF="#MENU_ON_RIGHT_RELEASE">Menu on Right-Button-Release</A>
+</UL>
+
+
+<P>
+<H3>Process Related Settings</H3>
+<UL>
+  <LI><A HREF="#PREEMPTIVE">Preemptive scheduling</A>
+    <UL>
+    <LI><A HREF="#DYNAMIC_PRIOS">Dynamic priorities</A>
+    </UL>
+</UL>
+
+<HR>
+
+<H2><A NAME="USENATIVEWIDGETS" HREF="#INDEX">Use Native Widgets (Experimental)</A></H2>
+
+(Win32 only) If on, native windows widgets are used.
+Currently, this is in an experimental stage and only used for Scrollbars and Buttons.
+The use of native widgets is only useful for certain screen capture programs,
+which expect a standard widget hierarchy when examining other windows (snagit, for example).
+
+
+<H2><A NAME="USENATIVEDIALOGS" HREF="#INDEX">Use Native Dialogs (Experimental)</A></H2>
+
+(Win32 only) If on, native windows dialogs are used.
+Currently, this is in an experimental stage and only used for some warning-, information- and
+confirmation-dialogs.
+The use of native dialogs is only useful for certain remote control applications,
+which expect standard widgets when examining/controlling other windows.
+
+
+<H2><A NAME="USENATIVEFILEDIALOGS" HREF="#INDEX">Use Native File Dialogs (Experimental)</A></H2>
+
+(Win32 only) If on, native windows file dialogs are used.
+Currently, this is in an experimental stage. Certain limitations are attached to using these
+dialogs; especially, the redraw-behavior and debuggability of the owning windows is affected
+in the current version. For example, it is (currently) not possible to interrupt, debug and
+proceed the application while a native file dialog is active. This is probably only a limitation
+for developers and might not be relevant to end users.
+
+
+
+<H2><A NAME="POPUP_SHADOWS" HREF="#INDEX">Shadows under Popup Views</A></H2>
+
+This disables the shadows under popup views in some view styles.
+<BR>
+On slow display stations (x terminals), popup menus may appear quicker with disabled shadows.
+<P>
+Under newer Windows versions (XP, Vista, Windows7), the system itself draws a half-transparent
+shadow underneath a menu, so this setting should be turned off (you will still see a shadow
+under the menu, as it is drawn by windows itself).
+
+
+<H2><A NAME="TOOLTIP_CARTOON" HREF="#INDEX">Cartoon Style Tooltips</A></H2>
+<BR>
+Draw tooltips in a cartoon-style "talking" shape.
+<P>
+This is disabled for displays which do not support arbitrarily shaped
+windows (currently arbitrarily shaped windows are only supported
+with XWindow displays).
+
+
+<H2><A NAME="ACOUSTICSIGNALS" HREF="#INDEX">Enable Acoustic Signals</A></H2>
+Enable/Disable acoustic signals alltogether.
+
+
+<H2><A NAME="ACCELS_IN_MENUS" HREF="#INDEX">Accelerators in menus</A></H2>
+
+Turns on/off the display of an items accelerator key (if any)
+in menus. Only useful if you know the accelerators well, and don't like the
+menus being a bit wider due to the extra text.
+
+
+<H2><A NAME="OPAQUE_PANEL_RESIZE" HREF="#INDEX">Opaque Variable Panel Resize</A></H2>
+
+If enabled, a movement of a variablePanels resize bar will immediately
+change the size ratio - leading to a synchronous resize operation.
+If disabled, resizing takes place when the handle is eventually released.
+<BR>
+You should disable this if your machine and/or graphics system are slow.
+<P>
+
+<H2><A NAME="OPAQUE_TABLE_RESIZE" HREF="#INDEX">Opaque Table Column Resize</A></H2>
+
+Similar to the above, this controls if columns of a tableview are
+resized using a synchronous resize operation.
+If disabled, resizing takes place when the handle is eventually released.
+<BR>
+You should disable this if your machine and/or graphics system are slow.
+<P>
+
+
+<H2><A NAME="FOCUS_FOLLOWS_MOUSE" HREF="#INDEX">Focus Follows Mouse</A></H2>
+
+If on, the keyboard focus follow the mouse -
+i.e. you can type into to another inputField or textWindow after moving
+the mouse pointer. This is the X-Window Systems traditional way of focus
+handling.
+<P>
+If off, you have to click into a view in order to attach the keyboard focus
+to it. This is the MS-Windows way of focus handling.
+<P>
+This flag only affects focus handling within a topWindow - focus assignment
+between topWindows is usually not under control of stx (instead,
+its typically done by the window manager).
+<P>
+Also notice, that the keyboard focus NEVER follows the mouse pointer,
+if it got assigned to some widget by <I>tabbing</I>.
+<BR>
+A widget which got the focus via <I>tabbing</I> will only give away the
+keyboard focus, if its either explicitely tabbed to another view,
+or if you click into another view (which takes the focus with button-press,
+such as a textView).
+<P>
+The default behavior setting depends on the view style.
+<P>
+Notice, that focus-follows-mouse combined with raise-on-click (see above)
+does not really make sense.
+
+
+<H2><A NAME="MOUSEWHEEL_FOCUS_FOLLOWS_MOUSE" HREF="#INDEX">Mousewheel Focus Follows Mouse</A></H2>
+
+If on, the mousewheel focus follow the mouse -
+i.e. you can scroll in another window after moving the mouse pointer.
+<P>
+If off, you have to click into a view in order to attach the wheel focus to it.
+
+
+<H2><A NAME="TAKE_FOCUS" HREF="#INDEX">Take focus when mapped</A></H2>
+
+Depending on which window manager you use, this may be required to avoid the
+annoying need for a click on an opened window, to have the keyboard focus
+assigned to it (OpenLook and some motif window managers).
+<BR>
+If the take-focus
+feature is enabled, <CITE>ST/X</CITE> will fetch the keyboard focus
+and assign it to the newly opened topWindow.
+<BR>
+Most window managers assign the focus to the view under the mouse pointer
+- on those, this should (can) be disabled.
+
+
+
+<H2><A NAME="RETURN_FOCUS" HREF="#INDEX">Boxes return focus</A></H2>
+
+Depending on which window manager you use, this may be required to avoid the
+annoying loss of keyboard focus after a dialog is closed.
+(It is known to happen with the OpenLook window manager.)
+<BR>
+If the return-focus
+feature is enabled, <CITE>ST/X</CITE> will return the keyboard focus to the view which
+was active before the dialog opened (i.e. the view which opened the dialog).
+<BR>
+Most window managers return the focus to the pointer window - on those,
+this should (can) be disabled.
+
+
+<H2><A NAME="RAISE_ON_CLICK" HREF="#INDEX">Raise & Activate on click</A></H2>
+
+If enabled, clicking in a window (with the left button)
+will raise its topView (as under Windows-95 & Windows-NT).
+<BR>
+If disabled, a click does not automatically raise the topView
+(as in the XWindow system).
+<P>
+Notice, that under X, the window manager may have been set up to
+perform this operation - on those systems,
+<CITE>ST/X</CITE> will have no chance to prevent auto-raise.
+<P>
+Notice, that raise-on-click combined with focus-follows-mouse (see below)
+does not really make sense.
+
+
+<H2><A NAME="SELECT_ON_RIGHT_PRESS" HREF="#INDEX">Select on Right-Button-Press</A></H2>
+
+If on, a right-button press will change the selection if clicked on a list or tree.
+If off, only the left button is responsible for selection.
+<P>
+Traditionally, in Smalltalk and unix workstations, the left button was the select button,
+and the right button the menu button.
+With windows, another GUI style appeared, in which both the left and right buttons perform
+a select operation, and the menu only appears when the right button is released.
+
+
+
+<H2><A NAME="MENU_ON_RIGHT_RELEASE" HREF="#INDEX">Menu on Right-Button-Release</A></H2>
+
+If on, the popUp-menu will be shown when the right-button is released.
+If off, it appears when pressed.
+<P>
+Traditionally, in Smalltalk and unix workstations, the left button was the select button,
+and the right button the menu button (both operating on press).
+With windows, another GUI style appeared, in which both the left and right buttons perform
+a select operation, and the menu only appears when the right button is released.
+
+
+
+<!--
+<H2><A NAME="HOSTNAME_IN_LABELS" HREF="#INDEX">Hostname in window labels</A></H2>
+
+If enabled, the machines hostname will be prepended to all window labels.
+<BR>
+This makes sense if you have multiple <CITE>ST/X</CITE>
+sessions from different machines open simultaneously on the same display
+screen
+(and you loose track of which view belongs to which session).
+-->
+
+<H2><A NAME="WINDOW_LABEL_FORMAT" HREF="#INDEX">Window Label Format</A></H2>
+
+Defines the format used for window labels (title in the window decoration).
+This is especially useful, if you have multiple Smalltalk images running side by side
+from different working directories and/or from different remote machines (via remote
+X11 connections, for example). Avoid getting confused on which window belongs to which
+application by adding the top-directory or the remote machine name to all of that application's
+window labels.
+<BR>
+This setting replaces the previous "Hostname in window labels" option.
+
+
+<H2><A NAME="PREEMPTIVE" HREF="#INDEX">Preemptive scheduling</A></H2>
+
+Controls if the processorScheduler should schedule using a pure
+priority based scheme (if off), or timeslice among the highest
+priority running processes (if on).
+<BR>
+Without preemptive scheduling, a busy view (for example, a workspace
+or application) may block other views - with preemptive scheduling,
+these are interrupted and the processor time is timesliced
+among all threads running at that priority.
+<P>
+Although the <CITE>ST/X</CITE> class library itself is generally thread-safe,
+existing user classes (PD-classes) are often not so.
+<BR>
+The reason is that other Smalltalk systems do not in general offer
+a timeslicing capability - which means that those programs are usually
+not prepared for being interrupted at any time by another thread running
+at the same priority.
+<br>
+Therefore, certain dangers are involved, if timeslicing is enabled;
+if you encounter any synchronization problems, or corrupted shared
+data in your applications, it may be preferable, to disable this
+feature (and save the settings).
+<BR>
+(Please read the documentation in <CODE>ProcessorScheduler &#187; scheduling</CODE>
+for more details).
+<P>
+More info is found in the <A HREF="../../programming/processes.html#ROUNDROBIN">
+'Adding round-robin'</A> chapter of the programming manual.
+
+<H3><A NAME="DYNAMIC_PRIOS" HREF="#INDEX">Dynamic priorities</A></H3>
+
+If enabled, the preemptive scheduler will shuffle priorities of
+processes with a dynamic priority.
+<BR>
+The affects processes with a dynamic priority range, and the
+effect is that those processes which want to run,
+but did not get the CPU for some time,
+will get their priority raised, while
+those which did run, get their priority lowered.
+<BR>
+Thus it is possible to give even low priority
+background processes a chance to make some progress.
+<P>
+A processes dynamic priority is set by sending
+the <CODE>#priorityRange:</CODE> message to a process,
+passing an interval as argument.
+This interval defines the minimum and maximum priority
+of the process.
+<P>
+This requires that your applications are well designed with respect
+to shared data access (i.e. shared collections),
+since now, even a low priority process can eventually interrupt
+a higher priority process and get a chance to execute.
+<BR>
+However, only processes with a priority range are affected -
+thus, unchanged existing applications are not affected by this.
+(the program must enable this via the <CODE>#priorityRange:</CODE> message,
+which must be sent to the process object.)
+<P>
+More info is found in the <A HREF="../../programming/processes.html#DYNAMICPRIOS">
+'Dynamic priorities'</A> chapter of the programming manual.
+
+
+
+
+<HR>
+<P>
+<P>
+Copyright &copy; 1997 Claus Gittinger eXept Software AG, all rights reserved
+<P>
+<P>
+
+<HR>
+Doc $Revision: 1.37 $ $Date: 2016-11-05 17:38:36 $
+
+</BODY>
+</HTML>

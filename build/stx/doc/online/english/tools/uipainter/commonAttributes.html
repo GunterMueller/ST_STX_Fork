@@ -1,0 +1,187 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+   <META NAME="Author" CONTENT="Thomas Zwick, eXept software AG, Germany">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.04 [en] (X11; I; Linux 2.0.30 i586) [Netscape]">
+   <TITLE>The Button Widget</TITLE>
+</HEAD>
+
+<BODY>
+<A HREF="TOP.html#TABLEOFTHEWIDGETS" NOPRINT><IMG SRC="../../../icons/DocsUpArrow.gif" ALT="Table of the Widgets" NOSAVE HEIGHT=30 WIDTH=30></A>
+<BR>&nbsp;
+<BR>
+<HR ALIGN=LEFT WIDTH="100%">
+<H1>
+<FONT SIZE=+4>Common Widget Attributes</FONT></H1>
+
+<H3>
+The <I>Basics</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>ID</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Unique symbolic name (ID) of the widget.&nbsp;</B>&nbsp;
+<BR>This ID can be used by the application to access the widget
+via <TT>"builder&nbsp;componentAt:#ID"</TT>.</TD>
+</TR>
+
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+
+
+
+<H3>
+The <I>Details</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Font</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the font style of the widget.</B>&nbsp;
+<BR>After selecting the check toggle, the font style can be chosen by selecting
+one of the Family/Face/Style/Size entries.
+<br>
+If no font style is selected,
+the widget takes its default font from the style sheet.
+<br>
+It is recommened to NOT specify any font,
+as it makes reconfiguration by the end-user (via the style settings) impossible.
+</TD>
+</TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>FG-Color</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the foreground color of the widget,
+i.e. the color of the letters.</B>&nbsp;
+<BR>After selecting the check toggle, the foreground color can be chosen by selecting the desired color.
+<br>
+If no color is selected,
+the widget takes its default foreground color from the style sheet.
+<br>
+It is recommened to NOT specify any color,
+as it makes reconfiguration by the end-user (via the style settings) impossible.
+</TD>
+</TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>BG-Color</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the background color of the widget.</B>&nbsp;
+<BR>After selecting the check toggle, the background color can be chosen
+by selecting the desired color.
+<br>
+If no color is selected,
+the widget takes its default background color from the style sheet.
+<br>
+It is recommened to NOT specify any color,
+as it makes reconfiguration by the end-user (via the style settings) impossible.
+</TD>
+</TR>
+
+<TR NOSAVE>
+<TD><B>Initially Disabled</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the widget is initially disabled.
+</B><BR>An enableChannel may overwrite this (see below).
+<br>Use this, if the widget is to be later enabled programatically.
+</TD>
+</TR>
+
+<TR NOSAVE>
+<TD><B>Initially Invisible</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the widget is initially invisible.
+</B><BR>A visibilityChannel may overwrite this (see below).
+<br>Use this, if the widget is to be later made visible programatically.
+</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Can Tab</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the widget can be reached by tabbing.</B></TD>
+</TR>
+
+</TABLE>
+
+
+
+
+
+&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Channels</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Visible</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for making the widget visible/invisible.</B>&nbsp;
+<BR>It should return one of:&nbsp;
+
+<P>&nbsp;&nbsp;&nbsp; - <TT>Boolean</TT> instance** (only for static behavior)&nbsp;
+<BR>&nbsp;&nbsp;&nbsp; - <TT>Block</TT> evaluating to a <TT>Boolean</TT> (evaluated once, at creation time of the widget)
+<BR>&nbsp;&nbsp;&nbsp; - <TT><A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance providing a <TT>Boolean</TT>**&nbsp;
+
+<P>A value model is used to make this feature dynamically changable.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Enable</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for en-/disabling the widget.</B>&nbsp;
+<BR>It should return one of:&nbsp;
+
+<P>&nbsp;&nbsp;&nbsp; - <TT>Boolean</TT> instance** (only for static behavior)&nbsp;
+<BR>&nbsp;&nbsp;&nbsp; - <TT>Block</TT> evaluating to a <TT>Boolean</TT>
+<BR>&nbsp;&nbsp;&nbsp; - <TT><A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance providing a <TT>Boolean</TT>**&nbsp;
+
+<P>A value model is used to provide a dynamically changing of the ability
+of the button.</TD>
+</TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>FG-Color</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for the foreground color of the widget.</B>&nbsp;
+<BR>It should return one of:&nbsp;
+
+<P>&nbsp;&nbsp;&nbsp; - <TT>Color</TT> instance&nbsp; (only for static behavior)&nbsp;
+<BR>&nbsp;&nbsp;&nbsp; - <TT>Block</TT> evaluating to a <TT>Color</TT>
+<BR>&nbsp;&nbsp;&nbsp; - <TT><A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance providing a <TT>Color</TT>.&nbsp;
+
+<P>A value model is used to dynamically change the widgets foreground color.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>BG-Color</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for the background color of the widget.</B>&nbsp;
+<BR>It should return one of:&nbsp;
+
+<P>&nbsp;&nbsp;&nbsp; - <TT>Color</TT> instance&nbsp; (only for static behavior)&nbsp;
+<BR>&nbsp;&nbsp;&nbsp; - <TT>Block</TT> evaluating to a <TT>Color</TT>
+<BR>&nbsp;&nbsp;&nbsp; - <TT><A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance with a <TT>Color</TT> instance.&nbsp;
+
+<P>A value model is used to dynamically change the widgets background color.</TD>
+</TR>
+</TABLE>
+<TT>*&nbsp; = ValueHolder, AspectAdaptor, BufferedValueHolder, RangeAdaptor,
+TriggerValue</TT>
+<BR><TT>** = true, false</TT>
+
+<P>
+<HR>
+
+<P><IMG SRC="../../../icons/stx.gif" ALT="[stx-logo]" NOSAVE NOPRINT HEIGHT=48 WIDTH=47 ALIGN=CENTER>
+<BR><TT>Copyright &copy; 1998 eXept Software AG, all rights reserved</TT>
+<BR>
+<HR>
+</BODY>
+</HTML>

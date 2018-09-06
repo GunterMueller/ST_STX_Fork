@@ -1,0 +1,31 @@
+ListView userDefaultTabPositions:(ListView tab4Positions).
+
+UserPreferences default
+	showBookmarkBar: true;
+	showGlobalHistory: false;
+	sortAndIndentClassesByInheritance: true;
+	useInPlaceSearchInBrowserLists: true;
+	runLintChecksInBackground: true;
+
+	showAcceptCancelBarInBrowser: true;
+	codeView2ShowAcceptCancel: true;
+
+	changeSetBrowserClass: Tools::ChangeSetBrowser2;
+	changesBrowserClass:   Tools::ChangeSetBrowser2;
+
+	autoDefineWorkspaceVariables: true;
+	eclipseStyleMenus:true;
+
+	at: #jsKeywordColor put: (Color red:33.0 green:33.0 blue:0.0);
+	at: #jsKeywordEmphasis put: #bold;
+
+	"/ Here we force language to be 'en_us'. Experience shows that
+	"/ programmers prefer English and besides, translations to other
+	"/ languages are so incomplete so it looks rather ugly. Better
+	"/ to have all in English. Users may choose different if they
+	"/ want.
+	useSystemLanguage: false;
+	language: #en;
+	languageTerritory: #us;
+
+	yourself.

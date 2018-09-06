@@ -1,0 +1,49 @@
+//
+// DO NOT EDIT 
+// automagically generated from the projectDefinition: stx_libjava_startup.
+//
+#define IDR_MAINFRAME   128
+#define IDR_SPLASH      129
+
+#if (__BORLANDC__)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#endif
+
+#pragma code_page(1252)
+
+
+
+VS_VERSION_INFO VERSIONINFO
+  FILEVERSION     6,2,32767,32767
+  PRODUCTVERSION  6,2,3,0
+#if (__BORLANDC__)
+  FILEFLAGSMASK   VS_FF_DEBUG | VS_FF_PRERELEASE
+  FILEFLAGS       VS_FF_PRERELEASE | VS_FF_SPECIALBUILD
+  FILEOS          VOS_NT_WINDOWS32
+  FILETYPE        VFT_DLL
+  FILESUBTYPE     VS_USER_DEFINED
+#else
+  FILEFLAGSMASK 0x3fL
+#endif
+
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904E4"
+    BEGIN
+      VALUE "CompanyName", "SWING Research Group & eXept Software AG\0"
+      VALUE "FileDescription", "Smalltalk/X Java Launcher\0"
+      VALUE "FileVersion", "6.2.32767.32767\0"
+      VALUE "InternalName", "stx:libjava/startup\0"
+      VALUE "LegalCopyright", "Copyright 2010-2011 Jan Vrany, Jan Kurs, Marcel Hlopko\nCopyright 1988-2011Claus Gittinger \nCopyright 1998-2011 eXept Software AG\0"
+      VALUE "ProductName", "Smalltalk/X JVM\0"
+      VALUE "ProductVersion", "6.2.3.0\0"
+      VALUE "ProductDate", "Thu, 05 Sep 2013 23:10:21 GMT\0"
+    END
+  END
+
+  BLOCK "VarFileInfo"
+  BEGIN                               //  Language   |    Translation
+    VALUE "Translation", 0x409, 0x4E4 // U.S. English, Windows Multilingual
+  END
+END

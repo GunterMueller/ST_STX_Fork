@@ -1,0 +1,40 @@
+<html><head><title>Refactoring: 
+
+
+
+Self Encapsulate Field</title></head><body>
+
+
+<H1>
+
+
+
+Self Encapsulate Field</H1>
+<P><I><CENTER>
+
+You are accessing a field directly, but the coupling to the field is becoming awkward. </CENTER></I></P>
+<P><B><CENTER>
+
+Create getting and setting methods for the field and use only those to access the field.</CENTER></B></P>
+
+<PRE>
+	private int _low, _high;
+	boolean includes (int arg) {
+		return arg &gt;= _low &amp;&amp; arg &lt;= _high;
+	}
+</PRE><P><CENTER><IMG SRC="arrow.gif"/></CENTER></P>
+<PRE>
+	private int _low, _high;
+	boolean includes (int arg) {
+		return arg &gt;= getLow() &amp;&amp; arg &lt;= getHigh();
+	}
+	int getLow() {return _low;}
+	int getHigh() {return _high;}
+</PRE>
+
+
+<P>For more information see page 
+	<font color="#FF0000">171</font>
+	of <I>Refactoring</I></P>
+
+<P /><P /><P><CENTER><A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A></CENTER></P></body></html>

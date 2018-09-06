@@ -1,0 +1,289 @@
+<HTML>
+<HEAD>
+<TITLE>Editing Text</TITLE>
+</HEAD>
+<BODY>
+
+<H1>Editing Text</H1>
+
+
+<H2>Selections</H2>
+
+Text is selected using the left mouse button:
+<BLOCKQUOTE>
+press the button over the first character to be
+selected,
+<BR>
+while being pressed, move the mouse pointer to the
+end position
+<BR>
+release the mouse button.
+</BLOCKQUOTE>
+
+The current selection will be highlighted. Pressing the
+left mouse button again makes the system forget the
+old selection and start a new one, except when you
+press the <KBD>SHIFT</KBD> key while pressing the button.
+<BR>
+In this case, the current selection will be expanded.
+You can expand a selection at any time, even if you
+leave and reenter the view containing the selection.
+It is therefore possible, to scroll the view (using
+the scrollbar) or perform any other function (page up
+or page down) needed to make the desired end position
+visible. A selection can be expanded in both directions,
+any number of times.
+<P>
+It is also possible to move the mouse pointer out of
+the view, <STRONG>while</STRONG> the mouse button is being pressed. The
+view will then start to automatically scroll. The farther
+away you move the pointer from the views border, the
+faster will it scroll. This is the easiest way of selecting
+text: just let it scroll by and stop when the end position
+arrives.
+<P>
+Double click will select wordwise, while triple click will select
+linewise. If you keep the button pressed after such a multi-click and start to move,
+it will go on selecting wordwise or linewise.
+<P>
+A quadruple click selects the whole text.
+
+<H2><A NAME="POPUPMENU">Popup Menu Functions</A></H2>
+
+All views showing text offer the usual
+edit functions via a pop-up-menu,
+which is activated with the right mouse button.
+<BR>
+
+<H2>Keyboard Shortcut Functions</H2>
+Most functions of the popup menus are also available via
+keyboard shortcuts. Actually, some functions are only available via
+the keyboard. In general, keyboard functions are activated by pressing
+either the <KBD>Control</KBD> or the <KBD>Command</KBD> key along with
+another key. Depending on your keyboard, the keys may also be labeled
+<KBD>CTRL</KBD> or <KBD>META</KBD> respectively.
+On some keyboards, the <KBD>Command</KBD> key is labeled <KBD>ALT</KBD>.
+<P>
+Typically, all <KBD>CTRL</KBD> functions perform cursor positioning
+functions, while the <KBD>CMD</KBD> functions modify the text or the
+current selection (but there are a few exceptions to this).
+<P>
+<H3>Additional Functions to Select Text</H3>
+<DL>
+<DT><KBD>CMD-SHIFT-'A'</KBD>
+<DD><I>select all</I>
+<BR>
+selects the whole text from the very first line to the very last line.
+<P>
+<DT><KBD>CMD-'w'</KBD>
+<DD><I>select word</I>
+<BR>
+selects the word under the cursor. If there is blank space under
+the cursor, all space between the surrounding words or
+to either end of the current line is selected.
+Thus, to join two text lines, select the space at the line end and
+<CODE>cut</CODE> it.
+<P>
+<DT><KBD>CMD-'m'</KBD>
+<DD><I>select matching</I>
+<BR>
+selects the text delimited by matching parenthesis. If the cursor is currently
+positioned on any <KBD>'('</KBD>, <KBD>'['</KBD> or <KBD>'{'</KBD>-character,
+the corresponding closing parenthesis is found forward in the text,
+and all text between those including
+the parenthesises is selected.
+Likewise, if the cursor is positioned on a closing
+parenthesis, the search is backward for the corresponding opening parenthesis.
+<BR>
+If no matching parenthesis is found, or the nesting is corrupted,
+no selection is made.
+<P>
+<DT><KBD>ESC</KBD>
+<DD>select from the
+beginning of the line up to
+the current cursor position. (See below for the definition of
+<A HREF="#DOIT"><I>doIt</I></A>;
+to evaluate
+something in a workspace, you have to press two keys only:
+<KBD>ESC</KBD> followed by <KBD>CMD-'d'</KBD>.)
+</DL>
+<P>
+<H3><A NAME="EDITING">Editing</A></H3>
+
+<P>
+command key functions:
+<DL>
+<DT><KBD>CMD-'x'</KBD>
+<DD><I>cut</I>
+<BR>
+the selected text is deleted from the text and put into the Cut&amp;Paste buffer
+<P>
+<DT><KBD>CMD-'c'</KBD>
+<DD><I>copy</I>
+<BR>
+the selected text is copied into the Cut&amp;Paste buffer
+<P>
+<DT><KBD>CMD-'v'</KBD>
+<DD><I>paste</I>
+<BR>
+the contents of the Cut&amp;Paste buffer is inserted at the
+current cursor position. If there is currently a
+selection,
+the selected text will be replaced. Notice that making
+selections in other (non Smalltalk) views may also put
+the selection into this Cut&amp;Paste buffer. Therefore, it
+is possible to select some text in an xterm window and
+paste it into some Smalltalk view. In contrast to
+Smalltalk views, most X views automatically perform the <KBD>copy</KBD>
+function when text is selected.
+<P>
+<DT><KBD>CMD-'s'</KBD>
+<DD><I>search</I>
+<BR>
+open up a panel to start a string search
+<P>
+<DT><KBD>CMD-'f'</KBD>
+<DD><I>forward search</I>
+<BR>
+search forward for the next
+occurrence of the selection or last search string.
+Ring the bell, (and show a cross-cursor for a
+moment)
+if not found.
+<P>
+<DT><KBD>CMD-'b'</KBD>
+<DD><I>backward search</I>
+<BR>
+same as above, but search backward.
+</DL>
+<P>
+Some keyboards (for example on Sun workstations) provide
+function keys labeled <KBD>"<B>copy</B>"</KBD>, <KBD>"<B>cut</B>"</KBD>,
+<KBD>"<B>paste</B>"</KBD> and so on. These keys will usually also
+perform the expected functions.
+
+<H3>Control Key Functions for Cursor Positioning</H3>
+
+<DL>
+<DT><KBD>Ctrl-'a'</KBD>
+<DD><I>start of line</I>
+<BR>
+position the cursor to the begin of the current line
+<P>
+<DT><KBD>Ctrl-'e'</KBD>
+<DD><I>end of line</I>
+<BR>
+position the cursor to the end of the current line
+<P>
+<DT><KBD>Ctrl-'m'</KBD>
+<DD><I>match</I>
+<BR>
+position the cursor on the matching parenthesis.
+Ring the bell if none is found or if the parenthesis
+nesting is wrong.
+<P>
+<DT><KBD>SHIFT-RETURN</KBD>
+<DD><I>non inserting cursor return</I>
+<BR>
+moves the cursor to the beginning of the next line, but does not
+insert a line break.
+<P>
+<DT><KBD>SHIFT-TAB</KBD>
+<DD><I>non inserting tabulator</I>
+<BR>
+moves the cursor to the next tabulator position, but does not
+insert a tabulator.
+<P>
+<DT><KBD>HOME</KBD>
+<DD><I>home</I>
+<BR>
+move the cursor to the very beginning of the text
+<P>
+<DT><KBD>END</KBD>
+<DD><I>end</I>
+<BR>
+move the cursor to the very end of the text
+<P>
+<DT><KBD>PAGEUP</KBD>
+<DD><I>next page</I>
+<BR>
+scroll backward to make the previous page visible. A page is usually
+the number of visible lines in the view.
+<P>
+<DT><KBD>PAGEDOWN</KBD>
+<DD><I>previous page</I>
+<BR>
+scroll forward to make the next page visible. A page is usually
+the number of visible lines in the view.
+<P>
+</DL>
+<H3><A NAME="EXECUTING">Executing Smalltalk Expressions</A></H3>
+<P>
+The following additional keyboard commands are available in all views
+which show code (i.e. in Workspaces and the Browser's code view):
+<DL>
+<DT><A NAME="DOIT"><KBD>CMD-'d'</KBD></A>
+<DD><I>doIt</I>
+<BR>
+the selected text is evaluated as a Smalltalk expression
+<P>
+<DT><KBD>CMD-'p'</KBD>
+<DD><I>printIt</I>
+<BR>
+the selected text is evaluated as a Smalltalk expression
+and the result inserted as new selection (so that
+a simple cut will remove this new text).
+<P>
+<DT><KBD>CMD-'i'</KBD>
+<DD><I>inspectIt</I>
+<BR>
+the selected text is evaluated as a Smalltalk
+expression, and an Inspector is started on
+the result.
+</DL>
+
+<H3>Saving Code/Text; Compiling</H3>
+<P>
+
+The following are available in the FileBrowser and SystemBrowser:
+<P>
+<DL>
+<DT><KBD>CMD-'a'</KBD>
+<DD><I>accept</I>
+<BR>
+the whole text (not just the selection) will
+replace the old text. The actual function performed by this depends
+on the context in which it is executed; for example in a FileBrowser,
+the (modified) text will be saved back to the disk file.
+In a SystemBrowser, the current method or class definition will be
+re-compiled and installed. In other applications, different interpretations
+of <I>accepting</I> may be used.
+</DL>
+<P>
+There are even more functions, see the methods <CODE>keyPress:...</CODE>
+in <CODE>TextView</CODE> and subclasses, especially <CODE>EditTextView</CODE>.
+You can also easily add more functions there.
+<P>
+All keyboard functions are bound to their key by use of a mapping table,
+called the <I>KeyboardMap</I>. The definition of the this map is done during
+early startup from within the <CODE>"display.rc"</CODE> file.
+You can change the mapping and/or add new keyboard functions there.
+<BLOCKQUOTE>
+Notice, that you can define your private <CODE>"display.rc"</CODE> file
+or use the default. The system uses the default file
+(in <CODE>"/usr/lib/smalltalk"</CODE>
+or <CODE>"/usr/local/lib/smalltalk"</CODE>)
+if you don't have a private one.
+<BR>
+A private version can be put into your current directory or
+<CODE>"~/.smalltalk</CODE>". (where <CODE>'~'</CODE> is the name of your home directory).
+</BLOCKQUOTE>
+<P>
+Sorry: currently there is no <KBD>undo</KBD> function, however
+no change in the text will have any effect until you
+accepted the new text.
+
+<HR>
+Doc $Revision: 1.8 $ $Date: 2016-09-14 09:41:12 $
+</BODY>
+</HTML>

@@ -1,0 +1,56 @@
+; View defaultStyle:#'motif_dec' 
+;
+; dec's motif style (as seen on an ultrix4.4 system)
+; like motif, but using different colors (baby blue)
+;
+;
+; $Header: /cvs/stx/stx/libview/styles/motif_dec.style,v 1.9 1999-10-27 13:28:03 stefan Exp $
+
+#if Screen current hasGreyscales
+# if Screen current hasColors
+viewGrey                    Color red:45 green:62.5 blue:100 
+scrollerVB                  Color red:38 green:53 blue:86
+# else
+viewGrey                    Color grey:67 
+scrollerVB                  Color grey:50
+# endif
+#endif
+
+#include 'motif.common'
+
+comment  'DEC motif look alike\\baby blue & larger fonts'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Angelehnt an `motif'' auf DEC Systemen\``Babyblau'''' und großer Zeichensatz.'
+#endif
+#if (Language == #french) or:[Language == #fr]
+comment  'Comme 'motif'' avec les systèmes de DEC'
+#endif
+
+menuFont             Font family:'helvetica' face:'medium' style:'roman' size:14
+
+#if Screen current hasColors
+lightColor                Color red:77 green:84.5 blue:100
+shadowColor               Color red:24 green:34.0 blue:54
+#else
+lightColor                Color grey:85
+shadowColor               Color grey:30
+#endif
+
+textCursor.type            #block
+
+scroller.viewBackground    =scrollerVB 
+scroller.thumbColor        =viewGrey
+
+selection.foregroundColor  Color black
+
+label.foregroundColor      Color black
+
+button.activeBackgroundColor      =scrollerVB
+button.activeForegroundColor      Color black
+arrowButton.activeForegroundColor =viewGrey  
+
+menu.viewBackgroundColor         =scrollerVB
+menu.disabledForegroundColor     Color darkGrey
+
+ruler.backgroundColor            =scrollerVB

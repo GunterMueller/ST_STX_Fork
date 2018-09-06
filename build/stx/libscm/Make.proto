@@ -1,0 +1,15 @@
+# Hand-written 
+#
+# position in directory hierarchy:
+TOP=..
+
+# subdirectories where targets are to be made:
+SUBDIRS=common mercurial
+
+# subdirectories where targets are to be made:
+ALLSUBDIRS=$(SUBDIRS) git
+
+test: $(TOP)/goodies/builder/reports
+	$(MAKE) -C $(TOP)/goodies/builder/reports
+	$(TOP)/goodies/builder/reports/report-runner.sh -D . -r Builder::TestReport \
+		-p 'stx:libscm/mercurial'

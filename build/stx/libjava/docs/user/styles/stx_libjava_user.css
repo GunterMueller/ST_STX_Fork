@@ -1,0 +1,138 @@
+body {
+  margin: 1cm 1cm 1cm 1cm;
+  font-family: sans-serif;
+  font-weight: normal;
+  color: black;
+  background: white;
+}
+
+ul,li {
+	margin-left: 2em;
+	margin-right: 2em;
+}
+
+ul p {
+	margin-left: 0em;
+	margin-right: 0em;
+}
+
+
+p { 	
+	text-indent: 0em;
+	text-align: justify;
+	margin-left: 2em;
+	margin-right: 2em;
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
+
+div.simplesect {
+	margin-left: 2em;
+	margin-right: 2em;
+	margin-top: 1em;
+	margin-bottom: 1em;
+
+}
+
+table {
+	margin-left: 2em;
+	margin-right: 2em;
+}
+
+thead th {
+		background: silver;
+}
+
+/*
+tbody td {
+	background: #cccccc;
+}
+*/
+
+div.simplesect  p {
+	margin-left: 0em;
+	margin-right: 0em;
+}
+
+
+
+pre {
+	margin-left: 1cm;
+	margin-right: 1cm;
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
+
+
+
+pre.programlisting {
+                     margin-left: 1cm;
+                     margin-right: 1cm;
+                     margin-top: 1em;
+                     margin-bottom: 1em;
+                     text-align: left;
+                     font-size: 120%;
+                     padding: 10px;
+                     
+                     background: silver;
+                     color: black;
+                     border: 2px solid black;
+                     
+                     }
+
+.abstract {
+		font-style: italic;
+}
+
+.prompt, .computeroutput {
+	color: black;
+}
+
+
+tt, .command {
+	font-family: monospace;
+}
+
+.figure {
+	text-align: center;
+	margin:	1cm auto 1cm auto;
+}
+
+.title {
+	color: maroon;
+}
+
+.methodname { 
+               color: olive;
+               font-size: 120%;
+               }
+.classname {   
+             color: olive;
+             font-weight: bold; 
+             font-size: 120%;
+             }
+
+.varname { 
+           color: olive;
+           } 
+
+
+img { border-width: 0em }
+
+.sgmltag-element { font-weight: bold; }
+
+
+/* GENERIC LINK */
+
+a 	{ 
+	  color: #588bef; 
+	  font-weight: normal; 
+	  text-decoration: none; 
+	}
+
+a:hover { /* color: #1060ea; */
+	  color: red;
+	  font-weight: normal; 
+	  text-decoration: underline;
+	}
+

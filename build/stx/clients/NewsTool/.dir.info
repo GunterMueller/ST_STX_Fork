@@ -1,0 +1,20 @@
+This is a news-reader.
+
+Its not finished and might have bugs ....
+
+start with:
+
+        NewsView start
+
+(will be autoloaded)
+
+
+It should be enhanced; must urgent is a post-news feature.
+
+
+If you use NNTP, set the NNTPSERVER environment variable,
+or alternatively the smalltalk-global NNTPSERVER.
+
+i.e.
+    Smalltalk at:#NNTPSERVER put:'slsv6bt'.
+    NewsView open

@@ -1,0 +1,34 @@
+/* XPM */
+static char *thailand_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 22 5 1",
+/* colors */
+"a c #EEEEEE",
+"b c #0C4099",
+"c c red",
+"d c #FFDEDE",
+"e c white",
+/* pixels */
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"dddddddddddddddddddddddddddddddd",
+"eaeeeeeeeeeeeeeeeeeeeeeeeeeeeeae",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"eaeeeeeeeeeeeeeeeeeeeeeeeeeeeeae",
+"dddddddddddddddddddddddddddddddd",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+};

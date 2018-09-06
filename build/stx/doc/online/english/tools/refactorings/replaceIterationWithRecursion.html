@@ -1,0 +1,246 @@
+<html>
+<head>
+<title>Refactoring: Replace Iteration with Recursion</title>
+</head>
+<body>
+  <H1>Replace Iteration with Recursion</H1>
+  <P>
+<B> Refactoring contributed by 
+	<A href="mailto:dave_whipp@yahoo.com">Dave Whipp</A></B>
+</P>
+  <P>
+<I>
+<CENTER>You have a loop, and it is not obvious what each iteration is
+doing</CENTER>
+</I>
+</P>
+  <P>
+<B>
+<CENTER>Replace Iteration with Recursion</CENTER>
+</B>
+</P>
+  
+  <PRE>
+
+
+
+unsigned greatest_common_divisor (unsigned a, unsigned b)
+{
+  while (a != b)
+  {
+    if (a &gt; b)
+    {
+      a -= b;
+    }
+    else if (b &gt; a)
+    {
+      b -= a;
+    }
+  }
+}
+
+   
+  </PRE>
+  <P>
+<CENTER>
+<IMG SRC="arrow.gif"></CENTER>
+</P>
+  
+  <PRE>
+   
+
+unsigned greatest_common_divisor (unsigned a, unsigned b)
+{
+  if (a &gt; b)
+  {
+    return greatest_common_divisor ( a-b, b );
+  }
+  else if (b &gt; a)
+  {
+    return greatest_common_divisor ( a, b-a );
+  }
+  else // (a == b)
+  {
+    return a; 
+  }
+}
+
+   
+  </PRE>
+  
+  <h2>Motivation</h2>
+  <P>A problem with some loops is that it is difficult to work out what each iteration is doing. Formal methods folks use the term "loop-invariant" to describe the condition that exists as the result of each iteration. An invariant can be added to code as either comments or assertions. The use of good identifier names can often reduce the need for this type of comment. But in the example above, there are no appropriate identifiers to name -- and do you really want to introduce a temp?</P>
+  <P>The solution is to replace the iteration with recursion. Unlike most procedural looping constructs, a recursive function call can be given a meaningful name -- this name should reflect the loop invariant. (In the example, the loop invariant is that the gcd of a and b is unchanged on each iteration). This can often lead to mode understandable code, and can also open new opportunities for other refactorings.
+</P> 
+   <P>Many people worry about performace when using recursion. As always, performace isn't an issue until you profile the code and find the hotspots. However, even with this caveat, it is useful to dispel the myth:</P>
+  <P>On many c/c++ compilers (most, if you enable optimisation), the recursive version will compile to code that is more efficient! This is because the compiler can perform the tail-recursion optimisation to eliminate the function call overhead, leaving just the body of the loop as the limiting factor. In the first version, the exit criteria is checked at the start of each iteration; in the latter, it is only reached at the end of the calculation. So the iterative version keeps checking if (a != b), while the recursive version never makes that check. (it is, of course, possible to re-write the while-loop to cure this, but that optimisation doesn't have the readability/simplicity advantages of the recursive version)</P> 
+
+  <h2>Mechanics</h2>
+<UL>
+  <LI>Identify the candidate loop. The loop should modify one or more scoped locals, and then return a result based on their final values.</LI>
+  <LI>Move the loop into a new function.</LI>
+  <LI>Compile and rerun tests.</LI>
+  <LI>Replace the loop with a function that accepts the local variables, and which returns the final result.</LI>
+  <LI>The implementation of the function should be an 'if' statement, which tests the looping condition (the condition expression in "while (condition) ...;"). The "then" clause should calculate/return the final result. The "else" clause should make the recursive call, with appropriately modified parameters.</LI>
+  <LI>Compile and rerun tests.</LI>
+  <LI>Now refactor the new function: You may be able to remove some temps, and find a better structure for the conditional in the recursive fuction</LI>
+  </UL>
+- <h2>Example</h2>
+<UL>
+  <P>Start with this code.</P> 
+- <PRE>
+-  
+
+unsigned foo (...)
+{
+  ...
+
+  unsigned a = f();
+  unsigned b = g();
+
+  ...
+
+  while (a != b)
+  {
+    if (a &gt; b)
+    {
+      a -= b;
+    }
+    else if (b &gt; a)
+    {
+      b -= a;
+    }
+  }
+
+  unsigned c = a;
+
+  ...
+}
+
+   
+  </PRE>
+  <P>This code has a pretty horrible loop: fortunately, we know what it does:</P> 
+  <PRE>
+   
+
+unsigned foo (...)
+{
+  ...
+
+  unsigned a = f();
+  unsigned b = g();
+
+  ...
+
+  unsigned c = greatest_common_divisor(a, b);
+
+  ...
+}
+
+unsigned greatest_common_divisor (unsigned a, unsigned b)
+{
+  while (a != b)
+  {
+    if (a &gt; b)
+    {
+      a -= b;
+    }
+    else if (b &gt; a)
+    {
+      b -= a;
+    }
+  }
+  return a;
+}
+
+   
+  </PRE>
+  <P>I can now compile and test this.</P> 
+  <P>Now that I've extracted the loop (which may, itself, be a sufficient refactoring), I can change it to a recursive form:</P> 
+- <PRE>
+-  
+
+
+unsigned greatest_common_divisor (unsigned a, unsigned b)
+{
+  if (a != b)
+  {
+    if (a &gt; b)
+    {
+      a -= b;
+    }
+    else if (b &gt; a)
+    {
+      b -= a;
+    }
+    return greatest_common_divisor(a, b);
+  }
+  else
+  {
+    return a;
+  }
+}
+
+   
+  </PRE>
+  <P>This form isn't much better yet. There are 2 further simplifications: we fir
+st avoid modifying the parameters,</P>
+- <PRE>
+-
+
+
+unsigned greatest_common_divisor (const unsigned a, const unsigned b)
+{
+  if (a != b)
+  {
+    if (a &gt; b)
+    {
+      return greatest_common_divisor(a-b, b);
+    }
+    else if (b &gt; a)
+    {
+      return greatest_common_divisor(a, b-a);
+    }
+   }
+  else
+  {
+    return a;
+  }
+}
+   
+  </PRE>
+  <P>and, finally, we simplify the conditionals:</P> 
+  <PRE>
+   
+
+unsigned greatest_common_divisor (const unsigned a, const unsigned b)
+{
+  if (a &gt; b)
+  {
+    return greatest_common_divisor(a-b, b);
+  }
+  else if (b &gt; a)
+  {
+    return greatest_common_divisor(a, b-a);
+  }
+  else // a == b
+  {
+    return a;
+  }
+}
+
+   
+  </PRE>
+  </UL>
+   
+   <P>
+</P>
+<P>
+</P>
+<P>
+<CENTER>
+<A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A>
+</CENTER>
+</P>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+   this emulatates a "modular" dtd like xhtml-1.1.
+   exercises code that handles IGNORE and INCLUDE 
+   conditional sections -->
+<!DOCTYPE html SYSTEM "fake-modular.dtd">
+<html>
+    <head>
+        <title>Title</title>
+        <meta content="asdf" />
+    </head>
+    <body>
+
+        <h1>Heading Level 1</h1>
+
+        <p>This is a paragraph</p>
+
+        <modular:xxx>This comes from the modular dtd</modular:xxx>
+
+    </body>
+</html>

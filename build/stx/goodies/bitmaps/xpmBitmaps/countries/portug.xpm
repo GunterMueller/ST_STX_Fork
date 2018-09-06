@@ -1,0 +1,34 @@
+/* XPM */
+static char *portug_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 20 7 1",
+/* colors */
+"a c black",
+"b c #fefefe",
+"c c #1818ff",
+"d c red",
+"e c #00e600",
+"f c white",
+"g c yellow",
+/* pixels */
+"eeeeeeeeeeeeeddddddddddddddddddd",
+"eeeeeeeeeeeeeddddddddddddddddddd",
+"eeeeeeeeeeeeeddddddddddddddddddd",
+"eeeeeeeeeeeeeddddddddddddddddddd",
+"eeeeeeeeeeeeeddddddddddddddddddd",
+"eeeeeeeeeeeeeddddddddddddddddddd",
+"eeeeeeeeeeeggggddddddddddddddddd",
+"eeeeeeeeeeggggggdddddddddddddddd",
+"eeeeeeeeegbddadagddddddddddddddd",
+"eeeeeeeeegbbfffdgddddddddddddddd",
+"eeeeeeeeegbbfffggddddddddddddddd",
+"eeeeeeeeeggdfcbdgddddddddddddddd",
+"eeeeeeeeeegaddagdddddddddddddddd",
+"eeeeeeeeeeeggbgddddddddddddddddd",
+"eeeeeeeeeeeeeddddddddddddddddddd",
+"eeeeeeeeeeeeeddddddddddddddddddd",
+"eeeeeeeeeeeeeddddddddddddddddddd",
+"eeeeeeeeeeeeeddddddddddddddddddd",
+"eeeeeeeeeeeeeddddddddddddddddddd",
+"eeeeeeeeeeeeeddddddddddddddddddd",
+};

@@ -1,0 +1,33 @@
+/* XPM */
+static char *s_africa_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 20 6 1",
+/* colors */
+"a c black",
+"b c red",
+"c c #00E600",
+"d c white",
+"e c yellow",
+"f c #1818FF",
+/* pixels */
+"cccccddbbbbbbbbbbbbbbbbbbbbbbbbb",
+"ccccccddbbbbbbbbbbbbbbbbbbbbbbbb",
+"ccccccccddbbbbbbbbbbbbbbbbbbbbbb",
+"eccccccccdddbbbbbbbbbbbbbbbbbbbb",
+"eeeccccccccddbbbbbbbbbbbbbbbbbbb",
+"aaeeccccccccdddbbbbbbbbbbbbbbbbb",
+"aaaaeeccccccccdddbbbbbbbbbbbbbbb",
+"aaaaaaeeccccccccdddddddddddddddd",
+"aaaaaaaeeccccccccccccccccccccccc",
+"aaaaaaaaaeeccccccccccccccccccccc",
+"aaaaaaaaaaeecccccccccccccccccccc",
+"aaaaaaaaaeeccccccccccccccccccccc",
+"aaaaaaaeeccccccccccccccccccccccc",
+"aaaaaaeeccccccccdddddddddddddddd",
+"aaaaeeccccccccdddfffffffffffffff",
+"aaeeccccccccdddfffffffffffffffff",
+"eeeccccccccddfffffffffffffffffff",
+"cccccccccdddffffffffffffffffffff",
+"cccccccdddffffffffffffffffffffff",
+"ccccccddffffffffffffffffffffffff",
+};

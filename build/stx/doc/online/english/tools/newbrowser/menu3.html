@@ -1,0 +1,250 @@
+<HEAD>
+<TITLE>Using the New System Browser - Code Menu Functions 3</TITLE>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="menu2.html"> <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html"> <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="accepting.html"> <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H2><A NAME="CODE_MENU" HREF="TOP.html#I_CODE_MENU">Code Menu Functions</A></H2>
+
+
+This menu provides code-rewriting and formatting functions.
+Some of its functions are also reachable via the codeView's
+shifted-middle-button menu (i.e. press "<KBD>SHIFT</KBD>" while clicking the menu button).
+
+<BR>
+<IMG SRC="../../../pictures/NewSystemBrowserMenuCode.gif" ALT="[Fig: code menu hardcopy] ">
+<BR>[code menu; the image may be outdated]
+<P>
+<BR>
+
+<IMG SRC="../../../pictures/NewSystemBrowserMenuCodeViewCode.gif" ALT="[Fig: codeView code menu hardcopy] ">
+<BR>[codeView's code menu (<KBD>SHIFT</KBD>-menu)]
+<P>
+
+  <UL>
+    <LI><A NAME="I_CODE_MENU.VARIABLES"       HREF="#CODE_MENU.VARIABLES">Variables</A>
+    <UL>
+	<LI><A NAME="I_CODE_MENU.VARIABLES.RENAME_LOCAL"            HREF="#CODE_MENU.VARIABLES.RENAME_LOCAL">Rename Local Variable</A>
+<!--
+	<LI><A NAME="I_CODE_MENU.VARIABLES.RENAME_VARIABLE"         HREF="#CODE_MENU.VARIABLES.RENAME_VARIABLE">Rename Variable</A>
+-->
+<!--
+	<LI><A NAME="I_CODE_MENU.VARIABLES.RENAME_INSTVAR"          HREF="#CODE_MENU.VARIABLES.RENAME_INSTVAR">Rename Instance Variable</A>
+	<LI><A NAME="I_CODE_MENU.VARIABLES.RENAME_CLASSVAR"         HREF="#CODE_MENU.VARIABLES.RENAME_CLASSVAR">Rename Class Variable</A>
+-->
+	<LI><A NAME="I_CODE_MENU.VARIABLES.MAKE_ABSTRACT"           HREF="#CODE_MENU.VARIABLES.MAKE_ABSTRACT">Make Abstract</A>
+	<LI><A NAME="I_CODE_MENU.VARIABLES.MAKE_INSTVAR"            HREF="#CODE_MENU.VARIABLES.MAKE_INSTVAR">Make Instance Variable</A>
+	<LI><A NAME="I_CODE_MENU.VARIABLES.CONVERT_TO_VALUEHOLDER"  HREF="#CODE_MENU.VARIABLES.CONVERT_TO_VALUEHOLDER">Convert to ValueHolder</A>
+    </UL>
+    <P>
+    <LI><A NAME="I_CODE_MENU.INLINE_SELECTED"           HREF="#CODE_MENU.INLINE_SELECTED">Inline Selected Message</A>
+    <LI><A NAME="I_CODE_MENU.EXTRACT_TO_TEMPORARY"      HREF="#CODE_MENU.EXTRACT_TO_TEMPORARY">Extract Selected Message to Temporary</A>
+    <LI><A NAME="I_CODE_MENU.EXTRACT_METHOD"            HREF="#CODE_MENU.EXTRACT_METHOD">Extract Method</A>
+    <LI><A NAME="I_CODE_MENU.EXTRACT_METHOD_TO_COMPONENT"       HREF="#CODE_MENU.EXTRACT_METHOD_TO_COMPONENT">Extract Method to Component</A>
+    <P>
+    <LI><A NAME="I_CODE_MENU.ADD_PARAMETER"             HREF="#CODE_MENU.ADD_PARAMETER">Add Parameter to Method</A>
+    <LI><A NAME="I_CODE_MENU.INLINE_PARAMETER"          HREF="#CODE_MENU.INLINE_PARAMETER">Inline Parameter of Method</A>
+    <LI><A NAME="I_CODE_MENU.REMOVE_PARAMETER"          HREF="#CODE_MENU.REMOVE_PARAMETER">Remove Parameter to Method</A>
+    <P>
+    <LI><A NAME="I_CODE_MENU.FORMAT"                    HREF="#CODE_MENU.FORMAT">Format</A>
+    <P>
+    <LI><A NAME="I_CODE_MENU.SYNTAX_COLORING"           HREF="#CODE_MENU.SYNTAX_COLORING">Syntax Coloring</A>
+    <LI><A NAME="I_CODE_MENU.IMMEDIATE_SYNTAX_COLORING" HREF="#CODE_MENU.IMMEDIATE_SYNTAX_COLORING">Immediate Syntax Coloring</A>
+    <LI><A NAME="I_CODE_MENU.IMMEDIATE_EXPLAINING"      HREF="#CODE_MENU.IMMEDIATE_EXPLAINING">Immediate Explaining</A>
+    <LI><A NAME="I_CODE_MENU.AUTOFORMAT"                HREF="#CODE_MENU.AUTOFORMAT">Autoformat Code</A>
+    <LI><A NAME="I_CODE_MENU.SHOW_METHOD_TEMPLATES"     HREF="#CODE_MENU.SHOW_METHOD_TEMPLATES">Show Method-Templates for New Code</A>
+  </UL>
+
+<DL>
+<DT><A NAME="CODE_MENU.VARIABLES" HREF="#I_CODE_MENU.VARIABLES"></A>
+
+<DT><A NAME="CODE_MENU.VARIABLES.RENAME_LOCAL" HREF="#I_CODE_MENU.TEMPORARYS.RENAME_LOCAL">Rename Local Variable</A>
+<DD>Change the name of the selected variable (i.e. must be a local variable or argument).
+<BR>
+The source of the current method is rewritten as required and an implicit accept is performed
+(i.e. the changed code is installed).
+<BR>(see <A HREF="refactorings.html#REFACTORING.RENAME_TEMPORARY">"Refactorings"</A> for details).
+<P>
+
+
+<!--
+<DT><A NAME="CODE_MENU.VARIABLES.RENAME_VARIABLE" HREF="#I_CODE_MENU.VARIABLES.RENAME_VARIABLE">Rename Variable</A>
+<DD>Change the name of an instance- or class variable.
+<BR>
+The classes definition is changed if required (for instance and class variables),
+
+and all methods which refer to the renamed variable are rewritten as required and
+implicit accepts are performed (i.e. the changes are installed).
+<BR>
+This will also change methods in all subclasses, which refer to the variable in question.
+<BR>(see <A HREF="refactorings.html#REFACTORING.RENAME_VARIABLE">"Refactorings"</A> for details).
+<P>
+-->
+
+<!--
+<DT><A NAME="CODE_MENU.VARIABLES.RENAME_INSTVAR" HREF="#I_CODE_MENU.VARIABLES.RENAME_INSTVAR">Rename Instance Variable</A>
+<DD>Change the name of an instance variable.
+<BR>
+All methods which refer to the renamed variable are rewritten as required and
+implicit accepts are performed (i.e. the changes are installed).
+<BR>
+This will also change methods in all subclasses, which refer to the variable in question.
+<BR>(see <A HREF="refactorings.html#REFACTORING.RENAME_VARIABLE">"Refactorings"</A> for details).
+<P>
+
+<DT><A NAME="CODE_MENU.VARIABLES.RENAME_CLASSVAR" HREF="#I_CODE_MENU.VARIABLES.RENAME_CLASSVAR">Rename Class Variable</A>
+<DD>Change the name of a class variable.
+<BR>
+All methods which refer to the renamed variable are rewritten as required and
+implicit accepts are performed (i.e. the changes are installed).
+<BR>
+This will also change methods in all subclasses, which refer to the variable in question.
+<BR>(see <A HREF="refactorings.html#REFACTORING.RENAME_VARIABLE">"Refactorings"</A> for details).
+<P>
+-->
+
+<DT><A NAME="CODE_MENU.VARIABLES.MAKE_ABSTRACT" HREF="#I_CODE_MENU.VARIABLES.MAKE_ABSTRACT">Make Abstract</A>
+<DD>Make the selected variable abstract.
+<BR>
+All direct references to the selected variable are changed into message sends to corresponding
+getter-/setter- methods, and getter-/setter-methods are added (if not already present).
+<BR>
+This will also change methods in all subclasses, which refer to the variable in question.
+<BR>(see <A HREF="refactorings.html#REFACTORING.ABSTRACT_VARIABLE">"Refactorings"</A> for details).
+<P>
+
+<DT><A NAME="CODE_MENU.VARIABLES.MAKE_INSTVAR" HREF="#I_CODE_MENU.VARIABLES.MAKE_INSTVAR">Make Instance Variable</A>
+<DD>Change a local to an instance variable
+<BR>
+Changes the selected local variable into an instance variable.
+<BR>
+A check is performed, if a local by that name does not exist in other methods.
+<BR>(see <A HREF="refactorings.html#REFACTORING.TEMPORARY_TO_INSTANCE">"Refactorings"</A> for details).
+<P>
+
+<DT><A NAME="CODE_MENU.VARIABLES.CONVERT_TO_VALUEHOLDER" HREF="#I_CODE_MENU.VARIABLES.CONVERT_TO_VALUEHOLDER">Convert to ValueHolder</A>
+<DD>Change an instance variable to a valueHolder.
+<BR>
+All direct references to the variable are rewritten into <CODE>#value</CODE>/<CODE>#value:</CODE> message sends,
+and a ValueHolder creation method is added if not already present.
+<BR>
+This will also change methods in all subclasses, which refer to the variable in question.
+<BR>(see <A HREF="refactorings.html#REFACTORING.CONVERT_TO_VALUEHOLDER">"Refactorings"</A> for details).
+<P>
+
+<DT><A NAME="CODE_MENU.INLINE_SELECTED" HREF="#I_CODE_MENU.INLINE_SELECTED">Inline Selected Message</A>
+<DD>The message which is selected in the codeView is inlined.
+<BR>
+This only works if there is exactly one possible method to be inlined.
+<BR>(see <A HREF="refactorings.html#REFACTORING.INLINE_METHOD">"Refactorings"</A> for details).
+<P>
+
+<DT><A NAME="CODE_MENU.EXTRACT_TO_TEMPORARY" HREF="#I_CODE_MENU.EXTRACT_TO_TEMPORARY">Extract Selected Message to Temporary</A>
+<DD>The message which is selected in the codeView is assigned to a temporary within the method.
+<BR>(see <A HREF="refactorings.html#REFACTORING.EXTRACT_TO_TEMP">"Refactorings"</A> for details).
+<P>
+
+<DT><A NAME="CODE_MENU.EXTRACT_METHOD" HREF="#I_CODE_MENU.EXTRACT_METHOD">Extract Method</A>
+<DD>Extract the selected code and place it into a separate method
+<BR>(see <A HREF="refactorings.html#REFACTORING.EXTRACT_METHOD">"Refactorings"</A> for details).
+<P>
+
+<DT><A NAME="CODE_MENU.EXTRACT_METHOD_TO_COMPONENT" HREF="#I_CODE_MENU.EXTRACT_METHOD_TO_COMPONENT">Extract Method to Component</A>
+<DD>Extract the selected code and place it into a separate method in another component.
+<BR>(see <A HREF="refactorings.html#REFACTORING.EXTRACT_METHOD_TO_COMPONENT">"Refactorings"</A> for details).
+<P>
+
+<DT><A NAME="CODE_MENU.ADD_PARAMETER" HREF="#I_CODE_MENU.ADD_PARAMETER">Add Parameter to Method...</A>
+<DD>Adds an additional argument to the selected method.
+<BR>
+This also asks for a new default value for the argument, and rewrites all methods which send
+this message to send the new message with the default value for the additional parameter.
+<BR>(see <A HREF="refactorings.html#REFACTORING.ADD_PARAMETER">"Refactorings"</A> for details).
+<P>
+
+<DT><A NAME="CODE_MENU.REMOVE_PARAMETER" HREF="#I_CODE_MENU.REMOVE_PARAMETER">Remove Parameter from Method</A>
+<DD>Removes an argument from the selected method.
+<BR>
+The argument must be selected in the codeView.
+This function rewrites all methods which send
+this message to send the new message without the removed parameter.
+<BR>(see <A HREF="refactorings.html#REFACTORING.REMOVE_PARAMETER">"Refactorings"</A> for details).
+<P>
+
+<DT><A NAME="CODE_MENU.FORMAT" HREF="#I_CODE_MENU.FORMAT">Format the methods source</A>
+<DD>PrettyPrints (indents and wrapes) the source code of the current method.
+<BR>
+Notice, that prettyPrinting is a much debated upon issue - some parameters of the formatting can be
+adjusted via the launcher's settings->source_and_debugger-menu.
+<P>
+
+<DT><A NAME="CODE_MENU.SYNTAX_COLORING" HREF="#I_CODE_MENU.SYNTAX_COLORING">SyntaxColoring</A>
+<DD>Enable/disable syntax highlighting/coloring.
+<BR>
+The parameters of the coloring style can be
+adjusted via the launcher's settings->source_and_debugger-menu.
+<P>
+
+<DT><A NAME="CODE_MENU.IMMEDIATE_SYNTAX_COLORING" HREF="#I_CODE_MENU.IMMEDIATE_SYNTAX_COLORING">Immediate Syntax Coloring</A>
+<DD>Enable/disable immediate syntax highlighting/coloring (with every keystroke).
+<BR>
+If enabled, bad messages and unknown variables are immediately marked by either a red, bold selector
+or an underwaved variable-name.
+<BR>
+However, on very slow machines, the overhead of parsing might slow down the key-stroke processing
+and make typing a nightmare. Disable this if you work on a slow machine.
+<P>
+
+<DT><A NAME="CODE_MENU.IMMEDIATE_EXPLAINING" HREF="#I_CODE_MENU.IMMEDIATE_EXPLAINING">Immediate Explaining</A>
+<DD>Enable/disable immediate explaining of the clicked-on code.
+<BR>
+If enabled, whenever the mouse button is released in the code editor,
+the syntactic node under the textcursor is explained in the information view.
+<BR>
+On very slow machines, the overhead of parsing and searching for senders/implementors
+might slow down the system.
+Disable this, if this is the case.
+<P>
+
+<DT><A NAME="CODE_MENU.AUTOFORMAT" HREF="#I_CODE_MENU.AUTOFORMAT">Autoformat Code</A>
+<DD>If enabled, a method's code is always automatically formatted (pretty-printed)
+when displayed.
+<BR>
+Use with care, as the formatter is known to still contain "loosing-comments" bugs.
+<P>
+
+
+<DT><A NAME="CODE_MENU.SHOW_METHOD_TEMPLATES" HREF="#I_CODE_MENU.SHOW_METHOD_TEMPLATES">Show Method-Templates for New Code</A>
+<DD>If enabled, the browser displays a Method-Code-Template for new methods.
+This is sometimes useful to beginners, but also often annoying to advanced programmers.
+<P>
+
+
+
+</DL>
+<P>
+
+
+<HR>
+<A HREF="accepting.html">Next: Accepting</A>
+
+
+
+
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif" ALT="[stx logo]">
+Copyright &copy; 2000 eXept Software AG, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+<HR>
+Doc $Revision: 1.14 $ $Date: 2016-01-21 16:22:40 $
+
+</BODY>
+</HTML>

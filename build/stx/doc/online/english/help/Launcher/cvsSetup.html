@@ -1,0 +1,265 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Help - CVS Repository Setup Dialog</Title>
+</HEAD>
+
+<BODY>
+
+<H1>CVS Repository Setup Dialog</H1>
+
+<H2><A NAME="INDEX">Help index</A></H2>
+
+<UL>
+ <LI><A HREF="#INTRODUCTION">Introduction</A>
+ <UL>
+  <LI><A HREF="#SINGLEREPOSITORY">Single Repository Setup</A>
+  <LI><A HREF="#MULTIPLEREPOSITORY">Multiple Repository Setup</A>
+  <LI><A HREF="#CVSSETUP">Setting up a CVS Repository</A>
+  <LI><A HREF="#CVSATTACH">Attaching to another Repository</A>
+ </UL>
+<P>
+ <LI><A HREF="#SETTINGS">CVS Settings Dialog</A>
+ <UL>
+<!--
+   <LI><A HREF="#ENABLE_REPOSITORY">Repository Enabled</A>
+-->
+   <LI><A HREF="#BINARY_PATH">CVS Binary Executable Path</A>
+   <LI><A HREF="#CVS_DEFAULT_ROOT">CVSRoot Default</A>
+   <LI><A HREF="#CVS_PERMODULE_ROOT">CVSRoot per Module</A>
+<!--
+   <LI><A HREF="#SOURCE_CACHE">Source Cache</A>
+   <LI><A HREF="#USE_LOCAL_SOURCE">Use Local Source</A>
+   <LI><A HREF="#KEEP_METHOD_SOURCE">Keep Method Source</A>
+   <LI><A HREF="#CHECK_HALTS">Check for Halt and other bad Message Sends</A>
+-->
+ </UL>
+</UL>
+
+<H2><A NAME="INTRODUCTION" HREF="#INDEX">Introduction</A></H2>
+
+For an introduction to source code management,
+please consult the
+<A HREF="../../programming/sourcemanager.html"><I>Programmer's Guide to ST/X</I></A>.
+
+<H3><A NAME="SINGLEREPOSITORY" HREF="#INDEX">Single repository setup</A></H3>
+
+In a single repository setup, all of the sources of the system are contained in
+one big repository - this includes the sources of the base system classes, as well as
+the sources of any application.
+<BR>
+Notice, that with the exception of eXept itself and
+a number of customers with special contract, this is normally not a realistic setup
+for most other users
+(in fact, even within eXept, multiple cvs servers are used for individual projects).
+<P>
+In a single repository setup, all that needs to be configured, is the CVSROOT of a repository,
+which contains source containers for all projects.
+As an example, the following setting will acomplish this:
+<BR>
+<IMG SRC="../../../pictures/SettingDialog_CVS4.gif">
+<BR>
+(Notice, that the above picture also demonstrates a setup with a changed cvs-binary directory)
+<P>
+In this concrete example, all source-requests for all projects (i.e. not only the stx-projects) will be
+tried to be resolved from the repository located on the "cvs.smallalk-x.de"-host.
+
+
+<H3><A NAME="MULTIPLEREPOSITORY" HREF="#INDEX">Multiple repository setup</A></H3>
+
+In a multiple repository setup, various cvs repositories are responsible for resolving
+source requests. The repository is choosen by the module component of the packageID
+(i.e. the first component up to the separating colon).
+<P>
+For almost all situations, this is the recommend setup, and the most useful setting would be:
+<OL>
+<LI>Use a repository on one of you own hosts as the default CVSROOT. For performance reasons,
+this may even be a local cvs installation on your development machine,
+or at least a machine within your local network.
+<P>
+<LI>Use the eXept repository
+<!-- <i> to prevent naive searchers from finding this url... -->
+("<CODE><i></i>:pserver<i></i>:<i></i>cvs<i></i>@<i></i>cvs<i></i>.<i></i>smalltalk-x.de<i></i>:<i></i>/cvs/stx</CODE>")
+for all projects under the "stx" module.
+I.e. in the settings dialog, add a per-module entry for "stx" as follows:
+<BR>
+<IMG SRC="../../../pictures/SettingDialog_CVS5.gif">
+<BR>
+<P>
+<LI>If not already enabled, now enable the repository caching mechanism.
+If on,
+checked out source files are cached on the local machine to speed up future accesses.
+<BR>
+Please do expect some initial delays, when source files are fetched for the very first time
+(this will lead to short delays in the browser,
+whenever it needs access to a sourcefile,
+which is not cached has not been previously fetched).
+<BR>
+These delays will vanish as soon as enough source files have been cached.
+</OL>
+
+
+<H3><A NAME="CVSSETUP" HREF="#INDEX">Setting up a CVS Repository</A></H3>
+
+Please refer to your CVS-Installation's user manual, online help or command usage documentation on
+how to initially setup and maintain a cvs resository.
+
+
+<H3><A NAME="CVSATTACH" HREF="#INDEX">Attaching to another Repository</A></H3>
+
+Additional data security is optained, by using a master repository,
+which is periodically copied to a slave repository, which is given to third party users.
+For example, in the eXept setup, the repository at
+<!-- <i> to prevent naive searchers from finding this url... -->
+"<CODE>:pserver:cvs@cvs.smalltalk-x.de:/cvs/stx</CODE>"
+is actually only a passive copy of a fraction of the real repository - sensitive parts and
+customer projects are not visible in that slave repository.
+
+
+<H2><A NAME="SETTINGS" HREF="#INDEX">CVS Settings Dialog</A></H2>
+
+<!--
+<H3><A NAME="ENABLE_REPOSITORY" HREF="#INDEX">Repository Enabled</A></H3>
+
+If disabled, source requests will be tried to be resolved from the local file system
+(by searching for a directory structure corresponding to a packageID-path).
+-->
+
+<H3><A NAME="BINARY_PATH" HREF="#INDEX">CVS Binary Executable Path</A></H3>
+
+Optionally specifies the path to the <CODE>"cvs"</CODE> (or <CODE>"cvs.exe"</CODE>) command.
+<BR>
+This is only required if you do not have cvs installed along the default <CODE>PATH</CODE>,
+or if you want to use your own private version of the <CODE>cvs</CODE> command.
+
+
+<H3><A NAME="CVS_DEFAULT_ROOT" HREF="#INDEX">CVSRoot Default</A></H3>
+
+Specifies the CVSROOT (see cvs documentation) for all classes which do not
+belong to a cvs-module listed in the CVSRoot-per-module list.
+<BR>
+I.e. its the fallback CVSRoot used for all other classes, not listed below.
+
+
+
+<H3><A NAME="CVS_PERMODULE_ROOT" HREF="#INDEX">CVSRoot per Module</A></H3>
+
+In ST/X, class packages form a hierarchical tree and are mapped in the cvs
+repository to source file containes located in subdirectories below a so called
+module root. The module itslef is specified by the first component of a package
+path.
+For example:
+<br>
+The "Array"-class is found in the "stx:libbasic" package.
+<BR>Therefore, its module is "stx" and its cvs container is found in the "libbasic"
+sub-directory, of the CVS-repository which has been associated to the "stx" module.
+<P>
+Placing your own packages into a separate module (typically, you would use your company name
+as module-name) and specifying a separate CVSRoot for this module, allows you to
+manage your own classes in a separate source code repository.
+<BR>
+Of course, this also allows for multiple independent repositories to be defined and
+maintained in bigger organizations.
+<P>
+You can attach to the stx-repository (readOnly) by specifying the following
+CVSRoot for the "stx" module:
+"<CODE>:pserver:stx@www.exept.de:/stx</CODE>"
+<br>A CVS-login is required when accessing this repository for the very first time.
+Perform this login either via the cvslogin command-line utility, or by pressing the
+login-button in the settings dialog.
+The password for the stx repository is <CODE>"stx"</CODE>
+(be reminded, that this is a read-only copy of our real repository) .
+
+
+
+<!--
+
+<H3><A NAME="SOURCE_CACHE" HREF="#INDEX">Source Cache</A></H3>
+
+Performing a slow CVS-checkOut operation for every class which is visited in
+the browser does slow down the system's responses - especially the search functions
+(senders/string-search etc.) may become unusably slow.
+<BR>
+To avoid this, the sourcecode-manager keeps track of already checked-out classes
+and remembers those in a cacheDirectory. This cache may grow over time, as
+it remembers multiple versions of all classes of which source code has ever
+been asked for.
+<BR>
+The default location for this cache is <CODE>"/tmp/stx_sourceCache"</CODE> (unix)
+or <CODE>"&lt;userDefault&gt;\local files\Temp\stx_sourceCache"</CODE> (windows).
+<BR>
+Over time, this directory may grow and should be purged from time to time
+(The purge operation removes old versions in the cache and leaves the youngest only).
+<BR>
+It is not dangerous, to remove those old files, as they will be re-checked out
+as required (for example, when you do a "compare with previous" operation later).
+
+
+<H3><A NAME="USE_LOCAL_FILES" HREF="#INDEX">Use Local Files (First)</A></H3>
+
+If enabled, source requests will be <B>first</B> tried to be resolved from the local file system
+(by searching for a directory structure corresponding to a packageID-path),
+<B>then</B> via a CVS request.
+<BR>
+This is a useful setup, if your CVS connection is very slow or unreliable,
+as most of the CVS requests are avoided.
+However, it has the severe drawback, that you may never modify any of the local source files.
+<BR>
+Be aware, that the source code manager trusts the versionNumber found in the
+sourcefile, to correspond to the versionNumber of the compiled class.
+Manually editing a sourceFile, will certainly lead to invalid sourcecode
+being shown in the browser.
+<BR>
+The reason is that in order for the browser to be able to fetch a methods source,
+it fetches the source (by release) and extracts a methods source from the file position
+as kept in the method-object.
+<BR>
+If the file is modified, this file position information becomes invalid.
+<P>
+Keep this in mind, when enabling this feature.
+
+
+<H3><A NAME="USE_LOCAL_SOURCE" HREF="#INDEX">Use Local Source</A></H3>
+If enabled, the local fileSystem is first checked for a sourcefile to be present.
+This speeds up the source code access, but is somewhat dangerous: if the file
+was modified (for example in an external editor), the file-positions from the compiled
+methods will no longer be valid, resulting in garbage source to be presented in the browser.
+This means that: you shalt never edit or otherwise modify the source files if this flag is
+enabled. Actually, it is not really needed, if the source cache is enabled.
+
+<H3><A NAME="KEEP_METHOD_SOURCE" HREF="#INDEX">Keep Method Source</A></H3>
+If enabled, any method's source code is remembered as string in the image,
+once it has been acquired either from a file or from the repository.
+As a result, your image will grow by roughly 10-20Mb over time.
+However, source code access and search operations in the browser will become much faster
+over time (until the working set of source code has been loaded).
+
+
+<H3><A NAME="CHECK_HALTS" HREF="#INDEX">Check for Halt and other bad Message Sends</A></H3>
+
+If enabled, code which is about to be checked into the repository is
+checked for a number of "considered bad" code constructs.
+Among them are:
+<UL>
+<LI>Leftover sends of the <CODE>#halt</CODE>-message
+<LI>Sends of the <CODE>#error</CODE>-message (i.e. without descriptive text-argument)
+</UL>
+-->
+
+<P>
+<P>
+
+
+
+<HR>
+<P>
+<P>
+Copyright &copy;  eXept Software AG, all rights reserved
+<P>
+<P>
+
+<HR>
+Doc $Revision: 1.9 $ $Date: 2016-11-18 12:09:29 $
+
+</BODY>
+</HTML>

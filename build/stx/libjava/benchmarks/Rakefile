@@ -1,0 +1,274 @@
+#require 'pry'
+
+require 'yaml'
+
+
+# DO NOT EDIT following list to temporarily run one benchmark for testing.
+# You can run it by:
+#
+#   rake <bench>
+#
+# for instance:
+#
+#   rake Jasper
+#
+# alternatively, to run just stx:libjava version, run it by:
+#
+#   ./benchmark-runner.st -b Jasper -n 1
+#
+TESTS = [   
+        # Order matters! 
+        # Micro...
+        [ "Ackerman" ,             8         ] ,
+        [ "Ary" ,                  100000    ] ,        
+        [ "Hash" ,                 10000     ] ,
+        [ "Strcat" ,               5000000   ] ,
+        [ "Native1" ,              1000000   ] ,
+ 
+        # Macro...
+        [ "Groovy" ,               5         ] ,
+        [ "Saxon" ,                10        ] ,
+        # [ "Jasper" ,               1 ] ,
+
+        # Interop...        
+        [ "MethodInvocation" ,     500000000 ] ,
+
+        [ "PrimitiveArguments" ,   100000000 ] ,
+        [ "ObjectArguments" ,      100000000 ] ,
+        [ "WrappedArguments" ,     100000000 ] ,
+
+        [ "OverloadedMethods2" ,   100000000 ] ,
+        [ "OverloadedMethods" ,    100000000 ] ,
+        
+        # Broken 
+        # [ "CrossLanguageInvocation" ,  500000000 ] ,
+        # [ "Threadring" ,           100000 ] ,
+        
+        
+        [] # terminator, to make commenting tests easy!!!
+        ]
+
+RESULTS_LAST="result.txt"
+RESULTS_LAST_CSV="result.csv"
+RESULTS_LOG="results-log.txt"
+
+# Make sure it is 32bit JVM!!!
+JAVA_HOME=ENV['JAVA_HOME'] || "/usr/lib/jvm/java-1.6.0-openjdk-i386"
+JAVA="#{JAVA_HOME}/bin/java"
+
+# Defines how many times given benchmark is run. The minimal value
+# is then taken. 
+BENCHMARK_RUNS=Integer(ENV["RUNS"] || "5")
+
+task :default => [:all]
+
+task :all => [:compile, :run]
+
+task :build => [ :compile ]
+
+task :compile do  
+    Dir.chdir 'java' do 
+        system 'ant'    
+    end
+end
+
+task 'echo-classpath' do
+        puts "export CLASSPATH=#{classpath()}"
+end
+
+task :clean do
+    Dir.chdir 'java' do 
+        system 'ant clean'    
+    end  
+    rm_f RESULTS_LAST
+end
+
+task :run do
+  results = Hash.new
+  TESTS.each do | spec |
+    if spec.size == 2      
+      benchmark(spec[0], spec[1], results, BENCHMARK_RUNS)  
+    end      
+  end
+  
+  results = Hash[results.sort]
+
+  write_results_txt(STDOUT, results)  
+
+  if File.exist? RESULTS_LAST
+    File.delete(RESULTS_LAST)
+  end
+  if File.exist? RESULTS_LAST_CSV
+    File.delete(RESULTS_LAST_CSV)
+  end
+
+  write_results_txt_to_file(RESULTS_LAST, results)
+  write_results_csv_to_file(RESULTS_LAST_CSV, results)
+  write_results_txt_to_file(RESULTS_LOG, results)  
+end
+
+# Generate tasks to run individual benchmarks
+TESTS.each do | spec |
+  if (spec.size == 2)
+    task spec[0] do        
+      results = Hash.new
+      benchmark(spec[0], spec[1], results, BENCHMARK_RUNS)
+      puts results.to_yaml
+      write_results_txt(STDOUT, results)
+    end
+  end
+end
+
+
+# Run given benchmark
+def benchmark(test, passes, results, runs)
+    puts "Benchmarking #{test} (#{runs} passes)"      
+    times = Hash.new
+    puts "export CLASSPATH=#{classpath()}"
+    ENV['CLASSPATH'] = classpath()
+    
+    [:jvm, :jvmint, :stx, :libjava, :libjavaint, :stx2libjava, :ruby].each do | platform |        
+        times[platform] = measure(test, passes, platform, runs)
+    end
+
+    results[test] = times
+end
+
+# Return a class path arguments to be passed to java/javac
+# (including '-cp') or an empty string
+def classpath()
+   return '/usr/share/java/groovy-all.jar:../libs/libs/saxon-9.1.0.8.jar:/usr/share/java/saxonb-9.1.0.8.jar:/usr/share/java/itext-2.1.7.jar:/usr/share/java/jasperreports.jar:/usr/share/java/commons-digester.jar:/usr/share/java/commons-logging.jar:/usr/share/java/commons-collections3.jar:/usr/share/java/commons-beanutils.jar:java/bin:.'
+end
+
+
+def measure(test, passes, platform, runs)
+    min = 999999999
+    i = 1;
+    while (i <= runs)
+        puts "Pass #{i}"
+        t = measure_single(test, passes, platform)        
+        if (t == 'N/A')
+            min = t
+            break;
+        end
+        if (min > t)
+            min = t
+        end
+        i = i + 1
+    end
+    return min
+end
+
+# Runs a given bench on given platform and return the time. 
+# If bench fails (non-zero status value), raise an exception. 
+def measure_single(test, passes, platform)
+       if (platform == :'jvm') 
+          command = "#{JAVA} stx.libjava.benchmarks.#{test} #{passes}" 
+       elsif (platform == :'jvmint') 
+          command = "#{JAVA} -Xint stx.libjava.benchmarks.#{test} #{passes}" 
+          command = 'echo "EXECUTION TIME: N/A"'
+       elsif (platform == :'stx')
+          command = "./benchmark-runner.sh --smalltalk -b #{test} -n #{passes} 2>&1"
+       elsif (platform == :'libjava') 
+          command = "./benchmark-runner.sh --jit --java -b #{test} -n #{passes} 2>&1"
+       elsif (platform == :'libjavaint') 
+          if test == 'Ackerman' 
+            command = 'echo "EXECUTION TIME: N/A"'
+          else 
+            command = "./benchmark-runner.sh --nojit --java -b #{test} -n #{passes} 2>&1"
+            command = 'echo "EXECUTION TIME: N/A"'
+          end
+       elsif (platform == :'stx2libjava') 
+          command = "./benchmark-runner.sh --smalltalk2java -b #{test} -n #{passes} 2>&1"
+       elsif (platform == :ruby)
+          command = "./#{test.downcase}.rb #{passes} 2>&1"
+       else
+          raise Exception.new("Unssuported platform: #{platform}")          
+       end
+        
+       puts " running: #{command}"
+       output = `#{command}`
+       if ($? != 0) 
+           puts output
+           raise Exception.new("Command failed!")
+       end
+       execution_time = (output.scan /^EXECUTION TIME: N\/A/).last()
+       if execution_time 
+          puts "      =>  N/A"
+          return "N/A"
+       end
+       
+       execution_time = (output.scan /^EXECUTION TIME: \d*[\.\d]\d*$/).last()
+       execution_time = execution_time.gsub /^EXECUTION TIME: /, ''
+       puts "      =>  #{execution_time}"
+       return execution_time.to_i
+end
+
+
+def write_results_txt_to_file(filename, results)
+  File.open(filename, "a+") do |file| 
+    write_results_txt(file, results)
+  end
+end
+
+
+def write_results_txt(file, results)   
+    file.write("\n")
+    file.write(Time.now.to_s)    
+    file.write("\n")
+    values = [[ "Test", "JVM", "JVM (int)", "STX-S", "STX-J", "STX-J (int)" , "STX-J2S", "Ruby" ]]
+    TESTS.each do | pair |
+      if (pair.size == 2) 
+        key = pair[0]
+        if (results.has_key? key)
+          values << [ key, results[key][:jvm], results[key][:jvmint], results[key][:stx], results[key][:libjava], results[key][:libjavaint], results[key][:stx2libjava], results[key][:ruby] ]
+        end
+      end  
+    end
+    max_lengths = values[0].map { |val| val.length }
+    values.each do |row|
+      row.each_with_index do |elem, index|
+        elem_size = elem.size
+        max_lengths[index] = elem_size if elem_size > max_lengths[index]
+      end
+    end
+    values.each do |val|
+      format = max_lengths.map { |length| "%#{length}s" }.join(" " * 3)
+      file.write(format % val)
+      file.write("\n")
+    end 
+    file.write("--\n")
+  
+end        
+
+def write_results_csv_to_file(filename, results)
+  File.open(filename, "a+") do |file| 
+    write_results_csv(file, results)
+  end
+end
+
+
+def write_results_csv(file, results)   
+    values = [[ "Test", "JVM", "JVM (int)", "STX-S", "STX-J", "STX-J (int)" , "STX-J2S", "Ruby" ]]
+    TESTS.each do | pair |
+      if (pair.size == 2) 
+        key = pair[0]
+        if (results.has_key? key)
+          values << [ key, results[key][:jvm], results[key][:jvmint], results[key][:stx], results[key][:libjava], results[key][:libjavaint], results[key][:stx2libjava], results[key][:ruby] ]
+        end
+      end  
+    end
+    max_lengths = values[0].map { |val| val.length }
+    values.each do |row|
+      row.each_with_index do |elem, index|
+        elem_size = elem.size
+        max_lengths[index] = elem_size if elem_size > max_lengths[index]
+      end
+    end
+    values.each do |val|
+      format = max_lengths.map { |length| "%#{length}s , " }.join(" " * 3)
+      file.write(format % val)
+      file.write("\n")
+    end 
+end        
+

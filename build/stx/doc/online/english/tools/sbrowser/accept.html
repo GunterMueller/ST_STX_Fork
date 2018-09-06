@@ -1,0 +1,136 @@
+<HEAD>
+<TITLE>Using the System Browser - accepting & recompilation</TITLE>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="menu.html"> <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">  <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="warn.html"> <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H2><A NAME="ACCEPTING" HREF="TOP.html#I_ACCEPTING">Accepting</A></H2>
+
+  Performing <CODE>"accept"</CODE> in the code view (we say <CITE>``accepting''</CITE>)
+  will behave different, depending on the
+  last action and the current selection in the list views.
+<BR>
+  In general, <CITE>accepting</CITE> always affects
+  the aspect shown in the code view.
+<BR>
+  This means that <VAR>accept</VAR> will:
+
+<UL>
+<LI>change the class comment
+<BR>
+after you previously selected <CODE>"comment"</CODE> in the class menu,
+and classes comment is shown in the lower text view
+<P>
+<LI>change the class definition
+<BR>
+after you changed classes, selected <CODE>"new class"</CODE>
+or selected <CODE>"definition"</CODE> in the class menu.
+<P>
+<LI>change the classes class-instance-vars
+<BR>
+after selecting <CODE>"class instvars"</CODE>
+<P>
+<LI>change a methods definition (i.e. compile it)
+<BR>
+after selecting or changing a method or after selecting <CODE>"new method"</CODE> in the method menu.
+</UL>
+<P>
+The one exception is the full class browser: <VAR>accept</VAR> may affect all of the
+above, since it rereads all of the text shown in the codeview (actually a filein).
+
+<P>
+  Unless your changed code has been <VAR>accepted</VAR>, no changes are made to the actual
+  method or class. If you want to change your mind, and go back to the original
+  (actually: the last <VAR>accept</VAR>) version after editing for a while, simple click
+  on the method (in the methodlist) after a method change or the class
+(in the classList) after a definition change.
+
+
+<H2><A NAME="RECOMPILATION" HREF="#I_RECOMPILATION">Recompilation after a class change</A></H2>
+
+  Changing a classes instance- or classInstance variable definition may require a
+  recompile of some or all methods (also often in subclasses).
+<BR>(the recompile is required, since named instance variables are accessed via
+their index in the byteCode - thus, without recompilation,
+old methods code would refer to wrong instvars).
+<BR>
+  Smalltalk tries to recompile only the minimum set of methods, but still, this
+  recompilation may take some time.
+<P>
+  Notice, that when you add or remove instance variables to/from a class description
+  and <VAR>accept</VAR>, the system will actually create a
+  <STRONG>new class</STRONG> instead of changing
+  the old one, and recompile the original methods in the context of
+  the new definition (the same is done when class instance variables are added or removed).
+<P>
+  The original class is still physically around, but no longer accessible by name.
+  It is called an anonymous class and has a category of <CODE>"obsolete"</CODE>.
+<BR>
+  The reason for doing this is that existing instances of the class still need their valid
+  class for proper operation (which is the old one, NOT the new one); keep in mind that
+  all specification (i.e. number of instance variables etc.) and protocol (i.e. the list of
+  selectors) are defined in an objects class - therefore, old instances would be in big trouble
+  without a valid class, once they receive a message.
+<P>
+  After such a change, the old (anonymous) class is no longer editable by the
+  systemBrowser. The following scenario should give you more insight on this:
+<BLOCKQUOTE>
+    consider a view class of yours,
+    of which an instance exists and is visible on the screen
+<P>
+    now you add an instance variable <CODE>"foo"</CODE> to its class description
+<P>
+    this creates a new class (with the original name), and removes the
+    old one from the name tables; the old class is still around but not
+    reachable by the old name. However, if you inspect that class, it will
+    show its old name and a category of <CODE>"obsolete</CODE>.
+<P>
+    Old instances are therefore no longer affected by any changes in the browser,
+    thus any changes will only make sense for new instances.
+</BLOCKQUOTE>
+<H3>Why is this so ?</H3>
+
+  There are basically 2 other possible solutions to handling this situation:
+
+<OL>
+<LI>do not allow a class definition change as long as there are instances
+<BR>
+       this would make it impossible, to change things like ScrollBars, TextViews
+	 and almost any other class in the system.
+<P>
+<LI>convert instances
+<BR>
+this means that existing instances have to either get
+       new fields added (which default value ?) or instance variables removed.
+<P>
+    In theory, this is possible (and is actually done by other Smalltalk
+    systems). The drawback is that the system has to perform a <CODE>#become:</CODE>
+    on all existing instances (and derived instances), which may be very
+    slow.
+<BR>
+    ST/X may offer this mechanism in a later release as an option.
+</OL>
+<P>
+Notice:
+<BLOCKQUOTE>
+    Occasionally, it happens that browsers do not correctly update after such
+    a definition change (i.e. a class definition is changed in one browser, but
+    other browser(s) continue to show the old, obsolete class).
+<BR>
+    You will notice this when adding new methods, which do not show up in other
+    browsers.
+<BR>
+    To prevent confusion, it is a good idea to use the <CODE>"update"</CODE> menu function of
+    other browsers - or start a new browser if you are in doubt.
+<BR>
+    This is definitely a bug in ST/X and will be fixed.
+</BLOCKQUOTE>
+
+<HR>
+Doc $Revision: 1.14 $ $Date: 2016-09-14 09:41:13 $
+
+</BODY>
+</HTML>

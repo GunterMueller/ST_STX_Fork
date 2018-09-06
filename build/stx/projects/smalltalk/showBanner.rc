@@ -1,0 +1,63 @@
+"/ Encoding: iso8859-1
+"/
+"/ $Header$
+"/
+"/ MIMEType: application/x-smalltalk-source
+"/
+"/ if you dont like the splash banner at startup,
+"/ simply remove or rename this file.
+"/
+"/ if you like another image to be shown (especially for applications),
+"/ copy this file to the apps startup directory,
+"/ and edit the bitmap-file names found below as required.
+"/ (notice, that the code below uses an image which does not allocate
+"/  to many colors for the particular display in use - it may be useful
+"/  to do so for you own images as well, to avoid slowing down startup)
+"/
+"/ Notice:
+"/   the image used here was bought by ObjectShare from Robert Tinney
+"/   and placed into the Public Domain by ObjectShare.
+"/   We would like to thank both for that.
+"/   Feel free to use & spread it.
+
+|d imgFileName img view|
+
+"/ for now: cannot do this under DOZE;
+"/ win does not support viewBackgrounds and
+"/ no event handling takes place at this time. sigh.
+"/ Display connections with round-trip-time >= 20 ms are
+"/ considered slow and no banner is shown
+
+(OperatingSystem isUNIXlike
+ and:[(Smalltalk at:#XPMReader) notNil  "maybe minimal configuration"
+ and:[Display notNil
+ and:[Display roundTripTime < 20]]]) ifTrue:[
+    "/ choose one of the banners
+    "/ (select the one which fits our screen depth best,
+    "/  avoiding allocation of too many colors)
+    (d := Display depth) <= 8 ifTrue:[
+	d <= 4 ifTrue:[
+	    d <= 2 ifTrue:[
+		imgFileName := 'banner1.xpm'     "/ bw image
+	    ] ifFalse:[
+		imgFileName := 'banner3.xpm'     "/ 8 colors
+	    ]
+	] ifFalse:[
+	    imgFileName := 'banner5.xpm'         "/ 24 colors
+	].
+    ] ifFalse:[
+	imgFileName := 'banner8.xpm'             "/ 255 colors
+    ].
+
+    img := Image fromFile:imgFileName.
+    img notNil ifTrue:[
+	"/ ('showBanner.rc [info]: launch splash screen banner.') infoPrintCR.
+	"/ remember the bannerView - will be destroyed by
+	"/ the hideBanner script.
+	view := PopUpBanner forImage:img.
+	view showCentered.
+	Display flush.
+	Smalltalk addStartBlock:[view destroy].
+    ].
+].
+!

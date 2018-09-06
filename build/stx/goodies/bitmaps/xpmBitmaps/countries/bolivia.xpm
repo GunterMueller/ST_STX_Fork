@@ -1,0 +1,31 @@
+/* XPM */
+static char *bolivia_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 20 4 1",
+/* colors */
+"a c #2C8955",
+"b c red",
+"c c #D88000",
+"d c yellow",
+/* pixels */
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"dddddddddddddddddddddddddddddddd",
+"dddddddddddddccccddddddddddddddd",
+"ddddddddddddccaabcdddddddddddddd",
+"ddddddddddddcbaaccdddddddddddddd",
+"dddddddddddddccccddddddddddddddd",
+"dddddddddddddddddddddddddddddddd",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+};

@@ -1,0 +1,193 @@
+"{ Package: 'stx:libdb/libopenDBX/driver/tests' }"
+
+DBXBackendFacility subclass:#DBXMySQLFacility
+	instanceVariableNames:''
+	classVariableNames:''
+	poolDictionaries:''
+	category:'DataBase-OpenDBXDriverTests'
+!
+
+
+!DBXMySQLFacility class methodsFor:'instance creation'!
+
+new
+	self error: 'Use facilityForTest or facilityForBenchmark'
+! !
+
+!DBXMySQLFacility methodsFor:'benchmarks'!
+
+bigBenchmarkScriptInsert
+	| scriptDDL |
+	scriptDDL := OrderedCollection new.
+	scriptDDL add: '
+			CREATE TABLE big_benchmark_insert (
+			num1 	REAL,
+			num2 	FLOAT,
+			num3 	DECIMAL(8,2),
+			num4 	SMALLINT,
+			str1 	CHAR(10),
+			str2 	VARCHAR(255),
+			date1 	DATE,
+			date2 	DATETIME)'.
+	^ scriptDDL
+!
+
+bigBenchmarkScriptSelect
+	| scriptDDL |
+	scriptDDL := OrderedCollection new.
+	scriptDDL add: '
+			CREATE TABLE big_benchmark_select (
+			num1 	REAL,
+			num2 	FLOAT,
+			num3 	DECIMAL(8,2),
+			num4 	SMALLINT,
+			str1 	CHAR(10),
+			str2 	VARCHAR(255),
+			date1 	DATE,
+			date2 	DATETIME)'.
+	^ scriptDDL
+!
+
+tinyBenchmarkScript
+	| scriptDDL |
+	scriptDDL := OrderedCollection new.
+	scriptDDL add: '
+				CREATE TABLE tiny_benchmark_insert (
+			num1 	REAL,
+			num2 	FLOAT,
+			num3 	DECIMAL(8,2),
+			num4 	SMALLINT,
+			str1 	CHAR(10),
+			str2 	VARCHAR(255),
+			date1 	DATE,
+			date2 	DATETIME)'.
+	^ scriptDDL
+!
+
+tinyBenchmarkScript: aNumber 
+	| script |
+	script := OrderedCollection new.
+	script add: '
+		CREATE TABLE tiny_benchmark_' , aNumber asString , ' (
+			id 		INTEGER,
+			num1 	REAL,
+			num2 	FLOAT,
+			num3 	DECIMAL(8,2),
+			num4 	SMALLINT,
+			str1 	CHAR(10),
+			str2 	VARCHAR(255),
+			date1 	DATE,
+			date2    TIME,
+			date3 	DATETIME,
+			PRIMARY KEY (id))'.
+	1
+		to: aNumber
+		do: [:i | script
+				add: ('INSERT INTO tiny_benchmark_' , aNumber asString , ' 
+					(id, num1, num2, num3, num4, str1, str2, date1, date2, date3)
+				VALUES 
+					({1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10})' format: (OrderedCollection new add: i asDbxString;
+							 add: i asFloat asDbxString;
+							 add: i asFloat asDbxString;
+							 add: i asFloat asDbxString;
+							 add: i asDbxString;
+							 add: i asString asDbxString;
+							 add: i asString asDbxString;
+							 add: Date current asDbxString;
+							 add: Time current asDbxString;
+							 add: DateAndTime current asDbxString;
+							 yourself))].
+	^ script
+! !
+
+!DBXMySQLFacility methodsFor:'connection'!
+
+createConnection
+self connectionSettings: (DBXConnectionSettings
+			host: 'localhost'
+			port: '3306'
+			database: 'sodbxtest'
+			userName: 'sodbxtest'
+			userPassword: 'sodbxtest').
+self platform: DBXMySQLBackend new.
+
+
+! !
+
+!DBXMySQLFacility methodsFor:'tests'!
+
+addTestScripts
+| scriptDDL scriptDrops  |
+	scriptDDL := OrderedCollection new. 
+	scriptDrops := OrderedCollection new. 
+	
+
+	scriptDDL add: 'CREATE TABLE student(
+	   id INTEGER AUTO_INCREMENT,
+	   username VARCHAR(10),
+	   pass VARCHAR(50),
+	   mail VARCHAR(50),
+	   name_surname VARCHAR(30),	   
+	   regular BOOLEAN,
+	   age SMALLINT,	   
+	   average_grade DECIMAL(9,3),
+	   sex CHARACTER(3),
+	   description VARCHAR(200),
+	   starting_hour TIME,
+	   sign_up_date DATETIME,
+	   born_date DATE,
+	   nullable_field VARCHAR(64) NULL,
+	  CONSTRAINT pk_students_id PRIMARY KEY (id)
+	) ENGINE = InnoDB ;
+'.
+"The InnoDB engine is in order to have transaction in this table"
+	
+	scriptDDL add:  'CREATE TABLE signature(
+	code INTEGER, 
+	id_student INTEGER,
+	name CHAR(100),
+	observations VARCHAR(255),
+	course_grade INTEGER,
+	final_grade INTEGER,
+	CONSTRAINT pk_signatures_code PRIMARY KEY (id_student, code)
+) ENGINE = InnoDB '.
+"The InnoDB engine is in order to have transaction in this table"
+
+	scriptDDL add:  
+'CREATE TABLE course(
+	id_course INTEGER,
+	id_student INTEGER,
+	signature_code INTEGER,
+	starting_date DATE,
+	CONSTRAINT pk_courses_id_course PRIMARY KEY (id_student, signature_code)
+) ENGINE = InnoDB '.
+"The InnoDB engine is in order to have transaction in this table"
+
+"		scriptDDL add: 'ALTER TABLE course
+	ADD CONSTRAINT co_ao_fk FOREIGN KEY (id_student) REFERENCES alumno(id)'.  
+		
+			scriptDDL add: 'ALTER TABLE course
+	ADD CONSTRAINT co_ma_fk FOREIGN KEY (signature_code) REFERENCES signature(code)'."
+	
+	scriptDDL add: 'ALTER TABLE signature
+	ADD CONSTRAINT se_st_fk FOREIGN KEY (id_student) REFERENCES student(id)'.
+	
+	self scriptsDDL: scriptDDL. 
+	
+	scriptDrops add: 'DROP TABLE IF EXISTS course CASCADE'.
+	scriptDrops add: 'DROP TABLE IF EXISTS signature CASCADE'. 
+	scriptDrops add: 'DROP TABLE IF EXISTS student CASCADE'.
+
+	self scriptsDrops: scriptDrops.
+! !
+
+!DBXMySQLFacility class methodsFor:'documentation'!
+
+version
+    ^ '$Header: /cvs/stx/stx/libdb/libopenDBX/driver/tests/DBXMySQLFacility.st,v 1.2 2013-04-15 13:18:06 cg Exp $'
+!
+
+version_CVS
+    ^ '$Header: /cvs/stx/stx/libdb/libopenDBX/driver/tests/DBXMySQLFacility.st,v 1.2 2013-04-15 13:18:06 cg Exp $'
+! !
+

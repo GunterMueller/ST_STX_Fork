@@ -1,0 +1,30 @@
+; View defaultStyle:#'show_buttons' 
+;
+; like often seen in showcase applications
+; not really useful
+;
+; notice, that the light- and shadow colors are computed from the bitmaps;
+;
+; $Header: /cvs/stx/stx/libview/styles/show_buttons.style.ign,v 1.2 2000-08-16 14:24:30 ca Exp $
+;
+
+#include 'mswindows.style'
+
+comment  'like MS Windows;\\with stony buttons'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Wie MS Windows\\Mit harten Knöpfen'
+#endif
+
+rock                        (Smalltalk imageFromFileNamed:'bitmaps/granite_small.tiff' inPackage:'stx:libwidg3')
+rockShadow                  =rock darkened
+rockLight                   =rock lightened
+
+buttonBackgroundColor        =rock 
+buttonShadowColor            =rockShadow 
+buttonLightColor             =rockLight 
+buttonForegroundColor        Color grey:90
+buttonForegroundColor        Color grey:90
+
+buttonActiveLevel            -5 
+buttonPassiveLevel           5

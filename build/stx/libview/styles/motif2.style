@@ -1,0 +1,43 @@
+; View defaultStyle:#motif2
+;
+; just a demo:
+; like motif, but with different (red) menu-hilighting
+;
+; $Header: /cvs/stx/stx/libview/styles/motif2.style,v 1.12 1999-10-27 13:28:02 stefan Exp $
+
+#if Screen current hasGreyscales
+viewGrey                (Color grey:61) exactOrNearestOn:(Screen current) 
+lightColor              (Color grey:84) exactOrNearestOn:(Screen current)
+shadowColor             (Color grey:33) exactOrNearestOn:(Screen current)
+mediumColor             (Color grey:52) exactOrNearestOn:(Screen current)
+#else
+viewGrey                Color white
+lightColor              Color grey:25
+shadowColor             Color black
+mediumColor             Color grey:50.
+#endif
+
+#include 'motif.style'
+
+comment  'Fun style. Like `motif'' style.\\With changed menu & selection colors.'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Wie `motif'', mit geänderten Farben für Menüs & Selektionen'
+#endif
+#if (Language == #french) or:[Language == #fr]
+comment  'Comme `motif'', avec des couleurs differentes'
+#endif
+
+menu.hilightForegroundColor      Color white
+menu.hilightBackgroundColor      Color red
+menu.hilightLevel                1
+
+;
+; and different selectionHilighting
+; (if the following is uncommented)
+;
+
+selection.hilightForegroundColor     Color black      
+selection.hilightBackgroundColor     Color green
+selection.hilightStyle               nil
+selection.hilightLevel               1

@@ -1,0 +1,176 @@
+; View defaultStyle:#os2
+;
+; this is not yet completed
+;
+; $Header: /cvs/stx/stx/libview/styles/os2.style,v 1.20 2005-06-27 10:34:22 cg Exp $
+
+comment  'OS/2 look alike'
+
+#if (Language == #german) or:[Language == #de]
+comment  'An `OS/2'' angelehnter Stil'
+#endif
+#if (Language == #french) or:[Language == #fr]
+comment  'Comme `OS/2'''
+#endif
+
+is3D                      true
+name                      #os2
+
+; viewGrey                  Color grey:80
+; darkerGrey                Color grey:67
+
+
+#if Screen current hasColors
+Yellow                    (Color red:100 green:100 blue:70) exactOrNearestOn:(Screen current)
+Yellow                    (Color red:100 green:100 blue:70)
+#else
+Yellow                    Color white
+#endif
+
+#if Screen current hasGreyscales
+viewGrey                  (Color grey:67) exactOrNearestOn:(Screen current)
+brighterGrey              (Color grey:80) exactOrNearestOn:(Screen current)
+darkerGrey                (Color grey:50) exactOrNearestOn:(Screen current)
+#else
+Yellow                    Color white
+viewGrey                  Color white
+brighterGrey              Color white
+darkerGrey                Color white
+#endif
+
+#if Screen current platformName = 'WIN32'
+viewGrey           [Screen current getSystemColor:#'COLOR_BTNFACE']
+brighterGrey       [Screen current getSystemColor:#'COLOR_BTNFACE']
+darkerGrey         Color grey:50
+#endif
+
+borderWidth               0
+viewBackground            =viewGrey
+
+fatFont                   Font family:'helvetica' face:'bold' style:'roman' size:12
+thinFont                  Font family:'helvetica' face:'medium' style:'roman' size:12
+
+scrollBar.position         #right
+
+scrollBar.buttonPositions  #around
+scrollBar.level            -1
+scrollBar.elementSpacing   0
+scrollBar.disableButtons   true               "/ disable useless scrollButtons
+scrollBar.hiding           true               "/ automatic hiding of useless scrollBars
+
+scroller.level             0
+scroller.viewBackground    =darkerGrey
+scroller.thumbColor        =viewGrey
+scroller.thumbLevel        1
+scroller.thumbInset        0
+;scroller.thumbInset        1
+miniScroller.size          2.5  "/ millimeter
+
+button.edgeStyle                 #soft
+button.activeLevel               -1
+button.passiveLevel              3
+button.returnButtonHasBorder     true
+; button.activeBackgroundColor     =darkerGrey
+#if Screen current hasGreyscales
+button.activeBackgroundColor     =brighterGrey
+#else
+button.activeBackgroundColor     Color black
+button.activeForegroundColor     Color white
+#endif
+
+radioButton.style                       #round3D
+
+textCursor.type                          #solidCaret
+textCursor.backgroundColor               Color black
+textCursor.noFocusForegroundColor        Color grey
+
+popup.shadow                     true
+popup.shadowColor                Color black
+popup.borderWidth                1
+
+arrowButton.style                  #os2
+arrowButton.foregroundColor        Color black
+arrowButton.activeBackgroundColor  =viewGrey
+arrowButton.upFormFile             'ScrollUp.os2.14.xbm'.
+arrowButton.downFormFile           'ScrollDn.os2.14.xbm'.
+arrowButton.leftFormFile           'ScrollLt.os2.14.xbm'.
+arrowButton.rightFormFile          'ScrollRt.os2.14.xbm'.
+arrowButton.activeLevel            -1 "/ 0
+arrowButton.passiveLevel           1
+
+#if Screen current hasGreyscales
+button.disabledForegroundColor     Color white
+arrowButton.activeForegroundColor  Color white
+#else
+button.disabledForegroundColor     Color grey
+arrowButton.activeForegroundColor  Color grey
+#endif
+
+checkToggle.checkColor             Color black
+#if Screen current hasGreyscales not
+checkToggle.activeBackgroundColor  Color white
+#else
+checkToggle.activeBackgroundColor =viewGrey
+#endif
+
+selection.font                     =fatFont
+label.font                         =thinFont
+
+selection.backgroundColor          =Yellow
+selection.hilightForegroundColor   Color white
+#if Screen current hasGreyscales
+selection.hilightBackgroundColor   (Color grey:50) exactOrNearestOn:(Screen current)
+selection.hilightFrameColor        (Color grey:25) exactOrNearestOn:(Screen current)
+#else
+selection.hilightBackgroundColor   Color black
+selection.hilightFrameColor        Color grey:25
+#endif
+
+selection.hilightLevel             0
+selection.rightArrowLevel          0
+
+editField.backgroundColor            =Yellow
+editField.selectionBackgroundColor   Color black
+editField.selectionForegroundColor   Color white
+
+;
+; since menus inherit from selectionInList,
+; redefine the Yellow settings ...
+;
+menu.font                            =fatFont
+menu.backgroundColor                 =viewGrey
+menu.shadowColor                     =menu.backgroundColor darkened
+menu.lightColor                      =menu.backgroundColor lightened
+; menu.hilightForegroundColor        Color white
+; menu.hilightBackgroundColor        =darkerGrey
+#if Screen current hasGreyscales
+menu.hilightFrameColor               nil
+menu.hilightLevel                    -1
+#else
+menu.hilightFrameColor               Color black
+menu.hilightLevel                    0
+#endif
+menu.viewBackground                  =viewGrey
+menu.separatingLineLevel             0
+
+pullDownMenu.font                    =fatFont
+pullDownMenu.separatingLines         false
+;; pullDownMenu.level                0
+pullDownMenu.level                   1
+pullDownMenu.hilightLevel            -1
+#if Screen current hasGrayscales
+pullDownMenu.hilightForegroundColor  Color black
+#else
+pullDownMenu.hilightForegroundColor  Color white
+#endif
+
+#if Screen current hasGrayscales not
+html.anchorUnderline                true
+html.anchorForegroundColor          Color black
+html.backgroundColor                Color white
+html.activeAnchorForegroundColor    Color black
+html.activeAnchorBackgroundColor    =html.backgroundColor
+html.visitedAnchorForegroundColor   Color black
+html.exampleAnchorForegroundColor   Color black
+#endif
+

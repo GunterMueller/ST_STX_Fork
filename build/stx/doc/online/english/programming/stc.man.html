@@ -1,0 +1,700 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - STC manual page</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="performanceMisconceptions.html">    <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">  <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="compiling.html">    <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>STC manual page</H1>
+
+<PRE>
+
+STC(1)                                                     STC(1)
+
+
+NAME
+       stc - Smalltalk compiler
+
+SYNOPSIS
+       stc [ options ] file.st
+
+DESCRIPTION
+       Stc is the Smalltalk/X standalone batch compiler.
+
+       Normally, stc translates the input file into temporary c-
+       source file and calls the standard C-compiler cc to create
+       a binary object module.
+       Alternative  C-compilers  can be used by setting the envi-
+       ronment-variable 'CC' to the name of your compiler (for
+       gnu-folks). There is also a command line argument to spec-
+       ify a different c-compiler.
+
+INPUT FILE FORMAT
+       Input to stc consists of either a complete classes  source
+       code (in fileOut-format), or of a collection of individual
+       methods, which can be of any class. In the first case, only
+       methods for the defined class are allowed. In the second
+       case, no class definitions, but only methods are allowed.
+       Notice that fileout format requires that exclamation mark
+       characters ('!') be doubled within a source file,
+       and individual expressions are separated by a '!'-character
+       - remember this when editing ST-source files with vi, emacs
+       or other non-smalltalk tools. Normally, these files are
+       created by filing out source from a Smalltalk system browser.
+
+HEADER FILES
+       When translating a class, stc produces a header definition
+       file, which defines the instance layout and inheritance of
+       the  class. This file is usually created as '&lt;class&gt;.H' in
+       either the current directory or the header output directory
+       (see '-H' flag below).
+       To avoid name conflicts (class-files with common names but in
+       different packages), generated header files should be created
+       in the directory where the source file is located.
+       These header are used to control the dependencies in makefiles.
+
+
+
+
+
+
+
+
+
+
+
+
+OPTIONS
+       Arguments of the form `-anything' are either  stc  options
+       or passed to the C-Compiler.
+
+       General options:
+
+       -C      Suppress the final compilation phase of the compi-
+	       lation; the intermediate c-source is put into  the
+	       file `file.c'.
+
+       -v      List  (on  standard output) the utilities (cc, ld)
+	       called by stc and their arguments. This option  is
+	       also passed on to cc.
+
+       -Idir   defines  the search path for class-definition (.H)
+	       files.  This option is also passed on to cc. With-
+	       out  this  option, the value of the shell environ-
+	       ment variable "STX_LIBDIR" is taken as the root of
+	       a smalltalk installation tree, and the include
+	       files expected in "$STX_LIBDIR/include".
+	       If     no    '-I'    option    is    given,    and
+	       "$STX_LIBDIR" is  undefined,  include  files
+	       are expected to be found in the current directory.
+
+       -includeDir=dir
+	       like above (see note below)
+
+       -Hdir   put the generated class-definition (.H) file  into
+	       directory  dir  instead  of '.'.  This also adds
+	       dir to the class-definition search path (see  -I
+	       above).  However, its not passed on to cc.
+
+       -headerDir=dir
+	       same as above (see note below)
+
+       -PpackageName
+	       define  the  package  symbol,  which is set in all
+	       classes and methods of this module.
+
+       -package=packageName
+	       same as above (see note below)
+
+       -nameSpace=nameSpaceIdentifier
+	       put the generated class into the namespace named
+	       nameSpaceIdentifier. Without this, classes are
+	       placed into the global nameSpace ('Smalltalk') or
+	       the nameSpace as implied by any nameSpace prefixes
+	       in the class definition and methodsFor chunks.
+	       This option has the same effect as a corresponding
+	       namespace directive in the file.
+
+       -Nname  define the name of the  entry  function.  This  is
+	       only  required  for  incremental  compilation,  to
+	       avoid  name  conflicts  when  modules  are  loaded
+	       dynamically.  This is not a public option.
+
+       -initName=name
+	       same as above (see note below)
+
+       -check  Do  only syntactic checking of the smalltalk code.
+	       No output is generated.
+
+       -CC=path
+	       Same effect as setting the environment variable CC
+	       to  'path'.  To  allow  the  use  of  different c-
+	       compilers.
+
+       -errorOutput=fileName
+	       send error messages to fileName, instead of the
+	       standard output.
+
+
+       Notice:
+	       the -N, -P, -Z, -H and -I flags may collide with
+	       corresponding c-compiler flags, which may be required
+	       but have different semantics (for example, the hp
+	       compiler requires a -H option to be set, which could
+	       not be done, if -H was interpreted by stc).
+	       To allow any of those flags to be passed to cc without
+	       interpretation by stc, a special option (+newFlagNames)
+	       disables detection of those flags within stc.
+	       You have to use the corresponding long-option names to
+	       affect the stc behavior.
+
+
+       input language options:
+
+       -noPragmas
+	       This option will turn OFF the effect of any pragma
+	       found in the source.
+
+       -ignoreHere
+	       treat 'here' sends like normal 'self' sends.
+
+       options to control code generation:
+
+       +/-optinline
+	       Enables  /  disables  inline coding. This includes
+	       (among others) inline coding of '+', '-'  messages
+	       to SmallIntegers, 'at:' and 'at:put' to Arrays and
+	       Strings.  The default is on.
+	       Turning this off makes the code a bit more  dense,
+	       bit  also  slows  down simple arithmetic and loops
+	       (especially loops over Arrays).
+	       Notice that methods for inlined messages will never
+	       be called - a halt or trap in the corresponding
+	       smalltalk method will never be reached.
+	       (therefore, a breakpoint on SmallInteger &#187; + will
+		seldom be reached ...)
+	       You can turn off inline code  generation  for  all
+	       high  level  (view  &amp; widget) classes, without any
+	       noticable effect on application performance.
+
+       +/-optinline2
+	       Enables inline coding of some well  known  message
+	       sends  as  inline  function calls. Currently, this
+	       only affects a  few  message  sends,  for  example
+	       "OperatingSystem  disableInterrupts".   Default is
+	       off.
+	       There is no noticable effect  on  performance  for
+	       most  classes (except, for ProcessorScheduler, for
+	       which this optimization was mostly added)
+	       '+optinline2' implies '+inlineNew'.
+
+       +/-inlineNew
+	       Enables inline coding of "Array new  /  basicNew",
+	       and  "Array  with:...with:"  type of messages. The
+	       default is off.
+
+       +/-optspace
+	       Enables / disables code generation  optimized  for
+	       space.  The default is off.
+	       Turning this on makes the resulting code more com-
+	       pact (about 15%), but also slower.
+	       Can be used for all user interface classes without
+	       a noticable slow down.
+	       '+optspace'  implies '-optinline' and '-optsplit'.
+
+       +/-optspace2
+	       Enables even more space optimizations.
+	       The default is off.
+	       Turning this on makes the resulting code even more
+	       compact (another 2%), and also slows down the gen-
+	       erated code further.
+	       This  too  can  be  given  for  all user interface
+	       classes without noticable slowdown.
+	       '+optspace2' implies '+optspace'.
+
+       +/-optcontrol
+	       Enables / disables  control  optimizations.  These
+	       include   inline  coding  of  ifTrue:/ifFalse  and
+	       whileTrue:/whileFalse messages or converting "expr
+	       not ifTrue:" into "expr ifFalse:".  The default is
+	       on.
+	       Turning this off makes the code  much  slower  and
+	       should  only  be  done for very special cases (for
+	       example,  to  support  non-boolean  receivers   in
+	       if/while messages).
+	       Note:
+	       We have not yet seen a program, which requires this;
+	       also, if you really want to redefine if:/while
+	       semantics, ALL classes need to be recompiled with
+	       this flag. For these reasons, this flag may not be
+	       available in future versions.
+
+       +/-optsplit
+	       Enables  /  disables  generating  split  code  for
+	       loops.  If enabled, some (short) loops  are  coded
+	       twice,  checking  argument  types (usually integer
+	       loop variables) before entering the loop.  If dis-
+	       abled, the code is (obviously) more compact (about
+	       5%).
+	       The default is on.
+	       Turning this off makes simple loops (over  collec-
+	       tions) slower.  Notice, that only very small loops
+	       are splitted anyway, to avoid excessive code grow.
+
+       +/-optmath
+	       Enables   /   disables   math  optimizations.   If
+	       enabled,  intermediate   results   of   arithmetic
+	       expressions  involving  floats  are not created as
+	       objects, but as C values only.  This results  both
+	       in  faster execution (due to ommitted allocations)
+	       and less temporary garbage to be created  at  run-
+	       time (i.e. less GC overhead).  The overall speedup
+	       is typically some 5-20% (it may be more  in  inner
+	       math  loops).   Be aware, that with this optimiza-
+	       tion, floating point overflow and underflow is not
+	       detected/checked  on systems which do not signal a
+	       floating point  exception  (i.e.  all  systems  in
+	       which  the  C  runtime  system  creates NAN-values
+	       instead of sending a UNIX signal). Therefore, this
+	       opimization  should  only  be  turned  on for well
+	       debugged code.
+	       The default is off.
+
+       +/-inlineMath
+	       Enables / disables inline math function  optimiza-
+	       tions.   If enabled, sends to some well known math
+	       functions generate inline, function calls - avoid-
+	       ing  the  message  send overhead alltogether.  The
+	       following messages are (currently) inlined if  this
+	       optimization  is  on  and  the receiver is a float
+	       object:
+		   "sin", "cos", "abs"
+	       there may be more in future versions.
+	       The default is off.
+
+       +/-inlineMath2
+	       Like above, but ommits argument checks.  The  gen-
+	       erated  code  does not validate the receiver to be
+	       in the valid range  for  the  operation,  and  may
+	       return   a   wrong   result and/or lead to a
+	       floating point exception.
+	       This  optimization (currently) affects sends to float
+	       receivers  with the following selectors:
+		   "sqrt"  -  receiver is not checked for being
+			      positive
+	       there may be more in future versions.
+	       The default is off. This  option  should  only  be
+	       used  for  highly performance critical code, which
+	       is very well debuggeed.
+	       Turning this on implies '+inlinemath'.
+
+       +/-optcommoncode
+	       Enables / disables common method/block code detec-
+	       tion.  If enabled, machine code for some very sim-
+	       ple methods/blocks is shared (for example "^ self"
+	       or simple instVar access methods).
+	       Default  is  on - there is usually no need to turn
+	       it off.
+
+       +/-optcontext
+	       If enabled, this  optimization  creates  code  for
+	       faster  context handling. The resulting code is up
+	       to 20% faster in  pure  message  sending.  (higher
+	       speedup on machines without GCC and/or many regis-
+	       ters).
+	       However,  return  and  restart  functions  of  the
+	       debugger  are no longer available for methods com-
+	       piled with this optimization.  (exception handling
+	       and unwind actions are not affected by this)
+	       Default is off - it can be used to compile final,
+	       production  code. (i.e. for delivery)
+	       All ST/X standard classes are usually compiled with
+	       this option in effect.
+
+       +/-optregister
+	       If  enabled, generates code which places more tem-
+	       porary objects into register variables,  resulting
+	       in better code for certain code sequences.
+	       Default  is  on  - it may show slower execution on
+	       machines with a small number of registers. Some  C
+	       compilers  optimizers  (GNU)  are clever enough to
+	       find out things themself, so this may  not  affect
+	       all  machines  performance. (it does with non GCCs
+	       on SGI, AIX)
+
+       +homePointers (experimental: for A&amp;T i386 SYS5.4 only)
+	       Instructs stc to put the home context pointers  of
+	       blocks  into  local  variables  before using them,
+	       instead of following  the  context  pointer  chain
+	       inline.   This  is  a workaround for a bug in AT&amp;T
+	       sys5.4 compilers, which crashes on constructs like
+	       "p->f->f->f...->f".   Don't use this flag - it will
+	       be silently removed.
+
+       +/-optCommonStrings
+	       If enabled, all equal strings within one  compila-
+	       tion  module  are  mapped  onto one string to save
+	       some data space. It should be disabled if  literal
+	       strings are modified by the program (which is con-
+	       sidered bad programming style).
+	       Default is on.
+
+       +limitSuperInclude (for broken SCO compilers only)
+	       Produce code to NOT include  the  header-files  of
+	       the  superclass. This should be used only, if your
+	       c-preprocssor runs into trouble with deeply nested
+	       include-files. Not for general use.
+
+       +/-staticMethods
+	       make the methods functions static in the resulting
+	       output file.  This will create less symbols in the
+	       symbol table of the resulting  output  module  and
+	       speed-up  final  linking.  On  systems  where  the
+	       linker has a fixed, limited  symbol  table  inter-
+	       nally,  it may be necessary to use this option and
+	       strip out all local  symbols  before  linking  the
+	       final executable.
+	       The default is on - you may have to turn this off,
+	       to debug the system using dbx, sdb or gdb.
+
+       +/-shortMethodNames
+	       if  on,  short  names  are  generated  for methods
+	       names.  Some assemblers have  problems  with  very
+	       long  function  names  (NeXT 2.1 assembler crashes
+	       with a core dump)
+	       Turning this  option  on  enables name truncation.
+	       This  may  help  in some situations.
+	       Default is off.
+
+       +/-shortNames
+	       like shortMethodNames, short names  are  generated
+	       for  methods. In addition, symbol names are trans-
+	       lated via a map in the file 'shortNm.stc', if pre-
+	       sent.   Also,  warnings are output for identifiers
+	       which are longer than 32 characters and which  are
+	       not  mapped  via  'shortNm.stc'.   This option may
+	       help  with  compilers/assemplers  and/or   linkers
+	       which  truncate  identifiers and/or define macros.
+	       Default is off.  The mapping file 'shortNm.stc' is
+	       not  provided  with the system.
+	       This flag is obsolete with +sharedLibCode
+
+       +sepInitCode
+	       put  initialization  code for classes into a sepa-
+	       rate file; this allows all init  functions  to  be
+	       linked  to  the  end of the executable.  In memory
+	       limited paging architectures, this will give  bet-
+	       ter  performance  since  unneeded init-code can be
+	       paged out - while otherwise  the  init-code  would
+	       take up space due to beeing intermixed with method
+	       code.  With  enough  memory  or  small  page-sizes
+	       (i.e.  512 byte) the effect will not be noticable.
+	       '+sepInitCode' implies '-staticMethods', since the
+	       init code references the methods.
+
+       +sharedLibCode
+	       create  code which is suitable for building shared
+	       libraries.  This includes indirect  references  to
+	       symbols  abd  globals,  and resolving externals at
+	       startup time (instead of  letting  the  linker  do
+	       this).
+	       Even  on  systems  without shared library support,
+	       this flag is useful, since it reduces  the  number
+	       of external C symbols by roughly 12000 (in a stan-
+	       dard smalltalk executable) thus making  the  final
+	       link  much  faster  (there are linkers which spend
+	       hours in their symbol table handling code ;-)
+	       Default depends on the architecture; for most, it
+	       is on.
+	       '+sharedLibCode'  implies  '+indirectSymbols'  and
+	       '+indiretGlobals'.
+
+       +indirectSymbols
+	       create code which references symbols via  indirect
+	       pointers
+	       This  reduces  the number of external C symbols by
+	       roughly 11000 (in a standard smalltalk executable)
+	       thus  making the final link much faster (there are
+	       linkers which spend hours in  their  symbol  table
+	       handling code ;-).
+	       If  the  code  is  to be loaded dynamically into a
+	       running system, the classes must be compiled  with
+	       this flag.
+	       Default is (currently) off. See +sharedLibCode.
+	       '+sharedLibCode'  implies  '+indirectSymbols'  and
+	       '+indiretGlobals', so this flag is usually not of
+	       interest.
+
+       +indirectGlobals
+	       create  code which references globals via indirect
+	       pointers
+	       This enables the use of  multiple  namespaces  and
+	       poolDictionaries  (rel2.11  only) and also reduces
+	       the number of external C symbols somewhat.
+	       Default is (currently) off. See +sharedLibCode.
+	       '+sharedLibCode'  implies  '+indirectSymbols'  and
+	       '+indiretGlobals', so this flag is usually not of
+	       interest.
+
+       +commonSymbols
+	       collect symbols encountered in the input in a file
+	       called  'symbols.stc', in the 'include' directory,
+	       and do not create initialization  code  for  those
+	       symbols in the object file.
+	       This option compacts the resulting object file, by
+	       not including all  symbols  as  c-strings  (for  a
+	       standard  smalltalk,  the saving is roughly 300k).
+	       These  strings  are  only  required  during  early
+	       startup,  to  unify  all symbols as present in the
+	       various object modules. Therefore, the effect  may
+	       be ignorable on systems with lots of memory.
+	       If any module was compiled with this option turned
+	       on, the symbols file is required to be present and
+	       readable at execution time later.
+	       Typically,  the symbols file is installed in $LIB-
+	       DIR/include/symbols.stc.
+	       Default is off in  stc,  but  most  configurations
+	       turn this on explicitely for the standard classes.
+	       Notice, that with the 'symbols.stc' file, symbol
+	       unification is done at mdoule compilation time -
+	       without it, it is done at smalltalk-startup time.
+
+	       Also notice, that the 'symbols.stc' file must
+	       correspond exactly to the smalltalk executable version.
+	       Strange effects are to be expected, if they are not
+	       in sync. For this reason, we do NOT recommend this
+	       flag to be used for other than the standard smalltalk
+	       classes.
+	       Especially: NEVER use this option with shared libraries
+	       which are to be transported to other systems.
+
+       -symPrefix=prefix
+	       This arranges for the C-identifiers which are generated
+	       for symbol constants and selector symbols to be prefixed
+	       with prefix to avoid name conflicts with other C names.
+	       Use this, if you have C variables, types or typedefs with
+	       names of the form "_"XXX, where XXX is also used as an ST/X
+	       Symbol. Without the prefix, this code is not compilable,
+	       since stc generates C-names of the above form to refer to
+	       symbols.
+	       The names are only used in #define directives which are
+	       only valid &amp; used within a single compilation unit.
+	       Therefore, it can be used with individual st-source files
+	       without affecting other modules.
+
+       -varPrefix=prefix
+	       Much like above, this affects the names of common C-names
+	       for names which are visible between modules.
+	       You can use this to change the names of stc-generated object
+	       reference pointers, if those conflict with any library.
+	       However, in general, all classes within a (possibly shared)
+	       classLibrary should be compiled with the same varPrefix setting.
+	       Use of this flag also sligtly reduces the size of the generated
+	       object files, since pointers to symbols and globals can now be
+	       shared by all classes inside a classLibrary - thereby reducing
+	       the amount of initialization code which needs to be generated.
+	       (there is no noticable effect on the execution time, though)
+
+
+       options to control diagnostic output:
+
+       +/-errorGlobal
+	       If enabled, generate an error, whenever a variable
+	       is detected which is currently undefined and taken
+	       to be global by the compiler.  The default is off,
+	       since all classes referenced  in  a  module  would
+	       otherwise produce errors.
+
+       +/-errorLowerGlobal
+	       If enabled, generate an error if a global variable
+	       which  starts  with  a  lower  case  character  is
+	       detected.   Default  is  on,  since globals should
+	       start with an uppercase character (by convention).
+
+       +/-errorUpperLocal
+	       If  enabled,  generate an error if an instance- or
+	       local-variable starts with an upper case character
+	       is  detected.   Default is on, since locals should
+	       start with a lowercase character (by  convention).
+
+       +/-errorInstVarRedef
+	       If enabled, generate an error if an instance vari-
+	       able is defined, whose name is already present  in
+	       a   superclass.    Default   is  on,  since  other
+	       smalltalk systems do  not  allow  hiding  instance
+	       variables  in  subclasses.   Can  be turned off to
+	       allow compilation of classes  with  this  kind  of
+	       conflict.
+
+       -warn   Suppress all warning messages.
+
+       +/-warnNonStandard
+	       If   enabled,   stc  outputs  a  warning  message,
+	       whenever a non standard (i.e. a ST/X special) fea-
+	       ture of the language is used. Default is on.
+
+       +/-warnGlobal
+	       If  enabled,  stc outputs a warning message, when-
+	       ever a variable is  detected  which  is  currently
+	       undefined  and taken to be global by the compiler,
+	       AND the variables name starts with  a  lower  case
+	       character.  Default  is  on  since  globals should
+	       start with an upper case character  by  default  -
+	       however, 'errorLowerGlobal' is also on by default,
+	       so that an error is generated instead of  a  warn-
+	       ing.
+
+       +/-warnUpperGlobal
+	       Same  as  +warnGlobal  for identifiers which start
+	       with an uppercase character.  The default is  off,
+	       since  all  classes  referenced  in a module would
+	       otherwise give warning messages.
+
+       +/-warnGlobalAssign
+	       Output a warning message,  whenever  a  global  is
+	       assigned  to.  This flag is useful, to detect side
+	       effects between classes.  Default is on.
+
+       +hint   Enables printing of hint messages.  Hint  messages
+	       are  output, when stc detects code, which could be
+	       compiled into faster/smaller code, when  rewritten
+	       slightly.  Do not expect too much currently; there
+	       may be more hints in future versions.
+
+       +notice Enables printing of stc-developers internal debug
+	       notes.   These  give  notifications about internal
+	       optimizations and are not meant for public use.
+
+       options to control symbolic information in the output:
+       (these will not affect runtime behavior; instead more/less
+       data space will be needed by the executable)
+
+       +/-sourceInfo
+	       Output  / do not output source-file information on
+	       methods.  If disabled, the methods will  not  con-
+	       tain  the  information where the source is located
+	       (i.e. fileName / position) and therefore make  the
+	       SystemBrowser  almost  unusable.  Also, data space
+	       requirements will be slightly smaller.
+	       Default is +sourceInfo. It is not recommended to
+	       turn this off.
+
+       +/-categoryInfo
+	       Output / do not output class category information.
+	       If  turned  off,  no class category will be avail-
+	       able, hindering  the  SystemBrowser.   Also,  data
+	       space requirements will be slightly smaller.
+	       Default is +categoryInfo. It is not recommended to
+	       turn this off.
+
+       +/-commentInfo
+	       Output  / do not output class comments.  If turned
+	       off, no class comment will be available.   Depend-
+	       ing  of  the size of the comments, data space sav-
+	       ings may be noticable, if disabled.
+	       Default is +commentInfo. It is not recommended to
+	       turn this off.
+
+       +compact
+	       Do not output any source information.  This  flags
+	       turns  all  of  'sourceInfo',  'categoryInfo'  and
+	       'commentInfo' off.
+
+       options to extract various information for make-support:
+
+       -extractClass
+	       Extracts the class-name. This can be used to auto-
+	       matically  create 'abbrev.stc'-abbreviation files.
+
+       -extractCategory
+	       Extracts the classes category. This can be used to
+	       automatically create category information for
+	       'abbrev.stc'-abbreviation files.
+
+       -extractRevision
+	       Extracts the classes revision number.
+
+       -extractInit
+	       Extracts the basename of the  init-function.  This
+	       can    be    used    to    automatically    create
+	       'classList.stc' files.
+
+       -makeDepend
+	       Extracts dependency information. This can be  used
+	       to  automatically create dependency lists in make-
+	       files.
+
+       All other arguments are passed on to cc(1).
+
+EXAMPLES
+       to compile a smalltalk class into a machine code object:
+
+	   stc -I/usr/local/lib/smalltalk/include -c file.st
+
+       In normal situations, stc is never  called  directly  from
+       the  shell;  the  system as delivered includes appropriate
+       Makefiles, which hide all command line details.
+
+
+FILES
+       file.st                     input file
+       file.c                      intermediate output file
+       file.H                      class definition output file
+       file.o                      object file
+       abbrev.stc                  abbreviation file
+       include/symbols.stc         symbols file
+       include/symbols.stc.lck     symbols file lock (temporary)
+       LIB/smalltalk/librun.obj    runtime library
+       LIB/smalltalk/libbasic.obj  standard class library
+       LIB/smalltalk/libbasic2.obj additional non GUI classes
+       LIB/smalltalk/libbasic3.obj additional non GUI classes
+       LIB/smalltalk/libcomp.obj   bytecode compiler library
+       LIB/smalltalk/libview.obj   view library for X11
+       LIB/smalltalk/libwidg.obj   widget library
+       LIB/smalltalk/libwidg2.obj  additional widgets
+       LIB/smalltalk/libwidg3.obj  additional (fun) widgets
+       LIB/smalltalk/libtool.obj   development tools library
+       LIB/smalltalk/source        standard place for sources
+       LIB/smalltalk/include       standard directory for class-header files
+
+SEE ALSO
+       Smalltalk 80, The Language and Implementation, (Blue book)
+
+       cc(1)
+       smalltalk(1)
+       'doc/online/programming'  HTML documentation files
+
+DIAGNOSTICS
+       The  diagnostics  produced by stc are intended to be self-
+       explanatory.  Occasional messages may be produced  by  the
+       c-compiler  or loader.  Especially, primitives may produce
+       c-compiler warnings for unreached code.
+
+BUGS
+       see files 'doc/TODO', 'doc/bug_list' and 'doc/relNotes'
+
+AUTHOR
+       Claus Gittinger
+       Development &amp; Consulting
+       Email:  info@exept.de
+
+COPYRIGHT
+       COPYRIGHT (c) 1988-98 by Claus Gittinger
+       COPYRIGHT (c) 2005 by eXept Software AG
+		  All Rights Reserved
+
+	This software is furnished under a license and may be used
+	only in accordance with the terms of that license and with the
+	inclusion of the above copyright notice.   This software may not
+	be provided or otherwise made available to, or used by, any
+	other person.  No title to or ownership of the software is
+	hereby transferred.
+
+</PRE>
+</BODY>
+</HTML>

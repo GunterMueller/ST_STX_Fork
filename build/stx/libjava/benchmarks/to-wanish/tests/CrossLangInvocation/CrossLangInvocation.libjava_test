@@ -1,0 +1,9 @@
+inst := JAVA CrossLangInvocation new.
+
+duration := Time millisecondsToRun: [
+	n timesRepeat: [
+		inst doSmth
+	].
+].
+
+Transcript showCR: 'EXECUTION TIME: ' , duration printString.

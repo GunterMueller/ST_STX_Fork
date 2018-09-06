@@ -1,0 +1,6 @@
+BitTorrentBDecoder BitTorrentBDecoder stx:goodies/communication/bitTorrent 'Net-Communication-Bittorrent' 0
+BitTorrentBEncoder BitTorrentBEncoder stx:goodies/communication/bitTorrent 'Net-Communication-Bittorrent' 0
+BitTorrentTorrentFileContents BitTorrentTorrentFileContents stx:goodies/communication/bitTorrent 'Net-Communication-Bittorrent' 0
+BitTorrentTorrentFileRecord BitTorrentTorrentFileRecord stx:goodies/communication/bitTorrent 'Net-Communication-Bittorrent' 0
+BitTorrentTorrentInfoRecord BitTorrentTorrentInfoRecord stx:goodies/communication/bitTorrent 'Net-Communication-Bittorrent' 0
+stx_goodies_communication_bitTorrent stx_goodies_communication_bitTorrent stx:goodies/communication/bitTorrent '* Projects & Packages *' 3

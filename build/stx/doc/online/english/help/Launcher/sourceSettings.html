@@ -1,0 +1,93 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Help - Source Code Settings</Title>
+</HEAD>
+
+<BODY>
+
+<H1>Source Code Settings</H1>
+
+<H2><A NAME="INDEX">Help index</A></H2>
+
+<UL>
+  <LI><A HREF="#SYNTAXCOLORING">Syntax Coloring</A>
+  <LI><A HREF="#SELECTORCHECK">Immediate Selector Check</A>
+  <LI><A HREF="#AUTOFORMAT">Automatic Code Formatting</A>
+</UL>
+<P>
+
+<H2><A NAME="SYNTAXCOLORING" HREF="#INDEX">Syntax Coloring</A></H2>
+
+Controls if the syntax of methods should be highlighted in the
+browser, by coloring entities.
+<BR>
+Colors and emphasis can be individually configured for various
+syntactic and semantic entities, such as message selectors, comments,
+global or local variables etc.
+<P>
+To change an element's presentation,
+<OL>
+<LI>select the element type (argument, global, etc.) in the list
+<LI>check the color box if its color is to be changed
+(leave unchecked, to keep these elements un-annotated)
+<LI>if checked, choose a color
+<LI>optionally, choose an emphasis (that is: style)
+</OL>
+
+A number of common styles can be quickly set by
+selecting it in the common styles list, and pressing the "<I>Reset To</I>" button.
+
+
+<P>
+
+<H2><A NAME="SELECTORCHECK" HREF="#INDEX">Immediate Selector Check</A></H2>
+
+If on, a syntax check is done "while you type in new characters"
+in the browser, and message selectors are checked on the fly.
+<BR>
+Any unimplemented message is highlighted (bold-red by default.
+<BR>
+You may want to disable this on a slow machine.
+<P>
+
+<H2><A NAME="AUTOFORMAT" HREF="#INDEX">Automatic Code Formatting</A></H2>
+
+(the formatter's settings have been moved to a separate tab recently.
+See <A HREF="sourceFormatSettings.html">"Source Code Format Setings"</A>)
+<!--
+<P>
+If on, methods source code is formatted (pretty printed) automatically
+when a method's source is displayed.
+<BR>
+For now, the formatter is not invoked on keyboard input;
+you can reformat a changed method source via the popup menu or the "Format" button.
+<BR>
+You may want to disable this, if you don't like the formatter's output.
+<P>
+The formatter may be configured to either generate lisp-style or
+c-style block format.
+<P>
+Warning: the formatter is based on the BRFormatter code ported from
+the RefactoryBrowser package. Porting is still underway and there may be
+bugs especially with ST/X extended syntax. The original formatter completely
+lost any comment layout, which resulted in very ugly looking source code
+(and is probably one reason, why many people did not comment their code!).
+We tried to fix most of those issues (but who knows...).
+Use at your own risk, and check if you like the output. If not, indent your code
+manually.
+-->
+
+
+<HR>
+<P>
+<P>
+Copyright &copy;  Claus Gittinger Development & Consulting, all rights reserved
+<P>
+<P>
+
+<HR>
+Doc $Revision: 1.16 $ $Date: 2016-10-30 15:20:58 $
+
+</BODY>
+</HTML>

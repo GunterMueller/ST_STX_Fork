@@ -1,0 +1,18 @@
+/* XPM */
+static char *HandleNext_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"7 7 4 1",
+/* colors */
+"a c black",
+"b c white",
+"c c #555555",
+"d c #aaaaaa",
+/* pixels */
+"dcaaadd",
+"caccccd",
+"accdddd",
+"acddbbd",
+"acdbbbd",
+"dcdbbdd",
+"ddddddd",
+};

@@ -1,0 +1,39 @@
+; View defaultStyle:#motif3
+;
+; just a demo:
+; like motif, but with different menu-hilighting
+; (yellow text on grey - looks like lighted with a lamp from behind ...)
+;
+; $Header: /cvs/stx/stx/libview/styles/motif3.style,v 1.7 1997-11-02 19:48:59 cg Exp $
+
+
+#include 'motif.style'
+
+comment  'like `motif'' style;\\with changed menu, selection & button colors'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Wie `motif'', mit geänderten Farben für\Menüs, Selektionen und Knöpfe'
+#endif
+#if (Language == #french) or:[Language == #fr]
+comment  'Comme `motif'', avec des couleurs differentes'
+#endif
+
+menu.hilightForegroundColor      Color yellow
+menu.hilightBackgroundColor      =viewGrey
+menu.hilightLevel                0
+
+;
+; and different selectionHilighting (yellow fg highlighting)
+;
+
+selection.hilightForegroundColor     Color yellow      
+selection.hilightBackgroundColor     =viewGrey
+selection.hilightStyle               nil
+selection.hilightLevel               0
+
+;
+; and different button hilighting
+;
+
+button.activeForegroundColor     Color yellow      
+button.foregroundColor           Color black      

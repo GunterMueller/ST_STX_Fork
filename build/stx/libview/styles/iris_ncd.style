@@ -1,0 +1,22 @@
+; View defaultStyle:#iris_ncd 
+;
+; silicon graphics style with smaller fonts
+;
+; $Header: /cvs/stx/stx/libview/styles/iris_ncd.style,v 1.2 1997-11-03 16:42:52 cg Exp $
+
+#include 'iris.style'
+
+comment  'Silicon graphics'' iris look alike\with smaller fonts (for NCD x-terminals)' 
+
+#if (Language == #german) or:[Language == #de]
+comment  'An Silicon Graphics Iris angelehnter Stil,\mit kleineren Zeichensätzen (für NCD x-terminals).'
+#endif
+
+text.font         Font family:'courier' size:10
+editField.font    Font family:'courier' size:10
+variableFont     Font family:'helvetica' size:10
+selection.font    Font family:'helvetica' size:10
+label.font        Font family:'helvetica' size:10
+menu.font         Font family:'helvetica' size:10
+pullDownMenu.font Font family:'helvetica' size:10
+

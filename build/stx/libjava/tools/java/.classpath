@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" output="bin-tests" path="src-tests"/>
+	<classpathentry exported="true" kind="lib" path="libs/org.eclipse.jdt.core_3.8.3.v20130121-145325.jar" sourcepath="libs-src/org.eclipse.jdt.core.source_3.8.3.v20130121-145325.jar"/>
+	<classpathentry kind="con" path="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?project=stx.libjava.tools&amp;ivyXmlPath=ivy.xml&amp;confs=*"/>
+	<classpathentry kind="con" path="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?project=stx.libjava.tools&amp;ivyXmlPath=ivy.xml&amp;confs=*&amp;acceptedTypes=jar%2Cbundle%2Cejb%2Cmaven-plugin&amp;alphaOrder=false&amp;resolveInWorkspace=false&amp;transitiveResolve=true&amp;readOSGiMetadata=false&amp;retrievedClasspath=true&amp;retrievedClasspathPattern=libs%2F%5Bartifact%5D-%5Brevision%5D.%5Bext%5D&amp;retrievedClasspathSync=false&amp;retrievedClasspathTypes=jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/stx.libjava"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/stx.libjava.libs"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/stx.libjava.tests"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

@@ -1,0 +1,1128 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Exception Handling</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="contexts.html">     <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="processes.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Exception Handling and Signals</H1>
+
+<H2>Contents</H2>
+
+<UL>
+	<LI><A HREF="#NOTICE" NAME="I_NOTICE">Read this Notice First</A>
+	<LI><A HREF="#INTRO" NAME="I_INTRO">Introduction</A>
+	<LI><A HREF="#PARENTS" NAME="I_PARENTS">Signals, Parents and SignalSets</A>
+	<LI><A HREF="#HANDLERS" NAME="I_HANDLERS" >Signal Handlers</A>
+	<LI><A HREF="#NESTEDHANDLERS" NAME="I_NESTEDHANDLERS" >Nested Handlers</A>
+	<LI><A HREF="#UNHANDLED" NAME="I_UNHANDLED" >Unhandled Exceptions</A>
+	<LI><A HREF="#HANDLERBLOCKS" NAME="I_HANDLERBLOCKS" >Handler Blocks</A>
+	<LI><A HREF="#PROCESSHANDLERS" NAME="I_PROCESSHANDLERS" >Per Process Emergency Handler</A>
+	<LI><A HREF="#ORDER" NAME="I_ORDER" >Order of Handler Invocation</A>
+	<LI><A HREF="#EASYHANDLING" NAME="I_EASYHANDLING" >Simple Handlers to Catch & Ignore Exceptions</A>
+	<LI><A HREF="#HOWTOIGNORE" NAME="I_HOWTOIGNORE" >How to Completely Ignore Errors</A>
+	<LI><A HREF="#UNIXSIGNALS" NAME="I_UNIXSIGNALS" >Unix-signals vs. Smalltalk-signals</A>
+	<LI><A HREF="#PRIVATESIGNALS" NAME="I_PRIVATESIGNALS" >Private Signals</A>
+	<LI><A HREF="#QUERYSIGNALS" NAME="I_QUERYSIGNALS" >Queries and Notifications</A>
+	<LI><A HREF="#READING" NAME="I_READING" >Further Reading</A>
+</UL>
+
+<H2><A NAME="NOTICE" HREF="#I_NOTICE">NOTICE</A></H2>
+
+This document describes the somewhat obsolete (but still supported) Signal mechanism,
+which was mostly being replaced by a <I>class based exception</I>
+implementation which is described in the Ansi standard.
+<br>
+However, both the protocol and the mechanism are still the same, although the parent-relationship
+is now based upon class inheritance, instead of the signals parent.
+The old Signal based framework is (and will) still be useful for dynamically generated,
+local signals which are to be visible inside a single method or class only.
+<br>
+Therefore, the description below is still valid and useful, even if implementation details might be different.
+
+<H2><A NAME="INTRO" HREF="#I_INTRO">Introduction</A></H2>
+
+  Whenever some error occurs in <CITE>Smalltalk/X</CITE> (such as a division by zero),
+  the system does not simply crash or terminate, but instead notifies
+  the running program via an exception mechanism. There are many reasons,
+  why a sophisticated error handling mechanism is needed in Smalltalk, the
+  most obvious is of course, that you are working in the system and don't want
+  to get kicked out due to some minor error. Another one is that many errors
+  can be handled by the program and appropriate repair or at least user information
+  is desired and possible.
+  Especially, when evaluating
+  <VAR>doIt</VAR> expressions or while testing new methods, errors can happen quite easily.
+<P>
+  To do this, all errors have associated with them a so called
+  <VAR>Exception</VAR> or <VAR>Signal</VAR>
+  object (not to confuse with Unix-Signals), which gets notified of the
+  error. In Smalltalk terms, this is called "<VAR>raising an exception</VAR>"
+  (or sometimes, for historical reasons, "<VAR>raising a signal</VAR>").
+<P>
+  Your program can provide a handler for such an exception, which can
+  decide what to do with the error. If no handler exists, a reasonable
+  default action is taken - typically, a debugger is entered, but there are
+  also signals which are ignored by default.
+
+<BLOCKQUOTE>
+<STRONG>Notice (if you read this in the ST/X help view):</STRONG>
+<BR>
+some of the examples below do not show the expected behavior IF
+executed in the help viewer. The reason is that the help viewer itself
+catches any exception
+that might occur in an example and aborts the example (after showing a warning).
+You should copy-paste those examples into a workspace and execute them there.
+</BLOCKQUOTE>
+
+<H2><A NAME="PARENTS" HREF="#I_PARENTS">Signals, Parents and SignalSets</A></H2>
+
+  Usually, signals which can be raised by some class
+  are kept in the class as class variables and created during early initialization
+  of the system. Most classes provide access to those signals via
+  getter methods on the class side
+  (typically, those methods are categorized as <VAR>"Signal constants"</VAR>,
+  so you may easily find them with browser's <VAR>"spawn category"</VAR> function).
+<P>
+  For example, the signal raised upon division-by-zero errors is kept in
+  the class <CODE>ArithmeticValue</CODE> as class variable <CODE>DivisionByZeroSignal</CODE>.
+  The method that provides access to this signal is
+<CODE><PRE>
+      ArithmeticValue divisionByZeroSignal.
+</PRE></CODE>
+  Since subclasses of <CODE>ArithmeticValue</CODE> share its class variables and inherit
+  its methods, all numeric classes will of course also respond to this message
+  and return the signal object
+  (i.e. <CODE>Float divisionByZeroSignal</CODE> will also work and return the same object).
+<P>
+  If the new class based exception mechanism is used, the corresponding getter method will
+  return the exception class instead. So for the outside user, it is transparent whether
+  the class uses signals or class based exceptions to signal an exception.
+<P>
+  Every signal (except for the top, <CODE>GenericException</CODE>) has a parent.
+  Whenever a handler
+  is specified for a parent, all child signals are also handled by this handler.
+  There are some signals which are never raised directly,
+  but instead exist as parent signals of others for the purpose of handling them all at once.
+  An example of such a signal is <CODE>ArithmeticValue &#187; arithmeticSignal</CODE>,
+  which is a parent of all other numeric error signals.
+<P>
+  Sometimes, you may want to handle a group of unrelated signals with a common
+  handler (i.e. signals which do not have a common parent).
+  For example, in a desk-calculator you may decide to handle any
+  numeric error and the messageNotUnderstood signals with a common handler.
+  To support this, <CITE>Smalltalk/X</CITE> provides groups of signals,
+  so called <VAR>SignalSet</VAR> and <VAR>ExceptionhandlerSet</VAR>.
+<BR>
+  A signalSet may contain a number of signals and also responds to the
+  <CODE>#handle:do:</CODE> and <CODE>#catch:</CODE> messages in much the same
+  way as signals do (more details below).
+<BR>
+  A signalSet to catch the above errors could be created with:
+<CODE><PRE>
+    |s|
+
+    s := SignalSet
+	    with:(Object messageNotUnderstoodSignal)
+	    with:(ArithmeticValue arithmeticSignal).
+    ...
+</PRE></CODE>
+   because signals and errors respond to the "," (comma) message,
+   a shorter and more readable version is:
+<CODE><PRE>
+    (Object messageNotUnderstoodSignal , ArithmeticValue arithmeticSignal)
+	handle:[:ex | ....
+	] do:[
+	    ...
+	]
+</PRE></CODE>
+
+  (Notice: <CODE>SignalSet</CODE> is inheriting from <CODE>Collection</CODE>;
+   therefore the <CODE>#with:with:</CODE>
+   is understood by the <CODE>SignalSet</CODE> class - but you will need
+   individual <CODE>#add:</CODE>
+   messages if a set with more than 8 signals is to be created).
+
+
+
+
+
+<H2><A NAME="HANDLERS" HREF="#I_HANDLERS">Signal Handlers</A></H2>
+
+
+  Signals are handled by providing a signal handler (-block) for the duration
+  of some computation. Whenever the handled signal is raised during the
+  computation, the handler will be evaluated. The handler gets the reason
+  (i.e. the signal) and location (i.e. the context) of the exception as argument;
+  wrapped into a so-called <VAR>exception object</VAR>.
+  An optional additional parameter and
+  an error string are also available in the exception object.
+<P>
+  The handler can decide how to react to the signal -
+  it may:
+<UL>
+<LI>proceed / proceedWith:
+<BR>
+simply continues execution at the point after
+the signal raise. Typically, this is done after
+some cleanup work has been done by the handler.
+<P>
+<LI>restart
+<BR>
+restart the whole computation at the beginning
+(this is also typically done after some cleanup work).
+<P>
+<LI>return / returnWith:
+<BR>
+break out of the computation and optionally return a value.
+<P>
+<LI>reject
+<BR>
+do not handle the exception, but instead look for another
+handler (higher in the calling chain) and let it handle this exception
+(handlers can be nested).
+</UL>
+Many applications must perform operations "save" from entering
+the debugger.
+
+Such a "save" computation is performed by passing both the handler-block and
+  the block which does the actual computation to the signals
+<CODE>#handle:do:</CODE> method.
+<BR>
+  The following shall make this somewhat clearer:
+<CODE><PRE>
+    aSignal
+	handle:[:ex |
+	    "this is the handler ...
+	     ex is the exception object - see more below."
+	]
+	do:[
+	    "this is the computation"
+	]
+</PRE></CODE>
+
+   In the above, whenever <VAR>aSignal</VAR> is raised during evaluation of the second
+   block (the one after <CODE>'do:'</CODE>),
+the handler block (the one after <CODE>'handle:'</CODE>)
+is evaluated.
+The handler is a block with one argument (<VAR>ex</VAR>) in which
+the exception object (containing the exception info) will be passed.
+
+<P>
+   A concrete example:
+<BR>
+   In a desk calculator, you want to catch division-by-zero errors
+   (end-users should normally not be confronted with the internals presented by debuggers).
+<BR>
+Without exception handling, the following code
+will raise a divisionByZero exception and bring you into the debugger:
+
+<A TYPE="example">
+<CODE><PRE>
+    |result arg divisor|
+
+    arg := 5.
+    divisor := 0.
+
+    "bad division here ..."
+    result := arg / divisor.
+
+    Transcript showCR:('the result is ' , result printString).
+</PRE></CODE>
+</A>
+Note if you are reading this using the ST/X doc reader:
+<BR>
+the reader catches any error signals itself - here, no debugger is opened;
+instead, only a warnbox is shown.
+<P>
+
+
+With exception handling, the exception is handled locally,
+and a message is sent to the transcript instead:
+<A TYPE="example">
+<CODE><PRE>
+    |result arg divisor|
+
+    arg := 5.
+    divisor := 0.
+
+    ArithmeticValue divisionByZeroSignal
+	handle:[:ex |
+	    Transcript showCR:'an error occurred.'.
+	    ex return
+	]
+	do:[
+	    "now divide ..."
+	    result := arg / divisor
+	].
+    Transcript showCR:('the result is ' , result printString).
+</PRE></CODE>
+</A>
+
+   The interesting thing in the above code is the <CODE>'ex return'</CODE>.
+This is the
+   handler's action (in this case returning from the faulty computation,
+and continuing after the <CODE>#handle:do:</CODE> message).
+<P>
+The above handler simply returned from the computation block and therefore
+left the result undefined. You can also take the value of the <CODE>#handle:do:</CODE>
+and thereby use either the doBlocks regular return value, or a value from the handler:
+<A TYPE="example">
+<CODE><PRE>
+    |result arg divisor|
+
+    arg := 5.
+    divisor := 0.
+
+    result :=
+	(ArithmeticValue divisionByZeroSignal
+	    handle:[:ex |
+		Transcript showCR:'an error occurred.'.
+		ex returnWith:999999999999
+	    ]
+	    do:[
+		"now divide ..."
+		arg / divisor
+	    ]).
+    Transcript showCR:('the result is ' , result printString).
+</PRE></CODE>
+</A>
+
+<P>
+   Let's try another one, in which the handler restarts the computation
+   (not without changing the divisor first ...):
+<A TYPE="example">
+<CODE><PRE>
+    |result arg divisor|
+
+    arg := 5.
+    divisor := 0.
+
+    ArithmeticValue divisionByZeroSignal
+	handle:[:ex |
+	    Transcript showCR:'an error occurred.'.
+	    Transcript showCR:'retry with 1 as divisor.'.
+	    divisor := 1.
+	    ex restart
+	]
+	do:[
+	    "now divide ..."
+	    result := arg / divisor
+	].
+    Transcript showCR:('the result is ' , result printString).
+</PRE></CODE>
+</A>
+<BR>
+Of course, with our calculator example, restarting with a changed
+ divisor may not be a good idea. However, in many real-world applications,
+ a handler could fix things and restart the operation. This is especially true
+for file not found and communication breakdown type of problems.
+<P>
+   The handler can also decide to not handle the signal, and let it be handled
+   by someone else. This is useful when handlers are nested, and another
+   <CODE>#handle:do:</CODE> context is already calling this one
+   or if a handler can do some
+   partial repair or cleanup work, but still wants other error handlers to be
+executed. Finally, it is useful if a handler can sometimes repair things and
+continue the computation, but should report the error to higher levels
+if it was not able to fix things.
+<P>
+   Since there is no other handler in the example below, you will end up in
+   the debugger after the handler has sent its message to the Transcript.
+<A TYPE="example">
+<CODE><PRE>
+    |result arg divisor|
+
+    arg := 5.
+    divisor := 0.
+
+    ArithmeticValue divisionByZeroSignal
+	handle:[:ex |
+	    Transcript showCR:'an error occurred.'.
+	    Transcript showCR:'I give it to the next handler...'.
+	    ex reject
+	]
+	do:[
+	    "now divide ..."
+	    result := arg / divisor
+	].
+    Transcript showCR:('the result is ' , result printString).
+</PRE></CODE>
+</A>
+
+    If the handler has no explicit <CODE>#return</CODE>, <CODE>#proceed</CODE>
+or <CODE>#reject</CODE>, but instead simply
+    falls through to the end of the block, it will behave as if
+    a <CODE>#returnWith:val</CODE> was present,
+    where <VAR>val</VAR> is the handler block's evaluated
+    value (i.e. the value of its last expression).
+<P>
+
+    If your application is a graphical one, you might prefer to show some
+    warn-box in the handler (your end-user application may not have a
+    Transcript). This is of course straight forward:
+<A TYPE="example">
+<CODE><PRE>
+    |result arg divisor|
+
+    arg := 5.
+    divisor := 0.
+
+    ArithmeticValue divisionByZeroSignal
+	handle:[:ex |
+	    self warn:'an error occurred.'.
+	    ex return.
+	]
+	do:[
+	    "now divide ..."
+	    result := arg / divisor
+	].
+    Transcript showCR:('the result is ' , result printString).
+</PRE></CODE>
+</A>
+    To define a handler for all arithmetic errors, we can
+    use the parent of all arithmetic error signals: <CODE>ArithmeticError</CODE>.
+<BR>
+    This signal is never raised itself, however, since a handler for
+    a parent signal will also handle child signals, defining a handler for
+    the <CODE>ArithmeticError</CODE> signal will also handle division-by-zero and all
+    other arithmetic signals:
+<A TYPE="example">
+<CODE><PRE>
+    |result arg divisor|
+
+    arg := 5.
+    divisor := 0.
+
+    ArithmeticValue arithmeticSignal
+	handle:[:ex |
+	    self warn:'an error occurred.'.
+	    ex return.
+	]
+	do:[
+	    "now divide ..."
+	    result := arg / divisor
+	].
+    Transcript showCR:('the result is ' , result printString).
+</PRE></CODE>
+</A>
+    You may want to tell the user which signal was actually responsible for
+    the raise; you can ask the exception object for the creating signal,
+    as in:
+<A TYPE="example"><CODE><PRE>
+    |result arg divisor|
+
+    arg := 5.
+    divisor := 0.
+
+    ArithmeticValue arithmeticSignal
+	handle:[:ex |
+	    self warn:'Error occurred (' , ex creator printString , ')'.
+	    ex return.
+	] do:[
+	    "now divide ..."
+	    result := arg / divisor
+	].
+    Transcript showCR:('the result is ' , result printString).
+</PRE></CODE></A>
+or you can even get a textual description, ready to be shown:
+<A TYPE="example"><CODE><PRE>
+    |result arg divisor|
+
+    arg := 5.
+    divisor := 0.
+
+    ArithmeticValue arithmeticSignal
+	handle:[:ex |
+	    self warn:'Error occurred: ' , ex description.
+	    ex return.
+	] do:[
+	    "now divide ..."
+	    result := arg / divisor
+	].
+    Transcript showCR:('the result is ' , result printString).
+</PRE></CODE></A>
+
+
+<H2><A NAME="NESTEDHANDLERS" HREF="#I_NESTEDHANDLERS">Nested Handlers</A></H2>
+
+
+Handlers can be nested - for example, some methods can decide locally
+on how to handle an exception and continue gracefully. These may define
+a local signal handler and repair things. Any existing outer handler may
+or may not be notified (if the local handler rejects, the outer handler
+will see the exception; otherwise, the outer handler will not see anything).
+<P>
+An nice application for nested handlers can be found within the current smalltalk system:
+<BR>
+whenever the abort-button is pressed in the debugger (or the <KBD><B>CMD-Y</B></KBD>-key is pressed),
+an <CODE>AbortSignal</CODE>
+is raised, to return to some save place up in the calling hierarchy. The
+main event dispatcher handles this signal by simply continuing in its event loop.
+<BR>
+A workspace on the other hand, handles errors locally,
+and may output an error
+message - in this case, the event-dispatcher will not see any error at all.
+<P>
+Example:
+<A TYPE="example">
+<CODE><PRE>
+    |result1 result2 arg divisor|
+
+    arg := 5.
+    divisor := 0.
+
+    ArithmeticValue anyArithmeticSignal
+    handle:[:ex |
+	"(outer) handler for any arithmetic exception"
+
+	Transcript showCR:'an arithmetic error occurred'.
+	ex return.
+    ]
+    do:[
+	"the computation"
+
+	ArithmeticValue divisionByZeroSignal
+	    handle:[:ex |
+		"(inner) handler for division by zero"
+
+		Transcript showCR:'division by zero ignored'.
+		ex proceedWith:0
+	    ]
+	    do:[
+		"now divide ..."
+		result1 := arg / divisor.
+		Transcript showCR:('result of division: ' , result1 printString).
+		result2 := arg arcSin.
+		"not reached, since outer handler returns"
+		Transcript showCR:('result of arcSin: ' , result2 printString).
+	    ]
+    ].
+</PRE></CODE>
+</A>
+
+Notice: typically, handler blocks are not nested explicit as in the above
+example; instead, the nesting is burried in some called methods.
+
+<H2><A NAME="UNHANDLED" HREF="#I_UNHANDLED">Unhandled Exceptions</A></H2>
+
+Whenever an exception is not handled (i.e. either no handler was present, or all of them rejected),
+the runtime system will raise another exception,
+called the <CODE>NoHandlerError</CODE> (used to be NoHandlerSignal in the past).
+This exception wraps information on the unhandled exception,
+and can of course be handled just like any other exception or signal.
+The default action for it is
+to open a debugger - which is why you end in the debugger for all other
+unhandled signals.
+<P>
+Thus, handling the <CODE>NoHandlerError</CODE> is almost equivalent to handling all other signals.
+<BR>
+Example:
+<A TYPE="example">
+<CODE><PRE>
+    |result arg divisor|
+
+    arg := 5.
+    divisor := 0.
+
+    HandlerError
+	handle:[:ex |
+	    Transcript showCR:'some error occurred.'.
+	    ex proceed
+	]
+	do:[
+	    "divide by zero ..."
+	    result := arg / divisor.
+	    Transcript showCR:'after division'.
+
+	    "send some bad messages ..."
+	    Array new:-1.
+	    Transcript showCR:'after bad new'.
+
+	    1 at:5.
+	    Transcript showCR:'after bad at:'.
+	].
+</PRE></CODE>
+</A>
+    is almost equivalent to the following example:
+<BR>
+    (remember that <CODE>Error</CODE> is the parent
+     of all other errors;
+     thus handling this root also handles any other exception too):
+<A TYPE="example">
+<CODE><PRE>
+    |result arg divisor|
+
+    arg := 5.
+    divisor := 0.
+
+    Error
+	handle:[:ex |
+	    Transcript showCR:'some error occurred.'.
+	    ex proceed
+	]
+	do:[
+	    "divide by zero ..."
+	    result := arg / divisor.
+	    Transcript showCR:'after division'.
+
+	    "send some bad messages ..."
+	    Array new:-1.
+	    Transcript showCR:'after bad new'.
+
+	    1 at:5.
+	    Transcript showCR:'after bad at:'.
+	].
+</PRE></CODE>
+</A>
+    The difference lies in the exception-object passed as argument to the
+    handler block. In the first example, the handler will find the
+    NoHandler-context in the exception as location of the raise.
+    In the latter example, the exception will contain the place where the
+    original raise occured, which makes any repair work easier for the handler.
+    Thus, in the first example above, the handler is invoked with
+    somewhat more indirect information.
+<P>
+    If the <CODE>NoHandlerError</CODE> is not handled, a debugger is entered normally
+    (but see below for what is really going on).
+
+
+<H2><A NAME="HANDLERBLOCKS" HREF="#I_HANDLERBLOCKS">Handler Blocks</A></H2>
+
+    Notice: this paragraph applies to the old Signal mechanism
+    and is not valid for class based exceptions. Unless you have to
+    deal with backward compatibility issues, you should skip and forget this
+    paragraph.
+<P>
+    Instead of a <CODE>#handle:do:</CODE> -handler-context,
+    you may also assign a
+    handler block statically to a signal.
+    This block is called an emergency handler and is only evaluated
+    if no other handler was found, or all handlers rejected.
+<P>
+    Warning:
+<BLOCKQUOTE>
+      Static handler blocks are associated to the signal itself.
+      They are valid for all processes in any evaluation context.
+      They should be used in special situations only.
+</BLOCKQUOTE>
+
+    Static handlers make sense in the following situations:
+<UL>
+<LI>for Unix signals
+<BR>
+ (see below on how to have Unix-signals raise a Smalltalk signal).
+<P>
+<LI>In end user / standalone applications,
+<BR>to make certain that some error is always
+    handled, by any process. (
+    Although a cleaner solution would be to handle the NoHandlerError,
+    it is sometimes hard or impossible to rewrite existing code and place such
+    handler code. Especially, if you are given a compiled library without source code.
+<P>
+
+<!-- commented, because this is a bad example, and a Query/Notification should  be used
+<LI>for upRequests
+<BR>
+these are situations in which some code deeply down in the calling
+hierarchy wants to ask for some value, but can safely continue in case
+noone seems to care. One example is the object conversion upRequest,
+which is done by the binary object loader. If it reads an obsolete object,
+it raises a conversion signal, expecting the handler to provide a replacement object.
+If noone handles the signal, the conversion signals handlerBlock takes care of this
+and returns a default value.
+-->
+
+</UL>
+
+Signal handlerBlock example:
+<A TYPE="example">
+<CODE><PRE>
+    |result arg divisor|
+
+    ArithmeticValue divisionByZeroSignal
+	handlerBlock:[:ex |
+	    Transcript showCR:'division error occured - return 0 instead.'.
+	    ex proceedWith:0
+	].
+
+    arg := 5.
+    divisor := 0.
+    result := arg / divisor.
+
+    "we have to cleanup - otherwise, this error will never
+     lead to the debugger again ..."
+
+    ArithmeticValue divisionByZeroSignal
+	handlerBlock:nil
+</PRE></CODE>
+</A>
+    To demonstrate the global effect of the above, first evaluate:
+<A TYPE="example">
+<CODE><PRE>
+    ArithmeticValue divisionByZeroSignal
+	handlerBlock:[:ex |
+	    Transcript showCR:'division error occured - return 0 instead.'.
+	    ex proceedWith:0
+	].
+</PRE></CODE>
+</A>
+    then open any new workspace, and evaluate:
+<A TYPE="example">
+<CODE><PRE>
+    |divisor|
+
+    divisor := 0.
+    5 // divisor
+</PRE></CODE>
+</A>
+    there. Don't forget to cleanup things after your experiments, with:
+<A TYPE="example">
+<CODE><PRE>
+    ArithmeticValue divisionByZeroSignal handlerBlock:nil
+</PRE></CODE>
+</A>
+    Notice:
+<BLOCKQUOTE>
+in this demostration, you cannot directly enter <CODE>'5 // 0'</CODE>, since
+the compiler checks for zero-divisors BEFORE doing the
+actual send (when doing constant-folding). Thus the signal will
+not really be sent when using a constant as divisor.
+The compiler is (currently) not smart enough to track the values
+in variables - therefore putting the zero into some variable helps.
+</BLOCKQUOTE>
+
+   There is one limitation in static handler-blocks: no <CODE>#return</CODE>
+ or <CODE>#restart</CODE> actions
+   are allowed (i.e. these actions will lead to another error) in the handler.
+<BR>
+   The reason is simple:
+	<CODE>return/restart</CODE> try to return from/restart the
+evaluation-block.
+	Since there is no <CODE>#handle:do:</CODE> context for static handlers,
+no such
+	evaluation-block is available to return from.
+
+   Static handlers should either proceed, reject or
+   terminate the current process.
+   (Usually after showing some warnBox or querying the user).
+
+
+
+<H2><A NAME="PROCESSHANDLERS" HREF="#I_PROCESSHANDLERS">Per Process Emergency Handler</A></H2>
+
+
+   You can define a per-process emergency handler block,
+   which will be evaluated if the NoHandlerError is unhandled while a particular
+   process (aka thread) is running.
+   Each process can be assigned its own specific handlerblock.
+<P>
+   Per-process handlers are useful, if you want to make certain that a
+   process cleans up and terminates gracefully,
+   or if you want to catch any error within the process
+   AND you
+   do not want to (or cannot) add a <CODE>#handle:do:</CODE> into the start method
+   of the process's code. One such situation would be, if you do not have the source
+   code of a library which raises errors but does not (for whatever reason) contain
+   appropriate error handling code.
+<BR>
+   Example:
+<A TYPE="example">
+<CODE><PRE>
+    |myProcess|
+
+    myProcess := [
+	Transcript showCR:'waiting for a while ...'.
+	(Delay forSeconds:5) wait.
+	Transcript showCR:'doing something bad ...'.
+	1 at:5 put:nil.
+	"this is not reached"
+	Transcript showCR:'after the bad computation'.
+    ] newProcess.
+
+    "set the handler"
+    myProcess emergencySignalHandler:[:ex |
+	self warn:('process terminated due to error:' , ex errorString).
+	Processor activeProcess terminate.
+    ].
+
+    "let it run"
+    myProcess resume
+</PRE></CODE>
+</A>
+   For a typical application of these per-process handlers, see how the
+   <CODE>Launcher</CODE> sets up an emergency handler in its
+<CODE>realize</CODE> method, to show
+   a warnbox and optionally abort whatever the user action was.
+   Like static handlers, per-process handlers also do not support
+ <CODE>#return</CODE> and <CODE>#restart</CODE>.
+
+<H2><A NAME="ORDER" HREF="#I_ORDER">Order of Handler Invocation</A></H2>
+
+
+   Handlers are invoked in the following order, until some handler
+   either returns or proceeds the exception (i.e. followup-handlers are
+   invoked while handlers reject). Falling through a handler block
+   (without any explicit <CODE>#return</CODE>, <CODE>#proceed</CODE>
+or <CODE>#reject</CODE>) behaves like a <CODE>#return</CODE>.
+
+<OL>
+<LI>enclosing <CODE>#handle:do:</CODE> handler
+
+<P>
+<LI>next enclosing <CODE>#handle:do:</CODE> handler(s)
+
+<!--
+<P>
+<LI>per-signal static handler block, if defined
+-->
+
+<P>
+<LI>per-process handler-block for this exception, if defined
+
+<P>
+<LI>NoHandlerError <CODE>#handle:do:</CODE> handlers
+
+<!--
+<P>
+<LI>NoHandler static handler-block, if defined
+-->
+
+<P>
+<LI>per-process NohanderError emergency-handler-block
+
+<P>
+<LI>emergencyHandler defined in <CODE>GenericException</CODE>-class
+</OL>
+   The last handler-block (in <CODE>GenericException</CODE>) is always present,
+   because the system defines it during early initialization.
+   It will unconditionally enter the debugger.
+
+
+
+<H2><A NAME="EASYHANDLING" HREF="#I_EASYHANDLING">Simple Handlers to Catch & Ignore Exceptions</A></H2>
+
+Because the task of ignoring an exception within some computation is
+a pretty common one, the signal protocol includes two messages for
+a more convenient signal handling:
+<UL>
+<LI><VAR>someSignalOrException</VAR> <CODE>catch:[...]</CODE>
+<BR>
+to evaluate the block and break out if <VAR>someSignalOrException</VAR> is raised within.
+The overall returnValue is true iff the signal was raised during evaluation.
+<P>
+<LI><VAR>someSignalOrException</VAR> <CODE>ignoreIn:[...]</CODE>
+<BR>
+to evaluate the block and ignore raises of <VAR>someSignalOrException</VAR>.
+processing continues as if the signal was not raised.
+<BR>
+This is most useful to suppress popup warn or notifier boxes, which are handled
+by raising <CODE>Object &#187; warnSignal</CODE> and <CODE>Object informationSignal</CODE>
+respectively.
+</UL>
+Note that these two messages do not provide any new functionality - they can
+easily be implemented using the <CODE>handle:do:</CODE> protocol (actually, they are).
+<P>
+
+
+
+
+<H2><A NAME="HOWTOIGNORE" HREF="#I_HOWTOIGNORE">How to Completely Ignore Errors</A></H2>
+
+   This is a frequently asked question:
+   "<VAR>how can I make certain that no debugger is entered in my app</VAR>".
+<P>
+   From the above order of evaluation, it should now be clear, that errors
+   can be completely ignored by either:
+<CODE><PRE>
+    GenericException emergencyHandler:[:ex | ]
+</PRE></CODE>
+
+   or (for the current process individually):
+<CODE><PRE>
+    Processor activeProcess emergencySignalHandler:[:ex |]
+</PRE></CODE>
+
+   If you want to try it, don't forget to cleanup afterwards by either:
+<CODE><PRE>
+    Processor activeProcess emergencySignalHandler:nil
+</PRE></CODE>
+<P>
+The <CODE>GenericException</CODE> class provides a bunch of useful handlers
+in its <VAR>"useful handlers"</VAR> class protocol - have a look at those;
+there may be a useful one there for your application.
+
+
+
+<H2><A NAME="UNIXSIGNALS" HREF="#I_UNIXSIGNALS">Unix-Signals vs. Smalltalk-Signals</A></H2>
+
+   Technically, Unix signals have nothing at all to do with Smalltalk
+   signals. However, it is possible to arrange for a Smalltalk signal
+   to be raised whenever a Unix signal arrives. In other words: "to connect a Unix signal
+to a Smalltalk signal".
+<BR>
+   This is done by:
+<CODE><PRE>
+    OperatingSystem
+	operatingSystemSignal:aNumber
+	install:aSignal
+</PRE></CODE>
+
+   Notice, that OS signal numbers are not required to be portable across different
+   Unix versions or OperatingSystems (although they are so for the most common, standard signals).
+   Thus, you should not depend
+   on <CODE>SIGUSR1</CODE> being signal number 10, for example.
+   The <CODE>OperatingSystem</CODE> class offers methods to get the various numbers.
+<P>
+   Thus, your code should look like:
+<CODE><PRE>
+    |sigUsr mySignal|
+
+    sigUsr := OperatingSystem sigUSR1.
+    mySignal := Signal new.
+
+    OperatingSystem
+	operatingSystemSignal:sigUsr
+	install:mySignal.
+</PRE></CODE>
+
+   then, since Unix signals may occur at any time (especially:
+   in another process), you should assign a static handler block to the
+   signal (instead of a <CODE>#handle:do:</CODE>):
+<CODE><PRE>
+    mySignal handlerBlock:[:ex |
+	"do whatever has to be done ..."
+    ]
+</PRE></CODE>
+
+   Before the signal is finally delivered, the OS signal has to be enabled.
+   This is done by:
+<CODE><PRE>
+    OperatingSystem enableSignal:sigUsr
+</PRE></CODE>
+
+  One thing has to be kept in mind with these handlerblocks:
+  since they may be evaluated in whatever Smalltalk process is running
+  at signal time, these blocks should not (cannot) return or otherwise
+  modify the context chain. I.e. a <CODE>"^ something"</CODE> is not allowed
+  from these blocks.
+<P>
+  Not all Unix signals can be assigned a smalltalk signal:
+  certain signals will always be handled by smalltalk itself. These
+  are (among others):
+<UL>
+<LI>        <CODE>SIGINTR</CODE> (i.e. </KBD>Ctrl-C</KBD>),
+<LI>        <CODE>SIGALARM</CODE> (for timer)
+<LI>        <CODE>SIGFPE</CODE> (floating point exception).
+</UL>
+
+   these are handled slightly different, but can also be cought by defining
+   an object which is notified whenever these occur.
+   (see <A HREF="timing.html">``timers. delays and interrupts''</A>).
+
+
+
+<H2><A NAME="PRIVATESIGNALS" HREF="#I_PRIVATESIGNALS">Private Signals and Exception Classes</A></H2>
+
+It should be clear, that the exception mechanism is not limited to
+the above mentioned system error conditions.
+Instead, it can be used, whenever information about unexpected situations
+has to be forwarded to higher levels in the calling hierarchy
+(also called <VAR>upCasts</VAR>) or information is <VAR>queried</VAR>
+from someone higher in the calling hierarchy (could we call this
+an <VAR>upQuery</VAR> ?).
+<P>
+You can create your own private signals in your classes <CODE>#initialize</CODE>
+method, or even create them temporary (and/or anonymous) for use
+within a single method. Alternatively, you can define public or private classes which inherit
+from Exception, Error or any other existing exception class.
+<P>
+Although not obvious, the exception mechanism
+can also be used for a two-way communication of some deeply nested code with
+any outer handler (i.e. in which the handler never returns, but
+always proceeds execution with a value).
+Since there are many uses for this kind of relaxed exception,
+<CITE>ST/X</CITE> provides two special <CODE>Query</CODE> and <CODE>Notification</CODE>
+classes,
+which offer more convenient (i.e. readable) protocol,
+and whose default handler behavior has been redefined to proceed.
+Please read the section below for more details.
+<P>
+Concrete examples are found in the handling of a changed
+instance layout in the binary storage implementation, in the implementation
+of non local (fluid) variables
+and especially in how the compiler reports compilation warnings to its caller.
+<P>
+In the binary storage example, a signal is used to <VAR>ask</VAR>
+for a converter which is able to migrate outdated objects.
+In the fluid variable example, it is used to ask for the latest value binding of a variable.
+<BR>
+In both, this is an <VAR>upQuery</VAR> call to whichever handler is in charge of
+deciding things.
+
+<P>
+Finally, private signals can be used to implement the traditional
+catch&amp;throw mechanism, as in:
+<CODE><PRE>
+    ...
+    sig1 := Signal newSignal.
+    sig2 := Signal newSignal.
+    ...
+    sig1 handle:[:ex |
+	...
+	catch code for sig1
+	...
+    ] do:[
+	sig 2 handle:[:ex |
+	    ...
+	    catch code for sig2
+	    ...
+	] do:[
+	    ...
+	    someCondition ifTrue:[sig1 raise].   "throw sig1"
+	    ...
+	    someCondition ifTrue:[sig2 raise].   "throw sig2"
+	    ...
+	]
+    ]
+</PRE></CODE>
+of course, if the <VAR>throw</VAR> is not located in the same method,
+you have to make the signal be accessible in the called
+code (via class or instance variables, via a getter method or by defining an exception class).
+<BR>
+
+
+<H2><A NAME="QUERYSIGNALS" HREF="#I_QUERYSIGNALS">Queries and Notifications</A></H2>
+
+In addition to regular exceptions (which raise a NoHandlerError and thus enter the debugger if unhandled),
+<CITE>ST/X</CITE> provides two other kinds of exceptions,
+called <VAR>Query</VAR> and <VAR>Notification</VAR>.
+
+Like other signals or exceptions, these can be raised and an exception handler will
+catch them if. However, in contrast, these do not lead into
+the debugger if unhandled; instead, the execution continues after the raise,
+and the query is answered with some default value.
+<BR>
+If a handler is present, it is expected to proceed with some value.
+<P>
+Queries are used in situations, where a nested method requires
+some information which is optionally provided by the caller,
+AND
+the programmer does not want to pass that information through all the
+intermediate method invocations via arguments or static data.
+<BR>
+For example, a deeply nested method may encounter
+a problem when performing some action.
+It may want to display this trouble by opening a warnbox.
+This is ok, if the operation was originally invoked by the user, but
+annoying, if some other program wants to use this functionality,
+but does not want any warnboxes to appear.
+<P>
+Here, an up-query for a notification could be used;
+if unhandled, the notification default value as returned from the raise
+leads to a warnbox being shown:
+<BR>
+The corresponding code is:
+<CODE><PRE>
+     SomeClass
+	 ...
+	 classVariableNames:'WarnBoxQuery'
+	 ...
+
+	 initialize
+	    ...
+	    WarnBoxQuery := QuerySignal new.
+	    WarnBoxQuery defaultValue:true.
+	    ...
+
+	 warnBoxQuery
+	    ^ WarnBoxQuery
+
+	 actionMethod
+	    ...
+	    someErrorOccured ifTrue:[
+		WarnBoxQuery raise ifTrue:[
+		    self warn:'some error occured'
+		]
+	    ].
+	    ...
+</PRE></CODE>
+if the <CODE>#actionMethod</CODE> is simply called for, and an
+error occurs, the warnbox will be shown.
+<BR>
+If some program wants to use the actionMethod without any boxes being
+shown, the following code will do:
+<CODE><PRE>
+    ...
+    SomeClass warnBoxQuery
+	answer:true
+	do:[
+	     ...
+	     invoke actionMethod
+	     ...
+	]
+</PRE></CODE>
+The querySignals <CODE>#answer:do:</CODE> method implements a
+handler which proceeds with the answer-value - it is provided to
+make querySignal handlers more readable.
+<P>
+Within <CITE>ST/X</CITE>, querySignals are used by the compiler to
+ask for the current nameSpace, by the changeList manager, to ask if
+a change is to be recorded, and by the #notification / #warn methods,
+which ask if corresponding dialog boxes are to be shown.
+<P>
+For example, to suppress the opening of the warnBox, the following code
+will do:
+<CODE><PRE>
+    Object warningSignal
+    answer:false
+    do:[
+	...
+	something which may show
+	a warnBox otherwise
+	...
+    ]
+</PRE></CODE>
+or try (as a proof):
+<A type=example>
+<CODE><PRE>
+    Object warningSignal
+    answer:false
+    do:[
+	self warn:'no no no'
+    ]
+</PRE></CODE>
+</A>
+
+
+
+<H2><A NAME="READING" HREF="#I_READING">Further reading</A></H2>
+
+You will find examples in <CODE>"doc/coding"</CODE> which show
+various aspects and code examples of signal handling.
+<P>
+The above mentioned <VAR>Binding example</VAR> is found in
+<CODE>"goodies/Misc-Bindings.st</CODE>.
+<P>
+See <A HREF="errormsg.html#SIGNALS">``list of signals''</A> for a table of
+signals and a description of when they are raised.
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 1995 Claus Gittinger Development &amp; Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.36 $ $Date: 2018-05-08 17:45:33 $
+</BODY>
+</HTML>

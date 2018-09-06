@@ -1,0 +1,8 @@
+[phases]
+publish = false
+
+[paths]
+canonical = https://bitbucket.org/janvrany/stx-goodies-smallsense
+staging = https://bitbucket.org/janvrany/stx-goodies-smallsense
+default = https://bitbucket.org/janvrany/stx-goodies-smallsense
+

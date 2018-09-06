@@ -1,0 +1,380 @@
+<HTML>
+
+<HEAD>
+<TITLE>Using help </Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="../TOP.html" INFO="Back to documentation's main page" > <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+
+<H1>Using the Document Viewer</H1>
+<P>
+
+<UL>
+<LI><A HREF="#INTODUCTION" NAME="I_INTODUCTION">Introduction</A>
+<LI><A HREF="#NAVIGATING" NAME="I_NAVIGATING">Navigating</A>
+<LI><A HREF="#NOTATION" NAME="I_NOTATION">Notational Conventions</A>
+<LI><A HREF="#COPY_PASTE" NAME="I_COPY_PASTE">Copy & Paste</A>
+<LI><A HREF="#EXAMPLES" NAME="I_EXAMPLES">Executable Examples</A>
+<LI><A HREF="#INTERACT" NAME="I_INTERACT">Interactive Documents</A>
+</UL>
+
+<H2><A NAME="INTODUCTION" HREF="#I_INTODUCTION">Introduction</A></H2>
+
+The complete Smalltalk/X online documentation is provided in HTML format.
+As such, it can be viewed with any web browser, such as Firefox, Internet Explorer, Safari or Opera.
+<P>
+However, the documents also contain interactive code execution features, which
+requires direct communication with the running Smalltalk system.
+A feature which was
+not at all possible at times when the ST/X documentation was initially written (mid 90's,
+when JavaScript was not even invented).
+Therefore, we wrote our own implementation of an <A HREF="../tools/htmlViewer/TOP.html">HTML renderer</A>,
+which supported what was more or less state of the art at that time.
+As we do not plan to go into the browser business,
+and the documentation viewer fullfills
+our needs for online manual presentation,
+we did not and don't plan to put more effort into further development of the viewer.
+Therefore, it might look a bit outdated and also does not support all
+those fancy new features (stylesheets, for example).
+It also has a lot of bugs in its layout engine (tables, for example).
+It is still (after 25 years !) a preliminary implementation of a help viewer.
+<P>
+Summary: you can use another viewer for a slightly better look,
+but you will not get the interactive experience.
+
+
+
+
+
+<H2><A NAME="NAVIGATING" HREF="#I_NAVIGATING">Navigating</A></H2>
+
+In the text, you will find
+<A HREF="YES.html">highlighted</A>
+items which contain
+references to other parts of the documentation.
+<P>
+A single click on such an item will locate and show the
+corresponding part of the documentation.
+<P>
+The help viewer keeps a history of vistited documents;
+the "<KBD>back</KBD>" button returns to the
+previous document(s).
+The "<KBD>home</KBD>" button returns you to the
+top introduction document.
+<P>
+Most documents contain extra navigation buttons located at the
+beginning of the document.
+The "<KBD>prev</KBD>" (left arrow)
+and
+"<KBD>next</KBD>" (right arrow) buttons
+lead you to the previous/next chapter in the same
+hierarchy level of the documentation.
+The "<KBD>up</KBD>" (up arrow) button leads you back
+to the next higher level.
+
+
+
+<H2><A NAME="NOTATION" HREF="#I_NOTATION">Notational Conventions</A></H2>
+
+The documentation uses different font styles to distinguish plain text
+from variables, code fragments, examples etc.
+The  layout may vary with  different HTML viewers and their
+configuration settings. The documents may also look slightly
+different in printed form.
+<P>
+
+Cross references within this documentation usually include the
+title of the referenced section or chapter enclosed in
+quotation marks
+(e.g., see <A HREF="../whatsNew.html">"What's new in the documentation"</A>).
+<P>
+
+Lowercase italic type represents a <VAR>variable</VAR>,
+a placeholder for the text you actually enter.
+A variable can consist of different characters each time you make the entry.
+A typical example would be: "<VAR>someArray</VAR> <CODE>at:</CODE><VAR>index</VAR>".
+<P>
+Italic type is also used when some term is defined in the text, as in:
+<BR>
+"<VAR>an executable example</VAR>" is a code fragment that is executed
+when clicked upon.
+<P>
+
+Smalltalk code, constants, class names etc. are
+identified by a courier font, such as
+<BLOCKQUOTE>
+    ... the <CODE>UndefinedObject</CODE> class ...
+</BLOCKQUOTE>
+or
+<BLOCKQUOTE>
+    ... the <CODE>#at:put:</CODE> selector ...
+</BLOCKQUOTE>
+<P>
+This is also true for code fragments or example expressions such as:
+<CODE><PRE>
+	Transcript showCR:'hello world'
+</PRE></CODE>
+<P>
+
+To distinguish symbols and message selectors from regular strings or variable names,
+these are typically prefixed by a "#" character, as in:
+<BLOCKQUOTE>
+    ... the <CODE>#new</CODE>-message creates a new instance ...
+</BLOCKQUOTE>
+or a "#" character followed by a quoted string, as in:
+<BLOCKQUOTE>
+    ... the <CODE>#'foo_bar'</CODE>-message does this and that ...
+</BLOCKQUOTE>
+<P>
+
+Filenames are also shown in a monospaced font, but have additional
+quotes around them, as in <CODE>"/usr/lib/smalltalk/smalltalk.rc"</CODE>.
+<P>
+
+
+Keys that are labeled on your keyboard with more than one character,
+such as the "<KBD>RETURN</KBD>" key,
+are identified by all uppercase letters in a bold courier font.
+Keys that you are to press simultaneously or in succession
+are linked with a hyphen (e.g., press "<KBD>SHIFT-ALT-d</KBD>").
+<BR>
+If multiple keys are to be pressed in sequence, no hyphen is shown
+(e.g., as in "<KBD>COMPOSE a *</KBD>").
+<P>
+
+<!--
+
+<H2><A NAME="COPY_PASTE" HREF="#I_COPY_PASTE">Copy & Paste</A></H2>
+
+You can copy text from the help viewer and paste
+it into some other view. For example, you may want to
+take some example code and try a modified version in a workspace.
+<P>
+Due to the implementation
+(the help viewer uses an Xt-widget for its underlying view),
+selecting text in the example viewer automatically copies
+it into the copyBuffer (i.e. there is no extra <VAR>copy</VAR>
+operation required.
+<P>
+Thus, to copy some text into a workspace, simply select it in
+the help viewer and immediately paste it into the workspace.
+
+-->
+
+
+<H2><A NAME="EXAMPLES" HREF="#I_EXAMPLES">Executable Examples</A></H2>
+
+In some sections you will find executable example code or code fragments.
+You can execute those iretly from within the help viewer
+by clicking on them.
+<P>
+Like other code fragments, executable examples are layed out in a fixed (Courier) font
+but rendered in a different (darkened red) color.
+<A TYPE="example">
+<CODE><PRE>
+    Transcript topView raise.
+    Transcript showCR:'hello world'
+</PRE></CODE>
+</A>
+If you have problems with red/green colors, please change the color settings in the help viewer's
+settings dialog.
+<P>
+The help viewer will catch errors occurring in those examples and
+show a warn box.
+Examples which produce such an
+error by purpose (to demonstrate error behavior),
+can also be copied into a workspace and executed there (right-click on the example's text
+to get a popUp-menu).
+<BR>
+Try:
+<A TYPE="example">
+<CODE><PRE>
+    5 / (3 - 3)
+</PRE></CODE>
+</A>
+which will bring you into the debugger due to a division by zero error.
+<P>
+
+Programmed halts and breakpoints will also bring you directly into the debugger.
+<BR>
+Try also:
+<A TYPE="example">
+<CODE><PRE>
+    self halt
+</PRE></CODE>
+</A>
+
+Executable examples are a special feature of the <CITE>ST/X</CITE> help viewer.
+In regular browsers, such as Firefox, IE, Safari or any other
+HTML reader or web browser, these cannot be executed and an error page will be shown.
+<P>
+
+An example's text can also be copied to a workspace as follows:
+<UL>
+<LI> place the mouse-pointer over the example
+<BR>
+<LI> press the right (or middle-) button for a popup menu
+<BR>
+<LI> select the "<VAR>Copy Example's text</VAR>" item
+<BR>
+<LI> <VAR>paste</VAR> the text in a workspace window
+</UL>
+<P>
+alternatively, the "<VAR>Open Workspace on Example's Text</VAR>" menu item will
+open a new workspace which contains the example.
+<P>
+In the workspace, you may want to try variations of the example
+(trying different parameters, for example).
+<P>
+<P>
+
+<STRONG>SECURITY WARNING:</STRONG>
+<BLOCKQUOTE>
+Be careful with documents provided by untrusted people:
+<P>
+Since the examples are executed by your running Smalltalk system,
+a bad guy can place example code into a document,
+which could be harmful to your (Smalltalk-) system.
+<BR>
+Always read and understand what is going on the code example,
+before executing it.
+<BR>
+In the help viewer, you can disable example execution,
+to avoid executing any code by unintended clicks.
+<P>
+In non-Smalltalk HTML readers, command execution is not possible
+and there is no danger whatsoever with examples.
+</BLOCKQUOTE>
+
+
+
+<H2><A NAME="DYNAMICLINKS" HREF="#I_DYNAMICLINKS">Dynamic links (executed hrefs)</A></H2>
+
+A link may be defined to execute some Smalltalk action;
+from a technical point of view, they are much like executable examples,
+but the text which is shown is different from the executed code.
+<P>
+For example:
+<BR>
+Click
+<A HREF="onlyInSTX.html" ACTION="doit:UserPreferences browserClass open" INFO="open a browser">
+here</A> to open a browser.
+<BR>
+Or click
+<A HREF="onlyInSTX.html"
+   INFO="ask for class and open a browser"
+   ACTION="doit:
+    |cls|
+    cls := Dialog request:'Class:'.
+    cls notNil ifTrue:[
+	cls := Smalltalk at:cls asSymbol ifAbsent:nil.
+	cls notNil ifTrue:[
+	   Smalltalk browseInClass:cls selector:nil
+	]
+    ]
+">
+here</A> to ask for a class and open a browser there.
+<BR>
+Click
+<A HREF="onlyInSTX.html"
+   INFO="browse ApplicationModel"
+   ACTION="browse:ApplicationModel"
+>here</A>, to browse the ApplicationModel class.
+<P>
+The above security warning also applies to this type of code execution.
+
+
+<H2><A NAME="INTERACT" HREF="#I_INTERACT">Interactive Documents</A></H2>
+
+In some sections, you may find interactive elements, such as
+buttons or input fields.
+These fields can be filled out and actions are performed when
+the button is pressed.
+<BR>
+For example:
+
+<FORM ACTION="onlyInSTX.html"
+      METHOD="DOIT | :entry |
+	|cls|
+
+	entry isEmpty ifTrue:[
+	    self warn:'enter a class name first'
+	] ifFalse:[
+	    cls := Smalltalk classNamed:entry withoutSeparators.
+	    Smalltalk browseInClass:cls
+	]
+      ">
+
+Enter the name of a class here: <INPUT SIZE=45 NAME="entry" VALUE="SequenceableCollection">
+<BR>
+To browse, press:
+<INPUT TYPE="submit" VALUE="browse">.
+</FORM>
+<P>
+
+or:
+
+<FORM ACTION="onlyInSTX.html"
+      METHOD="DOIT | :className :selector |
+	|cls sel|
+
+	className isEmpty ifTrue:[
+	    self warn:'enter a class name first'
+	] ifFalse:[
+	    selector isEmpty ifTrue:[
+		self warn:'enter a selector first'
+	    ] ifFalse:[
+		cls := Smalltalk classNamed:className withoutSeparators.
+		sel := selector withoutSeparators asSymbol.
+		Smalltalk browseInClass:cls selector:sel
+	    ]
+	]
+      ">
+
+Enter the name of a class:
+<INPUT SIZE=45 NAME="className" VALUE="SequenceableCollection">
+<BR>
+and selector: <INPUT SIZE=45 NAME="selector" VALUE="sort">
+<BR>
+press:
+<INPUT TYPE="submit" VALUE="browse">.
+</FORM>
+
+<P>
+
+
+For these fillout forms, the same security dangers
+are to be considered as for executable examples
+(even more, since you do not see the underlying code).
+Therefore, these can also be disabled in the help viewer
+when reading untrusted documents. If disabled, the
+help viewer will show the underlying code in a box instead.
+
+<BLOCKQUOTE>
+<STRONG>
+Read the SECURITY WARNING above
+</STRONG>
+</BLOCKQUOTE>
+The <CITE>ST/X</CITE> documents as provided here
+were of course written with great care to avoid doing any
+harm to your Smalltalk environment - however, even these
+documents could have been modified by someone else at the time
+you read them...
+
+
+
+<P>
+<HR>
+<P>
+<P>
+<IMG ALIGN=middle SRC="../../icons/stx.gif" ALT="[stx-logo]">
+<BR>Copyright &copy; 1995-2016 <A HREF="HELLO.html">Claus Gittinger</A> Development & Consulting, all rights reserved
+<BR>Copyright &copy; 1996-2016 eXept Software AG
+
+
+<HR>
+Doc $Revision: 1.19 $ $Date: 2016-11-04 00:19:00 $
+</BODY>
+</HTML>

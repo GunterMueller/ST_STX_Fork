@@ -1,0 +1,37 @@
+//
+// DO NOT EDIT
+// automagically generated from the projectDefinition: stx_libbasic2.
+//
+VS_VERSION_INFO VERSIONINFO
+  FILEVERSION     7,1,1,146
+  PRODUCTVERSION  7,1,0,0
+#if (__BORLANDC__)
+  FILEFLAGSMASK   VS_FF_DEBUG | VS_FF_PRERELEASE
+  FILEFLAGS       VS_FF_PRERELEASE | VS_FF_SPECIALBUILD
+  FILEOS          VOS_NT_WINDOWS32
+  FILETYPE        VFT_DLL
+  FILESUBTYPE     VS_USER_DEFINED
+#endif
+
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904E4"
+    BEGIN
+      VALUE "CompanyName", "eXept Software AG\0"
+      VALUE "FileDescription", "Smalltalk/X Additional Basic Classes (LIB)\0"
+      VALUE "FileVersion", "7.1.1.146\0"
+      VALUE "InternalName", "stx:libbasic2\0"
+      VALUE "LegalCopyright", "Copyright Claus Gittinger 1988-2012\nCopyright eXept Software AG 2012\0"
+      VALUE "ProductName", "Smalltalk/X\0"
+      VALUE "ProductVersion", "7.1.0.0\0"
+      VALUE "ProductDate", "Fri, 14 Oct 2016 15:56:21 GMT\0"
+    END
+
+  END
+
+  BLOCK "VarFileInfo"
+  BEGIN                               //  Language   |    Translation
+    VALUE "Translation", 0x409, 0x4E4 // U.S. English, Windows Multilingual
+  END
+END

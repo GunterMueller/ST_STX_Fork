@@ -1,0 +1,583 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN" 
+                      "/usr/share/xml/docbook/schema/dtd/4.3/docbookx.dtd" [
+<!ENTITY xmlsuite "<emphasis>xmlsuite</emphasis>">
+<!ENTITY relax "<emphasis>xmlsuite/relaxng</emphasis>">
+
+<!ENTITY example1.rng SYSTEM "examples/example1.rng">
+<!ENTITY example1.xml SYSTEM "examples/example1.xml">
+
+<!ENTITY example2.rng SYSTEM "examples/example2.rng">
+
+]>
+<article lang="en">
+  <articleinfo>
+    <title>Using &xmlsuite; framework</title>
+    <author>
+      <firstname>Jan</firstname>
+      <surname>Vrany</surname>
+      <email>jan.vrany@e-fractal.cz</email>
+    </author>    
+  </articleinfo>  
+
+  <sect1>
+    <title>Introduction</title>
+    <sect2>
+      <title>XML and Schema languages</title>
+      
+      <para>
+	Nowadays, XML is playing an increasingly important role in the exchange 
+	of a wide variety of data between many different applications.
+	XML itself is rather meta-format than format for specific data.
+	XML allows users to define its own data format based on XML, that
+	means that user can define its own tags, attributes and its meaning.
+	For formal definition of such XML-based data formats
+	(<emphasis>XML languages</emphasis> in XML terminology), various
+	<emphasis>schema languages</emphasis> exists. 
+      </para>
+
+      <para>
+	XML processing software (<emphasis>XML parsers</emphasis>)
+	can, together with corresponding XML schema,
+	read XML document and determine whether it is correct (i.e. whether it
+	contains all required informations in appropriate order and in
+	proper nesting). In XML terminology, <emphasis>parsers</emphasis>
+	can <emphasis>validate</emphasis> the XML document.
+	Such validation has significant impact on application
+	robustness. It is widely known, that one of the most problematic
+	part of software is reading and validating user inputs. 
+	Validation provides unified and generic way how to do this task.
+	Once document is validated, application can be sure, 
+	that the document contains all informations as needed by 
+	application.            
+      </para>
+      
+      <para>
+	As a side-effect, schemas can be used as part of documentation
+	for given XML-based format. 
+      </para>
+      
+      <para>
+	Using <emphasis>validation parsers</emphasis> makes programmers'
+	lifes much easier, because they don't need to care about
+	validating user's data. But schemas can do more than validating.
+	Schemas can be used for binding data from XML documents directly
+	to internal data structures in particular programming language.
+	Once the XML software can do such binding, the problem of
+	reading and writing XML documents is almost solved (in generic
+	way) and programmer can concentrate on the application logic
+	rather than reading/storing data from/to external files.
+      </para>
+
+      <para>
+	Relax NG is one of <emphasis>schema languages</emphasis>.
+	The RELAX NG specifications have been developed within OASIS by
+	the RELAX NG Technical Committee. RELAX NG is being developed
+	into an International Standard (ISO/IEC 19757-2) by
+	ISO/IEC JTC1/SC34/WG1; it is currently in the final stage of
+	standardization. RELAX NG was based on TREX designed by
+	James Clark and RELAX designed by Murata Makoto.            
+      </para>
+    </sect2>
+
+    <sect2>
+      <title>&xmlsuite; package</title>
+
+      <para>
+	&xmlsuite; framework is (or wants to be) a next-generation
+	framework for processing and manipulating XML documents.
+	Primary goal of this project is to provide complete,
+	high-quality, standards-conformant tools for XML processing
+	for Smalltalk systems. Such tools include XML parser,
+	validator, tools for data-binding and for XML transformation. 
+      </para>
+      <para>
+	&relax; is part of &xmlsuite; package that can be used for
+	both validation and data-binding against Relax NG schemas.
+	Binding informations are kept separately in CSS stylesheet. Therefore
+	it is possible to use the same schema and two (different) bindings
+	(for example - server and client applications may use same
+	Relax NG schema and different bindings).
+	Relax NG schemas with binding informations as used by &relax; package
+	can be also used by any other Relax NG validator
+	(<productname>jing</productname>, <productname>libxml2</productname>
+	or <productname>SUN's multi scheme validator</productname>)
+      </para>
+
+      <para>
+	The binding mechanism is designed in platform-neutral manner,
+	so it is possible to implement another validation and binding
+	software for another platform (Java or lisp, for example) using
+	same approach and different implementation.
+      </para>
+      
+    </sect2>
+
+    <sect2>
+      <title>Ongoing work</title>
+
+      <itemizedlist>
+	<listitem>
+	  <para>
+	    Finish DOM3 implementation and CSS parsing framework.
+	    For &relax; this is implementation prerequsite, since
+	    DOM tree together with CSS style is used for
+	    validation and binding.
+	  </para>
+	</listitem>
+
+	<listitem>
+	  <para>
+	    Exactly define the components, its responsibilities,
+	    boundaries and usage. Especially define usage of
+	    XML binding CSS styles. Make the binding more powerful.
+	    This requires some investigation.
+	  </para>
+	</listitem>
+
+	<listitem>
+	  <para>
+	    Redesign validation and binding engine. Implement more
+	    Relax NG features including for example interleaving,
+        enumeration types, data type parameterization, regular expression
+	    support and so on. This requires investigation on
+	    Relax NG itself and many theoretical issues.
+	  </para>
+	</listitem>
+
+	<listitem>
+	  <para>
+	    Redesign &quot;data type libraries&quot;. Make them more generic
+	    and easy to use. Write complete W3C XML Schema data type library.
+	  </para>
+	</listitem>
+	
+	
+	<listitem>
+	  <para>
+	    Separate validation and binding from Relax NG-related code.
+	    This would make implementation of other schema languages as
+	    W3C Schema or DTD possible. 
+	  </para>
+	</listitem>
+      </itemizedlist>
+
+    </sect2>
+  </sect1>
+
+ 
+
+  <sect1 id="basic">
+    <title>Basic XML parsing and writing</title>
+    
+    <para>
+      &xmlsuite; is build on SAX2 <xref linkend="SAX2"/> parser, but contains 
+      interface for parsing 
+      XML documents into DOM tree. For now, XML is parsed into
+      Cincom's DOM-like tree (see &quot;XML-VW-Nodes&quot; category), but
+      full-featured DOM3-Core interface will be implemented soon.
+    </para>
+
+    <sect2 id="basic.sax2">
+      <title>SAX2 Interface</title>
+      
+      <para>
+	For simple parsing, full SAX2 compliant interface is provided. Some method 
+	names are different, because SAX2 API is designed for
+	Java language and Smalltalk doesn't support some language constructions that
+	SAX2 API employs (like method overloading, constructors etc.) or because
+	of compatibility with Cincom's library 
+	(<methodname>#startElement:namespace:prefix:attributes:</methodname> for example).
+      </para>
+
+      <para>
+	Example of parsing XML with SAX2 API is shown at <xref linkend="basic.sax2.example1" />.
+      </para>
+
+      <figure id="basic.sax2.example1">
+	<title>Example of parsing XML document using SAX2 API</title>
+	<programlisting>
+| contentHandler |
+
+contentHandler := MyContentHandler new.
+XMLv2::XMLReader new 
+    setContentHandler:contentHandler;
+    parseInputStream:(XMLv2::InputStream onFile:'mydoc.xml').
+	</programlisting>
+      </figure>
+
+      <para>
+	Unlike Java (and other, statically typed languages), <varname>contentHandler</varname>
+	does not need to inherit from <classname>ContentHandler</classname>
+	nor to implement whole interface (even by empty methods). If content handler
+	(and other handlers too) does not understand particular message, message is
+	simply not sent. Handler classes are provided just for documentation purposes.	
+      </para>
+  
+    </sect2>
+
+    <sect2 id="basic.dom3">
+      <title>DOM3 Interface</title>
+      <para>
+	XML Suite also provides DOM API for traversing and manipulating XML document tree.
+	In these days, Cincom's DOM-like implmentations is used. This will change soon.
+      </para>
+
+      <para>
+	Example of parsing XML document into DOM tree is on <xref linkend="basic.dom3.example1" />.
+	<varname>document</varname>  will be instance of 
+	<classname>XML::Document</classname>
+      </para>
+
+      <figure id="basic.dom3.example1">
+	<title>Example of parsing XML document into DOM tree</title>
+	<programlisting>
+| document |
+document := XMLv2::XMLParser new processDocumentInFilename:'mydoc.xml'
+	</programlisting>
+      </figure>
+      
+    </sect2>
+
+    <sect2>
+      <title>Writing XML</title>
+      <para>More to be written</para>
+    </sect2>
+    
+  </sect1>
+
+  <sect1 id="rng">    
+    <title>Relax NG</title>
+    
+    <abstract>
+      <para>
+	&xmlsuite; provides powerfull framework for validation and data-binding, both against 
+	Relax NG schema. Using implemented data-binding, one can read XML document into smalltalk
+	objects (and than serialize smallltalk  objects back to XML) using information found
+	in given Relax NG schema. As a side-effect of data-binding, document is validated.
+      </para>
+    </abstract>
+
+    <sect2 id="rng.idea">
+      <title>The idea behind</title>
+
+      <para>
+	Although XML documents are widely used for data exchange, most modern
+	applications (including smalltalk
+	ones) work with native data structures - objects - which are adjusted to problem domain
+	(usually tree of classes) rather than with DOM or similar generic objects. 
+	XML itself is used only for communication between heterogenous
+	systems or for transmitting data over some dumb media (network socket, file, etc).
+      </para>
+
+      <para>
+	Creating XML from object structure is quite simple - it is not so hard to
+	create a simple object that builds XML document 
+	(usualy using <emphasis>Visitor</emphasis> pattern).
+	Reading XML into objects is more complicated task. One can use event-based API (SAX2) or
+	tree-based API (DOM3) for building object structure but there are two problems:
+      </para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>
+	    The code (i.e. domain model objects) will be bloated by tons of methods that reads XML. 
+	    XML reading code is spread on large number of methods, any change is difficult. 
+	    In addition, such methods are very similar and are not related to problem domain.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Checking of entirety and correctness of parsed XML is not trivial but is
+	    neccessary in robust, mission critical applications.
+	  </para>
+	</listitem>
+      </itemizedlist>
+      
+      <para>
+	Second problem can be solved by using validating parsers (but the 
+	first one still remains).
+	Modern schema languages like <emphasis>Relax NG</emphasis> or 
+	<emphasis>W3C XML Schema</emphasis> provide more than old <emphasis>DTD</emphasis>,
+	one can say, 
+	that element  <token>e</token> has simple pcdata content that represents 
+	non-negative integer,
+	timestamp or set of strings, so structure of XML document can be specified more
+	precisely. In fact, schema defines <emphasis>grammar</emphasis> for XML language.
+      </para>
+
+      <para>
+	Because structure of objects and structure of XML document is less or more similar,
+	it is possible to use informations from schema for automatic or semi-automatic
+	<emphasis>data-binding</emphasis>, i.e. for reading XML into objects and 
+	for writing objects to XML. 
+      </para>
+
+      <para>
+	For Java, such tools already exist (Relaxer <xref linkend="Relaxer"/> or 
+	RelaxNGCC <xref linkend="RelaxNGCC" />). These
+	tools take Relax NG schema and produce set of class templates, that can
+	read/write itself from/to XML. This templates are used as basis for domain model
+	classes and programmer can add his own code to give some functionality to classes.
+	This added functinality represents real application logic. There are two problems
+	with this aproach:
+      </para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>
+	    What about change of schema. New class templates must be generated, code must be
+	    migrated...
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Programmers have almost no control about how the resulting classes will look like.
+	  </para>
+	</listitem>
+      </itemizedlist>
+
+      
+      <para>
+	The &relax; framework tries to solve all problems mentioned 
+	above. The input of xmlsuite/relaxng is only Relax NG schema with some additional 
+	information used for data-binding. In this paper, such information will be called
+	<emphasis>binding-info</emphasis>. 
+      </para>
+    
+
+      <figure id="rng.idea.example1.rng">
+	<title>Example of Relax NG schema with binding-info</title>
+	<programlisting>
+&example1.rng;	  
+	</programlisting>
+      </figure>
+
+      <figure id="rng.idea.example1.xml">
+	<title>Example of XML valid document for <xref linkend="rng.idea.example1.rng"/></title>
+	<programlisting>
+&example1.xml;	  
+	</programlisting>
+      </figure>
+
+
+      <para>
+	For example of simple Relax NG schema with binding-info see
+	<xref linkend="rng.idea.example1.rng" />. Example of valid XML document
+	is shown at <xref linkend="rng.idea.example1.xml" />. Consider
+	that there is class named <classname>Person</classname>
+	with two instance variables: <varname>nameString</varname> and
+	<varname>surnameString</varname>. Everything needed for creating
+	<classname>Person</classname> from XML
+	(and write back to XML) is shown at <xref linkend="rng.idea.example1.load"/>.
+      </para>
+
+      <figure id="rng.idea.example1.load">
+	<title>Example of XML valid document for <xref linkend="rng.idea.example1.rng"/></title>
+	<programlisting>
+| schema person |
+schema := Schema fromFile:'example1.rng'.
+person := schema validateAndBindFile:'example1.xml'.
+	</programlisting>
+      </figure>
+
+      <para>
+	When schema is changed (for example, <emphasis>surname</emphasis> element
+	becomes attribute), everything needed to change is schema.
+      </para>
+
+      <para>
+	Example above is very simple. In real world, there are many problems.
+	All these problems are dicussed in <xref linkend="rng.background" />.
+      </para>
+    </sect2>
+
+
+    <sect2 id="rng.using">
+      <title>Using &relax; framework</title>
+
+      <para>
+	As shown above, binding information is added to Relax NG schema as
+	set to attributes added to standard Relax NG schema elements.
+	Attributes are placed in separate namespace -
+	<constant>http://www.volny.cz/janfrog/xmlsuite/binding</constant>.
+	This allows other validators (jing, libxml2 etc.) validate
+	file using exactly same schema as used with &relax;.
+      </para>
+
+      <para>
+	Currently supported binding attributes:
+      </para>
+
+      <simplelist type="horiz" columns="3">
+	<member><sgmltag>iv</sgmltag></member>
+	<member><sgmltag>type</sgmltag></member>
+	<member><sgmltag>class</sgmltag></member>
+	<member><sgmltag>parent</sgmltag></member>
+	<member><sgmltag>readConverter</sgmltag></member>
+	<member><sgmltag>writeConverter</sgmltag></member>	
+      </simplelist>
+
+      <para>
+	All binding attributes will be described in following sections.
+	The basic principle is that every pattern (in Relax NG terminology)
+	with binding attribute is mapped one-to-one to instance of some class.
+	Patterns without binding information are not mapped to anything and are
+	simply ignored when building object structure. 
+      </para>
+
+      <para>
+	Consider the following scenario: we have a class named
+	<classname>Person</classname> with instance
+	variable named <varname>pet</varname>, that holds exactly
+	one instance of <classname>Dog</classname>
+	or <classname>Cat</classname>. One possible schema is
+	show at <xref linkend="rng.using.example3.rng" />.
+	
+      </para>
+
+      <figure id="rng.using.example3.rng">
+	<title>Example of schema with dog and cat</title>
+	<programlisting>
+&example2.rng;
+	</programlisting>
+      </figure>
+
+      <para>
+	We say, that <emphasis>parent of</emphasis> instance of <classname>Dog</classname> 
+	(or <classname>Cat</classname>) is instance of <classname>Person</classname>. 
+	Simply: <classname>Person</classname> is <emphasis>parent of</emphasis>
+	<classname>Dog</classname> and <classname>Cat</classname>. This means, that
+	instance of <classname>Dog</classname> is held as instance variable in
+	instance of <classname>Person</classname>. Note, that 
+	<emphasis>&quot;parent of&quot;</emphasis> relationship always depends on context.
+	For example, one can have document with <sgmltag>person</sgmltag>s and <sgmltag>hutch</sgmltag>s 
+	which both can contain <sgmltag>dog</sgmltag>s or <sgmltag>cat</sgmltag>s.
+      </para>
+
+      <para>
+	In which instance variable of parent object is current object stored
+	is said in <sgmltag>iv</sgmltag> binding attribute. <sgmltag>iv</sgmltag>
+	contains <emphasis>name</emphasis> of instance variable in 
+	<emphasis>parent</emphasis>. So, in our example, <classname>Person</classname>
+	is expected to have instance variable <varname>pet</varname>. During binding
+	process, instance of <classname>Dog</classname> or <classname>Cat</classname>
+	is stored in instance variable <varname>pet</varname> direcly, without
+	needs of accessors. If there is no instance with requested name in parent object,
+	a <exceptionname>BindingError</exceptionname> is raised.
+      </para>
+
+      <para>
+	The situation becames more complicated, if a person can have
+	zero or more pets. In such case, <classname>Person</classname> will have
+	instance variable <varname>pets</varname>, which will be actually a 
+	<emphasis>collection</emphasis> of dogs and cats (even empty).	
+      </para>
+     
+      <para>
+	More to be written
+      </para>
+    </sect2>
+
+    
+    <sect2 id="rng.background">
+      <title>Technology background</title>
+      <abstract>
+	<para>
+	  For better understanding of features, behavior and limitations of
+	  &relax;, some technological details are explained in this section.
+	</para>	
+      </abstract>
+
+      <sect3>
+	<title>&relax; limitations</title>
+	
+	<para>
+	  Relax NG, as defined by its authors, can validate any regular
+	  tree grammar. Unfortunately, for given regular tree grammar
+	  and tree instance, more than one interpretation could be found
+	  <xref linkend="TAXO"/>
+	  This makes binding imposible. Because binding is the most
+	  important feature of &relax; framework, implementation is limited
+	  to single-type tree grammars.
+	</para>
+	<para>
+	  In fact, this limitation is not fatal, because the most common problematic
+	  construction in regular tree grammars could be rewritten and
+	  resulting grammar will be single-type. W3C XML schemas are based
+	  on single-type tree grammars.
+	</para>
+
+	<para>
+	  Relax NG  provides unique powerfull contruction called
+	  <emphasis>interleaving</emphasis> which allows schema designer to
+	  make a nice tricks with grammar. On the other hand, implementation of
+	  interleave operator is quite problematic. Because &relax; implementation
+	  is based on finite-state automatons, a <emphasis>shuffle automaton</emphasis>
+	  must be used for validating interleaves. In these days, shuffle
+	  automatons are not implemented, thus interleave is not supported.
+	  This means that mixed content is not supported now. This may change
+	  in future versions.
+	</para>
+	
+      </sect3>
+
+
+      <sect3>
+	<title>Problems with <sgmltag>optional</sgmltag> and <sgmltag>choice</sgmltag></title>
+	<para>
+	  There is problem with serializing (i.e. creating valid XML document from
+	  objects) and <sgmltag>optional</sgmltag> or <sgmltag>choice</sgmltag> patterns.
+	</para>
+	<para>
+	  More to be written...
+	</para>
+      </sect3>
+    </sect2>
+    
+    
+  </sect1>
+
+
+  <bibliography>
+    <title>References</title>
+
+    <biblioentry id="SAX2">
+      <abbrev>SAX2</abbrev>
+      <title><ulink url="http://www.saxproject.org/">Official website for SAX</ulink></title>
+    </biblioentry>    
+
+    <biblioentry id="Relaxer">
+      <abbrev>Relaxer</abbrev>
+      <title><ulink url="http://www.relaxer.org">Relaxer.org</ulink></title>
+    </biblioentry>
+
+    <biblioentry id="RelaxNGCC">
+      <abbrev>RelaxNGCC</abbrev>
+      <title><ulink url="http://relaxngcc.sourceforge.net/en/index.htm">
+	RelaxNGCC ( RELAX NG Compiler Compiler)</ulink></title>
+    </biblioentry>
+
+    <biblioentry id="TAXO">
+      <abbrev>TAXO</abbrev>
+      <title>Taxonomy of XML Schema Languages using Formal Language Theory</title>
+      <authorgroup>
+	<author>
+	  <firstname>Makoto</firstname><surname>Murata</surname>
+	</author>
+	<author>
+	  <firstname>Dongwon</firstname><surname>Lee</surname>
+	</author>
+	<author>
+	  <firstname>Murali</firstname><surname>Mani</surname>
+	</author>
+	<author>
+	  <firstname>Koshuke</firstname><surname>Kawaguchi</surname>
+	</author>	
+      </authorgroup>      
+    </biblioentry>
+  </bibliography>
+  
+  <index />
+
+</article>

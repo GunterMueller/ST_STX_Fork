@@ -1,0 +1,67 @@
+"
+ COPYRIGHT (c) 2001 by eXept Software AG
+              All Rights Reserved
+
+ This software is furnished under a license and may be used
+ only in accordance with the terms of that license and with the
+ inclusion of the above copyright notice.   This software may not
+ be provided or otherwise made available to, or used by, any
+ other person.  No title to or ownership of the software is
+ hereby transferred.
+"
+"{ Package: 'stx:libbasic' }"
+
+IndexNotFoundError subclass:#SubscriptOutOfBoundsError
+    instanceVariableNames: ''
+    classVariableNames: ''
+    poolDictionaries: ''
+    category: 'Kernel-Exceptions-Errors'
+!
+
+!SubscriptOutOfBoundsError class methodsFor:'documentation'!
+
+copyright
+"
+ COPYRIGHT (c) 2001 by eXept Software AG
+              All Rights Reserved
+
+ This software is furnished under a license and may be used
+ only in accordance with the terms of that license and with the
+ inclusion of the above copyright notice.   This software may not
+ be provided or otherwise made available to, or used by, any
+ other person.  No title to or ownership of the software is
+ hereby transferred.
+"
+!
+
+documentation
+"
+    Raised when the index was ouf of a collections valid range for the index
+    (i.e. array index too high or less than 1)
+"
+! !
+
+
+!SubscriptOutOfBoundsError class methodsFor:'initialization'!
+
+initialize
+    NotifierString := 'subscript out of bounds: '.
+
+    "
+     self initialize
+    "
+! !
+
+
+!SubscriptOutOfBoundsError class methodsFor:'documentation'!
+
+version
+    ^ '$Header: /cvs/stx/stx/libbasic/SubscriptOutOfBoundsError.st,v 1.5 2013-04-27 10:07:39 cg Exp $'
+!
+
+version_SVN
+    ^ '$Id: SubscriptOutOfBoundsError.st 10761 2012-01-19 11:46:00Z vranyj1 $'
+! !
+
+
+SubscriptOutOfBoundsError initialize!

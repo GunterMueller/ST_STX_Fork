@@ -1,0 +1,31 @@
+/* XPM */
+static char *taiwan_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 20 4 1",
+/* colors */
+"a c #1414fc",
+"b c #1c1cfc",
+"c c #f40404",
+"d c #f4fcf4",
+/* pixels */
+"babbaabaabbabbaabacccccccccccccc",
+"babbaabdabbabbaabacccccccccccccc",
+"abaabbadaddbaabbabcccccccccccccc",
+"babbaaddddddbbaabacccccccccccccc",
+"abaabbbddddabbaabacccccccccccccc",
+"abaabbbdddddbbaabacccccccccccccc",
+"babbaaddddddbbaabacccccccccccccc",
+"abaabbbdbbdbaabbabcccccccccccccc",
+"babbaabaaaababaabacccccccccccccc",
+"babbaabaabbabbaabacccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+};

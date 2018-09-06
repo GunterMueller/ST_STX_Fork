@@ -1,0 +1,380 @@
+# A helper function to download and unpack pre-built stc and librun
+# for those who are not lucky enough to have an access to sources
+def download_binary_component(component, directory)
+  plat = nil
+  blob = nil
+  sha256 = nil
+  pattern = /prebuilt-#{Regexp.quote(component)}/
+
+  build_url = %Q{https://swing.fit.cvut.cz/jenkins/job/stx_jv/lastStableBuild}
+
+  origin_forest_url = HG::Repository.new(BUILD_DIR / '..').paths['default'].slice(0.. - 'stx-goodies-builder-rake'.size - 2) #/
+  # When building using Jan's staging repositories, use pre-built stc and librun
+  # from there too. 
+  if (origin_forest_url =~ /192.168.27.250/) then
+    build_url = %Q{http://192.168.27.253:8080/job/stx_jv/lastStableBuild/}
+  end
+
+  build = Jenkins::Build.new(build_url)
+  platform = BUILD_TARGET
+  build.artifacts.each do | artifact |
+    if (pattern =~ artifact.name) and (artifact.name.include? platform) then
+      if artifact.name.end_with? '.sha256' then
+        sha256 = artifact
+      else
+        blob = artifact
+      end
+    end
+  end
+  if not blob then
+    error "No binary component \"'#{component}\" found: #{build_url}/artifact/artifacts/"
+  end
+  if sha256 then
+    info "Downloading binary component SHA265 checksum #{sha256.name}"
+    sha256.download_to(directory)
+    if File.exist? directory / "#{component}" and File.exist? directory / "#{component}.sha256" then
+      # Compare a "current" checksum and the (possibly) "new" checkum.
+      # if same, skip the download (assuming that version has been
+      # downloaded already)
+      sha256_current = File.read(directory / ".#{component}.sha256")
+      sha256_new     = File.read(directory / sha256.name)
+      if sha256_new == sha256_current then
+        return
+      end
+    end
+  end
+  info "Downloading binary component #{blob.name}"
+  blob.download_to(directory)
+  info "Extracting binary component #{blob.name}"
+  if File.exist? directory / component then
+    rm_rf directory / component
+  end
+  unzip directory / blob.name, remove: true
+  if sha256 then
+    mv directory / sha256.name, directory / ".#{component}.sha256"
+  end
+end
+
+project :'stx:jv-branch-core' do
+  # Core Smalltalk/X - does contain only standard libraries,
+  # and development tools. Does not contain any other 'features'
+  # like XML suite, Java support. Usable as a basis for standalone
+  # applications that needs some JV-branch features.
+  import :'stx:baseline'
+
+  # FORKED STC and librun
+  package "stx:stc", :repository => :'jv-branch:private', :branch => 'jv',
+    :checkout => (Proc.new do | pkg |
+      # Download pre-compiled binary if user has no access to source code
+      if Rake::Stx::Configuration::Repository::find(pkg.repository) then
+        checkout pkg.repository, 'stx/stc', :branch => pkg.branch, :revision => pkg.revision
+      else
+        download_binary_component('stc', BUILD_DIR / 'stx')
+      end
+    end),
+    :update => (Proc.new do | pkg |
+      if (File.exists? BUILD_DIR / 'stx' / 'stc' / '.hg' / 'hgrc') then
+        update pkg.repository, 'stx/stc', :branch => pkg.branch, :revision => pkg.revision
+      elsif not jenkins?
+        download_binary_component('stc', BUILD_DIR / 'stx')
+    end
+  end)
+
+  package "stx:librun", :repository => :'jv-branch:private', :branch => 'jv',
+    :checkout => (Proc.new do | pkg |
+      # Download pre-compiled binary if user has no access to source code
+      if Rake::Stx::Configuration::Repository::find(pkg.repository) then
+        checkout pkg.repository, 'stx/librun', :branch => pkg.branch, :revision => pkg.revision
+      else
+        download_binary_component('librun', BUILD_DIR / 'stx')
+      end
+    end),
+    :update => (Proc.new do | pkg |
+      if (File.exists? BUILD_DIR / 'stx' / 'librun' / '.hg' / 'hgrc') then
+        update pkg.repository, 'stx/stc', :branch => pkg.branch, :revision => pkg.revision
+      elsif not jenkins?
+        download_binary_component('librun', BUILD_DIR / 'stx')
+    end
+  end)
+
+  # FORKED libraries
+  # ======================================================================
+  package "stx:libbasic", :repository => :'jv-branch:public', :branch => 'jv'
+  package "stx:libbasic2", :repository => :'jv-branch:public', :branch => 'jv'
+  package "stx:libbasic3", :repository => :'jv-branch:public', :branch => 'jv'
+  package "stx:libcomp", :repository => :'jv-branch:public', :branch => 'jv'
+  package "stx:libtool", :repository => :'jv-branch:public', :branch => 'jv'
+  package "stx:libtool2",:repository => :'jv-branch:public', :branch => 'jv'
+
+  package "stx:libview", :repository => :'jv-branch:public', :branch => 'jv'
+  package "stx:libview2", :repository => :'jv-branch:public', :branch => 'jv'
+  package "stx:libwidg", :repository => :'jv-branch:public', :branch => 'jv'
+  package "stx:libwidg2", :repository => :'jv-branch:public', :branch => 'jv'
+
+  package "stx:goodies/sunit", :repository => :'jv-branch:public', :branch => 'jv'
+  package "stx:goodies/monticello", :repository => :'jv-branch:public', :branch => 'jv'
+  package "stx:goodies/refactoryBrowser", :repository => :'jv-branch:public', :branch => 'jv'
+  package "stx:libsvn", :repository => :'jv-branch:public', :branch => 'jv'
+
+  # Some more development tools to build and preload
+  # ======================================================================
+  package "stx:goodies/xml/vw", :repository => :'exept:public'
+  package "stx:goodies/xml/stx", :repository => :'exept:public'
+
+  # SmallSense
+  package "stx:goodies/regex", :repository => :'exept:public'
+  package "stx:goodies/smallsense", :repository => :'jv-branch:public'
+  package "stx:goodies/smallsense/refactoring_custom"
+
+
+  tasks do
+    # Build and install documentation for stx:libjava and stx:libscm/mercurial
+    task "install:pre" do
+      chdir BUILD_DIR / 'stx' / 'libjava' do
+        make "doc-install"
+      end
+      chdir BUILD_DIR / 'stx' / 'libscm' / 'mercurial' do
+        make "doc-install"
+      end
+    end
+
+    # Try execute run the VM if it starts up
+    task :'compile:post' do
+      if PROJECT == 'stx:jv-branch' then
+        chdir BUILD_DIR / 'stx' / 'projects' / 'smalltalk' do
+          if win32?
+            sh "smalltalk.bat --abortOnSEGV -I --quick --eval \"Stdout nextPutLine:'OKay, VM runs'. Smalltalk exit: 0\""
+          else
+            sh "./smalltalk --abortOnSEGV -I --quick --eval \"Stdout nextPutLine:'OKay, VM runs'. Smalltalk exit: 0\""
+          end
+        end
+      end
+    end
+  end
+
+end
+
+
+
+project :'stx:jv-branch' do
+  # Standard Smalltalk/X IDE with some nice libraries preloaded
+
+  import :'stx:jv-branch-core'
+
+
+  app_name "smalltalkx-jv-branch"
+  app_version "8.0.0_#{BUILD_ID}"
+
+  # Forked PetitParser
+  package "stx:goodies/petitparser", :repository => :'jv-branch:public', :link => false
+  package "stx:goodies/petitparser/tests", :link => false
+  package "stx:goodies/petitparser/analyzer",  :link => false
+  package "stx:goodies/petitparser/analyzer/tests",  :link => false
+
+  # Monticello
+  package "stx:libcompat", :repository => :'exept:public'
+  package "stx:goodies/communication", :repository => :'exept:public'
+
+  # Java support
+  package "stx:libjava", :repository => :'jv-branch:public'
+  package "stx:libjava/tools"
+  package "stx:libjava/experiments"
+  #package "stx:libjava/examples" :link => false
+
+  # VDB
+  package 'stx:goodies/magritte', :repository => :'exept:public', :link => false
+  package 'stx:goodies/announcements', :repository => :'exept:public'
+  package 'jv:libgdbs', :repository => :'jv-branch:public', :link => false
+  package 'jv:libgdbs/tests', :repository => :'jv-branch:public', :link => false
+  package 'jv:vdb', :repository => :'jv-branch:public', :link => false
+
+
+  # Smalltalk/X IDE
+  application 'stx:projects/smalltalk', :repository => :'jv-branch:public', :branch => 'jv'
+
+  package 'stx:libscm', :repository => :'jv-branch:public'
+  package 'stx:libscm/common', :repository => :'jv-branch:public'
+  package 'stx:libscm/mercurial', :repository => :'jv-branch:public'
+  package 'stx:libscm/mercurial/monticello', :repository => :'jv-branch:public'
+  package 'stx:goodies/ring', :repository => :'jv-branch:public', :link => false
+  package 'stx:goodies/libcairo', :repository => :'jv-branch:public', :link => false
+  package 'stx:goodies/cypress', :repository => :'jv-branch:public'
+  package "stx:goodies/xmlsuite", :repository => :'jv-branch:public'
+  package "stx:goodies/loggia", :repository => :'exept:public', :link => false
+  package 'stx:goodies/smaCC',:repository => :'jv-branch:public'
+  package 'stx:goodies/regression',:repository => :'jv-branch:public', :branch => 'jv', :link => false
+  package "stx:goodies/builder", :repository => :'jv-branch:public',:branch => 'jv', :link => false
+  package "stx:goodies/builder/reports"
+
+  # Define a "default" test suite, i.e., a set of tests that are run when
+  # user does `rake test`.
+  package 'stx:libview/tests', :test => true;
+  package 'stx:libwidg/tests', :test => true;
+  package 'stx:libtool/tests', :test => true;
+  package 'stx:libjava', :test => true;
+  package 'stx:libjava/tools', :test => true;
+  package 'stx:goodies/regression', :test => true;
+  package 'stx:libscm/mercurial', :test => true;
+  package 'jv:libgdbs/tests', :test => true;
+
+  tasks do
+    # We need to checkout CharacterEncoderCodeGenerator from stx:goodies
+    # because RegressionTests::CharacterTests>>test01_CaseTesting needs that.
+    task 'checkout:post' => BUILD_DIR / 'stx' / 'goodies' / 'CharacterEncoderCodeGenerator.st'
+    file (BUILD_DIR / 'stx' / 'goodies' / 'CharacterEncoderCodeGenerator.st') do
+      checkout(:'exept:public', 'stx/goodies/CharacterEncoderCodeGenerator.st')
+    end
+
+    # Checkout & install demos. Too bad that demos are not in a package itself but
+    # rather a set of scaterred files here and there. So we have to checkout
+    # and install them manually
+    task 'checkout:post' => 'checkout:demos'
+    task 'checkout:demos' => [ BUILD_DIR / 'stx' / 'doc' / 'coding' ,
+                               BUILD_DIR / 'stx' / 'goodies'  / 'demos' ,
+                               BUILD_DIR / 'stx' / 'clients' ]
+    file BUILD_DIR / 'stx' / 'doc' / 'coding' do
+      checkout(:'exept:public', 'stx/doc/coding')
+    end
+    file BUILD_DIR / 'stx' / 'goodies'  / 'demos' do
+      checkout(:'exept:public', 'stx/goodies/demos')
+    end
+    file BUILD_DIR / 'stx' / 'clients' do
+      checkout(:'exept:public', 'stx/clients')
+    end
+
+    task 'dist:jv:post' => 'dist:jv:demos'
+    task 'dist:jv:demos' do
+      cp_rx BUILD_DIR / 'stx' / 'doc' / 'coding', $install_jv_dirs[:pkg_dir] / 'stx' / 'doc' do |fname|
+        # fname is full path!!!
+        /\.svn|CVS|\.cvsignore|tests/.match(fname).nil?
+      end
+
+      cp_rx BUILD_DIR / 'stx' / 'goodies' / 'demos', $install_jv_dirs[:pkg_dir] / 'stx' / 'goodies'  do |fname|
+        # fname is full path!!!
+        /\.svn|CVS|\.cvsignore|tests/.match(fname).nil?
+      end
+
+      cp_rx BUILD_DIR / 'stx' / 'clients', $install_jv_dirs[:pkg_dir] / 'stx' do |fname|
+        # fname is full path!!!
+        /\.svn|CVS|\.cvsignore|tests/.match(fname).nil?
+      end
+    end
+
+    # Normally the test package is not compiled but we have to
+    # compile programs used in tests before running the tests
+    # themselves. Sigh...
+    task "test:package:jv:libgdbs/tests:pre" do
+      chdir BUILD_DIR / 'jv' / 'libgdbs' / 'tests' do
+        sh "make -f Makefile.init mf" if unix?
+        make "testprograms"
+      end
+    end
+
+    task :'install:main' => :'dist:jv-branch'
+
+    task :'dist:jv:pre' => :'stx:jv-branch:extractver'
+
+    if win32?
+      app_name    = project.app_name      || (raise Exception.new("No app_name property specified"))
+	    app_version = project.app_version   || (raise Exception.new("No app_version property specified"))
+	    version = app_version.split('_').first
+
+	    install_dir = ARTIFACTS_DIR / BUILD_NAME
+	    bin_dir = install_dir / 'bin'
+
+
+    	cairo_dlls = nil
+    	if /i686/ =~ BUILD_TARGET
+	      cairo_dlls =  [
+	      	'libcairo-2.dll' ,
+					'libfontconfig-1.dll' ,
+					'libfreetype-6.dll' ,
+					'liblzma-5.dll' ,
+					'libpixman-1-0.dll' ,
+					'libpng15-15.dll' ,
+					'libxml2-2.dll' ,
+					'zlib1.dll'
+					]
+			else
+				cairo_dlls =  [
+	      	'fontconfig.dll' ,
+	      	'iconv.dll' ,
+	      	'libcairo-2.dll' ,
+	      	'libpng16.dll' ,
+	      	'libxml2.dll' ,
+	      	'pixman-1.dll' ,
+	      	'zlib1.dll'
+	      ]
+			end
+
+    	task :'dist:jv:post' => [ :'stx:jv-branch:extractver' , :'dist:jv:variables' ]
+    	cairo_dlls.each do | dll |
+    		task :'dist:jv:post' => [ bin_dir / dll ]
+				file bin_dir / dll do
+					mkdir_p bin_dir
+					cp BUILD_DIR / 'stx' / 'goodies' / 'libcairo' / 'support' / 'win32' / (/i686/ =~ BUILD_TARGET ? 'i586' : 'x86_64') / dll , bin_dir / dll
+				end
+    	end
+    end
+
+    task :'dist:jv-branch' => [ :'dist:jv:all',
+                                :'dist:jv:doc' ]
+
+    task :'install:main' => [:'stx:jv-branch:extractver']
+    task :'artifacts:main' => [:'stx:jv-branch:extractver']
+    task :'artifacts:post' => [:'artifacts:prebuilt-stc', :'artifacts:prebuilt-librun' ]
+
+    # Add dependency of stc and librun archive tasks on :'stx:jv-branch:extractver' so
+    # they create archives with up-to-date version.
+    task :'artifacts:prebuilt-stc' => :'stx:jv-branch:extractver'
+    task :'artifacts:prebuilt-librun' => :'stx:jv-branch:extractver'
+
+  end
+end
+
+task :'stx:jv-branch:extractver' => :'setup' do
+  ver = nil
+  if win32?
+    stx_exe = 'stx.com'
+  else
+    stx_exe = './stx'
+  end
+  chdir BUILD_DIR / 'stx' / 'projects' / 'smalltalk' do
+    ver = %x(#{stx_exe} --eval "Stdout nextPutAll: Smalltalk versionString")
+    if $?.exitstatus != 0
+      raise Exception.new("Failed extract version from stx")
+    end
+  end
+  ver = (ver.split(".")[0..2]).join(".")
+  project.app_version "#{ver}_#{BUILD_ID}"
+  # This is really ugly. We need to clean that up...
+  BUILD_NAME.replace "#{project.app_name}-#{project.app_version}_#{BUILD_TARGET}"
+end
+
+
+project :'stx:jv-branch:for-reports-only' do
+  import :'stx:jv-branch'
+
+  # Sigh, if we're about to run tests only, we don't want to
+  # run standard tests so we need to clean test flag.
+  package 'stx:libview/tests', :test => false;
+  package 'stx:libjava', :test => false;
+  package 'stx:libjava/tools', :test => false;
+  package 'stx:goodies/regression', :test => false;
+  package 'stx:libscm/mercurial', :test => false;
+
+  tasks do
+    task :'stx:projects/smalltalk:pre' do
+      chdir BUILD_DIR / 'stx' / 'projects' / 'smalltalk' do
+         if win32?
+           system "bmake clobber"
+         else
+           system "make clobber"
+         end
+      end
+    end
+
+    clear :'dist:install' => :'dist:jv-branch'
+  end
+end
+

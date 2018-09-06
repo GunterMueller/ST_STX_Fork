@@ -1,0 +1,372 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X GUI classes - Drawables and Views</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="image.html"> <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html#I_COLLECTIONS">     <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="interactors.html"> <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<P>
+Classes to know are:
+<UL>
+<LI> <A HREF="#VIEW" NAME="I_VIEW">View</A>
+<LI> <A HREF="#STDSYSVIEW" NAME="I_STDSYSVIEW">StandardSystemView</A>
+</UL>
+
+
+<H2>Drawables</H2>
+<P>
+Much of the drawing protocol is defined in abstract classes. These
+can be subclassed to support drawing on canvases other than bitmaps and views.
+<P>
+For example, a public domain goodie adds support to draw on a Postscript
+printer page. Therefore, the same piece of code that did the view redraw
+can now be used to send a hardcopy to the printer.
+<P>
+Most of the graphics functionality is implemented in the <CODE>GraphicsContext</CODE>
+and <CODE>DeviceDrawable</CODE> classes - these keep a handle to the actual underlying
+drawing device (i.e. a bitmap, a view or a postscript printers page), and
+forward low level drawing requests to that device.
+
+<P>
+Press here for more details about:
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:GraphicsContext backRef:'view.html'">
+<CODE>GraphicsContext</CODE></A> or:
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:DeviceDrawable backRef:'view.html'">
+<CODE>DeviceDrawable</CODE></A>.
+
+
+
+<H2><a NAME="VIEW" HREF="#I_VIEW">View</A></H2>
+<P>
+The View class provides the most of  the GUI functionality
+- although in a very generic and abstract way.
+It deals with resizing, redrawing, startup and closedown of views.
+<BR>
+Most other GUI components inherit (i.e. are subclassed) from this class.
+<P>
+All user interface components in <CITE>Smalltalk/X</CITE>
+are implemented as (direct or indirect) subclasses of <CODE>View</CODE>.
+Therefore, starting with View, you will find all components (such as Buttons,
+ScrollBars, TextViews etc.) in the subclass hierarchy.
+
+<BR>
+The most heavily used protocol:
+<P>
+<UL>
+<LI> creation:
+<CODE><PRE>
+<VAR>aView</VAR> := &lt;someViewClass&gt; <B>new</B>
+</PRE></CODE>
+
+<LI> creation and adding to some other view:
+<CODE><PRE>
+<VAR>newView</VAR> := &lt;someViewClass&gt; <B>new</B>.
+<VAR>outerView</VAR> <B>addSubView:</B> <VAR>newView</VAR>.
+</PRE></CODE>
+
+<LI> creation in another view (shortcut for above):
+<CODE><PRE>
+<VAR>aView</VAR> := &lt;someViewClass&gt; <B>in:</B> <VAR>anotherView</VAR>
+</PRE></CODE>
+
+<LI> creation, defining its dimentsion & adding to some other view:
+<CODE><PRE>
+<VAR>newView</VAR> := &lt;someViewClass&gt; <B>new</B>.
+<VAR>newView</VAR> <B>origin:</B> &lt;<VAR>topLeftOriginPoint</VAR>&gt;.
+<VAR>newView</VAR> <B>corner:</B> &lt;<VAR>bottomRightCornerPoint</VAR>&gt;.
+<VAR>otherView</VAR> <B>addSubView:</B> <VAR>newView</VAR>.
+</PRE></CODE>
+
+<LI> creation in another view, and defining the dimension (shortcut for above):
+<CODE><PRE>
+<VAR>aView</VAR> := &lt;someViewClass&gt;
+	     <B>origin:</B> &lt;<VAR>originPoint</VAR>&gt; <B>corner:</B> &lt;<VAR>cornerPoint</VAR>&gt; <B>in:</B> <VAR>outerView</VAR>
+</PRE></CODE>
+
+<LI> setting an inset (boundary offset) - see example below:
+<CODE><PRE>
+<VAR>aView</VAR> <B>inset:</B> &lt;<VAR>numberOfPixels</VAR>&gt;
+</PRE></CODE>
+
+<LI> setting 3D level - see example below:
+<CODE><PRE>
+<VAR>aView</VAR> <B>level:</B> &lt;<VAR>numberOfPixels</VAR>&gt;
+</PRE></CODE>
+
+
+<LI> destroying a view:
+<CODE><PRE>
+<VAR>aView</VAR> <B>destroy</B>
+</PRE></CODE>
+
+<LI> defining the views background color:
+<CODE><PRE>
+<VAR>aView</VAR> <B>viewBackground:</B> <VAR>aColorOrBitmap</VAR>
+</PRE></CODE>
+
+<LI> setting the drawing color & drawing a line:
+<CODE><PRE>
+<VAR>aView</VAR> <B>paint:</B> <VAR>aColorOrBitmap</VAR>.
+<VAR>aView</VAR> <B>displayLineFrom:</B> <VAR>startPoint</VAR> <B>to:</B> <VAR>endPoint</VAR>.
+</PRE></CODE>
+
+</UL>
+
+<P>
+Press here for more details about:
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:SimpleView backRef:'view.html'">
+<CODE>the View classes protocol</CODE></A>.
+
+
+
+<H2><a NAME="STDSYSVIEW" HREF="#I_STDSYSVIEW">StandardSystemView</a></H2>
+<P>
+Instances of this class represent topViews on your display screen.
+TopViews are the outer frames, which typically have a window title, can
+be iconified, and are managed by the displays window manager.
+<P>
+This class provides protocol to define a views icon, window title and
+position on the screen. On systems which support this (i.e. X displays with
+Shape extension) arbitrary shaped views (like round clocks) are supported.
+<BR>
+Also iconification, icon windows, size constrains and manual focus change
+via the keyboard are supported.
+<P>
+
+<BR>
+The most useful protocol:
+<P>
+<UL>
+<LI> creation:
+<CODE><PRE>
+<VAR>aTopView</VAR> := StandardSystemView <B>new</B>
+</PRE></CODE>
+
+<LI> creation with size:
+<CODE><PRE>
+<VAR>aTopView</VAR> := StandardSystemView <B>extent:</B> &lt;<VAR>extentPoint</VAR>&gt;.
+</PRE></CODE>
+
+<LI> defining a window title, icon & iconLabel:
+<CODE><PRE>
+<VAR>aTopView</VAR> := StandardSystemView <B>new</B>.
+<VAR>aTopView</VAR> <B>label:</B> 'hello world'.
+<VAR>aTopView</VAR> <B>icon:</B> (Image fromFile:'... someFilename ...').
+<VAR>aTopView</VAR> <B>iconLabel:</B> 'hello'.
+</PRE></CODE>
+
+</UL>
+
+
+After creation (possibly with many subviews), the view must be made visible.
+<BR>
+This is done by sending it the <CODE>#open</CODE> message - and called <CITE>opening the view</CITE>.
+<P>
+Views can be opened <VAR>modeless</VAR> (the new view is handled by an independent
+process and control returns immediately to the sender of the open message) or
+<VAR>modal</VAR> (the new view is handled by the calling process; control
+returns when the new view is closed).
+
+<BR>
+By default, all dialog views open up <VAR>modal</VAR>, all other views
+open <VAR>modeless</VAR>. However, you can send all an explicit <CODE>openModeless</CODE>
+or <CODE>#openModal</CODE> message to get around that default behavior.
+
+<UL>
+<LI> opening the window (in the view classes default mode):
+<CODE><PRE>
+<VAR>aTopView</VAR> <B>open</B>
+</PRE></CODE>
+
+<LI> opening the window modeless (in its own process):
+<CODE><PRE>
+<VAR>aTopView</VAR> <B>openModeless</B>
+</PRE></CODE>
+
+<LI> opening the window modal (in the current process):
+<CODE><PRE>
+<VAR>aTopView</VAR> <B>openModal</B>
+</PRE></CODE>
+
+</UL>
+
+
+Notice, you cannot depend on the view being really open right after sending it the
+<CODE>#open</CODE> message - the reason is that the open operation starts a new
+process for the view. By default, the new process executes at the same priority as
+the currently running process - therefore, the actual opening will be done
+<B>later</B>, when the current process is suspended (typically, when it waits for
+input).
+<P>
+If you want to draw into the new view (from the creating process)
+right after the open message, you have to make certain that the new view is really
+open.
+
+<UL>
+<LI> opening the window (as a separate process) and wait until it is visible:
+<CODE><PRE>
+<VAR>aTopView</VAR> <B>openAndWait</B>
+</PRE></CODE>
+</UL>
+
+<P>
+Press here for more details about:
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:StandardSystemView backRef:'view.html'">
+<CODE>StandardSystemView</CODE></A> or:
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:TopView backRef:'view.html'">
+<CODE>TopView</CODE></A> or:
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:DialogBox backRef:'view.html'">
+<CODE>DialogBox</CODE></A>.
+
+
+
+Typical uses:
+<UL>
+
+<LI> create and open a topView:
+<A TYPE="example">
+<CODE><PRE>
+    |topView|
+
+    topView := StandardSystemView new.
+    topView extent:200@200.
+    topView open.
+</PRE></CODE>
+</A>
+
+<LI> with windowLabel, icon and iconLabel:
+<A TYPE="example">
+<CODE><PRE>
+    |topView|
+
+    topView := StandardSystemView new.
+    topView extent:400@200.
+    topView label:'my first view'.
+    topView icon:(Image fromFile:'bitmaps/hello_world.icon').
+    topView iconLabel:'myView'.
+    topView open.
+</PRE></CODE>
+</A>
+
+<LI> placing a view into the outer topView:
+<A TYPE="example">
+<CODE><PRE>
+    |topView innerView|
+
+    topView := StandardSystemView new.
+    topView extent:400@200.
+    topView label:'my first view'.
+    topView icon:(Image fromFile:'bitmaps/hello_world.icon').
+    topView iconLabel:'myView'.
+
+    innerView := View origin:10@10 corner:0.5@0.5 in:topView.
+    innerView viewBackground:(Color red).
+
+    topView open.
+</PRE></CODE>
+</A>
+
+<LI> a panel with two buttons in a topView:
+<A TYPE="example">
+<CODE><PRE>
+    |topView panel button1 button2|
+
+    topView := StandardSystemView extent:400@200.
+    topView label:'buttons'.
+
+    panel := HorizontalPanelView origin:0.0@0.0 corner:1.0@1.0 in:topView.
+    panel inset:10.
+    panel level:-1.
+
+    button1 := Button label:'press me' in:panel.
+    button1 action:[ Transcript showCR:'hello there' ].
+    button1 foregroundColor:(Color blue).
+
+    button2 := Button label:'close me' in:panel.
+    button2 action:[ topView destroy ].
+    button2 backgroundColor:(Color red).
+    button2 foregroundColor:(Color white).
+    button2 enteredBackgroundColor:(Color red lightened).
+
+    topView open.
+</PRE></CODE>
+</A>
+
+<LI> with a pullDownMenu:
+<A TYPE="example">
+<CODE><PRE>
+    |topView menu fileMenu model|
+
+    model := 'some model'.
+
+    topView := StandardSystemView extent:200@200.
+    topView label:'Demo'.
+
+    menu := PullDownMenu in:topView.
+    menu labels:#('file' 'edit')
+	 selectors:#(file edit).
+
+    "/
+    "/ direct action on the edit item
+    "/
+    menu
+	actionAt:#edit put:[ Transcript showCR:'edit action' ].
+
+    "/
+    "/ submenu on the file item
+    "/
+    menu at:#file
+	 putLabels:#('new'
+		     '-'
+		     'open ...'
+		     '-'
+		     'quit'
+		    )
+	 selectors:#(new
+		     nil
+		     open
+		     nil
+		     quit
+		    ).
+
+    fileMenu := menu subMenuAt:#file.
+
+    fileMenu
+	actionAt:#new put:[ Transcript showCR:'new action ...' ].
+
+    fileMenu
+	actionAt:#open put:[ Transcript showCR:'open action ...' ].
+
+    fileMenu
+	actionAt:#quit put:[ topView destroy ].
+
+    topView open.
+</PRE></CODE>
+
+</A>
+</UL>
+
+More detailed information and a step by step tutorial
+is found in
+<A HREF="../../programming/viewintro.html"><VAR>``Introduction to view programming''</VAR></A>.
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif">
+Copyright © 1995 Claus Gittinger Development & Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.20 $ $Date: 2016-01-21 16:22:39 $
+</BODY>
+</HTML>

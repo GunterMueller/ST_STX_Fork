@@ -1,0 +1,15 @@
+; View defaultStyle:#mswindows95_timo 
+;
+; $Header: /cvs/stx/stx/libview/styles/mswindows95_timo.style,v 1.1 2001-11-09 20:04:43 tm Exp $
+
+#include 'mswindows95.style'
+
+comment  'timos win95 lookalike'
+
+textCursor.type                          #block
+textCursor.backgroundColor               =selectionBlue
+textCursor.foregroundColor               Color white
+textCursor.noFocusForegroundColor        Color grey
+
+scroller.snapBack                        false
+

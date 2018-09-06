@@ -1,0 +1,31 @@
+/* XPM */
+static char *serve_ftp_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"31 17 7 1",
+/* colors */
+"a c #0000FF",
+"b c #C6C3C6",
+"c c black",
+"d c white",
+"e c #000084",
+"f c #848284",
+"g c none",
+/* pixels */
+"ggggggggggggggggggggggggggggggg",
+"ggggggggggggggggggggggggggggggg",
+"gggggggggggccccdcccccdgcccdgggg",
+"gggggggggggcdddgggcddggcdgcdggg",
+"gggggggggggcdgggggcdgggcdgcdggg",
+"gggggggggggcccdgggcdgggcccdgggg",
+"eeeeeeeggggcddggggcdgggcddggggg",
+"aaaaaaacgggcdgggggcdgggcdgggggg",
+"aaaaaaacfffffffffgcdgggcdgggggg",
+"eeeeeeecbddddddddfffggggggggggg",
+"eeeeeeecbddddddddddffgggggggggg",
+"eeeeeeecbddddddcdddddcggggggggg",
+"eeeeeeecbbbdddddcccccgggggggggg",
+"eeeeeeecccbbbddddfffccccggggggg",
+"eeeeeeecggcbbbbddddddddbfgggggg",
+"cccccccggggccffffffffffccgggggg",
+"gggggggggggggccccccccccgggggggg",
+};

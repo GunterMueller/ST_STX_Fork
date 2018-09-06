@@ -1,0 +1,247 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Help - Editor Settings</Title>
+</HEAD>
+
+<BODY>
+
+<H1>Editor Settings</H1>
+
+<H2><A NAME="INDEX">Help index</A></H2>
+
+<UL>
+  <LI><A HREF="#USENEWCODEEDITOR">Use the New Code Editor 2</A>
+  <LI><A HREF="#SHOWACCEPTCANCELBAR">Show Accept/Cancel Bar in Editor</A>
+  <LI><A HREF="#MODALSEARCH">SearchBox is Modal</A>
+<P>
+  <LI><A HREF="#CODECOMPLETIONASYOUTYPE">Code Completion as you Type</A>
+  <LI><A HREF="#CODECOMPLETIONONCTRL">Code Completion on CTRL</A>
+  <LI><A HREF="#CODECOMPLETIONONTAB">Code Completion on TAB</A>
+<P>
+  <LI><A HREF="#TABSTOPS">Tab Stops in Multiples of 4</A>
+<P>
+  <LI><A HREF="#CTRLTEXTDRAG">CTRL-Key to Start Text Drag</A>
+  <LI><A HREF="#PASTEFILECONTENTS">Always Paste the Contents when Dropping a File</A>
+<P>
+  <LI><A HREF="#AUTOINDENT">Autoindent on Return</A>
+  <LI><A HREF="#ST80CURSOR">ST80 Cursor Behavior in EditTextView</A>
+<P>
+  <LI><A HREF="SELECTALLBEYONDENDOFTEXT">Select All when Clicking Beyond End of Text</A>
+  <LI><A HREF="#ST80SELECT">ST80 Double Click Select Behavior</A>
+  <LI><A HREF="#EXTENDEDWORDSELECT">Extended Character-Set in Word-Select</A>
+  <LI><A HREF="#WHITESPACEINWORDSELECT">Any non-Whitespace in Word-Select</A>
+  <P>
+</UL>
+
+<HR>
+
+<H2><A NAME="USENEWCODEEDITOR" HREF="#INDEX">Use the New Code Editor 2</A></H2>
+Controls if the new or old code editor should be used.
+<BR>
+The new code editor adds a line number bar, line number breakpoints and
+highlighting of variables and selectors.
+It is experimental and some functions may not work fully (breakpoint-on-line functions).
+<BR>
+The default is on (i.e. to use the new code editor).
+
+
+<H2><A NAME="SHOWACCEPTCANCELBAR" HREF="#INDEX">Show Accept/Cancel Bar in Editor</A></H2>
+Show an Accept/Cancel bar at the right of text editors. These serve two
+purposes: 1) to indicate that the text has been modified,
+2) for easy accept/cancel/compare.
+<BR>Click on the green area to accept the changes, the red area to cancel (undo all) of your
+changes, and the yellow area to compare your changed text against the original.
+<P>
+Notice, that the CodeView2 implements its own embedded accept/cancel bar,
+but is only usable with code, not with other editors. If you prefer the
+codeView2's embedded bar, disable this flag here.
+<P>
+(Yes, we know this is confusing, but the two mechanisms have been developed
+by different teams, and each prefers its own...)
+
+
+
+<H2><A NAME="MODALSEARCH" HREF="#INDEX">SearchBox is Modal</A></H2>
+If on, text-search-boxes are modal. If off, they stay open as floating dialogs, for
+easier incremental search operations.
+The default is modal.
+<P>
+
+
+<H2><A NAME="CODECOMPLETIONASYOUTYPE" HREF="#INDEX">Code Completion as you Type</A></H2>
+This enables "as you type" completion suggestions to be shown in a
+floating menu, which opens automatically and updates itself as you type.
+Once the suggestions appear, press CRSR-DOWN, CRSR-UP to navigate to a
+suggestion and hit RETURN to insert it.
+Pressing any graphical key updates the list of suggestions.
+Any other non-graphical key closes the suggestion viewer (especially: ESC).
+<P>
+The suggestions include variable names and selectors of Smalltalk code.
+Also, any abbreviations (snippets - see Workspace documentation) are
+presented at the end of the list (thus, as single CRSR-UP is needed to select the abbreviation).
+<P>
+The opinions on whether this is a great feature or rather disturbing are
+varying among users, so you may prefer one of the explicit completion options
+below,
+or stick with the old (CTRL-Space) explicit completion
+and (ALT-SPACE) explicit abbreviation commands.
+
+
+<H2><A NAME="CODECOMPLETIONONCTRL" HREF="#INDEX">Code Completion on CTRL</A></H2>
+This enables completion suggestions to be shown when the CTRL key is
+pressed (but only if the character before the cursor is a non-separator).
+This may be less disturbing than the above, but requires
+and extra key press. It may also interfere with CTRL-key commands.
+
+
+<H2><A NAME="CODECOMPLETIONONTAB" HREF="#INDEX">Code Completion on TAB</A></H2>
+This enables completion suggestions to be shown when the TAB key is
+pressed (but only if the character before the cursor is a non-separator).
+Press TAB again, for a real tab position change.
+<P>
+This may be less disturbing than the above, but requires
+and extra key press. This may be disturbing if you have to editor
+tabulator aligned columnar data tables, where many tabs are to be entered
+inside the text.
+
+
+<H2><A NAME="TABSTOPS" HREF="#INDEX">Tab Stops in Multiples of 4</A></H2>
+Toggles tab stops between multiples-of-4 and multiples-of-8.
+<P>
+Notice and warning: the tab stop setting ONLY affects the cursor positioning in
+the editor. When loading/saving code from/into a file, tab stops are always assumed to
+be in multiples of 8. Also, when saving, leading spaces in multiples of 8 are
+written as an appropriate number of tabs into the file.
+This is required for some files, such as Makefiles.
+When editing these files, make sure that your texteditor shows
+at least 8 spaces in the make rule lines (but not in target lines).
+<P>
+
+
+
+<H2><A NAME="CTRLTEXTDRAG" HREF="#INDEX">CTRL-Key to Start TextDrag</A></H2>
+If on, text-dragging out of a TextView is only initiated if the CTRL-key is pressed
+simultaneously.
+<BR>
+Otherwise, a mouse-move with the left button pressed initiates a text-drag.
+<BR>
+The default is to require the CTRL to be pressed.
+<P>
+
+
+<H2><A NAME="PASTEFILECONTENTS" HREF="#INDEX">Always Paste the Contents when Dropping a File</A></H2>
+When dragging a file from the desktop or another application into a text view (workspace, browser, etc.),
+you are normally asked if the contents of the file or alternatively the name of the file is to be pasted.
+This toggle disables that confirmation and enforces that the contents is always pasted.
+<BR>
+Use this, if many files are to be dropped.
+<P>
+
+
+<H2><A NAME="AUTOINDENT" HREF="#INDEX">Autoindent on Return</A></H2>
+Enables autoindent. After hitting the Return-key, the cursor is
+positioned on an appropriate column. Also, it remembers how it indented
+previously, and changes the Backspace behavior to remove multiple spaces
+if required.
+
+
+<H2><A NAME="ST80CURSOR" HREF="#INDEX">ST80 Cursor Behavior in EditTextView</A></H2>
+
+If enabled, the text cursor behaves as in the ST80 textView (and also as in
+many other editing systems), in that the cursors position is limited to the
+actual dimension of the underlying text (the ``text-stream'' philosophy as in
+the ''vi'' editor).
+I.e. the text cursor cannot be positioned beyond the last character within a text line
+and cannot be positioned beyond the last line vertically.
+<P>
+The default ST/X behavior is to treat editText as if it was a piece-of-paper,
+where random-posioning is always posible, automatically adjusting the texts size
+as required. (the ``piece-of-paper-WYSIWYG'' philosophy, as in the ''RAND'' editor.)
+<P>
+
+
+<H2><A NAME="SELECTALLBEYONDENDOFTEXT" HREF="#INDEX">Select All when Clicking Beyond End of Text</A></H2>
+If enabled, a click beyond the very last text line selects the whole text.
+This is the behavior of some other (Smalltalk-) editors,
+but not everybody likes it, as it often leads to text being selected
+by accident.
+
+
+
+<H2><A NAME="ST80SELECT" HREF="#INDEX">ST80 Double Click Select Behavior</A></H2>
+
+If enabled, text selection via double click behaves as in ST80,
+which is sligtly different from ST/X's normal (word-select) behavior:
+<BR>
+<UL>
+<LI>
+Double click at the very top of the document, selects the whole text.
+<P>
+<LI>
+Double click at the beginning of a line, selects the line.
+<P>
+<LI>
+Double click right after the opening or right before the closing quotes of a comment, selects the comment's text.
+<P>
+<LI>
+Double click right after the opening, or right before the closing bracket of a block, selects the block's contents.
+<P>
+<LI>
+Double click right after an opening, or right before a closing parenthesis, selects the parenthized text.
+</UL>
+<P>
+The above rules are not applied, if you double click on an opening or closing bracket or parenthesis.
+Then, the bracketed text is selected, including the brackets, as usual.
+
+
+
+<H2><A NAME="EXTENDEDWORDSELECT" HREF="#INDEX">Extended Character-Set in Word-Select</A></H2>
+
+If enabled, word detection includes the underline character in text editor views.
+<BR>
+This affects the double click behavior, when clicking into a word.
+If on, words connected with underline characters are treated as a single word;
+if not, they are treated as separate words.
+<P>
+Notice, that in a code-showing view, the underline character is always treated like
+an alphanumeric character.
+<BR>(Caveat: this should probably be a view-specific setting, instead of a global one).
+<P>
+
+
+
+<H2><A NAME="WHITESPACEINWORDSELECT" HREF="#INDEX">Any non-Whitespace in Word-Select</A></H2>
+
+If enabled, any non-Whitespace character is included in the selection when
+performing a word-select.
+<BR>
+This affects the double click behavior, when clicking into a word.
+If on, non-space and non-letter characters such as comma, period etc.
+will also be included in the selection.
+if not, they are treated as separators.
+<P>
+The style to be used depends on your personal preferences and also on which
+kind of text (documentation vs. code) is what you intend to work with
+mostly.
+<BR>(Caveat: this should probably be a view-specific setting, instead of a global one).
+<P>
+
+
+
+<P>
+
+
+
+<HR>
+<P>
+<P>
+Copyright &copy; 1999 eXept Software AG, all rights reserved
+<P>
+<P>
+
+<HR>
+Doc $Revision: 1.16 $ $Date: 2014-06-13 08:14:47 $
+
+</BODY>
+</HTML>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+    analogous to headertext.xml, but this is allowed
+    -->
+<!DOCTYPE html SYSTEM "fake-xhtml.dtd" >
+<html>
+    <head>
+        <title>Title</title>
+        <meta content="asdf" />
+    </head>
+    <body>
+
+        Some Text
+
+        <h1>Heading Level 1</h1>
+
+        <p>This is a paragraph</p>
+    </body>
+</html>

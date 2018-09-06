@@ -1,0 +1,404 @@
+<HTML>
+
+<HEAD>
+<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<TITLE>Smalltalk/X Online Documentation - Release Notes</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="TOP.html" INFO="Back to documentation's main page">
+<IMG SRC="../icons/DocsUpArrow.gif" ALT="[up]"></A>
+
+<H1>Release Notes</H1>
+<P>
+
+This page lists <b>major bug</b> fixes in chronological order.
+Only severe errors are listed here (show stoppers only) .
+Non severe bugs and inconveniences
+(which are in the queue, but not yet fixed/released) are found in the
+<A HREF="knownBugs.html">"Bug List"</A>.
+Compatibility-Issues for programmers are listed in the <A HREF="compatibilityNotes.html">"Compatibility Notes"</A>.
+<P>
+New features and improvements are not listed here; please refer to
+<A HREF="newFeatures.html">"What's new in ST/X"</A> for a list.
+
+<!-- no the following is not true; we were too lazy
+<P>
+For each fix, the affected file and (new) revision number is listed.
+Your system should have fixed the corresponding bug, iff the corresponding
+files/classes revision number is higher or the same as the numbers listed below.
+<P>
+You can extract the revision numbers from your <CITE>ST/X</CITE>
+executable with the UNIX command: <CODE>"ident stx"</CODE>.
+<BR>
+Class revision numbers are also displayed by the <VAR>"modules"</VAR>
+view, which can be opened via the launcher's <VAR>"file"</VAR> menu.
+<P>
+-->
+If you want to send a bug report, <B>always</B> extract the revision(s)
+of the corresponding part - this helps us in tracking/fixing bugs.
+<HR>
+<P>
+<UL>
+
+<LI>[apr-2018] [stc] wrong code generated for character literals above 16rFF (ouch)
+<LI>[nov-2016] [librun] outdated images are now always ignored (not tried to be loaded); to force, use a "-i img" argument
+<LI>[nov-2014] [librun] fixed a jitter bug which (in very rare situations) was sending a message to the wrong receiver
+<LI>[nov-2014] [libbasic] Number reading (fromString:) did not care for garbage at the end
+<LI>[nov-2014] [document viewer] fixed initial local anchor positioning
+<LI>[nov-2014] [libodbc] fixed a buffer overwrite in GetData (which did not hurt most of the time but...)
+<LI>[nov-2014] [stc] fixed bad code generation for some constant folded integer expressions
+<LI>[nov-2014] [stc, librun] some GC bug fixes (compressing GC)
+<LI>[jan-2013] [stc, librun] the package loader now correctly loads prerequisites before a package's code is installed
+<LI>[dec-2011] [stc, librun] memory bug in package loader (sometimes crashed when dynamically loading classlib-dlls)
+<LI>[aug-2011] [stc] code generator change to deal with new gcc versions (accessing outer context locals)
+<LI>[jun-2011] Fixed SOAP via HTTPS
+<LI>[aug-2010] [libwidg] autoscroll-up fixed for ListViews
+<LI>[jul-2010] [librun] (win32) fixed a thread scheduler bug, which could lead to memory inconsistency (WeakArray bug)
+<LI>[jul-2010] [librun] (win32) fixed lost timerinterrupt bug
+<LI>[oct-2009] [stc] "register" as instance variable generated code which cc does not like
+<LI>[oct-2009] [stc] wrong code for certain block-code (Timestamp)
+<LI>[sep-2009] [goodies/rdoit] disable the connection timeout in the rdoit client, after the connection has been established
+<LI>[apr-2009] [rules] windows executables and libraries support Data Execution Prevention (DEP/NX)
+<LI>[mar-2009] [stc] trigraph escaping (for VisualC)
+<LI>[mar-2009] [librun] LargeInteger constant error
+<LI>[dec-2008] [libview] bmp file reading fixed in ImageReader
+<LI>[nov-2008] [stc] some symbols where missing in the literalArray (some symbol searches failed)
+<LI>[oct-2008] [libbasic] workaround a com-interface bug/deadlock in ms-windows, which lead to occasional deadlocks when reading a symbolic link path
+<LI>[oct-2008] [libbasic] in rare cases, a locked semaphore was not released if the holding thread was killed, leading to a deadlock
+<LI>[sep-2008] [stc] generated wrong code for simple shared ret-arg2 methods
+<LI>[aug-2008] [libbasic] Date conversion fixes (1.1.4009)
+<LI>[jul-2008] [libbasic] replaceFromTo: did not ignore the 0-byte at the end of a string
+<LI>[jul-2008] [libbasic] Date: daysLeftInYear was returning a wrong number of days
+<LI>[mai-2008] [stc] temporary variable generation for complicated computed squeak array fixed
+<LI>[mar-2008] [librun] another bug when sharing simple nil-, true- or false-returning blocks with numArgs>0
+<LI>[jan-2008] [librun] inappropriate block sharing for simple nil-, true- or false-returning blocks when numArgs>0
+<LI>[oct-2006] [stc] generated code for squeak computed arrays fixed
+<LI>[oct-2006] [stc] generated code for supersends in extensions fixed
+<LI>[oct-2006] [librun] initialization order of extension modules fixed
+<LI>[oct-2006] [librun] primitiveTimeout argument was not saved from garbage collector
+<LI>[sep-2006] [libbasic/win32] GetDiskInfo fix for win2k incompatibility
+<LI>[sep-2006] [librun/win32] Dual monitor geometry fixes
+<LI>[jun-2006] [librun/win32] API call interruption crash bug fix
+<LI>[feb-2006] [libodbc] more bugs fixed; bulk transfer support
+<LI>[jan-2006] [VM] jitter-literal GC bug fixed
+<LI>[nov-2005] [XWorkstation] device- and gc-handle finalization fixed
+<LI>[sep-2005] [libodbc] some bugs fixed
+<LI>[aug-2005] [stc] namespace handling bug fixed
+<LI>[dec-2004] [stc] blockRef bug fixed
+<LI>[nov-2004] [Win32OperatingSystem] processGroup termination fixed
+<LI>[oct-2004] [Parser] Const-1 bug fixed
+<LI>[oct-2004] [librun] rememberedSet overflow bug fixed
+<LI>[oct-2004] [librun] snapshot restart pointer relocation speedup
+<LI>[sep-2004] [XWorkstation] clibpoard mechanism fixed for large data blocks
+<LI>[sep-2004] [stc] support sharePools
+<LI>[aug-2004] [stc] code generator bug in optimized equality compare expression fixed
+<LI>[sep-2004] [VM] much faster startup in case of pointer relocation
+<LI>[mar-2004] [WinWorkstation] activation event when closing a popup on top of a modal view
+<LI>[mar-2004] [WinWorkstation] closing a view on-top of an ST/X view via dbl-click on close created wrong button event in underlyig view
+<LI>[mar-2004] [VM] one of the new UTF8 support functions defected the dynamic library loading in some situations
+<LI>[jan-2004] [libbasic] some missing STORE-check macros added to fix memory (garbage collector) bugs which occurred in certion situations.
+<LI>[jan-2004] [process.c] (WIN32) interruption of blocking API calls fixed
+<LI>[nov-2003] [UnixOperatingSystem] segv bug fixed in getAddressInfo
+<LI>[nov-2003] [process.c] (WIN32) thread handle leak fixed
+<LI>[nov-2003] [WinWorkstation] (WIN32) redraw bug (redraw events were missing when moving/resizing views)
+<LI>[nov-2003] [WinWorkstation] (WIN32) pointer enter button-state bug (sometimes assumed that button is pressed when mouse enters a view)
+<LI>[oct-2003] [librun] allow grow of oldSpace during startup
+<LI>[oct-2003] [librun] allow executable without root-classes (micro-executables)
+<LI>[oct-2003] [stc] fixed write barrier bug (store into outer block context)
+<LI>[oct-2003] [AbstractLauncherApplication.st,v 1.292;AbstractSettingsApplication.st,v 1.111] fixed bug setting compiler options -removed #always option for stc
+<LI>[oct-2003] [stc] cache slot code generator bug (shared cache slots for class & instance methods)
+<LI>[sep-2003] [librun] method cache bug fixed in interpreted code
+    (wrong method was called occasionally when many processes where scheduled)
+<LI>[mai-2003] [librun] context of a method called with #valueWithReceiver was wrong after GC if selector was nil
+<LI>[mai-2003] [librun] bug in the GC, which sometimes clobbered the freeList when hitting the memory limit.
+<LI>[feb-2003] [XWorkstation] clipboard mechanism now X-clipboard compliant (used to be xterm compliant)
+<LI>[jan-2003] [ProcessorScheduler] fixed race when freeing VM's process structure (leak)
+<LI>[jan-2003] [librun] fixed malloc-bug when shrinking lifoRemSet (crash)
+<LI>[jan-2003] [librun] bug in nil-block optimization fixed
+<LI>[nov-2002] [Parser] WorkspaceVariables are only autoDeclared if they appear on
+the left side of an assignment.
+<LI>[nov-2002] [VM] wrong code with more than 256 literals (on some machines).
+<LI>[sep-2002] [libbasic] oops - "String new:-1" crashed ST/X (on some systems)
+<LI>[sep-2002] [stc] code generator bug with private classes named Method or Block
+<LI>[sep-2002] [Class] fileOut did not include initialize expression for private classes
+<LI>[jul-2002] [stc, Scanner] handle 3-character binops; allow for ! and # as binop.
+<LI>[jul-2002] [libview] fixed automatic graphic queue flush (draw from non-GUI process)
+<LI>[jul-2002] [libview] fixed automatic finish of event dispatcher process (when last view closes)
+<LI>[jul-2002] [libbasic] fixed i/o stream shuffling in OS command execution
+<LI>[apr-2002] [stx] symbol strings are now in the shared librun; the stx executable
+itself is now very small.
+<LI>[apr-2002] [liboracle] many bug fixes in the oracle interface
+<LI>[apr-2002] [stc] code generator bug with trivial or:
+<LI>[oct-2001] [VM] 2-pass compressing garbage collect fixed.
+<LI>[sep-2001] [Class] changeFile entry for private subclasses within a nameSpace was wrong (did not prefix namespace)
+<LI>[sep-2001] [stc] did not scan empty symbol constants
+<LI>[sep-2001] [stc] scanned string constants with embedded #'' wrong
+<LI>[jun-2001] [VM] code generator bug with RISC machines and method-arg access from within a cheap block
+<LI>[jun-2001] [stc] code generator bug with array&#187;at:put: (only if array was previously assigned from a constant)
+<LI>[feb-2001] [stc] did not correctly compile private subclasses of nil (no instVars were allowed)
+<LI>[dec-2000] [VM] subclasses of Block where sometimes handled as non-blocks (w.r.t. their home context)
+<LI>[sep-2000] [libbasic/ExternalStream] malloc/free non-reentrancy bug workaround (in fopen/fclose)
+<LI>[sep-2000] [stc] code generator bug with +optSpace3 option; ignored UNLIMITEDSTACK pragma (sparc only)
+<LI>[sep-2000] [stc] code generator now generates a context with UNLIMITEDSTACK pragma
+<LI>[sep-2000] [VM] JIT bug with inlined min:/max: and literal-SmallInt receiver (some CPU-architectures only)
+<LI>[aug-2000] [VM] bug in 2-pass compressor
+<LI>[aug-2000] [VM] JIT bailOut bug with inlined not
+<LI>[aug-2000] [MenuPanel] flush cached font geometry when starting an image on a different display
+<LI>[aug-2000] [Display] image startup on different depth display clobbered colors
+<LI>[jul-2000] [VM] JIT bug with inlined ifTrue:ifFalse: and non-block (value) args fixed
+<LI>[jul-2000] [MenuPanel & friends] better (fixed) shortCutKey and MnemonicKey handling
+<LI>[jun-2000] [VariablePanel] snap handle option
+<LI>[20-feb-2000] [View hierarchy] fixed tabbing and focus handling
+<LI>[feb-2000] [GenericException] missing method #raiseRequestWith:in: added
+<LI>[feb-2000] [SubCanvas] release vs. releaseAsSubCanvase
+<LI>[18-feb-2000] [Smalltalk] fixed renaming of a nameSpace class into another namespace
+<LI>[10-feb-2000] [VM] cache flush bug with SmallInt/UndefObject polymorph messages
+<P>
+
+<LI>[1-sep-1999] [stc] fixed various bugs related to include-file finding with
+private classes within a namespace.
+<P>
+
+<LI>[1-sep-1999] [stc] stc can now compile class-less (methods only-) files.
+This allows for addOns to be compiled into a shared class library.
+<P>
+
+<LI>[1-sep-1999] [stc] fixed the lexer, which crashed with very long lines.
+(workaround a lex bug).
+<P>
+
+<LI>[1-sep-1999] [stmkmp] fixed the script to generate a usable Make.proto.
+<P>
+
+<LI>[1-jul-1999] [Class, Autoload] Superclass autoload failed for private classes
+<BR>
+When filing in a private class, which was derived from an autoloaded class,
+the superclass was not loaded automatically.
+<P>
+
+<LI>[20-jun-1999] [WeakArray] occasional bad access to weakArray
+<BR>
+Reads could return an already collected object; writes could sometimes
+lead to a missing registration within the VM.
+Both errors could lead to bad object references in certain situations.
+<P>
+
+<LI>[16-apr-1999] [TerminalView] restart shell when restarted
+<BR>
+The original shell command is now restarted when an image is restarted
+from a snapshot image with an open terminalView.
+<P>
+
+<LI>[12-apr-1999] [mcompiler.c/send.c] JIT bug with Sun Ultra
+<BR>
+Fixed the icache flush code - this was responsible for the JITC to fail on
+ultra sparcs.
+<P>
+
+<LI>[12-apr-1999] [new.c] IGC failure when interrupted by reclaimSymbols
+<BR>
+The IGC left over some unmarked objects, when interrupted by reclaimSymbols.
+<P>
+
+<LI>[30-jul-1998] [send.c 1.937, interpret.c 1.148, lookup.c 1.67] private methods not understood
+<BR>
+Due to a change done in Jan97 (!), the privacy mechanism failed to work
+in some situations (no one seems to use this mechanism, since we did not get
+an error report !).
+<P>
+
+<LI>[6-jul-1998] [mcompiler.c 1.937] bad code generated
+<BR>
+JIT compiler: fixed & and | for non-boolean receivers.
+<BR>
+JIT compiler: code for increment-var generated a subtract for non-integers
+<P>
+
+<LI>[6-jun-1998] [GLXView] image restart
+<BR>
+Fixed image restart bug with open animated GL-views.
+<P>
+
+<LI>[6-jun-1998] [smalltalk.rc] source access if GNU-st is installed
+<BR>
+Remove system library from sourcePath, if a GNU-Smalltalk
+distribution is found there (to avoid autoloading the wrong classes)
+<P>
+
+<LI>[25-feb-1998] [libwidg2/MenuPanel.st 1.77]
+<BR>
+Short-clicked menu did not stay open.
+<P>
+
+<LI>[25-feb-1998] [stc/codeexpr.st 1.144]
+<BR>
+inlined code now checks for singleStepInterrupt pending.
+This allows for things like #at:/#at:put: to be single stepped - even if
+the code is inlined.
+<P>
+
+<LI>[25-feb-1998] [libbasic/Object.st 1.223]
+<BR>
+#perform: family of methods did not care for pending singleStepInterrupts.
+This prevented the debugger from single stepping into #perform: methods.
+<P>
+
+<LI>[25-feb-1998] [librun/mcompiler.c 1.790] bad code generated
+<BR>
+fix: bug in delaySlot optimizer - globbered register sometimes (sparc only)
+<P>
+
+<LI>[20-feb-1998] [librun/mcompiler.c 1.785] bad code generated
+<BR>
+fix: bad register reuse in JIT compiler (in special/rare situations)
+fix: bad temp-slot use for value of conditional (in special situations)
+<P>
+
+<LI>[2-feb-1998] [libbasic/Metaclass.st 1.122]
+<BR>
+fix: lost class methods if classInstVars changed
+fix: class instvar changes clobbered class methods of subclasses.
+<P>
+
+<LI>[1-feb-1998] [Slider.st 1.22]
+<BR>
+fix: care for range & step
+<P>
+
+<LI>[25-oct-1997] [libbasic/Integer.st]
+<BR>
+fix: \\, // and gcd: returned a wrong result for certain largeInteger receivers,
+due to a bug in gcd:. This also affected certain fractions with largeInteger numerator.
+<P>
+
+<LI>[14-aug-1997] [libbasic/String.st 1.95]
+<BR>
+fix: some search methods (index*) failed with national characters (high bit set).
+Must use unsigned character compares.
+<P>
+
+<LI>[9-aug-1997] [stc/scan.l 1.75]
+<BR>
+fix: fixed the HTML-View from image restart problem (image fetcher thread not
+restarted)
+<P>
+
+<LI>[7-aug-1997] [stc/scan.l 1.75]
+<BR>
+fix: float constants with exponent and decimal point scanned wrong
+<P>
+
+<LI>[5-aug-1997] [libview/WSensor.st 1.106, libview/WGroup.st 1.118]
+<BR>
+fix: expose event sometimes lost after remap of a view
+<P>
+
+<LI>[24-jul-1997] [libbasic/Fraction.st 1.37, librun/float.c 1.37]
+<BR>
+fix: fractions with negative denominator could be generated
+<P>
+
+<LI>[24-jul-1997] [libcomp/ObjFLoader.st 1.144]
+<BR>
+path of executable with dynamic loading under linux-a.out
+<BR>
+dynamic object loading under linux-a.out did not work,
+if the <CODE>stx</CODE> executable was not found in the current directory.
+<P>
+
+<LI>[24-jul-1997] [libview2/GIFReader.st 1.55]
+<BR>
+maskPixel handling fixed
+<BR>
+images with mask did not always work
+<P>
+
+<LI>[2-jul-1997] [libview/WSensor.st 1.104, libview/WGroup.st 1.116, libview/DSurface.st 1.30]
+<BR>
+no-deviceID error (debugger) with destroy arriving while waiting for
+a scroll-expose event to arrive.
+<P>
+
+<LI>[1-jul-1997] [libbasic/CharacterArray.st 1.123] [HP only]
+<BR>
+some hp fonts use non-iso8859-1 encoding. National characters were not
+displayed correctly sometimes.
+<BR>
+Translation tables were added for hp-to-iso8859 character translation.
+Notice, that not all iso8859-1 characters are available in those fonts.
+<P>
+
+<LI>[25-jun-1997] [libview/WSensor.st 1.103]
+<BR>
+deadlock situation with interruptActions during eventQueue handling
+<BR>
+If interrupted while being in the eventQueues critical region,
+ a deadlock occurred when another event was pushed in the interruptAction.
+<P>
+
+<LI>[25-mar-1997] [libbasic/Unix.st 1.198, libbasic/ProcSched.st 1.125]
+<BR>
+waiting forever for UNIX Processes
+<BR>
+ST/X sometimes didn't recognize the termination of UNIX-subprocesses on SUNOS
+and AIX before another process has been started.
+<P>
+
+<LI>[7-mar-1997] [librun/errhandler.c 1.48] restarting a doesNotUnderstand-context
+<BR>
+a doesNotUnderstand context could not be restarted, after the missing method
+was accepted in a browser.
+<P>
+
+<LI>[1-mar-1997] [libbasic/codecls.c 1.108] sub-subclass recompilation
+<BR>
+occasionally, sub-subclasses were not recompiled after a superclass-
+or instvar change in a baseclass.
+<P>
+
+<LI>[1-mar-1997] [stc/codecls.c 1.109] superclass with inderscore in name
+<BR>
+occasionally, stc generated wrong C-code for superclasses with underscores
+in their name (missing external declaration, leading to a C compilation error).
+<P>
+
+<LI>[27-feb-1997] [librun/new.c 1.249] idenitytHash clobbered in #become:
+<BR>
+in certain situations, #become: did not exchange the hashKeys,
+which lead to trouble with objects being held in a set or dictionary.
+<P>
+
+<LI>[27-feb-1997] [librun/new.c 1.249] growing oldSpace memory
+<BR>
+ST/X allocated more memory than required, if the fastMoreOld flag
+was on and the compression limit already reached.
+<P>
+
+<LI>[26-feb-1997] [stc/codeexpr.c 1.116] inline float multiplication
+<BR>
+stc generated syntactically incorrect C-code for inlined float multiplications,
+(i.e. multiplication with float-value-hinted values)
+
+<P>
+
+<LI>[15-feb-1997] [libbasic/MthdDict.st 1.18] ever growing methodDictionary
+<BR>
+methodDictionary resized itself wrong when entries where removed
+<P>
+
+<LI>[14-feb-1997] [stc/codeexpr.c 1.115] here-send in class methods
+<BR>
+'here' send did not work in class methods - this only happened in stc-compiled
+code (i.e. bytecode worked ok)
+<P>
+
+</UL>
+
+<P>
+<P>
+<HR>
+Doc $Revision: 1.135 $ $Date: 2018-05-12 07:14:47 $
+</BODY>
+</HTML>

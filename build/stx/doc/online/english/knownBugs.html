@@ -1,0 +1,691 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Online Documentation - known Bugs</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="TOP.html" INFO="Back to documentation's main page" > <IMG SRC="../icons/DocsUpArrow.gif" ALT="up"></A>
+
+
+<H1>Known Bugs, Limitations and Inconveniences</H1>
+<P>
+
+This page lists known bugs and inconveniences, and workarounds if available.
+<BR>
+Only bugs which are not severe, hard to fix or which only occur
+when certain (unusual) situations arise are listed here
+(other bugs will be fixed instead of documented ;-)
+<P>
+<H2>Warning</H2>
+This list is no longer maintained.
+We are now using expeccoALM for bug maintenance and communication.
+Please take a look at "https://expeccoALM.exept.de" for known bugs
+(you need an account - i.e. a maintenance contract to access this service).
+<P>
+
+<H2><A NAME="INDEX">Contents</A></H2>
+<UL>
+<LI><A HREF="#GENERALBUGS">General Bugs</A>
+  <UL>
+  <LI><A HREF="#RUNTIME_SYSTEM">Runtime System</A>
+  <LI><A HREF="#STC">stc Compiler</A>
+  <LI><A HREF="#BASIC_CLASSES">Basic Classes</A>
+  <LI><A HREF="#VIEW_CLASSES">View Classes</A>
+  <LI><A HREF="#WIDGET_CLASSES">Widget Classes</A>
+  <LI><A HREF="#TOOLS_CLASSES">Tools Classes</A>
+
+  </UL>
+<LI><A HREF="#ARCH_WINDOWS">Bugs in the Windows-95 / Windows-NT Version</A>
+<LI><A HREF="#ARCH_MACOSX">Bugs in the MAC OSX Version</A>
+<LI><A HREF="#DISPLAY_TYPES">Bugs/Problems with Particular Displays</A>
+<LI><A HREF="#INCONVENIENT">TODO</A>
+</UL>
+
+
+<H2>
+<A HREF="#INDEX" NAME="GENERALBUGS">General Bugs</A>
+</H2>
+
+<UL>
+<LI><A NAME="RUNTIME_SYSTEM" HREF="#INDEX">Runtime system</A>
+ <UL>
+    <LI>Dynamic Object loading
+
+    <UL TYPE=arrow>
+      <LI>Loading dynamic code for a method leads to a crash,
+	  if that method is currently active
+
+      <UL>
+	<LI>Description:
+	<BR>
+	STC-compiling a method which is currently been executed
+	(in another thread) leads to a crash.
+	<P>
+
+	<LI>Failure reason:
+	<BR>
+	The system does not check for this situation and possibly unloads
+	the old code from the memory. When the other thread is resumed,
+	it lost its code and a segmentation violation is usually triggered.
+      </UL>
+
+      <P>
+      <LI>restarting an image which contains dynamic code for individual methods
+	  leads to a crash if that method is invoked before the ObjectFileLoader
+	  has reloaded the dynamic modules.
+
+      <UL>
+	<LI>Description:
+	<BR>
+	When individual methods are accepted which contain primitive code,
+	and an image is saved, those dlls are reloaded during the early image
+	restart phase. However, if any method which is required by this restart
+	code is in the set of dynamic modules, that method has no valid machine code
+	by the time its invoked.
+	This leads to a crash during that init phase.
+	<P>
+	Affected by this are mostly primitive methods of the Object, Array,
+	Number and OperatingSystem classes
+	(which are not subject to user-modifications, anyway).
+	<P>
+
+	<LI>Failure reason:
+	<BR>
+	The system does not check for this situation. It should use the
+	old methods code (as in the executable) during the initialization,
+	until the dynamic method has been reloaded and installed correctly.
+	<P>
+
+	<LI>Workaround:
+	<BR>
+	Recompile the whole class (using stc) and recreate (i.e. relink)
+	a new Smalltalk executable.
+      </UL>
+
+    </UL>
+
+    <P>
+    <LI>Deep stack unwinding
+
+    <UL TYPE=arrow>
+      <LI>Unwinding a very deep stack (for example, after a recursion exception)
+	  may take very long, if those contexts have been accessed.
+
+      <UL>
+	<LI>Description:
+	<BR>
+	When returning from a recursion exception, the unwind takes very long,
+	if contexts have been accessed in the debugger.
+	(i.e. if you looked into contexts high in the calling hierarchy,
+	or accepted any code from within the debugger).
+	<P>
+
+	<LI>Failure reason:
+	<BR>
+	The thread has to unwind its stack, which (due to a bad algorithm in the VM)
+	may take very long in certain situations (if many or all of them have been marked
+	as being potentially referenced).
+	<BR>
+	However, the unwinding is done interruptably - therefore, higher priority
+	processes (or, if you enabled preemptive scheduling, same priority processes)
+	are not blocked.
+
+	<P>
+	<LI>Status:
+	<BR>
+	Open - a better algorithm in the VM may be implemented in one of the next
+	releases. This behavior is not fatal, since it is not encountered/noticed
+	in `normal' operation of the system.
+      </UL>
+    </UL>
+ </UL>
+<P>
+
+<LI><A NAME="STC" HREF="#INDEX">stc compiler</A>
+ <UL>
+    <LI>Keyword Symbol constants within a literal array
+
+    <UL TYPE=arrow>
+      <LI>are scanned wrong
+
+      <UL>
+	<LI>Description:
+	<BR>
+	within a literal array, keyword symbols are scanned wrong; instead
+	of #( #foo:bar: ) , the 2 element Array #( #foo: #bar: ) is parsed.
+	<P>
+
+	<LI>Workaround:
+	<BR>
+	use single quoted symbols, as in #( #'foo:bar:' ).
+	<P>
+
+	<LI>Status:
+	<BR>
+	open.
+      </UL>
+    </UL>
+    <P>
+
+    <LI>Cascades
+
+    <UL TYPE=arrow>
+      <LI>some cascade expressions cause stc to generate C-code
+	  which cannot be compiled by he c-compiler.
+
+      <UL>
+	<LI>Description:
+	<BR>
+	Some stc versions generate syntactically wrong code for certain
+	cascade expressions.
+	<P>
+
+	<LI>Workaround:
+	<BR>
+	Simplify the cascade, by using a temporary variable.
+	<P>
+
+	<LI>Status:
+	<BR>
+	open.
+      </UL>
+    </UL>
+    <P>
+
+    <LI><CODE>ifXXX</CODE> as value with blocks
+
+    <UL TYPE=arrow>
+      <LI>ifTrue:/ifFalse: expressions fail to compile,
+      <UL>
+	<LI>Description:
+	<BR>
+	  Some ifTrue:/ifFalse: expressions fail to compile,
+	  if the value of the if is used, and a block is generated in
+	  one of the alternatives.
+	<P>
+
+	<LI>Workaround:
+	<BR>
+	Move the assignment into the alternative(s).
+	<P>
+
+	<LI>Status:
+	<BR>
+	open.
+      </UL>
+    </UL>
+    <P>
+
+    <LI>shadowing local variable names in inlined nested blocks
+
+    <UL TYPE=arrow>
+      <LI>shadowing an outer scope-variable in an inlined ifXXX or whileXXX block's local
+	  leads to wrong (uncompilable) code to be generated sometimes.
+	  CC will fail with an "foo undefined" message
+      <UL>
+	<LI>Description:
+	<BR>
+	  The #undef of the variable at the end of an inlined block does not care
+	  to redefine the original (shadowed) reference.
+	  If the outer variable is accessed afterwards, the C-compiler does not have a definition
+	  for it and fails.
+	<P>
+
+	<LI>Workaround:
+	<BR>
+	Use a different name in the inner (inlined-block).
+	<LI>Status:
+	<BR>
+	fixed.
+      </UL>
+    </UL>
+    <P>
+
+    <LI>String constants containing '??' (AIX only)
+
+    <UL TYPE=arrow>
+      <LI>string constants containing '??' where compiled wrong on AIX2.3
+
+      <UL>
+	<LI>Description:
+	<BR>
+	The AIX C-compiler treats '??' as an escape sequence to translate the
+	followup character (for example, '??&lt;' gets translated to '{'.
+	<BR>
+	This (nonstandard) undocumented "feature" lead to bad translation
+	of some Smalltalk string constants.
+	(such a sequence is often contained in packed bitmap strings).
+	<P>
+
+	<LI>Status:
+	<BR>
+	fixed with release 3.4.5.
+      </UL>
+    </UL>
+    <P>
+
+
+    <LI>Very long String constants
+
+    <UL TYPE=arrow>
+      <LI>Very long string constants may lead to an stc compiler crash
+
+      <UL>
+
+	<LI>Failure reason:
+	<BR>
+	Since stc is build using yacc & lex, certain limitations which are
+	inherit to those tools may lead to crashes. One of them is the lexers
+	internal buffer, which is fixed in size.
+	Although stc as delivered was built with an increased buffer (64k),
+	it is still fix in size and not dynamically grown in case of a long
+	regular expression match - especially, a long string- constant may
+	overflow this buffer.
+	<BR>
+	Under normal situations, this limit is hardly ever reached, except if
+	inline-bitmap image descriptions (packed strings) as generated by the
+	imageEditor are compiled.
+	<P>
+
+	<LI>Workaround:
+	<BR>
+	Save your bitmap image to a file, and load it from that file during class
+	initialization.
+	<BR>
+	Or, do not stc-compile these methods (the byteCode compiler is written in Smalltalk
+	and does not suffer from this limitation).
+	<P>
+
+	<LI>Status:
+	<BR>
+	partially fixed:
+	<BR>
+	the bitmap storeString format has been changed to break long
+	strings into multiple lines.
+	<BR>
+	Huge literal strings may still lead to a problem.
+      </UL>
+    </UL>
+    <P>
+
+
+    <LI>Too much inlining
+
+    <UL TYPE=arrow>
+      <LI>#not-message is always inlined -
+	but always assuming that receiver is boolean (#not to non-boolean fails)
+
+      <UL>
+
+	<LI>Failure reason:
+	<BR>
+	stc's inlining is too aggressive with respect to the #not message; the non-boolean case is
+	never handled (instead, a non-boolean is treated like false).
+	<P>
+
+	<LI>Workaround:
+	<BR>
+	Do not use those messages on non-booleans.
+	<BR>
+	Or, do not stc-compile these methods (the byteCode compiler/just in time compiler combination
+	handles these sends correctly)
+	<BR>
+	Or, add the argument "-inlinenot" to the stc-options (in the Make.proto); this will turn off any inlining
+of the #not message.
+	<P>
+
+	<LI>Status:
+	<BR>
+	open - should be fixed to use inline code for booleans, but perform a real send for non-booleans.
+
+      </UL>
+    </UL>
+
+ </UL>
+<P>
+
+
+<LI><A NAME="BASIC_CLASSES" HREF="#INDEX">Basic classes</A>
+ <UL>
+ </UL>
+<P>
+
+<LI><A NAME="VIEW_CLASSES" HREF="#INDEX">View classes</A>
+ <UL>
+
+   <LI>Menus & Shortcuts
+    <UL TYPE=arrow>
+    <LI>underline - access character position
+    <LI>shortCut
+    </UL>
+
+   <LI>WINDOWS (Win-9x / Win-NT) graphics interface
+    <UL TYPE=arrow>
+    <LI>a views border is not correctly drawn
+    <LI>only borderWidths of 0 and 1 are supported
+    <LI>a bordered view leads to wrong clip in its parent view
+    <LI>the borderColor is ignored
+    <LI>not all lineStyles work properly under W95
+    <LI>pixmap borders are not supported
+    </UL>
+   <P>
+
+   <LI>ViewBackground Pixmaps
+    <UL TYPE=arrow>
+    <LI>the viewOrigin is ignored when a viewBackground pixmap is drawn
+    </UL>
+   <P>
+
+   <LI>VGL interface
+    <UL TYPE=arrow>
+    <LI>VGL is not supported with Win-95 / Win-NT
+
+    <LI>VGL gets sometimes confused if multiple GL views are drawing
+simultaneously.
+      <UL>
+      <LI>Description:
+      <BR>
+      Sometimes, the vogl library gets confused if multiple GL views
+      are active simultaneously. You get a bunch of 'vogl not initialized'
+      messages on the xterm window and one or more GL views fail to
+      perform any drawing operation.
+<BR>
+      This only happens with a vogl (GL simulation) system.
+Systems with a real GL implementation (i.e. Silicon Graphics), this
+error does not occur.
+      <P>
+
+      <LI>Failure reason:
+      <BR>
+      The vogl library is not perfectly thread save and some internal
+      state may be overwritten by the other GL view.
+      <P>
+
+      <LI>Workaround:
+      <BR>
+      - close the GL view and reopen it.
+      - only run one GL view at a time.
+      <P>
+
+      <LI>Status:
+      <BR>
+      Open - will not be fixed, since a switch to openGL is planned for
+      in the near future.
+      </UL>
+    </UL>
+
+  </UL>
+<P>
+
+
+<LI><A NAME="WIDGET_CLASSES" HREF="#INDEX">Widget classes</A>
+ <UL>
+  </UL>
+<P>
+
+<LI><A NAME="TOOLS_CLASSES" HREF="#INDEX">Tools classes</A>
+ <UL>
+    <LI>Browser related stuff
+
+    <UL TYPE=arrow>
+    <LI>Searching for senders seems to fail sometimes
+
+      <UL>
+      <LI>Description:
+      <BR>
+      A search for senders returns wrong info, although you are
+      certain, that there are senders.
+      <P>
+
+      <LI>Failure reason:
+      <BR>
+      The search for senders looks at the methods literalTable to find
+      selectors quickly (instead of parsing the sourceCode).
+      <BR>
+      This fails with autoloaded classes which have lazy compiler methods.
+      <P>
+
+      <LI>Workaround:
+      <BR>
+      - turn off lazy compilation
+      <BR>
+      - use the string search in the browser
+      <P>
+
+      <LI>Status:
+      <BR>
+      Closed - correct behavior is only achieved by a loading all autoloaded classes.
+      This would make this search very slow.
+      <BR>
+      Therefore, the behavior will not be changed.
+      </UL>
+
+    <P>
+    <LI>Newly created classCategories & method categories vanish,
+	if no class/method is created in it.
+
+      <UL>
+      <LI>Description:
+      <BR>
+      When a class/method category is created, and no class/method
+      was created in it, that category is gone after switching to another
+      category.
+      <P>
+
+      <LI>Failure reason:
+      <BR>
+      ST/X keeps the category information as an instance variable in
+      the class/method object - not in a separate dictionary as done by
+      ST-80.
+      <P>
+
+      <LI>Status:
+      <BR>
+      Closed - this is not a bug - just a different behavior.
+      </UL>
+    </UL>
+  </UL>
+
+ <P>
+ <UL>
+    <LI>HTML DocumentView related stuff
+    <UL TYPE=arrow>
+    <LI>HTML view blocked when restarting an image (with an open HTML viewer)
+      <UL>
+      <LI>Description:
+      <BR>
+      The view blocks after if the displayed page contains images.
+      <P>
+
+      <LI>Failure reason:
+      <BR>
+      The documentview does not restart its image fetcher thread and
+      will sooner or later block, waiting for the shared queue.
+      <P>
+
+      <LI>Workaround:
+      <BR>
+      Press the reload button (this will fork a new image fetcher thread);
+      if that does not help, terminate (close) the viewer and open a new one.
+      <P>
+
+      <LI>Status:
+      <BR>Fixed in rel3.2
+      </UL>
+    </UL>
+ </UL>
+
+ <P>
+ <UL>
+    <LI>GL (3D graphics)related stuff
+    <UL TYPE=arrow>
+    <LI>The VGL/GL (and future openGL) operations are not synchronized w.r.t. Smalltalk threads.
+	This can lead to problems, errors and even crashes.
+      <UL>
+      <LI>Description:
+      <BR>
+      Operations like begin_line ... end_line could be preempted by another Smalltalk thread,
+      which could do all kind of other GL drawing operations. This is especially dangerous,
+      if the first thread was inside of a makeobject operation.
+      <P>
+
+      <LI>Workaround:
+      <BR>
+      Add critical sections (Semaphore forMutualExclusion / sema critical) around your operations,
+      to make certain that sequences of drawing operations are executed in sequence, iff
+      you use background processes for animation.
+      <P>
+
+      <LI>Status:
+      <BR>Open
+      </UL>
+    </UL>
+ </UL>
+
+</UL>
+
+<H2>
+<IMG ALIGN=TOP SRC="../icons/win95.gif">
+<IMG ALIGN=TOP SRC="../icons/winNT.gif">
+<A HREF="#INDEX" NAME="ARCH_WINDOWS">Bugs of the Windows-95 / Windows-NT Version</A></H2>
+
+<UL>
+<LI>Drawing / Filling with a pattern
+(closed - Win95 is no longer supported)
+<BR>
+Under Windows-95, only mask-patterns with a size of 8x8
+are supported on the windows display device.
+<BR>
+(this can be seen in the DrawTool, where some fill patterns
+are truncated to 8x8)
+<BR>
+This is a limitation of windows-95; not a Smalltalk problem.
+<P>
+
+<LI>Line Drawing with a lineStyle
+(closed - Win95 is no longer supported)
+<BR>
+Under Windows-95, the #dotted, #dashDot and #dashDotDot styles
+do not work on the windows display device.
+<P>
+
+<LI>Font handling
+<BR>
+All font handling code needs to be rewritten, to correctly
+handle the Window's font naming conventions.
+<BR>
+For now, don't expect to be able to write a MS-Word clone with ST/X.
+<P>
+
+<LI>Socket implementation
+<BR>
+The current versions <CODE>#readWait</CODE> implementation does not work
+if you readWait for incoming connections (i.e. when listening).
+<BR>
+This is due to a limitation in Windows, where WaitForObject does
+not handle sockets correctly.
+<BR>
+As a workaround, use <CODE>#waitForNewConnectionWithTimeout</CODE> or
+<CODE>#waitForNewConnectionOrData</CODE>, which are found in the Sockets instance protocol.
+<BR>
+This is a temporary kludge-wrokaround.
+<P>
+
+<LI>Maximization bug under XP
+<BR>
+Maximization does not generate correct size-change events.
+<BR>
+Fixed with rel4.x
+<P>
+
+<LI>Echo in the TerminalView
+<BR>
+We could not figure out, how to configure the Console-Emulation of WinNT/2K/XP,
+to echo its input immediately (it works under W95/W98 !). The effect is that in the FileBrowser's terminal view,
+user-input is echoed when the &lt;RETURN&gt;-Key is pressed - not immediately as it should.
+<BR>
+If anyone knows how to fix this, please let us know !
+<P>
+
+</UL>
+
+<H2>
+<IMG ALIGN=TOP SRC="../icons/macos.xpm">
+<A HREF="#INDEX" NAME="ARCH_MACOSX">Bugs/Limitations of the Mac-OSX Version</A></H2>
+
+<UL>
+
+<LI>Needs 10.6 or better
+<BR>
+The development is done on a 10.6 system.
+I have no plans to support, check or validate backward compatibility with older OS versions.
+<P>
+
+<LI>No Native GUI Support
+<BR>
+The prerelease of the MAC-OSX version uses the X Window system for the GUI.
+There is currently no support for any nativeG UI (Cocoa).
+Some low level mechanisms and interfaces to Objective-C have been written,
+but are not yet in a release state.
+<P>
+
+<LI>Unfinished Jitter
+<BR>
+The jitter (bytecode to machine code compiler) is unfinished.
+It can currently only compile a subset of the full code set and will silently bail out
+for most methods. This is transparent to the user,
+as the code is still executed by the bytecode interpreter.
+Execution speed is somewhat slower for user-added code.
+However, as most of the system is compiled to machine code (by stc) anyway,
+this only affects execution speed during development.
+Compiled and deployed machine code runs at full speed.
+<P>
+<LI>Screen Readout does not work in XQuartz
+<BR>
+The XQuartz X-server does not support reading pixels from the screen.
+Therefore the screenshot functions do not work at all,
+and the drag&amp;drop operations do not show the dragged picture.
+<P>
+Currently, as a workaround, the system's screen-dump
+utility is called, and the resulting image file loaded.
+This is obviously much slower than a direct readout,
+but good enough for typical day-to-day usage.
+<P>
+
+</UL>
+
+<H2><A HREF="#INDEX" NAME="DISPLAY_TYPES">Bugs/Problems with Particular Displays</A></H2>
+
+<UL>
+<LI>Button State Bug in Exceed (an X-server for windows)
+<BR>
+The Exceed X-server (which versions ?) has a bug in that if you grab the pointer for a popUpView,
+move the mouse pointer to a windows decoration area, release the grab, and finally re-enter
+the otiginal view, the incoming motion events still say that the original button is pressed.
+<P>
+This bug is especially inconvenient when a pullDown menu is opened via a short click and then
+the mouse clicked in the windows title area.
+<BR>
+When reentering the menuPanel, menus reopen as if the mouse was still pressed.
+<P>
+Currently, there is no known programatic workaround for this (it does not happen with any other X-server).
+<BR>
+As a user, do not close pullDown menus by clicking into the title area; press escape or click anywhere else.
+<P>
+Late note: a workaround has been found and implemented in rel4.1.5.
+</UL>
+
+
+<H2><A HREF="#INDEX" NAME="INCONVENIENT">TODO</A></H2>
+
+
+
+
+<P>
+<P>
+<HR>
+Doc $Revision: 1.46 $ $Date: 2018-05-12 07:18:44 $
+</BODY>
+</HTML>

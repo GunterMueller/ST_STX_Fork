@@ -1,0 +1,35 @@
+Thsi directory contains a preliminary interface
+to sql databases, using an ODBC conform interface.
+This package is not yet officially released and still
+being developed - it is provided without any warranty
+(for now).
+
+
+Currently, only an interface to the msql database is
+provided with the system (in ODBCInterfaceMSQL, which maps
+ODBC requests to msql calls) - other adaptors will be added
+in the furture.
+You have to fetch the msql library from somewhere else, since
+we cannot provide it with the ST/X distribution for copyright
+reasons. However, msql is available through various ftp sites
+and also found on various CD distributions. 
+Sorry for the inconvenience.
+
+If you want to interface to other databases, take the
+ODBCInterfaceMSQL as a guide. If your database already provides
+an odbc compliant interface, the mapping from methods to
+odbc functions should be almost a 1:1 mapping.
+
+To make:
+   change the location of your msql library as required in the
+   Make.proto file, remake a makefile ("make mf") and remake
+   the database class library ("make"). 
+   This should give you a libdb.o / libdb.so, which can be loaded
+   into the ST/X executable.
+
+
+Claus:
+   Please excuse this somewhat incomplete and undocumented
+   package - yes, I know, we should not publish this in such
+   an early state - however, some may find it useful even though
+   it is not yet in a stable state (and may crash ...).

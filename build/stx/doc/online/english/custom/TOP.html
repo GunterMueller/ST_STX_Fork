@@ -1,0 +1,2084 @@
+<HTML>
+
+<HEAD>
+<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<TITLE>Smalltalk/X Configuration & Customization</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="../TOP.html" INFO="Back to documentation's main page" > <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+
+<H1>Configuration & Customization</H1>
+
+<H2><A NAME="INDEX">Index</A></H2>
+
+<UL>
+<LI><A NAME="I_SPLASH"         HREF="#SPLASH">Splash Banner at Startup</A>
+<LI><A NAME="I_APPS"           HREF="#APPS">Views Automatically Opened on Startup</A>
+<LI><A NAME="I_LANGUAGE"       HREF="#LANGUAGE">Language Setting</A>
+<LI><A NAME="I_MOUSE"          HREF="#MOUSE">Mouse Button Definition</A>
+<LI><A NAME="I_KEYBOARD"       HREF="#KEYBOARD">Keyboard Mappings</A>
+ <UL>
+ <LI><A NAME="I_AUX_KEYPAD"    HREF="#AUX_KEYPAD">Auxiliary Numeric Keypad</A>
+ <LI><A NAME="I_NATIONAL"      HREF="#NATIONAL">National Characters</A>
+ <LI><A NAME="I_MODIFIERKEYS"  HREF="#MODIFIERKEYS">Alt and Command Keys</A>
+ <LI><A NAME="I_KEYCOMMANDS"   HREF="#KEYCOMMANDS">Keyboard Commands</A>
+<!--
+ <LI><A NAME="I_KEYMACROS"     HREF="#KEYMACROS">Keyboard Macros</A>
+-->
+ <LI><A NAME="I_DEFAULTKEYS"   HREF="#DEFAULTKEYS">Default Keyboard Command Setup</A>
+ <LI><A NAME="I_FKEYS"         HREF="#FKEYS">Function Keys </A>
+ </UL>
+<LI><A NAME="I_VIEWSTYLE"      HREF="#VIEWSTYLE">Changing the View Style Appearance</A>
+ <UL>
+ <LI><A NAME="I_STYLES"            HREF="#STYLES">Existing Stylesheets</A>
+ <LI><A NAME="I_DEFAULT_VIEWSTYLE" HREF="#DEFAULT_VIEWSTYLE">The Default Style</A>
+ <LI><A NAME="I_NEWSTYLES"     HREF="#NEWSTYLES">Creating your own Stylesheet</A>
+ <LI><A NAME="I_STYLEVALUES"   HREF="#STYLEVALUES">What's in a StyleSheet</A>
+ </UL>
+<LI><A NAME="I_COLORS"         HREF="#COLORS">Color Allocation Strategy</A>
+<LI><A NAME="I_HOSTSTUFF"      HREF="#HOSTSTUFF">Host specific Setup </A>
+ <UL>
+ <LI><A NAME="I_PRINTER"       HREF="#PRINTER">Printer Setup </A>
+ </UL>
+<LI><A NAME="I_MISCSTUFF"      HREF="#MISCSTUFF">Other Configuration Settings</A>
+ <UL>
+ <LI><A NAME="I_AUTOLOAD"       HREF="#AUTOLOAD">Autoloaded Classes</A>
+ <LI><A NAME="I_LAZYLOAD"       HREF="#LAZYLOAD">Lazy Loading</A>
+ <LI><A NAME="I_COMPILER"       HREF="#COMPILER">Compiler Switches</A>
+ <LI><A NAME="I_LOGDOITS"       HREF="#LOGDOITS">Logging doIt Execution</A>
+ <LI><A NAME="I_TRANSCRIPT"     HREF="#TRANSCRIPT">Changing Transcript's Buffer Size</A>
+ <LI><A NAME="I_MESSAGES"       HREF="#MESSAGES">Turning off Messages</A>
+ <LI><A NAME="I_TOOLTIPS"       HREF="#TOOLTIPS">Tooltips (Fly-By-Help)</A>
+ </UL>
+</UL>
+
+<H2><A NAME="SPLASH" HREF="#I_SPLASH">Splash Banner at Startup</A></H2>
+
+The splash window is only shown when <CITE>Smalltalk/X</CITE> is started without
+a snapshot image.
+It is created and opened by the VM's startup code (i.e. not by Smalltalk code)
+very early during the startup procedure, and closed by Smalltalk code when the
+initialization is finished.
+
+Display of the splash image can be suppressed by giving a "<CODE>--noBanner</CODE>"
+argument to the <CODE>stx</CODE> command.
+<P>
+To show a different splash image, invoke <CITE>Smalltalk/X</CITE>
+with a "<CODE>--banner</CODE> <VAR>fileName</VAR>" argument.
+The "<I>fileName</I>" argument must be the name of a bmp-bitmap file with 8-bit depth.
+<P>
+Standalone applications can show a different splashscreen (if programmed to do so),
+by defining the name of the bitmap file in their ProjectDefinition class.
+
+
+
+<H2><A NAME="APPS" HREF="#I_APPS">Views Automatically Opened on Startup</A></H2>
+
+
+At initial startup time, <CITE>Smalltalk/X</CITE> reads (Smalltalk-) expressions from
+a file called "<CODE>smalltalk.rc</CODE>" which itself reads another script file,
+called "<CODE>private.rc</CODE>".
+These files are responsible for setting up the system and starting application views for the user.
+<BR>
+The default "<CODE>private.rc</CODE>" file opens a
+<A HREF="../tools/misc/TOP.html#LAUNCHER">Launcher</A>
+and a
+<A HREF="../tools/misc/TOP.html#SYSTEMYWORKSPACE">System Workspace</A>.
+<P>
+You can add additional expressions to start any other view or application automatically;
+for example, if you like a
+<A HREF="../tools/sbrowser/TOP.html">System Browser</A> to come up
+automatically, add a line such as:
+<CODE><PRE>
+    SystemBrowser open.
+    !
+</PRE></CODE>
+or (better):
+<CODE><PRE>
+    UserPreferences current systemBrowserClass open.
+    !
+</PRE></CODE>
+
+somewhere at the end of this file.
+<P>
+In previous versions, all setup was done in a single "<CODE>smalltalk.rc</CODE>" startup file.
+<BR>
+For easier customization this has been split into a bunch of individual files:
+all display specific startup has been extracted into a file called "<CODE>display.rc</CODE>",
+all host specific things are now found in "<CODE>host.rc</CODE>",
+and the keyoard mapping is defined in "<CODE>keyboard.rc</CODE>".
+<BR>
+Finally, a file called
+<CODE>"private.rc"</CODE> is read which should open initial applications.
+<BR>
+This separation allows the use of global startup files,
+combined with per-user-private additional definitions. If you installed
+"<CODE>smalltalk.rc</CODE>" in a standard place, the changes made there will affect
+all <CITE>ST/X</CITE> users. Therefore, it is wise to add private things to either
+a local "<CODE>smalltalk.rc</CODE>" or to your local "<CODE>private.rc</CODE>".
+(see "<A HREF="../installation/TOP.html">installing Smalltalk/X</A>").
+<P>
+
+<DL><DT>Notice:<DD>
+these files consists of Smalltalk expressions in
+<A HREF="../programming/fileoutFormat.html"><VAR>fileOut</VAR> format</a>.
+This means, that expressions have to be separated by period (".")
+characters. Also, groups of expressions (so called <VAR>chunks</VAR>) have
+to be separated by an exclamation mark ("!") character,
+and any exclamation mark inside a chunk needs to be duplicated (also inside string constants).
+<BR>
+The text within a chunk must be a syntactically valid methods code
+(i.e. an optional local variable declaration, followed by statements).
+<BR>
+Exclamation marks within such a chunk (also in strings or comments) have to
+be escaped by doubling them.
+</DL>
+
+
+
+<H2><A NAME="LANGUAGE" HREF="#I_LANGUAGE">Language Settings</A></H2>
+
+In <CITE>Smalltalk/X</CITE>, most
+<A HREF="#FN1" NAME="BACK_FN1">(*)</A>
+strings as presented in buttons, labels etc.
+are translated through a translation mechanism called <VAR>resource management</VAR>.
+<BR>
+As a programmer, you write your application in whatever language you prefer
+(we suggest: english) and provide the appropriate translations in a resource file.
+<BR>
+This has the advantage, that support for language variants is already built
+in, and no change and/or recompilation is required to support additional
+languages.
+
+<P>
+Resourcefiles are package or class specific;
+for every package, a corresponding resource file is present in its "resources" folder,
+but individual classes may provide additional translations in their own
+<CODE>&lt;</CODE><I>className</i><CODE>.rs</CODE>-file.
+<P>
+Because most translations are shared between classes
+(think of the text for the "Cancel"-Button),
+shared translations are collected in package-specific resource files
+(for example, one resource file contains all translations for all classes in the
+"stx:libview" package). Class specific resources may overwrite those,
+in case there are conflicts or multiple meanings.
+Sometimes, a single word can be
+used in english, whereas a non-english language may use different wrds
+depending on the context; for example, the english word "change" may need different
+translations depending on wether the verb or the subject is meant.
+
+<P>
+The classes initialization methods read those translations and keeps the
+mappings in a class variable named "classResources".
+When an instance is created, it copies those into its "resources" instance variable.
+From this, appropriate substitution strings are retrieved upon request.
+(see the <CODE>ResourcePack</CODE> class for more details).
+<P>
+The choosen translation is controlled by
+Smalltalk expressions as embedded in the resource file itself (not in the program).
+Typically, these expressions check for the value of the Smalltalk
+<CODE>language</CODE>-setting and translate as appropriate (actually, the resource
+file dispatches to a language specific resource file)<A HREF="#FN2" NAME="BACK_FN2">(**)</A>.
+<P>This language setting is initialized at startup time from the setting of the
+shell environment variable <CODE>LANG</CODE> (or whatever the OperatingSystems mechanism for
+the language setting is).
+<P>
+To start <CITE>ST/X</CITE> in german under unix, you have to:
+<CODE><PRE>
+    setenv LANG de
+</PRE></CODE>
+(or, if using bash, ksh or sh):
+<CODE><PRE>
+    LANG=de
+    export LANG
+</PRE></CODE>
+
+The current <CITE>Smalltalk/X</CITE> version may not include your prefered languages translations.
+Only translations for english, german and some french exist in a usable form
+(English being default anyway, German is almost complete, French needs some more translations).
+<BR>
+Italian, Spanish and some other european languages
+will be completed as friendly <CITE>ST/X</CITE> users send us translations.
+<BR>
+Japanese translations are only available for some of the launcher's strings
+(for now: as a demo and to test Unicode support;
+I don't know any japanese at all. I'd be happy and thankful,
+if some japanese speaking <CITE>ST/X</CITE> fan could send me correct translations).
+<P>
+You can change the strings and/or add additional translations by editing the
+corresponding resource files, which are found in "<CODE>resources</CODE>"
+directories below the corresponding widget class package directories.
+<BR>
+As an example, the resource definition for the ModalBoxes
+<VAR>ok</VAR>-Button is:
+<CODE><PRE>
+    #if Language == #de
+    'ok'    'ok'
+    'abort' 'Abbruch'
+    #endif
+
+    #if Language == #fr
+    'ok'    'd''accord'
+    'abort' 'canceler'
+    #endif
+
+    ... and so on ...
+</PRE></CODE>
+
+Be careful when editing resource files: most contain 8bit national
+characters and some editors silently strip off the eigth bit thereby
+clobbering the files (some old "vi" versions are known to do that).
+<BR>
+Use <CITE>ST/X's</CITE> FileBrowser which correctly handles these
+and also offers compose-key support to enter national characters on international
+keyboards.
+<P>
+If you add new definitions for languages which are not yet included,
+or can give better translations,
+please help the author by sending (mailing) changed resource files back.
+<BR>
+You will help the author, others and yourself (since your strings will be
+present in the next upgrade and you don't have to change things again).
+
+
+<H3><A NAME="FONTS">Fonts</A></H2>
+
+In earlier times, fonts made more problems - today, most systems are already
+equipped with usable Unicode fonts. If the initial welcome window looks ok to you,
+you may skip this section.
+<P>
+For non-western languages,
+you need a font which is able to represent those characters - of course.
+<BR>
+Most other languages should work with a standard ISO8859 font
+(but watch out, some standard X fonts only include the 7bit ascii subset,
+missing national characters).
+<P>
+You will be warned if you switch to (say) japanese and your display
+does not provide a corresponding font.
+In this case, you should get at least one JIS or Unicode encoded font and perform whatever installation
+is required to add it to the display's supported font list.
+<P>
+The way fonts are added is very system specific.
+<BR>Under Unix, using the X-Window system, you have to:
+<CODE><PRE>
+	xset +fp <VAR>directory-name</VAR>
+	xset fp rehash
+</PRE></CODE>
+to add another directories' fonts to the display's font set.
+<BR>
+(the directory should contain <CODE>"fonts.dir"</CODE> and <CODE>"fonts.alias"</CODE>
+files; these are usually generated with the <CODE>mkfontdir</CODE> command.)
+<P>
+The newest ST/X version also supports nice looking XFT fonts (these are scalable TrueType fonts).
+The ST/X package includes a number of usable free fonts, in case your system lacks
+those. Please take a look at the "support/fonts" folder, and possibly add it to your
+XFT font folder path.
+<P>
+Under older Windows systems, you had to install an appropriate language pack
+- if you still use one of those,
+please refer to Microsoft documentation for more information.
+
+<P>
+Notes:
+<DL><DT>
+<A HREF="#BACK_FN1" NAME="FN1">(*) national strings</A>
+<DD>
+some classes may still contain untranslated strings,
+and translations for many other languages are still to be added.
+Expect more in upcoming versions.
+</DL>
+
+<DL><DT>
+<A HREF="#BACK_FN2" NAME="FN2">(**) conditional resources</A>
+<DD>
+nothing prevents you from controlling the translation
+by any other condition. You can, for example, translate strings
+depending on the user's name, hostname or whatever.
+</DL>
+
+
+<H2><A NAME="MOUSE" HREF="#I_MOUSE">Mouse Button Definition</A></H2>
+
+To assign mouse buttons to actions, the display uses a
+vector to translate button numbers to symbolic actions.
+Button numbers start with one (1) for the leftmost button.
+<BR>
+Every display screen uses its own private translation,
+but all get initialized by a default vector (held in a class variable).
+Typically, there is only one display screen, but <CITE>ST/X</CITE>
+ supports and can handle multiple screens.
+<BR>
+Therefore, setting this default in the class
+<STRONG>before</STRONG> any concrete
+display screen is opened, will affect <STRONG>all</STRONG> screens opened later.
+While setting the translation in a concrete display instance will only affect
+that single display.
+<BR>
+The default translation is:
+<CODE><PRE>
+    #( #select #menu #menu)
+</PRE></CODE>
+i.e. the left button is used to select, while the middle and right buttons
+launch a popup menu.
+<P>
+To change the classes default, use:
+<CODE><PRE>
+    Screen buttonTranslation:#(menu #menu #select)
+</PRE></CODE>
+to change it for your single screen:
+<CODE><PRE>
+    Screen current buttonTranslation:(#menu #menu #select)
+</PRE></CODE>
+Currently, <CITE>ST/X</CITE> supports three button actions:
+<UL>
+<LI><CODE>#select</CODE> for selection (text, button-vies etc)
+<LI><CODE>#menu</CODE> for the <VAR>middleButtonMenu</VAR>
+<LI><CODE>#paste</CODE> to paste the contents of the copyBuffer
+</UL>
+For example, if you prefer the <VAR>xterm</VAR> behavior
+(pasting with the right mouse button), change the mapping via:
+<CODE><PRE>
+    Screen current buttonTranslation:#(select #menu #paste)
+</PRE></CODE>
+<P>
+
+Later versions of <CITE>ST/X</CITE> (or your application) may offer more choices.
+<P>
+Be aware that portable applications should not depend on multiple
+mouse buttons to exist; always write your application to be
+controllable with 2 buttons.
+(even the assumtion that 2 buttons exist
+ is not true for all machines.
+ <CITE>ST/X</CITE> will be changed to allow emulation of additional buttons with
+ shift/control or alt-key modifiers).
+<P>
+Your <CODE>"display.rc"</CODE> file contains a default button translation
+and (commented) alternatives.
+<P>
+Notice that <CODE>"Screen current"</CODE> is equivalent to
+ <CODE>"Display"</CODE> <STRONG>iff</STRONG> only a single display
+ connection is active. In the above and all following examples,
+ these two can be used interchangable in single screen setups (which is the default anyway).
+
+
+
+<H2><A NAME="KEYBOARD" HREF="#I_KEYBOARD">Keyboard Mappings </A></H2>
+
+In <CITE>Smalltalk/X</CITE>, all keyboard events are translated by a so
+called <VAR>keyboardMap</VAR> before being passed to the application program.
+This is done in the class which does all the display interfacing
+(for the curious: it is done in <CODE>DeviceWorkstation&#187;translateKey:</CODE>).
+<P>
+Since keyboards are very display (-hardware) specific, different mappings
+are required for different workstation types.
+Therefore, the "<CODE>display.rc</CODE>" file tries to find out the type of
+display the system is running on (using the display's name) and
+dispatches to "<CODE>keyboard.rc</CODE>" and one of the "<CODE>d_xxx.rc</CODE>" files.
+<BR>
+Both files manipulate the keyboardMap:
+<UL>
+<LI><CODE>"display.rc"</CODE>
+<BR>
+defines
+common commands which are valid on all keyboards.
+For example, the binding of <KBD>CMD-X</KBD> to the <VAR>cut</VAR>
+edit function is done here.
+<P>
+<LI><CODE>"d_xxx.rc"</CODE>
+<BR>
+sets mappings
+for extra keys. For example, on sun keyboards you will find keys
+labeled <KBD>copy</KBD> or <KBD>paste</KBD>. Binding of those extra keys
+to corresponding edit functions in done here.
+</UL>
+<P>
+To create your own <CODE>"d_xxx.rc"</CODE> file, take any existing as a template
+and copy it to <CODE>"d_</CODE><VAR>displayname</VAR><CODE>.rc"</CODE>.
+<BR>
+For example, if your display is <CODE>marvin:0</CODE>, you have to call your
+file <CODE>"d_marvin.rc"</CODE>.
+<BR>
+(use "<KBD>echo $DISPLAY</KBD>" to find out what the display name is).
+If <KBD>DISPLAY</KBD> is something like <CODE>":0"</CODE>,
+<CODE>":0.0"</CODE> or <CODE>"local:0"</CODE>, you should take your hostname
+instead.
+
+<P>
+In general, the keyboardMap is modified using expressions like:
+<CODE><PRE>
+    |map|
+
+    map := Display keyboardMap.
+    map bindValue:$[ to:#Alt8.
+    map bindValue:#Find to:#Cmds.
+    ...
+    !
+</PRE></CODE>
+each "<CODE>bindValue:</CODE><VAR>mappedKey</VAR> <CODE>to:</CODE><VAR>originalKey</VAR>"
+adds a mapping to use <VAR>mappedKey</VAR> instead, whenever
+<VAR>originalKey</VAR> is pressed.
+<VAR>MappedKey</VAR> can be a character or a symbolic functionKey name.
+<VAR>OriginalKey</VAR> can be a character, or a symbolic raw key name.
+<P>
+Keyboard modifiers
+(i.e. <KBD>"<B>ALT</B>"</KBD>,
+<KBD>"<B>CMD</B>"</KBD> or <KBD><NOBR>"<B>CTRL</B>"</NOBR></KBD>
+are included in the raw name;
+<BR>
+for example,
+pressing <KBD>"<B>ALT</B>"</KBD>
+together with the <KBD>"<B>a</B>"</KBD> alpha key,
+gives you the "<CODE>#Alta</CODE>" key event.
+<BR>
+If shift is pressed in addition, you will get "<CODE>#AltA</CODE>".
+<P>
+Take the expressions found in existing files as a template.
+If you are not certain, what the names of the raw keys are (i.e. what to use
+after <CODE>to:</CODE>), open an <CODE>EventMonitor</CODE>,
+which traces events and prints them on the standard output (give it some input and see).
+
+<H6 NOINDEX>Example</H6>
+As a concrete example, assume you want to change the
+mapping for the <KBD>"<B>HOME</B>"</KBD> and <KBD>"<B>END</B>"</KBD> keys,
+to position the cursor to <VAR>"begin-of-line"</VAR> and <VAR>"end-of-line"</VAR> respectively.
+<BR>
+(the defaults are <VAR>"begin-of-text"</VAR> and <VAR>"end-of-text"</VAR>).
+<P>
+To acomplish this, add the following to your <CODE>"private.rc"</CODE>:
+<CODE><PRE>
+<A TYPE="example" INFO="execute the example - adding keyBindings">
+    |map|
+
+    map := Display keyboardMap.
+    map bindValue:#BeginOfLine to:#Home.
+    map bindValue:#EndOfLine   to:#End.
+</A>    !
+</PRE></CODE>
+<P>
+Currently, the following symbolic key functions are implemented
+<BR>
+(but not all are bound to keys by default):
+<P>
+<PRE><CODE>
+    key-name              function                                implemented in
+
+    Paste                 paste the contents of the copyBuffer    EditTextView
+    Insert                paste the contents of the copyBuffer    EditTextView
+    Copy                  copy the selection into the copyBuffer  TextView
+    Cut                   cut the selection                       EditTextView
+    Again                 repeat last cut or replace              EditTextView
+    Replace               replace selection by copyBuffer         EditTextView
+
+    PreviousPage          previous page                           ListView
+    NextPage              next page                               ListView
+    HalfPageUp            scroll up half of a page                ListView
+    HalfPageDown          scroll down half of a page              ListView
+
+    ScrollUp              scroll up one line                      ListView
+    ScrollDown            scroll down one line                    ListView
+
+    Find                  open a box for pattern to search        TextView
+    FindNext              search forward (selection or pattern)   TextView
+    FindPrevious          search backward (selection or pattern)  TextView
+    SearchMatchingParent  position cursor on matching parenthesis EditTextView
+
+    BeginOfText           position to begin of text               ListView, EditTextView
+    EndOfText             position end of text                    ListView, EditTextView
+    BeginOfLine           position cursor to begin of line        EditTextView
+    EndOfLine             position cursor to end of line          EditTextView
+    NextWord              position cursor on next word            EditTextView
+    GotoLine              open box to query for lineNumber        EditTextView
+
+    SelectWord            select word under cursor                EditTextView
+    SelectMatchingParents select area between cursor and matching EditTextView
+    SelectAll             select the whole text                   TextView
+    SelectToEnd           select from cursor to end of text       EditTextView
+    SelectFromBeginning   select from start of text to cursor     EditTextView
+    SelectFromBeginning   select from start of text to cursor     EditTextView
+    SelectLine            select line of cursor                   EditTextView
+    ExpandSelectByLine    expand selection by one line            EditTextView
+
+    DeleteLine            delete the cursor line                  EditTextView
+
+    Backspace             delete selection or char before curs.   EditTextView
+    Delete                delete selection or char under curs.    EditTextView
+
+    FlushInput            flush any typeAhead input               WindowSensor
+    UserInterrupt         interrupt the underlying view process   WindowSensor
+    UserAbort             abort the underlying view process       WindowSensor
+
+    DoIt                  execute selection as ST-expression      CodeView
+    PrintIt               DoIt and paste printstring of result    CodeView
+    InspectIt             DoIt and open inspector on result       CodeView
+
+    CommentSelection      place ST-comments around selection      CodeView
+    UncommentSelection    remove Smalltalk comment                CodeView
+
+    FocusNext             focus to next field                     WindowGroup
+    FocusPrevious         focus to previous field                 WindowGroup
+</CODE></PRE>
+
+To see you current bindings, inspect the value returned by:
+<A type="example" INFO="inspect the keyboardMap" action="Display keyboardMap inspect">
+<CODE><PRE>
+    Display keyboardMap
+</PRE></CODE>
+</A>
+
+
+Since other views inherit their functionality from the above listed class(es),
+these functions are also available in those subclasses. For example,
+all functions implemented in <CODE>ListView</CODE> are also available in
+<CODE>SelectionInListView</CODE>.
+<P>
+If you change these methods to add more functions, please use symbolic keys
+(i.e. never hard-code any Ctrl or Alt key sequences), since this makes
+redefinition via the keyboard map impossible).
+<BR>
+For example, if you want to add a function to insert a blank line,
+add code such as:
+<CODE><PRE>
+    ...
+    (key == #InsertLine)    ifTrue:[
+	self makeCursorVisible.
+	self unselect. self insertLine:nil before:cursorLine. ^self
+    ].
+    ...
+</PRE></CODE>
+to the <CODE>keyPress:</CODE> method in <CODE>EditTextView</CODE>.
+And change the map to bind <CODE>#InsertLine</CODE> to the desired key.
+<CODE><PRE>
+    |map|
+
+    map := Display keyboardMap.
+    map bindValue:#InsertLine to:#Ctrli.
+</PRE></CODE>
+Do not hardcode <KBD>"<B>CTRL-i</B>"</KBD> into your <CODE>keyPress:</CODE> methods;
+
+<P>
+Notice, that not all of the above functions are available on all keyboards;
+missing functions can be put onto a function key (such as <KBD>"<B>F1</B>"</KBD>) with:
+<CODE><PRE>
+    map bindValue:#Again to:#F1
+</PRE></CODE>
+
+
+<H3><A NAME="AUX_KEYPAD" HREF="#I_AUX_KEYPAD">Auxiliary Numeric Keypad</A></H3>
+
+If you want to have the numeric keypad (if present on your keyboard)
+respond with normal numeric keys, add the following to your
+<CODE>"display.rc"</CODE> file:
+<CODE><PRE>
+    |map|
+    map := Display keyboardMap.
+    map bindValue:$0 to:#'KP_Insert'.
+    map bindValue:$1 to:#'KP_End'.
+    map bindValue:$2 to:#'KP_Down'.
+    map bindValue:$3 to:#'KP_Next'.
+    map bindValue:$4 to:#'KP_Left'.
+    map bindValue:$5 to:#'KP_Begin'.
+    map bindValue:$6 to:#'KP_Right'.
+    map bindValue:$7 to:#'KP_Home'.
+    map bindValue:$8 to:#'KP_Up'.
+    map bindValue:$9 to:#'KP_Prior'.
+    map bindValue:#Return to:#'KP_Enter'.
+    map bindValue:#Backspace to:#'KP_Delete'.
+</PRE></CODE>
+if that does not work, use the event monitor to find out the
+actual symbols as sent by your keypad and modify the above expressions
+as appropriate.
+
+
+<H3><A NAME="NATIONAL"      HREF="#I_NATIONAL">National Characters</A></H3>
+
+The encoding of characters used internally is <CITE>iso8859</CITE> by default.
+(although other encodings are possible, no support is currently being
+built in - for example, all text editing classes only handle 8 bit characters
+in ISO encoding. Also, drawing of characters currently depends on fonts
+supporting the ISO character encoding; this applies especially to systems
+using an X11R4 based Xwindow server.)
+
+<BR>
+There is some rudimentary support for 16bit strings
+(the <CODE>TwoByteString</CODE> class) and
+drawing of 16bit strings is supported (in all graphicContexts)
+but currently,
+neither input nor editing facilities exist for these.
+This will change in future versions.
+
+<P>
+If your keyboard has national character keycaps on it, these should
+produce the expected keypress events <STRONG>iff</STRONG> your display
+has been configured correctly (i.e. if your xserver's keyboard modifier table
+is correctly set).
+If in doubt, consult the manual page of the <VAR>xmodmap</VAR> command,
+and/or have a look at the output of the event monitor
+(in the launcher's "<VAR>tools-monitors</VAR>" menu).
+<P>
+To enter national characters on an international keyboard, or for an alien
+language, enter a compose key sequence consisting of the <KBD>"<B>Compose</B>"</KBD>
+key followed by the two characters which are to form the real character.
+<BR>
+For example, the spanish "&ntilde;" (<VAR>n-tilde</VAR>) is entered via
+<KBD>"<B>Compose-n-~</B>"</KBD>,
+the german "&uuml;" <VAR>u-dieresis or Umlaut-u</VAR>
+via <KBD>"<B>Compose-u-"</B>"</KBD>
+and the french "&aelig;" <VAR>ae-ligature</VAR> via <KBD>"<B>Compose-a-e</B>"</KBD>.
+<BR>
+(notice that the <KBD>"<B>Compose</B>"</KBD> key is not a modifier key,
+but a prefix;
+i.e. it has to be released before the other two characters are pressed.)
+<P>
+Here is a list of the most common sequences:
+<P>
+<PRE>
+    dieresis      : <KBD><B>Compose-<I>&lt;character&gt;</I>-"</B></KBD>
+    tilde         : <KBD><B>Compose-<I>&lt;character&gt;</I>-~</B></KBD>
+    acute         : <KBD><B>Compose-<I>&lt;character&gt;</I>-'</B></KBD>
+    grave         : <KBD><B>Compose-<I>&lt;character&gt;</I>-`</B></KBD>
+    circumflex    : <KBD><B>Compose-<I>&lt;character&gt;</I>-^</B></KBD>
+    cedille       : <KBD><B>Compose-<I>&lt;character&gt;</I>-,</B></KBD>
+    ring          : <KBD><B>Compose-<I>&lt;character&gt;</I>-*</B></KBD>
+    &copy; (copyright) : <KBD><B>Compose-O-C</B></KBD>
+    &szlig; (sz)        : <KBD><B>Compose-s-s</B></KBD>
+</PRE>
+
+<P>
+For a full list of supported sequences, inspect the array as returned by:
+<CODE><PRE>
+    <A TYPE="example" INFO="inspect the composeTable" ACTION="WindowSensor composeTable inspect">WindowSensor composeTable</A>
+</PRE></CODE>
+or have a look at the initialization code in the method:
+<A type="example" INFO="open a browser on that method" action="SystemBrowser browseClass:WindowSensor class selector:#initializeComposeKeyTable">
+<CODE><PRE>
+    WindowSensor class&#187;initializeComposeKeyTable
+</PRE></CODE>
+</A>
+or, the <A HREF="../help/Launcher/keyboardSetting.html#COMPOSE_KEY">keyboard help document</A>.
+<P>
+
+If any sequence is missing or you don't like the settings,
+change this method, or add new entries by:
+<CODE><PRE>
+    |table newTable|
+
+    table := WindowSensor composeTable.
+    newTable := table , #(
+			    ($O $/ 16rD8)
+			    ($o $/ 16rF8)
+			 ).
+    WindowSensor composeTable:newTable.
+</PRE></CODE>
+(entries consist of 3-element arrays, of which the first 2 specify the
+ input sequence, while the third defines the resulting character.
+ Characters may be specified as characters or their ascii code.
+ You may also define 16-bit characters as result.)
+<BR>
+Remark: you don't have to change the system for the <I>O-slash</I> characters;
+they are already in the table ...
+
+<P>
+Any changes should be done in the <CODE>"display.rc"</CODE>
+or (preferably) the <CODE>"private.rc"</CODE> file.
+<P>
+If your keyboard has no <KBD>"<B>Compose</B>"</KBD> key, you can
+remap one of the <KBD>"<B>Control</B>"</KBD> keys;
+as with:
+<CODE><PRE>
+    Display keyboardMap bindValue:#Compose to:#Control_R
+</PRE></CODE>
+which redefines the right control key to function as a <KBD>"<B>Compose</B>"</KBD>
+key.
+<P>
+Non-typist left handers may prefer the right control key;
+ good typers may choose any other (function-) key;
+finally,  those used to <CITE>ST-80</CITE> may want to
+ map <KBD>"<B>Ctrl-a</B>"</KBD>.
+
+
+
+
+<H3><A NAME="MODIFIERKEYS" HREF="#I_MODIFIERKEYS">Alt and Command Keys</A></H3>
+
+During early startup, the initialization code (in <CODE>XWorkstation&#187;initializeModifierMappings</CODE>)
+tries to get the mappings
+of the <KBD>"<B>Alt</B>"</KBD> and <KBD>"<B>Meta</B>"</KBD> modifier keys from the display server.
+<BR>
+Although this works on most XWindow displays, it may return wrong or unsatisfactorey mappings on
+some systems (if that system keyboard modifier table is not configured  correctly).
+<BR>
+Since alt- and meta-modifiers are not used by
+too many X programs,
+a wrong setup may get unnoticed quite often
+(and is actually encountered pretty often).
+<P>
+If you encounter trouble with <KBD>"<B>Alt</B>"</KBD> or <KBD>"<B>Cmd</B>"</KBD> key sequences,
+you should either fix the settings with the
+<A href="../misc/onlyInSTX2.html" action="html:HTMLDocGenerator manPageFor:'xmodmap'">
+xmodmap</A> command, or change <CITE>ST/X</CITE>'s
+settings.
+<BR>
+If <CITE>ST/X</CITE> settings are changed, do this in the
+<CODE>"display.rc"</CODE> or the <CODE>"private.rc"</CODE> file.
+<BR>
+For example:
+<CODE><PRE>
+    Display altModifiers:#( #Alt_R ).
+    Display metaModifiers:#( #Alt_L ).
+    Display altModifierMask:(Display modifier1Mask).
+    Display metaModifierMask:(Display modifier2Mask).
+</PRE></CODE>
+
+For further information, consult the manual page of the <CODE>xmodmap</CODE>
+command and/or ask an X-Guru about modifier settings.
+
+
+
+<H3><A NAME="KEYCOMMANDS"    HREF="#I_KEYCOMMANDS">Keyboard Commands</A></H3>
+
+All keyboard commands (also called <VAR>accelerators</VAR> or <VAR>shortCuts</VAR>) are internally handled as symbolic
+keys. For example, the "<VAR>search-forward</VAR>" function is performed whenever the
+<KBD>"<B>FindNext</B>"</KBD>
+key event is recognized by a textView class.
+<BR>
+The translation from physical key to this symbolic key is done via the keyboard map
+as described above.
+<BR>
+Therefore, you need an entry for whatever key should be assigned to the
+<KBD>"<B>FindNext</B>"</KBD> function.
+<BR>
+For example, to put this function on <KBD><NOBR>"<B>CTRL-f</B>"</NOBR></KBD>,
+add a line such as:
+<CODE><PRE>
+    |map|
+
+    map := Display keyboardMap.
+    map bindValue:#FindNext   to:#Ctrlf.
+</PRE></CODE>
+to one of your startup files;
+we recommend to do so in your <CODE>'private.rc'</CODE> file.
+<BR>
+(BTW: the above is the default anyway, done in <CODE>"display.rc"</CODE>)
+<P>
+If you add new features to the text editing classes or want to
+add support for keyboard commands in your own classes,
+please do so using symbolic keys too.
+<BR>
+We repeat: <STRONG>Never hardcode any control or meta
+sequences into your programs. </STRONG>
+<BR>
+Using symbolic keys allows better use of the system for those lucky people owning many
+function keys (with keys labeled <KBD>"<B>copy</B>"</KBD>, <KBD>"<B>cut</B>"</KBD>, <KBD>"<B>paste</B>"</KBD>
+and so on) and key functions to be changed without recompilation.
+<P>
+The definition of such a translation can use combination keys, such
+as #<CODE>CtrlX</CODE>, where <VAR>X</VAR> stands for the unmodified key
+- case is important here.
+<BR>
+Thus, to specify <KBD>"<B>SHIFT-CTRL-f</B>"</KBD>,
+use <KBD>#CtrlF</KBD> as
+second argument to the <CODE>bindValue:to:</CODE>.
+To specify unshifted <KBD>"<B>CTRL-f</B>"</KBD>,
+use <KBD>#Ctrlf</KBD>.
+<P>
+You can use control-key (<KBD>"Ctrl"</KBD>) or command-key (<KBD>"Cmd"</KBD>) modifiers.
+<BR>
+You may have to put the keys symbol in quotes; for example to define a mapping
+for control-underscore, use <KBD>#'Ctrl_'</KBD>.
+(this is pure Smalltalk syntax; no magic at all).
+<P>
+On some keyboards, the command key is labeled <KBD>"Meta"</KBD> or <KBD>"Alt"</KBD>.
+
+
+<!--
+
+<H3><A HREF="#I_KEYMACROS" NAME="KEYMACROS">Keyboard Macros</A></H3>
+
+You can define your own text and action macros and place
+them on the function keys labeled <KBD>"<B>Fn</B>"</KBD>.
+(except if you changed the binding of those function keys in the keyboardmap)
+
+<H4>Text macros</H4>
+
+If a function key has a <VAR>text macro</VAR> assigned,
+it pastes some predefined text at the current (text-) cursor position.
+<BR>
+To define a text macro,
+first select some text,
+then press <KBD>"<B>SHIFT-Fn</B>"</KBD>
+to assign it to a function key.
+The assignment is kept in a preference-variable (<CODE>UserPreferences current functionKeySequences</CODE>)
+until redefined (i.e. forever).
+<P>
+You can also think of these text macros as a bunch of extra CopyPasteBuffers.
+<P>
+<I>Hint:</I>
+<BR>
+ how about binding <CODE>"<B>ifTrue:[</B>"</CODE> or <CODE>"<B>ifFalse:[</B>"</CODE>
+ to some otherwise unused function keys ?
+<P>
+
+<I>Hint: To long time ST-80 users:</I>
+<BR>
+you get the old behavior of the <KBD>"<B>CTRL-t</B>"</KBD>
+ key (pasting <CODE>"ifTrue:</CODE>) by placing a text macro
+ on a non-existing function key (say: <KBD>"F99"</KBD>) and changing the
+ keyboard map to bind <KBD>"F99"</KBD> to <KBD>"CTRL-t"</KBD>.
+<BR>
+to do this, evaluate:
+<CODE><PRE>
+    (UserPreferences current functionKeySequences) at:#PasteIFTRUE put:'self insertSelectedStringAtCursor:''ifTrue:'' '.
+    (UserPreferences current functionKeySequences) at:#PasteIFFALSE put:'self insertSelectedStringAtCursor:''ifFalse:'' '.
+    Screen current keyboardMap bindValue:#PasteIFTRUE to:#Ctrlt.
+    Screen current keyboardMap bindValue:#PasteIFFALSE to:#Ctrlf.
+</PRE></CODE>
+
+<P>
+<H4>Action macros</H4>
+
+Another very powerful feature are <VAR>action macros</VAR>.
+These will not paste the text they stand for, but instead
+execute it as a Smalltalk expression
+(with <VAR>self</VAR> being bound to the view in which the press occurred).
+<BR>
+(This is what is called a ``<VAR>macro language</VAR>'' in other text editors;
+of course, <B>our</B> preferred macro language is <CITE>Smalltalk</CITE>.)
+<P>
+Action macros are defined like above text macros,
+but executed with <KBD>"<B>CMD-Fn</B>"</KBD>.
+<BR>
+Since many window managers use <KBD>"<B>CMD-Fn</B>"</KBD> for window
+operations, try <KBD>"<B>CTRL</B>"</KBD> instead of <KBD>"<B>CMD</B>"</KBD>,
+if the examples below do not work properly on your system.<P>
+<P>
+
+<I>Hint:</I>
+<BR>
+action macros still behave like text macros if pressed without
+<KBD>"<B>CMD</B>"</KBD>; this allows to check the assignment in case
+you are uncertain about which key was doing which action (i.e. you
+can <VAR>dump</VAR> the macros command).
+<BR>
+<P>
+
+Since action macros can save you so much time later, it makes sense to describe
+them a bit more detailed here - invest a bit of time now to understand them.
+<BR>
+You should know some Smalltalk, to understand the examples, though.
+<P>
+
+<HR>
+example1:
+<BR>
+let <KBD>"<B>CMD-F5</B>"</KBD> open a new browser:
+<UL>
+<LI>first enter <CODE>"SystemBrowser open"</CODE>
+into any textView (a workspace will do).
+<LI>select it
+<LI>press <KBD>"<B>SHIFT-F5</B>"</KBD> to assign it
+</UL>
+
+<HR>
+example2:
+<BR>
+to paste the current time on <KBD>"<B>CMD-Fn</B>"</KBD>,
+define it as:
+<CODE><PRE>
+    self paste:Time now printString
+</PRE></CODE>
+
+<HR>
+example3:
+<BR>
+every textView can set the tab positions via two
+methods named <CODE>setTab4</CODE> and <CODE>setTab8</CODE>.
+<BR>
+A useful ``<VAR>toggle tab settings</VAR>'' macro
+to switch between
+4-column and 8-column tab settings is:
+<CODE><PRE>
+    (tabPositions == self class tab4Positions)
+	ifTrue:[self setTab8] ifFalse:[self setTab4]
+</PRE></CODE>
+try to define it on (say) <KBD>"<B>CMD-F6</B>"</KBD>
+<BR>
+(notice, that <CODE>tabPositions</CODE> is an instance variable
+ in editTextView; if you are a C/C++ programmer,
+ you may wonder how the macro can access it ny name
+ and how this is technically implemented ;-) )
+<P>
+
+<I>Hint:</I>
+<BR>
+Although these macros are only placable onto function keys,
+you may want to have it executed with some more convenient
+key, like <KBD>"<B>CTRL-TAB</B>"</KBD>.
+<BR>
+To do so, change the keyboard mapping:
+<CODE><PRE>
+    Screen current keyboardMap bindValue:#CtrlF6 to:#CtrlTab
+</PRE></CODE>
+
+<I>Hint:</I>
+<BR>
+The above example made <KBD>"<B>F6</B>"</KBD> unusable for other macros,
+although we were only interested in the <KBD>"<B>CTRL-TAB</B>"</KBD> binding.
+You can avoid this by defining a macro for a nonexisting <VAR>virtual key</VAR>
+(for example, <KBD>"<B>F99</B>"</KBD>) and modify the keyboard map
+to translate from <KBD>"<B>CTRL-TAB</B>"</KBD> to this virtual key.
+<BR>
+Since you cannot enter this virtual key on the keyboard,
+you have to ``<VAR>manually</VAR>'' setup the macro:
+<CODE><PRE>
+    |macros|
+
+    macros := UserPreferences current functionKeySequences.
+    macros isNil ifTrue:[
+	macros := IdentityDictionary new.
+	UserPreferences current functionKeySequences:macros.
+    ].
+    macros at:#CmdF99 put:'(tabPositions == self class tab4Positions)
+			   ifTrue:[self setTab8] ifFalse:[self setTab4]'.
+    Screen current keyboardMap bindValue:#CmdF99 to:#CtrlTab
+</PRE></CODE>
+
+
+<HR>
+example4:
+<BR>
+if you often need the output of some Unix command to be inserted
+into your text
+(and don't want to open a fileBrowser and copy/paste all the text),
+<BR>
+try the following action macro:
+<CODE><PRE>
+    |selection|
+
+    (selection := self selection) notEmpty ifTrue:[
+	self replace:
+	    (PipeStream readingFrom:(selection asString))
+		contents
+		    asString
+    ]
+</PRE></CODE>
+if you assign this to <KBD>"<B>F7</B>"</KBD>,
+all you have to do is to enter the command, select it, and press
+<KBD>"<B>F7</B>"</KBD> (cool, you have just created yet another shell !).
+<BR>
+If your keyboard has a key labeled <KBD>"<B>execute</B>"</KBD>,
+you may want to change the keyboard map as well.
+
+<HR>
+
+
+There are uncounted more uses of action commands
+- you can even define additional editing methods in
+the <CODE>EditTextView</CODE> class and activate them via action macros.
+However, since you have the full Smalltalk language under your fingertip
+in these macros, this is hardly ever needed.
+<P>
+
+BTW:
+<BR>
+for security reasons, action macros are only available
+in codeViews - not in general editTextViews.
+This was done to protect enduser applications from being
+corruptable by users defining any bad macros.
+<BR>
+Therefore, enduser apps should be written to use instances of
+<CODE>EditTextView</CODE>.
+
+<FORM ACTION="../misc/onlyInSTX.html"
+      METHOD="DOIT |
+	|fKeyAssignments map ws|
+
+	fKeyAssignments := UserPreferences current functionKeySequences.
+	fKeyAssignments isNil ifTrue:[
+	    fKeyAssignments := IdentityDictionary new.
+	    UserPreferences current functionKeySequences:fKeyAssignments
+	].
+	fKeyAssignments at:#F99 put:'ifTrue:'.
+	fKeyAssignments at:#F98 put:'ifFalse:'.
+	fKeyAssignments at:#F97 put:'SystemBrowser open'.
+	fKeyAssignments at:#F96 put:'(tabPositions == self class tab4Positions)ifTrue:[self setTab8] ifFalse:[self setTab4]'.
+	fKeyAssignments at:#F95 put:'self replace:(PipeStream readingFrom:(self selection asString))contents asString'.
+	fKeyAssignments at:#F94 put:'self paste:Time now printString'.
+
+	map := Screen current keyboardMap.
+	map bindValue:#F99 to:#Ctrlt.
+	map bindValue:#F98 to:#Ctrlf.
+	map bindValue:#CmdF97 to:#F2.
+	map bindValue:#CmdF96 to:#CtrlTab.
+	map bindValue:#CmdF95 to:#F3.
+	map bindValue:#CmdF94 to:#F4.
+	ws := Workspace open.
+	ws topView extent:500@300.
+	ws contents:'I have defined the following function keys
+for you to play with:
+
+F2       - open a new browser
+CTRL-Tab - toggle between 4/8 tabs
+F3       - yet another shell (pastes stdOut)
+F4       - insert the current time
+CTRL-t   - insert ''ifTrue:''
+CTRL-f   - insert ''ifFalse:''
+
+notice: you don't have to press the CMD key
+	I modified the keyboardMap to get
+	the macros executed with plain F-keys
+'
+
+">
+<BR>
+If you want me to assign the macros of the above examples,
+and open a workspace to let you try them,
+press:<INPUT TYPE="submit" VALUE="demo">.
+</FORM>
+
+-->
+
+
+
+
+<H3><A NAME="DEFAULTKEYS" HREF="#I_DEFAULTKEYS">Default Keyboard Command Setup</A></H3>
+
+The default setup is done in the file <CODE>"display.rc"</CODE> and
+consists of:
+<PRE>
+  <KBD>CMD-c</KBD>    <VAR>copy</VAR>
+  <KBD>CMD-x</KBD>    <VAR>cut</VAR>
+  <KBD>CMD-v</KBD>    <VAR>paste</VAR>
+
+  <KBD>CMD-a</KBD>    <VAR>accept</VAR>
+
+  <KBD>CMD-d</KBD>    <VAR>doIt</VAR>
+  <KBD>CMD-p</KBD>    <VAR>printInt</VAR>
+  <KBD>CMD-i</KBD>    <VAR>inspectIt</VAR>
+
+  <KBD>CMD-s</KBD>    <VAR>search</VAR>
+  <KBD>CMD-f</KBD>    <VAR>search again forward</VAR>
+  <KBD>CMD-b</KBD>    <VAR>search again backward</VAR>
+
+  <KBD>CMD-g</KBD>    <VAR>goto line</VAR>
+
+  <KBD>CMD-w</KBD>    <VAR>select word</VAR>
+  <KBD>CMD-m</KBD>    <VAR>select to matching parentesis</VAR>
+
+  <KBD>CMD-z</KBD>    <VAR>open popUp menu</VAR>
+
+  <KBD>CTRL-m</KBD>   <VAR>match parentesis</VAR>
+  <KBD>CTRL-w</KBD>   <VAR>word forward</VAR>
+
+  <KBD>CTRL-f</KBD>   <VAR>page forward</VAR>
+  <KBD>CTRL-b</KBD>   <VAR>page backward</VAR>
+  <KBD>CTRL-d</KBD>   <VAR>half page forward</VAR>
+  <KBD>CTRL-u</KBD>   <VAR>half page backward</VAR>
+
+  <KBD>CTRL-a</KBD>   <VAR>move to begin of line</VAR>
+  <KBD>CTRL-e</KBD>   <VAR>move to end of line</VAR>
+
+  <KBD>CTRL-x</KBD>   <VAR>flush typeahead input</VAR>
+  <KBD>CTRL-c</KBD>   <VAR>interrupt window process & open debugger</VAR>
+  <KBD>CTRL-y</KBD>   <VAR>interrupt window process & abort operation</VAR>
+
+  <KBD>CTRL-CursorUp</KBD>     <VAR>Scroll up</VAR>
+  <KBD>CTRL-CursorDown</KBD>   <VAR>Scroll Down</VAR>
+  <KBD>CTRL-CursorRight</KBD>  <VAR>cursor-word forward</VAR>
+  <KBD>CTRL-CursorLeft</KBD>   <VAR>cursor-word backward</VAR>
+
+  <KBD>CMD-CursorRight</KBD>   <VAR>focus to next field</VAR>
+  <KBD>CMD-CursorLeft</KBD>    <VAR>focus to previous field</VAR>
+</PRE>
+
+Builtin hardwired key behavior (cannot be changed via the map):
+<PRE>
+  <KBD>Tab</KBD>        <VAR>focus to next field (in textViews, spaces is inserted)</VAR>
+
+  <KBD>Shift-Tab</KBD>  <VAR>focus to previous field (in textViews, its a ``nonInserting tab'')</VAR>
+
+  <KBD>Esc</KBD>        <VAR>cancel dialog box (in textViews, its a ``selectFromBeginning'')</VAR>
+</PRE>
+
+additional (keyboard specific) bindings are setup in <CODE>"d_xxx.rc"</CODE>.
+Your personal settings should go into <CODE>"private.rc"</CODE>.
+<P>
+Please have a look at those files, for the actual settings;
+the above list may not be up to date or valid for your particular
+system.
+<P>
+
+<H3><A NAME="DEFAULTMAPPING" HREF="#I_DEFAULTMAPPING">Default KeyboardMap</A></H3>
+
+If no "display.rc" file is present, the following default mappings are
+in effect under X11:
+<PRE>
+  <KBD>CMD-c</KBD>    <VAR>copy</VAR>
+  <KBD>CMD-x</KBD>    <VAR>cut</VAR>
+  <KBD>CMD-v</KBD>    <VAR>paste</VAR>
+
+  <KBD>CTRL-c</KBD>   <VAR>interrupt window process & open debugger</VAR>
+</PRE>
+while under Win32, the following defaults are used:
+<PRE>
+  <KBD>CTRL-c</KBD>    <VAR>copy</VAR>
+  <KBD>CTRL-x</KBD>    <VAR>cut</VAR>
+  <KBD>CTRL-v</KBD>    <VAR>paste</VAR>
+
+  <KBD>BREAK</KBD>     <VAR>interrupt window process & open debugger</VAR>
+</PRE>
+This is also the minimalistic map used for standAlone applicaitons,
+which do not explicitely look for a <CODE>"smalltalk.rc"</CODE> or <CODE>"keyboard.c"</CODE> file.
+<BR>
+See the <CODE>"*Workstation class &#187; initializeDefaultKeyboardMappingsIn:"</CODE> methods for details.
+
+
+
+<H3><A NAME="FKEYS"          HREF="#I_FKEYS">Function Keys</A></H3>
+
+To put functions on your functions keys (if your keyboard has them),
+use the same translation mechanism.
+For example, putting the <VAR>again</VAR> function onto the <KBD>"<B>F1</B>"</KBD> key
+is done with:
+<CODE><PRE>
+    |map|
+
+    map := Display keyboardMap.
+    map bindValue:#Again   to:#F1.
+</PRE></CODE>
+Some interesting examples on how you can
+define your own function keys are found in
+<A HREF="../getstart/TOP.html#KEYMACROS">``keyboard macros''</A>.
+
+
+
+<H2><A NAME="VIEWSTYLE"      HREF="#I_VIEWSTYLE">Changing the View Style Appearance</A></H2>
+
+<CITE>Smalltalk/X</CITE> supports very flexible style settings to allow customization of the look
+of your views. This was done to make <CITE>ST/X</CITE> applications fit
+nicely into existing environments and enable you to setup things for a
+common picture (even if only part of your application is implemented in
+<CITE>ST/X</CITE>).
+<BR>
+The various styles below are a by-product of this.
+It is not intended to mimic the originals exactly - so don't expect them to
+look & feel exactly the same.
+<P>
+<DL><DT>Notice:<DD>
+The style can now be changed via a convenient dialog
+through the new launcher's <VAR>settings</VAR> menu.
+You may skip the following description of details.
+</DL>
+
+To switch to another style (in a startup <CODE>".rc"</CODE> file),
+add a line such as:
+<CODE><PRE>
+    View defaultStyle:<VAR>styleName</VAR>
+</PRE></CODE>
+where <VAR>styleName</VAR> is one of:
+<BLOCKQUOTE>
+<CODE>#Adwaita</CODE>,
+<BR>
+<CODE>#macosx_yosemite</CODE>,
+<BR>
+<CODE>#motif</CODE>,
+<BR>
+<CODE>#mswindows95</CODE>,
+<BR>
+<CODE>#mswindowsXP</CODE>,
+<BR>
+<CODE>#mswindowsVista</CODE>,
+<BR>
+<CODE>#mswindows8</CODE>,
+<BR>
+<CODE>#iris</CODE>,
+</BLOCKQUOTE>
+Actually, more styles are available; see below.
+<P>
+Notice, that you have to pass a symbol as argument,
+and need quotes around the name for those names
+which include nonalphanumeric
+characters (i.e. the underline).
+<P>
+You can change the style setting at any time, but it will only affect new views.
+Existing views keep the style which was in effect when they were created.
+Sometimes, this leads to a strange mixture, when views create new subviews or popUp menus.
+We consider viewStyles to be something which is configured once only - therefore, no special
+effort has been put into handling dynamically changing styles.
+<BR>
+Therefore, it is best to set the style
+in one of your startup files - preferrabley in the
+<CODE>"private.rc"</CODE> or one of the <CODE>"d_xxx.rc"</CODE>files.
+<P>
+BTW: my personal favour is for the ``iris'' style ...
+
+<P>
+
+<H3><A NAME="DEFAULT_VIEWSTYLE" HREF="#I_DEFAULT_VIEWSTYLE">The Default Style</A></H3>
+
+The standard <CITE>ST/X</CITE> delivery defines the viewStyle in its <CODE>"display.rc"</CODE> script,
+which is read at initial startup.
+<P>
+
+If <CITE>ST/X</CITE> is started without a startup file, the initial style default
+is defined by the shell variable <CITE>STX_VIEWSTYLE</CITE>.
+If that variable is not set, the style defaults to #motif for unix,
+and #mswindows95 for linux and win32 systems.
+<BR>
+(see the source of the "SimpleView &#187; setDefaultStyle"-method...)
+
+
+<H3><A NAME="STYLES"         HREF="#I_STYLES">Existing Stylesheets</A></H3>
+
+For every style, a so called <VAR>styleSheet</VAR> exists in the <CODE>"resources"</CODE> directory.
+For example, the definitions for the <CITE>motif</CITE> style are found in
+<CODE>"resources/motif.style"</CODE>.
+<P>
+Currently, there are styles for:
+<UL>
+
+<LI><CODE>Adwaita.style</CODE>
+<BR>
+a style which resembles the corresponding Linux look.
+<BR>This is the default on Linux systems.
+<P>
+
+<LI><CODE>motif.style</CODE>
+<BR>
+motif lookalike style.
+<BR>On some displays (VGA) this one is a bit dark.
+(on my indy it looks ok)
+<P>
+
+
+<LI><CODE>motif_left.style</CODE>
+<BR>
+like above, with scrollbars on the left.
+<P>
+
+<LI><CODE>motif_light.style</CODE>
+<BR>
+motif style. same as above, but uses a brighter grey.
+<BR>(better on VGA screeens)
+<P>
+
+<LI><CODE>decWindows.style</CODE>
+<BR>
+modified motif style which fits the new decWindows style.
+<BR>This is now the default on Alpha systems (i.e. DecWindows).
+<P>
+
+<!--
+<LI><CODE>motif_red.style</CODE>
+<BR>
+motif style with darkish red backgrounds
+<BR>(as seen as an example in the motif StyleGuide).
+<P>
+-->
+
+<!--
+<LI><CODE>motif_blue.style</CODE>
+<BR>
+motif style with darkish blue backgrounds
+<BR>(as seen as an example in the motif StyleGuide).
+<P>
+-->
+
+<LI><CODE>motif_dec.style</CODE>
+<BR>
+modified motif style with bright sky-blue (baby blue ;-) backgrounds.
+<BR>This used to be the look on very old DecStations (DS3000).
+<P>
+
+<LI><CODE>motif_dec2.style</CODE>
+<BR>
+modified motif style with brownish backgrounds
+<BR>This used to be the default on old DECstations (DS4000).
+<P>
+
+<LI><CODE>iris.style</CODE>
+<BR>
+Silicon Graphics's iris style
+<P>
+
+<LI><CODE>sgmotif.style</CODE>
+<BR>
+A newer Silicon Graphics's iris style
+<P>
+
+<LI><CODE>next.style</CODE>
+<BR>
+NeXT lookalike style
+<P>
+
+<LI><CODE>mswindows.style</CODE>
+<BR>
+who likes that one ?
+<P>
+
+<LI><CODE>mswindows95.style</CODE>
+<BR>
+Win95 style
+<P>
+
+<LI><CODE>mswindowsXP.style</CODE>
+<BR>
+Windows XP style
+<P>
+
+<LI><CODE>mswindowsVista.style</CODE>
+<BR>
+Windows Vista style
+<P>
+
+<LI><CODE>mswindows8.style</CODE>
+<BR>
+Windows 8 style (flat)
+<P>
+
+<LI><CODE>macosx_yosemite.style</CODE>
+<BR>
+OSX style
+<P>
+
+<LI><CODE>openwin.style</CODE>
+<BR>
+that one is not really finished (scrollbars are very different)
+<P>
+
+<LI><CODE>os2.style</CODE>
+<BR>
+that one is completely out of time
+<P>
+
+
+<LI><CODE>st80.style</CODE>
+<BR>
+the old st80 style. Actually not bad, since it uses up less real estate
+on small screens, due to its narrow scrollBars. May be useful on a tablet.
+<P>
+
+<LI><CODE>st80_left.style</CODE>
+<BR>
+like st80, bt scrollbars are on the left (if you are used to find them there)
+<P>
+
+<LI><CODE>greenPC.style</CODE>
+<BR>
+a must for members of the green party - recyclable views.
+You will love it !
+</UL>
+
+Please remember that not all styles are perfect, and some are only included
+for demonstration. Except for the normal-style, most will not work
+properly on b&amp;w displays.
+<BR>
+If you enhance or fix a style, please return the changed styleSheet file
+to the author for redistribution.
+
+
+<H3><A NAME="NEWSTYLES"      HREF="#I_NEWSTYLES">Creating your own Stylesheet</A></H3>
+
+You can add your own styles and/or modify existing styles.
+(better add new ones - since upgrade packages may include new styleSheets.
+You otherwise had to add your changes again and again.)
+<P>
+StyleSheet files consist of name to value associations, with one entry
+per line; multiline entries are possible, if they end with a '\' (backslash) character.
+Lines beginning with a semicolon (;) are ignored and can be used as comments.
+<P>
+Each definition consist of a key and a value expression.
+The key should not contain space characters.
+<BR>
+The value expression is a regular Smalltalk expression, with the following
+additional syntactic extensions:
+<UL>
+ <LI>previous value:
+ <BR>a '=' (equals character) immediately followed by an identifier
+     is replaced by a previous definitions value.
+ <BR>i.e. the line:
+<PRE>
+       foo     =bar
+</PRE>
+ <BR>sets <I>foo</I> to the same value as <I>bar</I>.
+
+
+ <LI>conditional previous value:
+ <BR>a '?' followed by a '=' followed by a an identifier
+     is replaced by a previous definitions value - IFF there is no
+     value yet defined under the current lines key.
+ <BR>i.e. the line:
+<PRE>
+       foo     ? =bar
+</PRE>
+ <BR>sets <I>foo</I> to the same value as <I>bar</I> if <i>foo</I>
+ has no value yet assigned - if <I>foo</I> has a value, the old binding
+ remains in effect.
+</UL>
+
+<P>
+For example, the foreground color of buttons is defined with:
+<CODE><PRE>
+    button.foregroundColor    Color red
+</PRE></CODE>
+the first word is the name, everything after the first space or tab character
+is evaluated as a Smalltalk expression and its value is assigned.
+<P>
+You may refer to previous definitions using the special macro
+<CODE>=</CODE><VAR>name</VAR> (i.e. prefix the name to use with the equal
+(=) character.
+This allows definitions to be reused and common stuff to be defined only once.
+<CODE><PRE>
+    myForegroundColor        Color red
+    myBackgroundColor        Color yellow
+     ...
+    button.foregroundColor   =myForegroundColor
+    button.backgroundColor   =myBackgroundColor
+     ...
+    menu.foregroundColor     =myForegroundColor
+    menu.backgroundColor     =myBackgroundColor
+     ...
+    shadowColor              =myBackgroundColor darkened
+</PRE></CODE>
+<P>
+
+Definitions may be <VAR>conditional</VAR>; for example:
+<CODE><PRE>
+    #if Display hasColors
+    button.foregroundColor    Color red
+    #else
+    button.foregroundColor    Color grey
+    #endif
+</PRE></CODE>
+sets the value to red color if the display supports colors; otherwise, grey is
+used.
+<BR>
+The text after the <CODE>"#if"</CODE> must be a Smalltalk expression
+returning a boolean value. Conditional expressions may be nested.
+<P>
+StyleSheet files can include definitions from other files. Therefore, the easiest
+way to modify styles is to create a new file (say <CODE>"foo.style"</CODE>) and
+include an existing one.
+Then add lines for those values which you like to have changed.
+Since styleSheets are read from top-to-bottom,
+later definitions will overwrite previous ones.
+<P>
+For example, a style based on the motif style, but with changed highlightcolor in menus is
+as simple as:
+<CODE><PRE>
+    ; this is a comment
+    ;
+    ; first, read motif style
+    ;
+    #include 'motif.style'
+
+    ;
+    ; then redefine highlightBackgroundColor of menus
+    ;
+    menu.highlightBackgroundColor    Color red
+</PRE></CODE>
+Have a look at existing styleSheets and the file <CODE>"generic.style"</CODE>
+to get a feeling for what can be redefined and how it is done.
+
+
+
+<H3><A NAME="STYLEVALUES"      HREF="#I_STYLEVALUES">What's in a StyleSheet</A></H3>
+The following (incomplete) list describes the most interesting styleSheet values:
+
+<TABLE BORDER>
+<TR>
+<TH>StyleSheet key</TH>              <TH>Type</TH>        <TH>default</TH> <TH>description</TH>
+</TR>
+
+<TR>
+<TD></TD><TD>ScrollBars are composed of two ArrowButtons and a Scroller.
+<BR>
+Therefore, its look is also controlled by
+<BR>
+<I>scroller.xxx</I> and <I>arrowButton.xxx</I> styleSheet values.
+</TD></TR>
+
+<TR>
+<TD>scrollBar.buttonPositions</TD>   <TD>Symbol</TD>  <TD>#bottom</TD>     <TD>one of #bottom, #top or #around</TD>
+</TR>
+<TR>
+<TD>scrollBar.level</TD>             <TD>Integer</TD> <TD>0</TD>           <TD>3D level of the scrollBar</TD>
+</TR>
+<TR>
+<TD>scrollBar.scrollerBordered</TD>  <TD>Boolean</TD> <TD>false</TD>       <TD>scroller should have a border within the scrollBar</TD>
+</TR>
+<TR>
+<TD>scrollBar.elementSpacing</TD>    <TD>Integer</TD> <TD>0</TD>           <TD>spacing between buttons and scroller</TD>
+</TR>
+<TR>
+<TD>scrollBar.disableButtons</TD>    <TD>Boolean</TD> <TD>false</TD>       <TD>disable buttons as required</TD>
+</TR>
+
+<TR></TR>
+
+<TR>
+<TD>scroller.viewBackground</TD>     <TD>Color | Image</TD> <TD><I>inherited</I></TD>        <TD>viewBackground color</TD>
+</TR>
+
+<TR>
+<TD>scroller.fullViewBackground</TD> <TD>Color | Image</TD> <TD><I>.viewBackground</I></TD>   <TD>viewBackground if no thumb</TD>
+</TR>
+
+<TR>
+<TD>scroller.thumbColor</TD>         <TD>Color | Image</TD> <TD><I>.viewBackground</I></TD>   <TD>color of the thumb</TD>
+</TR>
+
+<TR>
+<TD>scroller.shadowColor</TD>        <TD>Color | Image</TD> <TD>Black</TD>                   <TD>3D shadow color</TD>
+</TR>
+<TR>
+<TD>scroller.lightColor</TD>         <TD>Color | Image</TD> <TD>White</TD>                    <TD>3D light color</TD>
+</TR>
+<TR>
+<TD>scroller.thumbShadowColor</TD>   <TD>Color | Image</TD> <TD>Black</TD>                   <TD>3D shadow of thumb</TD>
+</TR>
+<TR>
+<TD>scroller.thumbLightColor</TD>    <TD>Color | Image</TD> <TD>White</TD>                   <TD>3D light of thumb</TD>
+</TR>
+<TR>
+<TD>scroller.thumbFrameColor</TD>    <TD>Color | Image</TD> <TD>nil</TD>              <TD>frame around thumb if non-nil</TD>
+</TR>
+<TR>
+<TD>scroller.ghostColor</TD>         <TD>Color | Image</TD> <TD>nil</TD>              <TD>color for old position of thumb if non-nil</TD>
+</TR>
+<TR>
+<TD>scroller.ghostFrameColor</TD>    <TD>Color | Image</TD> <TD>nil</TD>              <TD>frame around old position if non-nil</TD>
+</TR>
+<TR>
+<TD>scroller.ghostLevel</TD>         <TD>Integer</TD>       <TD>0</TD>                <TD>3D level of old position</TD>
+</TR>
+<TR>
+<TD>scroller.NTallyMarks</TD>        <TD>Integer</TD>       <TD>0</TD>                <TD>number of tallies to draw on thumb</TD>
+</TR>
+<TR>
+<TD>scroller.tallyLevel</TD>         <TD>Integer</TD>       <TD>0</TD>                <TD>3D level of tallies on thumb</TD>
+</TR>
+<TR>
+<TD>scroller.level</TD>              <TD>Integer</TD>       <TD>0</TD>                <TD>3D level of the scroller</TD>
+</TR>
+<TR>
+<TD>scroller.borderWidth</TD>        <TD>Integer</TD>       <TD>0</TD>                <TD>borderWidth of thumb</TD>
+</TR>
+<TR>
+<TD>scroller.thumbLevel</TD>         <TD>Integer</TD>       <TD>0</TD>                <TD>3D level of the thumb</TD>
+</TR>
+<TR>
+<TD>scroller.thumbInset</TD>         <TD>Integer</TD>       <TD>0</TD>                <TD>inset in pixels of the thumb</TD>
+</TR>
+<TR>
+<TD>scroller.thumbFixHeight</TD>     <TD>Boolean</TD>       <TD>false</TD>            <TD>WIN3 bug emulation - don't adjust thumbs size</TD>
+</TR>
+<TR>
+<TD>scroller.thumbEdgeStyle</TD>     <TD>Symbol</TD>        <TD>nil</TD>              <TD>style of edges (#soft, #nil)</TD>
+</TR>
+<TR>
+<TD>scroller.thumbEnteredColor</TD>  <TD>Color | Image</TD> <TD><I>.thumbColor</I></TD>       <TD>color of thumb if mouse entered</TD>
+</TR>
+<TR>
+<TD>scroller.thumbActiveLevel</TD>   <TD>Integer</TD>       <TD><I>.thumbLevel</I></TD>       <TD>3D level of thumb while moved</TD>
+</TR>
+<TR>
+<TD>scroller.middleButtonJump</TD>   <TD>Boolean</TD>       <TD>false</TD>            <TD>middle button makes thumb to move to that position</TD>
+</TR>
+<TR>
+<TD>scroller.newCursors</TD>         <TD>Boolean</TD>       <TD>false</TD>            <TD>use new pointer-cursor images</TD>
+</TR>
+<TR>
+<TD>scroller.thumbImage</TD>         <TD>Image</TD>         <TD>nil</TD>              <TD>bitmap image for the thumb</TD>
+</TR>
+<TR>
+<TD>scroller.handleImage</TD>        <TD>Image</TD>         <TD>nil</TD>              <TD>bitmap image for a thumb-handle
+<BR>(for handles a-la NeXT)</TD>
+</TR>
+
+<TR>
+<TD>scroller.autoRepeat</TD>         <TD>Boolean</TD> <TD>true</TD>    <TD>enable autorepeat pageUp/pageDown</TD>
+</TR>
+
+<TR>
+<TD>scroller.initialRepeatDelay</TD> <TD>Number</TD>  <TD>0.2</TD>     <TD>autorepeat initial delay in seconds</TD>
+</TR>
+
+<TR>
+<TD>scroller.repeatDelay</TD>        <TD>Number</TD>  <TD>0.1</TD>     <TD>repeat delay in seconds</TD>
+</TR>
+
+<TR></TR>
+
+<TD>button.backgroundColor</TD>            <TD>Color | Image</TD>        <TD><I>inherited</I></TD>              <TD>bg-color when passive</TD>
+</TR>
+<TR>
+<TD>button.foregroundColor</TD>            <TD>Color | Image</TD>        <TD><I>inherited</I></TD>              <TD>fg-color when passive</TD>
+</TR>
+<TR>
+<TD>button.activeBackgroundColor</TD>            <TD>Color | Image</TD>        <TD><I>.backgroundColor</I></TD>        <TD>bg-color when active (pressed)</TD>
+</TR>
+<TR>
+<TD>button.activeForegroundColor</TD>            <TD>Color | Image</TD>        <TD><I>.foregroundColor</I></TD>        <TD>fg-color when active (pressed)</TD>
+</TR>
+<TR>
+<TD>button.enteredBackgroundColor</TD>            <TD>Color | Image</TD>        <TD><I>.backgroundColor</I></TD>       <TD>bg-color when mouse entered</TD>
+</TR>
+<TR>
+<TD>button.enteredForegroundColor</TD>            <TD>Color | Image</TD>        <TD><I>.foregroundColor</I></TD>       <TD>fg-color when mouse entered</TD>
+</TR>
+<TR>
+<TD>button.disabledBackgroundColor</TD>            <TD>Color | Image</TD>        <TD><I>.backgroundColor</I></TD>      <TD>bg-color when disabled</TD>
+</TR>
+<TR>
+<TD>button.disabledForegroundColor</TD>            <TD>Color | Image</TD>        <TD><I>.foregroundColor</I></TD>      <TD>fg-color when disabled</TD>
+</TR>
+<TR>
+<TD>button.shadowColor</TD>          <TD>Color | Image</TD>    <TD><I>inherited</I></TD>            <TD>shadow color for edges</TD>
+</TR>
+<TR>
+<TD>button.lightColor</TD>           <TD>Color | Image</TD>    <TD><I>inherited</I></TD>            <TD>light color for edges</TD>
+</TR>
+
+<TR>
+<TD>button.activeLevel</TD>          <TD>Integer</TD>          <TD>0</TD>                <TD>3D level when pressed</TD>
+</TR>
+<TR>
+<TD>button.passiveLevel</TD>         <TD>Integer</TD>          <TD>0</TD>                <TD>3D level when passive</TD>
+</TR>
+<TR>
+<TD>button.borderWidth</TD>          <TD>Integer</TD>          <TD>0</TD>                <TD>2D borderWidth</TD>
+</TR>
+<TR>
+<TD>button.font</TD>                 <TD>Font</TD>             <TD><I>inherited</I></TD> <TD>font; defaults to label-font</TD>
+</TR>
+<TR>
+<TD>button.edgeStyle</TD>            <TD>Symbol</TD>           <TD>nil</TD>              <TD>style of edges (#soft, #nil)</TD>
+</TR>
+
+<TR></TR>
+
+<TR>
+<TD>label.font</TD>                  <TD>Font</TD>           <TD><I>inherited</I></TD>              <TD>font; defaults to general font</TD>
+</TR>
+<TR>
+<TD>label.foregroundColor</TD>       <TD>Color | Image</TD>  <TD>Black</TD>              <TD>foreground color of label</TD>
+</TR>
+<TR>
+<TD>label.backgroundColor</TD>       <TD>Color | Image</TD>  <TD>White</TD>              <TD>background color of label</TD>
+</TR>
+
+<TR></TR>
+
+<TR>
+<TD>popup.borderWidth</TD>           <TD>Integer</TD>           <TD>0</TD>              <TD>borderWidth of popupMenus</TD>
+</TR>
+<TR>
+<TD>popup.level</TD>                 <TD>Integer</TD>           <TD>0</TD>              <TD>3D level of popupMenus</TD>
+</TR>
+<TR>
+<TD>popup.hideOnRelease</TD>         <TD>Boolean</TD>           <TD>true</TD>           <TD>hide the menu when button is released slowly
+<BR>(it always hides when released quickly)</TD>
+</TR>
+<TR>
+<TD>popup.shadow</TD>                <TD>Boolean</TD>           <TD>false</TD>          <TD>draw IRIX-like shadow below the menu</TD>
+</TR>
+
+<TR></TR>
+
+<TR><TD>table is incomplete - to be completed ...</TD></TR>
+
+</TABLE>
+
+<H2><A NAME="COLORS" HREF="#I_COLORS">Color allocation strategy</A></H2>
+
+These days, all systems support full 24bit true color displays.
+So you may skip this chapter.
+<P>
+On systems where a limited number of colors is displayed from a
+palette (i.e. 8bit pseudoColor displays),
+the system may run out of available colors if too many of them are to be
+displayed simultaneously. This can happen if (many) color bitmaps are displayed.
+<P>
+<CITE>Smalltalk/X</CITE> offers two color allocation schemes:
+<UL>
+<LI>allocate as required
+<LI>allocate from a fixed palette
+</UL>
+With the first strategy (which is the default), colors will be allocated
+as required until the display runs out of available colors. If Images are
+displayed and no more colors are available, the nearest colors will be used
+for all following requests .Further display of bitmap images will use the
+set of already allocated colors for dithering.
+<BR>
+This may result in poor image quality in some
+situations. For example, if two images are displayed, where the first allocated
+many slightly different red-toned colors, and there are no reasonable
+green colors left for the second image.
+In this case, the first image will look great, while the second
+image will look very ugly.
+<BR>
+Another disadvantage of this scheme is that it may take away required
+colors from other (non <CITE>ST/X</CITE>) applications.
+<P>
+With the second strategy, <CITE>Smalltalk/X</CITE> preallocates a number of
+colors right at startup time.
+These are equally distributed over the whole range of colors (i.e. the color cube).
+Later requests are satisfied using <STRONG>only</STRONG> those colors for
+image display (by taking the nearest color and/or dither).
+<BR>
+This may result in suboptimal quality for the average image, but
+avoid the worst case, since there will always be 'nearby'-colors available with
+an acceptable error.
+Thus, the above two images can both be displayed with some less than perfect,
+but still usable quality.
+<BR>
+Another advantage is that the total number of used colors can be controlled,
+leaving colors for other (non <CITE>ST/X</CITE>) applications.
+<P>
+To enable the second strategy, add a line as:
+<CODE><PRE>
+    Color getColorsRed:6 green:6 blue:4 on:Display.
+</PRE></CODE>
+to your <CODE>'private.rc'</CODE> file.
+<BR>
+The above will preallocate 6x6x4 colors from the color cube at startup time
+(i.e. 6 grades of red and green, 4 grades of blue; for a total of 144 colors).
+On an 8bit display, this will leave 112 colors for other applications.
+<P>
+Beside the 6x6x4 color cube, other combinations are possible;
+if you want to leave lots of colors for other applications, try a 2x3x2 color cube).
+<P>
+The new launcher's display setting dialog contains a toggle, to
+enable/disable the color cube allocation scheme for a reasonable color cube (4x8x4 i.e. 128 colors).
+
+
+
+<H2><A NAME="HOSTSTUFF"      HREF="#I_HOSTSTUFF">Host specific setup </A></H2>
+
+Host specific setup consists mainly of printer setup - read and understand the
+contents of <CODE>'host.rc'</CODE>.
+Other host specific stuff includes the NNTPServer definition (for the newsReader).
+There may be more in the future.
+
+
+
+<H3><A NAME="PRINTER"        HREF="#I_PRINTER">Printer Setup </A></H3>
+
+This chapter is more or less obsolete - on Windows, ST/X uses host printing.
+On Unix, it uses postscript and sends it to the "lpr" command.
+<P>
+
+<CITE>Smalltalk/X</CITE> supports various printers - but currently,
+only for text printing (with bold, normal and italic attributes)
+<BR>
+Graphic printing is only possible with Postscript printers
+<BR>
+(however, using ghostscript, you can print graphics on the others as well).
+<P>
+Printers directly supported are:
+<UL>
+<LI>dumb (no attributes) printers [text only]
+<P>
+<LI>Epson FX compatible printers [text only]
+<P>
+<LI>HP Laserjet compatible printers [text only]
+<P>
+<LI>Postscript printers [text & graphics]
+</UL>
+For each printer type, a corresponding class exists.
+To define the printer, bind that class to the global variable <CODE>Printer</CODE>
+in your <CODE>"h_xxx.rc"</CODE> file.
+<BR>
+Have a look at the existing <CODE>"h_xxx"</CODE> files for more details.
+<P>
+You can also change the printer settings from the launcher's menu.
+
+<P>
+Graphic printing on postscript printers is done using the public domain
+<CODE> PSGraphicsContext</CODE> package (from the manchester goodies).
+<BR>
+(A customer was kind enough to return fixes and permit
+ redistribution ...)
+<P>
+The sources are found in the directory <CODE>"goodies/postscript"</CODE>.
+These classes are autoloaded when first accessed.
+<BR>
+However, the postscript package is currently not fully functional
+- some graphics request (pattern filling) are ignored or not handled correctly.
+<BR>
+Fixes are being prepared and may be
+included in the next release or provided as a patch.
+<BR>
+
+
+
+<H2><A NAME="MISCSTUFF"       HREF="#I_MISCSTUFF">Other configuration settings</A></H2>
+
+Most of the things described below are already reasonably configured.
+So normally, you don't have to care for these settings.
+<P>
+Notice:
+<BR>
+In versions above 2.10.4, most of these settings can also be changed from
+the launcher's <VAR>settings</VAR> menu, which is more convenient than
+entering expressions in a workspace.
+
+
+<H3><A NAME="AUTOLOAD"       HREF="#I_AUTOLOAD">Autoloaded Packages</A></H3>
+
+The user preferences include a set of package names, which should be automatically loaded
+when <CITE>Smalltalk/X</CITE> is started without an image file.
+<P>
+Packages include dependency information; therefore, all prerequisite packages and referenced packages
+are also loaded (before and after the package itself, respectively).
+
+<H3><A NAME="AUTOLOADEDCLASSES"       HREF="#I_AUTOLOADEDCLASSES">Autoloaded Classes</A></H3>
+
+Note: this is no longer recommended. Please use the package load
+mechanisms.
+<P>
+<CITE>Smalltalk/X</CITE> supports autoloading of classes.
+Autoloaded classes
+are loaded on demand, whenever the first message is sent to it
+(usually, an instance creation message).
+<BR>
+Technically, this is done by
+installing a stub class initially, which will fileIn the real class whenever
+first used and forward the message to the now-loaded real class.
+Many demo and game applications are installed this way.
+<BR>
+This means that all these demo classes do not eat up lots of memory
+space.
+<BR>However, applications using autoloaded classes
+will come up slower (due to the compilation)
+when started the first time.
+<BR>
+After the initial load, these should behave just like any other class.
+<P>
+Autoloaded classes are installed during early startup by the <CODE>"smalltalk.rc"</CODE>
+script, by invoking the method <CODE>Smalltalk installAutoloadedClasses</CODE>.
+<BR>
+This reads all files called <CODE>"abbrev.stc"</CODE> found under the current
+packagePath. When executing in the development environment,
+the packagePath defaults to <CODE>"../../.."</CODE> (i.e. one directory level above
+the stx-TOP directory).
+<BR>
+When executing in the runtime environment, the packagePat defaults to
+<CODE>"/opt/smalltalk/packages"</CODE> (resp. <CODE>"\programs\eXept\SmalltalkX\packages"</CODE>
+under win32).
+<P>
+In order to add your own classes/tools to be autoloaded,
+create a file named <CODE>"abbrev.stc"</CODE> which lists the classNames
+and fileNames (where the class is to be found), and place it in some directory
+beside the stx-TOP directory.
+<P>
+If you want to rescan the directory hierarchy for changed or added
+<CODE>"abbrev.stc"</CODE> files, while in the running Smalltalk,
+perform the following two operations in a workspace:
+<A TYPE="example" INFO="reread the abbreviationFile">
+<CODE><PRE>
+    Smalltalk installAutoloadedClasses.
+</PRE></CODE></A>
+<BR>
+The newest fileBrowser also provides a menu-item to read an individual <CODE>"abbrev.stc"</CODE> file
+in its stx-tools menu.
+<P>
+
+Since no methods (and therefore no source information) is present before
+such a class is actually loaded, the SystemBrowser has no
+way to show any source information or documentation.
+<BR>
+You can force a class to be loaded into the system,
+either by evaluating the expression:
+<CODE><PRE>
+    <VAR>className</VAR> autoload
+</PRE></CODE>
+or by using the browser's <VAR>load</VAR> function from its classLists popupMenu,
+or by double-clicking on the class in the browser.
+<P>
+Historic background:
+<BR>
+The name <CODE>"abbrev.stc"</CODE> originates from times were ST/X was
+running on systems with fileName length limitations (Sys5 with 14 characters,
+or MSDOS with 8.3 characters), and there was a need to provide className-to-fileName
+information somewhere. In the meantime, those old systems are no longer supported,
+and the abbrev files are used to provide autoload information.
+
+
+
+<H4><A NAME="LAZYLOAD"       HREF="#I_LAZYLOAD">Lazy loading</A></H4>
+
+By default, autoloaded classes are loaded lazy; this means that the
+compiler does not compile the classes methods (during the autoload operation),
+but instead installs empty method stubs.
+These are unexecutable methods which are compiled
+(to byteCode) when first executed.
+<BR>
+<VAR>Lazy loading</VAR> results in somewhat faster startup of these
+classes (since no compilation is done),
+but leads to short delays later when methods are first executed.
+<BR>
+Also, for classes consisting of many methods, only those that are actually
+called will be fully installed - resulting in somewhat smaller
+storage requirements.
+<P>
+(you may notice this short compilation delay, when playing with the DrawTool:
+<BR>
+try to move an object and notice a short delay when doing so the
+very first time. After that, no more delays are noticed).
+<BR>
+<P>
+<VAR>Lazy loading</VAR> is enabled by a line:
+<CODE><PRE>
+    Autoload compileLazy:true.
+</PRE></CODE>
+in the <CODE>"smalltalk.rc"</CODE> file.
+<BR>
+Remove this line or add "<CODE>Autoload compileLazy:false</CODE>" to
+your <CODE>"private.rc"</CODE> file, if you don't like this feature.
+
+
+<H3><A NAME="COMPILER" HREF="#I_COMPILER">Compiler Switches</A></H3>
+
+By default, the <CITE>Smalltalk/X</CITE> incremental compiler is configured
+to output warnings when non standard (i.e. <CITE>ST/X</CITE> only)
+language constructs are used.
+This can be turned off by adding a line such as:
+<CODE><PRE>
+    Compiler warnSTXSpecials:false
+</PRE></CODE>
+to your <CODE>"private.rc"</CODE> or <CODE>"smalltalk.rc"</CODE> file.
+<BR>
+(Of course, you can also evaluate this expression in a workspace at any time
+later).
+<P>
+Up to ST-80 vsn 4, underscores were not allowed in identifiers.
+In new systems, underscores are accepted. If you want to fileIn code
+from PP's OVST vsn 2 or later, use:
+<CODE><PRE>
+    Compiler allowUnderscoreInIdentifier:true
+</PRE></CODE>
+With the above, the compiler will still produce warnings if an underscore
+is encountered in an identifier. These can be turned off with:
+<CODE><PRE>
+    Compiler warnUnderscoreInIdentifier:false
+</PRE></CODE>
+<P>
+If you don't like warnings at all, turn them off completely with:
+<CODE><PRE>
+    Compiler warnings:false
+</PRE></CODE>
+<P>
+The new launcher's <VAR>settings</VAR> menu contains entries to change these flags
+in a more convenient way.
+
+<H3><A NAME="LOGDOITS" HREF="#I_LOGDOITS">Logging doIt Execution</A></H3>
+
+All of your changes are normally logged in a file called
+<CODE>"changes"</CODE> in your current working directory
+(see ``<A HREF="../tools/cbrowser/TOP.html">using the ChangesBrowser</A>'').
+<BR>
+However, to avoid having the changeFile growing too fast,
+expressions evaluated
+by <VAR>doIt</VAR>, <VAR>printIt</VAR> and <VAR>inspectIt</VAR>
+are not logged by default.
+<BR>
+You can turn on logging of them by adding:
+<CODE><PRE>
+    Smalltalk logDoits:true
+</PRE></CODE>
+to one of your startup files (or by evaluating it in a workspace).
+
+
+<H3><A NAME="TRANSCRIPT" HREF="#I_TRANSCRIPT">Changing Transcript's Buffer Size</A></H3>
+
+By default, the <A HREF="../tools/misc/TOP.html#TRANSCRIPT">Transcript</A>
+keeps the most recent 300 lines. The number of remembered lines
+can be changed by:
+<CODE><PRE>
+    Transcript lineLimit:<VAR>numberOfLines</VAR>
+</PRE></CODE>
+Notice, that you cannot add this line to <CODE>"private.rc"</CODE>, since at the time this
+file is read, the <CODE>Transcript</CODE> is not yet open.
+<BR>
+You have to add it in
+<CODE>"smalltalk.rc"</CODE>
+<STRONG>after</STRONG> the
+<CODE><PRE>
+    TextCollector newTranscript
+</PRE></CODE>
+line.
+<P>
+Future versions of <CODE>"smalltalk.rc"</CODE> may be changed to read a second
+private file (say <CODE>"private2.rc"</CODE>) at the end.
+Then, this would be the right place to add the above lineLimit expression.
+
+<H3><A NAME="MESSAGES" HREF="#I_MESSAGES">Turning off Messages</A></H3>
+
+Both the runtime system (VM) and some classes output informal
+and error messages occasionally. You may want to turn these off;
+either to not confuse end-users,
+or because you want to redirect
+<CITE>ST/X's</CITE> standard output/standard error to some other program
+and don't want those messages mix with the output.
+<P>
+These messages can be turned off with:
+<UL>
+<LI>VM informational messages:
+<BR>
+<CODE><PRE>
+    Smalltalk infoPrinting:false
+</PRE></CODE>
+Among others, this disables the garbage collectors reclamation messages.
+<P>
+
+<LI>VM error messages:
+<BR>
+<CODE><PRE>
+    Smalltalk debugPrinting:false
+</PRE></CODE>
+Among others, this disables internal error messages and stackBacktraces.
+<P>
+
+<LI>information messages from Smalltalk classes:
+<BR>
+<CODE><PRE>
+    Object infoPrinting:false
+</PRE></CODE>
+This disables all messages which are produced by the <CODE>#infoPrint:</CODE>
+method in the <CODE>Object</CODE> class.
+<BR>
+(which is used by other classes to output information messages)
+</UL>
+
+For the VM messages, there are also command line arguments to turn them off:
+<CODE><PRE>
+    stx -noDebugPrint -noInfoPrint ...
+</PRE></CODE>
+
+
+
+<H3><A NAME="TOOLTIPS" HREF="#I_TOOLTIPS">Tooltips (Fly-By-Help)</A></H3>
+
+Tooltips are enabled/disabled via the launcher's <I>"Help"</I>-<I>"Tooltips (FlyBy Help)"</I> menu item.
+<BR>
+Notice, that this settings default value is stored and retrieved from the settings file
+<CODE>"settings.stx"</CODE>, which is written via the save-button in the settings dialog.
+
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif" ALT="[stx-logo]">
+Copyright &copy; 1996 Claus Gittinger Development & Consulting, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.64 $ $Date: 2016-11-11 22:47:41 $
+</BODY>
+</HTML>

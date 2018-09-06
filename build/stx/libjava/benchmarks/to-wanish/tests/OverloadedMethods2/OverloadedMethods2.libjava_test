@@ -1,0 +1,15 @@
+inst := JAVA OverloadedMethods2 new.
+
+duration := Time millisecondsToRun: [
+	n timesRepeat: [
+		inst doSmth: 0.
+		inst doSmth: ''.
+		inst doSmth: self.
+		inst doSmth: JAVA java lang Object new.
+		inst doSmth: $c.
+		inst doSmth: 1.
+		inst doSmth: false
+	].
+].
+
+Transcript showCR: 'EXECUTION TIME: ' , duration printString.

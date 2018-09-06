@@ -1,0 +1,33 @@
+/* XPM */
+static char *menu_font_24x24_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"24 24 2 1",
+/* colors */
+"a c black",
+"b c none",
+/* pixels */
+"bbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbabbbbbbbbbbbb",
+"bbbbbbbbbbaabbbbbbbbbbbb",
+"bbbbbbbbbbaaabbbbbbbbbbb",
+"bbbbbbbbbaaaabbbbbbbbbbb",
+"bbbbbbbbbaaaaabbbbbbbbbb",
+"bbbbbbbbabaaaabbbbbbbbbb",
+"bbbbbbbbabbaaaabbbbbbbbb",
+"bbbbbbbabbbaaaabbbbbbbbb",
+"bbbbbbbabbbbaaaabbbbbbbb",
+"bbbbbbabbbbbaaaabbbbbbbb",
+"bbbbbbabbbbbbaaaabbbbbbb",
+"bbbbbabbbbbbbaaaabbbbbbb",
+"bbbbbaaaaaaaaaaaaabbbbbb",
+"bbbbabbbbbbbbbaaaabbbbbb",
+"bbbbabbbbbbbbbaaaaabbbbb",
+"bbbabbbbbbbbbbbaaaabbbbb",
+"bbbabbbbbbbbbbbaaaaabbbb",
+"baaaaaabbbbbaaaaaaaaaabb",
+"bbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbb",
+};

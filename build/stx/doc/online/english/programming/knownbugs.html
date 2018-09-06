@@ -1,0 +1,133 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - known bugs</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="debugging.html">     <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="prev"></A>
+<A NOPRINT HREF="TOP.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="back"></A>
+<A NOPRINT HREF="contexts.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="next"></A>
+
+
+<H1>Known bugs</H1>
+
+<H2>Contents</H2>
+
+<UL>
+ <LI><A NAME="I_INTRO" HREF="#INTRO">Introduction</A>
+ <LI><A NAME="I_SYSTEMBUGS" HREF="#SYSTEMBUGS">Known bugs in the VM/runtime system</A>
+ <LI><A NAME="I_COMPILERBUGS" HREF="#COMPILERBUGS">Known bugs in the compiler</A>
+ <LI><A NAME="I_BASICCLASSBUGS" HREF="#BASICCLASSBUGS">Known bugs in basic classes</A>
+ <LI><A NAME="I_WIDGETBUGS" HREF="#WIDGETBUGS">Known bugs in user interface/widget classes</A>
+ <LI><A NAME="I_TOOLBUGS" HREF="#TOOLBUGS">Known bugs in the programming tools/development environment</A>
+</UL>
+
+<A NAME="INTRO" HREF="#I_INTRO"><H2>Introduction</H2></A>
+
+This document summarizes known bugs and gives workarounds if possible.
+<BR>
+Of course, this list should be empty - but as everyone knowns, software
+is never completely bug free. We will constantly fix bugs to try to
+remove items from this list.
+
+<P>
+You are welcome to report bugs if you find any. To do so, please fill out
+the form below and submit it via mail.
+
+<HR>
+<FORM>
+
+<UL><LI>Affected area:
+<BLOCKQUOTE>
+   system:<input type="radio" name="area">
+   compiler:<input type="radio" name="area">
+   basic classes:<input type="radio" name="area">
+   widgets:<input type="radio" name="area">
+   tools:<input type="radio" name="area">
+   other:<input type="radio" name="area">
+</BLOCKQUOTE>
+
+<LI>Area detail (i.e. class name(s):
+<BLOCKQUOTE>
+<input name="areaDetail" size=30><P>
+</BLOCKQUOTE>
+
+<LI>Priority:
+<BLOCKQUOTE>
+<UL>
+  <LI><input type="radio" name="prio"> crashes smalltalk and no workaround available
+  <LI><input type="radio" name="prio"> crashes smalltalk and workaround is possible;
+      <BR>ANSI incompatibility;
+  <LI><input type="radio" name="prio"> wrong behavior (w.r.t. documentation)
+  <LI><input type="radio" name="prio"> inconvenient behavior, wrong display
+</UL>
+</BLOCKQUOTE>
+
+<LI>Bug descritpion:
+<BLOCKQUOTE>
+   <textarea name="description" rows=5 ></textarea>
+</BLOCKQUOTE>
+
+<LI>Workaround (if known):
+<BLOCKQUOTE>
+   <textarea name="workaround" rows=5 ></textarea>
+</BLOCKQUOTE>
+
+<LI>Comments (additional comments, scenario to repeat bug etc.):
+<BLOCKQUOTE>
+   <textarea name="comments" rows=5 ></textarea>
+</BLOCKQUOTE>
+
+</UL>
+
+<input type="submit" value="mail to developers">
+
+</FORM>
+<HR>
+
+<A NAME="SYSTEMBUGS" HREF="#I_SYSTEMBUGS"><H2>Known bugs in the VM/runtime system</H2></A>
+
+<A NAME="COMPILERBUGS" HREF="#I_COMPILERBUGS"><H2>Known bugs in the compiler</H2></A>
+
+<A NAME="BASICCLASSBUGS" HREF="#I_BASICCLASSBUGS"><H2>Known bugs in basic classes</H2></A>
+
+<A NAME="WIDGETBUGS" HREF="#I_WIDGETBUGS"><H2>Known bugs in user interface/widget classes</H2></A>
+
+<A NAME="TOOLBUGS" HREF="#I_TOOLBUGS"><H2>Known bugs in the programming tools/development environment</H2></A>
+
+
+
+
+<H3>Renaming classes which have class variables in the browser</H3>
+
+<DL>
+<DT>Affected area
+<DD>
+Browser
+
+<DT>Description
+<DD>
+When a class is renamed, its class variables are renamed to reflect the
+change. (in ST/X, class variables are stored in the global variable table
+with a special name of: "<VAR>className</VAR>:<VAR>varName</VAR>").
+<BR>
+However, interpreted code still references class variables by the old name.
+<BR>
+
+<DT>Workaround
+<DD>reaccept methods which access class variables after the rename.
+
+<DT>Priority
+<DD>4
+
+</DL>
+
+
+<P>
+<P>
+<HR>
+Doc $Revision: 1.5 $ $Date: 2016-01-21 16:22:40 $
+</BODY>
+</HTML>

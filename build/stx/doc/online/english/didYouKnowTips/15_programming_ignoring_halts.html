@@ -1,0 +1,22 @@
+<HTML>
+  <HEAD>
+    <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+    <TITLE>Ignoring halts and breakPoints</Title>
+  </HEAD>
+  <BODY>
+
+Sometimes, a <code>halt</code> or <code>breakPoint:</code> message send
+occurs in a loop and you may want to fast-forward over a particular debugger invocation.
+Inside a loop, you typically want to ignore all halts except for the one in the
+last loop code iteration.
+<P>
+For this, the debugger includes a submenu under the <NOBR>"<I>BreakPoint</I>"-"<I>Ignore this BreakPoint</I>"</NOBR>
+which allows for a particular halt- or breakpoint to be ignored for some number of times or
+for a given time duration or forever.
+<P>
+This ignore-feature can be turned off either from within the debuggers menu, or via the
+launchers <NOBR>"<I>Classes</I>"-"<I>Special</I>"-"<I>Stop Ignoring Halts</I>"</NOBR> menu function,
+or via the <A HREF="../tools/misc/TOP.HTML#BREAKPOINTLIST"><I>BreakPoint Browser</I></A>.
+
+  </BODY>
+</HTML>

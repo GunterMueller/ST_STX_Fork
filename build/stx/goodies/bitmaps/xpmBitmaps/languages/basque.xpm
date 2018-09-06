@@ -1,0 +1,30 @@
+/* XPM */
+static char *basque_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 20 3 1",
+/* colors */
+"a c red",
+"b c #009900",
+"c c white",
+/* pixels */
+"bbbaaaaaaaaaaaccccaaaaaaaaaaabbb",
+"bbbbaaaaaaaaaaccccaaaaaaaaaabbbb",
+"bbbbbbaaaaaaaaccccaaaaaaaabbbbbb",
+"abbbbbbbaaaaaaccccaaaaaabbbbbbba",
+"aabbbbbbbbaaaaccccaaaabbbbbbbbaa",
+"aaaabbbbbbbbaaccccaabbbbbbbbaaaa",
+"aaaaaabbbbbbbaccccabbbbbbbaaaaaa",
+"aaaaaaaabbbbbbccccbbbbbbaaaaaaaa",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"aaaaaaaabbbbbbccccbbbbbbaaaaaaaa",
+"aaaaaabbbbbbbaccccabbbbbbbaaaaaa",
+"aaaabbbbbbbbaaccccaabbbbbbbbaaaa",
+"aabbbbbbbbaaaaccccaaaabbbbbbbbaa",
+"abbbbbbbaaaaaaccccaaaaaabbbbbbba",
+"bbbbbbaaaaaaaaccccaaaaaaaabbbbbb",
+"bbbbaaaaaaaaaaccccaaaaaaaaaabbbb",
+"bbbaaaaaaaaaaaccccaaaaaaaaaaabbb",
+};

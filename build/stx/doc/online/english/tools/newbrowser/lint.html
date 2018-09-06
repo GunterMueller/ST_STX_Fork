@@ -1,0 +1,112 @@
+<HEAD>
+<TITLE>Using the New System Browser - Lint Checks</TITLE>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="codeCoverage.html">  <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">    <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="warn.html"> <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+
+<H2><A NAME="LINT_CHECKS" HREF="TOP.html#I_LINT_CHECKS">Lint Checks</A></H2>
+
+
+A number of code quality checks and code transformations
+are available via the
+"<I>Debug (Static Code Checks)</I>" menu item,
+or the toolbar button. Also, if the smallsense package is loaded and enabled
+(see the Launcher's "tools" -> "smallLint" menu), checks are performed
+"as you type" and possible problems marked with a little icon
+in the left gutter area of a code view.
+
+<P>
+Many additional rules have been added to the original
+set of rules, which were provided by the original refactory browser package.
+As of February 2015, there are roughly 140 rules, many of which check for
+multiple code smells and bug patterns.
+<P>
+The operations should be self describing (see the rationale display).
+
+Here is a short, possibly incomplete list of checks:
+<UL>
+<LI>Bugs
+  <UL>
+  <LI>Messages sent but not implemented
+  <LI>Overrides a "special" message
+  <LI>References an undeclared variable
+  <LI>Sublcass responsibility not defined
+  <LI>Precedence check: "<code>A | B = C</code>" instead of "<code>A | (B = C)</code>"
+  <LI>Precedence check: "<code>C includes:e not</code>" instead of "<code>(C includes:e) not</code>"
+  <LI>Precedence check: "<code>(E and:[C indexOf:e]) ~~ 0</code>" instead of "<code>E and:[(C indexOf:e) ~~ 0]</code>"
+  <LI>True/False instead if true/false
+  <LI>Variable used but not defined (no value)
+  </UL>
+<LI>Bugs (Smalltalk/X specific)
+  <UL>
+  <LI>Leftover debug code
+  <LI>Misplaced ^ in "<code>ifTrue:ifFalse:</code>" (stc bug workaround)
+  <LI>Missing national language translations in dialogs
+  <LI>Missing national language translations in resource files
+  </UL>
+<LI>Bugs (Squeak specific)
+  <UL>
+  <LI>Leftover debug code
+  <LI>Missing national language translations in menus
+  <LI>Platform dependent user functions
+  <LI>Sends a depricated message
+  <LI>Sends super new initialize
+  </UL>
+<LI>Possible Bugs
+<LI>Intention Revealing
+  <UL>
+  <LI>Class variable capitalization
+  <LI>Doesn't use result of a "<code>collect:</code>" or "<code>select:</code>"
+  <LI>Guarding clauses
+  <LI>Instance variable captialization
+  <LI>Law of demeter
+  <LI>Literal array containing only byte valued integers
+  <LI>Literal array containing only characters
+  <LI>Method defined in all subclasses, but not in super
+  <LI>Obfuscated lazy initialization
+  <LI>Sends "<code>add:/remove:</code>" to external collection
+  <LI>Temporary variable captialization
+  <LI>Unnecessary size check
+  <LI>Uses contains instead of includes
+  <LI>Uses "<code>size=0</code>", "<code>=nil</code>" or "<code>at:1</code>"
+  <LI>uses "<code>detect:ifNone:</code>" instead of "<code>contains:</code>" or "<code>includes:</code>"
+  <LI>Uses "<code>do:</code>" instead of "<code>collect:</code>" or "<code>select:</code>"
+
+  </UL>
+<LI>Misc
+<LI>Unnecessary Code
+</UL>
+
+and transformations:
+<UL>
+<LI>General
+  <UL>
+  <LI>Rewrite old style assignments "_" to ":="
+  <LI>Rewrite old style exception handlers (eq. "<code>handle:do:</code>") to Ansi versions (eg."<code>on:do:</code>")
+  </UL>
+<LI>Transformations (Smalltalk/X specific)
+<LI>Transformations (Squeak specific)
+</UL>
+
+<HR>
+<A HREF="codeGeneration.html">Next: Code Generation</A>
+
+
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif" ALT="[stx logo]">
+Copyright &copy; 2000 eXept Software AG, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+<HR>
+Doc $Revision: 1.6 $ $Date: 2015-02-20 17:57:52 $
+
+</BODY>
+</HTML>

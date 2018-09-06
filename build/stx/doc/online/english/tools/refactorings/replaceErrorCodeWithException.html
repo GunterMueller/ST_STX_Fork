@@ -1,0 +1,44 @@
+<html><head><title>Refactoring: 
+
+
+
+Replace Error Code with Exception</title></head><body>
+
+
+<H1>
+
+
+
+Replace Error Code with Exception</H1>
+<P><I><CENTER>
+
+A method returns a special code to indicate an error.</CENTER></I></P>
+<P><B><CENTER>
+
+Throw an exception instead.</CENTER></B></P>
+
+<PRE>
+	int withdraw(int amount) {
+		if (amount &gt; _balance)
+			return -1;
+		else {
+			_balance -= amount;
+			return 0;
+		}
+	}
+
+</PRE><P><CENTER><IMG SRC="arrow.gif"/></CENTER></P>
+<PRE>
+	void withdraw(int amount) throws BalanceException {
+		if (amount &gt; _balance) throw new BalanceException();
+		_balance -= amount;
+	}
+
+</PRE>
+
+
+<P>For more information see page 
+	<font color="#FF0000">310</font>
+	of <I>Refactoring</I></P>
+
+<P /><P /><P><CENTER><A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A></CENTER></P></body></html>

@@ -1,0 +1,10 @@
+.
+├── README.txt
+├── start_stx.sh
+├── stx
+│   ├── bin
+│   └── lib
+├── stx.tar.bz2
+└── tutorial.st
+
+3 directories, 4 files

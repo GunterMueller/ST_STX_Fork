@@ -1,0 +1,181 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - fileOut format</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="classicBugs.html"> <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html"> <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="language.html"> <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>The Smalltalk fileOut format</H1>
+
+<H2>Introduction</H2>
+
+This document describes the format used for source and object interchange.
+<BR>
+That format is based on an ascii representation of objects and can be used
+to transport source code and objects to another Smalltalk/X system
+or between different Smalltalk dialects.
+<BR>
+The format was originally defined for <CITE>ST-80</CITE>
+<A HREF="../overview/literature.html#[4]">[4]</A>
+and is compatible with <CITE>ST-80</CITE>, <CITE>Digitalk</CITE>,
+<CITE>VisualWorks</CITE>, <CITE>VisualAge</CITE>, <CITE>Squeak/Pharo</CITE>,
+<CITE>GNU Smalltalk</CITE> and of course,
+<CITE>Smalltalk/X</CITE> (plus many others, I guess).
+<P>
+Chunk files are typically used for source code transportation,
+although they can also be used to store/retrieve general objects.
+Some applications use this to save user settings or history items.
+<P>
+In Smalltalk/X, chunk files are used as Smalltalk source code files (which can be
+loaded with fileIn or compiled with the stc compiler),
+as interchange format for code and for storage in a source code management system,
+such as CVS, SVN or Mercurial.
+
+<H2>Definition</H2>
+
+A file in this format consists of so called <VAR>chunks</VAR> of text.
+These are delimited by single exclamation marks (!) and all exclamation
+marks within a chunk are doubled (!!). Doubled exclamation marks may not
+contain a space in between.
+<P>
+A chunk consisting of whitespace only is called an <VAR>empty chunk</VAR>.
+<P>
+With the exception of method chunks which follow a "methodsFor:" chunk (described below),
+each non empty chunk must represent a syntactically correct Smalltalk expression
+or statement list (expressions separated by full-stops).
+
+<H2>Objects</H2>
+
+Objects are stored as a chunk which, when evaluated, recreates the original
+object. Typically, an object's <I>storeString</I> is used for that purpose.
+For everything except literal objects (Number constants, String constants or Symbols),
+the <I>storeString</I> consists of a <CODE>#new</CODE> or <CODE>#basicNew</CODE> message,
+followed by messages to set the instance variables.
+For example, a storeString chunk for a Set with 1,2 and 4 as elements looks like:
+<CODE><PRE>
+    (Set new add:1; add:2; add:3; yourself)
+    !
+</PRE></CODE>
+Self referencing or otherwise recursive objects can (usually)
+not be represented in this format. Those must be transported via another mechanism:
+either the <A HREF="binaryStore.html">Binary Object Format</A>,
+or an <A HREF="xmlObjectStorage.html">XML representation</A>.
+Both are supported by corresponding class libraries and protocol.
+
+
+<H2>Class definitions</H2>
+
+Class definition chunks consist of a message that create the original class.
+Typically, it is one of the subclass creation messages defined in
+<CODE>Class</CODE>.
+<BR>
+A class definition chunk may look like:
+<CODE><PRE>
+    Object subclass:#Foo
+	   instanceVariableNames:'foo bar'
+	   classVariableNames:''
+	   poolDictionaries:''
+	   category:'Demos'
+    !
+</PRE></CODE>
+(again notice: this really <B>IS</B> a normal message send to the Object class.
+In a browser, search for implementors of it and find an implementation in or above the Class class)
+<P>
+<CITE>ST/V</CITE> uses a variant of the above (it does not support
+class categories). ST/X also supports those in
+both the incremental and the batch compilers:
+<CODE><PRE>
+    Foo subclass:#Bar
+	   instanceVariableNames:'baz'
+	   classVariableNames:''
+	   poolDictionaries:''
+    !
+</PRE></CODE>
+
+<CITE>ST/X</CITE> allows classes to be declared private for some other class;
+a private class is only visible to its <VAR>owning class</VAR>.
+If both a private class AND a non-private class with the same name
+(say "<VAR>Foo</VAR>") exist,
+the identifier "<VAR>Foo</VAR>" will refer to the private class within the
+owning class, and to the global class everywhere else.
+<BR>
+To access the global class within the owning class, use a namespace override
+construct, such as "<VAR>Smalltalk::Foo</VAR>".
+<BR>
+Private classes are declared with:
+<CODE><PRE>
+    SomeSuperclass subclass:#NameOfClass
+	   instanceVariableNames:''
+	   classVariableNames:''
+	   privateIn:OwningClass
+    !
+</PRE></CODE>
+Support for private classes is an <CITE>ST/X</CITE> feature - it may not be
+available on other smalltalk systems.
+
+
+<H2>Method definitions</H2>
+
+Method definitions consist of an initial <CODE>methodsFor:</CODE>
+chunk, followed by one or more method chunks.
+When evaluated at fileIn time, the first chunk will create an
+instance of ClassCategoryReader which itself will continue to
+read and compile the method chunks up to an empty chunk.
+<BR>
+Typical method definitions look like:
+<CODE><PRE>
+    !Foo methodsFor:'examples'!
+
+    foo
+	"this is the foo method"
+
+	^ 'foo'
+    !
+
+    bar
+	"this is the bar method"
+
+	^ 'bar'
+    ! !
+</PRE></CODE>
+<P>
+Notice the empty chunk at the end.
+<P>
+<CITE>ST/V</CITE> uses a variant of the above (it also lacks method
+categories). This is also supported
+by both the incremental and the batch compilers in <CITE>ST/X</CITE>:
+<CODE><PRE>
+    !Bar methods!
+
+    foo
+	"this is the foo method"
+
+	^ 'foo'
+    !
+
+    bar
+	"this is the bar method"
+
+	^ 'bar'
+    ! !
+</PRE></CODE>
+
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 1995 Claus Gittinger Development &amp; Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.21 $ $Date: 2016-07-11 09:24:05 $
+</BODY>
+</HTML>

@@ -1,0 +1,90 @@
+"{ package:'stx:libjava' }"
+
+|files|
+
+'loading package stx:libjava ...' printCR.
+
+Scanner allowDollarInIdentifier:true.
+
+"/
+"/ base system
+"/
+
+files := #(
+	'Java.st'
+	'JavaVM.st'
+
+	'JavaConstantPool.st'
+
+	'JavaObject.st'
+	'JavaClass.st'
+	'JavaMethod.st'
+	'JavaMethodWithException.st'
+	'JavaMethodWithHandler.st'
+	'JavaNativeMethod.st'
+	'JavaContext.st'
+	'JavaProcess.st'
+
+	'JavaClassReader.st'
+	'JavaDecompiler.st'
+
+	'JavaExceptionTableEntry.st'
+	'JavaLocalVariableTable.st'
+	'JavaLocalVariableTableEntry.st'
+
+	'JavaRef.st'
+	'JavaClassRef.st'
+	'JavaField.st'
+	'JavaFieldref.st'
+	'JavaMethodref.st'
+	'JavaInterfaceMethodref.st'
+	'JavaNameandType.st'
+	'JavaClassPointerRef.st'
+	'JavaBuiltInClassPointerRef.st'
+
+	'JavaUnresolvedConstant.st'
+	'JavaUnresolvedRefConstant.st'
+	'JavaUnresolvedClassConstant.st'
+	'JavaUnresolvedFieldrefConstant.st'
+	'JavaUnresolvedMethodrefConstant.st'
+	'JavaUnresolvedInterfaceMethodrefConstant.st'
+	'JavaUnresolvedNameandTypeConstant.st'
+	'JavaUnresolvedStringConstant.st'
+
+	'JavaView.st'
+	'JavaTopView.st'
+	'JavaPopUpView.st'
+	'JavaEmbeddedFrameView.st'
+
+	'SmalltalkAppletContext.st'
+	'SmalltalkAppletStub.st'
+).
+
+(Smalltalk loadClassLibraryIfAbsent:'libjava') ifTrue:[
+    |handle loaded|
+
+    loaded := OrderedCollection new.
+    handle := ObjectFileLoader loadedObjectHandles 
+		detect:[:h | |cls|
+		    cls := h classes firstIfEmpty:nil.
+		    cls notNil and:[cls package = 'stx:libjava']
+		]
+		ifNone:nil.
+    handle notNil ifTrue:[
+	handle classes do:[:c| c isMeta ifFalse:[loaded add:c classFilename]].
+    ].
+    files := files asOrderedCollection.
+    loaded do:[:f| files remove:f ifAbsent:[]].
+].
+
+files size > 0 ifTrue:[
+  files do:[:s|
+    '.' print.
+    Smalltalk fileIn:s.
+  ].
+  ' ' printCR.
+].
+'done (stx:libjava).' printCR.
+!
+
+

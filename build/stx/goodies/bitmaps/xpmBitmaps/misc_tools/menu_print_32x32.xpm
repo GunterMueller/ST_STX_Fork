@@ -1,0 +1,38 @@
+/* XPM */
+static char *menu_print_32x32_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"24 24 7 1",
+/* colors */
+"a c white",
+"b c black",
+"c c #000080",
+"d c yellow",
+"e c #808080",
+"f c #C0C0C0",
+"g c none",
+/* pixels */
+"gggggggggggggggggggggggg",
+"gggggggggggggggggggggggg",
+"gggggggggggggggggggggggg",
+"ggggggggbbbbbbbbbbbbbggg",
+"gggggggbaaaaaaaaaaaabggg",
+"ggggggbaaccccccccaabgggg",
+"ggggggbaaaaaaaaaaaabgggg",
+"gggggbaaccccccccaabggggg",
+"gggggbaaaaaaaaaaaabbbbbg",
+"ggggbaaccccccccaabbbfbfb",
+"ggggbaaaaaaaaaaaabbfbffb",
+"gggbbbbbbbbbbbbbbbfbffbb",
+"ggbfffffffffffffffbffbfb",
+"gbffffffffffffffffbfbffb",
+"gbbbbbbbbbbbbbbbbbbbffbg",
+"gbfffffffffeeeefffbffbbg",
+"gbfffffffffddddfffbfbfbg",
+"gbffffffffffffffffbbffbg",
+"gbbbbbbbbbbbbbbbbbbffbgg",
+"ggbeeeeeeeeeeeeeebffbggg",
+"ggbffffffffffffffbfbgggg",
+"gggbbbbbbbbbbbbbbbbggggg",
+"gggggggggggggggggggggggg",
+"gggggggggggggggggggggggg",
+};

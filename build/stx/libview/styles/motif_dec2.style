@@ -1,0 +1,61 @@
+; View defaultStyle:#'motif_dec2' 
+;
+; dec's motif style (as seen on an ultrix4.4 system)
+; like motif, but using different (brown, pessimistic, newEngland-weather) colors
+;
+;
+; $Header: /cvs/stx/stx/libview/styles/motif_dec2.style,v 1.9 1999-10-27 13:28:03 stefan Exp $
+
+#if Screen current hasGreyscales
+# if Screen current hasColors
+viewGrey                    Color red:79 green:67 blue:57 
+scrollerVB                  Color red:72 green:60 blue:52
+# else
+viewGrey                    Color grey:67 
+scrollerVB                  Color grey:50
+# endif
+#endif
+
+#include 'motif.common'
+
+comment  'another DEC motif look alike\\brownish colors & larger fonts.'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Angelehnt an `motif'' auf DEC Systemen\Brauner Hintergrund und großer Zeichensatz.'
+#endif
+#if (Language == #french) or:[Language == #fr]
+comment  'Comme 'motif'' avec les systèmes de DEC'
+#endif
+
+
+menuFont             Font family:'helvetica' face:'medium' style:'roman' size:14
+
+#if Screen current hasColors
+lightColor                Color red:90 green:75 blue:63
+shadowColor               Color red:36 green:30 blue:26
+#else
+lightColor                Color grey:85
+shadowColor               Color grey:30
+#endif
+
+textCursor.type            #block
+
+scroller.viewBackground    =scrollerVB 
+scroller.thumbColor        =viewGrey
+
+selection.foregroundColor  Color black
+
+label.foregroundColor      Color black
+
+button.activeBackgroundColor      =scrollerVB
+button.activeForegroundColor      Color black
+arrowButton.activeForegroundColor =viewGrey  
+
+menu.viewBackgroundColor         =scrollerVB
+menu.disabledForegroundColor     Color darkGrey
+
+ruler.backgroundColor            =scrollerVB
+
+#if (Screen current hasColors and:[Screen current depth > 4])
+transcript.backgroundColor       =viewGrey
+#endif

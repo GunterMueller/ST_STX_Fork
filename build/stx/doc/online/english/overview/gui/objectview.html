@@ -1,0 +1,58 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X GUI classes - ObjectView</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="scroller.html"> <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html#I_COLLECTIONS">     <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+
+
+<H2>ObjectView</H2>
+The objectView class provides a generic framework for editors which
+manipulate structured graphics.
+It is abstract in that it does not define the behavior of its
+components or how they are represented.
+However, it provides the common functions required to:
+<UL>
+<LI>select elements
+<LI>move elements (dragging)
+<LI>scroll the document in both directions
+<LI>redraw elements as uncovered
+<LI>zoom in/out
+</UL>
+Concrete subclasses have to define how elements are to be highlighted and
+what to do when elements are (double) clicked upon.
+<P>
+ObjectViews can operate on any object which responds to some basic protocol,
+which consists of:
+<UL>
+<LI>returning its boundary
+<LI>hit-detection when given a point in 2D space
+<LI>redraw itself in a graphicContext
+</UL>
+<P>
+Concrete examples of how objectView is used are found in <CODE>DrawTool</CODE>,
+<CODE>LogicTool</CODE> and <CODE>DirectoryView</CODE>.
+<P>
+ObjectView has proven to provide a very valuable framework for this kind of
+editor - saving lots of coding work. Several commercial applications
+have been built basing the graphic on sibclasses of it.
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif">
+Copyright © 1995 Claus Gittinger Development & Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.13 $ $Date: 2016-01-21 16:22:39 $
+</BODY>
+</HTML>

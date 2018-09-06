@@ -1,0 +1,35 @@
+<html><head><title>Refactoring: 
+Introduce Explaining Variable</title></head><body>
+
+
+<H1>
+Introduce Explaining Variable</H1>
+<P><I><CENTER>
+You have a complicated expression.</CENTER></I></P>
+<P><B><CENTER>
+Put the result of the expression, or parts of the expression, in a temporary variable with a name that explains the purpose.</CENTER></B></P>
+<PRE>
+if ( (platform.toUpperCase().indexOf("MAC") &gt; -1) &amp;&amp;
+      (browser.toUpperCase().indexOf("IE") &gt; -1) &amp;&amp;
+       wasInitialized() &amp;&amp; resize &gt; 0 )
+ {
+   // do something
+ }
+</PRE><P><CENTER><IMG SRC="arrow.gif"/></CENTER></P>
+<PRE>
+	final boolean isMacOs     = platform.toUpperCase().indexOf("MAC") &gt; -1;
+	final boolean isIEBrowser = browser.toUpperCase().indexOf("IE")  &gt; -1;
+	final boolean wasResized  = resize &gt; 0;
+
+	if (isMacOs &amp;&amp; isIEBrowser &amp;&amp; wasInitialized() &amp;&amp; wasResized)
+	{
+		// do something
+	}
+</PRE>
+
+
+<P>For more information see page 
+	<font color="#FF0000">124</font>
+	of <I>Refactoring</I></P>
+
+<P /><P /><P><CENTER><A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A></CENTER></P></body></html>

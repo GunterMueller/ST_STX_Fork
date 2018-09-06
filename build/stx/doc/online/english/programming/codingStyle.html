@@ -1,0 +1,1332 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - coding style</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="selectors.html"> <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html"> <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="guiCodingGuidelines.html"> <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<PRE>
+			First learn computer science and all the theory.
+			Next develop a programming style.
+			Then forget all that and just hack.
+
+			(George Carrette)
+
+</PRE>
+
+<H1>Coding Style used in Smalltalk/X Classes</H1>
+
+<H2>Contents</H2>
+
+<UL>
+<LI><A NAME="I_INTRODUCTION"                HREF="#INTRODUCTION">Introduction</A>
+<LI><A NAME="I_GENERAL"                     HREF="#GENERAL">General: English</A>
+<LI><A NAME="I_CLASS_DOCUMENTATION"         HREF="#CLASS_DOCUMENTATION">Class Documentation</A>
+  <UL>
+  <LI><A NAME="I_VERSION_METHOD"            HREF="#VERSION_METHOD">The version method</A>
+  <LI><A NAME="I_DOCUMENTATION_METHOD"      HREF="#DOCUMENTATION_METHOD">The documentation method</A>
+  </UL>
+<LI><A NAME="I_CLASS_VERSION"               HREF="#CLASS_VERSION">Class Version</A>
+<LI><A NAME="I_METHOD_DOCUMENTATION"        HREF="#METHOD_DOCUMENTATION">Method Documentation</A>
+<LI><A NAME="I_VARIABLE_AND_METHOD_NAMING"  HREF="#VARIABLE_AND_METHOD_NAMING">Variable and Method Naming</A>
+<LI><A NAME="I_GLOBAL_VARIABLES"            HREF="#GLOBAL_VARIABLES">Global Variables</A>
+<LI><A NAME="I_CODE_COMMENTS"               HREF="#CODE_COMMENTS">Code Comments</A>
+<LI><A NAME="I_CODE_INDENTATION"            HREF="#CODE_INDENTATION">Code Indentation</A>
+<LI><A NAME="I_CODE_FORMAT_IN_STX"          HREF="#CODE_FORMAT_IN_STX">Code Format in ST/X</A>
+<LI><A NAME="I_CODE_STYLE_EXAMPLES"         HREF="#CODE_STYLE_EXAMPLES">Examples for "dos" and "don'ts"</A>
+<LI><A NAME="I_NO_OBFUSCATION"              HREF="#NO_OBFUSCATION">Avoid Obfuscated Code</A>
+<LI><A NAME="I_DONT_DO_THIS"                HREF="#DONT_DO_THIS">Things you should not do</A>
+
+
+
+<P>
+</UL>
+
+
+
+<H2><A NAME="INTRODUCTION" HREF="#I_INTRODUCTION">Introduction</A></H2>
+
+This document describes the coding style and conventions
+used in <CITE>Smalltalk/X's</CITE> class library.
+<BR>
+The author is aware of the fact, that coding style is a very personal
+matter and should not be enforced by dictators.
+<BR>
+However, in this system, when you add code to be published and read by others,
+you are not alone. Therefore, it is useful to follow some rules, to enable other programmers
+an easier entry into the system. Also, there exist tools which extract
+useful information and can format neat documents if you follow those rules
+in your classes. Thus, when it's about time to deliver documentation
+on your project, a whole bunch of work is done for free.
+<BR>
+Experienced Smalltalk programmers may especially look into this document, because
+the <CITE>ST/X</CITE> coding style is slightly different from what other Smalltalkers consider to
+be "readable code".
+<P>
+If you have any suggestions or additions on this theme, let me know about it.
+<P>
+Finally: a lot of un-maintanability comes from programmers who are lazy typers -
+short or obfuscated class-, method- and variable names.
+Be reminded again, that code is usually written only once but read and possibly modified
+many many times over its lifetime. The time you save now will be spent manyfold by others
+(and possibly yourself) later, when you have to decipher the code in a year or so...
+<P>
+I admit that some of <CITE>Smalltalk/X's</CITE> code does not follow those guidelines:
+some code is very old and the author(s) of the code have matured as we all do.
+Bad code is and will be refactored or reformatted, whenever we encounter it.
+
+
+<H2><A NAME="GENERAL" HREF="#I_GENERAL">General: English</A></H2>
+
+All program code must be written in english.
+<P>
+Motivation:
+<BR>
+ Some time ago, I have been shocked by getting a Smalltalk program which was
+ written in another (national) language. All method, class and argument names where
+ completely unreadable to me. And I could only hardly understand, what the program was doing.
+ I still occasionally receive individual methods with local variables and comments
+ in another language, and it is very hard at times to understand it.
+<P>
+ Therefore this guideline forces everyone to use a language which is nderstood by everyone.
+ I request programs to be written in english, using english class names, english selectors,
+ english comments and variable names.
+ As every programmer - even from the far east - understands english,
+ but not vice versa,  this should make communication easier.
+<P>
+ This has nothing to do with '<i>western cultural imperialism</i>',
+or an '<i>egocentric view of the world</i>',
+or ignoring the culture and language of others - especially minorities,
+ as some (pseudo liberals) might complain,
+ but is purely practical: it should support the comprehensability of programs among
+ a worldwide programmer community.
+<p>
+ Even the authors of the ST/X system are not a native english,
+ so they too have to be careful at times.
+<p>
+By the way: the reason for not supporting non-Latin1 characters in variable names,
+class names and message selectors is part of that enforcing: by not being able to
+use other characters, people from east europe, the near or far east are less
+motivated to use non-english language in the program.
+<p>
+There is nothing to prevent you from using non-Latin characters in string constants,
+the UI or any other non-code areas.
+
+<H2><A NAME="CLASS_DOCUMENTATION" HREF="#I_CLASS_DOCUMENTATION">Class Documentation</A></H2>
+
+In <CITE>Smalltalk/X</CITE>, every class contains a method category called
+<VAR>"documentation"</VAR> in the class protocol.
+You will find at least two methods named
+"<CODE>version*</CODE>" and "<CODE>documentation</CODE>" there:
+<P>
+
+<H3>The "version*" Methods</H3>
+The "<CODE>version</CODE>" methods are exclusively maintained by the
+source code manager. They tell the system where to find a classes source code
+in the repository. A a class may be stored in multiple repositories,
+so occasionally you may find multiple version methods in a class.
+You should never ever touch or remove them. Details are described below.
+<P>
+If you report an error (to <CITE>eXept</CITE>),
+this string can be used to identify the exact version of the class.
+<P>
+
+
+<H3>The "documentation" Method</H3>
+The "<CODE>documentation</CODE>" method's comment should describe the class,
+its uses and (if of public interest) its instance and class variables.
+<P>
+In many classes, you will find an additional <CODE>#examples</CODE> method.
+This should contain a comment giving typical uses
+(often ready to select &amp; <i>doIt</i>).
+<P>
+These methods consist of comments only; they are not meant to be executed.
+(actually, if evaluated, they will return the receiver;
+since empty methods are semantically equivalent to a "<CODE>^ self</CODE>" method).
+<P>
+In contrast to other Smalltalk systems, which keep the class comment in the "comment"
+instance variable, <cite>ST/X</cite> uses the method comment.
+The reason is simply that the comment resides in memory,
+whereas all method sources are typically only present in external files.
+So, this scheme saves a lot of memory, if long and descriptive comments are present,
+and there is no 'performance' or 'memory usage' argument against them -
+which is exactly what we want.
+
+<P>
+The
+<A HREF="../tools/sbrowser/TOP.html">SystemBrowser</A>
+automatically shows the documentation text
+(found either in the "<CODE>documentation</CODE>" method  or in the class comment)
+whenever a class is selected.
+Thus, to be nice to other people browsing through the system,
+please add a short description of what your class is about in that method.
+<P>
+Also, the document viewer can extract a classes' documentation method's
+text and present it cutely formatted - you get your documentation almost
+for free, if you stick to these conventions! This is similar to what JavaDoc does.
+Try it by switching to any class (say: OrderedCollection), and select
+the browser's "<I>Class</I>-<I>Documentation</I>-<I>HTML-Documentation</I>" menu item.
+<P>
+Notice, that the documentation may even include so called "executable code examples";
+these are code fragments embedded in "<CODE>[exBegin]</CODE>" ... "<CODE>[exEnd]</CODE>" brackets.
+The documentation viewer will extract those and add an extra examples section at the
+end, where you can even click on those examples, to execute it directly in the viewer.
+<P>
+As already mentioned: do not worry about memory usage when creating documentation methods - simple methods
+which return self (as empty methods do) all share a common piece of code,
+so there will <STRONG>NOT</STRONG> be thousands of empty methods filling
+up your memory.
+(to be exact: there is some little overhead per method created
+by the method object itself - not by the method's code).
+However, for production code,
+<CITE>stc</CITE> provides a command line argument, to skip
+all methods in the <VAR>documentation</VAR> category;
+to allow building more compact class libraries).
+
+<P>
+BTW: from the author's experience, you should not delay documentation too much.
+Write them down as soon as possible - otherwise you may not find the time to
+do so later - or you may simply forget to do it.
+Also, keep in mind that it may
+take more time to add those comments later, since you may have to reflect about
+what is going on. From our experience, the later the documentation is written
+in a project, the higher is its cost.
+
+
+
+<H2><A NAME="CLASS_VERSION" HREF="#I_CLASS_VERSION">Class Version</A></H2>
+
+If you use one of the <CITE>Smalltalk/X</CITE> sourcecode managers,
+every class will contain a "<CODE>version*</CODE>" method, which
+returns the classes version string. The version method is maintained by the sourcecode manager;
+do NEVER manually change these strings (unless you know exactly what you are doing).
+<BR>
+The actual format of that string is specific to the underlying source code mechanism
+(for <VAR>CVS</VAR>, it looks similar to: <NOBR><CODE>"$<CODE>Header</CODE>$"</CODE></NOBR> ;
+for <VAR>SVN</VAR>, it is: <CODE>"Id: filename.st ..."</CODE>).
+<BR>
+These version strings will be expanded (by the source code management)
+to the actual version;
+for example, in the <CODE>Array</CODE> class, you will find something like:
+<CODE><PRE>
+    version_CVS
+	^ '$</CODE><CODE>Header: /cvs/stx/stx/libbasic/Array.st,v 1.149 2010/09/21 06:57:51 stefan Exp $'
+</PRE></CODE>
+
+<BR>
+Notice:
+<BR>
+Currently only managers for some repository types are provided, and some are
+experimental or provided as guideline for imlementors. Well supported are CVS,
+SVN, P4 (Perforce) and HG (Mercurial).
+You have to write your own manager class (derived from <CODE>AbstractSourceCodeManager</CODE>)
+if another mechanism is to be used.
+
+<P>
+If such a version method is present, and the source code manager is enabled,
+access to the repository is possible from the browser,
+and done automatically to retrieve a classes' source
+(based on the actual version of that class in the system).
+<P>
+When classes are checked in via the browser, version methods
+are automatically updated or created (if not already present).
+In normal operation, the handling of those is transparent,
+and you can safely forget about it ... it's useful to know about it, anyway.
+
+
+
+
+
+
+<H2><A NAME="METHOD_DOCUMENTATION" HREF="#I_METHOD_DOCUMENTATION">Method Documentation</A></H2>
+
+Every method should contain (at least) two comments:
+<UL>
+<LI>a comment giving a short description
+<BR>
+this comment should be the very first comment in the method, and should be placed
+between the selector &amp; argument specification and the local variables declaration
+or first statement.
+<BR>
+It should give a short description of what this method does, and what the
+arguments are to be used for.
+<P>
+Please, use this type of comment, since <CITE>ST/X</CITE> provides special printout
+features, which allow you to create printed documentation automatically,
+based on these comments (similar to javadoc).
+<BR>
+See the
+<A HREF="../tools/sbrowser/menu.html#CLASS_MENU.PRINTOUT_PROT">SystemBrowsers printOut protocol</A>
+functions - and the
+<A HREF="../classDoc/TOP.html">online class documentation</a>.
+
+<P>
+<LI>a comment giving example uses of this method
+<BR>
+this comment (or multiple comments) should be at the very end of the method,
+and give some example(s) of how the method is used.
+Also, as required, failure examples should be given.
+<BR>
+This comment will allow select &amp; printIt from the browser, without a need to
+type in any expressions.
+Thus providing simple "<VAR>HowTo examples</VAR>" to readers of your code.
+<P>
+Please put this comment at the end, not right after the selector at the top.
+The reason is that those examples may hinder easy code reading - especially if they
+are long. I admit, that during development, programmers tend to hate the need to scroll
+down, but other readers will later appreciate the improved readability.
+</UL>
+Example (from Collection's enumeration protocol):
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+    select:aBlock
+	<FONT color="#007F00">"return a new collection
+	 with all elements from the receiver,
+	 for which the argument aBlock evaluates to true"</FONT>
+
+	|newCollection|
+
+	newCollection := self <B>species</B> <B>new</B>.
+	self <FONT color="#0000FF"><B>do:</B></FONT>[:each |
+	    (aBlock <B>value:</B>each) <FONT color="#0000FF"><B>ifTrue:[</B></FONT>
+		newCollection <B>add:</B>each
+	    ].
+	].
+	^ newCollection
+
+	<FONT color="#007F00">"
+	 #(1 2 3 4) select:[:e | e odd]
+	 (1 to:10) select:[:e | e even]
+	"</FONT></PRE></CODE></TD></TR></TABLE>
+
+
+
+<H2><A NAME="VARIABLE_AND_METHOD_NAMING" HREF="#I_VARIABLE_AND_METHOD_NAMING">Variable and Method Naming</A></H2>
+
+Of course, you should give your variables and methods descriptive names.
+You should do so in any programming language.
+In Smalltalk, a common trick is to encode the expected type of a variable
+in the name
+(which you don't have to in static typed languages).
+For example, names like "<VAR>originPoint</VAR>", "<VAR>lineString</VAR>"
+or "<VAR>collectedNames</VAR>" make it totally clear,
+what the variables/arguments are used for.
+<P>
+By convention, global variables and class variables should start with
+an upper case character - other variables and selectors start with a lower case
+character.
+You may find a small number of exceptions to these rules, where selectors
+start with either an underscore or an upper case character. Those are typically to
+avoid conflicts or to provide compatibility with other programming languages.
+
+
+
+
+
+<H2><A NAME="GLOBAL_VARIABLES" HREF="#I_GLOBAL_VARIABLES">Global Variables</A></H2>
+
+Think twice before using globals - usually there is no need for them!
+<BR>
+Beside increasing code complexity (by introducing side effects),
+use of globals may lead to conflicts if packages from different
+programming teams are merged and both use the same global name.
+Although the browser offers search functions for uses of globals,
+you have to manually edit (and think about) the code in this case.
+Avoid this by banning globals from your code.
+<P>
+In many situations, a global can be eliminated by
+by passing additional method arguments
+(which may even be an advantage later,
+offering more possibilities for reuse of a method).
+<P>
+Any need for a globally accessible state can easily be replaced by a private class variable instead
+and access be provided to other parts via getter/setter methods on the class side.
+<P>
+As an alternative to getter/setters, you may also use Classvariables (which are visible within
+a class and subclasses) or SharedPool variables, which are visible when explicitely named (imported) in
+a classes definition.
+
+
+<H2><A NAME="CODE_COMMENTS" HREF="#I_CODE_COMMENTS">Code Comments</A></H2>
+
+You don't need too many comments in your methods,
+if the code is clean and straight forward.
+Do not add comments just for the comment.
+<P>
+For example, a comment like:
+<TABLE width="100%" bgcolor="#eedddd"><TR><TD><CODE><PRE>
+	sum := sum + 1.         "add one to sum"
+</PRE></CODE></TD></TR></TABLE>
+<p>
+is stupid and filling your methods with this kind of "information"
+actually makes your code less readable.
+<BR>
+(You may wonder why this is mentioned here;
+we have seen departments where code "quality" was measured by counting comments,
+which ended in people doing above rubbish - only to make the codecheckers happy.)
+<P>
+Also, if you think that a variable needs a comment stating its use,
+think about changing the variable's name!
+For example, the following code is a (stupid) example for a bad variable name:
+<TABLE width="100%" bgcolor="#eedddd"><TR><TD><CODE><PRE>
+	|c "counter for blabla"|
+</PRE></CODE></TD></TR></TABLE>
+<p>
+why not give the variable that name right away? As in:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+	|counterForBlaBla|
+</PRE></CODE></TD></TR></TABLE>
+
+<P>
+And, similar, if a group of statements need an explanation as in:
+<TABLE width="100%" bgcolor="#eedddd"><TR><TD><CODE><PRE>
+	...
+	"read the data from file blabla"
+	...code to read data...
+	...and so on...
+	...
+</PRE></CODE></TD></TR></TABLE>
+I would suggest that you extract those statements into a separate method,
+name then according to what they do and invoke that method:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+	...
+	self readDataFromBlaBlaFile.
+	...
+</PRE></CODE></TD></TR></TABLE>
+<BR>
+Voila - the method's name is just as good as the original comment.
+
+<P>
+The above actually means, that as your code becomes more &amp; more readable and less-cryptic,
+less comments are needed.
+<P>
+
+<B>However, the above does not mean that your code should be completely uncommented.</B>
+A lot of public domain Smalltalk code is floating around, which is very hard to understand
+in not providing a single informative comment.
+This often makes it very hard to figure out the overall structure of a framework
+or application from reading the code. You have to run this code (either in your mind, or for real) to
+see what is going on.
+<p>
+Especially the collaboration and interface between classes and methods is hard
+to see without a hint from the original coder. In some code we found, it was not even clear, how
+to start the framework, how to correctly setup server processes and where to find configuration parameters.
+
+<P>
+That said, use the following rules:
+<ul>
+
+<li>
+Give a hint on how to startup and shutdown an application/server in a class comment or documentation method.
+And/or add example methods, which setup the objects for proper use and startup the application or
+provide code examples on how to use the framework.
+<p>
+
+<li>
+Provide a set of unit-tests, to describe the public protocol.
+<p>
+
+<li>
+If a group of objects collaborate, write a class comment which gives a rough overview.
+<p>
+
+<li>If you use special tricks or uncommon constructs,
+you should add a comment describing what is going on -
+for yourself and for others.
+
+<p>
+<li>still, every method should contain a comment describing what it does,
+and possibly a short doIt example to try it (as described above).
+
+</ul>
+
+<H2><A NAME="TUTORIAL_CODE" HREF="#I_TUTORIAL_CODE">Tutorial Code for Beginners</A></H2>
+
+In some methods (especially in some included example code),
+you may find comments, which seem to violate the above rules,
+in that they explain obvious things. For example, comments like:
+<I>" ... now open the view ..."</I>
+<P>
+The reason for those comments is that we expect these code-texts to be read mostly by newcomers -
+so that the code text is also used and read as an introductionary text.
+Therefore, more than usual is sometimes commented there.
+
+
+
+<H2><A NAME="CODE_INDENTATION" HREF="#I_CODE_INDENTATION">Code Indentation</A></H2>
+
+The question of how code should be indented is a very personal one
+and the discussion around it often emotional, sometimes almost "religious".
+<P>For that reason, we will not give any recommendations for <B>your</B> own code here (but read on, please).
+Instead, the two most commonly used styles are described in short here.
+Take the one that you (and your friends) find to be the easiest to read.
+<P>
+<UL>
+<LI>Lisp-style indent
+<BR>
+In this, all closing parenthesises and brackets are lined up at the end,
+<BR>
+for example:
+<CODE><PRE>
+    foo
+	"this method performs some fooBar.
+	 Sometimes even baz is done"
+
+	doingBar
+	    ifTrue:[
+		self fooBar.
+		[doingBaz]
+		    whileTrue:[
+			self baz].
+		self moreFooBar.
+		1 to:10 do:[:index |
+		    1 to:10 do:[:index2 |
+			self doMore]]]
+	    ifFalse:[
+		...
+		and so on]
+</PRE></CODE>
+This style of indentation is seen often in <CITE>ST-80</CITE> code,
+and some <CITE>ST-80</CITE> formatters automatically produce output in this kind.
+Some variations are possible, for example, you can put the <CODE>ifTrue:</CODE>
+and <CODE>whileTrue:</CODE> right behind the receiver (as below).
+<P>
+<LI>C style indent (used by the author)
+<BR>
+This style is roughly based on the C-indentation style used by
+Kernigham &amp; Ritchie.
+<BR>
+for example:
+<CODE><PRE>
+    foo
+	"this method performs some fooBar.
+	 Sometimes even baz is done"
+
+	doingBar ifTrue:[
+	    self fooBar.
+	    [doingBaz] whileTrue:[
+		self baz
+	    ].
+	    self moreFooBar.
+	    1 to:10 do:[:index |
+		1 to:10 do:[:index2 |
+		    self doMore
+		]
+	    ]
+	] ifFalse:[
+	    ...
+	    and so on
+	]
+</PRE></CODE>
+
+Also, variations are possible; for example, the opening brackets of blocks
+can be put onto a separate line, as in:
+<CODE><PRE>
+    foo
+	"this method performs some fooBar.
+	 Sometimes even baz is done"
+
+	doingBar ifTrue:
+	    [
+		self fooBar
+		[doingBaz] whileTrue:
+		    [
+			self baz
+		    ].
+		self moreFooBar.
+		1 to:10 do:
+		    [:index |
+			1 to:10 do:
+			    [:index2 |
+				self doMore
+			    ]
+		    ]
+	    ]
+	    ifFalse:
+		[
+		    ...
+		    and so on
+		]
+</PRE></CODE>
+However, this seems to spread the code for even small methods quite a lot.
+To many programmers, this makes the readability worse.
+<BR>
+A simple rule: <VAR>try to make your methods fit onto a page or screenful</VAR>
+
+(of course: <STRONG>not by putting all into oneliners ;-)</STRONG>).
+<BR>
+</UL>
+Readability is usually better if you do not have to scroll when looking at a method's code.
+Therefore, methods should be short.
+On the other hand, don't break up a method into many short methods just
+for this - find a useful compromise.
+Having too many too small methods also often hinders readability, as you will
+then have to navigate through all those tiny pieces of code to find your way.
+<P>
+Many other styles are possible. However, whichever you choose, follow these rules:
+<BR>
+<UL>
+<LI>use the style consistent
+<BR>
+try to not mix styles.
+Although, there are some situations, when you have to break out
+of your indentation (for example, if lines become too long) you should
+stick to a general style.
+<BR>
+Also, for very simple if- or while-blocks, you may decide to put the block
+right behind the selector - within the same line.
+<P>
+
+<LI>use indentation
+<BR>
+<STRONG>Never</CODE> write your code in a Fortran or Basic-style, without any
+indentation. It makes your code almost impossible to read.
+Don't think that you will never again look at some method and therefore don't
+need to indent and/or comment it - experience shows: you or someone else will.
+<BR>
+Also, some people think that it saves development time
+when writing code without indentation and formatting initially,
+and only format later, when the method is finished.
+<P>
+That is not the case, as from our experience,
+you will actually slow down development time when the code is unreadable.
+Cases are very very rare, that code runs without any debugging,
+and you will need more time to read the code in the debugger then.
+
+
+<P>
+
+<LI>the style should show the control flow
+<BR>
+If you use a style which still requires comments like "end of while"
+or "end if this or that if", rethink about it. After all, indentation should
+express exactly that; without the need for further explanations.
+<P>
+
+<LI>don't argue about styles
+<BR>
+I hate people arguing about indentation styles.
+Let others use whatever they like - just as you want them to let you do your
+work as you like.
+However, when working in a group, agree on a common style.
+Discuss it in the group before you start writing code. If you join an existing
+group, adapt to their style.
+</UL>
+
+
+<H2><A NAME="CODE_FORMAT_IN_STX" HREF="#I_CODE_FORMAT_IN_STX">Code Format in ST/X</A></H2>
+
+All of the above is valid for <B>your</B> own code.
+<P>
+However,
+eXept and the author already went throught the above discussion process,
+and if you donate your code, <B>you</B> are the newcomer to the team.
+Don't expect everyone else to adopt to your personal preferences,
+but adjust to theirs.
+<P>
+Initially, we did not ask for a strict coding guideline, but followed the "do not discuss" rule above.
+However, over time, a lot of code has found its way into <CITE>ST/X</CITE> which is hard to read simply
+for its different indentation and coding style.
+Also, some code is harder to read for beginners
+or needs mental analysis to understand.
+We do not want this situation to become worse in the future,
+and will reformat any old code as we encounter it and find time.
+<P>
+We want the <CITE>ST/X</CITE> code base to conform to a common indentation style for two
+reasons:
+<ul><li>newcomers should not be confused by various different styles
+<p>
+<li>to support graphical structure recognition<br>
+It is a matter of fact, that the human brain is able to perform quite a bit of preprocessing on
+the unconcious level, based on the pure layout and geometric arrangement of code.
+For example, loop structures should be visible as such, without even a need to read the actual
+message names - simply by how the code is arranged.
+Newcomers and infrequent programmers may not experience this, but to a long-time hacker,
+used to his style of indentation, a lot of pattern matching happens on this level.
+</ul>
+
+<P>
+Also, eXept requests that any code which is to go into the main stream of the <CITE>ST/X</CITE> code
+base (i.e. is to be published as part of the <CITE>ST/X</CITE> deployed package) conforms to the following coding style,
+simply because it is usually <B>us</B> who will have to deal with any error reports
+and questions about the code later.
+<P>
+The rules are defined to make this "pictoral structure matching" easy. They are:
+
+<ol>
+<li>Kernigham - Ritchie (KR) style indentation
+<br>Sorry to all Smalltalkers and Lispers: 98% of the world is indenting their code this way, and <CITE>ST/X</CITE>
+does so as well. It may well be true, that some of the reasons for Lisp and Smalltalk not being mainstream was due to their
+indentation style, which is hard to read for beginners (it may well be for a guru with 10 years of Smalltalk experience, but...).
+Very short loops (collection collect, select) or if-for-value can go into a single line.
+<p>
+
+<li>Indentation level is 4
+<br>2 is not enough to make alignment of closing bracket to opening keyword easy;
+8 is too much and usually leads to a need to scroll the editor to the right.
+Be careful, when editing ST-files in an external editor (which is stupid, anyway): the meaning of a Tab character
+in the file is "move to the next multiple-of-8 column". This "8" is independent of any of your personal preferences
+for how much the tab-key should indent.
+<br>No special indentations (such as a ^ statement being indented 2 colums to the left).
+<p>
+
+<li>Blocks which are NOT loops or conditionals should NOT be indented as such
+<br>Although Smalltalk makes no difference between a block argument which is defining a callback block
+(as used in GUI widgets) and blocks which are loop-blocks (as in the collection protocol) or conditionals,
+it definitely DOES make a difference to a programmer's mental model of it.
+<P>
+Therefore, we demand that ONLY loops and conditionals are indent KR-style.
+Callbacks, async block arguments and "if-for-value" blocks are not.
+Blocks which are not executed (i.e. assigned to a variable
+for reuse) should also not be indented as if they were control blocks.
+<p>
+Thus, a block assigned to a variable should be indented as:
+<table width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+    var := [ blocks code... ]
+</pre></code></table>
+or (for long blocks):
+<table width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+    var :=
+	[
+	   ...
+	   blocks code
+	   ...
+	]
+</pre></code></table>
+instead of:
+<TABLE width="100%" bgcolor="#eedddd"><TR><TD><CODE><PRE>
+    var := [
+       ...
+       blocks code
+       ...
+    ]
+</pre></code></table>
+which would require the programmer to look at and read the first line,
+to see that it is not a loop or conditional.
+<p>
+
+<li>Local block variables are declared in an extra line.
+<BR>If block locals are written after the opening bracket or block args, that line looks like a boolean-or message
+sent to some variable.
+You would have to actually "read" the code, in order to understand, that it's a variable declaration.
+If it is on an extra line, this begins with a "|" which is immediately identifyable as a declaration.
+You would not write method locals after the method selector in the first line - would you?
+<P>
+So block locals should be declared as:
+<table width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+    collection do:[:el |
+	| local1 local2 |
+	...
+    ].
+</pre></code></table>
+instead of:
+<TABLE width="100%" bgcolor="#eedddd"><TR><TD><CODE><PRE>
+    collection do:[:el | | local1 local2 |
+	...
+    ].
+</pre></code></table>
+Because the first looks much like an expression, and I have to read it
+(and cannot using my "graphical structure recognizer")
+<p>
+
+<li>One empty line separates the first statement from the selector, comment and locals. Period.
+<br>
+The first statement should not directly follow any of the above. In order to guide the reader where to
+start reading, it must be separated by an empty line.
+Separate local variable declarations from the comment also by an empty line.
+For very simple getter/setter or forwarder methods, which have no comment,
+you may ommit that empty line.
+<p>
+
+There is no need for an additional empty line between the method's selector and argument declaration
+and the method comment or locals declaration.
+Especially, your code should NOT put an empty line BEFORE any local variable
+declarations AND at the same time OMIT the one before the first statement, as in:
+<table width="100%" bgcolor="#eedddd"><TR><TD><CODE><PRE>
+    foo: arg1 bar: arg2
+
+	|local1 local2|
+	statement1.
+	statement2.
+	...
+</pre></code></table>
+instead, write:
+<table width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+    foo: arg1 bar: arg2
+	|local1 local2|
+
+	statement1.
+	statement2.
+	...
+</pre></code></table>
+the reason is that in the first version above, you have to look at and read the local variable
+declarations to find the first line of real code. Whereas in the later example,
+the layout already leads you there. Be reminded that the syntax highlighter
+usually emphasizes the first line, so your code would be presented as:
+<code><pre>
+    <b>foo:</b> arg1 <b>bar:</b> arg2
+	|local1 local2|
+
+	statement1.
+	statement2.
+	...
+</pre></code>
+
+
+<li>Method comment
+<br>Every method, except for simple getters/setters MUST have a method comment at the top
+(between selector and local variable declaration or code). The comment is delimited at the bottom by an empty line
+from the real start of the code or the declaration.
+<p>
+
+<li>Sample usage method comment
+<br>If there is a comment which demonstrates the example use (which is a very welcome thing to have),
+place it at the END, not at the beginning.
+<br>We understand, that it is convenient during development of new code to have it at the beginning (where it is
+easier to select and doIt for a hacker), it disturbs the flow of reading for others later.
+Usually, when trying to understand unknown code, it will be read top to bottom and the usage examples may
+force one to scroll down.
+<P>Also, tooltip messages and code completion hints are extracted from a method's
+first comment, and thus may get quite ugly and long if the usage example is at the top.
+<p>
+
+
+<li>When wrapping long lines, selectors are aligned to the left
+<br>When splitting a long message send among multiple lines,
+the followup lines are aligned at the left.
+<br>Thus write:
+<table width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+    ...
+    Dialog
+	request: 'some string'
+	initialAnswer: 'blablabla'
+	initialSelection: (4 to:6)
+</pre></code></table>
+NOT:
+<table width="100%" bgcolor="#eedddd"><TR><TD><CODE><PRE>
+    ...
+    Dialog
+		 request: 'some string'
+	   initialAnswer: 'blablabla'
+	initialSelection: (4 to:6)
+</pre></code></table>
+<p>
+The reason is that the right-aligning version makes it harder to see which keyword
+parts belong to the send and where it ends.
+<P>
+
+<li>Wrapping long lines: followup and/or in conditionals
+<br>When splitting a long conditional into multiple lines, the break should be done
+before an and/or keyword, and the remaining code be indented one level to the right,
+with the actual if-keyword indented at the original column,
+so it is nor confused with the code of the if-body (see below).
+<p>
+
+<li>Avoid complicated boolean expressions
+<br>Complicated combinations of and:/or:/not should be avoided.
+If possible, use nested ifs or guards. Sorry to mathematicans: most programmers are not,
+and it is often not obvious what the outcome of a complicated and-not-or-not combination will be.
+<br>
+Avoid double negation ("<code>notEmpty not</code>" or "<code>foo not ifFalse</code>");
+for each of them, there is a corresponding positive condition
+(i.e. use "<code>isEmpty</code>" instead or "<code>foo ifTrue</code>")
+<p>
+
+<li>Class documentation
+<br>Every class should have a documentation method consiting of a comment-only method.
+The class documentation should also contain hints as how the class interacts with other parts of the system,
+and how the class/framework is used. For frameworks, the project-definition class is a good place to put
+framework documentation.
+<P>
+
+<li>Examples
+<br>A convenient place to add examples (especially for complicated frameworks, which need configuration and/or
+special instantiated objects) is the "example" method on the class side.
+This may consist of comments only or contain real sample code. Unit tests alone are not a relacement for an
+example method which shows how a complex framework (like an application or server process) is started, because these
+unit tests are often badly commented and it is often difficult to decide which test is testing internal mechanisms as
+opposed to the outside api of a framework.
+<p>
+
+</ol>
+
+<H2><A NAME="CODE_STYLE_EXAMPLES" HREF="#I_CODE_STYLE_EXAMPLES">Examples for "dos" and "don'ts"</A></H2>
+
+<TABLE border width="100%">
+
+<TR><TD>if "for value":</TD></TR>
+<TR>
+<TD bgcolor="#eedddd">Do NOT write:<br><CODE><PRE>
+    foo := bla ifTrue:[
+	5
+    ] ifFalse:[
+	6
+    ].
+</PRE></CODE>
+<p>because it hides the "used as value" aspect of the code,
+<br>and makes the state-change (i.e. assignment) less visible</TD>
+<TD bgcolor="#eedddd">Instead, write:<br><CODE><PRE>
+    foo := bla ifTrue:[5] ifFalse:[6].
+</PRE></CODE><P>For long expressions, write:<br><CODE><PRE>
+    foo := bla
+	    ifTrue:[...]
+	    ifFalse:[...].
+</PRE></CODE><P>or, if very long:<br><CODE><PRE>
+    foo := bla
+	    ifTrue:[
+		...
+	    ]
+	    ifFalse:[
+		...
+	    ].
+</PRE></CODE>
+</TD>
+</TR>
+
+<TR></TR>
+
+<TR><TD>assigning blocks:</TD></TR>
+
+<TR>
+<TD bgcolor="#eedddd">Do not write:<br><CODE><PRE>
+    fooAction := [
+	...
+	statements
+	...
+    ].
+</PRE></CODE>
+<p>because it looks like a loop,
+<br> and makes the state-change (assignment) less obvious</TD>
+<TD bgcolor="#eedddd">Instead, write:<br><CODE><PRE>
+    fooAction :=
+	[
+	    ...
+	    statements
+	    ...
+	].
+</PRE></CODE></TD>
+</TR>
+
+<TR></TR>
+
+<TR><TD>long conditions:</TD></TR>
+
+<TR>
+<TD bgcolor="#eedddd">Do not write:<br><CODE><PRE>
+    (condition1 and:
+	[condition2 and:
+	    [condition3]])
+		ifTrue:[
+		    statements
+		]
+</PRE></CODE></TD>
+<TD bgcolor="#eedddd">Instead, write:<br><CODE><PRE>
+    (condition1
+	and:[ condition2
+	and:[ condition3 ]]
+    ) ifTrue:[
+	statements
+    ]
+</PRE></CODE></TD>
+</TR>
+
+<TR><TD>block locals</TD></TR>
+
+<TR>
+<TD bgcolor="#eedddd">Do not write:<br><CODE><PRE>
+    expr do:[:arg| |a b c|
+	statements]
+</PRE></CODE></TD>
+<TD bgcolor="#eedddd">Instead, write:<br><CODE><PRE>
+    expr do:[:arg |
+	|a b c|
+
+	statements
+    ].
+</PRE></CODE></TD>
+</TR>
+
+
+</TABLE>
+
+
+<H2><A NAME="NO_OBFUSCATION" HREF="#I_NO_OBFUSCATION">Avoid Obfuscated Code</A></H2>
+
+The following is an incomplete list of recommendations:
+<UL>
+<LI>ommitting a "^ self" to save some typing
+<P>
+Often, some alternative must return from a method after some other method is invoked.
+<BR>A typical example are guards, as in:
+<TABLE width="100%" bgcolor="#eedddd"><TR><TD><CODE><PRE>
+    ...
+    foo ifTrue:[
+	^ self doSomethingForFoo.
+    ].
+    bar ifTrue:[
+	^ self doSomethingForBar.
+    ].
+    ...etc...
+    ...
+</PRE></CODE></TD></TR></TABLE>
+the problem with the above code is that from reading, you do
+not know whether the return value from "doSomethingForFoo" is really
+wanted here, or if it's simply a lazy typer, and the real return value
+is "self". So the reader has to navigate to implementors of "doSomethingForFoo"
+and look for the return code. Even worse, if he finds different return values
+in the different messages (such one returning self, another returning a boolean),
+he is really in trouble to determine the correct expectations when he wants to subclass
+or modify one of the doSomething methods.
+<P>
+Except for the cases when the return value really counts,
+you should always write:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+    ...
+    foo ifTrue:[
+	self doSomethingForFoo.
+	^ self
+    ].
+    bar ifTrue:[
+	self doSomethingForBar.
+	^ self
+    ].
+    ...etc...
+    ...
+</PRE></CODE></TD></TR></TABLE>
+It has absolutely no implications on the execution speed or code size,
+but makes it clear, that you are not interested in the answer from
+"doSomethingForFoo".
+
+
+<P>
+<LI>reusing variables
+<P>
+Do not reuse a local variable - a good style is to assign only once (functional style).
+Give your variables useful names. The code is written only once, but usually read
+many times by yourself and others later.
+
+<P>
+<LI>use "contains:", "includes:" etc. instead of "do:"-loops whenever possible
+<P>
+These methods not only save typing - they are also documenting what is done.
+<BR>
+Do not write code like:
+<TABLE width="100%" bgcolor="#eedddd"><TR><TD><CODE><PRE>
+    myMethod
+	someCollection
+	    do:[:eachElement |
+		someCondition on eachElement
+		    ifTrue:[^ true]
+	       ].
+	^ false.
+</PRE></CODE></TD></TR></TABLE>
+instead, write it as:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+    myMethod
+	^ someCollection
+	    contains:[:anElement | anElement someCondition].
+</PRE></CODE></TD></TR></TABLE>
+Just read it aloud and you know why.
+<P>
+
+<LI>use "contains:", "includes:" etc. instead of "detect:ifNone:" when checking for the presence of an element
+<P>
+The same argument as above applies here; often, "<CODE>detect:ifNone:</CODE>"
+is used to check for the presence of an element - not to retrieve that element.
+<BR>
+This should be avoided;
+instead of:
+<TABLE width="100%" bgcolor="#eedddd"><TR><TD><CODE><PRE>
+	(someCollection
+		detect:[:el | someCondition on el]
+		ifNone:nil) notNil
+	ifTrue:[
+	    ...
+	].
+</PRE></CODE></TD></TR></TABLE>
+write it as:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+	(someCollection contains:[:el | someCondition on el])
+	ifTrue:[
+	    ...
+	]
+</PRE></CODE></TD></TR></TABLE>
+Again, if in doubt, read the code loud for yourself.
+<P>
+As an extreme example, look at:
+<TABLE width="100%" bgcolor="#eedddd"><TR><TD><CODE><PRE>
+      (coll detect: [:b| b == fooBlock] ifNone: [nil]) isNil
+      ifFalse:[ ... ]
+</PRE></CODE></TD></TR></TABLE>
+which is a combination of "double-negation" confusion AND "detect:-to-test-for-inclusion" confusion.
+<BR>
+Every reader of that code (even an experienced smalltalker) has to read and think about
+this carefully, only to figure out, that it's nothing more than:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+      (coll includesIdentical:fooBlock)
+      ifTrue:[ ... ]
+</PRE></CODE></TD></TR></TABLE>
+By the way: you can search for such code fragments using the SystemBrowser's "<I>code-search</I>" facility.
+The above is found with the pattern:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+(`@e1 detect: `@b1 ifNone: [nil]) isNil ifFalse: `@b2
+</PRE></CODE></TD></TR></TABLE>
+
+<P>
+Here is another example, which uses two nested loops:
+<TABLE width="100%" bgcolor="#eedddd"><TR><TD><CODE><PRE>
+    | list rslt |
+
+    list := someList asOrderedCollection.
+    list do: [:p|
+      (p blocks detect: [:b| b == someObjectToSearchFor] ifNone: [nil]) isNil
+	ifFalse: [foundElement := p]
+    ].
+    foundElement isNil ifTrue:[ ^ false ].
+    ^ true
+</PRE></CODE></TD></TR></TABLE>
+let us rewrite this in smaller steps to a more readable version;
+the inner loop's statement is the one we saw in the previous example, so we can rewrite it to:
+<TABLE width="100%" bgcolor="#eedddd"><TR><TD><CODE><PRE>
+      (p blocks contains: [:b| b == someObjectToSearchFor])
+	ifTrue: [foundElement := p]
+</PRE></CODE></TD></TR></TABLE>
+which is the same as:
+<TABLE width="100%" bgcolor="#eedddd"><TR><TD><CODE><PRE>
+      (p blocks includesIdentical:someObjectToSearchFor)
+	ifTrue: [foundElement := p]
+</PRE></CODE></TD></TR></TABLE>
+the outer is simply another search, and the "do" can be rewritten to:
+<TABLE width="100%" bgcolor="#eedddd"><TR><TD><CODE><PRE>
+      foundElement := list
+			detect:[:p | (p blocks includesIdentical:someObjectToSearchFor) ]
+			ifNone:[nil].
+</PRE></CODE></TD></TR></TABLE>
+as the foundElement is not needed, the overall code can also be:
+<TABLE width="100%" bgcolor="#eedddd"><TR><TD><CODE><PRE>
+    | list |
+    list := someList asOrderedCollection.
+    ^ list
+	contains:[:p |
+	    (p blocks includesIdentical:someObjectToSearchFor) ]
+</PRE></CODE></TD></TR></TABLE>
+the last question we should ask is "why do we need a copy of the original collection as OrderedCollection for the search ?".
+So we can remove this as well, get rid of the temporary variable, and get the final code:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+    ^ someList
+	contains:[:p |
+	    (p blocks includesIdentical:someObjectToSearchFor) ]
+</PRE></CODE></TD></TR></TABLE>
+which is both faster and requires less memory (due to the removed list-copy).
+If the original collection is one of the hash-based collections (i.e. a Set),
+the includes-operation is probably even *much* faster ( O(1) instead of O(n) ).
+<BR>And it certainly is much more readable!
+<P>
+
+<LI>avoid using symbols as enum-values
+<BR>
+Very often, symbols are used as enumerated values,
+as in:
+<TABLE width="100%" bgcolor="#eedddd"><TR><TD><CODE><PRE>
+    ...
+    state == #foo ifTrue:[
+	...doSomethingForFoo...
+    ].
+    ...
+    state == #bar ifTrue:[
+	...doSomethingForBar...
+    ].
+    ...
+</PRE></CODE></TD></TR></TABLE>
+Beside the fact that this code is not very object oriented and
+should probably be done somehow using a message send,
+this code is very sensible to typing errors, as neither the
+compiler, nor the runtime system has a chance to check any such mistakes.
+<BR>
+For example, if you mistype #bar as #Bar at some place, the corresponding if-statements
+will never be executed and that kind of bug is hard to find.
+<P>
+There are multiple ways to make the above more secure:
+
+<ol>
+<li>Use class variables instead of symbols
+<br>
+Some of the danger can be taken out of the code, by removing the possibility for
+typing errors.
+Add a few class variables, for example named "FooState" and "BarState",
+and initialize them in the classes' initialize method as:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+initialize
+    FooState := #FooState.
+    BarState := #BarState.
+</PRE></CODE></TD></TR></TABLE>
+then, use those variables in the case code:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+    ...
+    state == FooState ifTrue:[
+	...doSomethingForFoo...
+    ].
+    ...
+    state == BarState ifTrue:[
+	...doSomethingForBar...
+    ].
+    ...
+</PRE></CODE></TD></TR></TABLE>
+Codewise, this does not make much of a difference. Execution speed is also not affected.
+However, you will be notified when you mistype one of the state names (by the compiler),
+and get an "unknown identifier" error.
+<p>
+
+<li>Use pool variables
+<br>This is pretty much the same solution as above, and should be used
+if the state values are needed across multiple non-inheriting classes.
+<BR>An alternative is to use access methods (on the class side) to
+fetch the states from the other class. Old smalltalkers seem to prefer that over
+class/pool variables - mostly because the early browsers only provided a convenient
+"senders" search. With modern browsers, you can easily find references to class- and
+pool variables, so that argument is no longer valid.
+<p>
+
+<li>Use state-objects
+<br>The above being first a step towards maintainability,
+a much better solution, which also makes later extensions much simpler is
+to provide separate state objects (state classes) and move functionality into
+them.
+This will eventually remove all of these switches and is generally called "object oriented".
+<BR>
+So as a first step, create some StateClass, and two subclasses named FooState and
+BarState (these can and often should be private classes).
+<BR>
+If there is any need to check for the state explicitely,
+use testing protocol:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+    ...
+    state isFooState ifTrue:[
+	...doSomethingForFoo...
+    ].
+    ...
+    state isBarState ifTrue:[
+	...doSomethingForBar...
+    ].
+    ...
+</PRE></CODE></TD></TR></TABLE>
+However, once this is done,
+the obvious next step is to move the above actions into each state object class,
+by definining doX there,
+and get rid of the if-condtional, as in:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+    ...
+    state doX
+    ...
+</PRE></CODE></TD></TR></TABLE>
+if required, pass the receiver, as in:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+    ...
+    state doXFor:self.
+    ...
+</PRE></CODE></TD></TR></TABLE>
+the BIG advantage of this becomes apparent, when a new state is added.
+<P>
+BTW: this is a well-known pattern in OO-programming.
+<P>
+Notice, that the Smalltalk language offers the added convenience that the class itself
+can be used as a state object (which means that you don't have to care for any singleton, instance creation,
+identity or other problems).
+<BR>
+In most other so called "OO"-languages, this is not possible; either because there is no such thing as
+a class available at runtime, or because static (class-) methods are not inherited the way that
+instance methods are.
+<P>
+Also notice, that in Smalltalk/X you can define the states as
+private classes, to keep the number of visible public classes smaller.
+</ol>
+
+</UL>
+
+
+
+<H2><A NAME="DONT_DO_THIS" HREF="#I_DONT_DO_THIS">Things you should not do</A></H2>
+
+<UL>
+<LI>Message chains which follow the object structure
+<P>
+Do not hardwire knowledge about object relations into you program;
+a typical example (which is very bad) is the following extract from
+a piece of code found in the manchester archive:
+<TABLE width="100%" bgcolor="#eedddd"><TR><TD><CODE><PRE>
+    ...
+    aReadStream ioConnection input readWait.
+    ^ aReadStream atEnd not
+    ...
+</PRE></CODE></TD></TR></TABLE>
+obviously, the readStream object is some kind of Socket-accessing
+thingy, and the programmer wants to wait for something to arrive.
+<BR>
+The bad thing with the above is that it hardwires the knowledge of
+the (internal) layout of that socket-accessing thingy into the program.
+<BR>
+(I.e. if the underlying stream implementation is ever changed to not use
+an <var>ioConnection</var>-slot,
+ or that <var>ioConnection</var>-object no longer has an <var>input</var>-slot,
+your code is doomed.)
+
+<P>
+Another example is:
+<TABLE width="100%" bgcolor="#eedddd"><TR><TD><CODE><PRE>
+    ...
+    widget wrapper wrapper wrapper controller enable.
+    ...
+</PRE></CODE></TD></TR></TABLE>
+here, the widget's internal hierarchy is reflected in the access-path,
+and the code will have a very hard time if the wrapper hierarchy ever changes
+ - either in the framework classes or by the application programmer.
+<P>
+These code fragments were specially written for a ParcPlace Smalltalk system,
+so they sure make problems when ported to ST/X, Squeak or another Smalltalk dialect.
+However, even ParcPlace itself will not be able to change any internals (optimize or
+get rid of the wrappers),
+without affecting this program.
+<BR>
+Thus, there is a chance that the above code will not work without change in the next
+ParcPlace version. And don't even think of porting it without change to another Smalltalk dialect.
+<P>
+
+For the socket wait example above,
+a better solution was to provide a #readWait method in the class of the socket-accessing
+object, and delegate things there.
+<P>
+For the wrapper example,
+to provide an enable-method in the widget, which delegates it to some controller.
+<P>
+
+This hides the object structure and allows both ParcPlace to change things,
+and allows ST/X's Socket class to behave like other SocketAccessors.
+It also makes it trivial to introduce a facade class, which forwards messages
+as required.
+
+<P>
+Of course, the above examples do not only apply to system classes -
+the same is very often found in user code - especially in GUI code.
+</UL>
+
+
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 1995 Claus Gittinger Development &amp; Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.42 $ $Date: 2017-08-30 20:36:19 $
+</BODY>
+</HTML>

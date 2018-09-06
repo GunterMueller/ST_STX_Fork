@@ -1,0 +1,9 @@
+example
+minigzip
+*.tds
+*.lib
+objvc
+objbc
+objtcc
+objlcc
+objmingw

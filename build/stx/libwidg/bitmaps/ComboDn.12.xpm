@@ -1,0 +1,21 @@
+/* XPM */
+static char *ComboDn_12_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"12 12 2 1",
+/* colors */
+"a c black",
+"b c none",
+/* pixels */
+"bbbbbbbbbbbb",
+"bbbbbbbbbbbb",
+"bbbbaaaabbbb",
+"bbbbaaaabbbb",
+"bbbbaaaabbbb",
+"bbaaaaaaaabb",
+"bbbaaaaaabbb",
+"bbbbaaaabbbb",
+"bbbbbaabbbbb",
+"bbbbbbbbbbbb",
+"bbaaaaaaaabb",
+"bbbbbbbbbbbb",
+};

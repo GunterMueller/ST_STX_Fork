@@ -1,0 +1,190 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Help - HTTPServer - Pluggable Services</Title>
+</HEAD>
+
+<BODY>
+<A HREF="index.html">Back to HTTPServer Main Index</A>
+<P>
+
+<H2><A NAME="INDEX">Pluggable Services Help index</A></H2>
+
+<UL>
+<LI><A HREF="#OVERVIEW">Overview</A>
+<LI><A HREF="#AVAILABLE_SERVICES">Available Services</A>
+<LI><A HREF="#REGISTERED_SERVICES">Registered Services</A>
+<LI><A HREF="#DEALING_SERVICES">Dealing with Services</A>
+</UL>
+
+<HR>
+
+<H2><A NAME="OVERVIEW" HREF="#INDEX">Overview</A></H2>
+
+
+    HTTPServices are objects which are responsible for handling http requests.
+    They register themself at a server under a so called linkName (or multiple link names).
+    Typically, the linkname is the top-component of an URL path - for example: "/foo".
+<BR>
+    For any incoming request, the http-server selects the service based on the requests URL
+    and forwards the request to the service, which has to generate a response
+    (typically, HTML, XML text or bitmap images).
+<P>
+    Due to the historic evolution of the web server, there are two different schemes for service handling:
+<UL>
+<LI><CODE>HTTPSelectorService</CODE>
+<BR>
+to support applications based in the PWS (pluggable web server) framework
+which receive individual messages, based on a component in the URL
+<P>
+
+<LI><CODE>HTTPActionService</CODE>
+<BR>
+to support applications based on the Comanche framework
+where a single processing method is invoked for all requests.
+</UL>
+<P>
+In order to allow for easy migration of applications based on these packages,
+the ST/X webServer supports both schemes.
+<BR>
+However, we think that the <CODE>HTTPActionService</CODE> scheme (single processing method)
+is better and more flexible, and we therefore recommend using that for new applications.
+<P>
+
+<H3>HTTPSelectorService</H3>
+    HTTPSelectorServices must provide a list of allowed service selectors
+    and a default service selector.
+<BR>
+    For any incoming request, the URL component AFTER the linkName is extracted and taken
+    as a message selector. I.e. if the URL is "/foo/bar", the service registered under the
+    "/foo" linkName gets a "bar:" message.
+<BR>
+    If the URL is the linkName alone (i.e. no component after the linkName),
+    the default selector is used.
+<BR>
+    If a selector is not allowed, the server responds with an "Illegal Message" response.
+
+<H3>HTTPActionService</H3>
+
+    HTTPActionServices will always receive a "process:" message, with the request as argument.
+    They are free to (and actually responsible for) interpreting the URL and dispatching to
+    any internal method.
+
+
+
+<H2><A NAME="AVAILABLE_SERVICES" HREF="#INDEX">Available Services</A></H2>
+
+    Presents a list of available services (all subclasses of the HTTPService class).
+    Use the down arrow button to add the selected service to the server (i.e. to register).
+
+
+<H2><A NAME="REGISTERED_SERVICES" HREF="#INDEX">Registered Services</A></H2>
+
+    Presents a list of all registered services for the server.
+    Every service has the following properties:
+<UL>
+<LI>Realm
+<BR>
+    Realm for authorization. If non-blank, the service can only be invoked by users which
+    authenticate themself as belonging to that realm (group).
+<BR>
+    If blank, everyone is allowed to invoke that service.
+<P>
+    Be aware, that the HTTP protocol supports multiple authentication protocls which
+    differ in complexity and security. For critical applications, we highly recommend to
+    disable basic authentication, because it is *very* insecure and easy to attack.
+<P>
+
+<LI>Allow Robots
+<BR>
+    Allow or disallow robots to access the service. If allowed, robots and crawlers
+    (such as google or other search engines) can access and index the pages of the service.
+<BR>
+    For highly dynamic and/or private services, we recommend to disallow robots.
+<BR>
+    The default is: disallow.
+<P>
+
+<LI>Visible (in Home Page)
+<BR>
+    Set/Clear the visible in home page aspect of a service.
+    The ST/X home page service will automatically generate links for services
+    which have the visible attribute set.
+<P>
+
+<LI>Reply Presenter
+<BR>
+    Used to display the service output written via nextPut: nextPutAll: or reply: in a special frame.
+<BR>
+    If you select "None" the server default reply presenter (which does not generate any decoration)
+    is used for the service.
+<BR>
+    You can create your own representer class to wrap generated pages into
+    a corporate identity-layout.
+<BR>
+    For more information, see <A HREF="serverSettings.html">Server Configuration</A>.
+    <UL>
+    <LI>EmptyDocumentReplyPresenter - data is wrapped into the body of a legal html document
+    <LI>ExeptReplyPresenter - an simple eXept reply presentation frame
+    <LI>PlainReplyPresenter - as is (for debugging only)
+    </UL>
+<P>
+
+<LI>Link Name(s)
+<BR>
+    The link name(s) under which the service is(are) registered.
+    Each link name has to started with a "/"-Character.
+<BR>
+    Linknames are not limited to the top in the URL hierarchy;
+    you can specify a deep path (such as "/foo/bar/baz") to include the service
+    below another service in the URL document tree.
+
+</UL>
+
+<H2><A NAME="DEALING_SERVICES" HREF="#INDEX">Dealing with Services</A></H2>
+
+  <H3>Service Request Context</H3>
+    To aid in programming threadsafe services, the <CODE>HTTPServiceRequestContext</CODE>-class
+    provides an interface to be inherited from.
+<BR>
+    This allows you to store variables on a per request basis.
+    For every request an instance of your subclass is created where the instance variable request is set.
+    Before passing through the service, initialize is called where you can do your own initialization of
+    your variables. This enables you to have request dependent state. At the end of the request release is called.
+
+    Redefine the class method <CODE>requestContextClass:</CODE> for your service that
+    returns your subclass of <CODE>HTTPServiceRequestContext</CODE>.
+
+  <H3>Reply Presenter</H3>
+    The reply presenters repsonsibility is to wrap a generated HTML-page and generate
+    a common frame around it for a nice common style.
+    Already provied are the default presenter (which generates nothing and leaves the pages as-is)
+    and the exept reply presenter, which generates a greenish exept-style frame with home-button.
+    This is mostly provided as an example.
+<P>
+    To create your own Reply Presenter, create a subclass of <CODE>ReplyPresenter</CODE>.
+    and implement the required protocol (use the browser - luke).
+<P>
+  <H3>Useful Helper Services</H3>
+    Even programatic services (such as the HomePageService, STT- or Swiki-Services)
+    often generate references to common files such as icons, bitmap images etc.
+<BR>
+    Typically, a FileService is used for this and automatically installed/deinstalled with the
+    service.
+<P>
+    In addition, other useful services are provided by the <CODE>HTTPUtilityService</CODE>;
+    Currently, this provides an accessCounter service, but more utilities are probably to
+    be added in the future.
+
+<HR>
+<P>
+<P>
+Copyright &copy; 2003 eXept Software AG, all rights reserved
+<P>
+<P>
+
+<HR>
+Doc $Revision: 1.4 $ $Date: 1997/08/07 15:06:09 $
+
+</BODY>
+</HTML>

@@ -1,0 +1,53 @@
+<TITLE>Understanding HTML and MIME</TITLE>
+<H1>Understanding HTML and MIME</H1>
+
+<I>I have dropped the differentiation of HTML into a sequence of
+conformance levels. Many people confused levels with versions.
+The different levels also encourage interoperability problems!
+Lets encourage full conformance with HTML 2.0 or HTML 3.0 rather
+than perpetuating intermediate levels of support.</I>
+
+<h2>HTML as an Internet Media Type</h2>
+
+<P>This (and upward compatible specifications) define the Internet
+Media Type (RFC 1590) and MIME Content Type (RFC 1521) called
+"text/html". The type "text/html" accepts the following parameters:
+
+<DL>
+<DT><b>Version</b>
+
+<DD>To help avoid future compatibility problems, the version parameter
+may be used to give the version number of the specification to which
+the document conforms. The version number appears at the front of this
+document and within the public identifier for the SGML DTD. This
+specification defines version 3.0.
+
+<DT><b>Character sets</b>
+
+<DD>The charset parameter (as defined in section 7.1.1 of RFC 1521) may
+be used with the text/html content type to specify the encoding used to
+represent the HTML document as a sequence of bytes. Normally, text/*
+media types specify a default of US-ASCII for the charset parameter.
+However, for text/html, if the byte stream contains data that is not in
+the 7-bit US-ASCII set, the HTML interpreting agent should assume a
+default charset of ISO-8859-1.
+
+<P>When an HTML document is encoded using US-ASCII, the mechanisms of
+numeric character references and character entity references may be
+used to encode additional characters from ISO-8859-1. Character entity
+references are needed for symbols such as math and greek characters
+from other unspecified character sets.
+
+<P>Other values for the charset parameter are not defined in this
+specification, but may be specified in future versions of HTML. It is
+envisioned that HTML will use the charset parameter to allow support
+for non-Latin characters such as Arabic, Hebrew, Cyrillic and Japanese,
+rather than relying on any SGML mechanism for doing so.
+
+<P><I>What about Unicode and its assorted encodings? This section would
+benefit from an explanation of the issues underlying support for
+multiple character sets and the problems arising from
+bidirectionality.</i>
+</DL>
+
+<!--NewPage-->

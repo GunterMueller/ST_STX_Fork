@@ -1,0 +1,234 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Help - HTTPServer - Log Settings</Title>
+</HEAD>
+<BODY>
+
+<A HREF="index.html">Back to HTTPServer Main Index</A>
+<P>
+
+<H2><A NAME="INDEX">Log Settings Help Index</A></H2>
+
+<UL>
+<LI><A HREF="#LOG_TO_FILE">Log to File</A>
+<LI><A HREF="#LOG_FILE">LogFile</A>
+<LI><A HREF="#ACCESS_LOGGER">Access Logger</A>
+<LI><A HREF="#AUTOMATIC_ANALYZIS">Automatic LogFile Analyzis</A>
+  <UL>
+  <LI><A HREF="#AWSTATS">Interfacing awstats</A>
+  </UL>
+</UL>
+
+<HR>
+
+<H2><A NAME="LOG_TO_FILE" HREF="#INDEX">Log to File</A></H2>
+
+    Enables or disables logging.
+
+
+<H2><A NAME="LOG_FILE" HREF="#INDEX">Log File</A></H2>
+
+    Specify the name of the logfile here.
+
+
+<H2><A NAME="ACCESS_LOGGER" HREF="#INDEX">Access Logger</A></H2>
+
+    Currently, two loggers are implemented, which generate different output format.
+<UL>
+<LI>The ApacheFormatLogger
+<BR>
+This logger generates its output in a format which is compatible to
+the apache logfile format, and therefore allowing
+for standard logfile analyzers (e.g. webalyzer, awstats, etc.)
+to generate fancy statistics.
+<P>
+
+<LI>FullAccessLogger
+<BR>
+This generates the old, proprietary format, which is more detailed but unstructured.
+<BR>
+This logger should only be used for debugging purposes.
+</UL>
+
+
+<H2><A NAME="LOGFORMAT" HREF="#INDEX">Apache Logfile Format</A></H2>
+
+
+The logger can be configured to generate
+on of the two well known standard formats, "NCSA" and "CLF",
+or a custom defined format.
+<BR>
+See the CustomLog directive of the apache mod_log_config.
+<BR>
+See also <a HREF=http://httpd.apache.org>http://httpd.apache.org</a>
+<P>
+To use a logfile analyzer, we recommend using the "NCSA" format.
+
+
+<H3>Apache Format directives ("%"-placeholders)</H3>
+
+An apache log entry is a line (in ascii) which is specified by a format
+string, where %-directives are macro-expanded according to the following table:
+<BR>
+<TABLE>
+
+<TR>
+<TD>%a</TD>          <TD>Remote IP-address </TD>
+</TR>
+
+<TR>
+<TD>%A</TD>          <TD>Local IP-address </TD>
+</TR>
+
+<TR>
+<TD>%B</TD>          <TD>Bytes sent, excluding HTTP headers </TD>
+</TR>
+
+<TR>
+<TD>%b</TD>          <TD>Bytes sent, excluding HTTP headers.
+			Like %B but '-' rather than a '0' when no bytes are sent (In CLF format) </TD>
+</TR>
+
+<TR>
+<TD>%c</TD>          <TD>Connection status when response was completed.<br>
+		    'X' = connection aborted before the response completed.<br>
+		    '+' = connection may be kept alive after the response is sent.<br>
+		    '-' = connection will be closed after the response is sent </TD>
+</TR>
+
+<TR>
+<TD>%{FOOBAR}e</TD>  <TD>The contents of the environment variable FOOBAR </TD>
+</TR>
+
+<TR>
+<TD>%f</TD>          <TD>Filename </TD>
+</TR>
+
+<TR>
+<TD>%h</TD>          <TD>Remote host </TD>
+</TR>
+
+<TR>
+<TD>%H</TD>          <TD>The request protocol </TD>
+</TR>
+
+<TR>
+<TD>%{Foobar}i</TD>  <TD>The contents of Foobar: header line(s) in the request
+		    <br>sent to the server </TD>
+</TR>
+
+<TR>
+<TD>%l</TD>          <TD>Remote logname (from identd, if supplied) </TD>
+</TR>
+
+<TR>
+<TD>%m</TD>          <TD>The request method </TD>
+</TR>
+
+<TR>
+<TD>%{Foobar}n</TD>  <TD>The contents of note Foobar from another module </TD>
+</TR>
+
+<TR>
+<TD>%{Foobar}o</TD>  <TD>The contents of Foobar: header line(s) in the reply </TD>
+</TR>
+
+<TR>
+<TD>%p</TD>          <TD>The canonical Port of the server serving the request </TD>
+</TR>
+
+<TR>
+<TD>%P</TD>          <TD>The process ID of the child that serviced the request </TD>
+</TR>
+
+<TR>
+<TD>%q</TD>          <TD>The query string (prepended with a ? if a query string exists,
+	    otherwise an empty string) </TD>
+</TR>
+
+<TR>
+<TD>%r</TD>          <TD>First line of request </TD>
+</TR>
+
+<TR>
+<TD>%s</TD>          <TD>Status.  For requests that got internally redirected,
+		    <br>this is the status of the *original* request.
+		    <br>"%>s" for the last status </TD>
+</TR>
+
+<TR>
+<TD>%t</TD>          <TD>Time, in common log format time format (standard english format) </TD>
+</TR>
+
+<TR>
+<TD>%{format}t</TD>  <TD>The time, in the form given by format,
+		    <br>which should be in strftime(3) format. (potentially localized) </TD>
+</TR>
+
+<TR>
+<TD>%T</TD>          <TD>The time taken to serve the request, in seconds </TD>
+</TR>
+
+<TR>
+<TD>%u</TD>          <TD>Remote user (from auth; may be bogus if return status (%s) is 401) </TD>
+</TR>
+
+<TR>
+<TD>%U</TD>          <TD>The URL path requested, not including any query string </TD>
+</TR>
+
+<TR>
+<TD>%v</TD>          <TD>The canonical ServerName of the server serving the request </TD>
+</TR>
+
+<TR>
+<TD>%V</TD>          <TD>The server name according to the UseCanonicalName setting </TD>
+
+</TR>
+</TABLE>
+
+
+
+<H2><A NAME="AUTOMATIC_ANALYZIS" HREF="#INDEX">Automatic LogFile Analyzis</A></H2>
+
+For automatic logFile analyzis, you should setup a "cron" (see Unix manuals) job,
+which executes your preferred analyzer (say) every midnight.
+<BR>
+These programs generate their output in HTML-format;
+create a directory to hold the output and specify this directory in the cron-command line.
+<P>
+To provide web access to these logs, configure a fileService on the above output directory,
+and define the logFiles index document (typically: "index.html") as default file.
+
+
+
+<H3><A NAME="AWSTATS" HREF="#INDEX">Interfacing awstats</A></H3>
+
+Our own server uses
+<A HREF="http://awstats.sourceforge.net">awstats</A> to generate access statistics
+from the logfile.
+<BR>
+We have set up the following cron job:
+<BR>
+<CODE><PRE>
+    23 0-23 * * * cd webServerData/awstats; awstats_buildstaticpages.pl -config=8080 -update
+</PRE></CODE>
+which generates the awstat pages every night.
+<BR>
+In addition, a fileService is configured under the "/awstats" linkName to service the awstats output.
+
+
+
+<HR>
+<P>
+<P>
+Copyright &copy; 2003 eXept Software AG, all rights reserved
+<P>
+<P>
+
+<HR>
+Doc $Revision: 1.4 $ $Date: 1997/08/07 15:06:09 $
+
+</BODY>
+</HTML>

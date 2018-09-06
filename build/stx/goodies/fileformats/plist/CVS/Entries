@@ -1,0 +1,17 @@
+/.cvsignore/1.1.1.1/Thu May  3 23:27:17 2018//
+/MacBinaryPListFileReader.st/1.1/Thu May  3 23:30:22 2018//
+/MacPlistBinaryDecoder.st/1.1/Thu May  3 23:27:21 2018//
+/MacPlistXMLCoder.st/1.1/Thu May  3 23:27:58 2018//
+/MacPlistXMLDecoder.st/1.1/Thu May  3 23:28:43 2018//
+/Make.proto/1.2/Thu May  3 23:42:27 2018//
+/Make.spec/1.2/Thu May  3 23:42:25 2018//
+/Makefile.init/1.1/Thu May  3 23:33:06 2018//
+/abbrev.stc/1.1/Thu May  3 23:33:12 2018//
+/bc.mak/1.2/Thu May  3 23:42:30 2018//
+/bmake.bat/1.1/Thu May  3 23:33:15 2018//
+/libInit.cc/1.2/Thu May  3 23:42:38 2018//
+/mingwmake.bat/1.1/Thu May  3 23:33:21 2018//
+/stx_goodies_fileformats_plist.st/1.3/Thu May  3 23:48:10 2018//
+/stx_goodies_fileformats_plistWINrc.rc/1.2/Thu May  3 23:42:36 2018//
+/vcmake.bat/1.1/Thu May  3 23:33:18 2018//
+D

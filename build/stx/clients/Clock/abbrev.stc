@@ -1,0 +1,5 @@
+Clock Clock stx:clients/Clock 'demos-Applications-Clock' 0
+Clock2 Clock2 stx:clients/Clock 'demos-Applications-Clock' 0
+RoundClock RoundClock stx:clients/Clock 'demos-Applications-Clock' 0
+RoundClock2 RoundClock2 stx:clients/Clock 'demos-Applications-Clock' 0
+stx_clients_Clock stx_clients_Clock stx:clients/Clock '* Projects & Packages *' 0

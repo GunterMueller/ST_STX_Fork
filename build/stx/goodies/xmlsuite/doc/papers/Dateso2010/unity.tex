@@ -1,0 +1,59 @@
+% for example: \labeldest{oo}{\chapter{Analýza a návrh}}
+\def\labeldest#1#2{
+  \ifx\pdfoutput\nodefined
+  \else
+    \pdfdest name {#1} fitbh
+  \fi %
+  #2 
+  \label{#1}
+}
+
+% for example: \reflink{kapitole}{oo}
+\def\reflink#1#2{%
+\ifx\pdfoutput\nodefined%
+\else%
+\pdfstartlink goto name {#2}%
+\fi %
+#1~\ref{#2}%
+\ifx\pdfoutput\nodefined%
+\else%
+\pdfendlink%
+\fi%
+}
+
+% for example: \image{img_tridni}{Popis}{img/class}{16cm}{20cm}
+\def\image#1#2#3#4#5{
+  \begin{figure}[htb]
+  \begin{center}
+    \ifx\pdfoutput\undefined
+       \includegraphics[width=#4,height=#5]{#3.eps}
+    \else
+      \pdfximage width #4 height #5 {#3.pdf}
+      \mbox{\pdfrefximage \pdflastximage}
+    \fi
+  \end{center}
+  \caption{#2}
+  \label{#1}
+\end{figure}}
+
+% for example: \image{img_tridni}{Popis}{img/class}{16cm}{20cm}
+\def\imagejpg#1#2#3#4#5{
+  \begin{figure}[htb]
+  \begin{center}
+    \ifx\pdfoutput\undefined
+       \includegraphics[width=#4,height=#5]{#3.eps}
+    \else
+      \pdfximage width #4 height #5 {#3.jpg}
+      \mbox{\pdfrefximage \pdflastximage}
+    \fi
+  \end{center}
+  \caption{#2}
+  \label{#1}
+\end{figure}}
+
+\newcounter{ExampleCount}
+\setcounter{ExampleCount}{0}
+
+\newcounter{DefinitionCount}
+\setcounter{DefinitionCount}{0}
+

@@ -1,0 +1,30 @@
+/* XPM */
+static char *iceland_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 20 3 1",
+/* colors */
+"a c #084098",
+"b c #F80400",
+"c c white",
+/* pixels */
+"aaaaaaaaacbbbbcaaaaaaaaaaaaaaaaa",
+"aaaaaaaaacbbbbcaaaaaaaaaaaaaaaaa",
+"aaaaaaaaacbbbbcaaaaaaaaaaaaaaaaa",
+"aaaaaaaaacbbbbcaaaaaaaaaaaaaaaaa",
+"aaaaaaaaacbbbbcaaaaaaaaaaaaaaaaa",
+"aaaaaaaaacbbbbcaaaaaaaaaaaaaaaaa",
+"aaaaaaaaacbbbbcaaaaaaaaaaaaaaaaa",
+"ccccccccccbbbbcccccccccccccccccc",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"ccccccccccbbbbcccccccccccccccccc",
+"aaaaaaaaacbbbbcaaaaaaaaaaaaaaaaa",
+"aaaaaaaaacbbbbcaaaaaaaaaaaaaaaaa",
+"aaaaaaaaacbbbbcaaaaaaaaaaaaaaaaa",
+"aaaaaaaaacbbbbcaaaaaaaaaaaaaaaaa",
+"aaaaaaaaacbbbbcaaaaaaaaaaaaaaaaa",
+"aaaaaaaaacbbbbcaaaaaaaaaaaaaaaaa",
+"aaaaaaaaacbbbbcaaaaaaaaaaaaaaaaa",
+};

@@ -1,0 +1,97 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Documentation - Book</Title>
+</HEAD>
+
+<BODY>
+
+<H1>Smalltalk/X Documentation - Book printing</H1>
+
+This document represents the complete Smalltalk/X Documentation
+(excluding detailed class documentation) as a single book.
+<BR>
+The detailed class documentation is represented by a separate book,
+due to its huge size. We recommend NOT to print it as a whole, but instead
+use the document browser to print individual pages if required.
+(however, if you want to kill another tree: see below ;-)
+<P>
+Book printing is only supported by the Smalltalk/X HTML Document viewer.
+<BR>
+If you use another HTML browser (Netscape, Mosaic, Chimera ...), the print button below
+is not functioning, and you should switch to
+<A NOPRINT HREF="TOP.html">TOP.html</A> and print individual pages.
+
+<HR>
+
+
+<P>
+
+<FORM ACTION="misc/onlyInSTX.html"
+      METHOD="DOIT |
+	Processor activeProcess withUserBackgroundPriorityDo:[
+	    HTMLDocumentPrinter
+		printBookURL:(self currentURL).
+	]
+      ">
+
+To print the whole documentation,
+make certain, that your
+printer has enough paper loaded (roughly 600 pages),
+press: <INPUT TYPE="submit" VALUE="print"> and go for a coffee break.
+</FORM>
+<BR>(no, you don't have to - printing is done in the background)
+
+<P>
+
+<B>Notice:</B>
+You can preview this book by selecting a ghostscript filtering
+printer command in the launcher's printer setting, before pressing
+the print-button.
+<P>
+
+Start of Book
+<HR>
+
+
+<UL>
+<LI><A HREF="BOOK_cover.html">Coverpage</A>
+<P>
+<LI><A HREF="TOP.html">IndexPage</A>
+<P>
+    <LI><A HREF="overview/TOP.html">System overview</A>
+    <LI><A HREF="overview/featurelist.html">Architecture specific features</A>
+    <LI><A HREF="installation/TOP.html">Installation</A>
+    <LI><A HREF="getstart/TOP.html">Getting started</A>
+    <LI><A HREF="reading.html">Reading list</A>
+    <LI><A ISBOOK HREF="overview/BOOK.html">Beginners intro to standard classes</A>
+<!--    <LI><A HREF="getstart/tutorial.html">Smalltalk tutorial</A> -->
+    <LI><A HREF="custom/TOP.html">Configuration</A>
+    <LI><A HREF="demos/TOP.html">Demos</A>
+    <LI><A HREF="whatsNew.html">Whats new in the documentation</A>
+    <LI><A HREF="misc/history.html">History of Smalltalk/X</A>
+
+    <LI><A ISBOOK HREF="tools/BOOK.html">Programming tools</A>
+    <LI><A ISBOOK HREF="programming/BOOK.html">Programmers guide</A>
+
+
+</UL>
+
+<HR>
+
+End of Book.
+<P>
+You can also print this book in parts:
+<UL>
+    <LI><A NOPRINT HREF="tools/BOOK.html">Programming tools guide only ...</A>
+    <LI><A NOPRINT HREF="programming/BOOK.html">Programmers guide only ...</A>
+</UL>
+
+<P>
+The full class documentation is an extra document (very large):
+<UL>
+    <LI><A NOPRINT HREF="classDoc/BOOK.html">Smalltalk/X Class documentation ...</A>
+</UL>
+
+</BODY>
+</HTML>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns:ivy="antlib:org.apache.ivy.ant">    
+    <property name="ivy.jar" value="${TOP}/libjava/java/ivy-2.4.0.jar"/>
+    <property name="ivy.settings.xml" value="${TOP}/libjava/java/ivy-settings.xml"/>
+
+    <property name="build.src.dir" value="src"/>
+    <property name="build.bin.dir" value="bin"/>
+    <property name="build.libs.dir" value="libs"/>
+    <property name="build.libs-src.dir" value="libs-src"/>
+
+    <property name="build.src-tests.dir" value="src-tests"/>
+    <property name="build.bin-tests.dir" value="bin-tests"/>
+
+    <property name="test.report"     value="test-results.xml"/>
+    <property name="test.report.dir" value="test-results"/>
+
+    <property name="ivy.dep.file" value="ivy.xml"/>
+
+    <available file="${ivy.dep.file}" property="ivy.dep.file.present"/>
+    <available file="${build.src.dir}" property="build.src.dir.present"/>
+    <available file="${build.src-tests.dir}" property="build.src-tests.dir.present"/>
+
+    <path id="build.classpath.prereqs">
+    </path>
+
+    <path id="build.classpath">
+	   <path refid="build.classpath.prereqs"/>
+	   <pathelement path="${build.libs.dir}"/>
+	   <fileset dir="${build.libs.dir}">
+	       <include name="*.jar"/>
+	   </fileset>
+    </path>
+
+    <path id="test.classpath">
+        <path refid="build.classpath"/>
+        <pathelement path="${build.bin.dir}"/>
+        <pathelement path="${build.bin-tests.dir}"/>
+    </path>
+
+    <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpath="${ivy.jar}" />
+    <ivy:settings file="${ivy.settings.xml}"/>      	   
+    
+
+
+    <target name="build" depends="compile"/>
+
+    <extension-point name="compile.pre"/>
+    <extension-point name="compile.post"/>
+    <target name="compile.main" if="${build.src.dir.present}">
+    	<mkdir dir="${build.bin.dir}"/>
+    	<javac srcdir="${build.src.dir}"
+    	       destdir="${build.bin.dir}"
+    	       classpathref="build.classpath"
+    	       debug="true"
+    	       debuglevel="lines,vars,source"
+    	       includeantruntime="false"/>
+    </target>
+    <target name="compile" depends="prereqs, compile.pre, compile.main, compile.post"/>
+
+    <target name="dependencies" depends="prereqs"/>
+
+    <extension-point name="prereqs.pre"/>
+    <extension-point name="prereqs.post"/>
+    <extension-point  name="prereqs.main"/>
+
+    <target name="prereqs" depends="libs, prereqs.pre, prereqs.main, prereqs.post"/>
+
+
+    <extension-point name="libs.pre"/>
+    <extension-point name="libs.post"/>
+    <target name="libs.main">
+	<mkdir dir="${build.libs.dir}"/>
+    </target>
+    <target name="libs.fetch" if="ivy.dep.file.present">	
+	<ivy:retrieve conf="binaries" pattern="${build.libs.dir}/[artifact]-[revision].[ext]" />
+	<ivy:retrieve conf="sources"  pattern="${build.libs-src.dir}/[artifact]-[revision].[ext]" />
+    </target>
+    <target name="libs" depends="libs.pre, libs.main, libs.fetch, libs.post"/>
+
+    <extension-point name="clean.pre"/>
+    <extension-point name="clean.post"/>
+    
+    <target name="clean.main">
+       <delete dir="${build.bin.dir}" />
+       <delete dir="${build.bin-tests.dir}" />
+       <delete dir="${test.report.dir}" />
+    </target>
+
+    <target name="clean" depends="clean.pre, clean.main, clean.post"/>
+
+    <target name="clobber" depends="clean"/>
+
+	<target name="echo.properties">
+		<echoproperties/>
+	</target>
+	<target name="echo.classpath">
+		<pathconvert property="build.classpath" refid="build.classpath"/>
+		<echo>build.classpath: ${build.classpath}</echo>
+		<pathconvert property="test.classpath" refid="test.classpath"/>
+		<echo>test.classpath: ${test.classpath}</echo>
+	</target>
+
+    <target name="test" depends="test.pre, test.main, test.post"/>
+    <extension-point name="test.pre"/>
+    <extension-point name="test.post"/>
+
+    <target name="test.main" depends="test.compile, test.run"/>
+
+    <target name="test.compile" depends="compile, test.compile.pre, test.compile.main, test.compile.post"/>
+    <extension-point name="test.compile.pre"/>
+    <extension-point name="test.compile.post"/>
+    <target name="test.compile.main" depends="compile" if="${build.src-tests.dir.present}">
+        <mkdir dir="${build.bin-tests.dir}"/>
+        <javac srcdir="${build.src-tests.dir}"
+               destdir="${build.bin-tests.dir}"
+               classpathref="test.classpath"
+               debug="true"
+               debuglevel="lines,vars,source"
+               includeantruntime="false"/>
+    </target>
+
+    <target name="test.run" depends="test.compile, test.run.pre, test.run.main, test.run.post">
+   	<fail  message="One or more test(s) failed. See aboce" 
+        	    if="test.failure" />
+    </target>
+
+    <extension-point name="test.run.pre"/>
+    <extension-point name="test.run.post"/>
+
+    <target name="test.run.main" if="${build.src-tests.dir.present}">
+        <mkdir dir="${test.report.dir}"/>
+        <junit fork="yes" failureproperty="test.failure">
+            <classpath refid="test.classpath"/>            
+            <formatter type="plain"/>
+            <batchtest todir="${test.report.dir}">
+                <fileset dir="${build.src-tests.dir}">
+                    <include name="**/*.java"/>                    
+                    <exclude name="**/mocks/**/*.java"/>                    
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
+
+</project>

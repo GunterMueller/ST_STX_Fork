@@ -1,0 +1,4 @@
+#define HandleLight_width 8
+#define HandleLight_height 8
+static char HandleLight_bits[] = {
+   0x00, 0x40, 0xc0, 0xc0, 0xc0, 0xc0, 0x60, 0x3c};

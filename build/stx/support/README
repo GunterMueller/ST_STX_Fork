@@ -1,0 +1,21 @@
+This directory contains additional libraries
+and useful support stuff - some of which has not
+yet been (fully) integrated into the ST/X system.
+The following are (currently) used:
+
+    libjpeg	- req'd for the JPEGImageReader class
+		  in $(TOP)/libview2.
+
+    libdld	- dynamic object loader for old a.out
+		  systems (no longer required on modern
+		  systems). Req'd for linux-a.out,
+		  sun3 (68k) and sun4 (pre-solaris) versions.
+
+    MESA	- OpenGL compatible 3D graphics
+		  Req'd by the OpenGLDevice class in
+		  $(TOP)/libopengl.
+
+    VGL		- GL subset-compatible 3D graphics
+		  Req'd by the GLXWorkstation class
+		  in $(TOP)/libview.
+		  Will be obsoleted by libopengl.

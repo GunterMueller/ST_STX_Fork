@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PCDATA is not allowed in the html element. check if the parser 
+        catches this -->
+<!DOCTYPE html SYSTEM "fake-xhtml.dtd" >
+<html>
+    <head>
+        <title>Title</title>
+        <meta content="asdf" />
+    </head>
+    TEXT
+    <body>
+
+        <h1>Heading Level 1</h1>
+
+        <p>This is a paragraph</p>
+    </body>
+</html>

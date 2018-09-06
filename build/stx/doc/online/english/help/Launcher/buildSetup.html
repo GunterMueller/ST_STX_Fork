@@ -1,0 +1,81 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Help - Build Setup Dialog</Title>
+</HEAD>
+
+<BODY>
+
+<H1>Build Setup Dialog</H1>
+
+<H2><A NAME="INDEX">Help index</A></H2>
+
+<UL>
+  <LI><A HREF="#CVS_BUILD">Building via the CVS Repository</A>
+  <LI><A HREF="#LOCAL_BUILD">Building without Repository</A>
+</UL>
+
+<H2><A NAME="CVS_BUILD" HREF="#INDEX">Building via the CVS Repository</A></H2>
+
+The standard procedure (at exept) is to use the CVS repository for building
+deployable products. This is usually done by:
+<OL>
+<LI>creating a fresh working directory on a machine
+<LI>checking out (a potentially tagged) repository state there.
+This includes both a definite version of the stx base system and a version
+of the application to be built. Normally, the application is to be built in a diretory
+beside the stx top directory.
+<LI>perform a build there.
+On Windows, this creates a self-installable setup executable (NSS) in the application's
+project directory. On Unix, an app-package is generated.
+</OL>
+Of course, all of this can be automated, as there is no Smalltalk image or browser interaction
+required. Everything is controlled by makefiles.
+The recommended way for automation is via a jenkins or expeccoNET scheduled build.
+<BR>
+
+
+
+<H2><A NAME="LOCAL_BUILD" HREF="#INDEX">Building without Repository (Local Build)</A></H2>
+
+For a local build, no repository is used. Instead, all files are generated in a
+temporary build directory (sources, makefiles and support files).
+Then, a normal make-controlled build is executed there.
+
+<H3><A NAME="LOCAL_BUILD_COMPILER" HREF="#INDEX">Choosing a Compiler</A></H3>
+
+Under unix/linux, the standard gnu compiler (gcc) is used for building.
+<P>
+On windows, you have the choice of:
+<UL>
+<LI>bcc32 - Borland cc
+<br>the free borland compiler from the command line tools.
+<p>
+<LI>vc - Visual c (Microsoft)
+<br>either the (Micrososft Visual C Express- or full version) or
+non-free version. Only the command line tools are needed.
+<p>
+<LI>lcc - lcc
+<br>not yet fully supported
+<p>
+<LI>gcc - gnu compiler (Cygwin)
+<br>using the Cygwin tool chain (not yet fully supported)
+</UL>
+
+
+<P>
+
+
+
+<HR>
+<P>
+<P>
+Copyright &copy;  eXept Software AG, all rights reserved
+<P>
+<P>
+
+<HR>
+Doc $Revision: 1.5 $ $Date: 2016-09-14 09:41:11 $
+
+</BODY>
+</HTML>

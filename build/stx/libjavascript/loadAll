@@ -1,0 +1,61 @@
+"/
+"/ $Header: /cvs/stx/stx/libjavascript/loadAll,v 1.3 2006-09-15 16:47:58 stefan Exp $
+"/
+"/ loadAll-file to fileIn code for: stx:libjavascript
+"/
+"/ Automatically generated from project definition.
+"/ DO NOT MODIFY THIS fILE;
+"/ modify the .prj file instead, and regenerate this file
+"/ with the ProjectBrowser tool.
+"/
+
+"/
+"/ Prerequisites:
+"/
+!
+
+"{ package:'stx:libjavascript' }"!
+
+|files|
+
+'loading package stx:libjavascript ...' infoPrintCR.
+
+files := #(
+    'JavaScriptEnvironment.st'
+    'JavaScriptFunctionNode.st'
+    'JavaScriptVariableNode.st'
+    'JavaScriptScanner.st'
+    'JavaScriptParser.st'
+    'JavaScriptCompiler.st'
+    'JavaScriptSyntaxHighlighter.st'
+    'JavaScriptFunction.st'
+    'JavaScriptInnerFunctionNode.st'
+    'JavaScriptVariable.st'
+) asOrderedCollection.
+
+"/ see if there is a classLibrary
+(Smalltalk fileInClassLibrary:'libstx_libjavascript') ifTrue:[
+    |handle loaded|
+
+    handle := ObjectFileLoader loadedObjectHandles
+		    detect:[:h | h package = 'stx:libjavascript'] ifNone:nil.
+    handle ifNotNil:[
+	loaded := Set new:(handle classes size).
+	handle classes do:[:c| c isMeta ifFalse:[loaded add:c classFilename]].
+	files := files asOrderedCollection \ loaded.
+    ].
+].
+
+"/ load files which are not in the classLibrary (all if there is none)
+files size > 0 ifTrue:[
+  files do:[:f |
+    '.' infoPrint.
+    f asFilename exists ifTrue:[
+	Smalltalk fileIn:f.
+    ] ifFalse:[
+	Smalltalk fileIn:('source/' , f)
+    ]
+  ].
+  ' ' infoPrintCR.
+].
+'done (stx:libjavascript).' infoPrintCR.

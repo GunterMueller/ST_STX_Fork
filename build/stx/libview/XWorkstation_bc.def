@@ -1,0 +1,7 @@
+LIBRARY         XWorkstation
+DESCRIPTION     'Smalltalk/X X11 Display Interface'
+CODE            PRELOAD MOVEABLE DISCARDABLE
+SEGMENTS
+    INITCODE    PRELOAD DISCARDABLE
+EXPORTS
+    __XWorkstation_Init         @1

@@ -1,0 +1,35 @@
+//
+// DO NOT EDIT 
+// automagically generated from the projectDefinition: stx_goodies_magritte_seaside.
+//
+VS_VERSION_INFO VERSIONINFO
+  FILEVERSION     5,4,0,1
+  PRODUCTVERSION  5,4,6,1
+  FILEFLAGSMASK   VS_FF_DEBUG | VS_FF_PRERELEASE
+  FILEFLAGS       VS_FF_PRERELEASE | VS_FF_SPECIALBUILD
+  FILEOS          VOS_NT_WINDOWS32
+  FILETYPE        VFT_DLL
+  FILESUBTYPE     VS_USER_DEFINED
+
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904E4"
+    BEGIN
+      VALUE "CompanyName", "eXept Software AG\0"
+      VALUE "FileDescription", "Smalltalk/X Class library (LIB)\0"
+      VALUE "FileVersion", "5.4.0.1\0"
+      VALUE "InternalName", "stx:goodies/magritte/seaside\0"
+      VALUE "LegalCopyright", "Copyright Claus Gittinger 1988-2009\nCopyright eXept Software AG 1998-2009\0"
+      VALUE "ProductName", "Smalltalk/X\0"
+      VALUE "ProductVersion", "5.4.6.1\0"
+      VALUE "ProductDate", "Wed, 29 Jul 2009 15:40:50 GMT\0"
+    END
+
+  END
+
+  BLOCK "VarFileInfo"
+  BEGIN                               //  Language   |    Translation
+    VALUE "Translation", 0x409, 0x4E4 // U.S. English, Windows Multilingual
+  END
+END

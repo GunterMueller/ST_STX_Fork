@@ -1,0 +1,149 @@
+<HEAD>
+<TITLE>Using the System Browser - introduction</TITLE>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="TOP.html">  <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="menu.html"> <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+
+<H2><A NAME="INTRO" HREF="TOP.html#I_INTRO">Introduction</A></H2>
+  SystemBrowsers are the main tools for programming in Smalltalk;
+  they allow you to both browse through the system, search for a method and
+  to create, modify or remove classes and methods.
+<P>
+  The standard System Browser consists of 5 major subviews; these components are:
+<P>
+
+<IMG SRC="../../../pictures/SystemBrowser.gif" ALT="[systemBrowser hardcopy]">
+<P>
+<OL>
+<LI>class category list
+<LI>class list
+<LI>class/instance toggle
+<LI>method category list
+<LI>method list
+<LI>code view
+</OL>
+<P>
+(the actual appearance of the Browser depends on the viewStyle setting;
+the picture above was taken with the "iris-style" in effect)
+<P>
+Notice:
+<BLOCKQUOTE>
+This document describes the pre 2.10.4 systemBrowser.
+In later releases, additional views presenting the instance
+variables of the current class and for namespace selection
+have been added.
+<BR>
+The menu items for
+variable-searches are now found in the variableLists popup menu.
+</BLOCKQUOTE>
+
+<H3>Class Category List</H3>
+<P>
+  Within the system, all classes are assigned to a class category,
+  this category has NO semantic function of any kind, it is simply
+  an attribute, to group classes for easier handling.
+  (actually, beside the browser, there are not many uses of class categories.)
+<P>
+  Once a class category is selected (by clicking on the entry in the
+  class category list), the class list shows all classes belonging to
+  that category.
+<BR>
+  The systemBrowser also offers two "special" categories:
+<CODE>"* all *"</CODE>
+  which will display all classes and show them alphabetically,
+  and
+<CODE>"* hierarchy *"</CODE>
+  which also shows all classes, but indents them by inheritance as a tree.
+
+<H3>Class List</H3>
+  Selecting a class in the class list, will show all method categories
+  in the method category list.
+
+<H3>Method Category (Protocol) List</H3>
+  Like class categories, method categories are only used
+  for grouping related methods; typically, methods are categorized
+  by function or effect. Like class categories, these have no semantic effect.
+  Method categories are also often referred to as "protocols".
+<P>
+  Selecting a method category will show all methods in that category.
+  The special category
+<CODE>"* all *"</CODE>
+shows all methods in alphabetic order.
+
+<H3>Method List</H3>
+  Finally, selecting a method in the method list will show the corresponding
+  method's source code in the code view.
+<BR>
+Notice that, if the classes source file has been removed, or is not accessible,
+the codeview will show the string <CODE>"no source available"</CODE>.
+<P>
+  Also keep in mind, that these lists (like all selection lists) respond to keyboard events:
+  especially, alpha-keys (search for the next entry with that character),
+<KBD>cursor UP/DOWN</KBD>,
+<KBD>page UP/DOWN</KBD>,
+<KBD>HOME</KBD> and
+<KBD>END-</KBD>keys
+are useful for navigation.
+<P>
+  For examples on
+<A NAME="I_HOWTO"     HREF="hints.html#HOWTO">typical uses</A> of the browser,
+see the last section(s) of this document.
+<P>
+
+<H2><A NAME="CLASS_VS_INST" HREF="TOP.html#I_CLASS_VS_INST">Class vs. Instance</A></H2>
+
+  The browser allows working on both a class and its metaclass (i.e. the
+  classes class). Smalltalk beginners should keep in mind, that classes are
+  objects like anything else in the system - thus the behavior of classes is described
+  by another class (the so called <VAR>metaclass</VAR>).
+  The set of messages understood by instances of a
+  class is called <VAR>instance protocol</VAR>,
+  while the set of messages understood by the class
+  is called the <VAR>class protocol</VAR>.
+<BR>
+  Just like instances inherit protocol from the superclass(es),
+  class protocol is inherited
+  from the metaclasses superclass(es).
+<P>
+  To switch, there are two toggle buttons named <CODE>"class"</CODE> and
+  <CODE>"instance"</CODE>.
+<BR>
+  Selecting <CODE>"instance"</CODE> (which is the default) makes your changes
+  affect the class, while selecting <CODE>"class"</CODE> makes them affect the metaclass.
+<P>
+If you are not too familiar with this concept, try the <CODE>"hierarchy"</CODE>
+function of the class-lists popupMenu - especially take a careful look at this
+hierarchy when looking at the <VAR>class protocol</CODE>.
+
+<H2><A NAME="DOUBLECLICK_CLASS" HREF="TOP.html#I_DOUBLECLICK_CLASS">Starting an Application by double clicking on a class</A></H2>
+
+For your convenience, a double click on a class, which is
+an application (i.e. subclass of ApplicationModel or a TopView application),
+can be started (opened) by double clicking on the class.
+<BR>
+(actually, any class which returns true from the <CODE>#isVisualStartable</CODE> message
+can be started this way)
+<P>
+Of course, this performs the same as evaluating "<VAR>className</VAR> <CODE>open</CODE>"
+in a workspace.
+
+<H2><A NAME="DOUBLECLICK_METHOD" HREF="TOP.html#I_DOUBLECLICK_METHOD">Opening a tool by double clicking on a method</A></H2>
+
+For selectors, which are marked as windowSpec, menuSpec or imageSpec methods,
+a corresponding editor application is opened on double-click.
+<BR>
+That means, that a GUI-Painter is opened when you double-click a windowSpec method,
+or an imageEditor is opened when you double-click an imageSpec method.
+<P>
+
+<P>
+<P>
+<P>
+<HR>
+Doc $Revision: 1.16 $ $Date: 2016-01-27 17:47:46 $
+
+</BODY>
+</HTML>

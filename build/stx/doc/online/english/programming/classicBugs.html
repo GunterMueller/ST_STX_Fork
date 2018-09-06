@@ -1,0 +1,1404 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - classic bugs</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="guiCodingGuidelines.html">      <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">              <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="fileoutFormat.html"> <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Classic Smalltalk Bugs</H1>
+
+<H2>Note</H2>
+
+The biggest part of this document has been taken from the
+<CITE>Prime time freeware</CITE> collection
+(assuming it is freeware, and it can be included here)
+and reformatted for HTML.
+<BR>
+Thanks to the author of the original paper (Ralph Johnson)
+for providing this list and granting inclusion of it in this
+documentation.
+<P>
+Some of the material in this paper is <CITE>ST-80</CITE> or
+<CITE>ST-V</CITE> specific,
+and I have
+added sections (between horizontal lines) where differences to
+<CITE>ST/X</CITE> or additional facts apply.
+<P>
+Please feel free to send additional classic bugs texts to the original
+author (Ralph Johnson) or the eXept team,
+for inclusion in this document.
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+<P>
+
+<H2>Contents</H2>
+
+<UL>
+<LI><A NAME="I_CLASSIC"         HREF="#CLASSIC">Classic Smalltalk Bugs (as collected by Ralph Johnson)</A>
+  <UL>
+  <LI><A NAME="I_BUG1"          HREF="#BUG1">Variable-sized classes</A>
+  <LI><A NAME="I_BUG2"          HREF="#BUG2"><CODE>#add:</CODE> returns its argument</A>
+  <LI><A NAME="I_BUG3"          HREF="#BUG3">Changing collection while iterating over it</A>
+  <LI><A NAME="I_BUG4"          HREF="#BUG4">Modifying copies of collections</A>
+  <LI><A NAME="I_BUG5"          HREF="#BUG5">Missing ^ (return)</A>
+  <LI><A NAME="I_BUG6"          HREF="#BUG6">Class instance creation methods</A>
+  <LI><A NAME="I_BUG7"          HREF="#BUG7">Assigning to classes</A>
+  <LI><A NAME="I_BUG8"          HREF="#BUG8"><CODE>#become:</CODE></A>
+  <LI><A NAME="I_BUG9"          HREF="#BUG9">Recompiling bugs in Smalltalk/V</A>
+  <LI><A NAME="I_BUG10"         HREF="#BUG10">Opening windows</A>
+  <LI><A NAME="I_BUG11"         HREF="#BUG11">Blocks</A>
+  <LI><A NAME="I_BUG12"         HREF="#BUG12">Cached Menus</A>
+  <LI><A NAME="I_BUG13"         HREF="#BUG13">Smalltalk/V class library</A>
+  </UL>
+<P>
+<LI><A NAME="I_MORE_STX"        HREF="#MORE_STX">Additional hints (from ST/X users)</A>
+  <UL>
+  <LI><A NAME="I_ARRAYLITERALS"    HREF="#ARRAYLITERALS">Storing into array literals</A>
+  <LI><A NAME="I_COMMENTS"         HREF="#COMMENTS">Commenting comments</A>
+  <LI><A NAME="I_PRIVATEMETHODS"   HREF="#PRIVATEMETHODS">Redefined private methods</A>
+  <LI><A NAME="I_ARRAYADD"         HREF="#ARRAYADD">Avoid the use of <CODE>Array &#187; add:</CODE></A>
+  <LI><A NAME="I_SLOWCOLLECTIONS"  HREF="#SLOWCOLLECTIONS">Slow collection methods</A>
+  <LI><A NAME="I_WRONGCOLORS"      HREF="#WRONGCOLORS">Wrong color drawing</A>
+  <LI><A NAME="I_BECOMEDANGER"     HREF="#BECOMEDANGER">One wrong <CODE>#become:</CODE> can ruin your whole day</A>
+  <LI><A NAME="I_HASHING"          HREF="#HASHING">redefining <CODE>#=</CODE> and <CODE>#hash</CODE></A>
+  </UL>
+<P>
+<LI><A NAME="I_MORE_NET"        HREF="#MORE_NET">Additional hints (from comp.lang.smalltalk)</A>
+</UL>
+
+
+<HR>
+<HR>
+
+<H1><A NAME="CLASSIC" HREF="#I_CLASSIC">Classic Smalltalk Bugs</A></H1>
+
+<HR>
+compiled by Ralph Johnson -- University of Illinois at Urbana-Champaign
+<P>
+Every programming system is prone to certain kinds of bugs.  A good
+programmer learns these bugs, and how to avoid them.  Smalltalk is
+no different.  Smalltalk eliminates lots of bugs that are common in
+other languages, such as bugs in linear search algorithms.  (Just use
+<CODE>do:</CODE>)
+However, it has its own set of classic bugs, which every new Smalltalk
+programmer runs into.
+<P>
+There are several reasons to collect classic bugs.  The first is that
+it will help experienced programmers test and debug programs, and can
+help us design better programs in the first place.  Second, if we
+teach these bugs up front then people should learn to be good
+programmers faster.  Third, perhaps we can redesign the system to
+eliminate some of these bugs, or we can write checking tools to
+spot them automatically.
+<P>
+
+
+
+
+<H2><A HREF="#I_BUG1" NAME="BUG1">Bug 1: Variable-sized classes</A></H2>
+
+<CODE>Set</CODE>, <CODE>Dictionary</CODE>, and <CODE>OrderedCollection</CODE>
+are variable-sized classes
+that grow.  They grow by making a copy of themselves and <I>"becoming"</I>
+the copy.  If you add new instance variables to a subclass then
+you have to make sure that these instance variables get copied, too,
+or else you will mysteriously lose the values of the instance
+variables at random points in time.
+<P>
+<CITE>Smalltalk-80 R4.0</CITE> (and probably some earlier versions) has a
+<CODE>copyEmpty:</CODE> method in <CODE>Collection</CODE> that you are
+supposed to override
+if you make a subclass of <CODE>Collection</CODE> that adds instance variables.
+The solution to this bug is to write a version of <CODE>copyEmpty:</CODE> for
+your class.
+<P>
+It has been suggested that it would be easy to write a tool that
+checked that every new subclass of <CODE>Collection</CODE> that added instance
+variables also defined a method for <CODE>copyEmpty:</CODE>.
+<P>
+<HR>
+ The same caution has to be taken in <CITE>ST/X</CITE>. In addition, many variable collections
+ have been implemented as
+ keeping the variable part in a separate array (instead of using the indexable vars).
+ The reason is that
+ the <CODE>#become:</CODE> operation can be quite expensive in direct pointer
+ smalltalk implementations which <CITE>ST/X</CITE> is (you don't have to fully understand this :-).
+ Therefore, all collections copy-methods should also copy their
+ container-array, otherwise both the original and the copy might
+ reference the same element-container - leading to much confusion
+ later ...
+<HR>
+
+
+
+
+<H2><A HREF="#I_BUG2" NAME="BUG2">Bug 2: "add:" returns its argument</A></H2>
+
+For every collection that grows, <CODE>add:</CODE> returns its argument,
+not the receiver, and people usually assume that it returns
+its receiver.  Thus, they write
+<CODE><PRE>
+    (c add: x) add: y
+</PRE></CODE>
+when they should
+really write
+<CODE><PRE>
+    c add: x; add: y
+</PRE></CODE>
+or else
+<CODE><PRE>
+    c add: x. c add: y
+</PRE></CODE>
+Note that this is one of the good uses for <CODE>yourself</CODE>, you can write
+<CODE><PRE>
+    (Set new
+	add: x;
+	add: y;
+	...;
+	yourself)
+</PRE></CODE>
+to make sure that you have the new set.
+<P>
+Note that there are good reasons why <CODE>add:</CODE> returns its arguments,
+and even if there weren't, it is a very, very bad mistake to
+implement <CODE>add:</CODE> so that it returns the receiver, and so confuse
+every other Smalltalk programmer on the planet.
+Making <CODE>add:</CODE> return its argument often keeps you from resorting
+to temps, because you can create the argument to <CODE>add:</CODE> on the
+fly, and then do other things with it after the <CODE>add:</CODE>.  If you
+want to access the collection, you can do it with <CODE>yourself</CODE> or
+cascaded messages, as described above.
+
+
+
+<H2><A HREF="#I_BUG3" NAME="BUG3">Bug 3: Changing collection while iterating over it</A></H2>
+
+You should <STRONG>never, never, never</STRONG> iterate over a collection which
+the iteration loop somehow modifies. Elements of the collection
+will be moved during the iteration, and elements might be missed
+or handled twice.  Instead, make a copy of the collection you
+are iterating over, i.e.
+<CODE><PRE>
+    aCollection copy do: [:each | aCollection remove: each]
+</PRE></CODE>
+is a good program, but if you leave out the copy then it isn't.
+<P>
+Mario Wolczko suggested a solution that catches this problem the
+instant it occurs (at some performance penalty of course).  The
+solution is to change the collection classes.  Each iteration method
+enters that collection into a set of collections being iterated over
+(IteratedCollections), executes the block, then removes the collection
+from the set.  Collections are usually (only?) modified using <CODE>at:put:</CODE>
+or <CODE>basicAt:put:</CODE>, so these are overriden to check that the collection
+is not in IteratedCollections.  If it is, an error is signalled.  You
+can either use this technique all the time, or you can just install
+these classes when you are testing and debugging your program.  These
+changes are packaged in a file <CODE>Iterator-check.st</CODE> that is available on
+the <CITE>Manchester</CITE> and <CITE>Illinois</CITE> servers.
+On the <CITE>Illinois</CITE> server, it is
+in <CODE>/pub/MANCHESTER/manchester/4.0/Iterator-check.st</CODE>.
+
+
+
+
+
+<H2><A HREF="#I_BUG4" NAME="BUG4">Bug 4: Modifying copies of collections</A></H2>
+
+It is common for an object to have an accessing method that returns a
+collection of objects that you can modify.  However, sometimes
+an object will return a copy of this collection to keep you from
+modifying it.  Instead, you are probably supposed to use messages
+that will change the collection for you.  The problem is that this
+is often poorly documented, and a person who likes to modify collections
+directly will run into problems.  See  "ScheduledControllers
+scheduledControllers" for an example.
+<P>
+The solution is to either provide better documentation, to claim
+that nobody is allowed to modify copies of collections returned
+from other objects, or to have objects that don't want their
+collections modified to return immutable versions of the collections
+that will give an error if you try to modify them.
+
+
+
+
+
+<H2><A HREF="#I_BUG5" NAME="BUG5">Bug 5: Missing ^ (return)</A></H2>
+
+It is very easy to leave off a return caret (^) on an expression.
+If there is no return at the end of a method, Smalltalk returns
+the receiver of the method.  It only takes one missing return
+to mess up a long chain of method invocations.
+
+
+
+
+
+<H2><A HREF="#I_BUG6" NAME="BUG6">Bug 6: Class instance creation methods</A></H2>
+
+Writing a correct instance create method is apparently non-trivial.
+The correct way to do it, is to have something like:
+<CODE><PRE>
+    new
+      ^ self basicNew initialize
+</PRE></CODE>
+
+where you redefine <CODE>initialize</CODE> in each class to initialize that
+class's instance variables.
+<br>In turn, <CODE>initialize</CODE> is defined as an instance method:
+<CODE><PRE>
+    initialize
+      super initialize "to initialize inherited instance variables"
+
+      "initialize variables that I define"
+      ...
+</PRE></CODE>
+
+There are lots of ways to do this wrong.
+Perhaps the most common is to forget the return, i.e. to write:
+<CODE><PRE>
+    new
+       self basicNew initialize
+</PRE></CODE>
+or:
+<CODE><PRE>
+    new
+       super new initialize
+</PRE></CODE>
+The result is that you have the class where you want the instance of
+the class returned from <CODE>#new</CODE>.  This is a special case of bug #5.
+<P>
+Another error is to forget the superclasses initialization, as in:
+<CODE><PRE>
+    initialize
+      "initialize variables that I define"
+      ...
+</PRE></CODE>
+This results in a partially initialized object. Be especially careful
+when writing a subclass of View; the inherited initialization is
+important for proper operation of the view instance.
+<P>
+Yet another typical error is to make an infinite loop by writing
+<CODE><PRE>
+    new
+      ^ self new initialize
+</PRE></CODE>
+
+If Smalltalk doesn't respond when you think it should, press
+<KBD>CTRL-.</KBD> (that is <KBD>"<B>Control</B>"</KBD> and <KBD>"<B>.</B>"</KBD> pressed at the same time) to
+get the debugger.  If the debugger shows a stack of <CODE>#new</CODE> messages
+then you know you made this mistake.
+<P>
+Finally, you should be careful to not call "super new initialize", but "basicNew initialize" instead.
+The reason is that the superclass may itself have redefine the new method to perform initialization.
+And so, with "super new initialize", we would initialize the object twice,
+wasting time and perhaps memory.
+<P>
+
+
+
+
+
+<H2><A HREF="#I_BUG7" NAME="BUG7">Bug 7: Assigning to classes</A></H2>
+
+<CODE><PRE>
+    OrderedCollection := 2
+</PRE></CODE>
+is perfectly legal Smalltalk, but does dreadful things to your image.
+This bug could be eliminated if the compiler gave a warning when you
+assigned to a global variable that contained a class.
+
+<HR>
+ In <CITE>ST/X</CITE>, the incremental compiler outputs a warning
+<HR>
+
+
+
+
+
+<H2><A HREF="#I_BUG8" NAME="BUG8">Bug 8: "become:"</A></H2>
+
+<CODE>#become:</CODE> is a very powerful operation.  It is easy to destroy your image
+with it.  Its main use is in growing collections (see bug #1), since
+it can make every reference to the old version of a collection become a
+reference to the new, larger version.  It has slightly different semantics
+in <CITE>Smalltalk/V</CITE> and <CITE>Smalltalk-80</CITE>,
+since
+<CODE><PRE>
+    x become: y
+</PRE></CODE>
+causes every
+reference to <VAR>x</VAR> and <VAR>y</VAR> to be interchanged in
+<CITE>Smalltalk-80</CITE>, but does not
+change any of the references to <VAR>y</VAR> in <CITE>Smalltalk/V</CITE>.
+<P>
+Suppose that you want to eliminate all references to an object x.
+Saying:
+<CODE><PRE>
+    x become: nil
+</PRE></CODE>
+works fine in <CITE>Smalltalk/V</CITE>,
+but will cause
+every reference to <VAR>nil</VAR> to become a reference to <VAR>x</VAR> in <CITE>Smalltalk-80</CITE>.
+This is a sure calamity.  You want <VAR>x</VAR> to <I>become</I> a new object with no
+references, such as in
+<CODE><PRE>
+    x become: String new
+</PRE></CODE>
+<HR>
+The semantics of <CODE>#become:</CODE> in <CITE>ST/X</CITE> is the same as in
+<CITE>Smalltalk-80</CITE>. However, <CITE>ST/X</CITE> provides another method
+(<CODE>#becomeNil</CODE>) to clear references.
+Using <VAR>nil</VAR>, smallIntegers or living contexts
+as either receiver or
+argument to <CODE>#become:</CODE> is not allowed in <CITE>ST/X</CITE>.
+<P>
+BTW: <CODE>#become:</CODE> may be a very time consuming operation in
+<CITE>ST/X</CITE> (and maybe other smalltalk implementations).
+Please avoid the use of it.
+<HR>
+
+
+
+
+<H2><A HREF="#I_BUG9" NAME="BUG9">Bug 9: Recompiling bugs in Smalltalk/V</A></H2>
+
+It is easy to have references to obsolete objects in <CITE>Smalltalk/V</CITE>
+if you change code without cleaning things up carefully. For example,
+the associations whose keys are the referenced names in the Pool
+Dictionary are stored in the CompiledMethods at compile time. If you
+create a new version of the Pool Dictionary and install it by simple
+assignment then the compiled methods still refer to the old associations.
+<P>
+If you substitute a new instance of Dictionary or replace, rather than
+update an association in a pool dictionary, you have to recompile all
+methods using variables scoped to that Pool.
+<P>
+This is is also annoying when using ENVY, where the methods are under
+strict control. Perhaps Pool Dictionaries should be be first-class
+versioned pre-requisites of Classes, just like the class definition.
+<P>
+BTW we are using/VPM 1.4 with ENVY 1.3
+<P>
+1. If you prune & graft a subtree of your class structure you have to
+make sure that all referencing methods are recompiled. Otherwise you
+will run (or your customer, because this is only detected at run time)
+into an Deleted class error message.
+Thomas Muhr posted a "Bite" a while ago to handle this problem for
+<CITE>Smalltalk/V</CITE> 286.
+
+<HR>
+In <CITE>ST/X</CITE>, deleted classes are kept as anonymous classes
+(i.e. they are no longer anchored in the Smalltalk dictionary).
+This means, that existing instances can still live and operate properly,
+but the SystemBrowser will not be able to show and/or modify any code.
+<BR>
+The class will of course be physically deleted by the garbage collector,
+once the instance is no longer referenced.
+<P>
+The same is true, if a classes instance layout changes (for example, when
+adding an instance variable). Existing instances will remain to exist as
+instances of the (now obsolete) old class.
+<P>
+You can find removed classes with the <VAR>MemoryUsageView</VAR>;
+look for entries marked as "<VAR>removed</VAR>" or "<VAR>obsolete</VAR>"
+(of course, you can also enumerate all behaviors and filter them manually).
+
+<HR>
+
+
+<H2><A HREF="#I_BUG10" NAME="BUG10">Bug 10: Opening windows (Smalltalk/V)</A></H2>
+
+<CITE>Smalltalk-V</CITE> and the older versions of <CITE>Smalltalk-80</CITE> do not return to
+the sender when a new window is opened. Thus, any code after
+a message to open a window will never be executed.  This is the
+cause of much frustration.  For example, if you try to open two
+windows at once, i.e.
+<CODE><PRE>
+    TextPane new open.
+    TextPane new open
+</PRE></CODE>
+in Smalltalk-V and
+<CODE><PRE>
+    aScheduledWindow1 open.
+    aScheduledWindow2 open
+</PRE></CODE>
+in <CITE>Smalltalk-80</CITE>, then you will get only one open window,
+and one forgotten piece of code.  This problem has been fixed
+in Objectworks/Smalltalk R 4.1, so the above code will create
+two windows as you would expect.
+<P>
+The fix for earlier versions of <CITE>Smalltalk-80</CITE> is to use the
+<CODE>openNoTerminate</CODE> method to open the window, which does not
+transfer control to it.  A useful trick is to store the new
+window in a global variable so you can test it.
+<P>
+Aad Nales says that the fix for <CITE>Smalltalk/V</CITE>V is to fork the
+creation of the new window.
+<CODE><PRE>
+    [Textpane open] fork.
+</PRE></CODE>
+If this is not what the programmer wants then it is probably necessary
+to hack the dispatcher code and remove the dropSenderChain message,
+which is the ultimate cause of the problem.
+<HR>
+This does not apply to <CITE>ST/X</CITE>.
+<BR>
+In <CITE>ST/X</CITE>, <CODE>open</CODE> always returns immediately
+(and actually forks a new process for the new view, if its a topview),
+while <CODE>openModal</CODE>
+does not return until the new view is closed.
+<HR>
+
+
+
+
+<H2><A HREF="#I_BUG11" NAME="BUG11">Bug 11: Blocks (Smalltalk/V)</A></H2>
+
+Blocks are very powerful, and it isn't hard for programmers to get
+into trouble trying to be too tricky.  To compound problems, the
+two versions of Smalltalk have slightly different semantics for
+blocks, and one of them often leads to problems.
+<P>
+Originally blocks did not have truly local variables.  The block
+parameters were really local variables in the enclosing method.
+Thus,
+<CODE><PRE>
+    | x y |
+
+    x := 0.
+    (1 to: 100) do: [:z | x := x + z]
+</PRE></CODE>
+actually had three temporaries, x, y, and z.  This leads to bugs
+like the following
+<CODE><PRE>
+    someMethod
+	| a b  |
+
+	a := #(4 3 2 1).
+	b := SortedCollection sortBlock: [:a :b | a someOperation: b].
+	b addAll: a.
+	Transcript show: a.
+</PRE></CODE>
+When elements are added to <VAR>b</VAR>, the <VAR>sortBlock</VAR> is used to
+tell where
+to put them,
+but this will change <VAR>a</VAR> and <VAR>b</VAR>.  <CODE>addAll:</CODE> is OK, but
+the <VAR>a</VAR> that gets displayed on the transcript will be an integer,
+not an array.
+<P>
+Early versions of <CITE>Smalltalk-80</CITE> (2.4 and before?) and of <CITE>Squeak/Pharo</CITE>
+(pre closure compiler versions)
+implemented blocks like this - and <CITE>Smalltalk/V</CITE> still does.
+<CODE>Smalltalk/X</CODE> always implemented real closures right from the beginning
+and does not suffer from this problem.
+In current <CITE>Visualworks Smalltalk</CITE>
+implementations, blocks are true closures. You can declare
+variables local to a block, and the names of the block parameters are
+local to the block. Most people agree that this is a much better
+definition of blocks than the original one.  Nevertheless, people
+planning to use <CITE>Smalltalk/V</CITE> should realise that it has a different
+semantics for blocks (that comment is from ancient times - today, there are
+not many ST/V users left in the world).
+<P>
+This difference can lead to some amusing problems.  For example, here
+is some code written for ST/V or Squeak by someone who had obviously learned Scheme or Smalltalk/X,
+where it works as expected:
+<CODE><PRE>
+    | anotherArray aBlockArray |
+
+    aBlockArray := Array new: 4.
+    anotherArray := #(1 2 4 8).
+
+    1 to: 4 do: [ :anIndex |
+	aBlockArray at: anIndex put: [ (anotherArray at: anIndex) * 2 ]].
+</PRE></CODE>
+
+The programmer expected that each block would be stored in the array
+along with its own value of <VAR>anIndex</VAR>.
+If <VAR>anIndex</VAR> were just a local
+variable of the method then this will not work.  It assumes that
+each execution of the block gets its own version of <VAR>anIndex</VAR>, and
+<CITE>Smalltalk/V</CITE> and old <CITE>Smalltalk-80</CITE> actually make
+each execution share
+the same version.
+<P>
+So, if you are using <CITE>Smalltalk/V</CITE> then be careful not to reuse the
+names of arguments of blocks unless you know that the blocks are
+not going to have their lives overlap.  Thus,
+
+<CODE><PRE>
+    aCollect do: [:i | ...].
+    bCollect do: [:i | ...].
+</PRE></CODE>
+
+is probably OK because <CODE>do:</CODE> does not store its argument, so the
+blocks will be garbage by the time the method is finished.
+However, if the first block were stored in a variable somewhere
+and evaluated during the execution of the second block then
+problems would probably occur.
+<HR>
+<CITE>ST/X's</CITE> block semantics is much like <CITE>ST-80 R4</CITE> blocks.
+They are true closures and no variables are shared with other blocks or
+the method.
+<HR>
+
+
+
+
+<H2><A HREF="#I_BUG12" NAME="BUG12">Bug 12: Cached Menus</A></H2>
+
+Menus are often defined in a class method, where they are created
+and stored in a class variable or a class instance variable.  The
+method will look something like this
+<CODE><PRE>
+    initializeMenu
+     ...
+</PRE></CODE>
+Note that accepting the method does *not* change the menu.  You
+have to execute the method to change the class variable or class
+instance variable.  Often the initializeMenu method is invoked by
+the class method initialize.  This can lead to the strange effect
+that you can initialize the menu by deleting the class and filing
+it in again, but otherwise you don't seem to be able to change
+the menu (because you haven't figured out that you should really
+be executing the initializeMenu method).
+<P>
+To make matters worse, it is possible that each instance of the
+controller, or model, or whatever has the menu, stores its own
+copy of the menu in an instance variable.  If that is the case then
+it is not enough to execute initializeMenu, you also must cause each
+object to reinitialize its own copy of the menu.  It is often easier
+to just delete the objects and recreate them.
+<P>
+Often a class will have a #flushMenus method to clear out all menus.
+Typically the method that fetches the menu will check to see if it
+is nil and invoke initializeMenu if it is.  So, flushMenus will just
+nil out the variable holding the menu.  The best way to figure out
+what is happening is to look at all uses of the variable.  Smalltalk
+experts rarely have problems with this bug, but it often confuses
+novices.
+<P>
+Caching is a very common technique in Smalltalk for making programs
+more efficient in both time and space.  Caching of menus is one of
+the simplest uses of caches, and other uses can create more subtle bugs.
+
+<P>
+<HR>
+In <CITE>ST/X</CITE>, the same is true for cached action blocks.
+Make certain, that existing instances reinitialize themself after a change,
+or you may wonder why these components show the old behavior after a change.
+<HR>
+
+
+
+<H2><A HREF="#I_BUG13" NAME="BUG13">Bug 13: Smalltalk/V class library</A></H2>
+
+Thomas Muhr makes these comments about bugs in the <CITE>Smalltalk/V</CITE>
+class library that you should know if you want to keep your
+programs fast and correct.
+<P>
+<OL>
+<LI> Never use symbols to label objects if you are dealing with many
+objects. This will slow down your system to an almost dead halt. Use
+strings instead.
+<P>
+<LI> Never use Sets when you can otherwise assure the uniqueness. Look
+at the implementation of <CODE>add:</CODE> for Sets and you'll know what I mean:
+on every <CODE>add:</CODE> the new element is compared to all others resulting
+into a nonlinear time for adding to Sets.
+<P>
+<LI> Do not think that if you <CODE>collect:</CODE> something from a
+<CODE>SortedCollection</CODE>, that your result will be sorted as the origin,
+unless you use the default <VAR>sortBlock</VAR>. This is one of the bugs provided
+by the language vendor
+</OL>
+<P>
+<HR>
+These bugs are not known in <CITE>ST/X</CITE> or <CITE>Smalltalk-80</CITE>.
+<BR>
+The bad news is that for some of the above, the opposite is true in
+<CITE>ST/X</CITE> (and maybe in <CITE>Smalltalk-80</CITE>).
+<BR>
+For example, in <CITE>ST/X</CITE>, identitySets with symbols as key are
+much faster than set using a string-key.
+<P>
+This may make it hard to write a class which shows best performance on
+all threee smalltalk implementations.
+<BR>
+Assuming that (as a consequence of the
+Parcplace-Digitalk merge) the old ST/V class library is going to be obsoleted
+over time, we recommend to ignore the above and use Symbols and Set in a way
+they are meant to be used (better put preasure on the vendor to fix things
+instead of writing workarounds ...).
+<P>
+<HR>
+
+
+Many thanks to the many people who contributed bugs or solutions to bugs
+to the list.  These include
+
+<PRE>
+ muhr@opal.cs.tu-berlin.de (Thomas Muhr)
+ steinman@is.morgan.com (Jan Steinman)
+ knight@mrco.carleton.ca (Alan Knight)
+ mario@cs.man.ac.uk (Mario Wolczko)
+ peterg@netcom.com (Peter Goodall)
+ Aad Nales &lt;nales@cs.few.eur.nl>
+ scrl@otter.hpl.hp.com (Simon Lewis)
+ msmith@volcano.ma30.bull.com (Mike Smith)
+ dai@mrco.carleton.ca (Naci Dai)
+ dcr0@speedy.enet.dec.com (Dave Robbins)
+ randy@tigercat.den.mmc.com (Randy Stafford)
+ Hubert.Baumeister@mpi-sb.mpg.de (Hubert Baumeister)
+ eliot@dcs.qmw.ac.uk (Eliot Miranda)
+ dmm@aristotle.ils.nwu.edu (Donald)
+ amir@is.morgan.com (Amir Bakhtiar)
+ Kurt Piersol &lt;Piersol@Apple.com>
+ sullivan@ticipa.ti.com (Michael Sullivan)
+ terry@zoe.network23.com (Terry)
+ brent@uwovax.uwo.ca (Brent Sterner)
+ frerk@informatik.uni-kl.de
+ nicted@toz.buffalo.ny.us (Nicole Tedesco)
+ riks@ogicse.ogi.edu (Rik Fischer Smoody)
+ marten@feki.toppoint.de (Marten Feldtmann)
+ mst@vexpert.dbai.tuwien.ac.at (Markus Stumptner)
+</PRE>
+
+<H1><A NAME="MORE_STX" HREF="#I_MORE_STX">Additional hints (from ST/X users)</A></H1>
+
+<H2><A NAME="ARRAYLITERALS" HREF="#I_ARRAYLITERALS">Storing into array literals</A></H2>
+
+A very subtle and hard to debug bug is encountered, when a method returns
+or passes a literal array constant to someone else, which stores into this
+array using <CODE>at:put:</CODE> type messages.
+<BR>
+Since array literals are kept and used from a method's literal table,
+the next call of the same method will return the same (now modified) array.
+<P>
+This bug is especially hard to find, since the method's sourcecode does not
+reflect that the array constant has changed - the browser will continue to
+show the original sourcecode.
+<BR>
+For example:
+<BLOCKQUOTE><CODE><PRE>
+Object subclass:#ArrayLiteralBugDemonstration
+	instanceVariableNames:''
+	classVariableNames:''
+	poolDictionaries:''
+	category:'Examples-Bugs'
+!
+
+!ArrayLiteralBugDemonstration methodsFor:'bug1'!
+
+literalArray
+    ^ #('hello' 'there')
+!
+
+buggy1
+    "
+     thats obvious ...
+    "
+    Transcript show:'literalArray initially returns: ';
+	       showCR:(self literalArray) displayString.
+
+    (self literalArray) at:2 put:'wrong'.
+
+    Transcript show:'literalArray now returns: ';
+	       showCR:(self literalArray) displayString.
+
+    Transcript showCR:'but the source is still:'.
+    Transcript cr.
+    Transcript showCR:(self class compiledMethodAt:#literalArray) source.
+
+    "
+     ArrayLiteralBugDemonstration new buggy1
+    "
+!
+
+buggy2
+    "
+     less obvious ... hard to track down
+    "
+    Transcript show:'literalArray initially returns: ';
+	       showCR:(self literalArray) displayString.
+
+    Transcript show:'literalArray modified: ';
+	       showCR:(self literalArray replaceAll:'hello' by:'bug') displayString.
+
+    Transcript show:'literalArray now returns: ';
+	       showCR:(self literalArray) displayString.
+
+    Transcript showCR:'but the source is still:'.
+    Transcript cr.
+    Transcript showCR:(self class compiledMethodAt:#literalArray) source.
+
+    "
+     ArrayLiteralBugDemonstration new buggy2
+    "
+! !
+</PRE></CODE></BLOCKQUOTE>
+<HR>
+To help tracking down this bug,
+<CITE>ST/X's</CITE> incremental compiler can optionally create array literals
+as immutable (i.e. not to be allowed to be changed) objects.
+<BR>
+This option is controlled by the classVariable <CODE>ArraysAreImmutable</CODE>
+in the <CODE>Parser</CODE> class. The flag is also found in the Launcher's
+settings dialog. Set this to true to get immutable array
+literals, which raise an error when stored into.
+<P>
+Since this is incompatible to <CITE>Smalltalk-80</CITE>, the default is
+false. Also, to the beginner, turning this on may create a bit of confusion
+if the array protocol is tried in a workspace/inspector,
+as the object is now presented as an ImmutableArray with a slightly different
+protocol.
+<P>
+The same mechanism is implemented for literal strings and literal byteArrays.
+<BR>
+The binary class compiler <CITE>stc</CITE> creates immutable array literals if a corresponding
+command line option is present.
+<HR>
+
+
+
+<H2><A NAME="COMMENTS" HREF="#I_COMMENTS">Commenting comments</A></H2>
+
+Sometimes, if you want to remove a piece of code by putting
+comments around, you reintroduce (by accident) statements which used to be hidden
+in another comment.
+<BR>
+For example:
+<BR>
+Original code:
+<CODE><PRE>
+	...
+	some statement
+	...
+	"bad statement - disabled by a comment"
+	...
+	more statements
+</PRE></CODE>
+after you place your comment around the code, as in:
+<CODE><PRE>
+	...
+"
+	some statement
+	...
+	"bad statement - disabled by a comment"
+	...
+	more statements
+"
+</PRE></CODE>
+and accept, you have really reintroduced the previously disabled
+<CODE>"bad statement"</CODE>.
+<P>
+Also, comments in the original code may now
+be parsed as smalltalk code. Look at:
+<CODE><PRE>
+	...
+	foo := foo squared.     "some stupid comment"
+	...
+</PRE></CODE>
+and the commented version:
+<CODE><PRE>
+	...
+"
+	foo := foo squared.     "some stupid comment"
+"
+</PRE></CODE>
+which now has the comment being compiled as smalltalk code.
+(sending <CODE>#comment</CODE> to the result of sending <CODE>#stupid</CODE>
+to the variable <CODE>"some"</CODE>).
+<BR>
+In most cases, the compiler gives a warning due to unknown identifiers;
+however, if there happens to be a variable named <CODE>"some"</CODE>,
+the above is perfectly legal and not even a warning is issued.
+<P>
+This is really bad, because you often want to disable debug or print code
+(which was written during development), but keep that code around
+for future debugging or as hints for others.
+
+<HR>
+To help getting around this problem,
+<CITE>ST/X</CITE> offers <A HREF="language.html#EOLCOMMENTS">end-of-line</A>
+and <A HREF="language.html#TOKENCOMMENTS">token delimited</A> comments,
+which do not nest,
+but instead treat everything (including comments) to the end of
+line (or the closing token) as a comment.
+End of line comments are written as:
+<CODE><PRE>
+	"/  everything after this is a comment
+</PRE></CODE>
+
+This character sequence was choosen after code studies of existing programs;
+it was found to not create backward compatibility problems
+(however, that is just statistics; there might actually be a small number of
+programs around, for which this is not true).
+<P>
+Of course, these comments are not defined in the Smalltalk language standard;
+therefore you should be careful in using them,
+if you plan to port your code to other Smalltalk dialects.
+<BR>
+The <CITE>ST/X</CITE> compilers can optionally output a warning, if such a non standard
+language extension is used.
+<P>
+
+(BTW: it is well known in the computer society,
+that comment syntax using the same characters as delimiters is a bad thing.
+Any upcoming ANSI standard should take care of this).
+<HR>
+
+
+<H2><A NAME="PRIVATEMETHODS" HREF="#I_PRIVATEMETHODS">Redefined private methods</A></H2>
+
+In some situations, methods assumed to be private get redefined,
+although they really should not (this happens especially when working in groups).
+How can I make certain that I reach my own method in a send.
+<P>
+There is no standard smalltalk solution to this problem.
+
+<HR>
+Beside <VAR>self</VAR>- and <VAR>super</VAR>-sends,
+<CITE>ST/X</CITE> offers another one, called the <VAR>here</VAR> send.
+Using <CODE>here</CODE> as the receiver of a message send,
+will result in a method lookup
+which starts in the class in which the method was defined.
+Semantically, it is much like a <VAR>super</VAR>-send,
+with the exception,
+that a <VAR>super</VAR>-send starts the search in the superclass of the defining class.
+<BR>
+Thus, you can use:
+<CODE><PRE>
+	here myPrivateMethod.
+</PRE></CODE>
+to get the local method - even if the receiver is an instance of a subclass,
+and the subclass redefined <CODE>myPrivateMethod</CODE>.
+<P>
+<STRONG>WARNING:</STRONG>
+<BLOCKQUOTE>
+Keep in mind that <VAR>here</VAR>-sends limit the reusability of your classes, since
+methods using them will never get into any redefined subclass method.
+<BR>
+Actually, <VAR>here</VAR> sends look much like a function call in other
+programming languages (except,
+that if no local target method is found, the search is continued in the superclass).
+</BLOCKQUOTE>
+Both <CITE>stc</CITE> and the incremental compiler offer compilation flags to turn
+<VAR>here</VAR> sends into regular <VAR>self</VAR> sends.
+(of course, you will get a 'using nonstandard features' warning too).
+<P>
+Notice, that <CITE>ST/X</CITE> offers method privacy too. But these will lead to
+a signal raise at run time instead. Also, method privacy is defined by the
+target method, while <VAR>here</VAR> sends are made up at the caller's side.
+<HR>
+
+
+<H2><A NAME="ARRAYADD" HREF="#I_ARRAYADD">Avoid the use of Array &#187; add:</A></H2>
+
+Although arrays support adding elements via the <CODE>add:</CODE> message,
+you should try hard to avoid using it. It is <STRONG>very very</STRONG> slow.
+For this reason, some other systems do not allow <CODE>Array &#187; add:</CODE> at all.
+<P>
+Since arrays are fixed size collections, changing the size implies a
+<CODE>#become:</CODE> operation. Due to technical reasons,  this operation
+may be very time consuming in <CITE>ST/X</CITE>. If your collection has to
+grow, use instances of OrderedCollection instead of arrays. Another alternative is
+to use a WriteStream to collect the elements and extract the completed
+collection when done (WriteStreams resize their container in big chunks,
+avoiding this overhead).
+<P>
+The above is also true for Strings, ByteArrays, FloatArrays and any other
+fixed size collection.
+<P>
+For example:
+<CODE><PRE>
+	|a|
+
+	a := Array new.
+	1 to:10 do:[:i |
+	    a add:i
+	]
+</PRE></CODE>
+is up to 500 times slower than both:
+<CODE><PRE>
+	|t a|
+
+	t := OrderedCollection new.
+	1 to:10 do:[:i |
+	    t add:i
+	].
+	a := t asArray
+</PRE></CODE>
+and:
+<CODE><PRE>
+	|s a|
+
+	s := WriteStream on:(Array new).
+	1 to:10 do:[:i |
+	    s nextPut:i
+	].
+	a := s contents
+</PRE></CODE>
+Beside <CODE>add:</CODE>, watch out for other methods which may be
+based upon <CODE>add:</CODE>.
+For example: <CODE>addAll:</CODE>, <CODE>addFirst:</CODE>, <CODE>addLast:</CODE>.
+
+
+
+<H2><A NAME="SLOWCOLLECTIONS" HREF="#I_SLOWCOLLECTIONS">Slow collection methods</A></H2>
+
+You should be careful when constructing big collections using
+<VAR>concatenation</VAR>-type methods.
+Some of these methods show a square time (and space) behavior,
+thus executing slow if applied to big collections.
+<BR>
+For example, the <CODE>copyWith:</CODE> method creates a new collection,
+with one more element. If you use this in a loop, individually adding
+elements, you may wonder where your time goes.
+<P>
+Methods to be careful about in this respect are (among many others):
+<UL>
+<LI><CODE>copyWith:</CODE>
+<LI><CODE>add:</CODE>
+<LI><CODE>,</CODE> (comma)
+</UL>
+in general, all methods which copy or regrow collections are possible performance
+beasts.
+<P>
+In these cases, it is much better to preallocate the target collection,
+use a WriteStream or
+work on a temporary resizable container (which is tuned for this type of operation) and
+convert at the end.
+<P>
+For example, <CODE>Set</CODE>, <CODE>Dictionary</CODE>,
+<CODE>OrderedCollection</CODE> and others allow you to specify an initial size,
+so that resizing is not needed later (but still possible). If you really need an array instance at the end,
+convert after building using <CODE>asArray</CODE> as a final message.
+<P>
+Compare:
+<CODE><PRE>
+     |s|
+
+     s := Set new.
+     10000 timesRepeat:[
+	s add:i asFloat
+     ]
+</PRE></CODE>
+to:
+<CODE><PRE>
+     |s|
+
+     s := Set new:10000.
+     10000 timesRepeat:[
+	s add:i asFloat
+     ]
+</PRE></CODE>
+the second piece of code is about 10-20% faster.
+(there is some speedup even though Set is already tuned for resizing,
+but the effect is not as dramatic as in the example that follows)
+<P>
+As an extreme example, compare:
+<CODE><PRE>
+     |a|
+
+     a := Array new.
+     1 to:10000 do:[:i |
+	a := a copyWith:i
+     ]
+</PRE></CODE>
+to:
+<CODE><PRE>
+     |tmp a|
+
+     tmp := OrderedCollection new.
+     1 to:10000 do:[:i |
+	tmp add:i
+     ].
+     a := tmp asArray
+</PRE></CODE>
+the second is up to 100 times faster.
+<P>
+See the actual execution times with:
+<A TYPE="example">
+<CODE><PRE>
+    Transcript show:'using copyWith: '.
+    Transcript show:(
+	Time millisecondsToRun:[
+	     |a|
+
+	     a := Array new.
+	     1 to:10000 do:[:i |
+		a := a copyWith:i
+	     ]
+	]).
+    Transcript showCR:' ms'.
+</PRE></CODE>
+</A>
+and:
+<A TYPE="example">
+<CODE><PRE>
+    Transcript show:'using OrderedCollection &#187; add: '.
+    Transcript show:(
+	Time millisecondsToRun:[
+	     |tmp a|
+
+	     tmp := OrderedCollection new.
+	     1 to:10000 do:[:i |
+		tmp add:i
+	     ].
+	     a := tmp asArray
+	]).
+    Transcript showCR:' ms'.
+</PRE></CODE>
+</A>
+
+<P>
+If you do not know the final size in advance, use a <CODE>Stream</CODE>.
+These are also tuned to handle this kind of growing.
+<P>
+Compare:
+<CODE><PRE>
+     |s|
+
+     s := ''.
+     10000 timesRepeat:[
+	s := s , 'more '
+     ]
+</PRE></CODE>
+to the (much faster):
+<CODE><PRE>
+     |s|
+
+     s := WriteStream on:String new.
+     10000 timesRepeat:[
+	s nextPutAll:'more '
+     ].
+     s contents
+</PRE></CODE>
+the second piece of code is about 5 to 10 times faster.
+
+<H2><A NAME="WRONGCOLORS" HREF="#I_WRONGCOLORS">Wrong color drawing</A></H2>
+
+This bug applies to limited graphic cards (with palette colors) only.
+These days, almost all graphic hardware uses 24bit (or more) true colors,
+where the problem described below is not present.
+<P>
+When drawing in a view, be careful to keep a reference to the color used.
+Otherwise, the garbage collector could free the color, which implies freeing
+of the corresponding color index in the displays colormap. The next allocated
+color may reuse this index and therefore change the appearance (i.e. the color)
+of the previously displayed graph.
+<BR>
+Example:
+<CODE><PRE>
+	...
+	aGC paint:(Color red:15 green:15 blue:100).
+	aGC displayLineFrom:(0@0) to:(100@100).
+	...
+	aGC paint:(Color red:50 green:50 blue:0).
+	aGC displayLineFrom:(100@0) to:(0@100).
+	...
+</PRE></CODE>
+is supposed to draw a cross, with different colors used. However,
+if a garbage collect occurs after drawing the first line, the first color
+may be reclaimed and the same colormap index be reused for the second color.
+The first line will therefore be shown in the same color on the screen.
+<P>
+Avoid this, by keeping references to all used colors somewhere in your view.
+<P>
+Of course, this reference must be kept as long as the view is visible;
+therefore a method local will usually not be the right place for it.
+Use an instance variable of an object which lives as long as the view is
+open.
+
+
+<H2><A NAME="BECOMEDANGER" HREF="#I_BECOMEDANGER">One wrong #become: can ruin your whole day</A></H2>
+
+<CODE>#become:</CODE> is a very dangerous operation; it can even crash the system.
+<BR>
+For performance (and other) reasons, instance variable accesses are not checked for boundary
+violations; therefore, the system is not prepared to handle the case where an
+object changes its layout AND instance variables of such a changed object
+are accessed in the same method (after the <CODE>#become:</CODE>).
+<BR>
+For example, consider you have a class called <CODE>MyClassWith2Instvars</CODE> -
+with two instance variables, <VAR>a</VAR> and <VAR>b</VAR> -
+and another class <CODE>MyClassWith1Instvar</CODE>, which
+has only one instance variable, called <VAR>c</VAR>.
+<P>
+The following method is dangerous, and may lead to a crash:
+<CODE><PRE>
+    dangerousMethod
+	a := 1.         "/ this access is ok
+	b := 2.         "/ still ok
+
+	self become:(MyClassWith1Instvar new).
+
+	a := 3.         "/ mhmh - this now accesses the c instvar
+	b := 4.         "/ CRASH or overwrite of some other object
+</PRE></CODE>
+The problem with the above code is that the compiler translates instance variable accesses
+into memory accesses which are indexed by the instance variables number.
+I.e. access to <VAR>a</VAR> is performed by an access to the first instance variable
+(i.e. to the slot with offset 0),
+<VAR>b</VAR> is accessed at offset 1 and so on.
+<P>
+After the <CODE>#become:</CODE>, the above method continues to access instance variables
+as if <CODE>self</CODE> was an instance of <CODE>MyClassWith2Instvars</CODE>;
+although this is no longer true. Actually, it accesses ``one slot behind'' the changed receiver,
+accessing whichever object is found there (this is highly nondeterministic - if by chance, there
+happens to be no object, or free memory, nothing happens. If there is some object, it will
+be corrupted.
+<BR>
+Since the very first slot of every object contains a reference to its class,
+accessing one-behind will very likely lead to the class slot of whichever object
+happens to be allocated there.
+<BR>
+In our concrete example, it is likely that the class slot of some poor innocent victim
+is modified to 4 which is certainly not a valid class ;-().
+<P>
+Be aware, that the above example is oversimplified:
+the instvar-accessing code after the <CODE>#become:</CODE>
+could be somewhere higher in the calling hierarchy, where it is not known (expected)
+that dangerousMethod is ever invoked.
+<P>
+This is one of the very rare cases,
+where the Smalltalk semantic is not safe
+- i.e. invalid memory acceses are possible.
+A possible defence strategy fro the runtime system (VM) could be
+to abort any currently executed method which is possibly accessing
+such invalid slots (i.e. all active instance methods of the object).
+This is currently not done in the VM.
+<P>
+Therefore, this is another reason for banning <CODE>#become:</CODE> from your code.
+<P>
+For above reasons:
+<BR>
+<B>Be very very careful in using <CODE>#become:</CODE> - if at all, use it for instances
+of the same class only or with instances which have the same layout.
+<BR>
+Most code can be easily written without using <CODE>#become:</CODE>.
+</B>
+
+
+<H2><A NAME="HASHING" HREF="#I_HASHING">redefining <CODE>#=</CODE> and <CODE>#hash</CODE></A></H2>
+
+If you redefine the compare-for-equal (<CODE>#=</CODE>) method in some class,
+<B>AND</B> instances of this class are to be placed into
+a Set or Dictionary (not IdentitySet or IdentityDictionary),
+you <B>MUST</B> also redefine the <CODE>#hash</CODE> method in this class.
+<P>
+The reason is that sets and dictionaries use the hash key to quickly find
+an element - and use #= to compare elements further.
+<BR>
+If not redefined, the default <CODE>#hash</CODE> method (in <CODE>Object</CODE>)
+uses the receiver's identityHash-value as a fallback. Thus, if only <CODE>#=</CODE>
+is redefined, the objects may compare as equal, but will not return the same
+hash keys. Sets and dictionaries will have trouble handling those objects
+correctly.
+<P>
+Therefore, always remember the rule:
+<BLOCKQUOTE>
+<STRONG>Always redefine</STRONG> <CODE>#hash</CODE> <STRONG>if</STRONG> <CODE>#=</CODE> <STRONG>is redefined.</STRONG>
+</BLOCKQUOTE>
+
+As an example, consider a class called person, which redefines equality as:
+<CODE><PRE>
+    = somePerson
+	self species == somePerson species ifFalse:[^ false].
+	self firstName = somePerson firstName ifFalse:[^ false].
+	self lastName = somePerson lastName ifFalse:[^ false].
+	^ true
+</PRE></CODE>
+then, a redefined hash method could be:
+<CODE><PRE>
+    hash
+	^ firstName hash + lastName hash
+</PRE></CODE>
+i.e. the hashValue is best based upon those attributes, which are
+also taken in the equality test.
+<BR>
+In any case should the <CODE>#hash</CODE> method return the same numeric value
+for instances which compare as equal.
+
+
+
+
+<H1><A NAME="MORE_NET" HREF="#I_MORE_NET">Additional hints (from comp.lang.smalltalk)</A></H1>
+
+These have still to be reformatted into HTML.
+More messages will be added here, as they arrive from the net.
+
+<HR>
+
+<PRE>
+From: jaeck@alc.com (William A. Jaeck)
+Subject: Re: Classic Smalltalk bugs
+Organization: Ascent Logic Corporation, San Jose, CA
+Date: Fri, 14 Aug 1992 18:22:27 GMT
+
+Here is a Smalltalk bug which bit me just this morning:
+
+I had created a subclass of OrderedCollection with an instance
+method called with:. This is supposed to do the same thing as
+add:.
+
+Then, I implemented a class method called with:with: as
+
+   with: arg1 with: arg2
+
+	 ^ self with: arg1; with: arg2
+
+This ended up producing a result as if I had implemented it as
+
+	^ self with: arg2
+
+The correct implementation of with:with: is, of course
+
+	^ (self with: arg1) with: arg2
+
+<HR>
+
+From: riks@ogicse.cse.ogi.edu (Rik Fischer SmOOdy)
+Newsgroups: comp.lang.smalltalk
+Subject: Classes as a dirty trick to get globals.
+
+Ralph: here's one for the list.
+
+A common "dirty trick"  is to use a class with class methods as an
+implementation for a "globally known" object which is expected
+to be unique.  This class is never expected to be instantiated:
+instances would have no capabilities except those inherited by
+default from #Object.
+The trick usually works, but it qualifies as design by accident.
+A tyro might study the object as an example and be misled.
+(It is important to encourage re-use to keep the visible structure
+as comprehensible as we can)
+Future engineers might decide that there needs to be another "instance"
+of this globally known object.  I have seen an example (identity
+of perpetrators withheld to protect the unconvicted) where the
+second instance was implmented as a sub-class, with numerous methods
+over-written to access a different class variable.
+
+On Smalltalk V/MAC, a quick scan found (Color MTrap Compiler and LCompiler )
+Smalltalk80 V4 comes with DefineOpcodePool but that may have other
+redeeming social value.
+The most egregious examples have come with other installed packages.
+
+Mr. Manners instead approves of the way Smalltalk80 uses the globally
+published objects named Transcript, Undeclared, and even Smalltalk itself.
+
+Rik Fischer Smoody
+smOOdynamics     Systems Made Outa Objects
+	2400 NE 25th, Suite 800
+	Portland, OR 97212
+riks@cse.ogi.edu
+503-249-8300
+
+    If the programming environment made it almost automatic to maintain
+	distinguished SortedCollections in the "global" dictionary known
+	as Smalltalk, we would see several examples of SortedCollections
+	installed there, without having elements added to them.  Their
+	methodDictionary's would be used as Classes' are now.
+
+Naming is important, especially for us humans to get mnemonic value.
+    I personally do not like contrived names that prepend the company of creation,
+    the current author's name, the place in some hierarchy, nor short letters
+    to grandmother.  Naming is an art.  Practice it well.
+
+Let's suppose that they implemented a class CheckBook.  On the assumption
+that you only have ONE CheckBook, they put all the behavior in the class.
+It had class variables #Balance and #CheckNumber.
+Later, a second bank account was opened (or they got married?) and a
+second CheckBook was needed.  A subclass CheckBookB was created, with
+class variables #BalanceB and #CheckNumberB.  All methods that accessed
+either variable were over-written.
+
+I think there should have been a class CheckBook with an instance
+installed as #MyCheckBook (or something).  The second instance
+could then simply be instantiated and installed as #MyCheckBookB.
+
+The extra maintainence hassle of installing the first one would have been
+repaid many times over with the second instantiation.
+
+<HR>
+
+Newsgroups: comp.lang.smalltalk
+Date: Thu, 3 Nov 1994 15:57:53 +0100
+Sender: SmallTalk programming language discussion &lt;INFO-CLS@DEARN.BITNET>
+From: Niklas Bjornerstedt &lt;niklas.bjornerstedt@ENTRA.SE>
+Subject: Common bugs
+
+After seeing certain types of bug repeat themselves in many systems
+I got the idea of compiling a list of the most common ones. The bugs
+I am interested in are the ones that make it to the end user, not the
+ones that irritate the developer.
+
+To start everything off I'll present my favorites:
+
+1. "self halt" left in the code.
+
+2. delays left in the code.
+   (A friend of mine "optmized" a routine in Object Pascal from 32 to 4
+   seconds by removing a delay he had forgotten during development.)
+
+3. String handling code unable to handle TwoByteString (ParcPlace Smalltalk).
+   Almost every major package I know of has had bugs in their handling of
+   TwoByteString.
+
+4. Forgetting to test against NULL in arguments and return-values.
+
+I could go on but I think this is enough to get things going.
+Now I invite others to add to this list. I will compile and repost
+the list if I get any responces.
+
+/Niklas
+
+-------------------------------------------------------------------------
+Niklas Bjornerstedt
+Entra Data AB, Sweden       tel: +46-8-80 97 00
+Gustavslundsv. 151 G        fax: +46-8-26 04 76
+S-161 36 Bromma           email: niklas.bjornerstedt@entra.se
+
+<HR>
+
+From scrl Mon Jul 20 08:28:42 1992
+Relay-Version: version Notes 2.8  87/9/11; site otter.hpl.hp.com
+From: scrl@otter.hpl.hp.com (Simon Lewis)
+Date: Mon, 20 Jul 1992 07:28:42 GMT
+Date-Received: Mon, 20 Jul 1992 07:28:42 GMT
+Subject: Re: Classic Smalltalk bugs
+Message-ID: &lt;2610024@otter.hpl.hp.com>
+Organization: Hewlett-Packard Laboratories, Bristol, UK.
+Path: otter!scrl
+Newsgroups: comp.lang.smalltalk
+Posting-Version: version Notes 2.8  87/9/11; site otter.hpl.hp.com
+References: &lt;1992Jul18.113941.30839@m.cs.uiuc.edu>
+
+Not so much a bug, but a common mistake I think :-
+
+(a &lt; b) ifTrue: [a := a + 1].     "Works fine."
+(a &lt; b) whileTrue: [a := a + 1].  "Is an error.  Should be [a &lt; b]."
+
+I've seen people do this, and take an awfully long time to figure out why
+the second one doesn't work, particularly if they *know* the system implements
+whileTrue:, but have a less than perfect understanding of *how* it works.
+
+Simon Lewis,
+HP Labs, Bristol, UK.
+
+
+</PRE>
+
+<HR>
+Doc $Revision: 1.29 $ $Date: 2017-07-13 10:01:50 $
+</BODY>
+</HTML>

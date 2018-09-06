@@ -1,0 +1,116 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+   <META NAME="Author" CONTENT="Thomas Zwick, eXept software AG, Germany">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.04 [en] (X11; I; Linux 2.0.30 i586) [Netscape]">
+   <TITLE>The SubSpecification Component</TITLE>
+</HEAD>
+<BODY>
+<A HREF="ArbitraryComponent.html" NOPRINT><IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="The Arbitrary Component Wigdet" NOSAVE HEIGHT=30 WIDTH=30></A>
+<A HREF="TOP.html#TABLEOFTHEWIDGETS" NOPRINT><IMG SRC="../../../icons/DocsUpArrow.gif" ALT="Table of the Widgets" NOSAVE HEIGHT=30 WIDTH=30></A>
+<A HREF="SubCanvas.html" NOPRINT><IMG SRC="../../../icons/DocsRightArrow.gif" ALT="The SubCanvas Wigdet" NOSAVE HEIGHT=30 WIDTH=30></A>
+<BR>&nbsp;
+<HR ALIGN=LEFT WIDTH="100%">
+<H1>
+<FONT SIZE=+4>The SubSpecification Component</FONT></H1>
+<IMG SRC="../../../pictures/GUIPainterWidgetArbitrary.gif" ALT="[A View of an empty Arbitrary Widget]" NOSAVE HEIGHT=24 WIDTH=207>
+<P>View Class: <TT>View</TT>
+<BR>Spec Class: <TT>UISubSpecification</TT>
+
+<P>The<B> SubSpecification Component</B> allows inclusion of another
+specification with all of its components.
+<BR>
+The components as defined in the included specification are sliced
+into the current view. The components bindings are resolved
+from the current applications bindings (i.e. the aspects of the
+application are used).
+<P>
+This is in contrast to a subCanvas, which creates an extra subapplication
+instance, with possibly private aspects.
+<BR>
+(i.e. a subCanvas may have its own ApplicationModel providing its own
+aspects;
+<BR>whereas a subSpecification only includes another spec)
+<BR>This is useful to reuse common specifications as a kind of macros.
+<BR>&nbsp;
+<H3>
+
+<HR ALIGN=LEFT WIDTH="100%"></H3>
+
+<H3>
+The <I>Basics</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>ID</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Unique symbolic name (ID) of the box.&nbsp;</B>&nbsp;
+<BR>This ID can be used by the application to access the widget
+via <TT>"builder>>componentAt:ID"</TT>.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Class</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Class which provides the window spec to be included.</B>&nbsp;
+<BR>If left unspecified, the application's class itself is used.
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Selector</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Message selector sent to the above class, to
+provide the window spec.</B>&nbsp;
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>GUI Painter</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Opens another GUI Painter on the subSpec.</B>
+</TR>
+
+</TABLE>
+
+
+&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Details</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Border</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the width of the border.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Level</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the width of the 3D-border.</B>&nbsp;
+<BR>Positive values provide a raising,&nbsp;
+<BR>negative values provide a lowering of the widget.</TD>
+</TR>
+
+</TABLE>
+
+<P>&nbsp;
+<H3>
+The <I>Help</I> Section:</H3>
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="HelpTool.html">Using the Help Tool</A>"
+<BR>&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Layout</I> Section:</H3>
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="LayoutTool.html">The Layout of the Widgets</A>"
+<BR>&nbsp;
+<BR>&nbsp;
+
+<P>
+<HR>
+
+<P><IMG SRC="../../../icons/stx.gif" ALT="[stx-logo]" NOSAVE NOPRINT HEIGHT=48 WIDTH=47 ALIGN=CENTER>
+<BR><TT>Copyright &copy; 1998 eXept Software AG, all rights reserved</TT>
+<BR>
+<HR>
+</BODY>
+</HTML>

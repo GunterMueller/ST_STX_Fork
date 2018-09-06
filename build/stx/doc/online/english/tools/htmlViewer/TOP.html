@@ -1,0 +1,1645 @@
+<HEAD>
+<TITLE>The ST/X HTML Viewer</TITLE>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="../cbrowser/TOP.html"> <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="../TOP.html" INFO="Back to the tool documentation page">          <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="../misc/TOP.html">     <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>The ST/X HTML Viewer</H1>
+
+<H2><A NAME="INDEX">Index</A></H2>
+
+<UL>
+<LI><A NAME="I_INTRO" HREF="#INTRO">Introduction</A>
+<LI><A NAME="I_FEATURES" HREF="#FEATURES">Features & Extensions</A>
+  <UL>
+  <LI><A NAME="I_FEATURES_ESCAPES" HREF="#FEATURES_ESCAPES">Ampersand Escapes</A>
+  <LI><A NAME="I_FEATURES_COLORNAMES" HREF="#FEATURES_COLORNAMES">Color Names</A>
+  <LI><A NAME="I_FEATURES_IMAGEFORMATS" HREF="#FEATURES_IMAGEFORMATS">Image Formats</A>
+  <LI><A NAME="I_FEATURES_NEWPARAMETERS" HREF="#FEATURES_NEWPARAMETERS">New Parameters</A>
+  </UL>
+<LI><A NAME="I_SMALLTALKACTIONS" HREF="#SMALLTALKACTION">Smalltalk Action HREFs</A>
+<LI><A NAME="I_SMALLTALKSCRIPT" HREF="#SMALLTALKSCRIPT">Smalltalk Script</A>
+<LI><A NAME="I_APPLETS" HREF="#APPLETS">Smalltalk Applets</A>
+<LI><A NAME="I_JAVAAPPLETS" HREF="#JAVAAPPLETS">Java Applets</A>
+<LI><A NAME="I_MISSINGFEATURES" HREF="#MISSINGFEATURES">Missing Features</A>
+<LI><A NAME="I_READING" HREF="#READING">Further Reading</A>
+<LI><A NAME="I_HIDDEN_FEATURES" HREF="#HIDDEN_FEATURES">Hidden Features</A>
+<LI><A NAME="I_APPENDIX" HREF="#APPENDIX">Appendix</A>
+  <UL>
+  <LI><A NAME="I_APPENDIX_PARAMETERS" HREF="#APPENDIX_PARAMETERS">Appendix - List of Parameters</A>
+  </UL>
+</UL>
+
+
+
+
+<H2><A NAME="INTRO" HREF="#INDEX">Introduction</A></H2>
+
+The <CITE>ST/X</CITE> HTML-viewer has been written to allow
+easy access to the online documentation.
+It provides some of the functionality and look & feel of
+popular HTML browsers (or WWW browsers), such as Netscape, Mosaic, Chimera etc.
+<P>
+Although the HTML viewer is typically used as a top view to display an
+HTML document, it can also be used as a widget and embedded in
+an application. <CITE>ST/X</CITE> itself uses this to display help
+texts for dialogs (try some dialog from the Launcher's settings menu).
+<P>
+
+In addition to most standard features, additional functionality
+has been built in, to allow some interaction with your current
+Smalltalk system.
+<P>
+Notice, that this browser has not been written to compete with existing
+browsers - we do not claim it to be a replacement for any real WWW browser.
+It has some major rendering features missing or only partially implemented;
+especially tables, box model and style sheets are completely unusable for
+today's web pages.
+<BR>
+Its main purpose is to provide a powerful tool for interactive online
+documentation AND at the same time use a widely used, industry standard document format.
+Additional features are implemented as add-on tags and tag-parameters,
+which are ignored by other browsers - thus, all documentation can also
+be viewed using any other browser. However, the interaction features
+will not be available with other browsers.
+<P>
+Documents may be located on local files or be accessed from remote machines
+via the HTTP protocol. This is especially useful in development groups
+or with larger projects, since the documentation can be located and managed
+on one central machine - thus reducing maintenance costs.
+<P>
+Beside its use as an ST/X document
+viewer, it may also be useful for application writers, to provide
+non-ST/X online documentation for their users.
+<P>
+By the way, due to its build in SmalltalkScript and applet support,
+it may also be useful as a tool to build nice intraNet applications -
+a very simple database application is found in
+<A HREF="../../html/applications/phoneBook/TOP.html">``html/applications/phoneBook''</A>.
+
+
+<H2><A NAME="FEATURES" HREF="#INDEX">Features</A></H2>
+
+<UL>
+  <LI>Should be (at least) HTML-2 compliant.
+  <LI>Supports many netscape, internet explorer and HTML-3 features
+  <LI>Partial support for tables
+  <LI>Supports SUB, SUP, UL and S style-Tags.
+  <LI>Smalltalk inline actions (on forms)
+  <LI>Executable examples
+  <LI><CITE>smalltalkScript</CITE> scripting language
+  <LI>Smalltalk applets
+  <LI>Printing with automatic chapter numbering, page breaks & table of contents generation
+  <LI>Displays UNIX man pages (using the special URL: "man://keyword")
+</UL>
+
+
+<H3><A NAME="FEATURES_ESCAPES" HREF="#INDEX">Ampersand Escapes</A></H2>
+
+To see the special characters as listed below,
+your system's font should be iso-latin1 encoded and contain
+the full character set.
+(Which is not the case for some of the older XWindow fonts).
+<P>
+National characters:
+<P>
+<TABLE border=2 bgcolor=#E0E0C0>
+  <TR>
+	<TD ALIGN=right> &oslash; <TD ALIGN=left> &amp;oslash;
+	<TD ALIGN=right> &Oslash; <TD ALIGN=left> &amp;Oslash;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &aring; <TD ALIGN=left> &amp;aring;
+	<TD ALIGN=right> &Aring; <TD ALIGN=left> &amp;Aring;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &atilde; <TD ALIGN=left> &amp;atilde;
+	<TD ALIGN=right> &Atilde; <TD ALIGN=left> &amp;Atilde;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &ntilde; <TD ALIGN=left> &amp;ntilde;
+	<TD ALIGN=right> &Ntilde; <TD ALIGN=left> &amp;Ntilde;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &otilde; <TD ALIGN=left> &amp;otilde;
+	<TD ALIGN=right> &Otilde; <TD ALIGN=left> &amp;Oslash;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &auml; <TD ALIGN=left> &amp;auml;
+	<TD ALIGN=right> &Auml; <TD ALIGN=left> &amp;Auml;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &uuml; <TD ALIGN=left> &amp;uuml;
+	<TD ALIGN=right> &Uuml; <TD ALIGN=left> &amp;Uuml;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &ouml; <TD ALIGN=left> &amp;ouml;
+	<TD ALIGN=right> &Ouml; <TD ALIGN=left> &amp;Ouml;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &euml; <TD ALIGN=left> &amp;euml;
+	<TD ALIGN=right> &Euml; <TD ALIGN=left> &amp;Euml;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &iuml; <TD ALIGN=left> &amp;iuml;
+	<TD ALIGN=right> &Iuml; <TD ALIGN=left> &amp;Iuml;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &yuml; <TD ALIGN=left> &amp;yuml;
+	<TD ALIGN=right> &szlig; <TD ALIGN=left> &amp;szlig;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &aelig; <TD ALIGN=left> &amp;aelig;
+	<TD ALIGN=right> &AElig; <TD ALIGN=left> &amp;AElig;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &acirc; <TD ALIGN=left> &amp;acirc;
+	<TD ALIGN=right> &Acirc; <TD ALIGN=left> &amp;Acirc;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &icirc; <TD ALIGN=left> &amp;icirc;
+	<TD ALIGN=right> &Icirc; <TD ALIGN=left> &amp;Icirc;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &ecirc; <TD ALIGN=left> &amp;ecirc;
+	<TD ALIGN=right> &Ecirc; <TD ALIGN=left> &amp;Ecirc;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &ucirc; <TD ALIGN=left> &amp;ucirc;
+	<TD ALIGN=right> &Ucirc; <TD ALIGN=left> &amp;Ucirc;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &ocirc; <TD ALIGN=left> &amp;ocirc;
+	<TD ALIGN=right> &Ocirc; <TD ALIGN=left> &amp;Ocirc;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &agrave; <TD ALIGN=left> &amp;agrave;
+	<TD ALIGN=right> &Agrave; <TD ALIGN=left> &amp;Agrave;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &igrave; <TD ALIGN=left> &amp;igrave;
+	<TD ALIGN=right> &Igrave; <TD ALIGN=left> &amp;Igrave;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &egrave; <TD ALIGN=left> &amp;egrave;
+	<TD ALIGN=right> &Egrave; <TD ALIGN=left> &amp;Egrave;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &ugrave; <TD ALIGN=left> &amp;ugrave;
+	<TD ALIGN=right> &Ugrave; <TD ALIGN=left> &amp;Ugrave;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &ograve; <TD ALIGN=left> &amp;ograve;
+	<TD ALIGN=right> &Ograve; <TD ALIGN=left> &amp;Ograve;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &aacute; <TD ALIGN=left> &amp;aacute;
+	<TD ALIGN=right> &Aacute; <TD ALIGN=left> &amp;Aacute;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &iacute; <TD ALIGN=left> &amp;iacute;
+	<TD ALIGN=right> &Iacute; <TD ALIGN=left> &amp;Iacute;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &eacute; <TD ALIGN=left> &amp;eacute;
+	<TD ALIGN=right> &Eacute; <TD ALIGN=left> &amp;Eacute;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &uacute; <TD ALIGN=left> &amp;uacute;
+	<TD ALIGN=right> &Uacute; <TD ALIGN=left> &amp;Uacute;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &oacute; <TD ALIGN=left> &amp;oacute;
+	<TD ALIGN=right> &Oacute; <TD ALIGN=left> &amp;Oacute;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &ccedil; <TD ALIGN=left> &amp;ccedil;
+	<TD ALIGN=right> &Ccedil; <TD ALIGN=left> &amp;Ccedil;
+  </TR>
+</TABLE>
+<P>
+Special characters:
+<P>
+<TABLE border=2 bgcolor=#E0E0C0>
+  <TR>
+	<TD ALIGN=right> &lt; <TD ALIGN=left> &amp;lt;
+	<TD ALIGN=right> &gt; <TD ALIGN=left> &amp;gt;
+	<TD ALIGN=right> &amp; <TD ALIGN=left> &amp;amp;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &quot; <TD ALIGN=left> &amp;quot;
+	<TD ALIGN=right> &copy; <TD ALIGN=left> &amp;copy;
+	<TD ALIGN=right> &reg; <TD ALIGN=left> &amp;reg;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &cent; <TD ALIGN=left> &amp;cent;
+	<TD ALIGN=right> &pound; <TD ALIGN=left> &amp;pound;
+	<TD ALIGN=right> &yen; <TD ALIGN=left> &amp;yen;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &brvbar; <TD ALIGN=left> &amp;brvbar;
+	<TD ALIGN=right> &sect; <TD ALIGN=left> &amp;sect;
+	<TD ALIGN=right> &middot; <TD ALIGN=left> &amp;middot;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &laquo; <TD ALIGN=left> &amp;laquo;
+	<TD ALIGN=right> &raquo; <TD ALIGN=left> &amp;raquo;
+	<TD ALIGN=right> &plusmn; <TD ALIGN=left> &amp;plusmn;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &frac14; <TD ALIGN=left> &amp;frac14;
+	<TD ALIGN=right> &frac12; <TD ALIGN=left> &amp;frac12;
+	<TD ALIGN=right> &frac34; <TD ALIGN=left> &amp;frac34;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &micro; <TD ALIGN=left> &amp;micro;
+	<TD ALIGN=right> &iquest; <TD ALIGN=left> &amp;iquest;
+	<TD ALIGN=right> &div; <TD ALIGN=left> &amp;div;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &sup1; <TD ALIGN=left> &amp;sup1;
+	<TD ALIGN=right> &sup2; <TD ALIGN=left> &amp;sup2;
+	<TD ALIGN=right> &sup3; <TD ALIGN=left> &amp;sup3;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &deg; <TD ALIGN=left> &amp;deg;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &nbsp;<TD ALIGN=left> &amp;nbsp; (no-break space)
+  </TR>
+</TABLE>
+
+
+<H3><A NAME="FEATURES_ESCAPES" HREF="#INDEX">Extended Ampersand Escapes</A></H2>
+
+For the HTML-3.0 Greek character set,
+your display & printer must provide a full symbol font.
+<P>
+Lower case greek:
+<P>
+<TABLE border=2 bgcolor=#E0E0C0>
+  <TR>
+	<TD ALIGN=right> &alpha; <TD ALIGN=left> &amp;alpha;
+	<TD ALIGN=right> &iota;  <TD ALIGN=left> &amp;iota;
+	<TD ALIGN=right> &rho;   <TD ALIGN=left> &amp;rho;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &beta; <TD ALIGN=left> &amp;beta;
+	<TD ALIGN=right> &kappa; <TD ALIGN=left> &amp;kappa;
+	<TD ALIGN=right> &sigma; <TD ALIGN=left> &amp;sigma;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &gamma; <TD ALIGN=left> &amp;gamma;
+	<TD ALIGN=right> &lambda; <TD ALIGN=left> &amp;lambda;
+	<TD ALIGN=right> &tau; <TD ALIGN=left> &amp;tau;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &delta; <TD ALIGN=left> &amp;delta;
+	<TD ALIGN=right> &mu; <TD ALIGN=left> &amp;mu;
+	<TD ALIGN=right> &upsilon; <TD ALIGN=left> &amp;upsilon;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &epsilon; <TD ALIGN=left> &amp;epsilon;
+	<TD ALIGN=right> &nu; <TD ALIGN=left> &amp;nu;
+	<TD ALIGN=right> &phi; <TD ALIGN=left> &amp;phi;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &zeta; <TD ALIGN=left> &amp;zeta;
+	<TD ALIGN=right> &xi; <TD ALIGN=left> &amp;xi;
+	<TD ALIGN=right> &chi; <TD ALIGN=left> &amp;chi;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &eta; <TD ALIGN=left> &amp;eta;
+	<TD ALIGN=right> &omicron; <TD ALIGN=left> &amp;omicron;
+	<TD ALIGN=right> &psi; <TD ALIGN=left> &amp;psi;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &theta; <TD ALIGN=left> &amp;theta;
+	<TD ALIGN=right> &pi; <TD ALIGN=left> &amp;pi;
+	<TD ALIGN=right> &omega; <TD ALIGN=left> &amp;omega;
+  </TR>
+</TABLE>
+
+<P>
+Variants:
+<P>
+<TABLE border=2 bgcolor=#E0E0C0>
+<!--
+  <TR>
+	<TD ALIGN=right> &vepsilon; <TD ALIGN=left> &amp;vepsilon;
+	<TD ALIGN=right> &vtheta; <TD ALIGN=left> &amp;vtheta;
+	<TD ALIGN=right> &varrho; <TD ALIGN=left> &amp;varrho;
+  </TR>
+-->
+  <TR>
+	<TD ALIGN=right> &varpi; <TD ALIGN=left> &amp;varpi;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &vsigma; <TD ALIGN=left> &amp;vsigma;
+  </TR>
+  <TR>
+	<TD ALIGN=right> &varphi; <TD ALIGN=left> &amp;varphi;
+  </TR>
+</TABLE>
+
+<P>
+Upper case greek:
+<P>
+<TABLE border=2 bgcolor=#E0E0C0>
+  <TR>
+	<TD ALIGN=right> &Gamma; <TD ALIGN=left> &amp;Gamma;
+	<TD ALIGN=right> &Xi; <TD ALIGN=left> &amp;Xi;
+	<TD ALIGN=right> &Phi; <TD ALIGN=left> &amp;Phi;
+  <TR>
+	<TD ALIGN=right> &Delta; <TD ALIGN=left> &amp;Delta;
+	<TD ALIGN=right> &Pi; <TD ALIGN=left> &amp;Pi;
+	<TD ALIGN=right> &Psi; <TD ALIGN=left> &amp;Psi;
+  <TR>
+	<TD ALIGN=right> &Theta; <TD ALIGN=left> &amp;Theta;
+	<TD ALIGN=right> &Sigma; <TD ALIGN=left> &amp;Sigma;
+	<TD ALIGN=right> &Omega; <TD ALIGN=left> &amp;Omega;
+  <TR>
+	<TD ALIGN=right> &Lambda;  <TD ALIGN=left> &amp;Lambda;
+	<TD ALIGN=right> &Upsilon; <TD ALIGN=left> &amp;Upsilon;
+	<TD ALIGN=right> &Chi; <TD ALIGN=left> &amp;Chi;
+	<TD>
+</TABLE>
+<P>
+The (not yet standard) Latex Math character set:
+<BR>
+Since those character names are not yet defined in the HTML-3.2 standard,
+the Latex names were used (we hope, those will make it at the end...)
+<BR>
+Notice, that the entity names may be changed, once a common standard exists.
+<P>
+<TABLE border=2 bgcolor=#E0E0C0>
+  <TR>
+	<TD ALIGN=right> &ldots;</TD>   <TD>3dots on baseline</TD>  <TD ALIGN=left> &amp;ldots;</TD>
+  <TR>
+	<TD ALIGN=right> &forall;</TD>  <TD>forall</TD>             <TD ALIGN=left> &amp;forall;</TD>
+  <TR>
+	<TD ALIGN=right> &exists;</TD>  <TD>exists</TD>             <TD ALIGN=left> &amp;exists;</TD>
+  <TR>
+	<TD ALIGN=right> &aleph;</TD>   <TD></TD>                   <TD ALIGN=left> &amp;aleph;</TD>
+  <TR>
+	<TD ALIGN=right> &Re;</TD>      <TD>R fraktur</TD>          <TD ALIGN=left> &amp;Re;</TD>
+  <TR>
+	<TD ALIGN=right> &Im;</TD>      <TD>I fraktur</TD>          <TD ALIGN=left> &amp;Im;</TD>
+  <TR>
+	<TD ALIGN=right> &infty;</TD>   <TD>infinity</TD>           <TD ALIGN=left> &amp;infty;</TD>
+  <TR>
+	<TD ALIGN=right> &le;</TD>     <TD>less-equal</TD>         <TD ALIGN=left> &amp;le;</TD>
+  <TR>
+	<TD ALIGN=right> &ge;</TD>     <TD>greater-equal</TD>      <TD ALIGN=left> &amp;ge;</TD>
+  <TR>
+	<TD ALIGN=right> &ne;</TD>     <TD>not equal</TD>          <TD ALIGN=left> &amp;ne;</TD>
+  <TR>
+	<TD ALIGN=right> &equiv;</TD>   <TD>equivalent</TD>         <TD ALIGN=left> &amp;equiv;</TD>
+  <TR>
+	<TD ALIGN=right> &approx;</TD>  <TD>approximate</TD>        <TD ALIGN=left> &amp;approx;</TD>
+  <TR>
+	<TD ALIGN=right> &cong;</TD>    <TD>congruent</TD>      <TD ALIGN=left> &amp;cong;</TD>
+  <TR>
+	<TD ALIGN=right> &plusmn;</TD>  <TD>plus-minus</TD>     <TD ALIGN=left> &amp;plusmn;</TD>
+  <TR>
+	<TD ALIGN=right> &times;</TD>   <TD>times</TD>          <TD ALIGN=left> &amp;times;</TD>
+  <TR>
+	<TD ALIGN=right> &div;</TD>     <TD>div</TD>            <TD ALIGN=left> &amp;div;</TD>
+  <TR>
+	<TD ALIGN=right> &oplus;</TD>   <TD>ring-plus</TD>      <TD ALIGN=left> &amp;oplus;</TD>
+  <TR>
+	<TD ALIGN=right> &otimes;</TD>  <TD>ring-times</TD>     <TD ALIGN=left> &amp;otimes;</TD>
+  <TR>
+	<TD ALIGN=right> &oslash;</TD>  <TD>ring-slash</TD>     <TD ALIGN=left> &amp;oslash;</TD>
+  <TR>
+	<TD ALIGN=right> &sum;</TD>     <TD>summation</TD>      <TD ALIGN=left> &amp;sum;</TD>
+  <TR>
+	<TD ALIGN=right> &prod;</TD>    <TD>product</TD>            <TD ALIGN=left> &amp;prod;</TD>
+  <TR>
+	<TD ALIGN=right> &vee;</TD>     <TD>logOr (vee)</TD>        <TD ALIGN=left> &amp;vee;</TD>
+  <TR>
+	<TD ALIGN=right> &wedge;</TD>   <TD>logAnd (wedge)</TD>     <TD ALIGN=left> &amp;wedge;</TD>
+  <TR>
+	<TD ALIGN=right> &neg;</TD>     <TD>negation</TD>           <TD ALIGN=left> &amp;neg;</TD>
+  <TR>
+	<TD ALIGN=right> &uparrow;</TD> <TD>uparrow</TD>            <TD ALIGN=left> &amp;uparrow;</TD>
+  <TR>
+	<TD ALIGN=right> &downarrow;</TD>   <TD>downarrow</TD>      <TD ALIGN=left> &amp;downarrow;</TD>
+  <TR>
+	<TD ALIGN=right> &leftarrow;</TD>   <TD>leftarrow</TD>      <TD ALIGN=left> &amp;leftarrow;</TD>
+  <TR>
+	<TD ALIGN=right> &rightarrow;</TD>  <TD>rightarrow</TD>     <TD ALIGN=left> &amp;rightarrow;</TD>
+  <TR>
+	<TD ALIGN=right> &leftrightarrow;</TD>  <TD>leftrightarrow</TD>  <TD ALIGN=left> &amp;leftrightarrow;</TD>
+  <TR>
+	<TD ALIGN=right> &Uparrow;</TD>     <TD>Uparrow</TD>        <TD ALIGN=left> &amp;Uparrow;</TD>
+  <TR>
+	<TD ALIGN=right> &Downarrow;</TD>   <TD>Downarrow</TD>      <TD ALIGN=left> &amp;Downarrow;</TD>
+  <TR>
+	<TD ALIGN=right> &Leftarrow;</TD>   <TD>Leftarrow</TD>      <TD ALIGN=left> &amp;Leftarrow;</TD>
+  <TR>
+	<TD ALIGN=right> &Rightarrow;</TD>  <TD>Rightarrow</TD>     <TD ALIGN=left> &amp;Rightarrow;</TD>
+  <TR>
+	<TD ALIGN=right> &Leftrightarrow;</TD>  <TD>Leftrightarrow</TD> <TD ALIGN=left> &amp;Leftrightarrow;</TD>
+  <TR>
+	<TD ALIGN=right> &isin;</TD>    <TD>Element-of</TD>         <TD ALIGN=left> &amp;isin;</TD>
+  <TR>
+	<TD ALIGN=right> &notin;</TD>   <TD>Not an element-of</TD>  <TD ALIGN=left> &amp;notin;</TD>
+  <TR>
+	<TD ALIGN=right> &subset;</TD>  <TD>subset</TD>             <TD ALIGN=left> &amp;subset;</TD>
+  <TR>
+	<TD ALIGN=right> &subseteq;</TD>    <TD>subset-eq</TD>      <TD ALIGN=left> &amp;subseteq;</TD>
+  <TR>
+	<TD ALIGN=right> &supset;</TD>      <TD>superset</TD>       <TD ALIGN=left> &amp;supset;</TD>
+  <TR>
+	<TD ALIGN=right> &supseteq;</TD>    <TD>superset-eq</TD>    <TD ALIGN=left> &amp;supseteq;</TD>
+
+  <TR>
+	<TD ALIGN=right> &lfloor;</TD>  <TD>left floor</TD> <TD ALIGN=left> &amp;lfloor;</TD>
+  <TR>
+	<TD ALIGN=right> &rfloor;</TD>  <TD>right floor</TD>    <TD ALIGN=left> &amp;rfloor;</TD>
+  <TR>
+	<TD ALIGN=right> &lceil;</TD>   <TD>left ceiling</TD>   <TD ALIGN=left> &amp;lceil;</TD>
+  <TR>
+	<TD ALIGN=right> &rceil;</TD>   <TD>right ceiling</TD>  <TD ALIGN=left> &amp;rceil;</TD>
+</TABLE>
+
+<P>
+
+Additional dynamic bindings:
+<P>
+<TABLE border=2 bgcolor=#E0E0C0>
+<TR>
+  <TH ALIGN=left>escape<TH ALIGN=left>expands to<TH ALIGN=right>example
+<TR>
+  <TD>&amp;userName;<TD>your full user name<TD ALIGN=right>"&userName;"
+<TR>
+  <TD>&amp;userFirstName;<TD>your first name<TD ALIGN=right>"&userFirstName;"
+<TR>
+  <TD>&amp;loginName;<TD>your login name<TD ALIGN=right>"&loginName;"
+<TR>
+  <TD>&amp;userID;<TD>your user id<TD ALIGN=right>"&userID;"
+<TR>
+  <TD>&amp;groupID;<TD>your group id<TD ALIGN=right>"&groupID;"
+<TR>
+  <TD>&amp;hostName;<TD>your machine's hostname<TD ALIGN=right>"&hostName;"
+<TR>
+  <TD>&amp;domainName;<TD>your machine's domainname<TD ALIGN=right>"&domainName;"
+<TR>
+  <TD>&amp;date;<TD>todays date<TD ALIGN=right>"&date;"
+<TR>
+  <TD>&amp;time;<TD>right now<TD ALIGN=right>"&time;"
+<TR>
+  <TD>&amp;url;<TD>the URL of the current document<TD>
+<TR>
+  <TD><TD ALIGN=right>"&url;"
+<TR>
+  <TD>&amp;urlBaseName;<TD>its baseName<TD ALIGN=right>"&urlBaseName;"
+<TR>
+  <TD>&amp;urlDirName;<TD>its directory name<TD>
+<TR>
+  <TD><TD ALIGN=right>"&urlDirName;"
+<TR>
+  <TD>&amp;stxVersion;<TD>the ST/X version<TD ALIGN=right>"&stxVersion;"
+
+</TABLE>
+
+
+
+<H3><A NAME="FEATURES_IMAGEFORMATS" HREF="#INDEX">Image formats</A></H2>
+
+All image formats which are understood by your Smalltalk system are
+also supported by the document viewer.
+In particular, these are <CITE>PNG</CITE>, <CITE>GIF</CITE>, <CITE>JPEG</CITE>,
+<CITE>TIFF</CITE>, <CITE>BMP</CITE>,
+<CITE>XBM</CITE> and <CITE>XPM</CITE>.
+<br>We recommend using PNG for new documents.
+
+
+
+<H3><A NAME="FEATURES_COLORNAMES" HREF="#INDEX">Color Names</A></H2>
+
+Color parameters (for example, the <CODE>Text=</CODE> parameter in
+the <CODE>BODY</CODE> tag) can be specified both by RGB-value
+and by name.
+<BR>
+To ensure compatibility with other HTML viewers, we recommend
+not using colorNames - or at least only use the names
+of the basic colors (which are also supported by other browsers, such as <CITE>MS internet explorer</CITE>).
+<P>
+Here are a few examples:
+<P INDENT=50>
+<TABLE border COLOR="black">
+<TR>
+   <TH WIDTH=100 BGCOLOR="red"  >red</TH>
+   <TH WIDTH=100 BGCOLOR="green">green</TH>
+   <TH WIDTH=100 BGCOLOR="blue" COLOR="white">blue</TH>
+<TR>
+   <TH BGCOLOR="olive"  >olive</TH>
+   <TH BGCOLOR="navy"  COLOR="white">navy</TH>
+   <TH BGCOLOR="purple">purple</TH>
+<TR>
+   <TH BGCOLOR="teal"  >teal</TH>
+   <TH BGCOLOR="gray"  >gray</TH>
+   <TH BGCOLOR="silver"  COLOR="white">silver</TH>
+<TR>
+   <TH BGCOLOR="lime"  >lime</TH>
+   <TH BGCOLOR="maroon"  >maroon</TH>
+   <TH BGCOLOR="yellow"  >yellow</TH>
+<TR>
+   <TH BGCOLOR="fuchsia"  >fuchsia</TH>
+   <TH BGCOLOR="aqua"  >aqua</TH>
+   <TH BGCOLOR="white"  >white</TH>
+</TABLE>
+</P>
+
+
+<H3><A NAME="FEATURES_NEWPARAMETERS" HREF="#INDEX">New Parameters</A></H2>
+
+
+The following additional (w.r.t. HTML-1) parameters are supported:
+
+<DL>
+
+
+<DT>&lt;APPLET&gt;
+  <BR>
+  Creates an applet. For now, only Smalltalk applets are supported;
+  Java applet support will be added in a future version
+  (an experimental version of the Java bytecode interpreter,
+   written in Smalltalk, is already running).
+  <BR>
+  Applets are ignored when a document is printed.
+  <P>
+  <DL>
+     <DT><B>CLASS=<VAR>aClassName</VAR></B>
+     <DD>Specify the applets className. This class must be already
+	 present in the Smalltalk system
+	 (i.e. this is for an <VAR>internal</VAR> applet).
+  </DL>
+
+  <DL>
+     <DT><B>CODE="<VAR>filename</VAR>.cls"</B>
+     <DD>Specify the applets code file. This file must contain the applets
+	 classCode in <VAR>binary fileOut format</VAR>.
+	 If this tag is present, the applet is considered an external applet,
+	 for which the classes code is loaded first. In this case, the CLASS-tag
+	 is not required.
+	 <BR>
+	 Additional security checks (code authentication) are performed.
+	 The applet will only be loaded and executed, if those checks pass.
+	 <BR>
+	 If this tag is not present or the class is not loadable from the
+	 codeFile, and a CLASS-tag is present, the applet will be created as an internal
+	 applet.
+  </DL>
+
+  <DL>
+     <DT><B>WIDTH=<VAR>aNumber</VAR></B>
+     <DD>Specify the applets width. The applet may override this,
+	 by resizing itself.
+	 <BR>
+	 If followed by a percent (%),
+	 the width is defined relative to the browserViews width.
+  </DL>
+
+  <DL>
+     <DT><B>HEIGHT=<VAR>aNumber</VAR></B>
+     <DD>Specify the applets height. The applet may override this,
+	 by resizing itself.
+	 <BR>
+	 If followed by a percent (%),
+	 the height is defined relative to the browserViews height.
+  </DL>
+
+  <DL>
+     <DT><B>NAME=<VAR>appletsName</VAR></B>
+     <DD>Defines the applets name - a script can refer to the applet using
+	 the expression:
+	 <BR>
+	 <CODE>"document window applets <VAR>appletsName</VAR>"</CODE>.
+  </DL>
+
+<P>
+<DT>&lt;PARAM&gt;
+  <BR>
+  Passes additional arguments to an applet. Each PARAM-tag must contain
+  NAME= and VALUE= parameters. A parameters string-values can be obtained by
+  the applets via <CODE>#getParameter:</CODE>-messages.
+  <P>
+  <DL>
+     <DT><B>NAME=<VAR>aParameterName</VAR></B>
+     <DD>Specify the parameters name.
+  </DL>
+
+  <DL>
+     <DT><B>VALUE="<VAR>something</VAR>"</B>
+     <DD>Specify the parameters value.
+  </DL>
+
+<P>
+<DT>&lt;INPUT&gt;
+  <DL>
+     <DT><B>TYPE=</B>button <B>ONCLICK=<VAR>aScriptMethodName</VAR></B>
+     <DD>Arranges for a scripts method to be evaluated when the button
+	 is pressed.
+	<BR>
+	 If <VAR>aScriptMethodName</VAR> ends in a colon,
+	 the name of the button which was clicked is passed as argument.
+  </DL>
+
+<P>
+<DT>&lt;FORM&gt;
+  <DL>
+     <DT><B>ONSUBMIT=<VAR>aScriptMethodName</VAR></B>
+     <DD>Arranges for a scripts method to be evaluated when the form
+	 is submitted. Forms which consist of textFields only will submit
+	 when the last field is left (via tabbing).
+	<BR>
+	 If <VAR>aScriptMethodName</VAR> ends in a colon,
+	 the name of the form which was submitted is passed as argument.
+  </DL>
+
+<P>
+<DT>&lt;BODY&gt;
+
+  <DL>
+     <DT><B>BGCOLOR=<VAR>aColor</VAR></B>
+     <DD>Specify the background color of the page.
+	 (this is ignored when the page is printed on paper).
+  </DL>
+
+  <DL>
+     <DT><B>BACKGROUND=<VAR>aColor</VAR></B>
+     <DD>Specify a background image
+  </DL>
+
+  <DL>
+     <DT><B>TEXT=<VAR>aColor</VAR></B>
+     <DD>Specify the text color of the page.
+  </DL>
+
+  <DL>
+     <DT><B>LINK=<VAR>aColor</VAR></B>
+     <DD>Specify the anchor color of the page.
+  </DL>
+
+  <DL>
+     <DT><B>VLINK=<VAR>aColor</VAR></B>
+     <DD>Specify the visited anchor color of the page.
+  </DL>
+
+  <DL>
+     <DT><B>LEFTMARGIN=<VAR>pixels</VAR></B>
+     <DD>Specify the leftMargin.
+  </DL>
+
+  <DL>
+     <DT><B>RIGHTMARGIN=<VAR>pixels</VAR></B>
+     <DD>Specify the rightMargin.
+  </DL>
+
+  <DL>
+     <DT><B>TOPMARGIN=<VAR>pixels</VAR></B>
+     <DD>Specify the topMargin.
+  </DL>
+
+<P>
+<DT>&lt;A&gt;
+
+  <DL>
+     <DT><B>TYPE=</B>"<CODE>example</CODE>" [<B>SHOWRESULT</B>]
+     <DD>The special anchorType <CODE>"example"</CODE> installs the
+	 anchor text as a clickable example. When clicked upon,
+	 it is interpreted as Smalltalk code.
+	 The example's text is visible.
+<BR>
+	 If the optional 'SHOWRESULT' parameter is present,
+	 the example's return value is shown in the infoView.
+  </DL>
+
+  <DL>
+     <DT><B>TYPE=</B>"<CODE>copyexample</CODE>" [<B>SHOWRESULT</B>]
+     <DD>The special anchorType <CODE>"copyexample"</CODE> marks the
+	 anchor text as non-clickable example. It does not evaluate when
+	 clicked upon, but provides a popup menu which allows for the example's
+	 text to be copied into a workspace.
+  </DL>
+
+  <DL>
+     <DT><B>ACTION=</B>"doit:<VAR>smalltalk expression</VAR>"
+     <DD>The anchors action is to execute the given expression.
+	 This is much like an example, but allows a different action
+	 from what is shown as text.
+  </DL>
+
+  <DL>
+     <DT><B>ACTION=</B>"plainText:<VAR>smalltalk expression</VAR>"
+     <DD>The Smalltalk expression is assumed to return some text string.
+	 This is shown as plainText.
+  </DL>
+
+  <DL>
+     <DT><B>ACTION=</B>"htmlText:<VAR>smalltalk expression</VAR>"
+     <DD>The Smalltalk expression is assumed to return some html text string.
+	 This is formatted and shown.
+  </DL>
+
+  <DL>
+     <DT><B>HREF=</B>"plainFile:<VAR>URL</VAR>"
+     <DD>The files text will be shown as plainText - even if it contains html text.
+  </DL>
+
+  <DL>
+     <DT><B>INFO=<VAR>string</VAR></B>
+     <DD>If the html-viewer was opened with an info-subview,
+	 show this string there, when the cursor moves over the anchor.
+	 Without an INFO-parameter, the anchors HREF is shown.
+  </DL>
+
+<P>
+<DT>&lt;P&gt;
+
+  <DL>
+     <DT><B>INDENT=<VAR>aNumber</VAR></B>
+     <DD>Indent the next paragraph. The argument bay also be preceeded
+	 by a <CODE>``+''</CODE> or <CODE>``-''</CODE>, to specify a
+	 relative indent.
+  </DL>
+
+  <DL>
+     <DT><B>NEWPAGE</B>
+     <DD>Force a page break when printing; ignored in the viewer.
+  </DL>
+
+  <DL>
+     <DT><B>NEED=<VAR>aNumber</VAR></B>
+     <DD>Force a page break when printing, if the current page does not
+	 have at least
+	 <VAR>aNumber</VAR> pixels of space. Can be used to prevent
+	 some text from being splitted.
+	 When printed, headline TAGs automatically imply a need of
+	 a few lines.
+	 Ignored in the viewer.
+  </DL>
+
+<P>
+<DT>&lt;UL&gt;
+
+  <DL>
+     <DT><B>TYPE=<VAR>markerType</VAR></B>
+     <DD>Specify the type of marker; the argument should be one
+	 of: <CITE>``disc''</CITE>, <CITE>``arrow''</CITE>,
+	 <CITE>``square''</CITE>, <CITE>``filledSquare''</CITE>,
+	 <CITE>``circle''</CITE>, <CITE>``filledCircle''</CITE>
+	 or <CITE>``none''</CITE>. The default taken by the viewer
+	 depends on the lists nesting level.
+  </DL>
+
+<P>
+<DT>&lt;OL&gt;
+
+  <DL>
+     <DT><B>TYPE=<VAR>numberingType</VAR></B>
+     <DD>Specify the numbering ; it should be one of:
+	 <CODE>A</CODE>: (<CITE>for uppercase letters</CITE>),
+	 <CODE>a</CODE>: (<CITE>for lowercase letters</CITE>),
+	 <CODE>I</CODE>: (<CITE>for uppercase roman numbers</CITE>),
+	 <CODE>i</CODE>: (<CITE>for lowercase roman numbers</CITE>),
+	 The default is to use digits.
+  </DL>
+
+  <DL>
+     <DT><B>START=<VAR>initialNumber</VAR></B>
+     <DD>Specify the starting value for sequence numbering. The default is 1.
+  </DL>
+
+<P>
+<DT>&lt;LI&gt;
+
+  <DL>
+     <DT><B>VALUE=<VAR>number</VAR></B>
+     <DD>Only within OL-lists: specify an explicit sequence number
+  </DL>
+
+<P>
+<DT>&lt;IMG&gt;
+
+  <DL>
+     <DT><B>NOPRINT</B>
+     <DD>The image is shown in the viewer, but suppressed when printed.
+	 Typically, this is used with the next/up/prev buttons as seen
+	 on this page (which are not wanted when the document is printed as
+	 a book).
+  </DL>
+
+  <DL>
+     <DT><B>BORDER=<VAR>aNumber</VAR></B>
+     <DD>Specifies the imageBorders thickness.
+  </DL>
+
+  <DL>
+     <DT><B>HSPACE=<VAR>aNumber</VAR></B>
+     <DD>Specifies additional horizontal spacing.
+  </DL>
+
+  <DL>
+     <DT><B>VSPACE=<VAR>aNumber</VAR></B>
+     <DD>Specifies additional vertical spacing.
+  </DL>
+
+<P>
+<DT>&lt;Hx&gt;
+
+  <DL>
+     <DT><B>NOINDEX</B>
+     <DD>Only affects printing: this header is not to be included in the
+	 Table-of-Contents.
+  </DL>
+
+  <DL>
+     <DT><B>NEWPAGE</B>
+     <DD>Force a page break; ignored in the viewer.
+  </DL>
+
+  <DL>
+     <DT><B>NEED=<VAR>aNumber</VAR></B>
+     <DD>see description of NEED in P-Tag.
+  </DL>
+
+
+<P>
+<DT>&lt;HR&gt;
+
+  <DL>
+     <DT><B>SIZE=<VAR>aNumber</VAR></B>
+     <DD>Specify the thickness of the horizontal rule (in pixels)
+  </DL>
+
+  <DL>
+     <DT><B>NOSHADE</B>
+     <DD>Force no shading (no 3D effect)
+  </DL>
+
+  <DL>
+     <DT><B>SHADE</B>
+     <DD>Force shading (with 3D effect)
+  </DL>
+
+  <DL>
+     <DT><B>WIDTH=<VAR>aNumber</VAR></B>
+     <DD>Specify the width (in pixels). If followed by a percent (%),
+	 the width is defined relative to the views (or printPages) width.
+  </DL>
+</DL>
+
+
+
+<H2><A NAME="SMALLTALKACTION" HREF="#INDEX">Smalltalk Action HREFs</A></H2>
+
+You can assign a Smalltalk action to be invoked when an anchor is clicked.
+This is done by adding an "<CODE>action=</CODE>" attribute to the anchor element, as in:
+<CODE><PRE>
+    &lt;A HREF="../../misc/onlyInSTX.html" ACTION="doit: Transcript showCR:10 factorial"&gt;
+	click to see 10 factorial on the Transcript
+    &lt;/A&gt;
+</PRE></CODE>
+which results in the following link:
+<A HREF="../../misc/onlyInSTX.html" ACTION="doit: Transcript showCR:10 factorial">
+	click to see 10 factorial on the Transcript
+</A>
+<BR>Notice the "onlyInSTX.html" fallback-link; this will be used by non-ST/X browsers (IE, firefox, etc.) as they do not
+know or care for the action-doIt attribute.
+<P>
+Such action links can be used to open example applications right from within the
+help document.<BR>For example:
+<A HREF="../../misc/onlyInSTX.html" ACTION="doit: SmallInteger browse">
+Click here to open a browser on the SmallInteger class
+</A>.
+
+
+
+<H2><A NAME="SMALLTALKSCRIPT" HREF="#INDEX">SmalltalkScript</A></H2>
+
+Smalltalk is supported as a script language - later versions will also support
+<VAR>javaScript</VAR>.
+In contrast to <VAR>javaScript</VAR>, Smalltalk scripts provide the full
+functionality of the language - it is not a Smalltalk subset.
+Any feature (such as opening new views, starting new threads etc.) is
+at the script writers hand. It is therefore much more powerful and expressive
+- but also opens the door to doing harm to your Smalltalk system.
+<P>
+For this reason, a strict security check is performed, before any script
+is allowed to execute.
+<BR>
+Since it is very hard (if not impossible) to provide a limited execution
+environment (as is done with Java), the security mechanism is based on
+trusted documents - instead of a protected environment.
+<BR>
+Documents which are considered secure are allowed to execute - without limitations.
+<BR>
+
+<P>
+Methods can be defined between <CODE>&lt;SCRIPT&gt; ... &lt;/SCRIPT&gt;</CODE>
+in Smalltalk code (fileOut format). These are installed as methods of an
+anonymous class, of which a single instance is created when a script-page is loaded.
+<P>
+Messages can be sent to this object interactively
+(for example, via the <CODE>ONCLICK="some message"</CODE>
+button parameter).
+<P>
+It is also possible, to execute Smalltalk code automatically, when the
+document is loaded.
+<P>
+Future enhancements will add additional interaction possibilities.
+
+<P>
+The script itself must consist of Smalltalk expression in a restricted chunk format.
+The script must consist of:
+<UL>
+ <LI>an optional variable definition chunk:
+ <BR>
+    This chunk must be of the form:
+<CODE><PRE>
+    !variables!
+	| varName_1 varName_2 ... varName_n |
+    !
+</PRE></CODE>
+ <P>
+ <LI>a method definition chunk:
+ <BR>
+    This chunk must be of the form:
+<CODE><PRE>
+    !methods!
+
+    selector
+	...
+	methods code
+	...
+    !
+
+    selector_2
+	...
+    !
+
+    ...
+
+    selector_n
+	...
+    ! !
+</PRE></CODE>
+ <P>
+ <LI>one or more expression chunks:
+ <BR>
+    These may contain any valid Smalltalk expression.
+    The expressions are evaluated when the page is loaded.
+</UL>
+
+The main purpose of the script is to provide methods which
+are evaluated via <CODE>"ONCLICK="</CODE> parameters.
+Typically, these are associated with form-buttons.
+<BR>
+Two special methods may be defined additionally:
+<UL>
+ <LI><CODE>#start</CODE>
+   <BR>
+	If defined, this method is evaluated when the document has
+	been completely read, and all fields and applets are created.
+	<BR>
+	This method allows input fields to be filled with
+	computed values.
+ <P>
+ <LI><CODE>#stop</CODE>
+   <BR>
+	If defined, this method is evaluated when the document is left;
+	i.e. if either the browser's view is closed, or another document
+	is about to be shown.
+	<BR>
+	Any cleanup (such as terminating subprocesses) should be done here.
+</UL>
+
+
+<P>
+Access to browser resources is via messages to the <VAR>window</VAR>
+object; the access path has been setup to be similar to
+<CITE>javaScript</CITE>.
+<P>
+
+<DL>
+  <DL>
+    <DT><B>window</B>
+    <DD>a pseudo object; provided as a container for the following objects.
+    <P>
+    <DL>
+       <DT><B>location</B>
+       <DD>the URL of the current document (as a string)
+
+       <P>
+       <DT><B>history</B>
+       <DD>the browser's URL-history. A collection of URL-strings.
+
+       <P>
+       <DT><B>document</B>
+       <DD>a pseudo object; provided as a container for the following objects.
+       <P>
+       <DL>
+	  <DT><B>applets</B>
+	  <DD>a collection of applets (access using <CODE>#at:</CODE> messages).
+	      Named applets can also be accessed <VAR>byName</VAR>, by sending
+	      corresponding messages to the applets collection.
+	  <P>
+	  <DL>
+	      <DT><VAR>applet-by-name</VAR>
+	      <DD>all named applets (i.e. those with a <CODE>NAME=</CODE> parameter)
+		  can be accessed here.
+
+	      <DT><B>at:</B><VAR>index</VAR>
+	      <DD>any applet can be accessed via a numeric index here.
+	  </DL>
+
+	  <P>
+	  <DT><B>forms</B>
+	  <DD>a collection of forms (access using <CODE>#at:</CODE> messages).
+	      Named forms can also be accessed <VAR>byName</VAR>, by sending
+	      corresponding messages to the forms collection.
+	      <BR>
+	      Every form consists of a collection of its elements (i.e. input fields,
+	      buttons etc.). Those are accessed via a numeric index, or
+	      (if the element has a <CODE>NAME=</CODE> parameter) vi the elements
+	      name.
+	  <P>
+	  <DL>
+	      <DT><VAR>form-by-name</VAR>
+	      <DD>all named forms (i.e. those with a <CODE>NAME=</CODE> parameter)
+		  can be accessed here.
+
+	      <DT><B>at:</B><VAR>index</VAR>
+	      <DD>any form can be accessed via a numeric index here.
+	  </DL>
+
+	  <P>
+	  <DT><B>images</B>
+	  <DD>a collection of images (access using <CODE>#at:</CODE> messages)
+
+	  <P>
+	  <DT><B>links</B>
+	  <DD>a collection of links contained in the document.
+
+	  <P>
+	  <DT><B>anchors</B>
+	  <DD>a collection of anchors contained in the document.
+       </DL>
+
+       <P>
+       <DT><B>frames</B>
+       <DD>a collection of frames (access using <CODE>#at:</CODE> messages).
+	   <BR>
+	   Frames are not yet supported.
+
+       <P>
+       <DT><B>view</B>
+       <DD>the main html browsers view. Any of the browser's internal attributes
+	   is accessible via messages to this object (an instance of HTMLDocumentView).
+       <P>
+       <DL>
+	  <DT><B>visitedURLs</B>
+	  <DD>a collection of visited URL-strings
+       </DL>
+    </DL>
+  </DL>
+</DL>
+
+For example, to access an applet named <VAR>"fooApplet"</VAR>, use the
+following message path:
+<CODE><PRE>
+    window document applets fooApplet
+</PRE></CODE>
+<P>
+
+Notice, that this resembles the corresponding javaScript expression, which would be:
+<CODE><PRE>
+    window.document.applets.fooApplet
+</PRE></CODE>
+
+<P>
+Script examples are found in "<A HREF="../../../../html/testDocs/">doc/html/testDocs</A>"
+or the index page "<A HREF="../../../../html/testDocs/TOP.html">doc/html/testDocs/TOP.html</A>".
+
+
+
+<H2><A NAME="APPLETS" HREF="#I_APPLETS">Smalltalk Applets</A></H2>
+
+Applet classes may be derived from either the <CODE>View</CODE> class or
+the <CODE>Applet</CODE> class. However, applet specific functionality (such as
+accessing the parameters) is only possible, if the applet inherits from <CODE>Applet</CODE>.
+<BR>
+Applet itself has been defined as a subclass of View, and defines
+some simple-protocol, which was created to look Java-applet like.
+<BR>
+See the classes documentation for more details.
+
+<H2><A NAME="JAVAAPPLETS" HREF="#I_JAVAAPPLETS">Java Applets</A></H2>
+
+Starting with release 3.5, the ST/X VM allows for Java code to be
+executed. This feature is also used to allow for Java applets to be embedded
+in the ST/X HTML viewer.
+<BR>
+Any standard 1.1.x JDK-Applet should be able to execute in the HTML
+browser.
+<BR>
+See the classes documentation for more details.
+
+
+
+
+<H2><A NAME="MISSINGFEATURES" HREF="#I_MISSINGFEATURES">Missing Features & Bugs</A></H2>
+
+Some features are not yet fully implemented, or missing.
+These may or may not be added in future versions.
+
+<UL>
+  <LI>Frames are not (yet) supported
+  <LI>Box model is not implemented
+  <LI>Layout of images in a text row is often bad
+  <LI>Tables do not fully work (multiColumns, multiRows and wrap within a cell)
+  <LI>Nested tables do not work at all
+  <LI>Layout of widgets within forms is often bad
+  <LI>Applets are not shutDown when Smalltalk exits
+  <LI>Applets are not reInitialized when a snapshot with active applets restarts
+  <LI>hyphenation hints are ignored
+  <LI>"center" and "right" aligns are not fully supported.
+  <BR>text which spawns multiple lines looks ugly with these alignments
+  <LI>"justify" align is not supported
+  <LI>CSS style sheets are not supported
+</UL>
+
+
+
+<H2><A NAME="READING" HREF="#INDEX">Further reading</A></H2>
+
+<UL>
+  <LI>For a very short introduction to HTML, see
+      <A HREF="../../../german/html/html_einfuehrung.html">HTML Einf&uuml;hrung</A> (german).
+  <LI>To learn how to write HTML documents,
+      read <A HREF="../../german/html/howTo/_start.htm">HTML Dateien selbst erstellen</A> (german).
+  <LI>The <A HREF="../../html/html-3_spec/CoverPage.html">HTML-3.0 reference</A> (obsolete!).
+  <LI>The <A HREF="../../html/html-3.2_spec/htmlspec-3.2.html">HTML-3.2 reference</A>.
+  <LI><A HREF="http://www.uni-konstanz.de/org/provider/html.html">HTML Einf&uuml;hrung (German)"</A>
+  <LI><A HREF="http://userpage.chemie.fu-berlin.de/diverse/htmleinf">HTML Einf&uuml;hrung (German)"</A>
+</UL>
+<P>
+
+<H2><A NAME="HIDDEN_FEATURES" HREF="#I_HIDDEN_FEATURES">Hidden Features</A></H2>
+
+The viewer has one useful hidden function:
+if you press the "Source Code" button while holdeing down the <KBD>CTRL</KBD>-key,
+a file browser is opened on the currently shown document.
+<P>
+There, you can edit/fix/modify the document, and press reload in the viewer
+after a save.
+
+
+
+<P>
+
+<A NAME="APPENDIX"></A>
+<H2><A NAME="APPENDIX_PARAMETERS" HREF="#I_APPENDIX_PARAMETERS">Appendix - List of Tags & Parameters</A></H2>
+
+Sorry, this chapter is not complete.
+<BR>
+Nonstandard tags or parameters are highlighted with a green color.
+
+<P INDENT=30>
+<TABLE border COLOR="black" bgcolor=#E0E0C0>
+<TR>
+   <TH>Element
+   <TH>Attribute
+   <TH>Possible Values
+   <TH>Description
+<TR>
+
+   <TD>
+
+<TR>
+   <TD bgcolor=#E000C0>A
+   <TD>HREF=
+   <TD>"<VAR>url</VAR>"
+   <TD>hyperlink of anchor
+<TR>
+   <TD>
+   <TD>
+   <TD bgcolor=green>"<CODE>man:</CODE><VAR>command</VAR>"
+   <TD bgcolor=green>hyperlink to a commands UNIX manual page
+<TR>
+   <TD>
+   <TD>NAME=
+   <TD>"<VAR>string</VAR>"
+   <TD>name of anchor
+<TR>
+   <TD>
+   <TD>ONCLICK=
+   <TD>"<VAR>scriptMethodName</VAR>"
+   <TD>name of script method
+<TR>
+   <TD>
+   <TD bgcolor=green>TYPE=
+   <TD bgcolor=green>"<CODE>example</CODE>"
+   <TD bgcolor=green>a clickable example
+<TR>
+   <TD>
+   <TD bgcolor=green>
+   <TD bgcolor=green>"<CODE>plainFile</CODE>"
+   <TD bgcolor=green>show as plain file - even if it contains HTML
+<TR>
+   <TD>
+   <TD bgcolor=green>SHOWRESULT
+   <TD bgcolor=green>
+   <TD bgcolor=green>for above: show result in info area
+<TR>
+   <TD>
+   <TD>ACTION=
+   <TD bgcolor=green>"<CODE>doit:</CODE><VAR>ST-expr</VAR>"
+   <TD bgcolor=green>Smalltalk expression evaluation
+<TR>
+   <TD>
+   <TD>
+   <TD bgcolor=green>"<CODE>plainText:</CODE><VAR>ST-expr</VAR>"
+   <TD bgcolor=green>expression provides plainText page
+<TR>
+   <TD>
+   <TD>
+   <TD bgcolor=green>"<CODE>htmlText:</CODE><VAR>ST-expr</VAR>"
+   <TD bgcolor=green>expression provides html page
+<TR>
+   <TD>
+   <TD bgcolor=green>INFO=
+   <TD bgcolor=green>"<VAR>string</VAR>"
+   <TD bgcolor=green>show info when mouse is over anchor
+<TR>
+
+   <TD>
+
+<TR>
+   <TD bgcolor=#E000C0>APPLET
+   <TD>WIDTH=
+   <TD><VAR>number</VAR>
+   <TD>width of applet space
+<TR>
+   <TD>
+   <TD>HEIGHT=
+   <TD><VAR>number</VAR>
+   <TD>height of applet space
+<TR>
+   <TD>
+   <TD>LEVEL=
+   <TD><VAR>number</VAR>
+   <TD>3D level of applets view
+<TR>
+   <TD>
+   <TD>CLASS=
+   <TD>"<VAR>className</VAR>"
+   <TD>name of applets class
+<TR>
+   <TD>
+   <TD>CODE=
+   <TD>"<VAR>url</VAR><CODE>.cls</CODE>"
+   <TD>binary code file (ST/X bytecode)
+<TR>
+   <TD>
+   <TD>
+   <TD>"<VAR>url</VAR><CODE>.class</CODE>"
+   <TD>binary code file (JAVA bytecode)
+<TR>
+
+  <TD>
+
+<TR>
+   <TD bgcolor=#E000C0>BODY
+   <TD>LEFTMARGIN=
+   <TD><VAR>number</VAR>
+   <TD>set the overall leftmargin
+<TR>
+   <TD>
+   <TD>TOPMARGIN=
+   <TD><VAR>number</VAR>
+   <TD>set the overall topmargin
+<TR>
+   <TD>
+   <TD>RIGHTMARGIN=
+   <TD><VAR>number</VAR>
+   <TD>set the overall rightmargin
+<TR>
+   <TD>
+   <TD>BACKGROUND=
+   <TD>"<VAR>url</VAR>"
+   <TD>define a background image
+<TR>
+   <TD>
+   <TD>BGCOLOR=
+   <TD><VAR>color</VAR>
+   <TD>background color
+<TR>
+   <TD>
+   <TD>TEXT=
+   <TD><VAR>color</VAR>
+   <TD>color for text
+<TR>
+   <TD>
+   <TD>LINK=
+   <TD><VAR>color</VAR>
+   <TD>color for links
+<TR>
+   <TD>
+   <TD>VLINK=
+   <TD><VAR>color</VAR>
+   <TD>color for visited links
+<TR>
+   <TD>
+   <TD>ALINK=
+   <TD><VAR>color</VAR>
+   <TD>color for active (pressed) links
+<TR>
+
+   <TD>
+
+<TR>
+   <TD bgcolor=#E000C0>H&lt;i&gt;
+   <TD>ALIGN=
+   <TD>center
+   <TD>center the headers text
+<TR>
+   <TD>
+   <TD>
+   <TD>right
+   <TD>rightAdjust the headers text
+<TR>
+   <TD>
+   <TD>
+   <TD>
+   <TD>default: leftAdjust
+<TR>
+   <TD>
+   <TD bgcolor=green>NOINDEX
+   <TD bgcolor=green>
+   <TD bgcolor=green>ignore in table of contents when printing
+<TR>
+   <TD>
+   <TD bgcolor=green>NEWPAGE
+   <TD bgcolor=green>
+   <TD bgcolor=green>force page break when printing
+<TR>
+   <TD>
+   <TD bgcolor=green>NEED=
+   <TD bgcolor=green><VAR>number</VAR>
+   <TD bgcolor=green>conditional page break when printing
+<TR>
+
+   <TD>
+
+<TR>
+   <TD bgcolor=#E000C0>IMG
+   <TD>SRC=
+   <TD>"<VAR>url</VAR>"
+   <TD>URL of the image.
+<TR>
+   <TD>
+   <TD>ALT=
+   <TD>"<VAR>text</VAR>"
+   <TD>text to display if image file is unloadable.
+<TR>
+   <TD>
+   <TD>BORDER=
+   <TD><VAR>number</VAR>
+   <TD>border width. Default is 0.
+<TR>
+   <TD>
+   <TD>WIDTH=
+   <TD><VAR>number</VAR>
+   <TD>width of image space
+<TR>
+   <TD>
+   <TD>HEIGHT=
+   <TD><VAR>number</VAR>
+   <TD>height of image space
+<TR>
+   <TD>
+   <TD>HSPACE=
+   <TD><VAR>number</VAR>
+   <TD>horizontal space around image
+<TR>
+   <TD>
+   <TD>VSPACE=
+   <TD><VAR>number</VAR>
+   <TD>vertical space around image
+<TR>
+   <TD>
+   <TD bgcolor=green>NOPRINT
+   <TD bgcolor=green>
+   <TD bgcolor=green>ignore this image when printing
+
+<TR>
+
+   <TD>
+
+<TR>
+   <TD bgcolor=#E000C0>LI
+   <TD>VALUE=
+   <TD><VAR>number</VAR>
+   <TD>set the items sequence number
+
+<TR>
+
+   <TD>
+
+
+<TR>
+   <TD bgcolor=#E000C0>OL
+   <TD>SEQNUM=
+   <TD><VAR>number</VAR>
+   <TD>define the start number
+<TR>
+   <TD>
+   <TD>START=
+   <TD><VAR>number</VAR>
+   <TD>alternative for above
+<TR>
+   <TD>
+   <TD>TYPE=
+   <TD>"A"
+   <TD>uppercase alpha numbering
+<TR>
+   <TD>
+   <TD>
+   <TD>"a"
+   <TD>lowercase alpha numbering
+<TR>
+   <TD>
+   <TD>
+   <TD>"I"
+   <TD>uppercase roman numbering
+<TR>
+   <TD>
+   <TD>
+   <TD>"i"
+   <TD>lowercase roman numbering
+<TR>
+   <TD>
+   <TD>
+   <TD>
+   <TD>default: decimal numbering
+<TR>
+   <TD>
+   <TD>LIST-STYLE=
+   <TD>"upper-alpha"
+   <TD>uppercase alpha numbering
+<TR>
+   <TD>
+   <TD>
+   <TD>"lower-alpha"
+   <TD>lowercase alpha numbering
+<TR>
+   <TD>
+   <TD>
+   <TD>"upper-roman"
+   <TD>uppercase roman numbering
+<TR>
+   <TD>
+   <TD>
+   <TD>"lower-roman"
+   <TD>lowercase roman numbering
+<TR>
+   <TD>
+   <TD>
+   <TD>"decimal"
+   <TD>decimal numbering
+<TR>
+   <TD>
+   <TD>
+   <TD>"none"
+   <TD>suppress numbering
+<TR>
+   <TD>
+   <TD>
+   <TD>
+   <TD>default: as specified by TYPE attribute
+<TR>
+
+
+   <TD>
+
+
+<TR>
+   <TD bgcolor=#E000C0>P
+   <TD>INDENT=
+   <TD><VAR>number</VAR>
+   <TD>set indent
+<TR>
+   <TD>
+   <TD>
+   <TD>+<VAR>number</VAR>
+   <TD>more indent
+<TR>
+   <TD>
+   <TD>
+   <TD>-<VAR>number</VAR>
+   <TD>less indent
+<TR>
+   <TD>
+   <TD>
+   <TD>
+   <TD>default: indent unchanged
+<TR>
+   <TD>
+   <TD bgcolor=green>NEWPAGE
+   <TD bgcolor=green>
+   <TD bgcolor=green>force page break when printing
+<TR>
+   <TD>
+   <TD bgcolor=green>NEED=
+   <TD bgcolor=green><VAR>number</VAR>
+   <TD bgcolor=green>conditional page break when printing
+<TR>
+
+   <TD>
+
+<TR>
+   <TD bgcolor=#E000C0>S
+   <TD>
+   <TD>
+   <TD>strikeout (3.0)
+
+<TR>
+
+   <TD>
+
+<TR>
+   <TD bgcolor=#E000C0>STRIKE
+   <TD>
+   <TD>
+   <TD>strikeout (3.2)
+
+<TR>
+   <TD>
+
+<TR>
+   <TD bgcolor=#E000C0>UL
+   <TD>TYPE=
+   <TD>"arrow"
+   <TD>draw an arrow as marker
+<TR>
+   <TD>
+   <TD>
+   <TD>"circle"
+   <TD>draw a circle marker
+<TR>
+   <TD>
+   <TD>
+   <TD>"filledcircle"
+   <TD>draw a filled circle marker
+<TR>
+   <TD>
+   <TD>
+   <TD>"square"
+   <TD>draw a square marker
+<TR>
+   <TD>
+   <TD>
+   <TD>"filledsquare"
+   <TD>draw a filled square marker
+<TR>
+   <TD>
+   <TD>
+   <TD>"disc"
+   <TD>draw a disc-bitmap marker
+<TR>
+   <TD>
+   <TD>
+   <TD>
+   <TD>default: depends on nesting level
+<TR>
+   <TD>
+   <TD>PLAIN
+   <TD>
+   <TD>suppress any marker
+</TABLE>
+</P>
+
+
+<HR>
+<P>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif" ALT="[stx logo]">
+Copyright &copy; eXept Software AG, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.54 $ $Date: 2016-11-04 00:19:00 $
+
+</BODY>
+</HTML>

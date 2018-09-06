@@ -1,0 +1,43 @@
+;
+; example for a very small change 
+; - like iris style, but tiny buttons and view-spacings
+;   (more real-estate on notebook/VGA displays)
+;
+
+#include 'iris.style'
+
+comment  'like `iris'';\tiny fonts and\tiny buttons & spacings (for 640x480 notebooks)'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Wie `iris'' Stil\mit kleinen Zeichen und\winzigen Knöpfen & Abständen (für 640x480 Notebooks).'
+#endif
+#if (Language == #french) or:[Language == #fr]
+comment  'Comme le style `iris'',\avec très petit charactères,\boutons et espaces (pour notebook 640x480).'
+#endif
+
+editField.font                   Font family:'courier' face:'medium' style:'roman' size:8
+variableFont                    Font family:'helvetica' face:'medium' style:'roman' size:8
+selection.font                   =variableFont
+label.font                       =variableFont
+text.font                        =editFieldFont 
+menu.font                        =variableFont 
+pullDownMenu.font                =menuFont
+
+arrowButton.downFormFile         'ScrollDn.8.xbm'
+arrowButton.upFormFile           'ScrollUp.8.xbm'
+arrowButton.leftFormFile         'ScrollLt.8.xbm'
+arrowButton.rightFormFile        'ScrollRt.8.xbm'
+
+comboView.downFormFile           'ComboDn.8.xbm'
+
+toggle.lampWidthMM               1.5   "/ millimeter
+toggle.lampHeightMM              2.5   "/ millimeter
+variablePanel.barHeight          6 "/ pixels
+viewSpacing                      2 "/ pixels
+launcher.buttonSize              22@22
+
+standardSystemView.defaultExtent         500@400
+modelBox.defaultExtent                   200@150   
+
+miniScroller.size                1.5             "/ millimeters
+

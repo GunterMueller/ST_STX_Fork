@@ -1,0 +1,34 @@
+<html><head><title>Refactoring: 
+
+
+
+Introduce Null Object</title></head><body>
+
+
+<H1>
+
+
+
+Introduce Null Object</H1>
+<P><I><CENTER>
+
+You have repeated checks for a null value.</CENTER></I></P>
+<P><B><CENTER>
+
+Replace the null value with a null object.</CENTER></B></P>
+
+<PRE>
+			if (customer == null) plan = BillingPlan.basic();
+			else plan = customer.getPlan();
+
+</PRE><P><CENTER><IMG SRC="arrow.gif"/></CENTER></P>
+<CENTER><IMG SRC="introNullObject.gif"/></CENTER>
+
+
+
+
+<P>For more information see page 
+	<font color="#FF0000">260</font>
+	of <I>Refactoring</I></P>
+
+<P /><P /><P><CENTER><A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A></CENTER></P></body></html>

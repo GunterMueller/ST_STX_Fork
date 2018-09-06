@@ -1,0 +1,28 @@
+tell application "Finder"
+  tell disk "stx"
+	open
+	set current view of container window to icon view
+	set toolbar visible of container window to false
+	set statusbar visible of container window to false
+	set the bounds of container window to {500, 100, 1023, 880}
+	set viewOptions to the icon view options of container window
+	set arrangement of viewOptions to not arranged
+	set icon size of viewOptions to 72
+	set background picture of viewOptions to file ".background:banner.png"
+	set position of item ".Trashes" of container window to {600, 200}
+	set position of item ".fseventsd" of container window to {600, 200}
+	set position of item ".background" of container window to {600, 300}
+	set position of item ".DS_Store" of container window to {600, 500}
+	set position of item "stx.app" of container window to {160, 300}
+	set position of item "Applications" of container window to {360, 300}
+	set position of item "LICENCE_STX.html" of container window to {80, 600}
+	set position of item "README.txt" of container window to {230, 600}
+	set position of item "README_macosx.txt" of container window to {350, 600}
+	set position of item "COPYRIGHT.txt" of container window to {470, 600}
+	set the bounds of container window to {500, 100, 1023, 880}
+	close
+	open
+	update without registering applications
+	delay 2
+  end tell
+end tell

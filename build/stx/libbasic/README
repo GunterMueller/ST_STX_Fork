@@ -1,0 +1,13 @@
+This directory contains (what we consider) fundamental
+classes required for any serious Smalltalk application
+(both headless and GUI-based).
+
+Of course, for special applications, even this set of
+classes could be reduced 
+(for smaller apps, some of LargeInteger, Float, Fraction 
+ etc. could be left out).
+
+We do not provide tools or support for such minimal 
+configurations - with modern, paged OperatingSystems, there
+is also less sense in doing so, since unused code is simply
+paged out or never paged in at all.

@@ -1,0 +1,157 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+   <META NAME="Author" CONTENT="Thomas Zwick, eXept software AG, Germany">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.04 [en] (X11; I; Linux 2.0.30 i586) [Netscape]">
+   <TITLE>The Check Toggle Widget</TITLE>
+</HEAD>
+<BODY>
+<A HREF="CheckBox.html" NOPRINT><IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="The Check Box Widget" NOSAVE HEIGHT=30 WIDTH=30></A><A HREF="TOP.html#TABLEOFTHEWIDGETS" NOPRINT><IMG SRC="../../../icons/DocsUpArrow.gif" ALT="Table of the Widgets" NOSAVE HEIGHT=30 WIDTH=30></A>
+<BR>&nbsp;
+<HR ALIGN=LEFT WIDTH="100%">
+<H1>
+<FONT SIZE=+4>The Check Toggle Widget</FONT></H1>
+<IMG SRC="../../../pictures/GUIPainterWidgetCheckToggle.gif" ALT="A View of a Check Toggle Widget" NOSAVE HEIGHT=19 WIDTH=19>
+<P>View Class: <TT>CheckToggle</TT>
+<BR>Spec Class: <TT>CheckToggleSpec</TT>
+
+<P>The <B>Check Toggle Widget</B> is like the <A HREF="CheckBox.html">Check
+Box Widget</A> exept that it has no label.
+<BR>&nbsp;
+<BR>&nbsp;
+<H3>
+
+<HR ALIGN=LEFT WIDTH="100%"></H3>
+
+<H3>
+The <I>Basics</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>ID</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Unique symbolic name (ID) of the check
+toggle.&nbsp;</B>&nbsp;
+<BR>This ID can be used by the application to access the widget
+via <TT>"builder &#187; componentAt:#ID"</TT>.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Model</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for the state
+(on/off) of the check toggle.&nbsp;</B>&nbsp;
+<BR>It should return a <TT><A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+with a <TT>Boolean</TT> instance**.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Details</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>BG-Color</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the background color of the check
+toggle, i.e. the color of the check box's view.</B>&nbsp;
+<BR>After selecting the check toggle the background color can be chosen
+by selecting the desired colored button. If no color&nbsp; is selected,
+the check toggle takes its default background color from the style sheet.</TD>
+</TR>
+
+<TR NOSAVE>
+<TD><B>Initially Disabled</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the check toggle is initially
+disabled.</B></TD>
+</TR>
+
+<TR NOSAVE>
+<TD><B>Initially Invisible</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the check toggle is initially
+invisible.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Can Tab</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the check toggle can
+be reached by tabbing.</B></TD>
+</TR>
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Channels</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Enable</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for en-/disabling
+the check toggle.</B>&nbsp;
+<BR>It should return a&nbsp;
+
+<P>&nbsp;&nbsp;&nbsp; - <TT>Boolean</TT> instance** (only for static behavior)&nbsp;
+<BR>&nbsp;&nbsp;&nbsp; - <TT><A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance with a <TT>Boolean</TT> instance**&nbsp;
+
+<P>A value model is used to provide a dynamically changing of the ability
+of the check toggle.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>BG-Color</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for the background
+color of the check toggle.</B>&nbsp;
+<BR>It should return a&nbsp;
+
+<P>&nbsp;&nbsp;&nbsp; - <TT>Color</TT> instance&nbsp; (only for static
+behavior)&nbsp;
+<BR>&nbsp;&nbsp;&nbsp; - <TT><A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance with a <TT>Color</TT> instance.&nbsp;
+
+<P>A value model is used to provide a dynamically changing of the background
+color.</TD>
+</TR>
+</TABLE>
+<TT>*&nbsp; = ValueHolder, AspectAdaptor, BufferedValueHolder, RangeAdaptor,
+TriggerValue</TT>
+<BR><TT>** = true, false</TT>
+
+<P>&nbsp;
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Selected</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Name of the selector sent to the application
+when the check toggle was pressed.&nbsp;</B></TD>
+</TR>
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Help</I> Section:</H3>
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="HelpTool.html">Using the Help Tool</A>"
+<BR>&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Layout</I> Section:</H3>
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="LayoutTool.html">The Layout of the Widgets</A>"
+<BR>&nbsp;
+
+<P>
+<HR>
+
+<P><IMG SRC="../../../icons/stx.gif" ALT="[stx-logo]" NOSAVE NOPRINT HEIGHT=48 WIDTH=47 ALIGN=CENTER>
+<BR><TT>Copyright &copy; 1998 eXept Software AG, all rights reserved</TT>
+<BR>
+<HR>
+</BODY>
+</HTML>

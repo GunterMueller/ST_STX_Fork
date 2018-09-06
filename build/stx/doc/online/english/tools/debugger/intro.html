@@ -1,0 +1,252 @@
+<HEAD>
+<TITLE>Using the Debugger - introduction</TITLE>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="TOP.html">         <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="up"></A>
+<A NOPRINT HREF="buttons.html">     <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="next"></A>
+
+<H2><A NAME="INTRO" HREF="TOP.html#I_INTRO">Introduction</A></H2>
+
+Whenever an unhandled error or exception occurs in <CITE>Smalltalk/X</CITE>,
+the system enters a debugger <A NAME = "BACKNOTE1" HREF = "#NOTE1">(1)</A>.
+<P>
+It is also possible, to enter the debugger by
+pressing the interrupt key <KBD>"<B>Pause</B>"</KBD> or <KBD>"<B>Interrupt</B>"</KBD>
+in any Smalltalk window.
+In some older Unix configurations, use: <KBD>"<B>Ctrl-c</B>"</KBD>.
+Also, for compatibility with other Smalltalk dialects, such as Squeak or ObjectWorks,
+the <KBD>"<B>Ctrl-.</B>"</KBD> and <KBD>"<B>Alt-.</B>"</KBD> keys are also treated as
+interrupt keys.
+This stops the corresponding process and opens a debugger on it.
+If you started <CITE>ST/X</CITE> with a controlling terminal window (console),
+pressing <KBD>"<B>Ctrl-c</B>"</KBD> there also interrupts the currently active process,
+but may lead you directly into a low-level MiniDebugger, which is described below.
+<P>
+You can also place a method-entry breakpoint on any method via the browser's breakpoint
+menu (the red traffic light button) or a line breakpoint in a code editor's line number area.
+<P>
+Finally, a programmed stop is added by placing a <CODE>"halt"</CODE>, <CODE>"breakPoint"</CODE> or
+<CODE>"assert"</CODE>-message into the code.
+These messages are implemented in the Object class and therefore understood by every object.
+
+<H3>Try It!</H3>
+Try evaluating:
+<A type="example" INFO="Click to execute the example">
+<CODE><PRE>    self halt
+</PRE></CODE></A>
+in a
+<!-- <A HREF="../../getstart/tut_1.html#WORKSPACE">Workspace</A>. -->
+<A HREF="../../tools/misc/TOP.html#WORKSPACE">Workspace</A>.
+
+<FORM ACTION="../../misc/onlyInSTX.html"
+      METHOD="DOIT |
+	|w|
+	w := WorkspaceApplication openWith:'Press doIt (CMD-d) (Windoze: CTRL-d) or
+evaluate with the ''doit'' menu function ....
+
+self halt
+
+you can also pass a textual message with the halt
+(this will be shown in the debugger''s window label),
+as in:
+
+self halt:''a programmed halt''
+'.
+	w window height:400.
+	w selectedWorkspace selectLine:4.
+	w selectedWorkspace scrollToTop.
+      ">
+To open a workspace for that, press:<INPUT TYPE="submit" VALUE="workspace">
+
+</FORM>
+
+<H3>Modes</H3>
+The debugger may run in one of three modes:
+
+<UL>
+<LI>Normal
+<BR>
+whenever an error occurs in a process,
+which is not the event handler process or scheduler,
+the debugger will start up on top of the erroneous process,
+blocking all interaction with the affected process
+(and its views).
+Other views are still active and behave as usual.
+<BR>
+Any number of these "normal" debugers may be open concurrently -
+one per debugged process.
+<P>
+
+<LI>Modal
+<BR>
+when an error occurs in Smalltalk's event handler process or scheduler,
+the debugger comes up in modal mode.
+While a modal debugger is active,
+NO interaction with any other view is possible.
+<BR>
+The reason for this is simple: while the eventhandler process is being debugged,
+no event handling (such as keyboard- or mouse input) is obviously
+handled at that time.
+Therefore, in this mode, the debugger starts its own event handling loop
+- effectively polling the display and disabling all other event handling -
+in order to communicate.
+<BR>
+As a consequence, opening debuggers or inspectors from a modal debugger
+does not work correctly (the views will show up delayed: later when the
+normal event processing is continued).
+<br>Only one single modal debug view may be open at any time.
+<P>
+Under normal conditions, the system does never enter this model debugger
+(we worked hard to avoid it, by caring for most possible errors in the event handling code).
+However, it may happen if you place a halt or breakpoint into the event handler's control flow.
+
+<P>
+<LI>Inspecting
+<BR>
+this mode allows inspecting the state of other processes.
+Such a debugger is usually opened from the
+<A HREF="../misc/TOP.html#PROCESSMONITOR"><I>ProcessMonitor</I></A>.
+However, since the debugged process continues to run,
+it is only possible to see a "snapshot" of the affected process.
+As soon as the process continues to run,
+the information presented by the debugger becomes outdated.
+This affects especially the walkback list: you may click on a context which has
+already been returned from, and the debugger will give you a corresponding warning then.
+This also means, that the debugger can not show any position (i.e. line number)
+information for contexts which have already returned.
+Inspecting debuggers show additional stop/resume button,
+so the shown process can be suspended temporarily to avoid the above problems.
+<P>
+Inspecing debuggers are especially useful to inspect blocked processes,
+and allow to resume them, by signalling the semaphore the process is waiting for.
+Also endlessly looping processes can be forced to abort the current action.
+Finally, the process can also be completely terminated.
+<P>
+The <A HREF="../misc/TOP.html#PROCESSMONITOR">process monitor</A> offers a pop up menu function to start
+an inspecting debugger on any process (or simply double click on a
+process entry in its list).
+<P>
+Any number of these inspecting debugViews may be open concurrently.
+</UL>
+
+
+<H3>Usage</H3>
+
+The debugger consists of 4 major subviews plus some action buttons.
+Newer versions of the debugger also show a menu panel and might have the buttons
+split into two separate panels. The picture below is slightly outdated,
+but the principles are still the same.
+<P>
+<IMG SRC="../../../pictures/Debugger.gif">
+<P>
+The actual appearance of the debugger depends on the <I>viewStyle</I> setting; the picture
+above was taken with the "Silicon Graphics iris-style" in effect, and is also quite old.
+<P>
+The subviews are:
+<OL>
+
+<LI>      Context walkback list (sender stack frame chain)
+<LI>      Method source view (code of selection)
+<LI>      Receiver inspector (receiver of selection)
+<LI>      Context inspector (locals of selection)
+</OL>
+
+  The context walkback list shows the context chain which lead to
+  the exception
+  (i.e. starting at the current context on top, the list of senders is displayed).
+  It should be read top to bottom as "was called by...".
+  The context of the method (or block) which was responsible for
+  the debugger's invocation is shown at or near the top
+<A NAME = "BACKNOTE2" HREF = "#NOTE2">(2)</A>.
+<P>
+  Selecting a context in this list will show the corresponding method's
+  source in the method source view, and updates the receiver- and context inspectors.
+<P>
+  The recevier inspector (left) shows the receiver of the
+  selected message; the context inspector (right) provides information
+  about the arguments and local variables of this context.
+<P>
+  The method source view highlights the current position of execution.
+  This view is a codeView - which means that you can change the code and <VAR>"accept"</VAR>
+  to change the method (i.e. fix errors and compile).
+  However, once </VAR>accepted</VAR>, the source code of the method is no longer in sync with
+  the state of the process (that one is still suspended in the previous, old code).
+  If the process is resumed, it will continue executing code from the original method,
+  until the same message is sent again. Then, any new accepted code will be executed.
+  Therefore, after any change, it is common to not proceed, but instead resend the current message
+  (for which a separate button exists in the action panel).
+<BR>
+  To avoid confusion, the debugger shows an indicator and toggle to switch between the
+  original and the accepted code.
+<P>
+  You can also evaluate expressions (like in a workspace) in any of the views.
+  Variable references are resolved as usual (i.e. you can refer to local variables,
+  class variables, instance variables etc. as if the code was written in a normal method)
+<A NAME = "BACKNOTE3" HREF = "#NOTE3">(3)</A>.
+
+
+
+<H3>Footnotes</H3>
+<A NAME = "NOTE1" HREF = "#BACKNOTE1">(1)</A>
+this is a bit oversimplified. Actually, all errors raise an exception,
+which (if not handled) raises another exception (the unhandled exception exception),
+which has a default handler.
+This default handler actually opens the debugger.
+Both the original exception and the unhandled exception can be cought by an
+exception handler. Also, the default handlers can be configured to perform arbitrary
+other actions (for example: to save a walkback to a file, show a warnbox,
+and abort the ongoing operation, or exit the program completely).
+Thus the system's reaction on those errors is actually under the programmer's control.
+<P>
+
+<A NAME = "NOTE2" HREF = "#BACKNOTE2">(2)</A>
+Actually, there are additional contexts which are hidden from this
+list by default. For example, if a "division by zero" error happens,
+the division operation method raises a ZeroDivide exception,
+which looks for a handler and finally raises an UnhandledException-exception.
+This finally enters the debugger. All those exception handling helpers are not
+shown by default, and the debugger presents the place of the divide
+as the top most context.
+Unless you are debugging the exception handling mechanism itself, this is usually
+the preferred presentation, as you as a developer are interested in the division
+error, not its handling.
+You can change this behavior (and make all contexts visible) via the debugger's
+view menu entry "Show Support Code".
+<P>
+In addition, contexts for some support code, such as block-values in enumerations
+and other helpers are hidden by default.
+To show them, turn off the "Show Dense Walkback" toggle in the same menu.
+<P>
+
+<A NAME = "NOTE3" HREF = "#BACKNOTE3">(3)</A>
+Ocasionally, the debugger has trouble with this, as the compiler(s) move
+local variables of inlined blocks into their surrounding context
+(i.e. a local variable within an ifTrue:[]-block is typically moved to the
+method's stack frame). Also, some inner blocks are actually compiled either inline or
+otherwise compiled more efficient (lambda lifted) and the debugger has not been implemented
+clever enough to figure out all such situations.
+Although trying hard, the debugger sometimes gets a wrong idea of where the variable
+is actually located, as it may not know about all optimizations done by the compilers,
+especially with "stc" compiled code.
+This is a known weakness (call it "a little bug"), with which we have to live (for now).
+In practice, such situations do occur, but are usually not limiting the programmer's productivity.
+
+<P>
+Continue in
+<A NOPRINT HREF="buttons.html">"Button Functions"</A>...
+
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif" ALT="[stx logo]">
+Copyright &copy; 1995 Claus Gittinger Development & Consulting, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+<HR>
+Doc $Revision: 1.27 $ $Date: 2016-07-13 08:19:29 $
+
+</BODY>
+</HTML>

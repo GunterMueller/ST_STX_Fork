@@ -1,0 +1,1464 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Messages</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="deployment.html"><IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html"><IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="debugging.html"><IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Error &amp; Warning Messages</H1>
+<H2>Overview &amp; Contents</H2>
+
+  This document lists some (most?) of the error and warning
+  messages from various parts of the system.
+  A short explanation of what the message means, and what
+  should be done is given for each.
+
+<UL>
+<LI><A NAME="I_STC_DIAG" HREF="#STC_DIAG">Diagnostics produced by the <CITE>stc</CITE> compiler</A>
+  <UL>
+  <LI><A NAME="I_STC_ERRORS" HREF="#STC_ERRORS"><CITE>stc</CITE> error messages</A>
+    <UL>
+    <LI><A NAME="I_STC_VAR_ERRORS" HREF="#STC_VAR_ERRORS">variables</A>
+    <LI><A NAME="I_STC_CLS_ERRORS" HREF="#STC_CLS_ERRORS">classes</A>
+    <LI><A NAME="I_STC_SYN_ERRORS" HREF="#STC_SYN_ERRORS">syntax</A>
+    <LI><A NAME="I_STC_SEM_ERRORS" HREF="#STC_SEM_ERRORS">checked semantic</A>
+    <LI><A NAME="I_STC_LIMIT_ERRORS" HREF="#STC_LIMIT_ERRORS">limitations</A>
+    </UL>
+  <LI><A NAME="I_STC_WARNINGS" HREF="#STC_WARNINGS"><CITE>stc</CITE> warning messages</A>
+  </UL>
+<P>
+<LI><A NAME="I_VM_DIAG" HREF="#VM_DIAG">Diagnostics produced by the runtime system</A>
+  <UL>
+  <LI><A NAME="I_VM_STARTUPMESSAGES" HREF="#VM_STARTUPMESSAGES">Startup messages</A>
+  <LI><A NAME="I_VM_LOOKUPERRORS" HREF="#VM_LOOKUPERRORS">Message lookup errors</A>
+  <LI><A NAME="I_VM_MEMORYERRORS" HREF="#VM_MEMORYERRORS">Memory management errors</A>
+  <LI><A NAME="I_VM_MEMORYDIAGNOSTICS" HREF="#VM_MEMORYDIAGNOSTICS">Memory management diagnostics</A>
+  <LI><A NAME="I_VM_OTHERERRORS" HREF="#VM_OTHERERRORS">Other VM errors</A>
+  <LI><A NAME="I_INCRCOMPILER" HREF="#INCRCOMPILER">Incremental compiler messages &amp; popups</A>
+  <LI><A NAME="I_VARIOUS" HREF="#VARIOUS">Misc messages from various classes</A>
+  <LI><A NAME="I_EXTERNALLIBMSGS" HREF="#EXTERNALLIBMSG">Misc messages from non-Smalltalk library code</A>
+  </UL>
+<P>
+<LI><A NAME=I_RUNTIMEERRORS" HREF="#RUNTIMEERRORS">Runtime errors (exceptions)</A>
+</UL>
+
+
+<H2><A NAME="STC_DIAG" HREF="#I_STC_DIAG">Diagnostics produced by stc</A></H2>
+
+  When compiling with <VAR>stc</VAR>, error and warning messages
+  may be either produced by <VAR>stc</VAR> itself, or by the c-compiler,
+  during the second compilation phase.
+<BR>
+Remember: <VAR>stc</VAR> first creates C-code
+  as intermediate code, and calls the c compiler for machine code
+  generation.
+<P>
+  Stc-generated messages are of the form:
+<BLOCKQUOTE>
+<VAR>file</VAR>.st, line <VAR>n</VAR>: <VAR>msgType</VAR>: some text
+</BLOCKQUOTE>
+  whereas messages produced by the C-compiler usually look like:
+<BLOCKQUOTE>
+<VAR>file</VAR>.c, line <VAR>n</VAR>: <VAR>msgType</VAR>: some text
+</BLOCKQUOTE>
+  (of course, the details depend on the type of c-compiler used,
+   so no more information can be given here).
+<P>
+  There should be no error messages from the C-compiler,
+  except in wrong defined primitive code. However, some C-compilers
+  are more 'picky' than others and output warnings sometimes.
+  These can usually be ignored (and <VAR>stc</VAR> will be fixed to output
+  code which does not produce warnings).
+<P>
+The handling of some errors can be changed by <VAR>stc</VAR> command line arguments.
+Also, warning messages may be disabled. See the <VAR>stc</VAR> manual page
+for more info.
+
+<H2><A NAME="STC_ERRORS" HREF="#I_STC_ERRORS">Stc error messages</A></H2>
+
+<H3><A NAME="STC_VAR_ERRORS" HREF="#I_STC_VAR_ERRORS">variables</A></H3>
+
+<UL>
+<LI><CODE>
+  Error: redefinition of 'foo' (line n)
+</CODE>
+<BR>
+	is reported, when a method for the same selector was
+	already defined previously. The line number <VAR>n</VAR> tells
+	the position of the previous method definition.
+
+<UL>
+<LI>repair:
+<BR>
+check the code and rename/remove the method.
+</UL>
+<P>
+
+
+
+<LI><CODE>
+  Error: redefinition of 'foo' in instvar list
+</CODE>
+<BR>
+	is reported, when the same identifier occurs twice in the
+	instanceVariableNames list of a class.
+<BR>
+	I.e. if you try to define some class as:
+<CODE><PRE>
+    Foo subclass:#Bar
+	instanceVariableNames:'... x ... x ...'
+	  ...
+</PRE></CODE>
+
+	here, the name ``<VAR>x</VAR>'' occurs twice.
+
+<UL>
+<LI>repair:
+<BR>
+	  check the definition and rename/remove the instance variable.
+</UL>
+<P>
+
+
+
+<LI>
+<CODE>
+  Error: redefinition of 'foo' in arg/var list
+</CODE>
+<BR>
+	is reported, when the same identifier occurs twice in an
+	argument list of a method or block.
+<BR>
+	I.e. if you try to define some method as:
+<CODE><PRE>
+	    methodWith:arg1 with:arg2 with:arg1
+</PRE></CODE>
+	here, the name ``<VAR>arg1</VAR>'' occurs twice.
+
+
+<UL>
+<LI>repair:
+<BR>
+	rename the argument.
+</UL>
+<P>
+
+
+
+<LI>
+<CODE>
+  Error: instvar 'foo' is already defined in a superclass
+</CODE>
+<BR>
+	is reported when an instance variable with the same name
+	is already defined in a superclass.
+<BR>
+	I.e. if you define a class such as:
+<CODE><PRE>
+    Point subclass:#MyPoint
+	  instanceVariableNames:'... x ...'
+	  ...
+</PRE></CODE>
+here, the superclass <CODE>Point</CODE> already defined an instance variable
+named ``<VAR>x</VAR>''.
+
+
+<UL>
+<LI>repair:
+<BR>
+	  rename/remove the instance variable.
+<P>
+<LI>hint:
+<BR>
+	In special situations (you do not want to change the
+	source), turn off the error with the <KBD>-errorInstVarRedef</KBD>
+	command line argument. This tells <VAR>stc</VAR> to output a
+	warning only, and continue compilation.
+<BR>
+	The resulting code will access the new instance variable
+	in the subclass (and classes derived from these).
+	The superclass continues to access its original instance
+	variable - of course.
+<P>
+<LI>notice:
+<BR>
+	do not use this command line argument in general -
+	it will lead to a sloppy coding style and may lead to
+	unexpected behavior in your classes.
+<BR>
+	However, there is one situation where allowing instvar redefinitions
+	makes sense and is very useful:
+	 if you port a class from another smalltalk system.
+<P>
+	For example: if a subclass of <CODE>View</CODE> is to be brought to
+	<CITE>ST/X</CITE> from <CITE>ST-80</CITE>, this may result in instvar
+	redefinitions, since
+	the inherited instance variables are certainly different in those
+	class hierarchies and conflicts are possible (although not likely).
+<BR>
+	Since the conflicting instvar was not present in the
+	original hierarchy, all references to it from within the new class
+	are certainly meant for its own instance variable - not to the inherited one.
+	Thus the semantic of accessing the own instvar is certainly the correct
+	one for that class.
+<P>
+<LI>warning:
+<BR>
+	This should be only only used for a quick port of class code.
+	In the long run, classes should be rewritten to have distinct instvar names.
+</UL>
+<P>
+
+
+
+
+
+
+<LI>
+<CODE>
+  Error: global 'foo' is not uppercase
+</CODE>
+<BR>
+	is reported, when no variable <VAR>foo</VAR> was defined.
+	For identifiers starting with an uppercase character, these
+	undefined names are automatically taken to be global.
+<BR>
+	For others, this error is reported.
+
+
+<UL>
+<LI>repair:
+<BR>
+	  add the missing definition (instance variable or local variable)
+<BR>
+	or:
+<BR>
+	  change the name (to uppercase, if its meant to be a global)
+<P>
+
+<LI>notice:
+<BR>
+	it is considered bad style (but not strictly an error)
+	to use lowercase names for globals and/or class variables.
+	However, for compatibility
+	(i.e. when porting code from other smalltalks) it is possible to
+	turn this error into a warning with the <KBD>-errorLowerGlobal</KBD> compiler switch.
+</UL>
+<P>
+
+
+
+<LI>
+<CODE>
+  Error: 'foo' is not lowercase
+</CODE>
+<BR>
+	is reported when an instance variables, method/block locals
+	or arguments name is starting with an upper case character.
+	This is not strictly an error, but considered bad style.
+	For compatibility (i.e. when porting code from other smalltalks)
+	you can turn this error into a warning with the
+	<KBD>-errorUpperLocal</KBD> command line argument.
+
+</UL>
+
+
+
+
+<H3><A NAME="STC_CLS_ERRORS" HREF="#I_STC_CLS_ERRORS">classes</A></H3>
+<UL>
+
+<LI>
+<CODE>
+  Error: subclasses of Foo not allowed
+</CODE>
+<BR>
+	this applies the classes <CODE>SmallInteger</CODE>,
+	<CODE>UndefinedObject</CODE>,
+	<CODE>True</CODE> and <CODE>False</CODE>.
+<BR>
+	For implementation reasons, you cannot create subclasses
+	of these (neither with <CITE>stc</CITE> nor with the browser.
+
+
+<UL>
+<LI>repair:
+<BR>
+	read the documentation on the language and the implementation
+</UL>
+<P>
+
+<LI>
+<CODE>
+  Error: Foo is a builtIn class
+</CODE>
+<BR>
+	Among others, this applies to the classes
+	<CODE>Object</CODE>, <CODE>Method</CODE>
+	<CODE>Block</CODE>, <CODE>Context</CODE>, <CODE>BlockContext</CODE>,
+	<CODE>String</CODE>, <CODE>Symbol</CODE>, <CODE>Array</CODE>,
+	<CODE>Behavior</CODE> and all of their superclasses.
+<P>
+	The instance layout of those class is known by (and built into)
+	the VM. You may not add or remove instance variables or change its
+	layout (i.e. introduce/remove indexed variables).
+
+
+<UL>
+<LI>repair:
+<BR>
+	rethink about what you tried to do.
+</UL>
+<P>
+
+</UL>
+
+
+
+
+<H3><A NAME="STC_SYN_ERRORS" HREF="#I_STC_SYN_ERRORS">syntax</A></H3>
+<UL>
+
+<LI>
+<CODE>
+  Error: block at line n or parenthesis nesting in foo
+</CODE>
+<BR>
+	either a blocks bracket-nesting or expressions parenthesis
+	nesting is wrong.
+
+
+<UL>
+<LI>repair:
+<BR>
+       typically some bracket '[' or ']' or parenthesis '(' or ')'
+       is missing
+</UL>
+<P>
+
+
+
+<LI>
+<CODE>
+  Error: '!' must be duplicated (in string constant)
+<BR>
+  Error: '!' must be duplicated (in character constant)
+</CODE>
+<BR>
+	since the input to <VAR>stc</VAR> is standard fileIn source format,
+	individual methods must be separated by '!'-characters,
+	and '!'-characters within methods must be doubled.
+	This also applies to exclamation marks in strings and character
+	constants.
+
+
+<UL>
+<LI>repair:
+<BR>
+	replace the single '!' by a double '!!'
+<P>
+<LI>notice:
+<BR>
+	this only applies to files edited with the fileBrowser
+	      or other editor.
+<BR>
+	Do NOT double '!'-characters when entering code into the systemBrowser,
+	since all fileIn/fileOut operations double/undouble exclamation marks
+	automatically.
+</UL>
+<P>
+</UL>
+
+
+<H3><A NAME="STC_SEM_ERRORS" HREF="#I_STC_SEM_ERRORS">checked semantic</A></H3>
+
+For some receiver/selector combinations, <CITE>stc</CITE> ``knows''
+what kind of argument is required and reports errors if these are
+incorrect. This may seem to make the implementation ``impure'' with
+respect to object orientation, but usually helps the programmer by
+flagging errors earlier (these will lead to a runtime error later, anyway).
+<P>
+Some of these checks can be turned of by <CITE>stc</CITE> command line
+arguments, which will force it to generate code even for suspect constructs.
+
+<UL>
+
+<LI>
+<CODE>
+  Error: body of whileTrue/whileFalse: must be a Block
+</CODE>
+<BR>
+	the argument to a <CODE>while</CODE> message
+	is known to be not a block. The compiler can (of course) not
+	figure out all situations, in which this will happen at runtime.
+	It is only reported for constant (non-block) arguments, or if <CITE>stc</CITE>'s
+	type tracker can definitely assert a variables type to be a nonBlock.
+
+
+<UL>
+<LI>repair:
+<BR>
+	usually some bracket '[' or ']' is missing, or a typing error
+	(round parentesis instead of brackets).
+<P>
+<LI>notice:
+<BR>
+	Unless the <CODE>"-optControl"</CODE> command line option is given,
+	<CITE>stc</CITE> generates inline code for
+	<CODE>#whileXXX</CODE>, <CODE>#ifXXX</CODE>, <CODE>#timesRepeat</CODE>,
+	<CODE>#to:do:</CODE> and <CODE>#to:by:do:</CODE> constructs, iff the receivers type is known
+	or can be tracked.
+<BR>
+	No real message send operation is performed at runtime for those.
+<BR>
+	This means that redefining the corresponding methods
+	(in the Block-class) has no effect on program execution,
+	except for explicit <CODE>#perform:</CODE> sends.
+<P>
+	You can force these methods to be executed by:
+<CODE><PRE>
+    [ ... ] perform:#'whileTrue:' with:[ .... ]
+</PRE></CODE>
+</UL>
+<P>
+
+<LI>
+<CODE>
+  Error: body of ifTrue/ifFalse: must be a Block
+</CODE>
+<BR>
+	like above.
+<P>
+
+<LI>
+<CODE>
+  Error: body of whileTrue:/whileFalse: may not have args
+</CODE>
+<BR>
+	an obvious error - the blocks in while-messages are evaluated
+	without an argument.
+
+
+<UL>
+<LI>repair:
+<BR>
+	remove the formal block args - or check if a while-loop is really
+	your intent.
+</UL>
+<P>
+
+<LI>
+<CODE>
+  Error: body of ifTrue:/ifFalse: may not have args
+</CODE>
+<BR>
+	like above
+<P>
+
+<LI>
+<CODE>
+  Error: undefined outcome of if
+</CODE>
+<BR>
+	the receiver of an if-type message is known to be not
+	a boolean.
+<P>
+</UL>
+
+
+<H3><A NAME="STC_LIMIT_ERRORS" HREF="#I_STC_LIMIT_ERRORS">limitations</A></H3>
+
+<UL>
+<LI>
+<CODE>
+  Error: cannot compile largeInteger literals yet (...)
+</CODE>
+<BR>
+	this is a limitation of the current <VAR>stc</VAR> - it cannot create
+	largeInteger literals.
+
+
+<UL>
+<LI>repair:
+<BR>
+	    use a classVariable for your large-constants, and
+	    set them in the classes <CODE>initialize</CODE> method using:
+<CODE><PRE>
+    myVar := LargeInteger readFromString:'..........'
+</PRE></CODE>
+<P>
+<LI>note:
+<BR>
+	this is not a bug of yours, but a limitation of <VAR>stc</VAR>.
+	It will be fixed in an upcoming version.
+<P>
+<LI>late note:
+<BR>
+	this bug has been fixed with release 2.10.7.
+</UL>
+<P>
+
+<LI>
+<CODE>
+  Error: cannot compile if for value
+</CODE>
+<BR>
+	this is a bug in the current <CITE>stc</CITE> implementation:
+	it cannot always compile constructs like:
+<CODE><BLOCKQUOTE>
+	foo := expression ifTrue:[expr1] ifFalse:[expr2].
+</BLOCKQUOTE></CODE>
+	This bug will be fixed in an upcoming version.
+
+
+<UL>
+<LI>repair:
+<BR>
+	replace by:
+<CODE><PRE>
+	expression ifTrue:[foo := expr1]
+		   ifFalse:[foo := expr2].
+</PRE></CODE>
+<LI>note:
+<BR>
+	this is not a bug of yours, but a limitation of <VAR>stc</VAR>.
+	It will be fixed in an upcoming version.
+<P>
+<LI>late note:
+<BR>
+	with release 2.10.7 this has been fixed mostly.
+	However, in rare situations (complicated expressions in the if-blocks), this
+	may still be occur.
+</UL>
+<P>
+
+
+
+
+
+<LI>
+  *** this list may be incomplete, as newer versions may add more messages ***
+</UL>
+
+
+
+
+<h2><A NAME="STC_WARNINGS" HREF="#I_STC_WARNINGS">Stc warning messagess</A></H2>
+
+<UL>
+<LI>
+<CODE>
+  Warning: useless computation of constant (nil)
+</CODE>
+<BR>
+
+	is output when an expression which evaluates to
+	nil is detected, where the value is not used/needed.
+	Typically, this is warning occurs with empty blocks as in:
+<CODE>
+<PRE>
+   foo ifTrue:[] ifFalse:[....]
+</PRE>
+</CODE>
+
+	This warning is somewhat questionable: it is reported
+	for totally correct code.
+<BR>
+	However, in some situations, it may make sense to
+	look into the code and check for commented out code
+	which should not be.
+<P>
+
+
+
+
+<LI>
+
+<CODE>
+  Warning: constant 1 in multiplication
+</CODE>
+<BR>
+
+	<VAR>stc</VAR> generates code, which will perform the send of <CODE>#*</CODE>
+	for non-numbers, and do nothing for <CODE>Integer</CODE> and <CODE>Float</CODE> receivers.
+<BR>
+You may want to have a look at the code to see if this multiplication is really needed.
+<P>
+
+
+
+
+
+<LI>
+
+<CODE>
+  Warning: constant 0 in multiplication
+</CODE>
+<BR>
+
+	<VAR>stc</VAR> generates code, which will perform the send of <CODE>#*</CODE>
+	for non-numbers, and evaluate to the constant 0 for <CODE>Integer</CODE> and <CODE>Float</CODE>
+	receivers.
+<P>
+
+
+
+
+
+<LI>
+
+<CODE>
+  Warning: assignment to global variable 'FooBar'
+</CODE>
+<BR>
+
+	is output whenever a global is assigned to.
+	In Smalltalk, it is considered bad coding style to heavily
+	use global variables - you should always think twice before
+	doing so.
+	Usually a class variable will give you the same functionality
+	AND provide a better encapsulation (and also security, since
+	assignments/modifications can be trivially cought by limiting
+	access through a class method, while globals can be accessed and
+	modified from everywhere).
+<BR>
+	This warning can be turned off with the <CODE>-warnGlobalAssign</CODE> flag.
+<P>
+
+
+
+
+
+<LI>
+<CODE>
+ Warning: declared 'Foo' as global
+</CODE>
+<BR>
+
+	is output, when some variable has been declared as global by <VAR>stc</VAR>.
+	This is done, whenever an otherwise undeclared name, which starts
+	with an upper case alpha character is encountered.
+	You may want to check, if this is the intention, since typing errors
+	in a class variables name may lead to this.
+<BR>
+	If its really a global variable that is intented, you should declare it
+	before using it, by adding a line such as:
+<CODE><PRE>
+    Smalltalk at:#Foo put:nil
+</PRE></CODE>
+	somewhere at the beginning of the file.
+<P>
+
+
+
+
+<LI>
+<CODE>
+  Warning: method var 'foo' hides instvar
+<BR>
+  Warning: block arg 'foo' hides instvar
+</CODE>
+<BR>
+
+	whenever a method variable/block arg is locally defined,
+	which has the same name as an instance variable.
+<BR>
+	This warning is output to remind you, that the instance variable
+	is not reachable in this inner scope - which may or may not
+	be the intent.
+<P>
+
+
+
+
+<LI>
+
+<CODE>
+  Warning: block arg 'foo' hides method local
+</CODE>
+<BR>
+
+	whenever a block arg is locally defined,
+	which has the same name as a method variable.
+<BR>
+	This warning is output to remind you, that the method variable
+	is not reachable in this inner scope - which may or may not
+	be the intent.
+<P>
+
+
+
+
+<LI>
+
+<CODE>
+  Warning: local 'foo' used before set
+</CODE>
+<BR>
+
+	This may or may not be really an error - since the
+	language definition states that local variables are
+	initialized to <CODE>nil</CODE>, it is perfectly legal to depend
+	on this (for example, to check for the first run
+	through a loop).
+<P>
+
+
+
+
+<LI>
+
+<CODE>
+  Warning: local 'foo' is always unassigned
+</CODE>
+<BR>
+
+	A local variable is used, but never gets a value assigned.
+	This is usually an  error. However, it conforms to the language definition,
+	therefore only a warning message is generated.
+<P>
+
+
+
+
+
+
+<LI>
+
+<CODE>
+  Warning: local 'foo' is never used
+<BR>
+  Warning: classvariable 'foo' is never used
+</CODE>
+<BR>
+
+	an unused variable - the warning can usually be ignored,
+	or the variables definition be removed.
+<BR>
+	In case of a classvariable, you should make sure that the
+	variable is not used in subclasses before removing it (or move
+	it to where it is supposed to be defined).
+<P>
+
+
+
+
+<LI>
+
+<CODE>
+  Warning: thisContext is unsafe in inlined blocks
+</CODE>
+<BR>
+
+	A <CODE>thisContext</CODE> is encountered in a block, which is inlined;
+	therefore </CODE>thisContext</CODE> will not return the blocks context,
+	but instead the context of the enclosing block or method.
+<BR>
+	<VAR>Stc</VAR> may be changed in the future to either not inlining such blocks,
+	or create a dummy context for the inlined block.
+<P>
+	You can avoid the ambiguity, by assigning <CODE>thisContext</CODE> to a local
+	method variable outside the block (i.e. in the method), and use this
+	local instead.
+<BR>
+	In general, to avoid compatibility problems with other smalltalk
+	implementations, it is wise to not use <CODE>thisContext</CODE> in blocks.
+<P>
+
+
+<LI>
+<CODE>
+  Warning: if/while with unassigned receiver
+</CODE>
+<BR>
+
+	A variable is used in an if or while expression, but
+	that variable never gets a value assigned (i.e. is known to be nil).
+<P>
+
+
+<LI>
+<CODE>
+  Warning: possible typing error:'fooBar'
+</CODE>
+<BR>
+
+	you have used a selector <CODE>fooBar</CODE>, which looks very obscure
+	to <VAR>stc</VAR>.
+<BR>
+	Although the program is syntactically correct, you should
+	check if the selector is really what you intented.
+<BR>
+	The set of obscure selectors has been determined by heuristics,
+	by statistics over common bugs. Things like <CODE>ifTrue:ifTrue:</CODE>
+	are among them. It is probably not complete, and more common typing
+	errors are to be checked for.
+<P>
+
+
+
+
+
+<LI>
+<CODE>
+  Warning: end-of-line comments are a special ST/X feature
+</CODE>
+<BR>
+
+	you have used the non portable end-of-line comment (<CODE>"/</CODE>). If you ever
+	plan to transport the source code to another Smalltalk
+	implementation, the code has to be changed.
+
+
+</UL>
+
+There are a few more (less frequent) error and warning messages which can be generated
+by the compiler. All of them should be self explanatory.
+
+
+
+<H2><A NAME="VM_DIAG" HREF="#I_VM_DIAG">Diagnostics produced by the runtime system</A></H2>
+
+In case of a severe error, the runtime system (also called <VAR>VM</VAR>)
+sends diagnostic to the standard errror (i.e. your shell terminal).
+Also informational messages are occasionally output,
+for example, garbage collection statistics.
+<P>
+Normally, you would not care for these messages,
+except if <CITE>ST/X</CITE>'s output is piped to another program.
+In this case, you may want to suppress these messages.
+<BR>
+(future versions will allow these to be written into a logfile as option)
+
+<P>
+Most debug &amp; error messages can be suppressed by evaluating:
+<CODE><PRE>
+	Smalltalk debugPrinting:false
+</CODE></PRE>
+for the error messages, and:
+<CODE><PRE>
+	Smalltalk infoPrinting:false
+</CODE></PRE>
+for the informal messages. You may place the above expressions into
+any of your startup files, or evaluate them at any time in a workspace.
+<P>
+Alternatively, you can give additional command line arguments which
+suppress  these messages right from the start:
+<CODE><PRE>
+	smalltalk -noDebugPrint -noInfoPrint
+</PRE></CODE>
+Finally, these can be enabled/disabled in the launcher's <VAR>settings-messages</VAR> menu.
+<P>
+Messages for very severe errors (crashes) cannot be suppressed.
+<P>
+Starting with <CITE>ST/X</CITE> release 3, all system messages are prefixed
+by a subsystem name (such as <CODE>"IRQ"</CODE> or <CODE>"MEM"</CODE>),
+which specifies the part within the VM, where the message was generated,
+and a severity indicator (one of <CODE>"error"</CODE>, <CODE>"warning"</CODE>
+or <CODE>"info"</CODE>).
+<BR>
+The subsystems are:
+<DL>
+<DT>IRQ<DD>the interrupt subsystem which handles the timer, user interrupts (CTRL-C),
+I/O interrupts and memory access violations.
+<DT>MEM<DD>memory management
+<DT>IGC<DD>incremental garbage collector (within the memory system)
+<DT>GC<DD>blocking (mark &amp; sweep) garbage collector (within the memory system)
+<DT>CGC<DD>compressing garbage collector (within the memory system)
+<DT>IMG<DD>snapshot image save &amp; reload subsystem
+<DT>VM<DD>other message
+</DL>
+By convention, messages generated by Smalltalk code also follow the above
+convention, but print the name of the class which generated the message.
+<BR>
+(This helps in searching for the origin of that message in the browser.)
+
+
+<H3><A NAME="VM_STARTUPMESSAGES" HREF="#I_VM_STARTUPMESSAGES">Startup messages</A></H3>
+
+<UL>
+<LI>
+<CODE>
+  IMG: image &lt;filename> is not compatible with executable (not yet supported)
+</CODE>
+<BR>
+
+the snapshot file (default: <CODE>"st.img"</CODE>) was written by an earlier
+version of the <CITE>ST/X</CITE> executable
+(i.e. <CODE>"smalltalk"</CODE> has been recompiled or relinked in the meantime),
+or by a system running on a different processor architecture;
+<P>
+The state contained in the file cannot be restored.
+<BR>
+Future versions of <CITE>ST/X</CITE> may convert the image and be able to
+read the image, even in this case.
+For now, <CITE>ST/X</CITE> performs the normal (clean-) startup, ignoring the image.
+<P>
+Warning:
+<BLOCKQUOTE>
+currently, old images are unusable, if <CITE>ST/X</CITE> is recompiled/
+relinked. Make certain, that all of your classes have been
+filedOut before you recreate a <CODE>"smalltalk"</CODE> executable.
+<BR>
+This may change in one of the future versions.
+</BLOCKQUOTE>
+<H5>This message cannot be suppressed.</H5>
+
+<LI>
+<CODE>
+  IMG [error]: version-mismatch: <VAR>className</VAR>-&gt;<VAR>superclassname</VAR>
+</CODE>
+
+<BR>
+
+the classes superclass definition does not match. This occurs
+when a superclass has been changed (for example: instance variables
+have been added or removed) and compiled (with <VAR>stc</VAR>), and the
+subclass has NOT been recompiled.
+<P>
+If this happens, the bad class and all of its subclasses are ignored by
+the system and will not be present (i.e. the system will initialize
+as if those classes were not present).
+<P>
+Usually, <CITE>ST/X</CITE> cannot work correctly in this situation - you will
+almost certainly run into the debugger due to doesNotUnderstand errors.
+
+
+repair:
+<BLOCKQUOTE>
+recompile the class (and/or superclass) &amp; relink <CITE>ST/X</CITE>
+</BLOCKQUOTE>
+<H5>This message cannot be suppressed.</H5>
+
+
+
+<LI>
+
+<CODE>
+  [XWorkstation]: cannot connect to Display
+</CODE>
+<BR>
+
+You should either set the <KBD>DISPLAY</KBD> shell-variable correctly or make
+certain, that the X-server defined by <KBD>DISPLAY</KBD> permits connections.
+(actually this is not a VM message, but produced by the <CODE>Workstation</CODE> class)
+
+
+repair:
+<BLOCKQUOTE>
+- check <KBD>$DISPLAY</KBD>
+<BR>
+- try the unix command: "<KBD>xhost +myHostName</KBD>"
+<BR>
+- check if the Xserver is running (if display is on a remote machine)
+</BLOCKQUOTE>
+</UL>
+
+
+<H3><A NAME="VM_LOOKUPERRORS" HREF="#I_VM_LOOKUPERRORS">Message lookup errors</A></H3>
+
+<UL>
+<LI>
+<CODE>
+  VM: doesNotUnderstand notUnderstood
+</CODE>
+<BR>
+
+some object does not understand the <CODE>#doesNotUnderstand:</CODE>
+message. This error also raises the <CODE>InternalError</CODE> exception.
+
+
+
+<DL><DT>Sources of this error:<DD>
+	    - corrupted superclass chain
+<BR>
+	    - invalid class-entry in an object
+<BR>
+	    - implementation bug in the VM (send a bug report)
+</DL>
+There are some situations, where this error may occur due to a programmers
+fault. For example, if you create an instance of a new anonymous class,
+send it any unimplemented message AND that class does not implement a
+method for <CODE>#doesNotUnderstand:</CODE>.
+<BR>
+i.e.
+<CODE><PRE>
+    |newClass|
+
+    newClass := (Metaclass new) new.
+    newClass setSuperclass:nil.
+    newClass new foo
+</PRE></CODE>
+<P>
+If you create a nil-subclass in the browser (i.e. not 'manually'),
+the class will always include a default implementation for
+<CODE>#doesNotUnderstand:</CODE>
+to prevent this kind of error.
+
+<P>
+<LI>
+<CODE>
+  VM: searchclass is not a behavior
+</CODE>
+<LI>
+<CODE>
+  VM: selector array is not an array
+</CODE>
+<LI>
+<CODE>
+  VM: method array is not an array
+</CODE>
+<LI>
+<CODE>
+  VM: nil method array
+</CODE>
+<LI>
+<CODE>
+  VM: selector/method array sizes don't match
+</CODE>
+<LI>
+<CODE>
+  VM: superclass chain seems endless in lookup
+</CODE>
+
+<BLOCKQUOTE>
+these are various messages produced by corrupted classes.
+These should only occur if you manually manipulated a classes
+instance variables - otherwise, send a bug report.
+</BLOCKQUOTE>
+
+<DL><DT>Sources of these errors:<DD>
+as above
+</DL>
+
+<P>
+<DL><DT>Notice:<DD>
+Portable applications should not depend on these error conditions
+to be handled gracefully - some other smalltalk implementation may simply dump core
+if one of the above errors occurs.
+</DL>
+
+</UL>
+
+
+
+<H3><A NAME="VM_MEMORYERRORS" HREF="#I_VM_MEMORYERRORS">Memory management errors</A></H3>
+
+<UL>
+<LI>
+<CODE>
+  MEM: findRefs: alien xxxxxxxx in yyyyyyy offset x (aClass)
+</CODE>
+<BR>
+
+the garbage collector found an invalid object reference to a
+non-object or free object <VAR>x</VAR> in the object <VAR>y</VAR> which is an instance
+of <VAR>aClass</VAR>.
+<BR>
+This error should normally not happen and is usually worth a
+bug report (except if its due to bad primitive code as described below).
+<BR>
+However, <CITE>ST/X</CITE>'s memory manager is relatively robust against
+these errors - in most cases, execution can still continue (for a while).
+<BR>
+One exception is when this error happens in the incremental GC;
+continuing will probably lead to more errors of this kind.
+You should terminate the incremental GC process.
+<P>
+In any case, you should try to save as much of your work as possible
+(by filing out your classes) and restart the system from your
+last saved image. You can try to write a new image; there are some
+repair mechanisms built in, which nil out illegal references. If
+the wrong pointer was caused by a bad primitive or external C subsystem,
+chances are good that the system may continue to work.
+However, do not overwrite your last image and do not overwrite
+existing source files (i.e. write a new image, and fileOut into
+a different directory) because you cannot be certain that the incore
+source information is still valid and consistent.
+
+
+<DL><DT>Sources of this error:<DD>
+	    - version-mismatch (see above)
+<BR>
+	    - errors in primitive code clobbering objects
+<BR>
+	    - unprotected objectpointers kept in external c-code or
+	      globals
+<BR>
+	    - malloc'ing ST-objects in a primitive (which is not allowed)
+<BR>
+	    - freeing ST-objects in a primitive
+<BR>
+	    - implementation bug in the VM (send a bug report)
+</DL>
+
+<P>
+<LI>
+<CODE>
+  GC: tried to mark free inst xxxx in yyyy(n) space s class:zzzz (...)
+</CODE>
+<BR>
+the garbage collector found a reference to an object which was freed in
+a previous GC cycle. This error should not happen as is usually worth
+a bug report (except if its due to bad primitive code as described below).
+<BR>
+The collector nils this invalid reference in order to protect itself from
+further trouble. However, this may lead to more strange behavior in your
+program.
+
+
+<DL><DT>Sources of this error:<DD>
+	- typically, this error results from an ommitted __STORE-macro
+	  in primitive code. This macros tells the collector, that a reference
+	  has been created (usually to some newly created object) and enters
+	  the destination into the remembered lists. If that macro is missing,
+	  the gc may consider the object as free, although a reference to it
+	  exists, and find this situation in the next GC cycle.
+</DL>
+</UL>
+
+
+
+<H3><A NAME="VM_MEMORYDIAGNOSTICS" HREF="#I_VM_MEMORYDIAGNOSTICS">Memory management diagnostics</A></H3>
+
+<UL>
+<LI>
+<CODE>
+  MEM: Allocate n bytes more oldspace ...
+<BR>
+  MEM: ... done
+</CODE>
+<BR>
+
+	the memory system was either forced to (via "<CODE>ObjectMemory moreOldSpace:</CODE>")
+	or decided by itself (when free memory drops below some limit)
+	to allocate more memory for oldSpace objects.
+<BR>
+	Depending on the capabilities of your operating system,
+	this may or may not be a timely operation;
+<BR>
+	On all systems which allow arbitrary mmap'ing of memory pages
+	 (i.e. Linux, SGI, Suns, Unixware and some others), this operation
+	takes a few milliseconds; on systems which do not support this
+	(HP, Ultrix, RealIX and others), it may take seconds.
+
+
+<P>
+<LI>
+<CODE>
+  GC: found: n bytes of free storage (n:x max:y joins:z)
+</CODE>
+<BR>
+
+	the blocking (i.e. non-incremental) garbage collector just finished
+	its work and found n bytes of free storage.
+
+
+<P>
+<LI>
+<CODE>
+  IGC: found: n bytes of free storage (n:x max:y joins:z)
+</CODE>
+<BR>
+
+	the incremental garbage collector just finished its work
+	and found n bytes of free storage.
+
+<P>
+<LI>
+<CODE>
+  MEM: very bad space conditions
+</CODE>
+<BR>
+
+	the object memory is full and the operatingSystem is not willing
+	to hand out more memory in an allocation request.
+	This occurs if the smalltalk process has reached its (VM) limits,
+	or if the system is running out of swap/paging space.
+<P>
+	Smalltalk cannot do much about this; however, a lowSpace interrupt
+	is triggered, which sends a <CODE>#lowSpaceCleanup</CODE> message to
+	all classes.
+<BR>
+	All classes which keep huge data (for example cached bitmap images or
+	other reconstructable data) should implement a method for this message
+	and release as much as possible there.
+<BR>
+	In rare situations, this error occurs in a loop (if the cleanup did not
+	release enough memory, and further allocation requests failed as well).
+<BR>
+	In this case, you have to kill or otherwise terminate the smalltalk process
+	manually (via the UNIX <VAR>kill</VAR> command).
+	Then, either check your application for excessive memory requirements
+	(endless loop when constructing some object hierarchy), or
+	reconfigure your system to provide more swap space and restart from a saved
+	image.
+<P>
+	Notice that some (bad) Unix systems simply kill the smalltalk process,
+	so smalltalk gets no chance to perform the above cleanup actions or handle
+	the error in a graceful way.
+	Good systems return an error from the allocation (sbrk / mmap or malloc)
+	request (this is a hint to OS designers ;-).
+
+
+</UL>
+
+
+
+
+<H3><A NAME="VM_OTHERERRORS" HREF="#I_VM_OTHERERRORS">Other VM errors</A></H3>
+
+<UL>
+<LI>
+<CODE>
+  VM: sigsegv
+</CODE>
+<BR>
+
+	a segmentation violation (illegal memory access) occurred
+<BR>
+This error should normally not happen and is usually worth a
+bug report (if it occurs during normal ST/X operation,
+i.e. not caused by some external (C-language) subsystem or by a user supplied
+primitive).
+However, <CITE>ST/X</CITE> is relatively robust against
+these errors - in most cases, execution can still continue.
+<P>
+To continue execution after this error,
+you have to <VAR>abort</VAR> <STRONG>NOT</STRONG> <VAR>continue</VAR>
+in the debugger - otherwise, the segmentation violation will occur over
+and over again (the reason lies in Unix's handling of the segv exception,
+retrying the illegal memory access).
+
+</UL>
+
+
+
+<H3><A NAME="INCRCOMPILER" HREF="#I_INCRCOMPILER">Incremental compiler messages &amp; popups</A></H3>
+
+<UL>
+<LI>
+
+<CODE>
+  Too many literals in method
+</CODE>
+<BR>
+
+	Incremental compiled code sets a limitation of 2^16 (65637)
+	distinct literals per method. This includes all explicit
+	constants
+	(i.e. constant strings, float or largeInteger constants,
+	symbols, array and byteArray constants)
+	and literals as introduced by message sends (for the selector).
+
+<DL><DT>Notice:<DD>
+You hardly reach this limit.
+</DL>
+
+<P>
+<LI>
+<CODE>
+  Too many globals in method
+</CODE>
+<BR>
+
+	Incremental compiled code sets a limitation of 255
+	references to distinct global or class variables per method.
+
+
+<DL><DT>Notice:<DD>
+	You hardly reach this limit.
+</DL>
+
+<LI>
+
+<CODE>
+  superclass is (currently ?) nil
+</CODE>
+<BR>
+
+	A supersend in a class which has currently no superclass.
+	The Smalltalk language does not specify the result of a supersend,
+ if there is no superclass. In <CITE>ST/X</CITE>, it will be handled like
+	a normal (non-super) message send.
+<P>
+	This is a warning (not treated as an error), since the superclass could be
+	non-nil at runtime. Notice, that no additional runtime checks for
+	this situation are performed by the VM, since this would involve
+	additional overhead, while in practice this situation is very rare.
+
+<P>
+<LI>
+<CODE>
+  assignment to a constant
+<BR>
+  assignment to nil
+</CODE>
+<BR>
+
+	these are obvious errors
+
+<P>
+<LI>
+<CODE>
+  assignment to self | super | thisContext
+</CODE>
+<BR>
+
+	assignments to these pseudo-variables are not allowed/possible.
+
+<P>
+<LI>
+<CODE>
+  assignment to true|false
+</CODE>
+<BR>
+
+	since assigning new values to these (pseudo-) variables will make
+	the whole system unusable, the compiler flags this as an error.
+	If you are really willing to crash the system this way, try
+<CODE><PRE>
+    Smalltalk at:#true put:something
+</PRE></CODE>
+<BR>- but please:
+<STRONG>save your work before doing so ....</STRONG>
+
+<P>
+<LI>
+  *** this list may be incomplete, as newer versions may add more messages ***
+</UL>
+
+<H3><A NAME="VARIOUS" HREF="#I_VARIOUS">Misc messages from various classes</A></H3>
+
+In general, these messages do not report fatal conditions, but give
+useful background information on what is going on at a higher (smalltalk-) level.
+<P>
+These messages can be suppressed with:
+<BLOCKQUOTE>
+<CODE>Object infoPrinting:false</CODE>
+</BLOCKQUOTE>
+or via the launcher's <VAR>settings-messages</VAR> menu.
+<P>
+
+<UL>
+<LI><CODE>[Image]: ... is not existing or not readable</CODE>
+<BR>
+   a bitmap image was not found by the <CODE>Image</CODE> class.
+
+<P>
+<LI><CODE>[Image]: allocating n colors ...</CODE>
+<BR>
+   simply an information message - color allocation can be somewhat slow
+   if no preallocated fixed color table is configured.
+
+<P>
+<LI><CODE>[XWorkstation]: x-error cought maj=... min=... resource=...</CODE>
+<BR>
+   an error was reported from the display connection (X-server).
+<P>
+   These are often a consequence of some view not being destroyed correctly.
+   In this case, the garbage collectors finalization procedure frees
+   the view and all of its subviews, by sending destroy requests
+   to the display server.
+<BR>
+   However, those requests are ususally not sent in the views subview order,
+   so that a superview may be destroyed before a subview.
+   Since the server internally destroys all subviews with every superview
+   destroy request,
+   the subview-destroy request may be for such an already destroyed view
+   and is reported by the server.
+<P>
+   Since the garbage collector has no idea of the view hierarchy, this
+   annoying message is hard to suppress. As a programmer, you should always
+   perform an explicit destroy on a topView when it is no longer in use.
+   Be especially careful with popup boxes.
+<P>
+   This diagnostic is informal only - this is no error situation and does
+   not crash or otherwise affect the system.
+
+
+<P>
+<LI>*** this list may be incomplete, as newer versions may add more messages ***
+</UL>
+
+<H3><A NAME="EXTERNALLIBMSG" HREF="#I_EXTERNALLIBMSGS">Misc messages from non-Smalltalk library code</A></H3>
+
+Smalltalk/X uses additional libraries and frameworks,
+which are typically written in C or C++. Also, some operations are implemented by
+calling out to external programs.
+These may generate additional information messages, which are not under control of
+ST/X (and thus cannot be easily suppressed).
+
+<UL>
+<LI><CODE>Fontconfig warning: ignoring UTF-8: not a valid region tag</CODE>
+<BR>This message is generated by the Xft font subsystem,
+iff the <CODE>LC_CTYPE</CODE> shell environment variable contains a value
+which is not a valid country/region tag. Under OSX, this typically happens when
+LC_CTYPE is set to "UTF-8", instead of "de.UTF-8" or "en.UTF-8".
+The message vanishes, if you change LC_CTYPE as appropriate (i.e. $LANG.UTF-8)
+in the calling shell (i.e. "export LC_CTYPE=de.UTF-8").
+
+<P>
+<LI>*** this list may be incomplete, as newer versions may add more messages ***
+</UL>
+
+
+<H2><A NAME="RUNTIMEERRORS" HREF="#I_RUNTIMEERRORS">Runtime errors (exceptions)</A></H2>
+
+  Most runtime errors raise a signal, which can be cought or handled
+  in an exception handler.
+See the documentation on
+<A HREF="exceptions.html">exceptions</A>
+and/or read and understand the sample code in
+<CODE>"doc/coding/Signal-xxx"</CODE>
+  for how this is done.
+<P>
+
+<FORM ACTION="onlyInSTX.html"
+      METHOD="DOIT |
+	SystemBrowser default
+	    browseMethodCategory:'Signal constants'
+      ">
+For a complete (up-to-date) list,
+<INPUT TYPE="submit" VALUE="spawn">
+a browser on the <VAR>"Signal constants"</VAR> method category
+</FORM>
+
+<FORM ACTION="onlyInSTX.html"
+      METHOD="DOIT |
+	(SystemBrowser default
+	    browseClasses:(GenericException withAllSubclasses)
+	    label:'Exceptions & Errors')
+	    switchToClassHierarchyView
+      ">
+and on the
+<INPUT TYPE="submit" VALUE="spawn">
+<VAR>"Exception hierarchy"</VAR>.
+</FORM>
+
+  Notice, that you can handle all related child signals in one handler,
+  by catching the common parent signal. For example, <CODE>Object &#187; errorSignal</CODE>
+  is the common parent of all other signals - handling this one will
+  also handle all others.
+
+
+
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 1995 Claus Gittinger Development &amp; Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.36 $ $Date: 2018-05-08 17:39:50 $
+</BODY>
+</HTML>

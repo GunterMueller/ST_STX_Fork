@@ -1,0 +1,285 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Basic classes - Processes</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="numeric.html">     <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html#I_PROCESS">         <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="exceptions.html">     <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Processes</H1>
+<P>
+Smalltalk allows multiple lightweight processes
+(also called threads or tasks)
+to execute pseudo concurrently.
+These run within the same address space
+(inside a single heavy weight operating system process)
+and can communicate via shared objects.
+Process scheduling is priority driven,
+with preemptive time slicing (multitasking)
+within each priority level.
+Scheduling is implemented fully in Smalltalk
+(i.e. all algorithms are open and can be changed if there is a need to do so).
+<P>
+Each process has its own automatically growing stack which is protected against
+overflow. No stack size definition is needed at process creation time - the
+system will allocate additional stack memory in reasonable small increments.
+The algorithm is a so called "<I>segmented spaghetti stack</I>",
+consisiting of chains of stack segments.
+Stack overflow is signalled as an exception and can be cought (see <A HREF="exceptions.html">``Exceptions and Signals''</A>)
+and handled gracefully. It is even possible to restart or continue with more
+stack space after such an exception.
+<P>
+Also, multiple processes can be debugged simulatiously (using the symbolic
+Debugger) - even while executing concurrently. This means, that other processes
+continue to execute while other processes may be debugged.
+<P>
+The windowing interface makes use of processes, by executing each toplevel view's
+application in a separate process (the so called "<i>Windowgroup Process</I>". This means, that other windows are not locked up
+by one window being debugged or busy
+(which would be the case in pure event driven systems).
+<P>
+The interesting classes are:
+<UL>
+<LI> <A HREF="#PROCESS" NAME="I_PROCESS">Process</A> - represents processes
+<LI> <A HREF="#PROCSCHED" NAME="I_PROCSCHED">ProcessorScheduler</A> - the scheduler
+<LI> <A HREF="#SEMAPHORE" NAME="I_SEMAPHORE">Semaphore and RecursionLock</A> - for mutual access and process synchronization
+<LI> <A HREF="#DELAY" NAME="I_DELAY">Delay</A> - for timing operations
+</UL>
+
+<H2><A HREF="#I_PROCESS" NAME="PROCESS">Process</A></H2>
+
+Class <CODE>Process</CODE> represents a thread of control in Smalltalk.
+An arbitrary number (limited by memory) of processes can execute concurrently
+within the Smalltalk system.
+These processes (also called <VAR>threads</VAR> or <VAR>lightweight processes</VAR>)
+are not implemented as Unix/Windows processes,
+but instead are created, managed and scheduled by Smalltalk itself.
+They all run in the same address space; therefore, the same objects can be accessed by different processes.
+<BR>
+Typical uses:
+<UL>
+<LI> creation:
+<CODE><PRE>
+    <VAR>aBlock</VAR> fork
+<BR>
+    <VAR>aBlock</VAR> forkAt:<VAR>priority</VAR>
+<BR>
+    <VAR>aBlock</VAR> newProcess
+<BR>
+</PRE></CODE>
+
+<LI> accessing:
+<CODE><PRE>
+    <VAR>aProcess</VAR> priority
+<BR>
+    <VAR>aProcess</VAR> state
+<BR>
+    <VAR>aProcess</VAR> id
+<BR>
+    <VAR>aProcess</VAR> name
+<BR>
+</PRE></CODE>
+
+<LI> scheduler control:
+<CODE><PRE>
+    <VAR>aProcess</VAR> priority:<VAR>newPriority</VAR>
+<BR>
+    <VAR>aProcess</VAR> priorityRange:<VAR>priorityInterval</VAR>
+<BR>
+    <VAR>aProcess</VAR> suspend
+<BR>
+    <VAR>aProcess</VAR> resume
+<BR>
+    <VAR>aProcess</VAR> terminate
+</PRE></CODE>
+</UL>
+Read <A HREF="../../programming/processes.html">``Working with processes''</A> for
+detailed information on processes.
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in the
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:Process backRef:'process.html'">
+"<CODE>Process</CODE> class documentation</A>".
+
+
+
+<H2><A HREF="#I_PROCSCHED" NAME="PROCSCHED">ProcessorScheduler</A></H2>
+
+Class <CODE>ProcessorScheduler</CODE>'s sole instance (named <CODE>Processor</CODE>)
+is responsible for priority scheduling among running processes.
+In contrast to other
+Smalltalk and VM-based language implementations, scheduling is done completely at the Smalltalk language level.
+This allows for different schedulers to be implemented if required.
+<P>
+The basic scheduling is preemptive priority based.
+Preemptive means that a process may be suspended and resumed at any time
+as determined by the runnable state of higher priority processes.
+No cooperation (explicit yield) is required to be programmed into
+the code to give up control.
+<P>
+Time slicing (multi tasking) is done by a high-prio timeslicer process,
+which assigns time slots within a priority group in a round robin fashion.
+Thus, other processes within that priority group are able to make progress,
+even if a single process performs a long running operation.
+<P>
+Typical messages sent to <CODE>Processor</CODE>:
+<UL>
+<LI> queries:
+<CODE><PRE>
+    Processor activeProcess
+<BR>
+    Processor activePriority
+<BR>
+    Processor userSchedulingPriority
+<BR>
+    Processor userBackgroundPriority
+</PRE></CODE>
+
+<LI> scheduling:
+<CODE><PRE>
+    Processor terminateActive
+<BR>
+    Processor yield
+<BR>
+    Processor suspend:<VAR>aProcess</VAR>
+<BR>
+    Processor resume:<VAR>aProcess</VAR>
+</PRE></CODE>
+</UL>
+<P>
+
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in the
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:ProcessorScheduler backRef:'process.html'">
+"<CODE>ProcessorScheduler</CODE> class documentation</A>".
+
+
+
+<H2><A HREF="#I_SEMAPHORE" NAME="SEMAPHORE">Semaphore and RecursionLock</A></H2>
+
+Semaphores are used for process synchronization, nonBusy waits and mutual exclusion
+of processes from critical regions.
+A process can wait on a semaphore (and thereby be suspended from execution) until
+the semaphore is signalled (which resumes execution of the process).
+<BR>
+Semaphores can also be installed for being signalled on I/O availability or timer expiration.
+<P>
+Notice that a critical region semaphore may be only only entered once,
+even if the aquiring process already owns it.
+This may lead to deadlocks or difficult coding style
+if your code is recursive or is entering the critical region in multiple places.
+For that, a so called <VAR>RecursionLock</VAR> is provided.
+This behaves like a Semaphore, except for the re-entering situation.
+It allows for the one process which already owns the lock, to reenter a critical region.
+
+<P>
+Typical use:
+<UL>
+<LI> creation:
+<CODE><PRE>
+    Semaphore new
+
+    Semaphore forMutualExclusion
+
+    RecursionLock new
+<BR>
+</PRE></CODE>
+
+<LI> wait & signal:
+<CODE><PRE>
+    <VAR>aSemaphore</VAR> wait
+<BR>
+    <VAR>aSemaphore</VAR> waitWithTimeOut:<VAR>seconds</VAR>
+<BR>
+    <VAR>aSemaphore</VAR> signal
+<BR>
+    <VAR>aSemaphore</VAR> wouldBlock
+<BR>
+</PRE></CODE>
+
+<LI> critical regions (must be a Semaphore forMutualExclusion or a RecursionLock):
+<CODE><PRE>
+    <VAR>aSemaphoreOrRecursionLock</VAR> critical:[ ... criticalBlock ...]
+<BR>
+</PRE></CODE>
+
+<LI> I/O triggering (low level):
+<CODE><PRE>
+    Processor signal:<VAR>aSemaphore</VAR> onInput:<VAR>fileDescriptor</VAR>
+<BR>
+    Processor signal:<VAR>aSemaphore</VAR> onOutput:<VAR>fileDescriptor</VAR>
+<BR>
+</PRE></CODE>
+
+<LI> timer triggering (low level):
+<CODE><PRE>
+    Processor signal:<VAR>aSemaphore</VAR> afterSeconds:<VAR>numberOfSeconds</VAR>
+</PRE></CODE>
+</UL>
+
+The I/O and timer messages are low level protocol;
+please use the protocol provided
+by <CODE>Delay</CODE> and <CODE>ExternalStream</CODE> for portability.
+<BR>
+To wait for multiple events, use a
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:SemaphoreSet backRef:'process.html'">
+<CODE>SemaphoreSet</CODE></A>.
+
+
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in the
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:Semaphore backRef:'process.html'">
+"<CODE>Semaphore</CODE>"</A> or
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:RecursionLock backRef:'process.html'">
+"<CODE>RecursionLock</CODE>"</A>
+ class documentation.
+
+
+
+
+<H2><A HREF="#I_DELAY" NAME="DELAY">Delay</A></H2>
+
+Class <CODE>Delay</CODE> wraps the above timer based suspend into a portable interface.
+<BR>
+Typical use:
+<UL>
+<CODE><PRE>
+(Delay forSeconds:<VAR>numberOfSeconds</VAR>) wait
+<BR>
+(Delay forMilliseconds:<VAR>numberOfMilliseconds</VAR>) wait
+<BR>
+Delay waitForSeconds:<VAR>numberOfSeconds</VAR>
+<BR>
+Delay waitForMilliseconds:<VAR>numberOfMilliseconds</VAR>
+<BR>
+Delay waitUntil:<VAR>aTimestamp</VAR>
+</PRE></CODE>
+</UL>
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in the
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:Delay backRef:'process.html'">
+"<CODE>Delay</CODE> class documentation</A>".
+
+
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif">
+Copyright © 1996 Claus Gittinger Development & Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.23 $ $Date: 2013-07-25 10:05:07 $
+<BODY>
+</HTML>

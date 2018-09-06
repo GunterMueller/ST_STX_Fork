@@ -1,0 +1,397 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Dynamic Object File Loading</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="primitive.html"> <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">       <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="startup.html">  <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Dynamic Object File Loading</H1>
+
+<H2>Contents</H2>
+
+<UL>
+  <LI><A HREF="#INTRO" NAME="I_INTRO">Introduction</A>
+  <LI><A HREF="#CLASSLIBRARIES" NAME="I_CLASSLIBRARIES">Binary classlibraries (packages)</A>
+  <UL>
+     <LI><A HREF="#LOADING" NAME="I_LOADING">Loading</A>
+     <LI><A HREF="#UNLOADING" NAME="I_UNLOADING">Unloading</A>
+     <LI><A HREF="#ERRORS" NAME="I_ERRORS">Errors during the load</A>
+     <LI><A HREF="#SNAPSHOTS" NAME="I_SNAPSHOTS">Snapshot images & dynamic libraries</A>
+  </UL>
+  <LI><A HREF="#CLASSES" NAME="I_CLASSES">Individual binary classes</A>
+  <LI><A HREF="#CLIBRARIES" NAME="I_CLIBRARIES">C libraries / C modules</A>
+<!--  <LI><A HREF="#BINARYPATCHES" NAME="I_BINARYPATCHES">Binary patches</A>  -->
+  <LI><A HREF="#SYSTEMSPECIFICS" NAME="I_SYSTEMSPECIFICS">Architecture specific notes</A>
+  <UL>
+      <LI><A HREF="#SYSTEMSPECIFICS_AIX" NAME="I_SYSTEMSPECIFICS_AIX">AIX (3.2.5) shared objects</A>
+      <LI><A HREF="#SYSTEMSPECIFICS_SOL" NAME="I_SYSTEMSPECIFICS_SOL">Solaris shared objects</A>
+  </UL>
+</UL>
+
+
+<A NAME="INTRO" HREF="#I_INTRO"><H2>Introduction</A></H2>
+
+On systems which support dynamic loading of object modules,
+(currently, these are: SGI, Linux (both a.out and ELF based),
+Unixware, SUNOS4.x),
+<CITE>ST/X</CITE> allows that binary files are
+loaded and unloaded dynamically to the running system
+- without a need to leave the session.
+
+<P>
+
+
+<A NAME="CLASSLIBRARIES" HREF="#I_CLASSLIBRARIES"><H2>Binary classlibraries (packages)</A></H2>
+
+Binary class libraries consist of a group of classes, which are
+contained in a single object file and loaded/unloaded together.
+<BR>
+Class libraries can be statically included in the initial executable
+(the whole system that surrounds you typically is) or,
+alternatively, added dynamically to an executing image.
+
+
+<A NAME="LOADING" HREF="#I_LOADING"><H3>Loading</A></H3>
+<P>
+To load a class library, select it in the fileBrowser,
+and execute the <VAR>fileIn</VAR> menu function.
+<BR>
+The system automatically detects the file as a binary object
+(in contrast to a smalltalk source file) and loads it
+as a binary object.
+
+<P>
+Programmatically, this can be done with:
+<CODE><PRE>
+    Smalltalk fileIn:'path-of-the-binary-file'
+</PRE></CODE>
+
+The pathName argument must specify the binary objects
+complete path, including any suffixes (such as "<CODE>.so</CODE>" or
+"<CODE>.dll</CODE>").
+<BR>
+This is of course not portable across different architectures,
+both due to differnet directory names, and
+since filename extensions are highly system specific.
+<BR>
+If you can place your class libraries into some standard directory
+(i.e. a directory named "<CODE>binary</CODE>" somewhere in the <VAR>searchPath</VAR>),
+you should use a more portable interface, which only
+requires the binaries base name, and uses the architecture specific
+filename extension:
+<CODE><PRE>
+    Smalltalk fileInClassLibrary:'name-of-the-library'
+</PRE></CODE>
+The <VAR>searchPath</VAR> is the standard <VAR>ST/X</VAR> searchpath, which can be
+defined via the shell environment or in the "<CODE>startup.rc</CODE>" file.
+
+Thus, a programmer using dynamic class libraries should write:
+<CODE><PRE>
+    Smalltalk fileInClassLibrary:'libFoo'.
+</PRE></CODE>
+and place the corresponding "<CODE>libFoo.so</CODE>" or "<CODE>libFoo.sl</CODE>"
+or "<CODE>libFoo.dll</CODE>" file into one of the binary directories.
+<BR>
+(you can also ask the <CODE>ObjectFileLoader</CODE> class about the systems
+ preferred file extension and construct the files full name manually;
+try <CODE>"ObjectFileLoader&nbsp;sharedLibraryExtension"</CODE>).
+<P>
+When loaded, all classes contained in that package are installed,
+and <CODE>#initialize</CODE> messages are sent to the classes in the
+order of inheritance (i.e. superclasses get this message before any
+subclasses). Classes of which the superclass is missing (i.e. a binary
+class of which the superclass is in another binary file) will not be
+installed; however, these are rememebred to be installed and initialized
+as soon as the missing superclass is loaded. If the missing superclass is
+marked as an autoloaded class, <CITE>ST/X</CITE> tries to load it first,
+by searching for an appropriate binary (along the searchPath).
+
+<P>
+If the classLibrary contains any class named after a class
+in the executing image, the old class will remain physically present
+as an object, but will be no longer accessible via the global
+name table (i.e. <CODE>"Smalltalk at:name"</CODE> will return the new class).
+<BR>
+This allows existing instances to continue to function correctly,
+in case the instance layout changes, or invalid code is loaded, or
+the load failed for some reason.
+<P>
+
+If a class library is reloaded (i.e. it was already loaded), the old
+code is unloaded (see below) before the new code is read.
+
+
+
+<A NAME="UNLOADING" HREF="#I_UNLOADING"><H3>Unloading</A></H3>
+
+Once loaded, the system keeps track of which objects are loaded
+and which classes/methods refer to instructions in that library.
+<BR>
+The finalization mechanism is used to detect when the last reference to
+the object file ceases to exist (i.e. there are no more methods/classes
+from that module in the system) and the module is <b>automatically</b> unloaded.
+<P>
+This happens, if you remove those classes in the browser AND there are
+no more instances of them in the system.
+<P>
+You can also <b>force</b> a class to be unloaded, by opening the launcher's
+<VAR>file-modules</VAR> dialog, selecting a package and pressing the
+<VAR>unload</VAR> button. By the way: this dialog also shows a packages
+contents and the classes revision numbers - useful to validate a correct
+version has been loaded.
+<P>
+Existing methods which still refer to this binary are no longer executable.
+(the browser marks them as <VAR>** unloaded **</VAR> and a method invocation will
+raise an <VAR>invalidCode</VAR> exception).
+<P>
+Since the unload is automatic in normal circumstances,
+no special programming interface exists for unloading.
+<BR>
+(However, see the "<CODE>ObjectFileLoader</CODE>" class for low level
+ access to loaded modules and load/unload functionality.
+<BR>
+ This classes protocol is private and subject to changes,
+ and we do not guarantee this to remain unchanged forever.)
+
+<P>
+Before the actual unlaoding is performed, all classes in the module
+receive a <CODE>#deinitialize</CODE> message, to give them
+a chance to perform any required cleanup actions.
+<P>
+You can also arrange for <CODE>#aboutToUnload</CODE> change notifications
+to be sent - to either the unloaded classes or any other watcher object.
+<BR>
+To receive these, the interested object must be
+a dependent of the <CODE>ObjectFileLoader</CODE> and check for
+a <CODE>#aboutToUnload</CODE> argument in the <CODE>#update:with:from:</CODE>
+method. The second <CODE>with:-</CODE> argument will be the class
+which is about to be unloaded.
+<BR>
+If the unloaded class is itself interested, it should check this argument
+for identity to itself, before performing any cleanup actions.
+(which is why the <CODE>#deinitialize</CODE> mechanism is probably easier
+to use ...).
+
+
+
+<A NAME="ERRORS" HREF="#I_ERRORS"><H3>Errors during the load</A></H3>
+
+
+While loading, new classes are validated against their superclasses
+definitions and the installation of a class or a number of classes
+may be suppressed.
+<P>
+The error most likely to occur is that a compiled class inherits from
+some other class, which has changed its definition (i.e. added or removed an
+instance variable) in the meanwhile, and the subclass has not been recompiled.
+<BR>
+This situation is detected, by comparing the classes signatures, and ignoring
+any class(es) from the package, for which this check fails.
+<BR>
+Other (valid) classes are not affected and the package may be partially loaded.
+<P>
+Therefore, as a programmer, it is a good idea to check for all expected classes
+to be present after the load.
+<P>
+
+<A NAME="SNAPSHOTS" HREF="#I_SNAPSHOTS"><H3>Snapshot images & dynamic libraries</A></H3>
+
+When a snapshot image is saved, sufficient information about all loaded
+binaries is kept and saved with the image, to allow those modules to
+be reloaded at restart time.
+<P>
+Therefore, be careful when removing any binary class libraries - there could
+still be references from some passive snapshot images to them !!
+<P>
+
+If some binary is no longer present or loadable at restart time, all methods
+depending on it are invalidated (similar to the above described unload behavior).
+<BR>
+This means, that the image is still runnable, as long as those missing
+methods are not invoked. If they are, you'll end up in the debugger.
+
+
+
+<A NAME="CLASSES" HREF="#I_CLASSES"><H2>Individual binary classes</A></H2>
+
+The required actions to load object files containing individual classes
+(as opposed to packages) are the same as described above.
+<BR>
+However, the Makefiles as created by the configuration process
+(or <VAR>stmkmp</VAR>) are not prepared to generate such files.
+<BR>
+Therefore, you have to either manually change the "<CODE>Make.proto</CODE>"
+files, or by generating a loadable file via command line linker invokation.
+<P>
+The details vary among system architectures:
+<P>
+<TABLE BORDER=2 bgcolor=#E0E0C0>
+<TR><TH>System<TH>command<TH>comment
+
+<TR><TD align="left">Linux a.out<TD align="right"><TD>-- can directly load ".o" files --
+<TR><TD align="left">Linux ELF<TD align="right">ld -shared -o file.so file.o<TD>
+<TR><TD align="left">SGI<TD align="right">ld -shared -o file.so file.o <TD>
+<TR><TD align="left">SUNOS4.0<TD align="right"><TD>-- can directly load ".o" files --
+<TR><TD align="left">Solaris<TD align="right">ld -G -B dynamic -o file.so file.o<TD>
+<TR><TD align="left">Unixware<TD align="right">ld -G -o file.so file.o<TD>
+
+<TR><TD align="left">NeXTStep 3.x<TD align="right"><TD>dynamic loading not (yet) supported
+<TR><TD align="left">HPUX 9.x<TD align="right"><TD>dynamic loading not supported
+<TR><TD align="left">HPUX 10.x<TD align="right"><TD>dynamic loading not (yet) supported
+<TR><TD align="left">AIX 3.2<TD align="right">cc -bI:.. -bE:file.exp -bM:SRE file.o -o file.so<TD>requires librun.so & librun.exp
+<TR><TD align="left">REAL/IX<TD align="right"><TD>dynamic loading not supported
+<TR><TD align="left">NT<TD align="right">link /DLL /OUT:file.dll /DEF:file.def file.lib<TD>need to create/edit a .def file
+<TR><TD align="left">OSF/1<TD align="right"><TD>dynamic loading not supported
+<TR><TD align="left">OpenVMS<TD align="right"><TD>dynamic loading not supported
+</TABLE>
+
+<P>
+Since the existing makefiles ``know'' how to create loadable classLibraries
+(if supported by your architecture),
+we recommend placing all binary classes into a classlibrary - even if it
+only consists of a single object file.
+<BR>
+If you insist on creating loadable modules consisting of a single class,
+you have to create those ``manually'' on some systems.
+<P>
+
+
+<A NAME="CLIBRARIES" HREF="#I_CLIBRARIES"><H2>C libraries / C modules</A></H2>
+
+Beside smalltalk class binaries, ordinary c object modules and libraries
+can be dynamically loaded with:
+<CODE><PRE>
+    |moduleHandle|
+
+    moduleHandle := ObjectFileLoader
+			loadDynamicObject:'binary-object-path'.
+</PRE></CODE>
+the individual functions are extracted with:
+<CODE><PRE>
+    |functionHandle|
+
+    functionHandle := moduleHandle
+			getFunction:'nameOfCFunction'.
+</PRE></CODE>
+and finally, that function is callable via:
+<CODE><PRE>
+    functionHandle call
+</PRE></CODE>
+There are various call methods provided, for passing different types and
+number of arguments to the C function. See the <CODE>ExternalFunction</CODE>
+classes protocol for detailed information.
+<P>
+Like with class libraries, these modules can be unloaded, making the corresponding
+function handles become invalid (calling them leads to a </VAR>primitiveFailure</VAR>
+exception) and are reloaded when a snapshot image is restarted.
+<P>
+If the binary contains a function named "<CODE>__&lt;fileName&gt;__Init()</CODE>", that function
+is called when the module is loaded. This allows initialization code
+to be performed automatically, before any other function calling takes place.
+<BR>
+This function is also called when the binary is reloaded at image restart time.
+<P>
+In addition to initialization, this function can also signal failure by
+returning a negative integer value (i.e. -1). In this case, the module will
+be immediately unloaded and failure will be reported to the caller on the
+smalltalk side.
+<BR>
+To report success, the init function must return a value >= 0.
+<P>
+
+A similar de-init function named "<CODE>__&lt;fileName&gt;__deInit()</CODE>"
+is called (if present in the binary) when the module is unloaded, allowing
+the C code to perform any required cleanup.
+<P>
+The deinit function is always called - even if the unload is due to
+the init functions failure return.
+<P>
+Example c files usable for dynamic load experiments
+are found in <A HREF="../../../coding/cModules">"<CODE>doc/coding/cModules</CODE>"</A>.
+
+
+
+<!-- TO BE DOCUMENTED
+
+<A NAME="BINARYPATCHES" HREF="#I_BINARYPATCHES"><H2>Binary patches</A></H2>
+
+-->
+
+<A NAME="SYSTEMSPECIFICS" HREF="#I_SYSTEMSPECIFICS"><H2>Architecture specific notes</A></H2>
+
+Some systems require special actions, for shared objects to be created;
+the following only applies to specific systems.
+
+<A NAME="SYSTEMSPECIFICS_AIX" HREF="#I_SYSTEMSPECIFICS_AIX"><H2>AIX (3.2.5) shared objects</A></H2>
+
+On aix (3.2.5), the linker needs an exports file (which defines the symbols
+of a shared object, which are to be exported), and also import files
+which define the names to be imported from other shared objects.
+<P>
+The makefiles as provided create export files, which must be kept aside the
+corresponding classLibrary file (if you move/copy shared objects to other machines,
+do not forget to copy those as well).
+<BR>
+The exports file of the runtime library has been created by hand, and is found
+in <CODE>"librun/librun_aix.exp"</CODE>.
+<P>
+At link time, these exports files must be present and reachable.
+<P>
+We recommend, creating a directory named: <CODE>"/usr/local/lib/smalltalk/lib"</CODE>,
+where all shared libraries and export files are copied to (especially, the librun-exports file).
+<P>
+To create a shared object, use the command (or make-rule):
+<CODE><PRE>
+    cc -bI:/usr/local/lib/smalltalk/lib/librun_aix.exp
+       -bE:libName.exp
+       -bM:SRE
+       -o libName.so
+       libName.o
+</PRE></CODE>
+after that, <CODE>"libName.so"</CODE> is ready to be loaded via <VAR>fileIn</VAR>.
+
+<P>
+If individual methods containing inline C-code are to be <VAR>accepted</VAR>
+in the browser, the system executes a command similar to the above.
+<BR>
+Here, you also have to make certain, that <CODE>"librun/librun.so"</CODE>
+and <CODE>"librun/librun_aix.exp"</CODE> have been copied to
+<CODE>"/usr/local/lib/smalltalk/lib"</CODE> - otherwise, the linkage operation
+will fail.
+
+<A NAME="SYSTEMSPECIFICS_SOL" HREF="#I_SYSTEMSPECIFICS_SOL"><H2>Solaris shared objects</A></H2>
+
+Dynamic class libraries must be compiled with the -fPIC compiler option;
+otherwise, a segmentation violation may occur when the object is
+loaded. The configuration as delivered already contains the required
+definitions, so that Makefiles when generated from a Make.proto will
+have this option set.
+<BR>
+If the dynamic object needs other dynamic libraries, make certain that
+those will be found at load time - either by adding the path to the library
+to the LD_LIBRARY_PATH shell variable, or by placing a copy/symbolic link
+to those libraries into your current directory, or by adding a -Rpath
+option to the link command of your class library.
+
+
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 1995 Claus Gittinger Development &amp; Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.25 $ $Date: 2016-07-11 09:24:05 $
+</BODY>
+</HTML>

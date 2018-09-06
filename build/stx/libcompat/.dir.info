@@ -1,0 +1,20 @@
+This directory contains some (mostly functionless) ST-80 compatibility
+classes. These may be useful when loading ST-80 code, to have (at least)
+a class tree available, where code can be filed into.
+
+It is by no means complete.
+
+Do not expect too much here.
+
+
+
+
+
+
+To install them as autoloaded (in the running image):
+
+    make mf
+    make updAbbrev
+    rdoit "Smalltalk readAbbreviations"
+    rdoit "Smalltalk installAutoloadedClasses"
+

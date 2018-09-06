@@ -1,0 +1,13 @@
+The contents of this directory is generated automatically.
+DO NOT MANUALLY MODIFY THE DIRECTORY OR THE FILES.
+
+This directory contains "symbolic links" to compiled
+class libraries which can be conveniently loaded via the
+launcher's "Load Package" dialog.
+
+These links are generated and collected by the makefiles,
+as packages are compiled.
+
+There is no real new semantic functionality here;
+however, collecting the links allows for a much faster package load
+dialog (without it, a slow recursive directory search would be needed)

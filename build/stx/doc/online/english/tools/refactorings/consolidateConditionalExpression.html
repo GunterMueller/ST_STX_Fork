@@ -1,0 +1,38 @@
+<html><head><title>Refactoring:
+
+
+
+Consolidate Conditional Expression</title></head><body>
+
+
+<H1>
+
+
+
+Consolidate Conditional Expression</H1>
+<P><I><CENTER>
+
+You have a sequence of conditional tests with the same result.</CENTER></I></P>
+<P><B><CENTER>
+
+Combine them into a single conditional expression and extract it.</CENTER></B></P>
+<PRE>
+	double disabilityAmount() {
+		if (_seniority &lt; 2) return 0;
+		if (_monthsDisabled &gt; 12) return 0;
+		if (_isPartTime) return 0;
+		// compute the disability amount
+</PRE><P><CENTER><IMG SRC="arrow.gif"/></CENTER></P>
+<PRE>
+	double disabilityAmount() {
+		if (isNotEligableForDisability()) return 0;
+		// compute the disability amount
+</PRE>
+
+
+
+<P>For more information see page
+	<font color="#FF0000">240</font>
+	of <I>Refactoring</I></P>
+
+<P /><P /><P><CENTER><A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A></CENTER></P></body></html>

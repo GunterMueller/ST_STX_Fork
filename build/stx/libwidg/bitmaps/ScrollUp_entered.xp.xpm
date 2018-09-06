@@ -1,0 +1,28 @@
+/* XPM */
+static char *ScrollUp_entered.xp_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"15 15 6 1",
+/* colors */
+"a c #D0E0F0",
+"b c #C0D0F0",
+"c c #406080",
+"d c #F0F0F0",
+"e c #E0E0F0",
+"f c none",
+/* pixels */
+"ddddddddddddddd",
+"deeeeaaaaaaabed",
+"deeeeeaaaaaaaad",
+"deeeeeeaaaaaaad",
+"deeeeaacaaaaaad",
+"daeeaacccaaaaad",
+"daeaacccccaaaad",
+"daaacccacccaaad",
+"daacccaaacccaad",
+"daaacaaaaacaaad",
+"dbaaaaaaaaaaaad",
+"dbaaaaaaaaaaaad",
+"dbaaaaaaaaaaaad",
+"deaaaaaaaaaaaed",
+"ddddddddddddddd",
+};

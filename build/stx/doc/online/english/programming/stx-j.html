@@ -1,0 +1,91 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - ST/X - Java integration</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="processes.html"> <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html"> <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="binaryStore.html"> <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>ST/X - Java integration</H1>
+
+<H2>Contents</H2>
+<UL>
+ <LI><A HREF="#INTRO" NAME="I_INTRO">Introduction</A>
+ <LI><A HREF="#CALL_STATIC" NAME="I_CALL_STATIC">Calling static java functions from smalltalk</A>
+</UL>
+
+
+<H2><A HREF="#I_INTRO" NAME="INTRO">Introduction</A></H2>
+
+
+
+<H2><A HREF="#I_CALL_STATIC" NAME="CALL_STATIC">Calling static java functions from smalltalk</A></H2>
+
+Use #perform: passing the java-selector, to invoke a specific static function.
+Example:
+<CODE><PRE>
+    JAVA::java::lang::Math perform:#'abs(I)I' with:-1234
+</PRE></CODE>
+<CODE><PRE>
+    JAVA::java::lang::Math perform:#'abs(F)F' with:-1234.0
+</PRE></CODE>
+
+Use #perform: passing a smalltalk-like selector, to let ST/X choose the best
+matching java function:
+<CODE><PRE>
+    JAVA::java::lang::Math perform:#'abs' with:-1234
+</PRE></CODE>
+<CODE><PRE>
+    JAVA::java::lang::Math perform:#'abs' with:-1234.0
+</PRE></CODE>
+
+The later are equivalent to:
+<CODE><PRE>
+    JAVA::java::lang::Math abs:-1234
+</PRE></CODE>
+<CODE><PRE>
+    JAVA::java::lang::Math abs:-1234.0
+</PRE></CODE>
+
+Be aware, that this automatic choice may not lead to a definite function being
+invoked; for example, Math provides both float- and double-argument versions
+of the abs function. Or there might be versions for both the integer and the
+Number type.
+<BR>
+If you are uncertain, which function is invoked (and it makes a difference),
+use the specific calling mechanism described first.
+<P>
+Some erroneous examples:
+<CODE><PRE>
+    JAVA::ArcTest main
+</PRE></CODE>
+leads to an argument count mismatch error.
+
+<P>
+Some good examples:
+<CODE><PRE>
+    JAVA::ArcTest main:#()
+</PRE></CODE>
+<CODE><PRE>
+    JAVA::ArcTest main:#('hello' 'world')
+</PRE></CODE>
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 1998 Claus Gittinger Development &amp; Consulting, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.4 $ $Date: 2016-07-13 08:19:31 $
+</BODY>
+</HTML>

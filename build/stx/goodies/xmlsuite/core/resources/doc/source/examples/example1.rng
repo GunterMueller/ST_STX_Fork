@@ -1,0 +1,15 @@
+<![CDATA[<grammar
+    xmlns="http://relaxng.org/ns/structure/1.0" 
+    xmlns:b="http://www.volny.cz/janfrog/xmlsuite/binding"
+    datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <start>
+    <element name="person" b:class="Person">
+      <element name="name" b:iv="nameString">
+	<data type="string" />
+      </element>
+      <element name="surname" b:iv="surnameString">
+	<data type="string" />
+      </element>
+    </element>
+  </start>
+</grammar>]]>

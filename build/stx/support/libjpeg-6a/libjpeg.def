@@ -1,0 +1,17 @@
+LIBRARY         libjpg
+DESCRIPTION     'Smalltalk/X support'
+VERSION         5.4
+SECTIONS
+    INITCODE    READ EXECUTE
+    INITDATA    READ WRITE
+EXPORTS
+    jpeg_read_header
+    jpeg_calc_output_dimensions
+    jpeg_stdio_src
+    jpeg_std_error
+    jpeg_CreateDecompress
+    jpeg_destroy_decompress
+    jpeg_finish_decompress
+    jpeg_start_decompress
+    jpeg_read_scanlines
+    jpeg_set_marker_processor

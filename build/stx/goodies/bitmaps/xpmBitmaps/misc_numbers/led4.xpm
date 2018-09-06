@@ -1,0 +1,33 @@
+/* XPM */
+static char *led4_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"13 23 3 1",
+/* colors */
+"a c black",
+"b c #800000",
+"c c red",
+/* pixels */
+"aaaaaaaaaaaaa",
+"aaababababaaa",
+"acaabababaaca",
+"accaababaacca",
+"acccaaaaaccca",
+"acccaaaaaccca",
+"acccaaaaaccca",
+"acccaaaaaccca",
+"acccaaaaaccca",
+"accaaaaaaacca",
+"acacccccccaca",
+"aacccccccccaa",
+"abacccccccaca",
+"aabaaaaaaacca",
+"ababaaaaaccca",
+"aabaaaaaaccca",
+"ababaaaaaccca",
+"aabaaaaaaccca",
+"ababaaaaaccca",
+"aabaababaacca",
+"abaabababaaca",
+"aaababababaaa",
+"aaaaaaaaaaaaa",
+};

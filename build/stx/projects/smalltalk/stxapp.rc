@@ -1,0 +1,26 @@
+"/ Encoding: iso8859-1
+"/
+"/ $Header$
+"/
+"/ MIMEType: application/x-smalltalk-source
+"/
+"/ ST/X startup command file:
+"/
+"/ example for a very simple startup file for standAlone applications
+"/ this is read for standAlone apps, if no <commandName>.rc is found.
+"/
+"/ without an stxapp.rc, no display is opened and no setup of keyboardMap or viewStyle
+"/ is performed - this still works correctly, but may be invonvenient for the
+"/ user ...
+
+[
+    Screen openDefaultDisplay:nil.
+] on:Screen deviceOpenErrorSignal do:[:ex|
+    ('smalltalk.rc [warning]: No Display connection to: ', ex parameter) errorPrintCR.
+].
+Display notNil ifTrue:[
+    Smalltalk fileIn:'display.rc'.
+    Smalltalk fileIn:'keyboard.rc'.
+].
+Smalltalk silentLoading:true.
+!

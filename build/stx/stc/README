@@ -1,0 +1,9 @@
+The sources of the Smalltalk-to-C compiler are not delivered.
+
+In order to use stc, please make sure that the stc executable
+is found either in this directory or along your shell PATH.
+
+Ignore this, if you have the complete source code of stc here.
+
+The exept stx team.
+stx@exept.de

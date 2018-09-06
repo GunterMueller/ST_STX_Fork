@@ -1,0 +1,8 @@
+#/bin/sh
+
+list=''
+for i in $*
+do
+   list=$list" "i_$i
+done
+echo $list

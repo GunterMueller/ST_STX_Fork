@@ -1,0 +1,7 @@
+syntax: glob
+
+build
+artifacts
+reports
+config.rb
+.rake_tasks~

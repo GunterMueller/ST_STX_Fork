@@ -1,0 +1,13 @@
+*******************************************************
+
+WORK IN PROGRESS
+
+*******************************************************
+
+The classes here implement a native interface to (parts of) the sqLite library.
+You have to download and install a version of the sqlite3.dll before.
+
+This is not strictly needed to work with an sqLite database:
+using the sqLite ODBC package (http://www.ch-werner.de/sqliteodbc)
+you can also access sqLite DBs using the satandard ODBC interface classes
+(which also makes your application independent of the concrete type of database you use)

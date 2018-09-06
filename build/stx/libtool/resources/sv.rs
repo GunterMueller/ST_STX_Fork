@@ -1,0 +1,43 @@
+#encoding iso8859-1
+
+; $Header: /cvs/stx/stx/libtool/resources/sv.rs,v 1.2 2008/11/28 16:41:56 cg Exp $
+;
+; Launcher: Swedisch
+
+; 'Afrikaans'         'Afrikaans'
+'Arabic'            'Arabiska'
+'Chinese'           'Kinesiska'
+'Chinese (simplified)'           'Kinesiska (simplified)'
+'Chinese (traditional)'          'Kinesiska (traditional)'
+'Croatian'          'Kroat'
+'Czech'             'Tjeckiska'
+'Danish'            'Danska'
+'Dutch'             'Holländare'
+'English (US)'      'Engelska (US)'
+'English (UK)'      'Engelska (UK)'
+; 'Esperanto'         'Esperanto'
+'Finnish'           'Finska'
+'French'            'Fransk'
+'German'            'Tyska'
+'Greek'             'Grekiska'
+'Italian'           'Italiensk'
+'Japanese'          'Japanska'
+'Norwegian'         'Norska'
+'Polish'            'Polska'
+'Portuguese'        'Portugisiska'
+'Portuguese (Brazilian)'    'Portugisiska (brasiliansk)'
+'Russian'           'Russo'
+'Slovak'            'Slovakiska'
+'Spanish'           'Spansk'
+'Swedish'           'Svenska'
+'Turkish'           'Turkisk'
+
+'about Smalltalk/X'     'information'
+'file'                  'filer'
+'Save Image'            'Lagra'
+'snapshot'              'lagra'
+'snapshot & exit'       'lagra & avsluta'
+'exit'                  'avsluta'
+'exit smalltalk'        'avsluta smalltalk'
+'settings'              'inställningar'
+'screen'                'skärm'

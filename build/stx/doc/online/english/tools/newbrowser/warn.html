@@ -1,0 +1,80 @@
+<HEAD>
+<TITLE>Using the System Browser - Warning & Problems</TITLE>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="lint.html">  <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">     <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="hints.html">   <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H2><A NAME="WARNING" HREF="TOP.html#I_WARNING">A Warning</A></H2>
+
+  Especially beginners should not change the definition of any existing system class,
+  but stick to their private ones. (Even 'gurus' think twice before doing that :- .)
+<BR>
+  The <CODE>"copy class"</CODE> or <CODE>"copy category"</CODE> functions are very helpful when creating experimental versions
+  of new classes - they allow for very quick class duplication.
+<P>
+  So, instead of modifying any existing class, it is better to either create a copy of
+  an existing class, or to create a new empty one and copy some methods over from the original one.
+<BR>
+  Then test & debug the new class for perfection.
+<P>
+  Of course, when done, you should override the old class with the class <VAR>"Class"-"Rename"</VAR> function,
+  and avoid code duplication.
+<P>
+  This approach is especially suggested when you modify classes which are used by
+  the system itself (for example: container- or UI-classes), since bugs in those may lead to subtile errors or even crashes.
+<BR>
+  (Just consider modifying <CODE>ScrollBar</CODE> to make it err somewhere;
+   since the Debugger uses scrollBars too, it may have problems coming up.
+   As a result, you might be forced to quit Smalltalk and restart your session,
+   unless you are able to undo your change in the MiniDebugger).
+<P>
+We suggest that you save a snapshot image BEFORE starting to modify any critical system
+class - actually, its a good idea to do regular snapshots in any case.
+Then, you can resume from the last snapshot and examine and reapply individual
+changes using the <A HREF="..\cbrowser\TOP.html">ChangesBrowser</A>.
+
+
+
+<H2><A NAME="PROBLEMS" HREF="TOP.html#I_PROBLEMS">Problems</A></H2>
+
+  It may happen, that the browser shows funny source code in the codeview (totally
+  wrong, empty code or off by some characters). This happens, when a sourcefile
+  has been changed or removed from outside the browser (i.e. with FileBrowser or
+  any other editor/program) and the system has not been recompiled or
+  relinked yet (i.e. the compiled class in the executable is not up-to-date).
+<P>
+  Since the source information in a method is simply the <VAR>filename</VAR>+<VAR>filePosition</VAR>,
+  this information is wrong after such a change.
+<P>
+  A recompile (using <VAR>stc</VAR>) followed by a relink of the Smalltalk executable, should
+  give you a version with correct (up-to-date) source information.
+  (however, the demo version does not include <VAR>stc</VAR> - here you have to undo any
+   outside world editing, and only change methods from within the SystemBrowser).
+<P>
+  We recommend use of the sourceCode manager, which is able to access a classes
+  sourcecode from the source repository, and does not need source files.
+<BR>
+  Here, the above problems are unlikely to occur (unless someone changes the classes
+  version identification manually ...)
+<P>
+<P>
+
+<HR>
+<A HREF="hints.html">Next: Hints</A>
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif" ALT="[stx logo]">
+Copyright &copy; 2000 eXept Software AG, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+<HR>
+Doc $Revision: 1.13 $ $Date: 2017-11-25 12:01:31 $
+
+</BODY>
+</HTML>

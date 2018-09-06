@@ -1,0 +1,4 @@
+Games::D3TicTacToe D3TicTacToe stx:clients/TicTacToe3D 'games-3DTicTacToe' 0
+Games::D3TicTacToe3DView D3TicTacToe3DView stx:clients/TicTacToe3D 'games-3DTicTacToe' 0
+Games::D3TicTacToeGame D3TicTacToeGame stx:clients/TicTacToe3D 'games-3DTicTacToe' 0
+Games::D3TicTacToePlayer D3TicTacToePlayer stx:clients/TicTacToe3D 'games-3DTicTacToe' 0

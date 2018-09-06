@@ -1,0 +1,46 @@
+"/ Encoding: iso8859-1
+"/
+"/ $Header$
+"/
+"/ MIMEType: application/x-smalltalk-source
+"/
+"/ ST/X startup configuration & command file:
+"/
+"/ restart configuration for smalltalk
+"/
+"/ this file plays the role of smalltalk.rc when an image
+"/ is restarted. Usually, everything should stay as it was,
+"/ except for things like keyboard mapping (if running on another display)
+"/
+
+"/ first, restart the Display connection
+Display notNil ifTrue:[
+    [
+	Display reinitializeFor:Screen defaultDisplayName.
+	"/ Tell smalltalk, that the display may be used now.
+	Smalltalk displayInitializationDone.
+        "/
+        "/ this handles all variant display stuff
+        "/ (i.e. things which might change, when DISPLAY is set different)
+        "/
+        Smalltalk fileIn:'display.rc'.	
+    ] on:Screen deviceOpenErrorSignal do:[
+	'smalltalk_r.rc [error]: Cannot restart connection to: ' errorPrint.
+	Screen defaultDisplayName errorPrintCR.
+	Smalltalk exit.
+    ].
+].
+
+"/
+"/ this defines stuff relating to the machine we are running on
+"/ (which may also be different after a snapIn)
+"/
+Smalltalk fileIn:'host.rc'.
+
+"/
+"/ if the image was saved with the dynamic compiler turned on,
+"/ turn it on again.
+"/ If you encounter any problems with it, remove the line below.
+"/
+ObjectMemory reEnableJustInTimeCompilation.
+ObjectMemory oldSpaceCompressLimit:0.   "/ temporary kludge

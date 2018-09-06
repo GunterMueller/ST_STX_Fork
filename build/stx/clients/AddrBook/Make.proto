@@ -1,0 +1,46 @@
+# %W% %E%
+
+# -------------- no need to change anything below ----------
+
+SHELL=/bin/sh
+
+TOP=../..
+SUBDIRS=
+MODULE=stx
+MODULE_DIR=clients/AddrBook
+PACKAGE=$(MODULE):$(MODULE_DIR)
+RCSSOURCES=*.st Make.proto bitmaps/*.xbm
+
+SYSLIBS    = -lX11
+
+STCOPT=$(CLIENT_STCOPT)
+
+# CFLAGS  = -I$(INCLUDE) $(OS) $(OPT) $(DBG) $(DEFS)
+# STCFLAGS= -v -H$(INCLUDE)
+
+#
+# H-files should be created local
+#
+STCFLAGS= -H. -I. -I$(INCLUDE) $(STCOPT)
+
+LIBNAME=Addresses
+
+PROGS      = Addresses
+
+all::       $(PROGS)
+
+OBJS=       Addresses.o
+
+objs::      $(OBJS)
+
+Addresses:      $(OBJS)
+	    $(CC) -c $(CFLAGS) -DSTARTUP_CLASS="Addresses" \
+			       -DSTARTUP_SELECTOR='"start"' $(MAIN)
+	    $(LD) $(LDFLAGS) -o Addresses \
+		  $(CRT0) main.o $(OBJS) \
+		  $(LIBWIDGOBJ) $(LIBVIEWOBJ) $(LIBBASICOBJ) \
+		  $(LIBRUNDIR)/hidata.o $(LIBRUN) \
+		  $(MATHLIB) $(SYSLIBS) $(OTHERLIBS) $(CRTN)
+
+# BEGINMAKEDEPEND
+# ENDMAKEDEPEND

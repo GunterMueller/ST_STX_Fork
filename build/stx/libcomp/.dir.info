@@ -1,0 +1,36 @@
+This directory contains the bytecode compiler classes. 
+These classes are needed for incremental compilation and
+for evaluation of expressions from strings.
+They are compiled by stc into the library 'libcomp'.
+
+Depending on the configuration and capabilities of your Operating-
+System, the resulting classlibrary is either:
+
+        libcomp.a      - an archive
+
+        libcomp.obj    - a prelinked object library
+
+        libcomp.so     - a shared object
+
+the library includes init code (libcomp_Init) for all of its components.
+
+
+Things you can do here:
+
+    make                compile all classes, producing libcomp
+
+    make objs           compile all required object files
+
+    make install        compile all and install in DESTLIBDIR
+
+    make qinstall       only install - assumes binaries are up-to-date 
+
+    make check          syntax check only over all .st files
+
+    make <file>.o       compile <file>.st to object-file
+
+    make <file>.c       compile <file>.st to c intermediate
+
+    make clean
+
+    make clobber

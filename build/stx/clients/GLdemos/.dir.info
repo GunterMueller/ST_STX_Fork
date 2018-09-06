@@ -1,0 +1,110 @@
+Well, I started to add support for SGI'S GL library,
+but had not enough time to finish things.
+
+I'll continue next time Ill get an Indigo ....
+
+
+(at least its good as a demo on how to access this stuff)
+
+BTW: these programs are not at all demonstrating beautiful programming
+     style; they are just q&d hacks to show what can be done.
+
+
+Late news: with the help of the VGL library, everyone (i.e. non SGI-owners)
+	   can now play in 3D-space .... 
+	   (except for zBuffering, lights, materials, textures and some other things)
+
+
+
+	GLXView.st              a view capable of GLX drawing
+				(needed for all of the below classes)
+				Provides only the lowest level functionality
+				(i.e. 1-to-1 of GL-functions)
+
+	Demo1.st                very simple 'getting started' demos
+	Demo2.st                
+	Demo3.st
+	Demo4.st
+	Demo5.st
+
+	Demo6.st                a nice one, demonstrating transformations
+				by mouse interactions
+
+	Point3D.st              helper class - represents 3D points in a
+				format which is preferred by GL
+
+	GLPlaneDemo1.st         draws a rotating plane (single buffered)
+				extracted from a c-program
+				(4Dgifts/examples/mix.c)
+				(needs GLXView)
+
+	GLPlaneDemo2.st         as above, but uses double buffering
+				(needs GLXView and GLPlaneDemo1)
+
+	GLObjectDemo.st         abstract class for rotating objects
+				(needs GLXView)
+
+	GLWireCubeDemo.st       a rotating cube (wireframe)
+				(needs GLXView, GLObjectView)
+
+	GLCubeDemo.st           a rotating cube (solid)
+				(needs GLXView, GLObjectView)
+
+	GLCubeDemo2.st          a rotating cube (solid) with a light source
+				(needs GLXView, GLObjectView and real GL)
+
+	GLTetraDemo.st          a rotating tetrahedron (solid)
+				(needs GLXView, GLObjectView)
+
+	GLWireSphereDemo.st     a rotating sphere (wireframe)
+				(needs GLXView, GLObjectView)
+
+	GLSphereDemo1.st        a sphere and a light source rotating around
+				(needs GLXView and real GL)
+
+	GLSphereDemo2.st        as above, but uses double buffering
+				(needs GLXView, GLSphereDemo1 and real GL)
+
+	GLDoughnutDemoView.st   a rotating wireframe doughnut
+
+	GLOctahedronDemoView.st a rotating octahedron with blended colors
+				needs a real GL
+
+	GLBrickDemoView.st      a rotating plane with texture
+				needs a real GL which supports texture mapping
+
+	GLBrickCubeDemoView.st  a rotating cube with texture & light source
+				needs a real GL which supports texture mapping
+
+	Logo3DView.st           rotates "SMALLTALK/X"
+				(needs GLXView)
+
+	GLPlanetDemo.st         rotates the earth around the sun
+				(needs GLXView)
+
+	GLTeapotView.st         got the teapots coordinates from somewhere,
+				this one displays them as points, lines or solid
+				(uses the data in Pot.data)
+				(needs GLXView, GLXPoint3D)
+
+	GLTeapotDemo.st         thats better - controls let
+				you manipulate a TeapotView; demonstrates how
+				Smalltalk-widgets can be combined with GL a view.
+				(ugly code - generated with an early
+				 version of the interface builder)
+				(needs GLXView, SliderBox, GLTeapotView)
+
+
+helpers:
+	SliderBox.st            3 sliders in a box (used by TeapotDemo)
+
+
+todo:
+	- 3D objects instead of GL-low level stuff 
+	  (i.e. define classes for Sphere, Cube etc. then use them
+	   as aSphere drawIn:someView ...)
+
+	- wrap all lights, materials etc. into clean classes
+	  (use as LightSource position:... direction:... red:... green:...)
+
+Maybe someone else finishes this and sends me the code ....

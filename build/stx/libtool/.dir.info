@@ -1,0 +1,44 @@
+This directory contains the high level graphical development tools. 
+They are compiled by stc into the library 'libtool'. 
+
+These are normally not needed for final applications -
+actually, if you are producing an end-user application, you
+are NOT allowed to include the Browser and other development
+tools in that executable - except if the end-user has a developpers
+licence too.
+
+Use of these classes requires that 'libview', 'libview2', 'libwidg' and
+'libwidg2' are also loaded into the system.
+(although autoloading them is also possible).
+
+Depending on the configuration and capabilities of your Operating-
+System, the resulting classlibrary is either:
+
+	libtool.a      - an archive
+
+	libtool.obj    - a prelinked object library
+
+	libtool.so     - a shared object
+
+the library includes init code (libtool_Init) for all of its components.
+
+
+Things you can do here:
+
+    make                compile all classes, producing libwidg
+
+    make objs           compile all object files
+
+    make install        compile all and install in DESTLIBDIR
+
+    make qinstall       only install - assumes binaries are up-to-date 
+
+    make check          syntax check only over all .st files
+
+    make <file>.o       compile <file>.st to object-file
+
+    make <file>.c       compile <file>.st to c intermediate
+
+    make clean
+
+    make clobber

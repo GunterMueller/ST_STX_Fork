@@ -1,0 +1,27 @@
+
+# generated from project definition
+
+# load package dependencies
+load 'package.deps.rake'
+
+# kludge: clear some invalid dependencies of libwidg
+# (should be fixed in baseline)
+clear "stx:libwidg" => "stx:libui"
+clear "stx:libwidg2" => "stx:libui"
+
+project :'hello:baseline' do
+  # preamble
+  
+  # --------
+
+  package "stx:libbasic"
+  package "stx:libcomp"
+
+
+  application "stx:doc/coding/demoHelloWorld"
+
+  # postamble
+  
+  # ---------
+
+end

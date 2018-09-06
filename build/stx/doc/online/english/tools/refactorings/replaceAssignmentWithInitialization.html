@@ -1,0 +1,95 @@
+<html><head><title>Refactoring: 
+Replace Assignment with Initialization</title></head><body>
+<H1>
+Replace Assignment with Initialization</H1>
+<P><B> Refactoring contributed by 
+	<A href="http://www.henricson.se/mats">Mats
+Henricson</A></B></P>
+<P><I><CENTER>
+You have code that first declares a variable and then assigns a value
+to it</CENTER></I></P>
+<P><B><CENTER>
+Make it into a direct initialization instead</CENTER></B></P>
+
+<PRE>
+void foo() {
+   int i;
+   // ....
+   i = 7;
+}
+</PRE><P><CENTER><IMG SRC="arrow.gif"/></CENTER></P>
+<PRE>
+void foo() {
+   // ...
+   int i = 7;
+}
+</PRE>
+
+<h2>Motivation</h2>
+<P>You often see functions in which the programmer has first declared lots of variables that will be used in that function, and then, further down the function, assigns values to them. This is often an artifact from older programming languages, where you had to declare in the beginning of the function all variables that are used in it. In C++ and Java this is not necessary, and in C++ this old style of programming can give you slower programs, since a declaration of a variable in C++ often means a call to the default constructor. In Java, declarations of variables are cheap, if not even free, but the problem is that you end up with unnecessary lines of code that adds no value to your program - you have two lines of code that can be expressed with one line of code.
+
+Another problem is the risk that at some parts of the program a variable is not explicitly initialized, so that its initial value may not be obvious, or even undefined, as is often the case in C++.
+
+</P>
+<h2>Mechanics</h2><UL>
+<LI>Move the declaration of the variable to where that variable is first used,
+just before the assignment, making sure that you haven't reduced the scope
+of the variable so that it isn't in scope at some other place where it
+is used
+</LI>
+
+<LI>Compile and test  </LI>
+
+
+<LI>Replace the declaration and assignment with a direct initialization  </LI>
+
+
+<LI>Compile and test  </LI>
+<LI>If appropriate, declare the temp as final, and compile and test again.</LI>
+
+
+</UL>
+
+<h2>Example</h2><UL>
+
+<P>Start with this code.</P>
+<PRE>
+void foo() {
+	int i;
+	// ....
+	i = 7;
+}
+</PRE>
+<P>
+The first move is to move the declaration of the variable to just before
+where it is assigned to:</P>
+
+<PRE>
+void foo() {
+	// ....
+	int i;
+	i = 7;
+}
+</PRE>
+<P>
+I can now compile and test this. The most common mistake is that you have reduced the scope of the variable so that it no longer is in scope at some other place where it is used. Fortunately C++ and Java compilers will give you and error if this has happened.</P>
+<P>
+Then it is time to replace the declaration + assignment with the initialization:  </P>
+<PRE>
+void foo() {
+	// ....
+	int i = 7;
+}
+</PRE><P>
+If this also compiles and runs as before, then it is the end of the refactoring.</P>
+<P>
+However if the value of <code>i</code> doesn't change, then it's a good idea to make that explicit by declaring <code>i</code> as final</P>
+<PRE>
+void foo() {
+	// ....
+	final int i = 7;
+}
+</PRE>
+</UL>
+
+<P /><P /><P><CENTER><A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A></CENTER></P></body></html>

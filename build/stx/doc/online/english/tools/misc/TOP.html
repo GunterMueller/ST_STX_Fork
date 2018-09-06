@@ -1,0 +1,2508 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Tools</Title>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="../htmlViewer/TOP.html" > <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="../TOP.html" INFO="Back to the documentation's main page">            <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+
+<H1>Other Tools</H1>
+This document is unfinished - there is a bunch of other tools to be documented ...
+<P>
+
+<H2><A NAME="INDEX">Index</A></H2>
+
+<UL>
+<LI>
+<A HREF="#TRANSCRIPT">Transcript</A> - Shows Smalltalk Messages</LI>
+
+<!--
+<LI>
+<A HREF="#OLDLAUNCHER">OldLauncher</A> - A former Launcher (obsolete)</LI>
+-->
+
+<LI>
+<A HREF="#LAUNCHER">Launcher</A> - Tool for Starting Smalltalk Tools and Configuration</LI>
+
+<LI>
+<A HREF="#WORKSPACE">Workspace</A> - Tool for Evaluating Smalltalk Expressions</LI>
+
+<LI>
+<A HREF="#INSPECTOR">Inspector</A> - Tool for Inspecting &amp; Manipulating Smalltalk Objects</LI>
+
+<LI>
+<A HREF="#PROJECTVIEW">Project View</A> - Tool for Managing Projects</LI>
+
+<LI>
+<A HREF="#PROCESSMONITOR">Process Monitor</A> - Displays Smalltalk Processes
+</LI>
+
+<LI>
+<A HREF="#PROCESSMONITOR2">Enhanced Process Monitor</A>
+</LI>
+
+<LI>
+<A HREF="#SEMAPHOREMONITOR">Semaphore Monitor</A> - Displays Smalltalk Semaphores
+</LI>
+
+<LI>
+<A HREF="#MEMORYMONITOR">Memory Monitor</A> - Displays Overall Memory Usage
+</LI>
+
+<LI>
+<A HREF="#MEMORYUSAGE">Memory Usage</A> - Displays Memory Usage by Class
+</LI>
+
+<LI>
+<A HREF="#MODULEINFO">Object Module Information</A> - Show Loaded DLLs (Class Libraries)
+</LI>
+
+<LI>
+<A HREF="#EVENTMONITOR">Event Monitor</A> - Displays Events Sent to a View
+</LI>
+
+<LI>
+<A HREF="#VIEWTREE">Graphical View Tree</A> - Shows a View's Widget Hierarchy
+</LI>
+
+<LI>
+<A HREF="#VIEWTREEINSPECTOR">View Tree Inspector</A> - Inspect a View's Widget Hierarchy
+</LI>
+
+<LI>
+<A HREF="#XMLINSPECTOR">XML Inspector</A> - Shows the Structure of an XML Document
+</LI>
+
+<LI>
+<A HREF="#METHODFINDER">Method Finder</A> - Find a Selector by its Effect
+</LI>
+
+<LI>
+<A HREF="#TODOLIST">ToDo List</A> - Tool to Remember Things to be Fixed
+</LI>
+
+<LI>
+<A HREF="#BREAKPOINTLIST">Breakpoint Browser</A> - Find and Control Breakpoints
+</LI>
+
+<LI>
+<A HREF="#SUNIT">SUnit</A> - Unit testing framework and TestRunner GUI
+</LI>
+
+<LI>
+<A HREF="#VERSIONDIFF">Version Diff Browser</A> - Compare Two Versions of a Class
+</LI>
+
+<LI>
+<A HREF="#PACKAGER">Packager</A> - A Standalone-Executable Builder and Packager
+</LI>
+
+<LI>
+<A HREF="monticellobrowser.html">Monticello Repository Browser</A> - A Tool to Aid Importing Code from Squeak (and Others)
+</LI>
+
+<LI>
+<A HREF="#TERMINAL">Terminal</A> - A Shell Terminal
+</LI>
+
+</UL>
+
+
+
+<H2><A HREF="#INDEX" NAME="TRANSCRIPT">Transcript</A> - The Smalltalk Messages Window</H2>
+
+In Smalltalk, the Transcript plays the role of a console,
+where useful information is sent to. For example, the compiler
+outputs progress information onto the transcript when compiling methods
+from a file or from the browser.
+<P>
+From your programs, you can send output to the Transcript via the messages:
+<KBD>show:</KBD>,
+<KBD>cr</KBD> and
+<KBD>showCR:</KBD>.
+<P>
+Here are a few concrete examples (click to execute):
+<CODE><PRE><A type="example">
+   Transcript showCR:'Hello World'.
+</A></CODE></PRE>
+<CODE><PRE><A TYPE="example">
+   Transcript clear.
+   Transcript show:'The time is '.
+   Transcript show:(Time now).
+   Transcript cr
+</A></CODE></PRE>
+or:
+<CODE><PRE><A type="example">
+   Transcript show:'The time is '; show:(Time now); cr
+</A></CODE></PRE>
+or:
+<CODE><PRE><A type="example">
+   Transcript
+      showCR:('The time is %1, today is %2'
+		bindWith: (Time now)
+		with: (Date today) )
+</A></CODE></PRE>
+
+
+<P>
+In very old Smalltalk versions, the Transcript and Launcher (described below)
+were two separate applications.
+Today, these two applications have been merged into a new Launcher
+(which is a bit of a stupid name, as this "new" launcher is now also almost 20 years old!).
+
+
+
+<!--
+<H2><A HREF="INDEX" NAME="OLDLAUNCHER">OldLauncher</A> - A Menu to Launch Applications and Tools</H2>
+
+The Launcher allows startup of commonly used tools and utilities.
+<BR>
+The OldLauncher class can also be subclassed; so you can create your own
+application launcher and/or add/remove entries from the default launcher.
+The launcher is typically started from your <CODE>"private.rc"</CODE>
+startup file.
+<P>
+<IMG ALIGN=TOP SRC="../../../pictures/OldLauncher.gif" ALT="[missing fig.: oldLauncher hardcopy]">
+<P>
+
+<DL><DT>Notice:<DD>
+The OldLauncher is obsoleted by the Launcher class, which offers much more
+functionality and is easier to use.
+<BR>
+The oldLauncher is still provided for backward compatibility
+(subclassed OldLauncher used by customers to launch their application),
+and maybe for purists ;-)
+</DL>
+-->
+
+
+<H2><A HREF="#INDEX" NAME="LAUNCHER">NewLauncher</A> - Combined Launcher and Transcript Tool</H2>
+
+The Launcher allows startup of commonly used tools and utilities,
+and contains the transcript window for messages to the user.
+<BR>
+This application offers pulldown menus and buttons to open
+useful applications, monitors and to perform most common operations.
+<P>
+In addition, the language, viewStyle and compiler settings can be set
+via more convenient dialogs
+(in previous versions, these had to be set by evaluating Smalltalk
+ expressions in a workspace or by editing the startup scripts).
+<P>
+The launcher is typically started from your <CODE>"private.rc"</CODE>
+startup file.
+
+<P>
+<IMG ALIGN=TOP SRC="../../../pictures/NewLauncher.gif" ALT="[missing fig.: newLauncher hardcopy]">
+<br>
+<font size=-2>Screen image of the Launcher with a "Motif" view style.</font>
+<P>
+
+Starting with <CITE>ST/X</CITE> rev 3.3, the Launcher was completely rewritten,
+using the new UI-builder framework.
+The items found in the pulldown menu
+and the toolbar panel can now be changed using the convenient menu editor.
+It is now very easy to create a user or project specific
+subclass with different functions.
+<BR>
+Also, the launcher's functionality was moved to an abstract generic launcher superclass,
+which does not provide any GUI, but is purely functional.
+<BR>
+This architecture allows for future- and custom launchers to be build easily.
+
+<H3><A HREF="#INDEX" NAME="LAUNCHER_SETTINGS">Settings Dialog</A></H3>
+Use the Launcher's settings dialog to change, save and load your personal preferences and settings.
+The initial setting values are loaded from a
+file named "settings.stx" in either the current directory
+(where <cite>ST/X</cite> was started),
+or in the ".smalltalk"-subdirectory in your home directory.
+<P>
+The dialog operates on the current setting values,
+which are only valid during the current <cite>ST/X</cite> session.
+If you forget to save the settings (via the "save" button),
+any modified settings are lost when you exit <cite>Smalltalk/X</cite>,
+and your next session will again come up with the previous or default settings.
+
+<H4><A HREF="#INDEX" NAME="LAUNCHER_SETTINGS_OF_INTEREST">Settings you may want to Change</A></H4>
+
+Some areas are of special interest:
+<UL>
+<LI>the behavior of text editors (cursor at end-of-line, tabulators, etc.)
+can be changed in the <I>"Settings"</I>-<I>"Tools"</I>-<I>"Editor"</I> area.
+Notice that tabulator columns are only used for cursor positioning.
+The tabs in external files are always assumed to be multiple-of-8 tabs.
+<p>
+
+<LI>the way source code is colorized (syntax coloring)
+is defined in <I>"Settings"</I>-<I>"Tools"</I>-<I>"Editor"</I>-<I>"Syntax Color"</I>.
+If you are used to Squeak or VisualAge styles,  select the style and press the "Rest to:" button.
+<p>
+
+<LI>the source code management (repository check-in and out) is
+configured in <I>"Settings"</I>-<I>"Sourcecode Management"</I>.
+<p>
+
+<LI>compiler warnings are
+configured in <I>"Settings"</I>-<I>"Tools"</I>-<I>"Compilation"</I>-<I>"ByteCode"</I>.
+Individual warnings, which have been disabled interactively, can also be reenabled there.
+</UL>
+
+<H3><A HREF="#INDEX" NAME="LAUNCHER_FILE_FUNCTIONS">File Menu Functions</A></H3>
+The file menu contains functions for package loading,
+and to save the state of the system. Some less obvious functions are:
+
+<DL>
+<DT>Load Package
+<DD>opens a convenient package load dialog. In the past, most users did that via
+scripts in their "MyWorkspace.wsp" file, but this seems inconvenient if you
+are new to the system. The package load dialog gives an overview on available packages
+and also shows a package's documentation.
+<P>
+
+<DT>Save Image / Save Image As
+<DD>the usual functions to dump the whole state of the system to a snapshot file,
+from which it can be restarted later.
+<P>
+
+<DT>Save Session Changes
+<DD>this only saves changes made during the current session (the so called "Change-Set")
+to a file, from which those changes may be applied later, browsed with the changes browser,
+or transported to another system.
+</DL>
+
+<H3><A HREF="#INDEX" NAME="LAUNCHER_CLASS_FUNCTIONS">Class Menu Functions</A></H3>
+Although your main tool for programming will be the <A HREF="../newbrowser/TOP.html">System Browser</A>,
+there are a few other less well known (and less used) tools to be found here. Of interest may be:
+<DL>
+
+<DT>Method Finder
+<DD>this does a semantic search, answering the question: "which method woudl compute me
+some particular value". It is described in more detail <A HREF="#METHODFINDER">below</A>.
+</DL>
+
+
+<H3><A HREF="#INDEX" NAME="LAUNCHER_SYSTEM_FUNCTIONS">System Menu Functions</A></H3>
+This menu contains entries to open various monitors. Of special interest are:
+
+<DL>
+<DT>Process Monitor
+<DD>an application to monitor and manipulate processes (i.e. threads) of the system.
+This is especially useful to find and debug runaway processes (endless loop in a buggy program).
+It is described in more detail <A HREF="#PROCESSMONITOR">below</A>.
+<P>
+
+<DT>Reload Language Resources
+<DD>this reloads the national language translation files ("xxx/resources/xx.rs"-files).
+Use this to update the cached information in memory, after editing one of
+the resource files. Notice that most existing (i.e. already instantiated)
+widgets and menus still keep the old translations.
+So some views need to be closed and reopened to see any new translations.
+<P>
+
+<DT>Settings
+<DD>this opens the central settings dialog. There, of particular interest are the
+<UL>
+<LI>Language Settings<br>to choose a national language for the user interface,
+<LI>View Style Settings<br>to adapt the look of windows to your personal preferences,
+<LI>Editor Settings<br>to adapt the behavior of the text editor,
+<LI>Source Code Repository Settings<br>to setup a versioning system for your code
+</UL>
+</DL>
+
+<H3><A HREF="#INDEX" NAME="LAUNCHER_WINDOW_FUNCTIONS">Window Functions (Window Menu)</A></H3>
+Among others, the window menu contains the following less known but very useful window functions:
+
+<DL>
+<DT>Migrate to Visible Area
+<DD>ever had a problem with windows on another screen, after you have unplugged a beamer or secondary monitor?
+The function brings all (ST/X) windows back into the visible area.
+<P>
+
+<DT>Shrink Window
+<DD>shrinks a window back to a small (200x200) size.
+Useful, if the window is too big, so its resize handles/bounds can no longer be clicked on
+(this is a special problem on the Mac, where they spared some bits and only provide a single resize handle at the lower right)
+<P>
+
+<DT>FlyBy Window Information
+<DD>displays useful window attributes as a tooltip,
+as you move the mouse pointe rover it.
+<P>
+
+<DT>Select and Inspect Hierarchy
+<DD>click on a window and get a multipane inspector on its
+view, application, model and process.
+<P>
+
+<DT>Screen Capture without or with Delay
+<DD>both region- and fullscreen captures are possible.
+Use the delayed capture, to get a chance for open popup menus to be captured.
+<P>
+
+
+</DL>
+
+<H2><A HREF="#INDEX" NAME="WORKSPACE">Workspace</A> - A Tool for Expression Evaluation</H2>
+
+Workspaces are text editors which also
+allow for Smalltalk expressions to be evaluated.
+As such, they are typically used to setup a call to some function
+or for little scripts which are not meant to remain permanently in the
+system. You can also use them as scratchpads or notepads for ordinary text.
+Notice that any view which shows code (for example: the code editor of a system browser)
+also allows for immediate expression evaluation.
+However, workspaces provide additional convenient features,
+especially namespaces for retained variables, multiple language support,
+and additional inspectors.
+
+<P>
+<IMG ALIGN=middle SRC="../../../pictures/Workspace1.jpg" ALT="[missing fig.: Workspace-screenshot-1]">
+<br>
+Screen image of a workspace with a "Windows XP" view style.
+
+<H4><A NAME="WORKSPACE_EVALUATION">Expression Evaluation</A></H4>
+
+Beside the general text editing features, workspaces allow for Smalltalk code to
+be evaluated (interpreted).
+To do this,
+select some text (which should represent a valid Smalltalk expression),
+and use one of the following popup- or toolbar-menu functions for evaluation:
+<UL>
+<LI><VAR>doIt</VAR> - To evaluate the expression
+<LI><VAR>printIt</VAR> - To evaluate the expression and paste the result
+<LI><VAR>inspectIt</VAR> - To evaluate the expression and open an inspectorView on the result
+<LI><VAR>browse</VAR> - To evaluate the expression and open a browser on the results classes
+</UL>
+
+In fact, if nothing is selected, the current cursor-line is taken.
+Therefore, most of the time, you simply have to enter an expression in its own line
+and click on one of the evaluation buttons.
+Or press one of the shortkey commands as listed below.
+<P>
+If there was a selection, anything outside that selection is not part of the evaluation.
+Thus the text for multiple scripts can be held in a single workspace,
+even separated by nonevaluatable arbitrary other text. This makes workspaces perfect
+as a kind of library of useful expressions.
+
+<H4><A NAME="WORKSPACE_SHORTCUTS">Keyboard Shortcuts</A></H4>
+
+There are also keyboard shortcuts for the above functions - typically:
+<DL>
+<DT>"<KBD>CTRL-d</KBD>" (or "<KBD>ALT-d</KBD>") for <VAR>doIt</VAR>,
+<DT>"<KBD>CTRL-p</KBD>" (or "<KBD>ALT-p</KBD>") for <VAR>printIt</VAR>,
+<DT>"<KBD>CTRL-q</KBD>" (or "<KBD>ALT-i</KBD>") for <VAR>inspectIt</VAR> and
+<DT>"<KBD>CTRL-Shift-B</KBD>" (or "<KBD>ALT-Shift-B</KBD>") for <VAR>browseIt</VAR>.
+</DL>
+Depending on your keyboard settings file (<CODE>"keyboard.rc"</CODE>), the key assignments might be
+different on your particular system.
+If in doubt, look at the right-button menu or consult the Launcher's <I>System-Settings-Keyboard</I> dialog.
+
+A pull down menu provides additional functions:
+<UL>
+<LI><VAR>TimeIt</VAR>
+- show the execution time it takes to evaluate the selected expression
+<LI><VAR>SpyOnIt</VAR>
+- show an execution trace (messageTally-spy) of the selected expression's evaluation
+<LI><VAR>Browse Implementors</VAR>
+- open a browser on the selected selector's implementors
+<LI><VAR>Browse Senders</VAR>
+- open a browser on the selected selector's senders
+<LI><VAR>Browse References</VAR>
+- open a browser on methods which refer to the selected global variable name
+</UL>
+
+<H4><A NAME="WORKSPACE_STOPPING_AN_EVALUATION">Stopping an Evaluation</A></H4>
+
+An ongoing expression evaluation can be interrupted and a debugger is opened
+by pressing the <VAR>Interrupt</VAR> key, which is mapped to "<KBD>ALT-.</KBD>".
+Under Windows, you can also press "<KBD>Break</KBD>" ("<KBD>Untbr</KBD>" on a German keyboard).
+<BR>
+The <VAR>Abort</VAR> key, ("<KBD>CTRL-Break</KBD>") aborts
+an ongoing expression evaluation (without going into a debugger).
+<BR>
+Aborting means: 'raising an AbortSignal', which is cought in all views' eventLoop.
+<P>
+
+
+<H4><A NAME="WORKSPACE_VARIABLES">Variables in Workspace Expressions</A></H4>
+
+For the evaluation of workspace-expressions ("<i>doIts</i>"),
+the Smalltalk language parser supports two additional types of semi-global variables:
+"<I>WorkspaceVariables</I>" and "<I>DoItVariables</I>".
+Conceptionally, these are similar to two additional pool dictionaries,
+which are only visible in doIt-evaluations.
+<UL>
+<LI>WorkspaceVariables
+<BR>
+These are much like global variables,
+but only visible and known in the context of <VAR>"doIt"</VAR> evaluations
+(i.e. NOT in a method's code). A value kept by such a variable is alive until the
+variable is assigned a new value (typically: nil) or the variable is removed
+via the "<I>Workspace</I>" pulldown menu.
+<BR>
+Being both persistent and shared among all workspaces, these are very useful to pass an object reference
+from one workspace or inspector to another,
+or to keep objects around for later use without a need to introduce new global variable names.
+<BR>
+Of course, they also protect you from accidentally overwriting a global by the same name.
+<P>
+<LI>DoItVariables
+<BR>
+These are like local variables,
+and only visible and known in the context of one single <VAR>"doIt"</VAR> evaluation.
+<br>
+They do not add new functionality, but avoid the need to declare locals in a doIt evaluation.
+</UL>
+
+The "<I>Workspace</I>"-menu contains an <I>"Auto Define Variables"</I>-item.
+If checked, unknown variables are automatically declared as workspace or doIt variables.
+If turned off, undefined variables trigger an error message, as usual.
+<P>
+Be aware that workspace variables have an unlimited lifetime, unless removed.
+Therefore, some care should be taken to clear or remove variables eventually,
+if it holds on to an external stream, socket, window or other limited resource.
+
+<H4><A NAME="EVALUATION_WORKSPACE">Evaluation Workspace</A></H4>
+
+A special variant of the workspace is the so called <I>"Evaluation Workspace"</I>.
+This adds a separate view to show an evaluation's result, a list of currently defined
+workspace variables, and the last few results in a history list.
+It is useful for classroom demonstrations or when exploring the system.
+<BR>
+An evaluation workspace can be added via the workspace's pull down menu.
+
+<H4><A NAME="SHAREDPOOLS_IN_DOITS">SharedPools</A></H4>
+
+The set of sharedPools which are visible inside a doIt evaluation is controlled by the
+<I>"Add SharedPool"</I> and <I>"Remove SharedPool"</I> menu functions,
+in the <I>"Workspace"</I> section in the main menu.
+Initially, no sharedPools are visible in a doIt evaluation.
+
+
+<H4><A NAME="SYSTEMYWORKSPACE">System Workspace: Combination of Useful Pages</A></H4>
+The "<I>System Workspace</I>" is a workspace with a predefined page setup,
+containing general information for beginners and pages with useful expressions.
+It is shown when the system is started initially (i.e. without an image),
+or when the "Workspace" button is pressed for the very first time in the
+Launcher. Both the launcher and workspaces also offer a menu item to
+reopen a system workspace.
+
+
+<H4><A NAME="MYWORKSPACE">MyWorkspace: a Private Page in the System Workspace</A></H4>
+You can add a private personalized page to the system workspace,
+by creating a file named <CODE>"MyWorkspace.wsp"</CODE> in the <CITE>ST/X</CITE> startup directory.
+<BR>
+There, you may keep commonly used expressions/doIts to start tools or applications.
+<BR>
+If such a file exists, the WorkspaceApplication automatically adds another page to its tab-list
+and presents the contents of that file there.
+
+<H4><A NAME="MULTIPLE_PRIVATE_WORKSPACE_PAGES">Multiple Private Workspace Pages</A></H4>
+In version 6.2, this has been extended to support multiple such private workspaces.
+To do so,
+<ol>
+<li>save the contents (using the "<I>Save As</I>" menu function) preferrably
+into the ".smalltalk" folder in your home folder.
+<li>add a bookmark (using the "<I>Bookmarks</I>"->"<I>Add Bookmark</I>"
+or "<I>Bookmarks</I>" -> "<I>My Workspaces</I>" -> "<I>Add Bookmark Here</I>" menu items).
+</ol>
+Now, whenever you open a "myWorkspace", all of the bookmarked files
+are shown in separate tab-pages.
+
+
+<H4><A NAME="SNIPPETS">Code Snippets</A></H4>
+You can remember a piece of code as a so called <I>"Code Snippet"</I>.
+These snippets are shared among all workspaces and code-views and are retained in a class variable
+(they are not lost, when a workspace window is closed).
+They are only stored inside the running Smalltalk image, i.e. there is (currently) no external file persistency.
+If you forget to save a snapshot image, or you start <CITE>ST/X</CITE> anew, these snippets are lost.
+However, you can of course add expressions to define snippets to your "private.rc" file,
+which is consulted at every fresh start.
+<P>
+The functions for snippet handling are found in the <I>"Edit"</I> section in the main menu.
+<P>
+Snipplets can be very easily pasted into a textview via the abbreviation keystroke: type the name of the snippet
+followed by <KBD>CMD-SPACE</KBD> (on most keyboards, the <KBD>CMD</KBD>-key is named "Alt" and found to the left of the space-key).
+<P>
+For example, to paste a template for the <CODE>"ifTrue:ifFalse:"</CODE> message,
+type "<KBD>itf</KBD> "<KBD>CMD-SPACE</KBD>.
+<P>
+Standard snippets are setup in
+<A HREF="onlyInSTX.html"
+   ACTION="doit:UserPreferences browserClass openInClass:Workspace class selector:#initializeDefaultAbbreviations"
+   INFO="click to browse this code">
+   "<CODE>Workspace&gt;&gt;initializeDefaultAbbreviations</CODE>"
+</A>
+as:
+<BLOCKQUOTE><TABLE BORDER>
+<TR>
+<TH>Abbrev</TH><TH>Expands to</TH>
+</TR>
+
+<TR>
+ <TD>n</TD><TD>nil </TD>
+</TR>
+
+<TR>
+ <TD>t</TD><TD>true </TD>
+</TR>
+
+<TR>
+ <TD>f</TD><TD>false </TD>
+</TR>
+
+<TR>
+ <TD>in</TD><TD>isNil </TD>
+</TR>
+
+<TR>
+<TD>nn</TD><TD>notNil </TD>
+</TR>
+<TR>
+<TD>it</TD><TD>ifTrue: [!]</TD>
+</TR>
+<TR>
+<TD>if</TD><TD>ifFalse: [!]</TD>
+</TR>
+<TR>
+<TD>itf</TD><TD>ifTrue: [!] ifFalse: []</TD>
+</TR>
+<TR>
+<TD>int</TD><TD>isNil ifTrue: [!]</TD>
+</TR>
+<TR>
+<TD>inf</TD><TD>isNil ifFalse: [!]</TD>
+</TR>
+<TR>
+<TD>ints</TD><TD>isNil ifTrue: [^self]</TD>
+</TR>
+<TR>
+<TD>infs</TD><TD>isNil ifFalse: [^self]</TD>
+</TR>
+<TR>
+<TD>wt</TD><TD>whileTrue: [!]</TD>
+</TR>
+<TR>
+<TD>wf</TD><TD>whileFalse: [!]</TD>
+</TR>
+<TR>
+<TD>do</TD><TD>do: [:each | !]</TD>
+</TR>
+<TR>
+<TD>dt / de / det</TD><TD>detect: [:each | !]</TD>
+</TR>
+<TR>
+<TD>dtn</TD><TD>detect: [:each | !] ifNone: []</TD>
+</TR>
+<TR>
+<TD>cl / co / col</TD><TD>collect: [:each | !]</TD>
+</TR>
+<TR>
+<TD>sl / se / sel</TD><TD>select: [:each | !]</TD>
+</TR>
+<TR>
+<TD>rj / re / rej</TD><TD>reject: [:each | !]</TD>
+</TR>
+<TR>
+<TD>inj</TD><TD>inject: ! into:[:pValue :each | ]</TD>
+</TR>
+<TR>
+<TD>ex</TD><TD>Error handle:[ex | !] do:[]</TD>
+</TR>
+<TR>
+<TD>np</TD><TD>nextPut: </TD>
+</TR>
+<TR>
+<TD>npa</TD><TD>nextPutAll: </TD>
+</TR>
+<TR>
+<TD>y </TD><TD>yourself.</TD>
+</TR>
+<TR>
+<TD>sh</TD><TD>self halt.</TD>
+</TR>
+<TR>
+<TD>ps</TD><TD>printString</TD>
+</TR>
+<TR>
+<TD>sr</TD><TD>self subclassResponsibility</TD>
+</TR>
+<TR>
+<TD>st</TD><TD>Smalltalk</TD>
+</TR>
+<TR>
+<TD>ts / trs</TD><TD>Transcript showCR: </TD>
+</TR>
+<TR>
+<TD>ik</TD><TD>includesKey: #</TD>
+</TR>
+<TR>
+<TD>abb</TD><TD>Workspace snippets inspect</TD>
+</TR>
+<TR>
+<TD>ws / wfs</TD><TD>Delay waitForSeconds: 1</TD>
+</TR>
+<TR>
+<TD>wfm</TD><TD>Delay waitForMilliseconds: 1000</TD>
+</TR>
+
+<TR>
+<TD>s</TD><TD>self</TD>
+</TR>
+<TR>
+<TD>slef / sefl</TD><TD>self (typo repair)</TD>
+</TR>
+
+<TR>
+<TD>ati</TD><TD>at:! ifAbsent: </TD>
+</TR>
+<TR>
+<TD>ini</TD><TD>initialize<BR>&nbsp;&nbsp;&nbsp;&nbsp;super initialize.</TD>
+</TR>
+
+<TR>
+<TD>newi</TD><TD>new<BR>&nbsp;&nbsp;&nbsp;&nbsp;^ super new initialize.</TD>
+</TR>
+
+<TR>
+<TD>upd</TD><TD>update:something with:aParameter from:changedObject<BR>&nbsp;&nbsp;&nbsp;&nbsp;!<BR>&nbsp;&nbsp;&nbsp;&nbsp;^ super update:something with:aParameter from:changedObject.</TD>
+</TR>
+
+<TR>
+<TD>A / a</TD><TD>Array</TD>
+</TR>
+
+<TR>
+<TD>An / an</TD><TD>Array new:</TD>
+</TR>
+
+<TR>
+<TD>Aw / aw</TD><TD>Array with:</TD>
+</TR>
+
+<TR>
+<TD>Aww </TD><TD>Array with:! with:</TD>
+</TR>
+
+<TR>
+<TD>OC / oc</TD><TD>OrderedCollection</TD>
+</TR>
+<TR>
+<TD>OCn / ocn</TD><TD>OrderedCollection new</TD>
+</TR>
+
+<TR>
+<TD>SC / sv</TD><TD>SortedCollection</TD>
+</TR>
+<TR>
+<TD>SCn</TD><TD>SortedCollection new</TD>
+</TR>
+
+<TR>
+<TD>D</TD><TD>Dictionary</TD>
+</TR>
+<TR>
+<TD>Dn / dn</TD><TD>Dictionary new</TD>
+</TR>
+
+<TR>
+<TD>ID / Id / id</TD><TD>IdentityDictionary</TD>
+</TR>
+
+<TR>
+<TD>IDn / idn</TD><TD>IdentityDictionary new</TD>
+</TR>
+
+<TR>
+<TD>Sn / sn</TD><TD>Set new</TD>
+</TR>
+
+<TR>
+<TD>0</TD><TD>(0.0 @ 0.0) </TD>
+</TR>
+<TR>
+<TD>1</TD><TD>(1.0 @ 1.0) </TD>
+</TR>
+
+<TR>
+<TD>[</TD><TD>[: !] </TD>
+</TR>
+</TABLE>
+</BLOCKQUOTE>
+Notice that the position of the text cursor after the snippet insertion
+is controlled by the presence and position of an exclamation mark ("!") in the snippets text.
+<P>
+Also notice, that misspellings such as "sefl" are also included.
+These help to fix typing errors immediately (as you see them while typing).
+
+
+<H4><A NAME="JAVASCRIPT_EVALUATION">Multiple Programming Language Support</A></H4>
+Starting with the 6.2 version, workspaces support multiple programming languages.
+If the corresponding packages are loaded (libjavascript,libjava, libruby),
+the evaluation language's syntax can be specified via the "workspace" menu.
+The language selection changes the syntax coloring, syntax checker
+and the syntax of doIt expressions.
+<BR>
+For example, to send something to the Transcript when JavaScript is selected,
+you'd have to type:<CODE><PRE>
+    Transcript.showCR("hello")</PRE></CODE>
+instead of<CODE><PRE>
+    Transcript showCR:'hello'</PRE></CODE>
+<P>
+Multilanguage support is still being developed, so you may encounter
+inconveniences. For example, the debugger might not be able to deal with
+other languages as nicely as with Smalltalk code.
+
+<H4><A NAME="BULK_EDITING">Text Processing</A></H4>
+The edit menu contains items to perform bulk text processing functions.
+These are specified by entering the code of a Smalltalk block
+which is required to process/generate/filter text lines.
+This is useful to insert tables or literals arrays containing
+tables or regular string data, or to remove all lines
+which satisfy a given predicate check.
+
+<H4><A NAME="FURTHER_READING_ON_WORKSPACES">Further Reading</A></H4>
+Click <A HREF="../../getstart/tut_1.html#WORKSPACE"> here for a
+tutorial on workspaces</A>, which is found
+in the <A HREF="../../getstart/tutorial.html">"Tutorial for Beginners"</A>.
+<BR>
+Text edit functions are described in
+the <A HREF="../../getstart/TOP.html#EDITING">"Editing Text Section"</A>
+of the <A HREF="../../getstart/TOP.html">"Getting started Document"</A>.
+
+<FORM ACTION="../../misc/onlyInSTX.html" METHOD="DOIT | WorkspaceApplication open">
+To open a workspace, press this button:
+<INPUT TYPE="submit" VALUE="Open Workspace">.
+</FORM>
+
+
+<H2><A HREF="#INDEX" NAME="INSPECTOR">Inspector</A> - Looking into an Object</H2>
+
+<H3>Introduction</H3>
+
+  Inspectors allow looking into an object. They usually consist of
+  2 subviews, one showing the names (and possibly indices) of the
+  object's instance variables, the other showing the value of the selected
+  instance variable and allowing doIt evaluations.
+<P>
+  There are some specialized inspectors (for example: image inspectors), which
+  add more subviews and/or show the object additionally in a more user friendly
+  form. The new Inspector provides a list of tabs, to select one from the various presentations.
+<P>
+  When inspecting collections where the logical contents is different from the internal representation
+(eg. instances of Set, Dictionary, OrderedCollection and others),
+  the tab named "<i>Basic</i>" shows the actual internal representation,
+  whereas the other tab shows the object's contents "<i>as seen by the programmer</i>".
+
+<H3>Opening an Inspector</H3>
+
+Inspectors can be opened:
+<UL>
+<LI>by executing:
+<CODE><PRE>
+      <VAR>anObject</VAR> inspect
+</PRE></CODE>
+	or:
+<CODE><PRE>
+      <VAR>anObject</VAR> basicInspect
+</PRE></CODE>
+for any object.
+(see below for the difference between <CODE>inspect</CODE>
+ and <CODE>basicInspect</CODE>).
+<P>
+
+<LI>by executing:
+<CODE><PRE>
+      Inspector openOn:<VAR>anObject</VAR>
+</PRE></CODE>
+<P>
+
+<LI>by using the "<VAR>inspectIt</VAR>"-menu function in any codeview.
+<BR>
+All code views allow inspecting the result of an expression evaluation,
+via the "<VAR>inspectIt</VAR>" menu-entry
+(there is also a keyboard abbreviation, usually <KBD>CTRL-q</KBD>).
+<P>
+
+
+<LI>by double-clicking on a name entry in an inspector
+</UL>
+
+Many other tools can open inspectors.
+For example, the system browser's class list has an
+"<VAR>Inspect Instances</VAR>"-menu function, the process monitor
+has an "<VAR>Inspect Process</VAR>" function etc.
+<P>
+Also, inspectors are often embedded: for example, the debugger contains
+two inspectors at the bottom (for the receiver object and the current stack frame),
+or the window-hierarchy tool, which contains a number of inspectors in its
+notbook tabs.
+
+<H3>Inspecting Large Collections</H3>
+    If the inspected object contains a large number of indexed instance variables,
+    only some of them are shown in the instance variable list initially
+    (to save time and memory during startup of the inspector).
+    In this case, the list's popup menu will contain an entry named "<VAR>Show More</VAR>" to
+    increase (double) the number of shown instance variables.
+<br>
+    A truncated list shows '...' as the last entry in the name list.
+    You can also click on this entry to see more items.
+
+<H3>Displaying Large Objects (i.e. Long DisplayStrings)</H3>
+    If an inspected object (or a slot in it, when selected)
+    generates a long displayString (shown on the right side),
+    the string is cutoff after a configurable limit, and '...' is appended.
+    This is to prevent long delays when huge objects are shown.
+    The limit can be changed via the Inspector's view-menu.
+    The default is 100000 characters.
+
+<H3>Inspecting Dictionaries</H3>
+    The variable list shows the
+    dictionary's keys instead of the raw (i.e. real) instance variables.
+    If this is not what you are interested in, select the "<i>Basic</i>" tab,
+    or use the "<i>basicInspect</i>" method,
+    which opens an inspector without this behavior.
+
+<H3>Updating after a Change</H3>
+    To avoid overhead, inspectors do not update their name list and value indicators automatically,
+    when the inspected object changes its contents. As a matter of fact,
+    many objects do not send out change notifications when changed, so
+    the inspector had to check and compare periodically in order to
+    detect such changes (ie. poll for changes).
+<P>
+    Such periodical checks may involve a lot of
+    overhead (for example, if the collection is large) and also may lead to
+    side effects (or example, if the inspected object does some computation
+    when asked for its slot values). Therefore, periodical checks are disabled
+    by default.
+<P>
+    However, periodical checks can be enabled explicitly via the "<VAR>Start Monitoring</VAR>" menu item.
+<BR>
+    To force a single update (for example, after a collection has changed its
+    size) click on the <CODE>self</CODE> entry in the list.
+    This will both update the list
+    AND show the object's new printed representation in the value view.
+<P>
+    Without updating, you may run into an index error (and therefore: a debugger),
+    if you select an entry in a collection which is no longer valid.
+<BR>
+    For example, try:
+<A TYPE="example">
+<CODE><PRE>
+    #(1 2 3) asOrderedCollection inspect
+</PRE></CODE>
+</A>
+then, in the inspector, evaluate (<VAR>doIt</VAR>):
+<CODE><PRE>
+    self grow:2
+</PRE></CODE>
+and finally click on the entry labeled '3' in the namelist.
+<BR>
+Since the index 3 is no longer a legal one, you will run into a
+debugger due to an index error.
+<BR>
+To fix this, <VAR>`continue'</VAR> or <VAR>`abort'</VAR>
+in the debugger, and click on the <CODE>self</CODE>
+entry to force an update in the inspector.
+
+<H3>Inspecting Instances</H3>
+    Double clicking on a name/index in the instance variable list opens another
+    inspector on this instance variables value (the new inspector remembers the
+    old object in its history and shows the new object, without an extra window).
+
+Examples (click to execute):
+<CODE><PRE>
+<A TYPE="example">
+    #('one' #two 3.0 4) inspect
+</A> <A TYPE="example">
+    #('one' #two 3.0 4) asOrderedCollection inspect
+</A> <A TYPE="example">
+    #('one' #two 3.0 4) asOrderedCollection basicInspect
+</A> <A TYPE="example">
+    ( #('one' #two 3.0 4) asOrderedCollection removeFirst; yourself ) inspect
+</A> <A TYPE="example">
+    ( #('one' #two 3.0 4) asOrderedCollection removeFirst; yourself ) basicInspect
+</A> <A TYPE="example">
+    (Image fromFile:'../../goodies/bitmaps/xpmBitmaps/smileys/smiley_angry.xpm') inspect
+</A> <A TYPE="example">
+    (Image fromFile:'../../goodies/bitmaps/xpmBitmaps/smileys/smiley_angry.xpm') basicInspect
+</A> <A TYPE="example">
+    (Color yellow) inspect
+</A> <A TYPE="example">
+    (Color yellow) basicInspect
+</A> <A TYPE="example">
+    (Array new:400) inspect
+</A>
+</PRE></CODE>
+
+
+<H3>Pseudo Entries in the Fieldlist</H3>
+
+The inspected object's field list (on the left) contains a number
+of pseudo entries, which depend on the type of object.
+Pseudo entries start with a "-" character and are shown in italics.
+They are not really instance slots of the object,
+but instead generated by the inspector itself
+and provide additional useful information about the object.
+<P>
+For example, for collections, a pseudo entry named <VAR>'-size'</VAR>,
+which shows the collection's actual size if the actual size
+is different from the logical size.
+
+
+<H3>Inspect vs. basicInspect</H3>
+
+Sending <CODE>basicInspect</CODE> to an object will always open a general inspector,
+which shows instance variables as they are physically present in the inspected object.
+<P>
+In contrast, <CODE>inspect</CODE> is redefined in some classes to open an inspector showing
+the logical contents.
+For example, some collections, use an extra collection to hold the contents,
+so the logical view (the protocol as seen by the programmer) looks different from
+its internal representation.
+Try inspecting an (nonempty) instance of Dictionary to see the difference:
+<CODE><PRE>
+<A TYPE="example">
+    |d|
+    d := Dictionary new.
+    d at:#foo put:1.
+    d at:#bar put:2.
+    d inspect.
+    d basicInspect.
+</A>
+</PRE></CODE>
+or the differences in the inspectors of the above examples.
+The new inspector (see below) has the basicInspect functionality already
+included, and shows an extra tab for the "raw" object if there is a difference.
+
+<H3>The New Inspector</H3>
+
+In addition to the multitab presentation (inspect, basic, visual and class),
+the new inspector also keeps a history of visited objects.
+When double clicking on an entry in the name list, the new value is shown in
+the same inspector (instead of opening a new one), and the previous object is
+added to the history. Use the navigation buttons to get back to any previously visited
+object.
+<P>
+The new inspector is pluggable: individual classes may provide
+additional tabs by redefining a tab specification.
+Take a look at the Color, Image or ByteArray classes for concrete examples.
+
+<!--
+<H2><A HREF="#INDEX" NAME="PROJECTVIEW">ProjectView</A> - Aid in managing projects</H2>
+
+Notice:
+<BR>
+This is mostly obsolete - all of the project management is now usually done in the Browser.
+<P>
+
+If you are working on multiple projects simultaneously,
+a ProjectView can be opened for each of them. A projectView
+keeps track of views which were opened <VAR>under that project</VAR>
+and which changes where made (keeping separate changeLists).
+<BR>
+When activated (via a click), all of the project's views will be shown,
+other projects' views will be hidden.
+<P>
+For each project, a separate package identifier is kept, which marks
+changed methods and new classes - this enables the project view, to keep
+track of which code belongs to which project.
+<P>
+Also, separate fileOut directories can be defined per project, affecting
+the SystemBrowser's fileOut operations: files will be stored in the active
+projects fileOut directory.
+<P>
+A very useful default provided by the active project is the <VAR>default nameSpace</VAR>;
+when classes are loaded (filedIn), they will be placed there.
+Thus, class packages containing conflicting (or possibily conflicting)
+class names, may be loaded without danger of overwriting any existing class,
+by defining a distinct namespace.
+<BR>
+As a hint, the author uses 'ST80' whenever loading ST80 code from a
+public domain archive - no more overwriting of classes like Workspace,
+FileBrowser etc.
+<P>
+The projectView's popup menu is:
+<UL>
+<LI>class documentation
+<BR>opens the HTML documentation viewer on a list of all classes in
+that project.
+
+<P>
+<LI>show / hide
+<BR>as described above; show or hide all of the project's views
+
+<P>
+<LI>changes
+<BR>open a changeBrowser on the changes made in that project.
+
+<P>
+<LI>browse
+<BR>open browsers on all classes and individual (spread) methods,
+which were defined in the project.
+
+<P>
+<LI>fileOut classes
+<BR>fileout all classes to the projects directory.
+
+<P>
+<LI>fileOut directory ...
+<BR>change the projects directory
+
+<P>
+<LI>repository defaults ... (only in commercial versions)
+<BR>set the default package within the source repository
+
+<P>
+<LI>package name ...
+<BR>define the identifier (tag), with which all classes and methods
+will be marked, while accepting within that project
+
+<P>
+<LI>default nameSpace ...
+<BR>define the nameSpace, into which classes are loaded on fileIn.
+
+<P>
+<LI>remove package code
+<BR>remove all classes and individual methods of this project from the
+system
+
+<P>
+<LI>rename project ...
+<BR>give the project another name
+</UL>
+
+
+Use with some care.
+<P>
+Multiple project support is experimental and not yet finished.
+<BR>
+The changeList is not complete - only method accept is recorded.
+<BR>
+Especially, privacy and nameSpace changes are currently not recorded.
+<BR>
+Open a ChangesBrowser to get the full list of changes.
+-->
+
+
+
+<H2><A HREF="#INDEX" NAME="PROCESSMONITOR">Process Monitor</A> - Show & Manipulate Smalltalk Processes</H2>
+
+This tool displays a list of active Smalltalk processes (i.e. Smalltalk threads - not OS processes) and their current state.
+Its popup menu provides common operations to be applied to a process or a group of processes.
+<BR>
+The process monitor is a very useful tool to find (and terminate or debug) leftover
+background processes - especially during program development & debugging.
+
+<P>
+<IMG SRC="../../../pictures/ProcessMonitor.gif" ALT="[missing fig.: process monitor hardcopy]">
+<br>
+Very old screen image of the Process Monitor (it does look much better these days).
+<P>
+
+<FORM ACTION="../../misc/onlyInSTX.html" METHOD="DOIT | ProcessMonitorV2 notNil
+							ifTrue:[ProcessMonitorV2 open]
+							ifFalse:[ProcessMonitor open]">
+To start a process monitor, press this button:
+<INPUT TYPE="submit" VALUE="Start ProcessMonitor">.
+</FORM>
+
+The fields are:
+<DL>
+<DT><i>Id</i><DD>the processes ID; this number is assigned by the runtime system when
+the process is created. Each process has a unique ID.
+<P>
+
+<DT><i>Group</i><DD>the process group ID; this is empty for process group leaders and
+the ID of the group leader (the creator) for other processes.
+The process group allows for easy termination of some process with all of
+its subprocesses.
+
+<P>
+<DT><i>Name</i><DD>the processes name; this is provided for your convenience and has
+no semantic meaning.
+If no explicit name was ever given to the process, it's the name and ID
+of its creator with " sub" appended.
+
+<P>
+<DT><i>Instr</i><DD>the processes coverage monitoring state. See below.
+
+<P>
+<DT><i>State</i><DD>the processes execution state. See definitions below.
+
+<P>
+<DT><i>Prio</i><DD>the processes execution priority.
+<BR>The priority is an integer in the range 1..31. If two or more
+processes are runnable, the system selects the highest priority process
+for execution.
+<BR>
+If the process has a dynamic priority range, the range is shown behind
+its current priority (which may change).
+
+<P>
+<DT><i>Where</i><DD>the method in which the process is currently executing or
+in which it was suspended (went sleeping).
+</DL>
+
+
+
+The state of a process is one of the folowing:
+<UL>
+<LI><i>run</i> - the process is runnable (but CPU is not executing it)
+<LI><i>active</i> - the CPU executes this process right now
+<LI><i>wait</i> - the process is waiting on some semaphore
+<LI><i>ioWait</i> - the process is waiting on an IO-semaphore
+<LI><i>wrapWait</i> - the process is waiting in a blocking API call (win32 only)
+<LI><i>eventWait</i> - the process is waiting on an eventQueue-semaphore
+<LI><i>timeWait</i> - the process is waiting on a timer-semaphore
+<LI><i>suspended</i> - the process is suspended, but not waiting on a semaphore
+<LI><i>stopped</i> - manually stopped; like suspended, but will not respond to interrupts
+<LI><i>halted</i> - stopped by <KBD>CTRL-C</KBD> (win32 only)
+<LI><i>light</i> - the process has not yet started (it has no stack allocated yet)
+<LI><i>dead</i> - the process has died (these are normally not shown)
+</UL>
+The process which ran at the time of the update is marked with
+an (*) character.
+If none is marked, the scheduler was active (or waiting for an event).
+<BR>
+Processes which ran during the last timeSlicing period (usuall 1/20th second) are marked
+with a (+) character.
+<P>
+The list is updated every few seconds, so be prepared for some delayed
+visibility of new processes.
+<P>
+A popup menu (and tool buttons in the new version)
+allows for useful operations to be performed on a selected process:
+<UL>
+<LI><i>Inspect</i> - opens an inspector on the selected process.
+<P>
+
+<LI><i>Debug</i> - opens a debugger on the selected process.
+<P>
+
+<LI><i>Resume</i> - resume execution of a suspended process
+<P>
+
+<LI><i>Suspend</i> - suspend execution of the process
+<BR>notice, that the process may be resumed by the system due to a timer
+or I/O event.
+<P>
+
+<LI><i>Stop</i> - stop execution of the process
+<BR>timer or I/O events will not resume a stopped process
+<P>
+
+<LI><i>Abort</i> - send an AbortSignal to the process
+<BR>all processes are supposed to return to a save place (typically the
+main event handling loop) when an abortSignal arrives. This can be used to
+force a process "out of" a long term (or endless) computation.
+<P>
+
+<LI><i>Terminate</i> - terminate the process
+<BR>sends a TerminateSignal to the process; the process has a chance to
+perform any cleanup (unwind) actions and is then removed from the system.
+<P>
+
+<LI><i>Terminate group</i> - terminate the process and all of its group members
+<BR>use this to terminate a process which has created background processes.
+(for example, a workspace in which subprocesses were forked)
+<P>
+
+<LI><i>Hard Terminate</i> - terminate the process without cleanup
+<BR>immediately terminates the process, without giving it a chance
+to perform any cleanup (unwind) actions.
+Only use this, if a terminating process blocks in its unwind actions
+(due to a bug or deadlock).
+<BR>
+As there are no unwind actions performed, the process has no chance for any
+proper cleanup and leftover resources, open streams or locked semaphores
+are likely to be encountered afterwards. Be aware of this, and only use this
+if a regular abort or terminate operation fails.
+<P>
+
+<LI><i>Raise prio</i> - raise the processes priority by one
+<P>
+
+<LI><i>Lower priority</i> - lower its priority by one
+</UL>
+
+<!--
+By holding down the "<KBD>CTRL</KBD>" key while pressing the middle button,
+another popup menu is opened, which allows toggling the <VAR>display details</VAR>
+flag.
+<BR>
+
+With details on, more info is shown (which you might not be interested in).
+<BR>
+-->
+Additional information (among others) is:
+<UL>
+<LI><i>UsedStack</i> - the size of the stack being in use by the process
+<P>
+<LI><i>TotalStack</i> - the size of the stack as allocated for the process
+<BR>This is adjusted dynamically by the runtime system.
+<P>
+</UL>
+Other items are only of interest for <CITE>ST/X</CITE> runtime system debugging.
+
+<P>
+Probably the most useful item found is the "<VAR>debug</VAR>" function,
+which opens an inspector-like debugger on the selected process.
+<BR>
+This may be useful if some process is waiting on
+a semaphore and you want to see exactly where the wait is and how it reached
+it. With the debugger's <VAR>monitor</VAR> option, you can even watch & see what
+that process is doing!
+<P>
+Note:
+<BR>
+Since at the time of the view update,
+the active process is <STRONG>always</STRONG>
+the process monitor itself, the distinction between <VAR>run</VAR> and <VAR>active</VAR>
+states is useless here: you will always see that process as being active
+in the monitor's display.
+<P>
+
+<H2><A HREF="#INDEX" NAME="PROCESSMONITOR2">Enhanced Process Monitor</A></H2>
+
+The above described process monitor component is now embedded inside an
+improved application, which provides many additional menu und toolbar functions.
+Among others, most useful are:
+<UL>
+<LI>Raise/Lower Application's Window
+<br>This function is enabled if a GUI-process is selected. It will raise (deiconify) the
+processes main window.
+<P>
+
+<LI>Pick a View
+<br>Lets you select a window on the screen (by clicking on it) to
+select the corresponding UI process.
+<P>
+
+<LI>Instrumentation
+<br>Enable/disable the coverage monitoring of the selected process.
+Be reminded that coverage analysis can be done either globally (i.e. coverage is recorded
+regardless of which process executes the code) or process-specific (coverage is only
+recorded when a particular process executes the code).
+<P>When recording code coverage, it is usually desired that code is only recorded,
+when it is executed by the test suite, not by other parts of the system.
+This is especially a problem, when code coverage of UI components or basic class libraries
+is to recorded (think of the code of a scrollbar to be analyzed).
+That code is also executed by the base system (IDE) itself (i.e. by other processes).
+<P>Therefore, coverage monitoring should usually be enabled for a particular process
+only, not globally.
+<P>
+Of course, coverage monitoring only works, if the corresponding classes have been
+instrumented before (see the SystemBrowser's documentation on how this is done).
+</UL>
+
+The most common operations are also found in the toolbar menu.
+
+
+<H2><A HREF="#INDEX" NAME="SEMAPHOREMONITOR">Semaphore Monitor</A> - Show Semaphores</H2>
+
+This tool displays a list of Smalltalk semaphores, their internal count
+and the list of processes on its waiting list.
+<BR>
+This tool is useful to debug deadlock or endless-wait situations in
+multithread applications.
+<P>
+<IMG SRC="../../../pictures/SemaphoreMonitor.gif" ALT="[missing fig.: semaphore monitor hardcopy]">
+<P>
+
+<FORM ACTION="../../misc/onlyInSTX.html"
+      METHOD="DOIT | SemaphoreMonitor open">
+
+
+To start a semaphore monitor, press this button:
+<INPUT TYPE="submit" VALUE="Start SemaphoreMonitor">.
+</FORM>
+The columns shown are:
+<DL>
+<DT><I>Id</I><DD> an internal id (actually, the semaphore's hashKey)
+<P>
+<DT><I>Name</I><DD> the semaphore's userFriendly name (if it has one)
+<P>
+<DT><I>Count</I><DD> the semaphore's count (i.e. the number of waits that go through
+without blocking)
+<P>
+<DT><I>Owner</I><DD> the processId of the process which was dropping the count to
+zero the last time (i.e. which got the semaphore). This id is not cleared
+when the process releases the semaphore - it stays set, even if the semaphore
+is actually free. I.e. it holds the ID of the current or the last owner.
+<P>
+<DT><I>Waiting processes</I><DD> the number and names of process(es) waiting for the semaphore
+to be signalled.
+</DL>
+
+The popup menu offers useful functions on the semaphore which is selected in
+the list; especially "<I>Signal</I>", to unlock a semaphore.
+
+
+
+
+
+<H2><A HREF="#INDEX" NAME="MEMORYMONITOR">Memory Monitor</A> - Displays overall Memory Usage</H2>
+
+This utility displays the amount of object memory used by the system,
+and displays various other statistic values.
+<BR>
+Its popup menu offers functions to manually perform
+either blocking- or nonBlocking background garbage collects.
+<BR>
+Some of those functions are provided as debugging & measuring tools,
+and not required by the typical user.
+
+<P>
+<IMG SRC="../../../pictures/MemoryMonitor.gif" ALT="[missing fig.: memory monitor hardcopy]">
+<P>
+
+<FORM ACTION="../../misc/onlyInSTX.html"
+      METHOD="DOIT | MemoryMonitor open">
+
+
+To start a memory monitor, press this button:
+<INPUT TYPE="submit" VALUE="Start MemoryMonitor">.
+</FORM>
+  The numbers shown are (top to bottom):
+<BR>
+<UL>
+<LI>lim - the maximum allowable oldSpace size.
+<BR>This is a configurable limit (set in the startup rc-file),
+which prevents a runaway program from allocating too much memory
+and leading to thrashing the systems virtual memory.
+<P>
+
+<LI>max - the maximum overall amount ever allocated (since start of the monitor),
+<BR>This value is useful to estimate how much peak memory is
+needed during a session. The value can be reset via the popup menu (reset measured value).
+<P>
+
+<LI>tot - the current total amount of used memory (new + old + free)
+<P>
+
+<LI>all - the current used amount of memory (new + old)
+<P>
+
+<LI>new - the amount of new space used
+<BR>(this is the memory area in which objects are initially created)
+<P>
+
+<LI>frl - the amount of memory in free lists (fragmented free space)
+<P>
+
+<LI>fre - the unused portion of oldSpace (compact free space)
+<P>
+
+<LI>old - the amount of oldSpace used
+<BR>(this is the memory area into which long living objects moved)
+<P>
+
+<LI>mal - malloc'd memory in use (not inside object memory)
+<P>
+
+<LI>mto - malloc'd memory total (i.e. free+in use; not inside object memory)
+<P>
+
+<LI>code - jitted code (not inside object memory)
+<P>
+
+<LI>min - the minimum overall amount (since start of the monitor)
+</UL>
+the other numbers are less of interest to normal users, but give some info to VM developers:
+<UL>
+<LI>t - the current dynamic tenureAge
+<LI>I - the internal state (phase) of the incremental garbage collector (2 = idle)
+<LI>weak - the number of weak objects
+<LI>rem - the number of objects in the remembered list (old->new crossrefs)
+<LI>lrem - the number of contexts in the lifo list (obj->stack crossrefs)
+<LI>minSc - scavenger's worst case survivor percentage (since monitor start or last reset)
+<LI>number of scavenges (minor collections) since system started
+<LI>% - the fill-grade of newSpace after the last scavenge
+</UL>
+
+The graphic displays a history of the used amount. Newspace size
+is shown in orange (light grey in b&amp;w displays),
+freelistspace in green (dark grey)
+and oldspace in white.
+<P>
+
+The history is updated twice a second.
+Use the key-commands <KBD>'f'</KBD> (for faster) and <KBD>'s'</KBD> (for slower) to change
+the update interval.
+Press <KBD>'r'</KBD> (for reset) to rescale the display.
+<P>
+The typical picture shown is some saw-tooth figure;
+memory use is usually growing until a newspace collection (scavenge) reduces the amount.
+Don't be surprised by some activity even in an idle system.
+This is caused by the scheduler, time slicer and (mostly) the memory monitor itself.
+<P>
+The memoryMonitor also provides a popup menu for common garbage collect
+operations:
+
+<UL>
+<LI><var>collect garbage</var> - perform a mark&amp;sweep oldSpace collect.
+<BR>
+the system will be blocked while doing this.
+
+<P>
+<LI><var>collect garbage & symbols</var> - like above, but reclaim unused symbols as well.
+
+<P>
+<LI><var>collect garbage & compress</var> - perform a compressing oldSpace collect.
+<BR>
+the system will be blocked while doing this.
+
+<P>
+<LI><var>background collect</var> - perform a non blocking mark&amp;sweep collect.
+<BR>
+the system will continue to react, since this collect is performed
+incrementally in the background.
+<BR>
+This is executed at low priority; if other user processes (at normal priority)
+are currently running, this garbage collect may not make any progress.
+
+<P>
+<LI><var>reset statistic values</var> - clears minSc & max amount
+</UL>
+
+The "<VAR>others</VAR>"-submenu provides less frequently needed operations
+to be invoked:
+
+<UL>
+<LI><var>scavenge</var> - perform a newSpace collect
+<P>
+
+<LI><var>tenure</var> - clean the newSpace; surviving objects
+are immediately tenured into the oldSpace
+<P>
+
+<LI><var>hi prio incremental collect</var> - perform a non blocking mark&amp;sweep collect.
+<BR>
+the system will continue to react, since this collect is performed
+incrementally in the background.
+<BR>
+In contrast to the above ("<VAR>background collect</VAR>"),
+the incremental garbage collect is performed at high prioriy and guaranteed
+to make some progress.
+<P>
+
+<LI><var>cleanup memory</var> - sends all classes a <CODE>#lowSpaceCleanup</CODE>
+message, to have them free any cached or buffered data.
+<BR>
+If your classes keep any recoverable objects in classVariables (caching),
+these should implement this message and release these objects there.
+<P>
+
+<LI><var>flush method history</var> - flush method history
+<BR>
+The method history (if enabled in the launcher's <VAR>"Source & Debugger"</VAR>
+settings dialog) keeps previous versions of changed methods.
+Over time, this may take up some memory and can be flushed
+periodically if ST/X runs on a machine with a small memory
+footprint (e.g. a Raspberry-PI or similar).
+<P>
+
+<LI><var>unload autoloaded classes</var> - unloads all classes which were autoloaded
+and changes them to become autoloaded again.
+<BR>
+Use this, to remove examples, demos and games which are no longer needed.
+<P>
+
+<LI><var>compress sources</var>
+<BR>
+this writes out all incore method source strings to a single file called
+"<CODE>st.src</CODE>" and replaces the in-memory strings by references
+into this file. This reduces memory requirements after you have changed
+(or filedIn) lots of code.
+<BR>
+Be <STRONG>very careful</STRONG> in keeping this file
+intact, unchanged and in sync with images.
+Since your methods sources are no longer directly
+available as string objects after doing this,
+your methods source would be lost, if this file gets corrupted.
+<BR>
+(However, you still have your changes file around for emergency)
+<P>
+</UL>
+
+
+
+
+
+
+<H2><A HREF="#INDEX" NAME="MEMORYUSAGE">Memory usage</A> - Displays Statistics on Memory Usage by Class</H2>
+
+This utility
+displays the amount of memory allocated by individual classes.
+The display can be sorted by different criteria - use its popup menu to
+change this.
+<P>
+<IMG ALIGN=TOP SRC="../../../pictures/MemoryUsage.gif" ALT="[missing fig.: memory usage view hardcopy]">
+<P>
+<FORM ACTION="../../misc/onlyInSTX.html"
+      METHOD="DOIT | MemoryUsageView open">
+
+
+To start a memory usage monitor, press this button:
+<INPUT TYPE="submit" VALUE="Start MemoryUsageMonitor">.
+</FORM>
+<BR>
+Since scanning the memory is a time consuming operation,
+there is no automatic update of the list;
+use the menus <VAR>update</VAR> function to manually update the display.
+<P>
+A memoryUsageView is useful to find <VAR>memory leaks</VAR>.
+In Smalltalk, these are not caused by not freeing memory, but instead
+by keeping references to objects in globals or class variables.
+<BR>
+(so, if you find those leaks, don't blame it on the garbage collector;
+ the collector cannot free the memory as long as any reachable
+reference to an object exists.)
+<BR>
+The menu includes two very useful functions, which help in finding
+those references:
+<UL>
+<LI><VAR>owners</VAR>
+<BR>which opens an
+inspector on all objects owning references to instances of the
+selected class
+(showing the names/indices of the instance variables,
+ which hold a reference).
+<P>
+<LI><VAR>ref chains</VAR>
+<BR>which displays chains of references from a global to instances of the
+selected class.
+</UL>
+Thus, if you have trouble finding out why some object is not garbage collected,
+open a <I>memory usage view</I>, select the class and use the <I>ref chains</I>
+menu function to find out how those instances are still references.
+
+<P>
+Notice, that the <VAR>owners</VAR> function will not be much of a help,
+if the object in question is kept from being freed by a long
+chain of references (for example, if it's in a long linked list which is
+anchored in a global variable).
+<P>
+Also notice, that the <VAR>ref chains</VAR> function may be very time consuming.
+
+
+
+<H2><A HREF="#INDEX" NAME="MODULEINFO">Object Module Information</A> - Show Loaded DLLs (Class Libraries)</H2>
+
+This tool lists the classes/methods/functions as contained in the loaded
+dlls (shared libraries).
+This is useful to find out version information in case of an error.
+The tool's menu also allows for a dll or the complete package to be unloaded.
+<P>
+Its popup menu also provides a convenient way to get a module's version information into the clipBoard.
+<FORM ACTION="../../misc/onlyInSTX.html"
+      METHOD="DOIT | Tools::ObjectModuleInformation open">
+
+To open a module-info window now, press this button:
+<INPUT TYPE="submit" VALUE="Show ModuleInfo">.
+</FORM>
+
+
+<H2><A HREF="#INDEX" NAME="EVENTMONITOR">Event Monitor</A> - Displays Events sent to a View</H2>
+
+
+This tool is useful when keyboard mappings are changed or tested.
+It outputs the
+incoming event-messages on the standard output (xterm-window / console)
+or alternatively to the Transcript.
+(similar to the <CODE>'xev'</CODE> XWindow utility).
+<BR>
+To try it, open an EventMonitor, place the mouse pointer into it, and press
+some key(s) on the keyboard. Watch the trace output.
+
+<FORM ACTION="../../misc/onlyInSTX.html"
+      METHOD="DOIT | EventMonitor open">
+
+To start an EventMonitor, press this button:
+<INPUT TYPE="submit" VALUE="Start EventMonitor">.
+</FORM>
+An EventMonitor can also be started via the Launcher's <I>"System-EventMonitor"</I> menu item.
+
+
+
+<H2><A HREF="#INDEX" NAME="VIEWTREE">Graphical View Tree</A> - Shows a View's Widget Hierarchy</H2>
+
+
+Notice: this is a very old tool, and has been obsoleted by the "View Tree Inspector", described below.
+<P>
+This tool displays a view's widget hierarchy graphically (Smalltalk views only).
+When started via the launcher, a crosshair cursor is shown, and
+you should click on some (Smalltalk-) view on the screen.
+<BR>
+That view's widget hierarchy will then be displayed;
+visible components are displayed in red color,
+invisible (i.e. hidden or unmapped views) are drawn black.
+
+<BR>
+The popup menu shows various details about a selected widget
+and allows further inspection.
+<P>
+<IMG ALIGN=TOP SRC="../../../pictures/ViewTree.gif" ALT="[missing fig.: treeview hardcopy]">
+<br>
+The (now obsolete) simple view tree appliciation.
+<P>
+A graphical viewTree can be opened via the launcher's <VAR>"Tools-Views"</VAR>
+pullDown menu; either on a single view (which is to be selected with
+the mouse), or on all views.
+<P>
+This tool is opened via the Launcher's <I>"Window"</I>-menu.
+
+
+<H2><A HREF="#INDEX" NAME="VIEWTREEINSPECTOR">View Tree Inspector</A> - Inspect a View's Widget Hierarchy</H2>
+
+
+This tool allows for the hierarchy of a (Smalltalk-) window's widgets
+to be inspected.
+After startup, a crosshair cursor is shown,
+and you should pick a window by clicking on some (Smalltalk-) view on the screen.
+That view's widget hierarchy will then be displayed.
+The menus provide access to various
+useful information to a programmer.
+<P>
+Widgets can be selected either via the widget tree
+or by changing to "pick mode" and clicking right on the widget of interest in
+the inspected application's window.
+"Pick mode" is toggled via the toolbar's lock-icon.
+
+
+<P>
+<IMG ALIGN=TOP SRC="../../../pictures/viewTreeInspector.png" ALT="[missing fig.: treeview hardcopy]">
+<br>
+The improved view tree appliciation.
+<P>
+This tool is opened via the Launcher's <I>"Window"</I>-menu.
+
+
+<H2><A HREF="#INDEX" NAME="XMLINSPECTOR">XML Inspector</A> - Show the Structure of an XML Document</H2>
+
+This tool displays the structure of an XML document.
+It is especially useful when an element's XPath is needed,
+as this is automatically shown whenever an element is selected.
+<P>
+Currently, the XML Inspector only works with VW-Dom nodes.
+It is being changed to support YAXO nodes too.
+<P>
+<IMG ALIGN=TOP SRC="../../../pictures/xmlInspector.png" ALT="[missing fig.: xml inspector hardcopy]">
+<P>
+This tool can be opened programmatically on a parsed XML dom tree,
+or via the file browser's <I>"File"</I>-<I>"Tools"</I>-menu,
+to inspect the contents of an XML file.
+
+
+
+<H2><A HREF="#INDEX" NAME="METHODFINDER">Method Finder</A> - Find a Selector by Argument & Result</H2>
+
+The method finder answers questions of the form: "<I>given this input, and that desired output, what is the name of the
+method to invoke</I>".
+Concrete examples could be questions like:
+"<I>what is the name of a function to convert a string from lower- to uppercase?</I>"
+or "<I>what is the name of a function to compute the sum of values in a collection?</I>".
+
+<P>This tool can be started via the Laucher's
+<VAR>"Classes-Special->MethodFinder"</VAR> menu function,
+or by clicking on a method name in the browser's explainer info field
+(shown at the bottom, when the cursor is in a message selector).</P>
+
+<P>Use an example to find a method in the system.
+Type receiver, args, and answer in the top panes,
+like <CODE>4 5 1</CODE>.
+Then press the search button.
+The lower left pane will show all messages which
+when send to the receiver 4 with an argument of 5
+will answer the value 1.
+<P>
+Try it again with a receiver of
+<CODE>'hello'</CODE>, and argument of <CODE>3</CODE> and an
+answer of <CODE>'llo'</CODE>.
+<P>
+Finally, to answer the above example-questions,
+try it again with a receiver of <CODE>'hello'</CODE>,
+no argument
+and an answer of <CODE>'HELLO'</CODE>
+(to find the message: "asUppercase")
+or with a receiver of <CODE>#(1 2 3 4)</CODE>,
+no argument
+and an answer of <CODE>10</CODE> (to find the message: "sum").
+<P>
+
+You can write expressions in the fields to create a non-literal
+object such as a Dictionary (rather than using strings and numbers).
+But be aware, that these expressions are evaluated and may
+have side effects.
+Usually, it is a good idea to try an expression
+like "basicNew" first, to avoid side effects.
+<P>
+In addition, a limited browser is included: selecting an item in the lower left pane
+shows the implementors in the upper right pane; selecting any of the implementors will
+display the method's code in the lower right pane (which is readOnly; i.e. no <VAR>accept</VAR>
+is possible).
+
+<BR>
+<P>
+The methodFinder-GUI is actually using the <CODE>MethodFinder</CODE>-class to do the actual work.
+This one provides even more search functionality.
+For example, if you evaluate ("<VAR>printIt</VAR>") the following in a workspace
+
+<BR>
+<A type="example" showresult ><CODE><PRE>
+    MethodFinder methodFor: #(
+				(4 3) 7
+				(0 5) 5
+				(5 5) 10)
+</PRE></CODE></A>
+<P>
+it will discover (data1 + data2) - i.e. a message selector which satisfies all of the three
+constraints.
+<P>
+In addition to the above described "find my example",
+the methodfinder window also shows an interactive pattern search.
+So if you have a rough idea, of how a message might be named,
+enter "*foo*" into the search field. As you type, more or less
+implementors are shown in the result list below the search pattern field.
+
+<H3>MethodFinder GUI</H3>
+The MethodFinderWindows provides an easy to use GUI interface to the above described functionality.
+To use, enter the receiver value, the number of arguments, optionally any argument values, and the expected
+result (answer) into the top-left panes.
+Press <I>Search</I> to find the set of methods which conform to this specification.
+
+
+<P>
+Some fancy examples of its usefulness are:
+<table border>
+ <tr>
+   <th>Receiver</th>   <th>Arg1</th>  <th>Arg2</th>   <th>Result</th>   <th>Finds this</th>
+ </tr>
+
+ <tr>
+   <td><CODE>'knock knock'</CODE></td>          <td><CODE>$k</CODE></td>  <td></td>   <td><CODE>'noc noc'</CODE></td>   <td><CODE>'knock knock' copyWithout: $k</CODE></td>
+ </tr>
+ <tr>
+   <td><CODE>'30 apr 1999' asDate</CODE></td>   <td><CODE></CODE>  </td>  <td></td>   <td><CODE>'friday'</CODE> </td>   <td><CODE>'30 apr 1999' asDate weekday </CODE></td>
+ </tr>
+ <tr>
+   <td><CODE>Float pi / 2</CODE></td>           <td><CODE></CODE>  </td>  <td></td>   <td><CODE>1</CODE> </td>          <td><CODE>1.570796 sin</CODE></td>
+ </tr>
+</table>
+<P>
+This tools was originally written by Ted Kaehler, Scott Wallace and Dan Ingalls for Squeak.
+<P>
+
+<FORM ACTION="../../misc/onlyInSTX.html"
+      METHOD="DOIT | MethodFinderWindow open">
+It is opened via the Launcher's <I>"Classes"-"MethodFinder"</I>-menu,
+or by pressing this button:
+<INPUT TYPE="submit" VALUE="Open MethodFinder">.
+</FORM>
+
+
+
+
+
+<H2><A HREF="#INDEX" NAME="TODOLIST">ToDo List</A> - Tool to Remember Things to be Fixed</H2>
+
+This tool monitors error and warning-messages from the compiler and displays them in a list.
+Whenever a change is made to a class or a method, the TODO-list checks if any of those remembered
+errors is now fixed. If that is the case, the entry is removed from the list.
+The list is initially empty; however, every compilation error which is confirmed with
+a "<I>Continue</I>" and many warnings will lead to an entry being added.
+As an example, try to remove an instance variable which is still accessed in a method
+from a class.
+<BR>
+The use of this tool is especially helpful while programming new code,
+where some of the sent messages are not yet implemented.
+Of course, you can also run a static code check (lint) on your code,
+but the todo list is more "realtime", and you can continue doing
+other work, without forgetting things that still need attention.
+<P>
+A double click on an entry in the list opens a systembrowser and navigates it to
+the code in question.
+<P>
+Notice: you can quickly check a class (or group of classes) by selecting them in a browser
+and then performing the <I>"Recompile-All-Methods"</I> menu item in the class lists <I>"Debug"</I>
+submenu, while a ToDo-List tool is open.
+Of course, the amount of warnings and hints depends on your current
+compilation settings (in the Launcher's setttings dialog).
+You may have to enable some warnings to get any output.
+<P>
+<FORM ACTION="../../misc/onlyInSTX.html"
+      METHOD="DOIT | Tools::ToDoListBrowser open">
+This tool is opened via the Launcher's <I>"Tools"</I>-menu,
+or by pressing this button:
+<INPUT TYPE="submit" VALUE="Open ToDoListBrowser">.
+</FORM>
+
+
+
+<H2><A HREF="#INDEX" NAME="BREAKPOINTLIST">Breakpoint Browser</A> - Find and Control Breakpoints</H2>
+
+This tool shows a list of methods which contain either a static (coded) breakpoint
+or which have a dynamic trap attached,
+and makes it very easy to quickly locate and enable or disable breakpoints.
+
+<P>
+<IMG ALIGN=TOP SRC="../../../pictures/BreakPointBrowser.png" ALT="[missing fig.: breakPoint browser hardcopy]">
+<br>
+The breakpoint browser (shown in the "Windows XP" view style).
+<P>
+
+<H3>Usage</H3>
+The Breakpoint-Browser's major use is in finding methods which contain breakpoints and to
+enable or disable them.
+When started, the list displays all locations of a breakpoint.
+For that, the whole system is scanned for breakpoints, which takes a few seconds initially;
+after that, it watches your changes and updates its list incrementally in real time,
+without any further noticable delay. Therefore, it is better to keep this view open (or iconified)
+during a development session, instead of closing and reopening it.
+<BR>
+By checking corresponding
+items in the <I>"View"</I>-menu, this list is filtered by type of breakpoint and by argument.
+<P>
+Breakpoints can be enabled or disabled both by type and parameter.
+By default, halts and assertions are enabled, whereas breakpoints are disabled.
+<P>
+To open a browser on a selected method, either double-click on the item in the list,
+or press the "Browse"-button in the toolBar menu.
+Small editing changes like removing breakpoint code or adding information prints
+can also be done directly in the code view: simply type it and accept as usual.
+<P>
+Dynamic breakpoints are set and cleared from within the system browser's debugging menu
+(or via the traffic light buttons, or via line-breakpoints in the edit view).
+<P>
+Static breakpoints are coded as messages sends
+using one of the following selectors:
+<UL>
+<LI><CODE>#halt</CODE>
+<LI><CODE>#halt:</CODE>
+<LI><CODE>#breakPoint:</CODE>
+<LI><CODE>#breakPoint:info:</CODE>
+<LI><CODE>#assert:</CODE>
+<LI><CODE>#assert:message:</CODE>
+</UL>
+
+<H3>Breakpoints</H3>
+Of special interest are the <CODE>#breakPoint:</CODE> methods;
+these behave much like ordinary <CODE>#halt</CODE> messages, but differ in two aspects:
+<OL>
+<LI>by default, <CODE>#breakPoint:</CODE>-messages are ignored.
+This means, that you can leave them in production code.
+
+<LI>they can be enabled/disabled easily;
+individual breakpoint groups can be differentiated by their (symbolic) argument.
+</OL>
+A typical use of these breakpoints is with the initials of a programmer as (symbolic) argument,
+to allow individual programmers within a team to control the execution of
+his own breakpoints. To do so, add a piece of code such as:
+<CODE><PRE>
+    self breakPoint:#ab
+</PRE></CODE>
+or:
+<CODE><PRE>
+    self breakPoint:#ab info:'bla bla'
+</PRE></CODE>
+where <CODE>#ab</CODE> stands for an arbitrary key (such as your initials).
+<P>
+By default, these breakpoint-halts are ignored, so that the execution is not interrupted by a debugger.
+However, they can be enabled or disabled at any time by evaluating:
+<CODE><PRE>
+    self enableBreakPoint:#ab
+</PRE></CODE>
+or:
+<CODE><PRE>
+    self disableBreakPoint:#ab
+</PRE></CODE>
+or from within the Breakpoint-Browser's <I>"Enable"</I>-menu.
+Typically, this is done by the user named "ab",
+in order to only activate his own breakpoints.
+<P>
+
+<H3>Halts</H3>
+Halts can also be temporarily ignored by the debugger: the debugger's breakpoint menu
+includes entries to disable a halt either for some time, or for a number of occurrences or forever.
+Such temporarily disabled halts can be found quickly by checking one of the halt-filters
+in the <I>"View"</I>-<I>"Halt"</I>menu, i.e. by setting the "show only ignored halts" filter.
+The breakpoint-list's popup menu also includes a function to re-enable such a disabled halt.
+<P>
+
+<H3>TracePoints</H3>
+Similar to breakpoints,
+tracepoints can also be tagged with an id,
+and individual traces be enabled/disabled by those group tags.
+For a conditional tracepoint,
+add a piece of code such as:
+<CODE><PRE>
+    self tracePoint:#ab
+</PRE></CODE>
+or:
+<CODE><PRE>
+    self tracePoint:#ab message:'bla bla'
+</PRE></CODE>
+Again, <CODE>#ab</CODE> stands for an arbitrary key (such as your initials).
+<P>
+By default, these tracepoints are ignored, so that no output is generated.
+However, they can be enabled or disabled via the above mentioned
+enable/disable messages, or via the Breakpoint-Browser.
+<P>
+
+<H3>Debug Code</H3>
+Similar to break- and tracepoints,
+this consists of a piece of code which is to be conditionally
+executed:
+<CODE><PRE>
+    self debuggingCodeFor:#ab is:[
+	...
+	conditionally executed
+	...
+    ].
+</PRE></CODE>
+Again, <CODE>#ab</CODE> stands for an arbitrary tag key.
+
+
+<H3>Startup</H3>
+The breakpoint browser tool is opened via the Launcher's <I>"System"</I>-menu,
+<FORM ACTION="../../misc/onlyInSTX.html"
+      METHOD="DOIT | Tools::BreakpointBrowser open">
+or by pressing press this button:
+<INPUT TYPE="submit" VALUE="Open BreakpointBrowser">.
+</FORM>
+<P>
+Notice our convention at <I>Exept Software AG</I>:
+<BR>in contrast to <CODE>halts</CODE>, coded breakpoints can be left in published
+code as long as further development and enhancements to the code are ongoing or likely,
+and individual team members are still interested in aspects of the execution.
+Then, this team member adds a breakpoint with his/her initials as argument to the code,
+and individually enables all of his/her breakpoints using this tool for testing.
+As breakpoints are ignored by default, this does not affect other team members.
+<P>
+A full description of the debugging facilities is found
+in <A HREF="../../programming/debugging.html">"Advanced Debugging Support in ST/X"</A>.
+
+<H2><A HREF="#INDEX" NAME="SUNIT">SUnit</A> - Unit testing framework and TestRunner GUI</H2>
+
+This framework (-> Kent Beck, Ward Cunningham and others) allows for convenient
+component testing.
+<BR>
+This tool was ported to <CITE>ST/X</CITE> by Samuel Shuster and Travis Griggs - thanks to you and
+all other Camp Smalltalk guys !
+<P>
+For automatic testing, testcases (subclasses of <CODE>TestCase</CODE>) should define a bunch of methods
+named '<CITE>testXXX</CITE>', which test various aspects of your code.
+<BR>
+For checks, the inherited messages #assert:, #should, #shouldNot etc. should be used.
+<BR>
+See the provided ExampleSetTest for more info on how to use this.
+
+<P>
+The TestRunner GUI interface automatically searches for all test cases as present in the system,
+and offers execution via a pull-down list:
+<P>
+<IMG ALIGN=TOP SRC="../../../pictures/SUnit.gif" ALT="[missing fig.: sunit testRunner hardcopy]">
+<P>
+After selection of the test, run its test-methods by pressing the <CITE>"Run"</CITE>-Button.
+<BR>
+Failures are collected and provided in the lower pull-down list for debugging.
+<P>
+Although simple, this is a very useful tool and we highly recommend its use -
+it will make your life MUCH easier.
+Please read some good book(s) on eXtreme programming or
+Kent Becks original <A HREF="testfram.htm">"Smalltalk Testing""</A> paper
+for more information.
+<P>
+
+
+<H3>Using the TestRunner</H3>
+The TestRunner is started either by double-clicking on a TestCase class in the browser,
+by evaluating:
+<CODE><A TYPE="example"><PRE>
+    TestRunner open.
+</A></PRE></CODE>
+or via the launcher's <VAR>"Tools-SUnit"</VAR> menu item.
+<P>
+<FORM ACTION="../../misc/onlyInSTX.html"
+      METHOD="DOIT | TestRunner open">
+
+A test runner can also be started with this button:
+<INPUT TYPE="submit" VALUE="Start SUnit TestRunner">.
+</FORM>
+
+
+<UL>
+<LI>Refresh - Button
+<BR>
+Press this button to update the list of offered testCases (in the TestCase-PullDown list)
+<BR>
+(Use this after new testCases have been added, or when testCases have been filedIn/autoloaded).
+<P>
+
+<LI>TestCase Selection - PullDown list
+<BR>
+Select a particular TestCase to run.
+<P>
+
+<LI>Run - Button
+<BR>
+Executes all test* methods from the selected testCase; rememberes the results and changes the
+information view's background color to red, if any test failed or green, if all tests succeeded.
+<P>
+
+<LI>ReRun Defects - Button
+<BR>
+Re-Executes only the failed testCases from the previous run.
+<P>
+
+<LI>RunAll - Button
+<BR>
+Executes all testCases present in the system
+<P>
+
+<LI>Defects - PullDown List
+<BR>
+Displays failed testCases and allows for selective reRun with a debugger opening up at
+point of failure.
+<P>
+
+<LI>Browse - Button
+<BR>
+Opens a SystemBrowser on the selected TestCase.
+<P>
+
+<LI>Debug - Button
+<BR>
+ReRun the selected failed testCase with a debugger opening up at point of failure (if it fails).
+
+</UL>
+
+The main information window displays progress information (while executing testCases) and the final
+result. Its color is changed to yellow while executing, and back to
+green (if all ok) or red if any testCase failed.
+<P>
+Notice that some of the test runner's functionality has also been built into the
+<A HREF="../newbrowser/intro.html#TOOLBAR_TESTRUNNER">New Systembrowser</A>.
+<P>
+This tool can also be opened via the Launcher's <I>"Tools"</I>-menu.
+
+<H3><A HREF="#INDEX" NAME="SUNIT2">New TestRunner2</A></H3>
+
+The new test runner2 shows an enhanced interface which adds execution history and popup menus for browsing.
+In addition, it has an "<VAR>Execute with Coverage Measurement</VAR>" button,
+which is enabled if the selected testcase specifies the set of classes which are covered
+by this test via a <CODE>coveredClassNames</CODE> method.
+<br>
+When pressed, these covered classes are instrumented before the test run,
+and a browser which displays the code's execution status is opened.
+As the coverage display is updated during the test run,
+you can easily see which code is executed during the testrun.
+Before each coverage-run, the previous collected coverage data as cleared,
+so the coverage display only reflects the outcome of a single run.
+Pressing one of the other run buttons executes while updating the previous
+coverage info without clearing it first.
+<P>
+You can specify which of the two test runners is to be used
+by the system via the Launcher's "<VAR>Settings</VAR>"-"<VAR>Tools</VAR>" dialog
+(although the new testRunner2 is the better choice).
+
+<FORM ACTION="../../misc/onlyInSTX.html"
+      METHOD="DOIT | Tools::TestRunner2 open">
+
+If configured, the new test runner is opened by double clicking
+on a test case class or via the Launcher's menu.
+It can also be opened with this button:
+<INPUT TYPE="submit" VALUE="Start SUnit TestRunner2">.
+</FORM>
+
+<H2><A HREF="#INDEX" NAME="VERSIONDIFF">Version Diff Browser</A> - Compare Two Versions of a Class</H2>
+
+This tool is opened by the system browser's "<I>Compare...</I>" menu function
+found in the project, class and method list popup menus.
+It shows a side-by-side comparison for two versions of a class, two classes or
+two versions of a set of classes (for example, a package).
+Typically it is used to compare the current (in-memory) version of a class or package
+against another version in the source code repository. However, it is also possible to compare
+two repository versions against each other.
+<P>
+The scrollbar to the right of the text view in the lower area
+marks different areas by coloring.
+So you can quickly navigate between changes.
+<P>
+When comparing packages, a huge number of changes might come up.
+When analyzing the effect of those (i.e. when searching for changes which might
+have lead to a bug), it may be hard to find the relevant changes among all documentaion, comment
+or formating changes. Also you may have an intuition that some class-changes might be irrelevant for
+a particular investigation.
+<p>
+To support this kind of work, the version diff browser offers a number of filters,
+which reduce the amount of data being shown.
+Filters to hide comment-only changes, documentation and version methods, category changes
+are foundin the tool's "<i>View</I>"-menu.
+Filters to hide classes, classes matching a pattern, selectors and selectors matching a pattern
+are found in the context menus of the lists and the "<I>Filter</I>"-menu.
+<P>
+In addition, methods which only differ in formatting or comment strings
+are listed in gray in the selection lists.
+<P>
+It is possible to remember filter-setups (during the current session in a class variable),
+or to export/import filter setups as XML (for exchange, if searching in a team).
+
+
+<H2><A HREF="#INDEX" NAME="PACKAGER">Packager</A> - A Standalone-Executable Builder and Packager</H2>
+
+This assistant-application allows for standalone applications and binary class libraries
+to be built very easily.
+It generates all required classes, files, starts the compilation process,
+and creates a self-installing executable for deployment with a few mouse clicks.
+A simple demo application like the (in)famous "Hello World" can be generated in a few minutes.
+Please read the <A HREF="../../getstart/tut_1b.html">"Introductionary Text"</A>
+for tutorial info about it.
+
+<H3>Prerequisites</H3>
+
+<H4>Windows Users:</H4>
+For 32bit ST/X versions, please install either the
+"Borland Free Commandline Compiler Tools" (bcc32)
+or the "Microsoft Visual-C++" package
+(also free, known as "Visual-C Express").
+<br>For the 64bit version, the MINGW64 compiler package is needed.
+<p>In addition, the free "NullSoft NSIS-Installer Package" is required to create self-installing
+executables for Windows. If you plan to use the Microsoft compiler, you also
+need a Windows SDK to be loaded and installed.
+
+<P>
+Due to limitations and bugs in the Visual-C++ compiler (limit on the size of string-constants),
+some Smalltalk code is not compilable with MSVC compilers before VC10.
+In particular, this affected classes containing image-resource methods for big images.
+Those problems seem to have vanished with VC10, but may reappear when bigger image resources are to be compiled.
+<P>
+Therefore, although Visual-C is supported by the build system,
+(and we are compiling and evaluating unit tests with a VC10-built ST/X),
+we still <B>recommend using the Borland compiler suite</B> for some unspecified migration time.
+<BR>
+Please install bcc32 at its standard location ("C:\Borland") as some makefiles/rule files might contain
+hard-coded pathes (yes, we are ashamed about this).
+The mingw compiler should be installed in C:\mingw or c:\mingw64.
+
+<H4>Unix Users:</H4>
+You should already have the gcc compiler suite (including all required header files) installed and ready to use.
+For a lack of time on our side, there is currently no self-installer support for Unix.
+The packager will generate a zipped tar file, which must be deployed and unpacked for use.
+This may change in the near future, to create a somewhat more appropriate package
+(the major hurdle is, that there exist multiple incompatible package managers
+in the Linux world, the only one which works on all is the somewhat outdated
+"autopackage" manager, which is not preinstalled on all Linux distributions).
+
+<H4>Mac OSX Users:</H4>
+You need either the gcc compiler suite
+or the newer clang compiler (including all required header files)
+to be installed and ready to use. If you install XCode from the app-store,
+you should have everything you need (although ST/X only needs the command-line
+tools). For a quick verification, type "gcc --version" on the command line; if you get a reasonable
+response, you should be ready to go.
+Hint: on the authors machine, the answer is "Apple LLVM version 6.0....".
+<P>
+The packager will generate a mountable ".dmg" package file for GUI apps,
+which contains the binary app and all required components (shared libraries) for deployment.
+Actually, the app can be started right out of the "dmg" or dragged to the "Applications"
+folder or to wherever the end-user wants it.
+<P>
+Currently, Mac build support is still being developed and unfinished;
+for example, there is currently no support to specify fancy icons or assistent
+supported installation of packages.
+
+
+<H3>Packages, Projects, PackageIDs and ProjectDefinitions</H3>
+
+Smalltalk/X basically uses two objects for packaging and package identification:
+<UL>
+<LI>PackageIDs (also called ProjectID's occasionally)
+<LI>ProjectDefinitions
+</UL>
+Older ST/X versions used instances of a Project class
+- this is now obsolete and might be
+removed eventually from the system.
+As some customers have built their own packaging
+scheme around it, it will be kept for some time but
+unmaintained for backward compatibility.
+<P>
+<H4>PackageIDs</H4>
+These are simple symbols and are attached to classes and methods. If a method has a packageID
+different from its class, it is called an <I>extension method</I>.
+There is one special packageID used for "as-yet-unassigned" code ("__NoPackage__").
+This is attached to new classes and methods until they are checked into the repository
+or moved explicitely to a real package.
+The browser's project-list shows them at the beginning of its list.
+<P>
+PackageIDs are used by the source-code manager to locate a classes' source container
+within the directory hierarchy. Therefore, these IDs must have a certain fixed format:
+they always consist of exactly two parts, the module and the directory part,
+separated by a colon character.
+<P>
+The module is used as main-selector on which, where and how the source code repository is accessed.
+The directory is a path below that repository.
+If checked out into the local filesystem, the module defines the top-level directory.
+Thus, if a packageID is "<CODE>stx:libbasic</CODE>", the corresponding sources will be found in the repository
+associated to the "stx" module, under the directory "<CODE>stx/libbasic</CODE>"
+(yes, the module-name is repeated inside the repository and is the top folder there).
+<p>In the local file system, it will be found under "<CODE>stx/libbasic</CODE>".
+As another example, if the packageID is "<CODE>exept:expecco/plugins/foo</CODE>",
+the repository is whichever
+is associated with the "exept" module,
+and the subdirectory is "<CODE>exept/expecco/plugins/foo</CODE>".
+The local path to the sourcefiles would be "<CODE>exept/expecco/plugins/foo</CODE>".
+<P>
+Please notice that it does actually make sense to use different repositories for different modules.
+For example, you could setup the source code manager to use CVS
+for everything under the "stx" module, and at the same time, use a local repository for
+everything under the "myCompany" module.
+The "stx" module could then be attached to the
+public CVS repository on "www.exept.de".
+<P>
+Your own projects should always have a module which is distinct from other people's modules
+(and especially from "exept" and "stx"). A good choice is your company name, your name
+or similar. Do not use module names like "demo" or "test".
+This avoids conflicts, when you load other users' packages later.
+
+
+
+<H4>Project Definitions</H4>
+These describe the contents of a project, such as the classes to include, the set of extension
+methods and some additional compilation information.
+Project definitions come in 4 flavours:
+<UL>
+<LI>GUI Application Definition
+<LI>non-GUI Application Definition
+<LI>ClassLibrary Definition
+<LI>Folder only Definition
+</UL>
+Project definitions are actually classes, defined as subclasses of either
+<CODE>ApplicationDefinition</CODE> or <CODE>LibraryDefinition</CODE> with a defined protocol.
+As classes, they are themself managed, compiled and packaged as
+part of the project (and also have the same packageID as their components).
+They are also treated like any other class w.r.t. source code management.
+The name of those project definition classes <b>must</b> follow the packageID,
+with colons (":") and slashes ("/") replaced by underscore characters "_").
+Thus, the name of the project definition class of the package(ID)
+"stx:goodies/sunit" will be "stx_goodies_sunit".
+
+<H4>Packaging</H4>
+All classes and extension methods belonging to a single package are supposed to be loaded (and possibly unloaded)
+together. They are also usually deployed inside a single <I>compiled class library</I>.
+<P>
+On Windows, these compiled class libraries are files with a ".dll" suffix.
+In the Unix world, they are called "<I>shared object</I>" or "<I>shared libraries</I>",
+and usually have a ".so" or ".dylib" suffix.
+<P>
+All class and extension source files for a package are stored in a common per-package directory,
+both on the local file system and in the source code repository (CVS, SVN, etc.).
+The name of the folder, the name of the project definition and the name of the shared library
+will all match or follow the packageID.
+<P>For example,
+given a packageID of "myCompany:foo/bar", the sources will be found in the file system
+in a folder named "myCompany/foo/bar" (backslashes on windows), the name of the
+project definition class will be "myCompany_foo_bar", and the name of the final
+shared class library file will be "libmyCompany_foo_bar.dll" (or ".so").
+<p>The first component of the
+packageID and the top-directory being the module name.
+Do not use "stx" or "exept" as the module name, and do not store your files underneath the
+stx folder. Instead, create your folders as siblings of "stx".
+
+
+<H3>Additional Support Files</H3>
+When the browser checks a package into the source repository or creates them in a
+temporary folder for compilation,
+a number of additional support files are also generated
+(possibly checked into the same repository directory).
+Of special interest are makefiles, batch scripts, installer scripts and meta information for packaging.
+These allow for a class library to be built
+from the command line shell
+or triggered by an automatic build process,
+such as Jenkins, expeccoNET, cron jobs or similar.
+<P>
+Makefiles are essential for unattended automatic builds,
+as opposed to interactive building as done in the ST/X IDE's packager tool.
+<P>
+Notice, that build support files are generated for all possible target architectures.
+That means that under Linux, all files for a Windows build or an OSX build are also
+generated. And vice versa.
+Once you have checked a package into the source repository,
+all you have to do on the other architectures is to check the files out,
+and "make" there. We do not currently support cross-compilation directly,
+although this could be implemented relatively easily by generating additional make
+rules, which call other compiler tool chains.
+If you have to build for multiple architectures, the current approach is
+to setup multiple virtual machines (virtualBox/VMware),
+and trigger the builds inside them (exept does this nightly, using jenkins as a driver).
+
+<H3>Structure of a Project inside the IDE</H3>
+Inside Smalltalk, three classes are needed to define a project
+(actually only two, if a command line program is to be built).
+Those can be created manually in the browser,
+or generated for you by the packager.
+<UL>
+<LI>the ProjectDefinition class
+<BR>This defines the type of application (GUI / non-GUI / Library), its contents (i.e. the set of classes to
+be included in the binary itself and the set of library-dll's to be included in the deployed
+package), and some other metadata, such as name, icon, title etc.
+<br>This is created inside the ST/X IDE, either manually, or by the browser's "Create Project" menu functions,
+or inside the packager itself.
+<P>
+<LI>the ApplicationModel class (GUI-Applications only)
+<BR>This defines the GUI, and is typically created using the UI-Painter.
+In almost all cases, this will be a subclass of <i>ApplicationModel</i>
+and can completely be written, executed and tested inside the IDE.
+Applications are completely developped inside the IDE; compilation,
+packaging, deploying and installing is only needed as the very last step, when
+the actual program is complete and fully debugged.
+<P>
+<LI>the Startup class
+<BR>This is the first class which gets control when the standalone executable is started;
+it can analyze the command line arguments, read patches or updates, start background ptocesses,
+and will eventually open the application's GUI. This corresponds to the "main" function in
+other programming languages.
+<P>
+A startup class is only needed/generated for stand alone executables -
+not for class library packages.
+They are also not needed/used if the application is only to be opened from within the
+<CITE>Smalltalk/X</CITE> IDE (i.e. if you do not plan to deploy it as standalone binary).
+</UL>
+
+<H3>Local Builds using the Packager</H3>
+
+The packager creates all of the build support files without a repository,
+on the local machine.
+It creates a temporary folder, generates the required files for building,
+and calls "make" locally. The final output will be a deployable package
+for the local architecture (i.e. a Windows/Linux/OSX deployable),
+which will be created in that temporary folder.
+<p>
+All of the three components above can be generated for you by the packager,
+to provide an initial (template) framework for further work. Of course, this automatically generated
+code will only implement an empty application without any useful functionality.
+However, it is easy to modify this into something more interesting, using the
+<A HREF="../uipainter/TOP.html">UI-Painter</A>,
+the <A HREF="../uipainter/MenuEditor.html">Menu-Builder</A> and the
+<A HREF="../newbrowser/TOP.html">SystemBrowser</A>.
+<P>
+When these classes have been specified, all required files are written into a temporary
+build directory. This includes the class and extension sources,
+make- and other support files.
+<P>
+Finally, the actual build process is started. This requires an external C-compiler.
+Under windows, both Borland-C (free download available via the internet) and
+Microsoft's Visual-C++ (also available for free) can be used. Support for
+lcc, mingw and other compiler suites is being developed, but not yet finished or
+considered not yet stable enough for release.
+We still recommend the use of the Borland Suite (bcc),
+because the Microsoft compiler still has serious bugs which prevent some classes from being
+compiled (especially: the string constant limitation may be a problem).
+<P>
+On Windows, a self-installing executable is built using the NullSoft NSIS package.
+After the build, all files are packaged in a single install-file.
+This is called "MyApplicationSetup.exe" and found in the project-specific subdirectory
+of the build directory. For deployment, this single file needs to be delivered to a customer
+and executed there.  If you do not want to use
+NSIS, you'll have to package the files resulting from the build yourself, or simply
+zip the whole folder and deploy the resulting zip archive.
+<P>
+On Unix/Linux, depending on the system, either a tar or installable auto-package is generated.
+<P>
+On Mac OSX, a mountable ".dmg" image or ".pkg"  is generated, depending on the type of
+project.
+
+<H3>Checkin/Checkout and Build</H3>
+
+If you plan to setup an automatic build system (especially for team developmentin a bigger team),
+you should setup the following:
+<ol><li>A central CVS repository
+<br>although SVN, Git, HG and others are also possible, we still recommend the
+old-fashioned CVS, as it is best integrated into the ST/X browser and other tools.
+<li>Jenkins for automatic builds
+<br>and virtual machines with the target systems (i.e. one for a Windows32 build using borland or visual-C,
+one for a Windows64 build, using MINGW, one for a Linux build and possibly one for
+an OSX build).
+<li>Install ST/X on the build machines. You will need a folder structure as
+deployed, with at least "stx/include", "stx/stc" and the "stx/libXXX" folders.
+The "libXXX" folders must have the header files for the classes (".H" or ".STH" files).
+<li>setup your repository, jenkins and build machines, so that the developed project is
+automatically checked out into a sibling folder of the "stx" folder every night,
+and "make" is called in your final application folder there.
+<li>define Jenkins rules
+<br>to force a cvs-checkout followed by "make" on the build machines
+<li>setup your ST/X IDE to use that repository
+<br>install ST/X on the development machine(s), go to the settings dialog,
+and define the repository to be used for your module name ("myCompany") to the
+central repository. For example, we use ":pserver:&lt;user&gt;@cvs.bh.exept.de:/cvs/exept"
+for the "exept" module, and ":pserver:&lt;user&gt;@cvs.exept.de:/cvs/stx"
+for the basic package (the "stx" module).
+This setup uses two distinct repositories, the public repository for all the "stx" stuff
+("exept.de" is the server visible to the public) and an in-house repository,
+which is only reachable from within the company.
+<br>
+When a team member checks into the source repository, the changes go into the corresponding
+repository.
+</ol>
+
+
+<P>
+Summary: It has NEVER been easier to create and deploy a GUI application written in Smallalk.
+
+
+
+
+<H2><A HREF="#INDEX" NAME="TERMINAL">Terminal</A> - A Shell Terminal</H2>
+
+This application provides a VT100 terminal emulation as an interface to the operating
+system's command line interface
+(i.e. "shell" under Unix or "command.com"/"cmd.exe" under DOS based systems).
+<P>
+This application is known to have some bugs:
+<UL>
+<LI>The VT100 emulation is neither complete nor correct. There are some incompatibilities,
+especially with respect to the wrapmode behavior when the cursor is at the right margin of
+a reagion or the logical screen width.
+This affects some curses based editors which optimize positioning by depending on
+the wrap mode behavior (vi seems to work, other editors suffer).
+<P>
+<LI>No unicode, no character set selection.
+<P>
+<LI>Under windows, any input is buffered and only passed to the command shell ("command.com")
+when the return key is pressed. The terminal behaves as if always in
+line-buffered mode, and immediate keyboard responses
+(i.e. command and filename completion on Tab-key) do not work.
+This behavior started after windows95 (where it worked correctly).
+Some magic console setting seems to be missing in order
+to set it to "raw/immediate/unbuffered" mode.
+<P>
+In the latest version, a workaround hack has been implemented, which reads the command line
+with local echo (and also provides line editing support), and finally transmitts the
+complete line when the return key is pressed.
+This works acceptable except for command- and file-name completion (TAB key),
+which is not done by the emulator.
+<P>
+Any help from a Windows expert would be much appreciated to fix this.
+<P>
+<LI>Under OSX, the job-control and interrupt characters do not work.
+<BR>Any help from an OSX expert would be much appreciated to fix this.
+</UL>
+
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif" ALT="[stx logo]">
+Copyright &copy; 1995-2016 Claus Gittinger Development & Consulting, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.212 $ $Date: 2018-04-24 08:14:51 $
+
+</BODY>
+</HTML>

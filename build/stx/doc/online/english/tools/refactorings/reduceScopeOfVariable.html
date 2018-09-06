@@ -1,0 +1,66 @@
+<html><head><title>Refactoring: 
+Reduce Scope of Variable</title></head><body>
+<H1>
+Reduce Scope of Variable</H1>
+
+<P><B> Refactoring contributed by 
+	
+<A href="http://www.henricson.se/mats">Mats
+Henricson</A></B></P>
+<P><I><CENTER>
+You have a local variable declared in a scope that is larger than
+where it is used</CENTER></I></P>
+<P><B><CENTER>
+Reduce the scope of the variable so that it is only visible in the
+scope where it is used</CENTER></B></P>
+
+<PRE>
+void foo()
+{
+    int i = 7;
+
+    // i is not used here
+
+    if (someCondition)
+    {
+        // i is used only within this block
+    }
+
+    // i is not used here
+}
+
+</PRE><P><CENTER><IMG SRC="arrow.gif"/></CENTER></P>
+
+<PRE>
+void foo()
+{
+    // i can not be used here
+
+    if (someCondition)
+    {
+        int i = 7;
+
+        // i is used only within this block
+    }
+
+    // i can not be used here
+}
+
+</PRE>
+
+<h2>Motivation</h2>
+<P>
+There are several problems with local variables declared in too large scopes. One is that the variable may be declared but never used, as is the case if <code>someCondition</code> in the above example is false. Since declarations of variables in many cases costs computational cycles, you may end up wasting time for nothing. Another problems is that it clutters the name space. If you have several objects of the same type within the same scope, naming them can be quite contrieved - (user1, user2, user3 or firstUser, otherUser, nextUser). You may also end up having one variable hiding another variable with the same name in a larger scope, something most seasoned programmers can testify is very confusing and error prone.</P>
+
+<h2>Mechanics</h2><UL>
+<LI>Move the declaration of the variable to the scope where that variable is used, making sure that you haven't reduced the scope of the variable too much, so that it isn't in scope at some other place where it is used</LI>
+<LI>Compile and test  </LI>
+</UL>
+<h2>Additional Comments</h2>
+<P>
+When I'm writing new code I find I don't scope my temps any less than method scope. This is because I keep my methods short, so reducing scope any further doesn't add much value. The value of this refactoring is in breaking up a large method. Doing this refactoring can help you see where a variable is used. As such it's a good move before doing <A href="extractMethod.html">Extract Method. </A></P>
+<P>Also, don't forget you can do this on a field that's only used by one method.
+</P>
+<P><I>--Martin Fowler</I></P>
+
+<P /><P /><P><CENTER><A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A></CENTER></P></body></html>

@@ -1,0 +1,18 @@
+# $Header: /cvs/stx/stx/support/VGL/vogl/Make.proto,v 1.14 2005-07-08 19:47:06 cg Exp $
+#
+
+#--------- no need to modify anything below -------
+
+TOP=../../..
+SUBDIRS=
+
+all::
+	$(MAKE) -f $(MAKEFILE_VOGL) \
+		CC="$(CC)" OPT="$(OPT)" CCCONFOPT="$(CCCONFOPT) $(VGL_OPT)" \
+		CLASSLIB_LD="$(CLASSLIB_LD)" XINCLUDE="$(XINCLUDE)"
+
+clean::
+	-rm -f drivers/*.o src/*.o
+
+clobber::
+	-rm -f drivers/*.o src/*.o src/libvogl.a

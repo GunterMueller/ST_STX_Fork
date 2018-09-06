@@ -1,0 +1,11 @@
+<addressbook>
+ <group>
+  <name value="15"/><!-- <empty/> -->
+ </group>
+ <group>
+  <name />
+  	
+  <content>10</content>
+  <endcontent />
+ </group>
+</addressbook>

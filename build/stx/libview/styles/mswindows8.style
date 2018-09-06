@@ -1,0 +1,250 @@
+; View defaultStyle:#mswindows8
+;
+; $Header$
+
+name                    #win8
+comment                 'Windows8 lookalike (unfinished)'
+previewFileName         'viewStyleSample_win8.png'
+
+#if (Language == #german) or:[Language == #de]
+comment  'an Windows8 angelehnter Stil (unvollständig)'
+#endif
+
+#if (Language == #french) or:[Language == #fr]
+comment  'Un style qui résemble Windows8 (incomplet)'
+#endif
+
+
+ToolbarIconLibrary              ?(Smalltalk at:#Windows8ToolbarIconLibrary) ? (Smalltalk at:#XPToolbarIconLibrary) ? GenericToolbarIconLibrary
+useQuestForHelp                 true
+
+;
+; unfinished
+;
+
+;
+; notice: the values below
+; are not used when running under native Windows
+; (uses system-settings values then)
+;
+#if Screen current hasGreyscales
+
+selectionBlue                   (Color red:20.0 green:60.0 blue:100.0) exactOrNearestOn:(Screen current)
+
+viewGrey                        (Color grey:95)  exactOrNearestOn:(Screen current)
+viewLightGrey                   Color white
+lightColor                      Color white
+halfShadowColor                 (Color grey:80) exactOrNearestOn:(Screen current)
+halfLightColor                  =viewGrey
+shadowColor                     (Color grey:60) exactOrNearestOn:(Screen current)
+
+#else
+
+selectionBlue                   Color black
+viewGrey                        Color white
+viewLightGrey                   Color white
+lightColor                      Color grey:50
+shadowColor                     Color black
+
+#endif
+
+#if Screen current platformName = 'WIN32'
+
+selectionBlue                   [Screen current getSystemColor:#'COLOR_HIGHLIGHT']
+menu.backgroundColor            [Screen current getSystemColor:#'COLOR_MENU'     ]
+menu.foregroundColor            [Screen current getSystemColor:#'COLOR_MENUTEXT' ]
+viewGrey                        [Screen current getSystemColor:#'COLOR_BTNFACE'  ]
+lightenedViewGrey               [(Screen current getSystemColor:#'COLOR_BTNFACE') lightened ]
+darkenedViewGrey                [(Screen current getSystemColor:#'COLOR_BTNFACE') darkened ]
+
+#else
+
+lightenedViewGrey               Color redByte:240 greenByte:240 blueByte:240
+darkenedViewGrey                Color redByte:150 greenByte:150 blueByte:150
+
+#endif
+
+#include 'mswindows95.common'
+
+menu.enteredLevel               0
+; menu.buttonEnteredLevel         2   "/ sigh - does not work
+
+;; enable this, when old menuView cares for it also
+;; menu.itemMargin                          1
+menu.selectionFollowsMouse                  true
+menu.enteredBackgroundColor                 =menu.hilightBackgroundColor
+menu.enteredForegroundColor                 =menu.hilightForegroundColor
+menu.iconIndicationOn.bitmapFile            'CheckOn_xp.xpm'
+menu.iconIndicationOff.bitmapFile           'CheckOff_xp.xpm'
+menu.iconRadioOn.bitmap                     (Windows8ToolbarIconLibrary radioOn12x12Icon)
+menu.iconRadioOff.bitmap                    (Windows8ToolbarIconLibrary radioOff12x12Icon)
+menu.iconDisabledIndicationOn.bitmapFile    'CheckOn_disabled_xp.xpm'
+menu.iconDisabledIndicationOff.bitmapFile   'CheckOff_disabled_xp.xpm'
+menu.iconDisabledRadioOn.bitmap             (Windows8ToolbarIconLibrary radioOnDisabled12x12Icon)
+menu.iconDisabledRadioOff.bitmap            (Windows8ToolbarIconLibrary radioOffDisabled12x12Icon)
+
+button.edgeStyle                       nil
+button.borderWidth                     1
+button.activeLevel                     0
+button.passiveLevel                    0
+
+button.frameColor                       (Color redByte:16rAC greenByte:16rAC blueByte:16rAC)
+button.enteredFrameColor                (Color red:50 green:70 blue:92)
+button.activeFrameColor                 (Color red:34 green:62 blue:90)
+button.enteredBackgroundColor           ((GradientBackground vertical:(Color rgbValue:16rEBF3FB) to:(Color rgbValue:16rDCEBFB)) usedLength:24)
+button.activeBackgroundColor            ((GradientBackground vertical:(Color rgbValue:16rDAEBFB) to:(Color rgbValue:16rC3E0FB)) usedLength:24)
+button.activeForegroundColor            (Color black)
+
+arrowButton.borderWidth                 0
+checkToggle.borderWidth                 0
+radioButton.borderWidth                 0
+comboView.button.borderWidth            0
+
+comboView.downForm                      (Windows8ToolbarIconLibrary scrollDownOffIcon)
+comboView.disabledDownForm              (Windows8ToolbarIconLibrary scrollDownOffIcon)
+comboView.enteredDownForm               (Windows8ToolbarIconLibrary scrollDownOffEntered2Icon)
+comboView.activeDownForm                (Windows8ToolbarIconLibrary scrollDownActiveIcon)
+; comboView.downFormFile                  'ComboDn_xp.xpm'.
+; comboView.disabledDownFormFile          'ComboDn_disabled_xp.xpm'.
+; comboView.activeDownFormFile            'ComboDn_active_xp.xpm'.
+; comboView.enteredDownFormFile           'ComboDn_entered_xp.xpm'.
+comboView.button.activeLevel            0
+comboView.button.passiveLevel           0
+comboView.button.activeBackgroundColor  =viewGrey
+; comboView.button.activeBackgroundColor  (Color white)
+; comboView.button.backgroundColor        (Color white)
+; comboView.level                         0
+
+; selection.highlightEnterItem       true         "/ underline-highlight item under cursor
+
+scroller.viewBackground          (Color redByte:16rF0 greenByte:16rF0 blueByte:16rF0)
+scroller.thumbColor              (Color redByte:16rCD greenByte:16rCD blueByte:16rCD)
+scroller.thumbLightColor         =scroller.thumbColor
+scroller.thumbShadowColor        =scroller.thumbColor
+scroller.thumbEnteredColor       (Color redByte:16rA6 greenByte:16rA6 blueByte:16rA6)
+scroller.thumbActiveColor        (Color redByte:16r60 greenByte:16r60 blueByte:16r60)
+scroller.thumbLevel              0
+scroller.thumbInset              1
+scroller.thumbFrameColor         nil
+scroller.thumbEdgeStyle          nil
+scroller.NTallyMarks             nil
+scroller.tallyLevel              nil
+scroller.tallyInset              nil
+scroller.tallyDistance           nil
+scroller.snapBackDistance        100
+scroller.minThumbSize            16
+
+scroller.vista3DStyle           false
+
+miniScroller.size               3     "/ in millimeters
+
+
+arrowButton.upForm                  (Windows8ToolbarIconLibrary scrollUpOffIcon)
+arrowButton.enteredUpForm           (Windows8ToolbarIconLibrary scrollUpOffEntered2Icon)
+arrowButton.activeUpForm            (Windows8ToolbarIconLibrary scrollUpActiveIcon)
+arrowButton.disabledUpForm          (Windows8ToolbarIconLibrary scrollUpOffIcon)
+
+arrowButton.downForm                (Windows8ToolbarIconLibrary scrollDownOffIcon)
+arrowButton.enteredDownForm         (Windows8ToolbarIconLibrary scrollDownOffEntered2Icon)
+arrowButton.activeDownForm          (Windows8ToolbarIconLibrary scrollDownActiveIcon)
+arrowButton.disabledDownForm        (Windows8ToolbarIconLibrary scrollDownOffIcon)
+
+arrowButton.leftForm                (Windows8ToolbarIconLibrary scrollLeftOffIcon)
+arrowButton.enteredLeftForm         (Windows8ToolbarIconLibrary scrollLeftOffEntered2Icon)
+arrowButton.activeLeftForm          (Windows8ToolbarIconLibrary scrollLeftActiveIcon)
+arrowButton.disabledLeftForm        (Windows8ToolbarIconLibrary scrollLeftOffIcon)
+
+arrowButton.rightForm               (Windows8ToolbarIconLibrary scrollRightOffIcon)
+arrowButton.enteredRightForm        (Windows8ToolbarIconLibrary scrollRightOffEntered2Icon)
+arrowButton.activeRightForm         (Windows8ToolbarIconLibrary scrollRightActiveIcon)
+arrowButton.disabledRightForm       (Windows8ToolbarIconLibrary scrollRightOffIcon)
+
+
+arrowButton.leftFormFile          'ScrollLt.xp.xpm'
+arrowButton.enteredLeftFormFile   'ScrollLt_entered.xp.xpm'
+arrowButton.activeLeftFormFile    'ScrollLt_active.xp.xpm'
+arrowButton.disabledLeftFormFile  'ScrollLt_disabled.xp.xpm'
+
+arrowButton.rightFormFile         'ScrollRt.xp.xpm'
+arrowButton.enteredRightFormFile  'ScrollRt_entered.xp.xpm'
+arrowButton.activeRightFormFile   'ScrollRt_active.xp.xpm'
+arrowButton.disabledRightFormFile 'ScrollRt_disabled.xp.xpm'
+
+arrowButton.passiveLevel          0
+arrowButton.activeLevel           0
+arrowButton.backgroundColor       =scroller.viewBackground
+arrowButton.activeBackgroundColor =scroller.viewBackground
+
+noteBook.backgroundColor          =lightenedViewGrey
+noteBook.activeBackgroundColor    =viewBackground
+noteBook.foregroundColor          Color black
+noteBook.lightColor               =darkenedViewGrey
+noteBook.shadowColor              =darkenedViewGrey
+noteBook.passiveBackgroundColor   =lightenedViewGrey
+
+checkToggle.bitmapFile            'CheckOn10_xp.xpm'
+radioButton.passiveImage          (Windows8ToolbarIconLibrary radioOff12x12Icon)
+radioButton.activeImage           (Windows8ToolbarIconLibrary radioOn12x12Icon)
+radioButton.enteredPassiveImage   (Windows8ToolbarIconLibrary radioOffEntered12x12Icon)
+radioButton.enteredActiveImage    (Windows8ToolbarIconLibrary radioOnEntered12x12Icon)
+radioButton.disabledPassiveImage  (Windows8ToolbarIconLibrary radioOffDisabled12x12Icon)
+radioButton.disabledActiveImage   (Windows8ToolbarIconLibrary radioOnDisabled12x12Icon)
+checkToggle.disabledActiveImage   (Windows8ToolbarIconLibrary checkToggleOnDisabledIcon)
+checkToggle.disabledPassiveImage  (Windows8ToolbarIconLibrary checkToggleOffDisabledIcon)
+checkToggle.activeImage           (Windows8ToolbarIconLibrary checkToggleOnIcon)
+checkToggle.passiveImage          (Windows8ToolbarIconLibrary checkToggleOffIcon)
+checkToggle.enteredPassiveImage   (Windows8ToolbarIconLibrary checkToggleOffEnteredIcon)
+checkToggle.enteredActiveImage    (Windows8ToolbarIconLibrary checkToggleOnEnteredIcon)
+checkToggle.activeLevel           0
+checkToggle.passiveLevel          0
+checkToggle.disabledBackgroundColor     =viewGrey
+checkToggle.backgroundColor             =viewGrey
+checkToggle.activeBackgroundColor       =viewGrey
+
+menu.iconIndicationOn             (Windows8ToolbarIconLibrary checkToggleOnIcon)
+menu.iconIndicationOff            (Windows8ToolbarIconLibrary checkToggleOffIcon)
+menu.iconDisabledIndicationOn     (Windows8ToolbarIconLibrary checkToggleOffDisabledIcon)
+menu.iconDisabledIndicationOff    (Windows8ToolbarIconLibrary checkToggleOffIcon)
+
+noteBook.activeTabMarkerColor       (Color red:100 green:78 blue:23)
+
+popup.borderColor                   (Color grey:50)
+popup.borderWidth                   1
+
+editField.level                     0
+editField.borderWidth               1
+editField.borderColor               (Color redByte:175 greenByte:190 blueByte:240)
+
+comboView.level                   0
+comboView.borderWidth             1
+comboView.borderColor             (Color redByte:175 greenByte:190 blueByte:240)
+
+; label.foregroundColor             (Color redByte:0 greenByte:70 blueByte:213)
+; button.foregroundColor            (Color black)
+; radioButton.foregroundColor       (Color black)
+; checkBox.labelForegroundColor     (Color black)
+
+; noteBook.foregroundColor          (Color redByte:0 greenByte:70 blueByte:213)
+framedBox.foregroundColor         (Color redByte:0 greenByte:70 blueByte:213)
+
+variablePanel.handleLevel       0
+
+infoBox.iconFile                'bitmaps/Information_XP.xpm'
+warningBox.iconFile             'bitmaps/Warning_XP.xpm'
+requestBox.iconFile             'bitmaps/Request_XP.xpm'
+errorBox.iconFile               'bitmaps/Error_XP.xpm'
+
+selection.backgroundColor       (Color white)
+
+;selection.hilightForegroundColor    (Color black)
+;selection.hilightBackgroundColor    (Color rgbValue:16rDFF0F8)
+;selection.hilightFrameColor         (Color rgbValue:16r96D9F9)
+
+;;;menu.hilightForegroundColor         (Color black)
+;;;menu.hilightBackgroundColor         (Color rgbValue:16rDAEBF3)
+;;;menu.hilightFrameColor              (Color rgbValue:16rA8D8EB)
+
+editField.selectionBackgroundColor   =selectionBlue
+editField.selectionForegroundColor   (Color white)
+
+scrolledView.level      0

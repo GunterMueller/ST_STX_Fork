@@ -1,0 +1,156 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - ASN1/GDMO Parser &amp; Support Classes</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="cparser.html">     <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="osi_acse.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>ASN1/GDMO Parser &amp; Support Classes</H1>
+
+<H2>Contents</H2>
+<UL>
+ <LI><A HREF="#INTRO" NAME="I_INTRO">Introduction</A>
+ <LI><A HREF="#ASN1_PARSER" NAME="I_ASN1_PARSER">ASN.1 Parser</A>
+ <LI><A HREF="#ASN1_SAMPLE" NAME="I_ASN1_SAMPLE">ASN.1 Sample Usage</A>
+</UL>
+
+<H2><A NAME="INTRO">Introduction</A></H2>
+
+This package consists of a Parser which reads ISO-x208 ASN.1 module
+specifications plus ISO x722-GDMO Managed Object definitions
+and a set of support classes to represent ASN types and GDMO objects.
+<P>
+Encoding/Decoding support is (currently) provided for BER encoded data packets.
+The framework provides the required hooks and flexibility
+for other coders (DER, PER, ...) to be plugged in easily.
+<P>
+
+<H2><A NAME="ASN1_PARSER">ASN.1 Parser</A></H2>
+
+The parser reads standard ASN.1 definitions from
+a file or string and returns an asn.1 module instance which
+is effectively a namespace (Dictionary) for its definitions.
+Typically, ASN.1 definitions are provided by a class method
+(which either returns the definitions as a constant string or
+returns a file's contents). This is the most flexible scheme, as
+ASN.1 definitions are parsed just in time, and the program is able to
+adjust its operation on the most up-to-date definitions automatically.
+However, it is also possibly to parse the definitions at compile time, and provide
+generated and statically compiled definition classes. However, in such a static
+scheme, any definition change will require a recompilation of the application.
+
+
+<H2><A NAME="ASN1_SAMPLE">ASN1 Sample Usage</A></H2>
+
+Assuming that the class method provides the ASN.1 source, a typical
+definition may look like:
+<CODE><PRE>
+asn1Definitions
+	^
+'
+   rsadsi OBJECT IDENTIFIER ::=
+       {iso(1) member-body(2) us(840) rsadsi(113549)}
+
+   digestAlgorithm   OBJECT IDENTIFIER ::= {rsadsi 2}
+
+   id-hmacWithSHA224 OBJECT IDENTIFIER ::= {digestAlgorithm 8}
+   id-hmacWithSHA256 OBJECT IDENTIFIER ::= {digestAlgorithm 9}
+   id-hmacWithSHA384 OBJECT IDENTIFIER ::= {digestAlgorithm 10}
+   id-hmacWithSHA512 OBJECT IDENTIFIER ::= {digestAlgorithm 11}
+'
+</PRE></CODE>
+(the above is a real world example, copy-pasted from RFC4231).
+<P>
+Then, the classes <CODE>initialize</CODE>-method could be:
+<CODE><PRE>
+initialize
+    Module isNil ifTrue:[
+	Module := OSI::ASN1Parser parseModuleDefinition:self asn1Definitions.
+    ].
+    ^ Module
+</PRE></CODE>
+assuming that <I>Module</I> is a local class variable.
+<P>
+Then, within the class, defined entities are accessible like:
+<CODE><PRE>
+    Module at:'hmacWithSHA512'
+</PRE></CODE>
+
+<P>
+If the module contains data structures, as in the X509 definition:
+<CODE><PRE>
+    ...
+    TBSCertificate ::= SEQUENCE {
+	version          [ 0 ]  Version DEFAULT v1,
+	serialNumber            CertificateSerialNumber,
+	signature               AlgorithmIdentifier,
+	issuer                  Name,
+	validity                Validity,
+	subject                 Name,
+	subjectPublicKeyInfo    SubjectPublicKeyInfo,
+	issuerUniqueID    [ 1 ] IMPLICIT UniqueIdentifier OPTIONAL,
+	subjectUniqueID   [ 2 ] IMPLICIT UniqueIdentifier OPTIONAL,
+	extensions        [ 3 ] Extensions OPTIONAL
+    }
+    ...
+</PRE></CODE>
+those can be instantiated as:
+<CODE><PRE>
+    cert := (Module at:'TBSCertificate') new.
+    cert issuer:'fooBar'.
+    cert subjectPublicKeyInfo:((Module at:'SubjectPublicKeyInfo') new.
+    ...
+</PRE></CODE>
+i.e. the returned objects behave like classes which can be instantiated,
+and those instances can be accessed via getter- and setter methods.
+<P>
+By putting those definitions into a shared pool or class variables,
+the code can further be simplified to:
+<CODE><PRE>
+    cert := TBSCertificate new.
+    cert issuer:'fooBar'.
+    cert subjectPublicKeyInfo:SubjectPublicKeyInfo new.
+    ...
+</PRE></CODE>
+and eventually encoded using the BER-coder:
+<CODE><PRE>
+    bytes := OSI::BERCoder encode:cert.
+</PRE></CODE>
+or decode a BER-encoded stream, using the ASN.1 type:
+<CODE><PRE>
+    cert := OSI::BERCoder decode:bztes withType:TBSCertificate.
+</PRE></CODE>
+<P>
+
+<H2><A NAME="ASN1_COMPILING">Compiling ASN.1 Defnitions</A></H2>
+
+--- to be documented ---
+
+<H2>Documentation</H2>
+This document is available upon request.
+
+<H2>Licensing</H2>
+This addOn package is licensed separately from the base ST/X system.
+<BR>
+Please contact eXept for license information &amp; pricing.
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 1999 eXept Software AG
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.11 $
+</BODY>
+</HTML>

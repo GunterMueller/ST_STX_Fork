@@ -1,0 +1,36 @@
+This directory contains additional high level graphical development tools;
+currently, a new multipane inspector is found here.
+
+These are normally not needed for final applications.
+
+Depending on the configuration and capabilities of your Operating-
+System, the resulting classlibrary is either:
+
+	libtool2.a     - an archive
+
+	libtool2.obj   - a prelinked object library
+
+	libtool2.so    - a shared object
+
+the library includes init code (libtool2_Init) for all of its components.
+
+
+Things you can do here:
+
+    make                compile all classes, producing libtool2
+
+    make objs           compile all object files
+
+    make install        compile all and install in DESTLIBDIR
+
+    make qinstall       only install - assumes binaries are up-to-date 
+
+    make check          syntax check only over all .st files
+
+    make <file>.o       compile <file>.st to object-file
+
+    make <file>.c       compile <file>.st to c intermediate
+
+    make clean
+
+    make clobber

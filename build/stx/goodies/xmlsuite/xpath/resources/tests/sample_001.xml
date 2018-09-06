@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root att_a="1" att_b="2" att_c="3" att_d="4">
+	<tag att="something"/>
+	<tag>
+		<subtag></subtag>
+		<subtag>Text in <emp>subtag</emp></subtag>
+		<subtag>Hello <b good="yes">world</b></subtag>
+	</tag>
+	<tag/>
+</root>

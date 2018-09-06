@@ -1,0 +1,147 @@
+# This is a demonstration Make.proto for class library building.
+#
+# your directory should contain:
+#
+#	Make.proto		a modified version of this file
+#
+#	*.st			your classes
+#
+# There is a hen-egg bootstrap conflict, of how to create the initial
+# Makefile after you have installed a new directory with your Make.proto
+# file. You can start with:
+#	make -f ../someExistingDirectory/Makefile Makefile
+# then remake locally with:
+#       make makeMakefile
+#
+# after that, you should always keep an existing Makefile around, and
+# use:
+# 	make Makefile
+# after any change in Make.proto.
+#
+# The other solution is to put the new directories name into the SUBDIRS=
+# list of the parent directory, and "make Makefiles" there.
+# However, since this modification will be lost when you get a new
+# ST/X distribution, its recommended to add your dir-names to
+# the OTHERLIBDIRS= definition in a private config file.
+# That way, all you have to do when upgrading to a new ST/X version
+# is to CONFIG <arch> myConf.
+
+#------------------------------------------------------------------------
+# start of generic library Make.proto
+#
+
+# this line should specify, how the smalltalk-top directory
+# can be reached.
+# (for example, include files are searched for in "$(TOP)/include").
+# Replace '..' by the number of hops needed to reach the smalltalk top directory.
+
+TOP=..
+
+# if there are any subdirectories which make should visit,
+# name them here. If non-empty, subdirectories are visited BEFORE
+# local targets when making things.
+
+SUBDIRS=
+
+# this defines the name of your class-libarary
+# for example, if the name is 'libfoo', an object called 'libfoo.obj'
+# will be created by that make.
+# Depending on the individual setup, either a prelinked library object 
+# 'libfoo.obj', an archive 'libfoo.a' or shared a object 'libfoo.so' will 
+# be created. The details are specified in your particular configuration
+# file - not here.
+#
+# to avoid confusion, it is recommended to name the directory after the
+# library that is created - it makes you life easier in the future.
+
+LIBNAME=libfoo
+
+# this defines the stc compiler options to use for the st-files here
+# (some useful default is already defined in the configuration files)
+# For all low-level basic classes, use '+optinline'; for all GUI and
+# non-time-critical stuff, use '+optspace' or even '+optspace2'
+
+#STCOPT=+optspace
+#STCOPT=+optinline
+
+# if you dont want the header definitions to be written to the INCLUDE
+# directory (but left locally instead), uncomment the following line:
+
+# STCFLAGS= -H. $(STCOPT)
+
+# this defines the default target, make should use
+# if there are any local objects, (c-) libraries etc. to build, add them
+# at the end of the line.
+# The 'abrev.stc' target will create an abbreviation file from all '.st' files
+# found in this directory.
+# Notice the double-colon; there are some other rules for 'all' already defined 
+# in the stdRules files
+
+all::   abbrev.stc objs genClassList $(OBJTARGET)
+
+
+# this should list all object files to be created
+# (use '$(O)' instead of '.o' as filename extension for binary files,
+#  since there are systems around, where object files have other names 
+#  - such as NT, Transputer, Mac and others. 
+#  Although this is currently not needed, it avoids trouble in the future).
+
+objs::							  \
+	      Foo.$(O)                                    \
+	      Bar.$(O)                             	  \
+	      Baz.$(O)
+
+# an optional installation rule
+# the default already installs the LIB in the DESTLIBDIR
+# so the below is actually never needed.
+
+#install:: 
+#	test -d $(DESTLIBDIR) || mkdir $(DESTLIBDIR)
+#	-$(INSTALL) $(LIBNAME)$(OBJNAME) $(DESTLIBDIR)
+
+# an optional rule to cleanup temporary stuff
+# be careful, to NOT uncomment the following line if you have any
+# c- or h-files in this directory.
+
+#cleanjunk::
+#	-rm -f *.c *.H
+
+# an optional rule to clean all intermediate files, but NOT the resulting
+# target (i.e. class-library in this case)
+
+# clean::
+# 	-rm -f *.c *.H
+
+# an optional rule to clean everything that can be reconstructed.
+# 'make clobber' should leave the directory in a fresh state
+
+# clobber::
+# 	-rm -f *.c *.H
+
+# an optional tar rule for easier transportation of subcomponents
+# this rule should create a tar-archive for this directory and any SUBDIRS
+# with pathnames as seen from TOP - for easier untar at the receiving site
+
+# tar:
+# 	(cd $(TOP); tar cvf SRCDISTRIB/libfoo.tar \
+# 	                        libfoo/*.st \
+# 	                        libfoo/Make.proto
+
+
+# dependencies:
+# upcoming versions of stc will have a makeDepend feature; 
+# until then, you have to do it manually ...
+
+STCHDR=$(IINCLUDE)/stc.h $(IINCLUDE)/stcIntern.h
+
+# just an example: Foo inherits from Object,
+# Bar inherits from Foo; 
+# Baz inherits from OrderedCollection.
+# 
+# For local classes, use '$(INCLUDE)/File.H if your H-inclue files are 
+# created in INCLUDE; otherwise, use 'File.H'
+# (see STCFLAGS-setting above)
+
+Foo.$(O): 	Foo.st $(STDHDR)
+Bar.$(O):	Bar.st Foo.H $(STDHDR)
+Baz.$(O):	Baz.st $(INCLUDE)/OrdColl.H $(STDHDR)

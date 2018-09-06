@@ -1,0 +1,163 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+   <META NAME="Author" CONTENT="Thomas Zwick, eXept software AG, Germany">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.04 [en] (X11; I; Linux 2.0.30 i586) [Netscape]">
+   <TITLE>Using the Resource Selection Browser</TITLE>
+</HEAD>
+<BODY>
+<A HREF="HelpTool.html" NOPRINT><IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="Using the Help Tool" NOSAVE HEIGHT=30 WIDTH=30></A>
+<A HREF="../TOP.html" NOPRINT><IMG SRC="../../../icons/DocsUpArrow.gif" ALT="Programming Tools" NOSAVE HEIGHT=30 WIDTH=30></A>
+<A HREF="HierarchicalListEditor.html" NOPRINT><IMG SRC="../../../icons/DocsRightArrow.gif" ALT="HierarchicalListEditor" NOSAVE HEIGHT=30 WIDTH=30></A>
+<BR>&nbsp;
+<HR ALIGN=LEFT WIDTH="100%">
+<H1>
+<FONT SIZE=+4>Using the Resource Selection Browser</FONT></H1>
+
+<H2>
+Index</H2>
+
+<UL>
+<LI>
+<A HREF="#INTRO">Introduction</A></LI>
+
+<LI>
+<A HREF="#FUNCTIONS">Functions of the Resource Selection Browser</A></LI>
+</UL>
+
+<HR ALIGN=LEFT WIDTH="100%">
+
+<H2><A NAME="INTRO"></A>Introduction</H2>
+The Resource Selection Browser of <I>ST/X</I> allows you to browse and
+select methods containing the following resource specifications:
+<UL>
+<LI>
+<B>canvas</B> - resource method format of the <A HREF="TOP.html">"GUI Painter"</A></LI>
+
+<LI>
+<B>menu</B> - resource method format of the <A HREF="MenuEditor.html">"Menu Editor"</A></LI>
+
+<LI>
+<B>image</B> - resource method format of the <A HREF="ImageEditor.html">"Image Editor"</A></LI>
+
+<!--
+<LI>
+<B>fileImage</B> - readable by the <A HREF="ImageEditor.html">Image Editor</A></LI>
+-->
+
+<LI>
+<B>help</B> - resource method format of the <A HREF="HelpTool.html">"Help Tool"</A></LI>
+
+<LI>
+<B>hierarchicalList</B> - resource method format of the <A HREF="HierarchicalListEditor.html">
+"Hierarchical List Editor"</A></LI>
+
+<LI>
+<B>tabList</B> - resource method format of the <A HREF="TabListEditor.html">"Tab List Editor"</A></LI>
+
+<LI>
+<B>tableColumns</B> - resource method format of the <A HREF="TableColumnEditor.html">"Table Column Editor"</A></LI>
+</UL>
+
+<HR ALIGN=LEFT WIDTH="100%">
+
+<H2><A NAME="FUNCTIONS"></A>Functions of the Resource Selection Browser</H2>
+After startup, a Resource Selection Browser appears as shown in the next figure:
+
+<P><IMG SRC="../../../pictures/ResourceSelectionBrowser.gif" ALT="A View of a Resource Selection Browser" NOSAVE HEIGHT=376 WIDTH=610>
+<BR>&nbsp;
+<OL>
+<LI>
+<B>Tree list of the system classes</B></LI>
+
+<BR>This list shows hierarchically all loaded classes of the smalltalk
+system. By the cursor keys you can move down or up; with double-clicking
+on classes with a plus signs their subclasses can be listed under that
+class. The subclasses can be hidden by a second double-click.
+<P>
+
+<LI>
+<B>Entry field for the name of a class</B></LI>
+
+<BR>When a class has been selected this field shows the class name. Besides
+that, this field has a special functionality:
+<BR>You can type in the first known characters of the class you want to
+browse to. Then press the tab key. Now, the tool will try to find that
+class which name contains these starting string pattern you typed in. This
+process can be repeated as long as you find the desired class.
+<P>
+
+<LI>
+<B>Table of the resource methods</B></LI>
+
+<BR>This table lists all resource methods implemented in the selected class.
+It depends on the instancing call for the Resource Selection Browser which
+resource methods are shown, i.e. a filter for the resource types can be
+set.
+<P>
+
+<LI>
+<B>Entry field for the name of a selector</B></LI>
+
+<BR>When a resource method has been selected, this field shows the name
+of the selector of the resource method. If you want to save a resource
+specification into a new resource method, you have to type the desired
+name of the selector for the resource method into this field.
+<P>
+
+<LI>
+<B><I>Class</I> Creation Button</B></LI>
+
+<BR>By pressing this button you creates a new class with the same superclass
+like the selected class.
+<P>
+
+<LI>
+<B><I>Subclass</I> Creation Button</B></LI>
+
+<BR>By pressing this button you creates a new subclass of the selected class.
+<P>
+
+<LI>
+<B><I>Private</I> Class Creation Button</B></LI>
+
+<BR>By pressing this button you creates a new private class of the selected
+class. You will be asked for a superclass by a dialog.
+
+<P>All new classes get the same category as the selected class.
+<P>
+
+<LI>
+<B><I>Help</I> Button</B></LI>
+
+<BR>By pressing this button a HTML-browser will be opened on this documentation
+file.
+<P>
+
+<LI>
+<B><I>Cancel</I> Button</B></LI>
+
+<BR>By pressing this button the tool will be closed and returns <TT>nil</TT>.
+<P>
+
+<LI>
+<B><I>OK</I> Button</B></LI>
+
+<BR>By pressing this button the tool will accept the selected resource
+method (or the name of the selector, you have typed in before). The tool
+returns then a <TT>String</TT> instance with the following format:
+
+<P><TT>'NameOfTheResourceClass nameOfResourceSelector'</TT>
+
+<P>These message strings will be evaluated in the tools using the Resource
+Selection Browser in order to load or save resource specifications.
+</OL>
+
+<HR>
+
+<P><IMG SRC="../../../icons/stx.gif" ALT="[stx-logo]" NOSAVE NOPRINT HEIGHT=48 WIDTH=47 ALIGN=CENTER>
+<BR><TT>Copyright &copy; 1998 eXept Software AG, all rights reserved</TT>
+<BR>
+<HR>
+</BODY>
+</HTML>

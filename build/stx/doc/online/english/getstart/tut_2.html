@@ -1,0 +1,2957 @@
+<HTML>
+<HEAD>
+<TITLE>Tutorial - Smalltalk basics</TITLE>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="tut_1b.html"> <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="tutorial.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="tut_2b.html"> <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+
+<H1><A NAME="BASICS">Smalltalk basics</A></H1>
+
+<PRE>
+					To a hammer,
+					everything looks like a nail.
+
+
+</PRE>
+
+<H2><A HREF="tutorial.html#I_BASICS" NAME="MOTIVATION">Motivation</A></H2>
+
+Smalltalk provides many features which are hard or impossible to implement in
+many other programming languages - namely closures, real reflection, dynamic late binding
+and a powerful integrated (I mean: really integrated) development environment.
+<P>
+<!--
+Before you ask "why would I need this feature - I don't need that in C/Java/TCL/..."
+(for example, when getting confronted with Metaclasses or closures)
+think a second about the above phrase and read on.
+<P>
+-->
+
+Before describing the language and how you can create your own
+programs, we should explain a few basics - both to give you
+some background and to define the technical terms used in the documentation
+(and literature).
+<P>
+Keep in mind that this text is only a short introduction -
+we recommend reading of a standard textbook on the language for more detailed
+information on the language
+(-> <A HREF="../overview/literature.html">'literature'</A>).
+
+
+
+<H2><A HREF="tutorial.html#I_BASICS" NAME="DEFINITIONS">Definitions, Nomenclature and Concepts</A></H2>
+
+<H4><A NAME="OBJECTS">Objects</A></H4>
+
+In Smalltalk, <b>everything</b> is about <DFN>objects</DFN>.
+<br>Objects can be as simple as a number, a character or as complex as a
+graphic being displayed, windows, user dialogs or complete applications.
+Typical applications consist of many objects (hundreds or thousands),
+each being specialized for and responsible for a particular functionality.
+<P>
+In contrast to hybrid systems like C++ or Java,
+"everything" means really "everything" in Smalltalk.
+This includes integers, characters, arrays, classes
+and even a program's stackframes, which hold the local variables
+during execution.
+<BR>
+In Smalltalk, there are no such things as "builtin" types or classes,
+which have to be treated different, or which do not behave exactly like
+other objects with respect to message sending, inheritance or debuggability.
+For example, in Smalltalk, classes like integer, character, string or classes
+themself can be given new or modified methods -
+even at runtime, by dynamically loading new code.
+
+<H4><A NAME="MESSAGES_AND_PROTOCOL">Messages &amp; Protocol</A></H4>
+
+Objects communicate by sending <DFN>messages</DFN> to other objects.
+In other languages, this is sometimes called a "virtual function call", "virtual function"
+or even "function" alone.
+<BR>All of those other names are a bit misleading,
+and - in the mathematical sense - actually wrong,
+because these message-send operations may have side effects
+or the result may depend on more than the argument(s) alone.
+<p>
+We will therefore use the term "<DFN>message</DFN>" or "<DFN>message send</DFN>" for the act of asking for an operation by name,
+and, as we will see later, the term <DFN>method</DFN> for the actual code which will
+eventually perform the operation.
+
+<P>
+To the outside world, any internals of an object are hidden - all interaction
+happens only via messages.
+
+The set of messages an object understands is called its
+<DFN>message protocol</DFN>, or <DFN>protocol</DFN> for short.
+
+<DL><DT>For example,<DD>a number's protocol contains
+the <CODE>+</CODE>, <CODE>-</CODE>, <CODE>*</CODE> ... messages.
+<BR>
+<DD>a string's protocol contains
+the <CODE>asUppercase</CODE>, <CODE>asLowercase</CODE> ... messages.
+</DL>
+
+When an object receives a message, it is the object itself,
+which decides how to react to the message - the Smalltalk language
+does not imply any semantic meaning into it.
+<P>
+Therefore, theoretically, an object may add the "+" message to its
+protocol and perform an operation which has nothing to do with
+the mathematical concept of <VAR>adding numbers</VAR>.
+<P>
+In practice, this is never done in Smalltalk,
+since it makes programs less understandable.
+For example, the Java operator to concatenate strings is "+",
+whereas in Smalltalk it is "," - and this was done by purpose to make the
+code easier to understand.
+<P>
+However, it is useful to keep in mind that only the message's receiver is
+responsible for the outcome, and in theory, any operator or message selector can
+be redefined by any object.
+(As we will see, this is also the reason for the uncommon precedence rules
+ in binary operations.)
+<P>
+On the other hand, it makes the system very flexible.
+For example, it is very easy to extend the numeric class hierarchy with additional
+things like Complex numbers, Matrices, Functional Objects etc.
+<BR>
+All that is required for those new objects to be handled correctly is
+that they respond to some basic mathematical protocol for arithmetic,
+comparison etc.
+Existing mathematical code is usually not affected by such extensions,
+which makes Smalltalk one of the best environments for code reuse and sharing.
+<BR>
+
+
+
+<H4><A NAME="CLASSES_AND_INSTANCES">Classes & Instances</A></H4>
+
+Since there are often many objects which share the same protocol,
+Smalltalk groups similar objects into <DFN>classes</DFN>.
+Every object is an <DFN>instance</DFN> of some class, and instances of
+the same class have the same protocol (although, each may have different internal
+state).
+<BR>
+This does not imply that instances of different classes must implement
+different protocols - actually, there are classes
+in the system (numeric classes, collection classes), which implement
+a common protocol,
+but are implemented completely different internally.
+This is called <DFN>polymorphism</DFN>.
+<P>
+Classes may have zero, one or many instances.
+<BR>You may wonder how a class without instances could be
+useful - this will become clear when inheritance and abstract
+classes are described further down in this document.
+
+<DL><DT>Examples:
+<DD><CODE>1</CODE>, <CODE>99</CODE> and <CODE>-8</CODE> are instances of the <CODE>Integer</CODE> class
+<BR>
+<DD><CODE>1.0</CODE> and <CODE>3.14159</CODE> are instances of the <CODE>Float</CODE> class
+<BR>
+<DD><CODE>'hello'</CODE>, <CODE>'foo'</CODE> are instances of the <CODE>String</CODE> class
+<BR>
+<DD>the buttons in a window are instances of the <CODE>Button</CODE> class
+<BR>
+<DD><CODE>nil</CODE> is the one and only instance of the <CODE>UndefinedObject</CODE> class
+</DL>
+
+<DL><DT>For the curious:
+<DD>
+ we say that Smalltalk is a <DFN>class based object oriented language</DFN>.
+ There are other languages around, which are not based upon the concept
+ of classes - the <VAR>Self programming language</VAR>, for example.
+<BR>
+However, most object oriented languages (<VAR>C++</VAR>, <VAR>Eiffel</VAR>, <VAR>Java</VAR>, <VAR>C#</VAR> and many others)
+are class based.
+</DL>
+
+So, in Smalltalk every object is an instance of a class,
+and it is the class which describes the behavior of its instances
+(by defining the protocol and thereby defining how instances
+react to messages).
+
+Smalltalk allows access to this class at runtime and to gather information from that "class thing".
+This is called <DFN>reflection</DFN>.
+<BR>
+Because Smalltalk is a <DFN>pure object oriented language</DFN>,
+this "class thing" is also an object and therefore responds to a set of messages
+which is called its metaclass protocol (more on this below).
+
+
+
+
+<H4><A NAME="METHODS">Methods</A></H4>
+
+When a message is sent to an object, a corresponding action has to
+be performed - technically, a piece of code must be executed.
+This piece of code is called a <DFN>method</DFN>.
+<P>
+Every class keeps a table (called "<DFN>MethodDictionary</DFN>") which
+associates the name of the message (the so called <DFN>message selector</DFN>) to a method.
+
+<BR>
+When a message is sent to an object, the classes method table
+is searched for a corresponding entry and - if found - the associated
+method is invoked (more details below ...).
+<P>
+Since Smalltalk is a pure object oriented language,
+this table is also an object and accessible at execution time;
+it may even be modified during execution
+and allows objects to <VAR>learn</VAR> about new messages dynamically.
+<BR>
+Of course, the interactive programming environment heavily depends on this;
+for example, the browser is a tool which adds new items to this table when
+a method's new or changed code is to be installed.
+<P>
+
+
+
+
+<H4><A NAME="INHERITANCE">Inheritance</A></H4>
+
+In Smalltalk (like in most other object oriented languages),
+classes are organized as a tree.
+Every class has a so called <DFN>superclass</DFN>,
+and is called a <DFN>subclass</DFN> of its superclass.
+(C++ programmers call these <VAR>"baseclass"</VAR> and
+<VAR>"derived class"</VAR> respectively).
+<BR>
+Since the superclass may itself have a superclass,
+we get a superclass-chain, which (typically) ends in a
+class called "Object" <A NAME="BACK_INHERITANCE_FN1" HREF="#INHERITANCE_FN1">(*)</A>.
+<BR>
+In Smalltalk, a class can have only a single superclass (as opposed to C++, for example,
+where classes can and often must inherit from multiple baseclasses)
+<A NAME="BACK_INHERITANCE_FN2" HREF="#INHERITANCE_FN2">(**)</A>.
+<P>
+A class inherits all protocol as defined by its superclass(es) and may
+optionally redefine individual methods or provide additional protocol.
+<P>
+
+Therefore, a message send performs the following actions
+<A NAME="BACK_INHERITANCE_FN3" HREF="#INHERITANCE_FN3">(***)</A>:
+<OL>
+<LI>the object's class is asked for the method table
+<LI>the table is searched for a method associated to the selector
+<LI>if not found, repeat the previous step with the superclasses table.
+<LI>unless there is no superclass - then report an error (see below).
+<LI>if found, execute the method's code
+</OL>
+
+Error reporting is done by packaging the bad messages arguments into
+a so called <VAR>"message"</VAR> object and resending another message
+(<CODE>#doesNotUnderstand:</CODE>) to
+the receiver with the message object as argument.
+<BR>
+This mechanism can be used to implement special error handling and recovery
+mechanisms.
+
+<P>
+<DL>
+<DT>Footnotes:<DD>
+  <DT><A NAME="INHERITANCE_FN1" HREF="#BACK_INHERITANCE_FN1">(*)</A>
+  <DD>For the curious:
+<BR>
+Although most classes eventually do inherit from
+<CODE>Object</CODE>, there is no need to.
+Actually, it may occasionally make sense for a class
+to inherit from no class at all (i.e. to have no superclass).
+The effect is that instances of such classes do not inherit ANY protocol
+and will therefore trigger an error for all received messages.
+<BR>This behavior is useful to implement advanced features, such as
+proxies (placeholders) for remote objects, message tracers, etc.
+
+  <DT><A NAME="INHERITANCE_FN2" HREF="#BACK_INHERITANCE_FN2">(**)</A>
+  <DD>For the curious:
+<BR>
+Support for multiple inheritance (MI) in C++ serves two purposes:
+first, to inherit private variables and operations (i.e. reuse)
+and second, to support polymorphism.
+<BR>
+As multiple inheritance can make things very complicated and
+can lead to number of problems, Smalltalk does no longer support it.
+There used to be an experimental implementation in early ST versions,
+but was abandoned later.
+<BR>
+Java provides interfaces which do solve the polymorphism issues of MI.
+Smalltalk does not require interfaces for that reason, as any message
+can be sent to any object (no matter what the class of the receiver is).
+<BR>
+
+
+  <DT><A NAME="INHERITANCE_FN3" HREF="#BACK_INHERITANCE_FN3">(***)</A>
+  <DD>For the curious:
+<BR>
+All Smalltalk implementations use various tricks (caching) to avoid the above
+search (also called <DFN>method lookup</DFN>) if possible.
+
+In most situations,
+the method's code which corresponds to a selector
+is reached quickly by an indirect function call.
+</DL>
+
+
+
+<H4><A NAME="INSTANCE_VARIABLES">Instance Variables</A></H4>
+
+An object may contain internal state (also called <DFN>attributes</DFN>).
+In Smalltalk, this state usually consists of references to other objects <A NAME="BACK_FN1" HREF="#FN1">(*)</A>.
+<BR>
+The slots which hold those references are
+called <DFN>instance variables</DFN>
+<A NAME="BACK_FN2" HREF="#FN2">(**)</A>.
+<BR>(Some refer to them as "private variables".)
+<P>
+All instances of a class provide the same message protocol,
+but typically contain different internal state.
+<BR>
+It is actually the class, which
+provides the definition of the protocol and amount of internal
+state of its instances.
+
+<P>
+<DL><DT>Example,<DD>'hi' and 'world' are both instances of the <CODE>String</CODE> class
+and respond to the same set of messages. But the internal state of the first
+string consists of the characters "h" and "i", whereas the second contains
+the characters "w", "o", "r", "l", "d".
+</DL>
+
+<P>
+An object's instance variables are only accessible via protocol,
+which is provided by the object - there is no way to access an object's
+internals except by sending messages to it.
+<BR>
+This is true for <B>every</B> object - even for the strings in the example above.
+<BR>
+There is no need for the sender of a message to actually know the class of
+the receiver - as long as it responds to the message and performs the
+appropriate action.
+
+<DL><DT>Example,<DD>a string provides access to its individual
+characters via the <CODE>'at:'</CODE> message. You could write
+an <VAR>ExternalString</VAR> class, which fetches characters from a file
+and returns them from this message.
+The sender of the <CODE>'at:'</CODE> message would not be affected at all by this
+(except for a possible performance degration ;-).
+<BR>
+What is more important: as long as the required protocol is
+implemented, every program which used to work with instances of String
+will also work unchanged with instances of ExternalString
+- there is no need to change the program in any way;
+there is not even a need to recompile, rebuild
+or any other means of telling the system about this new class.
+<BR>
+Such additions are even possible while the program is executing.
+</DL>
+
+
+
+<P>
+<DL><DT>FootNotes:
+<DT><A NAME="FN1" HREF="#BACK_FN1">(*)</A><DD>For the curious:
+<BR>
+other state which is not held in instanceVariables,
+and which are not references to other objects
+are the instance's size (collections) and its hashKey.
+<BR>
+These are not accessible as instanceVariables - special protocol is provided
+to access those (<CODE>#basicSize</CODE>, <CODE>#identityHash</CODE> etc.).
+
+<DT><A NAME="FN2" HREF="#BACK_FN2">(**)</A><DD>For the curious:
+<BR>
+technically, those references are mostly pointers to
+the referred objects, with a few exceptions:
+smallIntegers keep the numeric value as a bit pattern,
+strings and others store raw bytes but simulate holding character objects
+to the outside world.
+Finally, some Smalltalk implementations (like ST/X) represent the nil-Object
+internally by a special NULL-pointer.
+
+
+</DL>
+
+
+<H4><A NAME="METACLASSES">Metaclasses</A></H4>
+
+Since Smalltalk is a pure object oriented language, <B>everything</B> within the
+Smalltalk world is an object - this implies that every object's behavior is
+determined by its class.
+<BR>This is even true for classes themself -
+to the Smalltalk system, these are just like any other object and their protocol
+is specified by the classes class.
+These `class classes' are called <DFN>Metaclasses</DFN>.
+<P>
+Thus, when we send a message to some `normal' object, the corresponding class
+object provides the behavior - when some message is sent to a class object,
+the corresponding metaclass provides the behavior.
+<BR>
+Technically, messages to classes are treated exactly the same way as
+messages to non-class objects: take the receiver's class, lookup the method in its
+method table, execute the method's code.
+
+<P>
+Since different metaclasses may provide different protocol for their class
+instances, it is possible to add or redefine class messages just like any other
+message.
+<BR>
+As a concrete example, take instance creation which is done in Smalltalk
+by sending a "new"-message to a class.
+<BR>
+In Smalltalk, there is no such thing as a built-in "new" (or any other built-in)
+instance creation message
+- the behavior of those instance creation (class) messages is defined exclusively by metaclass protocol.
+<BR>
+Therefore, it is possible (and often done) to redefine the "new" method for special handling;
+for example singletons (classes which have only a single unique instance), caching and pooling
+(the "new" message returns an existing instance from a cache), tracing and many more are easily
+implemented by redefining class protocol.
+
+<P>
+
+
+<H4><A NAME="ABSTRACTCLASSES">Abstract Classes</A></H4>
+
+Abstract classes are classes which are not meant to be instantiated
+(i.e. no instances of them are to be created).
+Their purpose is to provide common functionality for their subclass(es).
+<BR>
+In Smalltalk, the most obvious abstract class is the <CODE>Object</CODE>-Class,
+which provides a rich protocol useful for all kinds of objects
+(comparing, dependency mechanism, reflection etc.).
+<BR>
+
+
+<H2><A HREF="tutorial.html#I_BASICS" NAME="SYNTAX">Smalltalk Language Syntax</A></H2>
+
+To a newcomer, the Smalltalk language syntax may look somewhat strange at
+the beginning;
+however, you will notice, that the syntax is highly orthogonal
+and pretty simple compared to most other programming languages (except Lisp ;-).
+Especially the syntax of blocks (which are described later) is one of the most
+beautifully designed ever.
+
+<BR>
+Interestingly, people which have not been previously exposed to languages such
+as C or C++ find Smalltalk much more intuitive than hard core programmers.
+<P>
+As we will see shortly, Smalltalk programs only consist of messages being sent to objects.
+<BR>
+Since even control structures
+(i.e. conditional evaluation, loops etc.)
+are conceptionally implemented as messages,
+a common syntax is used in your programs both for
+the programs flow control and for manipulating objects.
+<BR>
+Once you know how to send messages to an object,
+you also know how to write and use fancy control structures.
+<P>
+Smalltalk's power (and difficulty to learn) does not lie in the
+language itself,
+but instead in the huge protocol provided by the class libraries.
+<P>
+Let's start with languages building blocks...
+
+
+<H3><A HREF="tutorial.html#I_BASICS" NAME="SPACES">Spaces and Program Layout</A></H3>
+
+The Smalltalk syntax is format free (as opposed to the Fortran language, for example).
+Spaces and line breaks may be added to a Smalltalk program without changing the
+meaning, except for the following:
+<UL>
+<LI>within an identifier (i.e. a variable's name)
+
+<LI>within a numeric constant
+
+<LI>within some compound tokens, such as the assignment token: "<CODE>:=</CODE>"
+</UL>
+So, although you are free to use any indentation you like, we highly recommend
+that you adhere to a standard.
+Otherwise your code might be hard to read and understand by you and others later.
+Remember the golden coder's rule: "<B>Code is written only once, but read many many times</B>".
+
+
+<H3><A HREF="tutorial.html#I_BASICS" NAME="COMMENTS">Comments</A></H3>
+
+<H3>Regular Comments</H3>
+In Smalltalk a comment is anything enclosed in double-quotes (").
+A comment may spawn multiple lines.
+<BR>
+Examples:
+<CODE><PRE>
+    "some comment"
+</PRE></CODE>
+<CODE><PRE>
+    "this
+     is
+     a
+     multiline comment"
+</PRE></CODE>
+<CODE><PRE>
+    "
+     another multiline comment
+    "
+</PRE></CODE>
+
+<H3>End-of-Line Comments</H3>
+As a language extension, <CITE>ST/X</CITE> also allows end-of-line comments.
+These are introduced by the character sequence "/ (doublequote-slash) and treat everything
+up to the end of the line as a comment:
+<BR>
+<CODE><PRE>
+    "/ this is an end-of-line comment
+</PRE></CODE>
+
+If the remaining line contains comment characters, these are ignored.
+As such, End-of-line comments are especially useful to comment-out code which contains comments.
+
+<H3>Token Comments</H3>
+Finally, the character sequence "<< (doublequote-less-less) introduces a token-comment.
+The word following that sequence (possibly separated by optioal spaces)
+is treated as an identifier (i.e. the "token"),
+and everything up to a line which starts with that token is ignored.
+<BR>
+For example:
+<CODE><PRE>
+    "<< END
+    some comment line
+    more lines
+    a line with "another comment"
+    and followed by
+    "/ an end of line comment
+    plus more stuff here
+    END
+</PRE></CODE>
+will all be ignored and treated as a comment, even if those lines contain other comments.
+As such, Token comments are highly useful to comment-out code which contains any other
+comment.
+
+
+<H3><A HREF="tutorial.html#I_BASICS" NAME="LITERALS">Literal Constants</A></H3>
+
+Literal constants in a Smalltalk source code are processed
+by the compiler, which creates corresponding objects at
+<B>compilation time</B> and places references to these constants into the generated code.
+<BR>
+This is in contrast to <B>run-time</B> created objects,
+which are typically created by some variant of the <CODE>#new</CODE>
+-message sent to a class or the <CODE>#copy</CODE>-message sent to an instance.
+<P>
+The following literal constant types are allowed:
+
+<UL>
+<LI><CODE>Integer</CODE> constants (possibly negative):
+<BR INDENT>
+    <CODE>6</CODE>,
+<BR INDENT>
+    <CODE>-1</CODE>,
+<BR INDENT>
+    <CODE>12345678901234567890</CODE>
+<P>
+with a radix (number base):
+<BR INDENT>
+    <CODE>8r0777</CODE>,
+<BR INDENT>
+    <CODE>16r80000000000</CODE>,
+<BR INDENT>
+    <CODE>16rAFFE</CODE>, <CODE>-16r1000</CODE> and <CODE>16r-1000</CODE>,
+<BR INDENT>
+    <CODE>16r123456789abcdef0123456789abcdef</CODE>,
+<BR INDENT>
+    <CODE>2r0111000</CODE>
+<P>
+
+There is no limit on the integer constant's value; eg.
+<CODE>1234567890123456789012345678901234567890</code> is a valid integer literal
+(and NOT truncated, overflowing or leading to an error).
+
+<P>
+<LI>Exact Rational (<CODE>Fraction</CODE>) constants:
+<BR INDENT>
+    <CODE>1/3</CODE>,
+<BR INDENT>
+    <CODE>-1/3</CODE>,
+<P>
+Fractions consist of an integer numerator and integer denominator.
+Both being integer literals (i.e. unlimited in size).
+<P>
+
+<LI>Inexact Rational (<CODE>Float</CODE>) constants:
+<BR INDENT>
+    <CODE>1.234</CODE>,
+<BR INDENT>
+    <CODE>1e10</CODE>,
+<BR INDENT>
+    <CODE>1.5e15</CODE>
+<P>
+Float constants with radix (i.e. "<CODE>16r10.1</CODE>" or "<CODE>2r10.1</CODE>") are allowed,
+but should not be used in practice.
+<BR>(because the 'e'-exponential character is a valid numeric character in hex;
+and therefore, float constants with a radix-base greater than 14 cannot have an exponent).
+<P>
+The name "Float" is a historic leftover - internally
+the IEEE double precision floating point representation is used (independent of the exponent character).
+<P>
+For compatibility with other Smalltalk systems, the "d"-character is also recognized
+as an exponential character. I.e. <CODE>1d10</CODE> has the same value as <CODE>1e10</CODE>.
+
+<!-- currently, stc does not support this!
+<P>
+The exponent character 'f' will create short float literals,
+which are internally represented as IEEE single precision floating point numbers.
+--!>
+
+<!-- currently, stc does not support this!
+<P>
+If the underlying machine supports quad precision floating point numbers
+(which actually all of the current machines do),
+the exponent character 'q' will create long float literals.
+--!>
+
+<P>
+<LI>FixedPoint constants (Scaled Decimals):
+<BR INDENT>
+    <CODE>1.234s4</CODE>,
+<BR INDENT>
+    <CODE>10s4</CODE>,
+<P>
+FixedPoint constants are rational numbers which print themself as a scaled decimal
+number with the given number of post-decimal-point digits.
+Thus "1.234s4" prints as "1.2340" and "10s4" as "10.0000".
+Scaled Decimals are mostly used for monetary values and to format tabular data
+in a nice way.
+<P>
+Because scaled decimals are not supported by all Smalltalk systems,
+the compiler can be configured to treat them as errors via the settings dialog.
+If you want to ensure that your program is portable, disable them.
+
+<P>
+<LI><CODE>Boolean</CODE> constants:
+<BR INDENT><CODE>true</CODE>, <CODE>false</CODE>
+
+<P>
+<LI>The <CODE>UndefinedObject</CODE> constant:
+<BR INDENT><CODE>nil</CODE>
+
+<P>
+<LI><CODE>Character</CODE> constants from the 8-bit iso8859-1 character set:
+<BR INDENT><CODE>$c</CODE>
+<P>
+<CITE>ST/X</CITE> also allows unicode character constants with a codepoint above 16rFF,
+of up to 30 bit (i.e. up to 16r3FFFFFFF).
+<br>Therefore, <CODE>$&#x2260;</CODE>&nbsp; is also a valid character constant in <CITE>ST/X</CITE>
+and represents a character with a codePoint of 16r2260 (8800).
+<P>
+Be aware, that not all Smalltalk dialects support unicode.
+Most noteworthy is VisualAge Smalltalk, which does not.
+However, most modern Smalltalks do (Squeak, Visualworks and GNU-Smalltalk).
+So your program may be less portable if you use them.
+If portability against such old Smalltalk versions is an issue, we recommend at least extracting unicode specific code
+into easy maintainable extra methods.
+
+<P>
+<LI><CODE>String</CODE> constants:
+<BR INDENT><CODE>'foo'</CODE> or
+<BR INDENT><CODE>'a long string constant'</CODE>
+<P>String constants may spawn multiple lines.
+<BR>
+There are no special escapes or other mechanisms to represent unprintable characters
+(such as cr, tab or backspace) in a string. This is certainly a major missing feature and
+something that ought to be added in a future Smalltalk standard.
+(ST/X provides a message named "withoutCEscapes", which allows for the traditional C-language
+escape mechanism (i.e. <code>'foo\nbar\tbaz' withoutCEscapes</code>),
+but that is a little bit ugly to use.)
+
+<P>
+<CITE>ST/X</CITE> also allows unicode string constants
+where individual characters may have a codepoint of up to 30 bit (i.e. up to 16r3FFFFFFF).
+However, the above mentioned character portability issues apply.
+
+
+<P>
+<LI><CODE>Symbol</CODE> constants:
+<BR INDENT><CODE>#'bar'</CODE>,
+<BR INDENT><CODE>#'++'</CODE> or
+<BR INDENT><CODE>#'foo bar baz'</CODE>
+<BR INDENT><CODE>#foo</CODE> - see below
+<P>Symbols are unique immutable strings - that is, the system arranges that
+for a given sequence of characters,
+at most one corresponding symbol object exists. (Lispers call them <DFN>Atoms</DFN>)
+<P>Symbols can be used much like readonly Strings, with the big advantage that
+they can be compared using identity compare (== / ~~) whereas Strings
+usually have to be compared using equality (i.e. contents-) compare operators (= / ~=).
+<P>If the symbol's characters are all alphanumeric or all from the set of binary special
+characters (+, -, *, and a few others), the quotes can be omitted and
+the short form <CODE>#bar</CODE> can be used instead of <CODE>#'bar'</CODE>.
+Until you've learned the exact details, always place those quotes around, to be sure.
+<P>
+Symbols are limited to the Latin-1 character set, and we do not intend to
+change this.
+The reason is that we do not want class names and method names to be
+written in non-English (it is hard enough, if some programmers do not
+follow that rule and write their stuff in different east-european languages...).
+Sorry to non-western natives; but as you are currently reading this,
+you obviously understand English better than and prefer it to German.
+And that a Chinese programmer will probably have more trouble reading (say)
+Hindu than English ;-)
+So this is one way to enforce at least a western language (the compiler is not smart enough
+to detect and complain about non-english).
+
+<P>
+<BR>More information on symbols is found in
+<A HREF="../overview/basicClasses/collections.html#SYMBOL">"collection classes"</A>.
+
+<P>
+<LI><CODE>Array</CODE> constants:
+<BR INDENT><CODE>#(1 2 $b 'hello' 3.14159)</CODE>
+<P>The elements of an array constant, must be literal constants,
+and can be any of the literals described in this section.
+<P>Elements can themself be array literals - i.e. it can be a nested array literal, as in:
+<BR INDENT><CODE>#(1 #two #(3 4) #( #(5 6) 7) )</CODE>.
+<P>For simple symbol constants (identifiers) and nested arrays,
+the leading '#' may be ommitted
+within an array constant if it is not one of 'true', 'false' or 'nil'
+(however, we do not recommend doing so).
+<BR>
+Also, array constants within an array constant are allowed to be written without
+the leading '#'-character. Therefore, the above array constant can also
+be written as:
+<BR INDENT><CODE>#(1 two (3 4) ( (5 6) 7) )</CODE>
+
+<P>
+<LI><CODE>ByteArray</CODE> constants:
+<BR INDENT><CODE>#[0 1 2 3 4]</CODE>
+<P>The elements must be integer constants in the range 0..255.
+ByteArrays can be seen as more memory friendly, compact version of
+Arrays, and are often used when bulk data (bitmap images) is processed.
+</UL>
+
+
+
+<H3><A HREF="tutorial.html#I_BASICS" NAME="IDENTIFIERS">Identifiers</A></H3>
+
+Identifiers (variable names) identify a variable.
+In Smalltalk, a variable holds a reference to some object
+(technically, a pointer to some object - not the object's contents)
+<BR>
+Variables come in various flavours - differing in their scope
+(i.e. the visibility) and their lifetime.
+<BR>
+Among others, there are
+global variables, class variables,
+classInstance variable, instance variables, arguments and local variables.
+<P>
+Identifiers must start with a letter or an underscore character.
+The remaining characters may be letters, digits or the underline character <A NAME="BACK_FN3" HREF="#FN3">(*)</A>.
+<BR>
+Examples:
+<UL>
+<CODE>foo</CODE>
+<BR><CODE>foo123</CODE>
+<BR><CODE>foo_123</CODE>
+<BR><CODE>aVeryLongIdentifier</CODE>
+<BR><CODE>anIdentifier_with_underline_characters</CODE>
+</UL>
+
+By purpose, identifiers consist of latin-1 alphanumeric characters (plus the underscore).
+Please read the section on symbols above for the reason.
+
+<H4>Conventions</H4>
+By convention, uppercase identifiers are used for global-
+and class-Variables.
+<BR>
+Instance variables, arguments and local variables should start with a lowercase character.
+You will really confuse other Smalltalkers,
+and the compiler will give a warning,
+if you do not follow this rule.
+
+<P>
+<DL><DT>FootNotes:
+<DT><A NAME="FN3" HREF="#BACK_FN3">(*)</A>
+<DD>Characters in variable names:
+<BR>
+since not all Smalltalk dialects allow underscore characters in a variable name,
+this can be disabled in <CITE>ST/X</CITE>, to support portability checking
+of your code.
+<P>
+For portability with some (VMS-)VisualWorks Smalltalk variants,
+a dollar character ($) can also be allowed inside an identifier as a
+compiler option (the $ was used in the VMS Smalltalk version of ST/X).
+</DL>
+
+
+<H4>Special Identifiers (Builtin Names)</H4>
+
+<UL>
+<LI><CODE>nil</CODE>
+<BR>The one-and-only instance of the UndefinedObject class.
+<P>
+
+<LI><CODE>true</CODE> and <CODE>false</CODE>
+<BR>The two boolean truth values.
+<P>
+
+<LI><CODE>self</CODE>
+<BR>The receiver within a method.
+<P>
+
+<LI><CODE>super</CODE>
+<BR>Like self, but with different message lookup semantics if used as a message receiver.
+<BR>This will be described later.
+<P>
+
+<LI><CODE>thisContext</CODE>
+<BR>The <VAR>stackFrame</VAR> object of the currently executing method
+or block as an object. Holds the receiver, message selector, arguments and local variables.
+<BR>This will be described later.
+<P>
+
+<LI><CODE>here</CODE>
+<BR>Like self, but with different message lookup semantics if used as a message receiver.
+<BR>This will be described later.
+<P>
+Since <VAR>"here"</VAR> is a <CITE>Smalltalk/X</CITE> language extension,
+its builtin-ness is less strict than that of the other special variables:
+
+if a variable named <VAR>"here"</VAR> is defined and visible in the current variable scope,
+<VAR>here</VAR> will refer to that variable;
+otherwise, it refers to the receiver (with different lookup semantics).
+
+</UL>
+
+
+
+
+<H3><A HREF="tutorial.html#I_BASICS" NAME="MESSAGES">Messages</A></H3>
+
+A message consists of three parts:
+<UL>
+<LI>the <DFN>receiver</DFN>
+<LI>the message name, called the <DFN>selector</DFN>
+<LI>optional <DFN>arguments</DFN>
+</UL>
+<BR>
+In contrast to other programming languages, Smalltalk uses a special syntax for messages,
+which makes the code readable almost like English.
+The syntax depends mainly upon the number of arguments. Notice that a message corresponds
+roughly to what C++ programmers refer to as a "virtual function call".
+If you have a Java background, you may want to read
+<A HREF="../programming/stForJavaGuys.html">"Smalltalk for Java/JavaScript Guys"</A>.
+
+<H4><A HREF="tutorial.html#I_BASICS" NAME="UNARY_MESSAGES">Unary Messages</A></H4>
+
+Messages without arguments are called <DFN>Unary Messages</DFN>.
+The name of a unary message (the "message selector") consists of a single
+word consisting of letters, digits or the underline character. The first character must not be a digit.
+<BR>For example:
+
+<CODE><PRE>
+    1 negative
+</PRE></CODE>
+
+sends the message <CODE>"negative"</CODE> to the number 1, which is the receiver of the
+message.
+<P>
+Unary  messages, like all other messages, return a <VAR>result</VAR>,
+which is simply another object.
+<BR>
+In the above case, the answer from the <VAR>"negative"</VAR> message is the
+boolean <CODE>false</CODE> object.
+<P>
+Evaluate this in a
+<A HREF="../misc/onlyInSTX.html"
+   ACTION="doit: WorkspaceApplication openWith:'1 negative' "
+   INFO="Click to open a Workspace Window">
+workspace
+</A>
+
+(using <VAR>printIt</VAR>);
+
+try different receivers
+(especially: try a negative number).
+
+<P>
+<IMG SRC="Workspace6.gif">
+<P>
+
+Unary messages parse <VAR>left to right</VAR>, so, for example:
+
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    1 negative not
+</PRE></CODE></A>
+
+first sends the "<CODE>negative</CODE>"-message to the number 1.
+Then, the "<CODE>not</CODE>"-message is sent to the returned value.
+The response of this second message is returned as the final value.
+If you evaluate this in a workspace,
+the returned value will be the boolean <CODE>true</CODE>.
+<P>
+Try a few unary messages/expressions in a workspace:
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    1 negated
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    -1 negated
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    false not
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    false not not
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    -1 abs
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    1 abs
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    10 factorial
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    10 factorial sqrt
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    5 sqrt
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    1 isNumber
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    $a isNumber
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    $a isNumber not
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    1 isCharacter
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    $a isCharacter
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    'someString' first
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    'hello world' size
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    'hello world' asUppercase
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    'hello world' copy
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    'hello world' copy sort
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    #( 17 99 1 57 13) copy sort
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    1 class name
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    1 class name asUppercase
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    WorkspaceApplication open
+</PRE></CODE></A>
+
+<P>
+Notice, that in the above examples, you already encountered polymorphy: both strings and
+arrays respond to the <CODE>sort</CODE> message and sort their contents in place.
+<br>
+Also notice, that classes also respond to messages, just like any other object.
+The last example sends the "open"-message to the WorkspaceApplication class.
+
+
+<H4><A HREF="tutorial.html#I_BASICS" NAME="KEYWORD_MESSAGES">Keyword Messages</A></H4>
+
+This type of message allows for arguments to be passed with a message.
+A keyword message consists of one or more keywords, each followed by an argument.
+<BR>
+Each keyword is simply a name whereby the first character should be lower case
+by convention, and followed by a <VAR>colon</VAR>.
+<BR>
+The arguments may be literal constants,
+variables or other message expressions
+(must be grouped using parenthesis,
+if another keyword message's result is to be used as argument).
+<BR>
+For instance, in the message
+
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    5 between:3 and:8
+</PRE></CODE></A>
+
+"<CODE>between:</CODE>" and "<CODE>and:</CODE>" are the keywords,
+the numbers 3 and 8 are the arguments and the number 5 is the receiver of the message.
+<P>
+The message's actual selector (i.e. the message name) is formed by the concatenation of all individual
+keywords; in the above example, the message selector is "<CODE>between:and:</CODE>".
+<P>
+As a beginner, keep in mind that
+this is different to both a "<CODE>between:</CODE>" and an "<CODE>and:</CODE>"-message.
+And of course, also "<CODE>between:and:</CODE>" and "<CODE>and:between:</CODE>"
+are different messages.
+<BR>
+In the browser, the method will be listed under the name: "<CODE>between:and:</CODE>".
+
+<P>
+Keyword messages parse left to right,
+but if another keyword follows a keyword message, the expression is parsed as
+a single message (taking the keywords concatenation as selector).
+<BR>
+Thus, the expression:
+<CODE><PRE>
+    a max: 5 min: 3
+</PRE></CODE>
+would send a "<CODE>max:min:</CODE>"-message to the object referred to by the variable
+"<VAR>a</VAR>".
+<BR>This is not the same as:
+<CODE><PRE>
+    (a max: 5) min: 3
+</PRE></CODE>
+which first sends the "<CODE>max:</CODE>"-message to "<VAR>a</VAR>",
+then sends the "<CODE>min:</CODE>"-message to the result.
+<BR>Try these in a
+<A HREF="../misc/onlyInSTX.html"
+   ACTION="doit: WorkspaceApplication openWith:
+'2 max: 5 min: 3
+
+(2 max: 5) min: 3'
+ "
+   INFO="Click to open a Workspace Window">
+workspace
+</A>
+(don't fear the error...)
+
+<P>
+To avoid ambiguity you must place parentheses around.
+<P>
+
+Try a few keyword messages/expressions in a workspace (also see what happens, if you ommit
+or change the parenthesis):
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    1 max: 2
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    1 min: 2
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    (2 max: 3) between: 1 and: 3
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    (1 max: 2) raisedTo: (2 min: 3)
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    'Hello' at: 1
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    #(100 200 300) at: 2
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    #(10 20 30 40 50 60) indexOf: 30
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    #(10 20 30 40 50 60) at:('Hello' indexOf: $e)
+</PRE></CODE></A>
+<P>
+
+Unary messages have <VAR>higher precedence</VAR> than keyword messages,
+thus:
+<CODE><PRE>
+    9 max: 16 sqrt
+</PRE></CODE>
+evaluates to 9.
+<BR>(because it is evaluated as: "9 max: (16 sqrt)" which is "9 max:4".
+<BR>It is not "(9 max: 16) sqrt", which is "16 sqrt" and would give 4 as answer.)
+
+
+
+
+<H4><A HREF="tutorial.html#I_BASICS" NAME="BINARY_MESSAGES">Binary Messages</A></H4>
+
+A binary message takes 1 argument.
+Its selector is formed from <VAR>one or two non-alphanumeric special characters</VAR>.
+
+Some characters,
+such as braces, parenthesis or period
+cannot be used as binary selectors
+<A NAME="BACK_BINARY_FN1" HREF="#BINARY_FN1">(*)</A>.
+<p>
+Binary messages are typically used for arithmetic operations
+- although, this is not enforced by the system.
+No semantic meaning is known or implied by the Smalltalk compiler, and binary messages
+could be defined and used for any class and any operation.
+<P>
+A typical example of a binary message is the one which implements arithmetic addition
+for numeric receivers (it is implemented in the Number classes):
+
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    1 + 5
+</PRE></CODE></A>
+
+This is interpreted as a message sent to the object 1 with the selector '+'
+and one argument, the object 5.
+In a browser, the message will be listed under the name "+".
+<P>
+Binary messages
+parse <VAR>left to right</VAR> (like unary messages).
+<BR>Therefore,
+
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    2 + 5 * 3
+</PRE></CODE></A>
+
+results in 21, not 17.
+<BR>
+(because of left-to-right evaluation,
+first '+' is sent to 2, with 5 as argument.
+This first message returns 7.
+<BR>
+Then, '*' is sent to 7, with 3 as argument, resulting in 21 being answered.)
+<P>
+To change the execution order or to avoid ambiguity you should place parentheses around:
+
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    2 + (5 * 3)
+</PRE></CODE></A>
+
+Now, the execution order has changed and the new result will be 17.
+<P>
+Unary messages have <VAR>higher precedence</VAR> than binary messages, thus
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    9 + 16 sqrt
+</PRE></CODE></A>
+
+evaluates as "9 + (16 sqrt)", not "(9 + 16) sqrt".
+(notice, that sqrt returns a float result,
+and '+' is sent to the integer 9, with a float 4.0 as argument.
+All numeric operations support such "<i>mixed-mode</i>" operations
+and return an appropriate result object.)
+<P>
+On the other hand, binary messages have <VAR>higher precedence</VAR> than
+keyword messages, thus
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    9 + 16 max: 3 + 4
+</PRE></CODE></A>
+evaluates as "(9 + 16) max: (3 + 4)" which is "25 max: 7" and answers 25.
+<BR>
+It is not the same as "9 + (16 max: 3) + 4" (which results in 29) or
+"((9 + 16) max: 3) + 4" (which in this case also results in 29)
+
+<P>
+Again, we highly <B>recommend the use of parentheses</b> - even when the default
+evaluation order matches the desired order; it makes your code much
+more readable, and helps beginners a lot.
+<P>
+
+To practice, try a few binary messages/expressions in a workspace:
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    1 + 2
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    1 + 2 * 3
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    (1 + 2) * 3
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    1 + (2 * 3)
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    -1 * 2 abs
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    (-1 * 2) abs
+</PRE></CODE></A>
+
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    5 between:1 + 2 and:64 sqrt
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    5 between:(1 + 2) and:(64 sqrt)
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    #(100 200 300) at: (1+1)
+</PRE></CODE></A>
+
+<BR>
+The second example above shows why parentheses are so useful:
+from reading the code, it is not apparent, if the evaluation
+order was intended or is wrong.
+<BR>
+You will be happy to see parentheses when you have to debug
+or fix a program which contains a lot of numeric computations.
+<BR>
+Here are a few more "difficult" examples:
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    1 negated min: 2 negated
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    1 + 2 min: 2 + 3 negated
+</PRE></CODE></A>
+<P>
+
+<H4><A HREF="tutorial.html#I_BASICS" NAME="STRANGE_BINARY_MESSAGES">"Strange" Binary Messages</A></H4>
+
+There are a few binary messages found in the system,
+which look like syntax at first sight,
+and are therefore a bit difficult to understand and read for beginners.
+<br>
+Examples for such fancy messages which are worth mentioning are:
+<DL>
+
+<DT><CODE>,</CODE> (comma)
+<DD>
+The "<CODE>,</CODE>"-message is understood by collections,
+and mostly used for strings (which are collections of characters).
+As a binary message, it expects a single argument
+and returns the concatenation of the receiver and argument
+(i.e. a collection which contains the receiver's elements
+and those of the argument).
+<br>Thus,
+"<CODE><A type="example" SHOWRESULT INFO="Execute the example">
+ 'Hello','World'</A></CODE> "
+returns the new string: 'HelloWorld'.
+<br>But it works with many other collections;
+the following concatenates two array objects:
+<br>"<CODE><A type="example" SHOWRESULT INFO="Execute the example">
+ #(10 20 30),#(50 60 70) </A></CODE>"
+
+<P>
+
+<DT><CODE>@</CODE>
+<DD>
+The "<CODE>@</CODE>"-message is understood by numbers. As a binary message, it expects
+a single argument. It returns a Point-object (coordinate in 2D space) with the receiver
+as x, and the argument as y value.
+<br>Thus,
+"<CODE><A type="example" SHOWRESULT INFO="Execute the example">10 @ 20</A></CODE>"
+returns the same as
+"<CODE><A type="example" SHOWRESULT INFO="Execute the example">(Point new x:10 y:20)</A>"</CODE>.
+<P>
+
+<DT><CODE>-></CODE>
+<DD>
+The "<CODE>-></CODE>"-message is similar to the above "<CODE>@</CODE>" in that it is a shorthand instance creation message.
+It is understood by any object and returns an association (a pair) object.
+<br>The message,
+"<CODE><A type="example" SHOWRESULT INFO="Execute the example">10 -> 20</A></CODE>"
+returns the same as
+"<CODE><A type="example" SHOWRESULT INFO="Execute the example">(Association new key:10 value:20)</A>"</CODE>.
+<P>
+
+<DT><CODE>?</CODE>
+<DD>
+The "<CODE>?</CODE>"-message returns the receiver if it is non-nil, and the argument otherwise.
+It is used to deal with possibly uninitialized variables
+in assignments or as message argument.
+<br>Thus,
+"<CODE><A type="example" SHOWRESULT INFO="Execute the example">a ? 20</A></CODE>"
+returns the same as
+"<CODE>(a notNil ifTrue:[a] ifFalse:[20])"</CODE>.
+
+</DL>
+
+<P>
+
+<DL><DT>Notes:
+<DT><A NAME="BINARY_FN1" HREF="#BACK_BINARY_FN1">(*)</A><DD>Binary Characters:
+<BR>
+There is no real standard on which characters are actually allowed.
+For example, <CITE>ST/X</CITE> does allow for "#" or "!" to be used as binary selector,
+while other Smalltalk implementations do not.
+<BR>
+Also, <CITE>ST/X</CITE> allows up to three characters, while other Smalltalk implementations
+only allow two.
+<BR>
+For portable code, do not use more than 2 characters other than:
+<BR INDENT>
+"+" ,"-" , "*" , "/" , "\" , "," , "%" , "&amp;" , "|" , "&lt;" , "&gt;" , "=" , "?".
+<P>
+In <CITE>ST/X</CITE>, the actual set of allowed characters can be queried from the system
+by evaluating (and printing) the expression
+"<CODE><A type="example" SHOWRESULT INFO="Execute the example">Scanner binarySelectorCharacters</A></CODE>".
+
+<DT><A NAME="BINARY_FN2" HREF="#BACK_BINARY_FN2">(**)</A><DD>For the curious:
+<BR>
+Technically, binary messages do not add any new functionality
+to the Smalltalk language - they are just syntactic sugar and Smalltalk
+could have easily be defined without them
+(i.e. in a <VAR>Lisp-style</VAR>, using keyword messages like 'plus:', 'minus:' etc.)
+</DL>
+
+<P>
+
+
+
+
+
+<H4><A HREF="tutorial.html#I_BASICS" NAME="MESSAGE_SUMMARY">Message Syntax Summary</A></H4>
+
+For some (especially for C or Java programmers), Smalltalk's message
+syntax might seem strange at first.
+<BR>
+Interestingly, people with less programming experience seem to have less problems
+with this syntax - they often even find it more intuitive!
+<P>
+If you compare your favorite programming language
+against regular English,
+you will find Smalltalk to be much more similar to plain English
+than most other programming languages.
+
+For example, consider the order to a person called "tom",
+to send an email message to a person called "jane":
+<BR>
+(assuming that <VAR>tom</VAR>, <VAR>jane</VAR>, <VAR>theEmail</VAR> refer to objects)
+<P>
+<TABLE WIDTH=100% BORDER>
+<TR>
+ <TH>English</TH>
+ <TH>Smalltalk</TH>
+ <TH>Java / C++</TH>
+</TR>
+
+<TR>
+ <TD>tom, send an email to jane.</TD>
+ <TD><I>tom</I> sendEmailTo: <I>jane</I>.</TD>
+ <TD><I>tom</I>.sendEmail(<I>jane</I>);
+ <BR><I>tom</I>->sendEmail(<I>jane</I>);</TD>
+</TR>
+
+<TR>
+ <TD>tom, send theEmail to jane.</TD>
+ <TD><I>tom</I> send: <I>theEmail</I> to: <I>jane</I>.</TD>
+ <TD><I>tom</I>.sendEmail(<I>theEmail</I>, <I>jane</I>);
+ <BR><I>tom</I>->sendEmail(<I>theEmail</I>, <I>jane</I>);</TD>
+</TR>
+
+<TR>
+ <TD>tom, send theEmail to jane with subject: 'hi'</I>.</TD>
+ <TD><I>tom</I> send: <I>theEmail</I> to: <I>jane</I> withSubject: <I>'hi'</I>.</TD>
+ <TD><I>tom</I>.sendEmail(<I>theEmail</I>, <I>jane</I>, <I>"hi"</I>);
+ <BR><I>tom</I>->sendEmail(<I>theEmail</I>, <I>jane</I>, <I>"hi"</I>);</TD>
+</TR>
+
+</TABLE>
+
+Now, viewed from that angle, Smalltalk's syntax looks less strange
+and is actually very easy to read. You can see code that looks like:
+<CODE><PRE>
+    album play.
+    album playTrack: 1.
+    album repeatTracksFrom: 1 to: 10.
+</PRE></CODE>
+and it does exactly what it looks like.
+<P>
+Another plus in Smalltalk is that the meaning of an argument
+is described by the keyword before it. Whereas in Java or C++ you have to look at a function's
+definition to get information on the order and type of argument,
+unless you use fancy function names like "sendEmail_to_withSubject()"
+which actually mimics the Smalltalk way.
+<P>
+Smalltalk was originally designed to be easily readable by both programmers AND non-programmers.
+Humor says, that this is one reason why some programmers do not like Smalltalk syntax:
+they fear to loose their "guru" aura if others understand their code ;-) .
+
+
+
+<H4><A HREF="tutorial.html#I_BASICS" NAME="MESSAGE_EXAMPLES">Message Examples & Explanations</A></H4>
+
+Here are a few message expressions as examples:
+<DL>
+<DT>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE>
+1 negated
+</CODE></A>
+<DD>sends <CODE>"negated"</CODE> to the number 1, which gives
+us a -1 (minus one) as result.
+
+<P>
+<DT>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE>
+1 negated abs
+</CODE></A>
+<DD>demonstrates left-to-right evaluation of unary messages;
+first sends <CODE>"negated"</CODE> to the number 1, which gives
+us an intermediate result of -1 (minus one);
+then, the message <CODE>"abs"</CODE> is sent to it, giving us
+a final result of 1 (positive one).
+
+<P>
+<DT>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE>
+-1 abs negated
+</CODE></A>
+<DD>first sends <CODE>"abs"</CODE> to the number -1 (minus one), which gives
+us a 1 (positive one) as intermediate result. Then this object
+gets a <CODE>"negated"</CODE> message.
+<BR>The final return value is the number "-1" (minus one).
+
+<P>
+<DT>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE>
+1 + 2
+</CODE></A>
+<DD>that seems obvious, but is a message send in Smalltalk:
+it sends the message <CODE>"+"</CODE> to the number 1, passing it
+the number 2 as argument. The returned object is 3.
+<BR>
+Notice, that strictly speaking, the Smalltalk language does not
+define or require that the performed operation is an addition;
+instead, this is defined by how numbers react on (i.e. implement)
+the <CODE>"+"</CODE> message.
+<BR>
+However, programmers would have a hard time if this was not defined
+as "addition"; therefore, in general, messages in the Smalltalk class libraries
+perform the action one would expect.
+
+<P>
+<DT>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE>
+1 + 2 + 3
+</CODE></A>
+<DD>demonstrates left-to-right evaluation of binary messages;
+first, the message <CODE>"+"</CODE> is sent to the number 1, passing it
+the number 2 as argument. Then, another <CODE>"+"</CODE> message is sent to
+the intermediate result, passing the integer-object 3 as argument.
+
+<P>
+<DT>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE>
+1 + 2 * 3
+</CODE></A>
+<DD>that is less obvious - however, from the above you should
+understand, that left-to-right evaluation is always done in Smalltalk
+(since the language does not define any arithmetic semantic for any message).
+<BR>
+So, the outcome will be 9; not 7 as one would expect from mathematical
+precedence rules.
+<BR>
+Use parentheses to change the evaluation order.
+<P>
+<DT>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE>
+-1 abs + 2
+</CODE></A>
+<DD>demonstrates precedence rules, when mixing unary and binary messages.
+<BR>
+first sends <CODE>"abs"</CODE> to the number -1 (minus one), then sends <CODE>"+"</CODE>
+to the result, passing 2 as argument.
+<BR>The final return value is the number "3".
+
+<P>
+<DT>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE>
+1 + -2 abs
+</CODE></A>
+<DD>demonstrates precedence rules, when mixing unary and binary messages.
+<BR>first sends <CODE>"abs"</CODE> to the number -2, then sends <CODE>"+"</CODE>
+to the number 1, passing the result of the first message as argument.
+<BR>The final return value is the number "3".
+<BR><B>Remember:</b> unary messages have higher precedence than binary messages
+
+<P>
+<DT>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE>
+-1 abs + -2 abs
+</CODE></A>
+<DD>demonstrates precedence rules, when mixing unary and binary messages.
+<BR>first sends <CODE>"abs"</CODE> to the number -1 (minus one) and remembers the result.
+Then sends <CODE>"abs"</CODE> to the number -2 and passes this as argument
+of the "+" message to the remembered object.
+<BR>The final return value is the number "3".
+
+<P>
+<DT>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE>
+1 + 2 sqrt
+</CODE></A>
+<DD>demonstrates precedence rules, when mixing unary and binary messages.
+<BR>first sends <CODE>"sqrt"</CODE> to the number 2, then passes this as argument
+of the "+" message to the number 1.
+<BR>The final return value is the number "2.41421".
+<BR><B>Remember:</b> unary messages have higher precedence than binary messages
+
+<P>
+<DT>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE>
+(1 + 2) sqrt
+</CODE></A>
+<DD>first sends <CODE>"+"</CODE> to the number 1, passing 2 as argument.
+Then sends <CODE>"sqrt"</CODE> to the result.
+<BR>The final return value is the number "1.73205".
+
+<P>
+<DT>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE>
+1 min: 2
+</CODE></A>
+<DD>sends the <CODE>"min:"</CODE> (<VAR>minimum</var>)
+message to the number 1, passing 2 as argument.
+<BR>The return value is the number "1" (the smaller one).
+
+<P>
+<DT>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE>
+(1 max: 2) max: 3
+</CODE></A>
+<DD>first sends the <CODE>"max:"</CODE> (<VAR>maximum</var>)
+message to the number 1, passing 2 as argument. Then sends <CODE>"max:"</CODE>
+to the returned value, passing 3 as argument.
+<BR>The final return value is the number "3" (the largest one).
+
+<P>
+<DT>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE>
+(1 + 2 max: 3 + 4) min: 5 + 6
+</CODE></A>
+<DD>first sends <CODE>"+"</CODE> to the number 1 passing 2
+as argument and remembers the result.
+Then, <CODE>"+"</CODE> is sent to the
+number 3, passing 4 as argument.
+Then, <CODE>"max:"</CODE> is sent to the remembered first result,
+passing the second result as argument. The result is again
+remembered.
+Then, <CODE>"+"</CODE> is sent to the number 5, passing
+6 as argument.
+Finally, the <CODE>"min:"</CODE> message is sent to the
+remembered result from the first max: message, passing
+the result from the <CODE>"+"</CODE> message.
+<BR>The final return value is the number "7".
+<BR><B>Remember:</b> binary messages have higher precedence than keyword messages
+
+<P>
+<DT>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE>
+1 max: 2 max: 3
+</CODE></A>
+<DD>tries to send <CODE>"max:max:"</CODE>
+message to the number 1, passing the two arguments, 2 and 3.
+<BR>Since numbers do not respond to a <CODE>"max:max:"</CODE> message,
+this leads to an error (<VAR>message-not-understood</VAR>).
+<P>
+This example illustrates why parentheses are highly recommended - especially
+with concatenated keyword messages.
+
+<P>
+<DT>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE>
+'hello' at:1
+</CODE></A>
+<DD>sends the <CODE>"at:"</CODE>
+message to the string constant.
+<BR>The return value is the character "h" (which displays itself prefixed by a $ dollar).
+
+<P>
+<DT>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE>
+'hello' , ' world'
+</CODE></A>
+<DD>sends the <CODE>","</CODE>
+binary message to the first string constant, passing another string as argument.
+<BR>
+This message is implemented in the String class, and returns a concatenation
+of the receiver object and its argument.
+<BR>The returned object is a new string, consisting of the characters 'hello world'.
+
+<P>
+<DT>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE>
+'hello' , ' ' , 'world'
+</CODE></A>
+<DD>first sends the <CODE>","</CODE>
+binary message to the first string constant, passing ' ' as argument.
+Then, the result gets another <CODE>","</CODE> message, passing 'world' as
+argument.
+<BR>The returned object is a new string, consisting of the characters 'hello world'.
+
+<P>
+<DT>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE>
+#(10 2 15 99 123) min
+</CODE></A>
+<DD>sends the <CODE>"min"</CODE>
+unary message to an array object (in this case: a constant array literal).
+All collections respond to the <CODE>"min"</CODE> message by searching for its smallest
+element and returning it.
+
+<P>
+<DT>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE>
+WorkspaceApplication new open
+</CODE></A>
+<DD>first sends the "<CODE>new</CODE>"
+unary message to the WorkspaceApplication class object, which returns a new instance of itself.
+Then, this new instance gets the "<CODE>open</CODE>" message, which asks for a window
+to be shown.
+
+</DL>
+
+
+
+<H3><A HREF="tutorial.html#I_BASICS" NAME="STATEMENTS">Statements</A></H3>
+
+Multiple message expressions or assignments (see below) may be evaluated in sequence
+by separating individual expressions with a '.' (period) character.
+For example:
+<CODE><PRE>
+    -1 negated.
+    1 + 2.
+</CODE></PRE>
+first sends the "<CODE>negated</CODE>" message to -1 (minus one), ignoring the result.
+Then, the "<CODE>+</CODE>" message is sent to 1 (positive one), passing the number 2 as argument.
+<P>
+
+Notice that there is actually no need for a period after the last statement
+(it is a statement-separator) - it does not hurt, though.
+<BR>
+We will encounter more (useful) examples for multiple statements below.
+
+
+<H3><A HREF="tutorial.html#I_BASICS" NAME="VARIABLES">Variables</A></H3>
+
+In Smalltalk, a variable holds a reference to some object - we say,
+a variable "<VAR>is bound</VAR>" to some object.
+<BR>
+A variable may refer to any object - there is no limitation as to which
+type of object (i.e. the object's class) a variable may refer to.
+Every variable is automatically initialized to refer to <CODE>nil</CODE>, when created.
+<P>
+<B>Important Note to C, C++ and C# programmers:</B>
+<BLOCKQUOTE>
+Smalltalk variables always hold a reference (pointer) to some object.
+Every object "knows" its type.
+Its NOT the pointer, which knows the type of the object it points to.
+In Smalltalk it is totally impossible to treat a pointer to an integer like
+a pointer to something else. There is no such thing like a cast in Smalltalk.
+Therefore we say, that Smalltalk is a "dynamically strongly typed language".
+In contrast to C++, which is a "statically weakly typed language".
+<P>
+In Smalltalk, all objects are always and only created conceptionally on the dynamic
+garbage collected heap storage. There is no such thing as "<VAR>boxing</VAR>" or "<VAR>unboxing</VAR>".
+Assignments never copy the value, but instead the reference to the object.
+When arguments are passed in a message, references are passed.
+</BLOCKQUOTE>
+
+<P>
+For now, only global variables and local variables are described
+(because we need them for more interesting examples);
+the other variable types will be described later.
+<P>
+
+
+<H4><A NAME="GLOBAL_VARIABLES">Global Variables</A></H4>
+Global variables are only used for objects of common interest.
+Especially, most classes are referred to by a global variable
+
+(for the curious: it is possible to create anonymous classes,
+which are not referred to by a global variable).
+<P>
+Beside classes, only a few other objects are bound to globals;
+the most interesting for now are:
+
+<UL>
+<LI><CODE>Transcript</CODE>
+<BR>refers to the transcript window.
+This is a text window to which diagnostic output can be written.
+We will use the transcript in the examples below.
+<BR>
+The most useful messages that can be sent to the transcript window
+are:
+<DL>
+<DT><CODE>show:</CODE><VAR>something</VAR>
+<DD>show a printed representation of <VAR>something</VAR> at the
+current text cursor position and advance the cursor.
+The argument, <VAR>Something</VAR> is typically a string -
+if any other object is passed as argument,
+it is converted as appropriate
+(actually it is asked to generate a printed representation of itself).
+<P>
+
+<DT><CODE>cr</CODE>
+<DD>move the text cursor of the transcript output window to
+the beginning of the next line. If required, the text is scrolled.
+<P>
+
+<DT><CODE>showCR:</CODE><VAR>something</VAR>
+<DD>a short form for <CODE>show:</CODE> followed by <CODE>cr</CODE>.
+<P>
+
+<DT><CODE>flash</CODE>
+<DD>flashes the view, to get the user's attentions (try it).
+
+</DL>
+
+<LI><CODE>Smalltalk</CODE>
+<BR>refers to the set of global variable bindings.
+It responds to messages to add, remove and query for global variables.
+Also, the command line arguments, language settings and some other configuration
+parameters are accessible via this object.
+<P>
+
+<LI><CODE>Stdin</CODE>, <CODE>Stdout</CODE> and <CODE>Stderr</CODE>
+<BR>These refer to the standard input, output and error streams.
+They are usually only relevant for non-graphical (i.e. non-GUI) applications which deal with those input/output streams.
+When used with a GUI, Input/Output of Smalltalk is usually done through the Transcript or specialized Workspace windows.
+Under the Windows operating system,
+the "stx.exe" program has no console and therefore no interactive
+input/output. Data written to the output streams will be found in the log file
+(in the user-specific temp directory). When reading from the input stream,
+and End-of-File condition is signalled.
+
+</UL>
+
+In general, from a software engineering point of view,
+the use of global variables for anything other than classes is considered to be bad style.
+<BR>
+Making something globally visible is actually not required
+- we highly recommend using class variables
+and to provide access to those via access-protocol or
+to use pool variables (see both below).
+<P>
+Even simple references to the Transcript, UserPreferences or Display screen
+lead to trouble when multiple threads/sessions/users are to be supported.
+For this, ST/X provides queries like "Transcript current", "UserPreferences current"
+or "Screen current", which return thread-local references.
+So each thread may
+have its own, private I/O devices and settings.
+<P>
+That said (and kept in mind), being able to access the console via the Transcript
+is often very helpful: it allows to send debugging and informative messages from the
+program.
+<BR>
+For example:
+<A type="example" INFO="Execute the example"><CODE><PRE>
+    Transcript show: 'Hello world'
+</PRE></CODE></A>
+shows that greeting in the Transcript window,
+and
+<A type="example" INFO="Execute the example"><CODE><PRE>
+    Transcript cr
+</PRE></CODE></A>
+advances its text cursor to the next line.
+<BR>
+There is also a combined message, as in:
+<A type="example" INFO="Execute the example"><CODE><PRE>
+    Transcript showCR: 'Hello world'
+</PRE></CODE></A>
+Finally, to wakeup a sleepy user, try:
+<A type="example" INFO="Execute the example"><CODE><PRE>
+    Transcript topView raise.
+    Transcript showCR: 'Ring Ring - Wakeup!'.
+    Transcript flash.
+</PRE></CODE></A>
+
+
+<H5>So, How is a Global Variable Created Then?</H5>
+
+<P>A global is created by sending the message <CODE>at:put:</CODE> to the global called <CODE>Smalltalk</CODE>,
+passing the name of the new global as a symbol.
+For example:
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    Smalltalk at:#Foo put: 'Now there is a Foo'
+</PRE></CODE></A>
+and can then be used:
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    Smalltalk at:#Foo
+</PRE></CODE></A>
+or simply:
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    Foo
+</PRE></CODE></A>
+if you want Smalltalk to forget about that variable, execute
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    Smalltalk removeKey:#Foo
+</PRE></CODE></A>
+(be careful to not remove one of your loved one's by accident).
+<P>
+Having said this, you now better immediately forget about global variables.
+
+
+<H4><A NAME="WORKSPACE_VARIABLES">Workspace Variables</A></H4>
+
+When executing (example-) expressions in a workspace,
+it is often helpful to be able to refer to an object via a known name
+(for example, to be able to send messages to it later) but without the danger of
+overwriting existing global variables which might interfere with Smalltalk internals.
+<BR>
+For this, <CITE>Smalltalk/X</CITE> provides <DFN>Workspace variables</DFN>.
+<BR>
+These behave much like global variables, in that their lifetime is not limited
+to a method or block execution or to a particular instance.
+However, they are only visible in the context of a workspace's doIt evaluation -
+they do not conflict with a corresponding globals name.
+<P>
+Workspace variables are created and destroyed via corresponding menu functions in
+the workspace window. You can also configure the workspace to auto-define any unknown
+variable as a workspace variable (in the workspaces "workspace"-"settings"-menu). Thats the way to go for the remainder of this lecture,
+because it makes your life so much easier.
+<P>
+Be aware of the fact, that workspace variables are invisible to compiled code
+- i.e. any reference to such a variable from within compiled code will actually refer to a
+global variable with the same name (which will be seen as nil if it never gets a value assigned to).
+
+
+<H4><A NAME="CLASS_VARIABLES">Class Variables, Class Instance Variables and Shared Pools</A></H4>
+
+These are variables with a visibility that is limited to a class and its subclasses or a limited group of classes.
+
+<DL>
+<DT>Class Variables (now also called "<DFN>Statics</DFN>" in new VisualWorks versions)
+<DD>
+A "Class Variable" is a single cell which is visible and shared by a class and all of its subclasses.
+<BR>If some class "A" defines a class variable "Va", this "Va" can be seen, read and written to from all methods
+of class "A" and all of its subclasses. If "A" changes the value of "Va", the changed value is also seen in all of the subclasses
+and vice versa.
+<P>
+
+<DT>Class Instance Variables
+<DD>
+A "Class Instance Variable" is defined in a class as a slot of the class object and is as such inherited by the subclasses.
+However, each of the class objects has its own private slot. This is very similar to the definition of an instance variable,
+which is also defined at one place and then inherited by subclasses. But with each individual instance having a possibly
+different value in it.
+<BR>If some class "A" defines a class instance variable "Va", each class gets its own private slot named "Va".
+If "A" changes the value of its "Va", the other "Va"-slots of all the subclasses are not affected and vice versa.
+<P>
+For a C++, Java or C# programmer, class instance variables are hard to understand, unless they see the class objects as
+real objects with private slots, protocol etc. This is because none of those languages offers a similar construct.
+
+<P>
+
+<DT>Pool variables
+<DD>
+A "Shared Pool" is a collection of variable bindings which are visible to more than a single class.
+The pool itself defines the names of the variables it contains, and also provides the initialization code to
+set the initial values.
+Then other classes can "attach" to the pool, which makes these variables visible inside the class.
+Pool variables are readOnly for all places outside the SharedPool itself.
+They are typically used to hold and provide shared constants, parameters and definitions that do not change.
+</DL>
+
+More info on those variables will be presented below, after classes and metaclasses have been explained.
+
+
+<H4>Instance Variables</H4>
+
+<P>
+Instance variables are private to some object and their lifetime is the lifetime of the object.
+<BR>
+We will come back to instance variables, once we have learned how classes are defined.
+
+
+
+<H4><A NAME="LOCAL_VARIABLES">Local Variables</A></H4>
+
+<P>
+A <DFN>local variable</DFN> declaration consists of an opening '|' (vertical bar) character,
+a list of identifiers and a closing '|'.
+It must be located before any statement within a code entity
+(a doIt-evaluation, block or method; the later being described below).
+<BR>
+For example:
+<CODE><PRE>
+    | foo bar baz |
+</PRE></CODE>
+declares 3 local variables, named 'foo', 'bar' and 'baz'.
+<P>
+A local variable's lifetime is limited to the time the enclosing context
+is active - typically, a method or a block.
+<P>
+
+When a piece of code is evaluated in a workspace window,
+the system generates an anonymous method and calls it for the execution.
+Therefore, a local variable declaration is also allowed with
+<I>doIt</I>-evaluations
+(the variable's lifetime will be the time of the execution).
+
+
+
+<H3><A HREF="tutorial.html#I_BASICS" NAME="ASSIGNMENT">Assigning a Value to a Variable</A></H3>
+
+A variable is "<DFN>bound to</DFN>" (made to refer to) an object by an assignment expression.
+<BR>Assuming that "<CODE>foo</CODE>" and "<CODE>bar</CODE>" have been declared as
+variables before, you can assign a value with:
+<CODE><PRE>
+    foo := 1
+</PRE></CODE>
+or:
+<CODE><PRE>
+    bar := 'hello world'
+</PRE></CODE>
+
+
+<BR>
+This makes the variable refer to the object as specified by what is
+written
+after (to the right of) the assignment symbol.
+This may be either a literal (i.e. a constant),
+the value of another variable, or the outcome of a message expression.
+<BR>
+Multiple assignments are allowed, as in:
+<CODE><PRE>
+    foo := bar := baz := 1
+</PRE></CODE>
+<P>
+
+<DL>
+<DT>Notice:
+<DD>Beginners should be careful to not forget the colon character "<CODE><B>:</B></CODE>" in ":<CODE>=</CODE>".
+<BR>
+If you write "<CODE>=</CODE>" instead, you will get a binary message send expression
+which means "<DFN>is equal to</DFN>" (i.e. it is a comparison operator).
+<BR>Therefore,
+<CODE><PRE>
+    foo := baz = 1.
+</PRE></CODE>
+would assign true or false to "<CODE>foo</CODE>", depending on whether "<CODE>baz</CODE>" is equal to 1 or not.
+</DL>
+To make the intention clear, good programmers will often place the right side of the above expression in parentheses,
+<CODE><PRE>
+    foo := (baz = 1).
+</PRE></CODE>
+Even if they are not required, it is a bit easier to read.
+
+<P>
+All variables are initially bound to nil.
+<BR>
+This is the same behavior as found in Java or C#,
+but opposed to C or C++.
+You will never get random or even invalid values in a Smalltalk variable.
+<P>
+
+Keep in mind that only a reference to an object is stored into the variable,
+not the state of the object itself.
+This means that multiple variables may refer to the same object.
+<BR>
+For example:
+<A TYPE="example" INFO="Execute the example (look at the Transcript)">
+<CODE><PRE>
+    |var1 var2|
+
+    "create an Array with 5 elements ... and assign it to <VAR>var1</VAR>"
+    var1 := Array new:5.
+
+    "and also to <VAR>var2</VAR>"
+    var2 := var1.
+
+    "change the 2nd element..."
+    var1 at:2 put:1.
+
+    Transcript show:'var1 is '. Transcript showCR:var1.
+    Transcript show:'var2 is '. Transcript showCR:var2.
+</PRE></CODE>
+</A>
+The previous example demonstrates,
+that both <VAR>var1</VAR> and <VAR>var2</VAR> refer to the same array object.
+I.e. that in Smalltalk, a variable actually holds a <DFN>reference</DFN> to an object,
+and that more than one variable may refer to the same object
+<BR>
+Technically speaking: a variable holds a <DFN>pointer</DFN> to the object.
+<P>
+This is especially true with multiple assignments;
+so:
+<CODE><PRE>
+    foo := bar := 'hello'
+</PRE></CODE>
+binds both "<CODE>foo</CODE>" and "<CODE>bar</CODE>" to the same string object.
+<P>
+
+<H4>Side Effects</H4>
+What happened in the above "at:put:" example is called a <DFN>side effect</DFN>.
+As a "side offect" of sending a message to var1, the world changed also as seen from var1.
+Such side effects are one of the biggest troublemakers in bigger projects,
+because they are sometimes very hard to find and track down.
+Also, because their effect will usually be seen much later - when the cause is no longer in sight.
+One good strategy to prevent such trouble is to write code in a so called "<DFN>functional coding style</DFN>".
+In this, you avoid manipulating an object's state. Instead you create a copy of the original with
+the change applied. Thus never affecting others that also hold on to the object.
+Of course, taken to its extreme, such a coding style can lead to a huge overhead, and in practice
+a compromise has to be taken.
+However, for strings, simple collections, 2D and 3D coordinates and a number of other simple
+objects it is usually the way to go.
+
+
+<H4>Assignment to Globals</H4>
+
+Be careful when assigning to globals - do not (by accident) overwrite
+a reference to some other object, especially not to a class by writing:
+<CODE><PRE>
+    Array := nil
+</PRE></CODE>
+To prevent beginners from
+doing harm to the system, <CITE>ST/X</CITE> checks for this situation
+and gives a warning.
+<BR>
+However, other (Smalltalk-) systems may silently
+perform the assignment and leave you with an unusable system.
+<BR>
+Keep in mind, that this danger is also one of the reasons for Smalltalk's
+flexibility: it allows for almost any existing class to be replaced by your own.
+So it is a two sided sword: the strict prohibition of such changes (as advocated by Java and C#) might
+help the absolute beginners, but also hinder those who want to enhance the system with
+fancy new features. In practice, this has never been really a problem: if it ever happens,
+restart your last working image, reapply the changes and continue.
+You will do this mistake only once. Try it, now!
+<P>
+As a general rule:
+<BLOCKQUOTE>
+<STRONG>do not assign to global variables - it is usually a sign of
+very very bad design if you have to.</STRONG>
+As you read above and will see below, there are other variable types which can be used in most situations.
+
+</BLOCKQUOTE>
+<P>
+
+
+<H4>Examples</H4>
+
+Knowing about variables, we can try more interesting messages:
+<P>
+Ask the <CODE>Float</CODE> class for the &pi; (pi) constant:
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    Float pi
+</PRE></CODE></A>
+
+Ask the <CODE>Transcript</CODE> object to raise its top view:
+<A type="example" INFO="Execute the example"><CODE><PRE>
+    Transcript topView raise
+</PRE></CODE></A>
+
+Ask the <CODE>Transcript</CODE> object to flash its view:
+<A type="example" INFO="Execute the example"><CODE><PRE>
+    Transcript flash
+</PRE></CODE></A>
+
+Ask the <CODE>WorkspaceApplication</CODE> class to create a new instance and open
+a view for it:
+<A type="example" INFO="Execute the example"><CODE><PRE>
+    WorkspaceApplication open
+</PRE></CODE></A>
+
+Declare a local variable, assign a value and display it on the transcript
+window:
+<A type="example" INFO="Execute the example"><CODE><PRE>
+    |foo|
+
+    Transcript show:'foo is initially bound to: '.
+    Transcript showCR:foo.
+
+    foo := -1.
+    Transcript show:'foo is now bound to: '.
+    Transcript showCR:foo.
+
+    foo := foo + 2.
+    Transcript show:'foo is now bound to: '.
+    Transcript showCR:foo.
+</PRE></CODE></A>
+
+Remember, that a variable may refer to <B>any</B> object.
+<BR>
+Thus, the following is legal (although not considered a good style):
+<A type="example" INFO="Execute the example"><CODE><PRE>
+    |foo|
+
+    foo := -1.
+    Transcript show:'foo is: '.
+    Transcript show:foo.
+    Transcript cr.
+    Transcript show:'and it is a: '.
+    Transcript showCR:foo class name.
+
+    foo := 'hello'.
+    Transcript show:'foo is now: '.
+    Transcript show:foo.
+    Transcript cr.
+    Transcript show:'and it is a: '.
+    Transcript showCR:foo class name.
+</PRE></CODE></A>
+
+A rule of wisdom:
+<BR>
+do not reuse variables (as in the above case) unless needed for accumulating something.
+Having an extra variable in a method does not cost anything (neither time, nor space).
+However, it helps a lot in readability.
+Sometimes even use a temporary variable just for the name of it, to document what an
+intermediate result represents.
+
+
+
+<H3><A HREF="tutorial.html#I_BASICS" NAME="CASCADE">Cascade Message Expressions</A></H3>
+
+Sometimes, it is useful to send multiple messages to the same receiver.
+<BR>
+For example, to add elements to a freshly created collection,
+you could write:
+<CODE><PRE>
+    | coll |
+
+    coll := Set new.    "/ create an empty Set-collection
+    coll add:'one'.
+    coll add:'two'.
+    coll add:3.
+</PRE></CODE>
+
+A cascade expression (semicolon) allows this to be written a little shorter:
+it sends another message - possibly with arguments - to the previous receiver.
+<P>
+The following cascade is semantically equivalent to the above
+albeit a bit shorter:
+<CODE><PRE>
+    | coll |
+
+    coll := Set new.    "/ create an empty Set-collection
+    coll add:'one'; add:'two'; add:3.
+</PRE></CODE>
+
+<h4>Hint and Warning</h4>
+If you need a reference to such a freshly created collection,
+you should be aware that the "<CODE>add:</CODE>" method returns its argument
+(for historic reasons beyond my understanding).
+This means, that the following code does NOT what it looks like:
+<CODE><PRE>
+    | coll |
+
+    coll := Set new
+		add:1; add:2.   "/ Attention: add returns its argument
+</PRE></CODE>
+Instead of the expected, it leaves the integer 2 in the variable named "<VAR>coll</VAR>",
+because the assigned value is the value of the last "<CODE>add:</CODE>" message.
+<P>
+Because this is a recurring pattern, a method named "<CODE>yourself</CODE>" has been added to the Object class.
+As the name implies, it simply returns itself.
+Use this as the last message of the cascade:
+<CODE><PRE>
+    | coll |
+
+    coll := Set new
+		add:1; add:2;
+		yourself.       "/ returns the receiver - i.e. the Set
+</PRE></CODE>
+to prevent the above problem and get the expected value assigned.
+You may encounter this kind of code at various places in the system.
+
+
+
+<H3><A HREF="tutorial.html#I_BASICS" NAME="BLOCKS">Blocks</A></H3>
+
+Blocks are one of the most powerful features of the Smalltalk language.
+They allow for what is called "<DFN>higher order function</DFN>" algorithms - that is
+functions which return functions or get a function as argument.
+<BR>
+Take a few minutes to understand this concept, because it is not known to
+neither C/C++ nor to Java programmers.
+<P>
+A block represents a piece of executable code.
+Being a "real object" just like any other,
+it can be stored in a variable, passed around as argument or returned
+as value from a method - just like any other object.
+When required, the block can be <DFN>evaluated</DFN> at any later time,
+which results in the execution of the block's statement(s).
+The fancy thing is that the block's statements can see and are allowed to access
+all of the surrounding variables. Those which are visible within the static block scope.
+
+<P>
+<DL>
+<DT>For C/C++ and Java programmers:
+<DD>As a first approximation, regard a block as a reference to
+an anonymous function, which can be defined without a name, passed
+to other objects and eventually executed. However, blocks are more
+powerful, as they have access to variables of their statically enclosing, defining context.
+<P>
+
+<DT>For Lispers/Schemers:
+<DD>Blocks are closures (lambdas with access to their static enclosing environment)!
+</DL>
+
+
+<H4>Defining and Evaluating a Block</H4>
+A block is defined simply by enclosing its statements in brackets,
+as in:
+<CODE><PRE>
+    | someBlock |
+
+    someBlock := [  Transcript flash ].
+</PRE></CODE>
+later, when the block has to be evaluated (i.e. its statements executed),
+send it the "<CODE>#value</CODE>" message:
+<CODE><PRE>
+    ...
+    someBlock value.
+    ...
+</PRE></CODE>
+
+Blocks may be defined with 0 (zero) or more argument(s);
+<BR>
+A block with argument(s) is defined by giving the formal argument identifiers
+after the opening bracket - each prepended by a colon-character. The list
+is finished by a vertical bar.
+<BR>
+For example:
+<CODE><PRE>
+    |someBlock|
+
+    ...
+    someBlock := [:a | Transcript showCR:a ].
+    ...
+</PRE></CODE>
+defines a block which expects (exactly) one argument.
+<BR>
+To evaluate it, send it the "<CODE>#value:</CODE>" message, passing the desired
+argument object.
+<BR>
+For example, the above block can be evaluated as:
+<CODE><PRE>
+    someBlock value:'hello'
+</PRE></CODE>
+(here, a string object is passed as argument).
+<P>
+Blocks can be defined to expect multiple arguments, by declaring each
+formal argument preceeded by a colon. For evaluation, a message of the form
+"<CODE>#value:...value:</CODE>" with a corresponding number of arguments must be used.
+<BR>
+For example, the block:
+<CODE><PRE>
+    |someBlock|
+
+    ...
+    someBlock := [:a :b :c |
+			Transcript show:a.
+			Transcript show:' '.
+			Transcript show:b.
+			Transcript show:' '.
+			Transcript show:c.
+			Transcript cr
+		  ].
+    ...
+</PRE></CODE>
+can be evaluated with:
+<CODE><PRE>
+    someBlock value:1 value:2 value:3
+</PRE></CODE>
+<P>
+
+<H4>Block Evaluation Yields a Value</H4>
+When evaluated, the return value of the message is the value of the
+block's last expression.
+<CODE><PRE>
+    |someBlock|
+
+    ...
+    someBlock := [:a :b :c | a + b + c].
+    ...
+    Transcript showCR:(someBlock value:1 value:2 value:3).
+    ...
+</PRE></CODE>
+When executed, the above will display "6" on the Transcript window.
+<BR>Likewise,
+<CODE><PRE>
+    |someBlock|
+
+    ...
+    someBlock := [:a :b :c | a + b + c].
+    ...
+    result := someBlock value:1 value:2 value:3.
+    ...
+</PRE></CODE>
+will assign the numeric value 6 to the <VAR>result</VAR> variable.
+<P>
+Notice that blocks close over the variables of the environment which was active at
+the time the closure was created.
+And also that blocks also create such a variable-environment when executed.
+This means that in the following:
+<CODE><PRE>
+    |actions|
+
+    actions := (1 to:10) collect:[:factor | [:arg | arg * factor] ].
+    (actions at:5) value:10.
+</PRE></CODE>
+the "action at:5" retrieves a block which has captured the current value of the factor
+variable (which was 5) and therefore multiplies the argument by 5.
+<P>
+
+
+Blocks have many nice applications: for example, a GUI-Buttons action
+can be defined using blocks, a timer may be given a block for later
+execution, a batch processing queue may use a queue of block-actions
+and a sorted collection may use a block to specify how elements are to be compared.
+<P>
+However, the most striking application of blocks is in defining control
+structures (like if, while, repeat, loops etc.),
+and as <DFN>"higher order functions"</DFN> when enumerating or processing collections
+and the like.
+
+<H3>Control Structures</H3>
+Recall, that the above description of the Smalltalk language did not
+describe any syntax for control-flow - the reason is simple: there is none!
+<BR>
+Instead, all program control is defined by appropriate message protocol;
+mostly in the <CODE>Boolean</CODE>, <CODE>Block</CODE> and the <CODE>Collection</CODE> classes.
+<BR>
+
+
+
+<H4><A HREF="tutorial.html#I_IF" NAME="IF">Conditional Execution (if)</A></H4>
+
+Conditional execution is defined by the <CODE>ifTrue:</CODE> / <CODE>ifFalse:</CODE>
+protocol as implemented by the boolean objects bound to the globals "<CODE>true</CODE>" and "<CODE>false</CODE>":
+<UL>
+<LI><VAR>aBoolean</VAR> <CODE>ifTrue:</CODE> <VAR>aBlock</VAR>
+<BR>
+evaluates aBlock if aBoolean is true
+<P>
+<LI><VAR>aBoolean</VAR> <CODE>ifFalse:</CODE> <VAR>aBlock</VAR>
+<BR>
+evaluates aBlock if aBoolean is false
+<P>
+<LI><VAR>aBoolean</VAR> <CODE>ifTrue:</CODE><VAR>trueBlock</VAR> <CODE>ifFalse:</CODE> <VAR>falseBlock</VAR>
+<BR>
+evaluates trueBlock if aBoolean is true, falseBlock if false
+<P>
+<LI><VAR>aBoolean</VAR> <CODE>ifFalse:</CODE> <VAR>falseBlock</VAR> <CODE>ifTrue:</CODE><VAR>trueBlock</VAR>
+<BR>
+evaluates trueBlock if aBoolean is true, falseBlock if false
+</UL>
+these correspond to the if-then and if-then-else statements in traditional languages.
+<P>
+So, to compare two variables and send some message to the Transcript
+window, you can write:
+<CODE><PRE>
+    ...
+    (someVariable > 0) ifTrue:[ Transcript showCR:'yes' ].
+    ...
+</PRE></CODE>
+of course, you may change the indentation to reflect the program flow;
+<BR>this is what a C-Hacker (like I used to be) would write:
+<CODE><PRE>
+    ...
+    (someVariable > 0) ifTrue:[
+	(someVariable &lt; 10) ifTrue:[
+	    Transcript showCR:'between 1 and 9'
+	] ifFalse:[
+	    Transcript showCR:'positive'
+	]
+    ] ifFalse:[
+	Transcript showCR:'zero or negative'
+    ].
+    ...
+</PRE></CODE>
+
+and that is how a Lisper (and many Smalltalkers) would write it:
+<CODE><PRE>
+    ...
+    (someVariable > 0)
+	ifTrue:
+	    [(someVariable &lt; 10)
+		ifTrue:
+		    [Transcript showCR:'between 1 and 9']
+		ifFalse:
+		    [Transcript showCR:'positive']]
+	ifFalse:
+	    [Transcript showCR:'zero or negative'].
+    ...
+</PRE></CODE>
+
+Because the above constructs are actually message sends
+(NOT statement syntax), they do also return a value when invoked.
+Thus, some Smalltalkers or Lispers would probably prefer a more functional style,
+as in:
+<CODE><PRE>
+    ...
+    Transcript showCR:
+	((someVariable > 0)
+	    ifTrue:
+		[(someVariable &lt; 10)
+		    ifTrue:['between 1 and 9']
+		    ifFalse:['positive']]
+	    ifFalse:
+		['zero or negative']).
+    ...
+</PRE></CODE>
+
+Which one you prefer is mostly a matter of style,
+and you should use the one which is more readable
+- sometimes, deeply nested expressions can become quite
+complicated and hard to read.
+
+<P>
+As a final trick, noticing the fact that every object responds to the <CODE>#value</CODE>-message,
+and that the <CODE>#if</CODE>-messages actually send <CODE>#value</CODE> to one of the alternatives and
+return that,
+you may even encounter the following coding style sometimes (notice the non-block args of the inner ifs):
+<CODE><PRE>
+    ...
+    Transcript showCR:
+	((someVariable > 0)
+	    ifTrue:
+		[(someVariable &lt; 10)
+		    ifTrue:'between 1 and 9'
+		    ifFalse:'positive']
+	    ifFalse:
+		'zero or negative').
+    ...
+</PRE></CODE>
+The above "trick" should (if at all) <B>only be used for constant</B> if-arguments
+and only when using the "if" for its value.
+With message-send arguments, both alternatives would be evaluated,
+which has probably not the desired effect.
+Also be aware that some other objects implement value and will not return themself.
+Most noteworthy are instances of Association and the ValueModel hierarchy.
+<DL>
+<DT>Warning:
+<DD>
+It is a common beginners error, to forget that the above are really messages
+to some object and that the argument(s) of an if-message ought to be blocks.
+<BR>Therefore, except for the above "trick",
+it is usually an error to use round parentheses instead of brackets.
+<BR>(the if-expression would evaluate both alternatives and use the condition to choose the returned value.)
+</DL>
+
+
+<H4><A HREF="tutorial.html#I_WHILE" NAME="WHILE">Looping (while)</A></H4>
+
+While-loops are defined in the Block class:
+
+<UL>
+<LI><VAR>aBooleanBlock</VAR> <CODE>whileTrue:</CODE> <VAR>loopBlock</VAR>
+<BR>
+as long as aBooleanBlock evaluates to true,
+loopBlock is evaluated
+<BR>(i.e. repeats evaluating loopBlock as long
+as aBooleanBlock evaluates to true).
+<P>
+<LI><VAR>aBooleanBlock</VAR> <CODE>whileFalse:</CODE> <VAR>loopBlock</VAR>
+<BR>
+as long as aBooleanBlock evaluates to false,
+loopBlock is evaluated
+<P>
+<LI><VAR>aBooleanBlock</VAR> <CODE>whileTrue</CODE>
+<BR>
+repeats evaluating aBooleanBlock until it returns false
+<P>
+<LI><VAR>aBooleanBlock</VAR> <CODE>whileFalse</CODE>
+<BR>
+repeats evaluating aBooleanBlock until it returns true
+<P>
+</UL>
+Examples:
+<A type="example" INFO="Execute the example (look at the Transcript)"><CODE><PRE>
+    |someVar|
+
+    someVar := 1.
+    [someVar &lt; 10] whileTrue:[
+	Transcript showCR:someVar.
+	someVar := someVar + 1.
+    ]
+</PRE></CODE></A>
+<DL>
+<DT>Warning:
+<DD>
+It is a common beginners error, to forget that the above are really messages
+to some object and that the receiver of a while-message ought to be a block.
+<BR>Therefore, it is an error to use round parentheses instead of brackets.
+<BR>(i.e. <CODE>"(someVar &lt; 10)"</CODE> would return a boolean, which does
+not implement the while messages.)
+</DL>
+A nice use of this (and a demonstration of how powerful blocks are) is when the condition
+block is not static as in the above example, but passed in as an argument to some
+looping code.
+For example:
+<BR>
+<CODE><PRE>
+    condition := [ something evaluating to a Boolean ].
+    ...
+
+    condition whileTrue:[
+	...
+    ]
+</PRE></CODE>
+If while-loops are used that way, the condition is typically passed in as
+an argument or configured in some instance variable.
+
+
+<P>
+The above while-loops check the condition at the beginning - i.e. if the condition
+block evaluates to false initially, the loop-block is not executed at all.
+<P>
+The Block class also provides looping protocol for condition checking at the end
+(I.e. where the loop-block is executed at least once):
+<CODE><PRE>
+    [
+	...
+	loop statements
+	...
+    ] doWhile: [ ...condition... ]
+</PRE></CODE>
+and also:
+<CODE><PRE>
+    [
+	...
+	loop statements
+	...
+    ] doUntil: [ ...condition... ]
+</PRE></CODE>
+
+
+
+
+<H4><A HREF="tutorial.html#I_ENDLESSLOOP" NAME="ENDLESSLOOP">Endless Loop (forever)</A></H4>
+
+An endless loop is normally not what the programmer wants,
+except for server processes (which handle incoming requests)
+or iterative calculations.
+Such loops can be written as an endless loop, which is left (if at all) by other
+means (typically by terminating the process, via an exception
+or by returning from the method which contains the loop).
+<P>
+Of course, an obvious way to write an endless loop is:
+<CODE><PRE>
+    [true] whileTrue:[
+	...
+	endless loop statements
+	...
+    ]
+</PRE></CODE>
+
+However, to document the programmers intention, it it better to
+use one of the explicit endless loop constructs (#<CODE>loop</CODE> or #<CODE>repeat</CODE>),
+as in:
+<CODE><PRE>
+    [
+	...
+	endless loop statements
+	...
+    ] loop
+</PRE></CODE>
+or:
+<CODE><PRE>
+    [
+	...
+	endless loop statements
+	...
+	someCondition ifTrue:[ ^ something ].
+	...
+    ] loop
+</PRE></CODE>
+or:
+<CODE><PRE>
+    [:exit |
+	...
+	endless loop statements
+	...
+	someCondition ifTrue:[ exit value ]
+	...
+    ] loopWithExit
+</PRE></CODE>
+the last one is interesting, as the exit object passed in as argument
+is exiting the loop when #value is sent to it.
+Thus, because ifTrue: sends #value to its argument,
+the loop can also be written as:
+<CODE><PRE>
+    [:exit |
+	...
+	endless loop statements
+	...
+	someCondition ifTrue: exit
+	...
+    ] loopWithExit
+</PRE></CODE>
+
+<H4><A HREF="tutorial.html#I_TIMESREPEAT" NAME="TIMESREPEAT">Repeating a Number of Times</A></H4>
+
+To repeat the execution a number of times, use:
+<CODE><PRE>
+    n timesRepeat:[
+	...
+	repeated statements
+	...
+    ]
+</PRE></CODE>
+where <VAR>n</VAR> stands for an integer value (constant, variable or message expression).
+
+
+<H4><A HREF="tutorial.html#I_ENUMERATINGINTEGERS" NAME="ENUMERATINGINTEGERS">Looping Over a Range of Numbers</A></H4>
+
+The traditional (C and Java) loop styles,
+where a range of numbers is enumerated is also
+available in Smalltalk:
+
+<A type="example" INFO="Execute the example (look at the Transcript)"><CODE><PRE>
+    |anArray|
+
+    anArray := #( 'one' 'deux' 'drei' 'quatro' 5 6.0 ).
+
+    1 to: 6 do: [:idx |
+	Transcript showCR: (anArray at: idx)
+    ].
+</PRE></CODE></A>
+or, with an increment,
+<A type="example" INFO="Execute the example (look at the Transcript)"><CODE><PRE>
+    |anArray|
+
+    anArray := #( 'one' 'deux' 'drei' 'quatro' 5 6.0 ).
+
+    1 to: 6 by: 2 do: [:idx |
+	Transcript showCR: (anArray at: idx)
+    ].
+</PRE></CODE></A>
+
+However, no <CITE>real</CITE> Smalltalk programmer would use "<CODE>to:do:</CODE>" to enumerate a collection's elements.
+<BR>
+There are many, many useful enumeration messages provided in the collection
+classes, and we highly recommend that you have a look at them.
+<BR>
+A real Smalltalk programmer would instead write:
+<A type="example" INFO="Execute the example (look at the Transcript)"><CODE><PRE>
+    |anArray|
+
+    anArray := #( 'one' 'deux' 'drei' 'quatro' 5 6.0 ).
+
+    anArray do:[:eachElement |
+	Transcript showCR: eachElement
+    ].
+</PRE></CODE></A>
+Notice that this example also demonstrates good vs. bad resuability of the code:
+the first version (using to:do:) uses a numeric-index-based address to fetch each element.
+This implies that the collection must be some kind of numerically-sequenceable collection.
+The second version simply leaves that decision to the collection itself.
+It will therefore work with any kind of collection (lists, trees, hashtables, sets, etc.).
+Of course, in the above example we hardcoded an array as receiver, which is known to allow access
+via a numeric index. However, in practice, the collection is often coming from elsewhere via a
+message argument or variable value. In that case, a changing collection representation in other parts of
+the program will not affect the enumeration loop.
+<P>
+Open a browser and look at the implementation of
+<CODE>#reverseDo:</CODE>,
+<CODE>#collect:</CODE>, <CODE>#detect:</CODE>, <CODE>#select:</CODE>, <CODE>#findFirst:</CODE> etc.
+<P>
+
+<DL>
+<DT>Hint:
+<DD>
+It is very common for beginners to use simple "<CODE>do</CODE>"- or even "<CODE>while</CODE>"-loops with
+indexing to enumerate elements for element searching or processing.
+<BR>Please do have a look at the full enumeration protocol and browse for uses of them.
+It really helps, saves code and avoids bugs.
+In addition, many of the enumeration messages are implemented in a much more efficient way
+than naïve loop code would be. Do not reinvent the wheel!
+</DL>
+
+
+
+<H4><A HREF="tutorial.html#I_EXCEPTIONHANDLING" NAME="EXCEPTIONHANDLING">Exception Handling</A></H4>
+
+Errors and Exceptions can be handled programmatically:
+<A type="example" INFO="Execute the example (look at the Transcript)"><CODE><PRE>
+    [
+	'nonExistingFile' asFilename contents
+    ] on:Error do:[:exceptionInfo |
+	Transcript showCR:(exceptionInfo description).
+    ].
+</PRE></CODE></A>
+
+
+<H4><A HREF="tutorial.html#I_UNWINDCLEANUP" NAME="UNWINDCLEANUP">Ensuring Cleanup Actions</A></H4>
+
+In some situations, a cleanup action is required to be always performed,
+even if some operation gets aborted (by an exception or a user interrupt).
+Typical situations are closing a file, closing a window or turning off some
+device. For this, use an ensure block, which will be evaluated after some other action,
+even if the action gets aborted (unwound).
+This is similar to the "finally" construct of Java or the "unwind-protect" of Scheme.
+<A type="example" INFO="Execute the example (look at the Transcript)"><CODE><PRE>
+    |s|
+
+    [
+	s := 'someFile' asFilename writeStream.
+	Transcript showCR:'start writing...'.
+	s nextPutLine:'hello'.
+	"/ now, an error occurs and a debugger is opened
+	self error:'please abort (here or in the debugger)'.
+	"/ so this line is not executed:
+	Transcript showCR:'not reached'.
+    ] ensure:[
+	"/ but this is:
+	Transcript showCR:'cleaning up'.
+	s close.
+	'someFile' asFilename remove.
+    ].
+</PRE></CODE></A>
+There is also a combined handler+ensure method which corresonds to other language's
+try-catch-finally statement:
+<CODE><PRE>
+    [
+	some action
+    ] on:Error do:[
+	error handler
+    ] ensure:[
+	cleanup action
+    ]
+</PRE></CODE>
+
+
+
+
+<H3><A NAME="HIGHER_ORDER_FUNCTIONS">Higher Order Functions</A></H3>
+
+The term "<DFN>Higher Order Function</DFN>" originated in the functional programming area
+and refers to functions which expect functions as arguments or return them as their values.
+Higher order functions are natural in programming languages where functions and executable
+code can be treated like any other object (are so called "<DFN>first class citizens</DFN>").
+<P>
+Smalltalk's blocks are perfectly well suited for this style of programming, because they allow
+for all of the above.
+And actually, they are used heavily as arguments in the collection class protocol.
+
+
+
+
+
+<H4><A HREF="tutorial.html#I_ENUMERATING" NAME="ENUMERATING">Looping Over Elements of a Collection (enumerating)</A></H4>
+
+All collection classes (<CODE>Array</CODE>, <CODE>Set</CODE>, <CODE>Dictionary</CODE> etc.) provide for
+messages to enumerate their elements and evaluate a given block for each of them.
+The most useful of those enumeration messages is:
+<UL>
+<LI><VAR>aCollection</VAR> <CODE>do:</CODE> <VAR>aOneArgBlock</VAR>
+</UL>
+For example, the enumeration of an array's elements is easily done as in:
+<A type="example" INFO="Execute the example (look at the Transcript)"><CODE><PRE>
+    |anArray|
+
+    anArray := #( 'one' 'deux' 'drei' 'quatro' 5 6.0 ).
+    anArray do:[:eachElement | Transcript showCR:eachElement ].
+</PRE></CODE></A>
+of course, you should indent the code to reflect the intended control flow.
+With C-style indentation the code looks as:
+<A type="example" INFO="Execute the example (look at the Transcript)"><CODE><PRE>
+    |anArray|
+
+    anArray := #( 'one' 'deux' 'drei' 'quatro' 5 6.0 ).
+    anArray do:[:eachElement |
+	Transcript showCR:eachElement
+    ].
+</PRE></CODE></A>
+
+
+
+<H4><A NAME="HISTOGRAM_EXAMPLE">The Power of Blocks: a Concrete Example</A></H4>
+
+To give you a rough idea of how powerful these blocks are,
+here is a piece of code to enumerate all files of a directory, split each into words,
+count them and give a histogram of the top-10 used words:
+<A type="example" info="Click to execute"><CODE><PRE>
+    |bag mostUsed|
+
+    bag := Bag new.
+
+    '../../doc/online/english/getstart' asFilename directoryContentsAsFilenames
+	select:[:eachFile | eachFile isDirectory not]
+	thenDo:[:eachFile |
+	    eachFile contents do:[:eachLine |
+		bag addAll: eachLine asCollectionOfWords.
+	    ].
+	].
+
+    mostUsed := (bag valuesAndCounts asArray sort:[:a :b | a value > b value ]) first:10.
+
+    CodingExamples_GUI::HistogrammView new
+	extent:500@300;
+	labels:(mostUsed collect:[:eachPair | eachPair key storeString]);
+	values:(mostUsed collect:[:eachPair | eachPair value]);
+	open.
+</PRE></CODE></A>
+The higher-order functions used are:
+<OL>
+<LI>as argument1 to <CODE>select:thenDo:</CODE>
+<LI>as argument2 to <CODE>select:thenDo:</CODE>
+<LI>as argument to <CODE>do:</CODE>
+<LI>as argument to <CODE>sort:</CODE>
+<LI>as argument to <CODE>collect:</CODE>
+<LI>as argument to <CODE>collect:</CODE>
+</OL>
+That makes 7 uses as higher order function - some even nested.
+Notice how nicely the block syntax fits the select operation - it looks almost like mathematics.
+You are welcome to try this without blocks, by using streams or even explicit loops.
+
+
+<H4><A NAME="HISTOGRAM_EXAMPLE2">The Power of Blocks: Another Example</A></H4>
+
+
+As another demonstration of how powerful blocks are,
+here is a code fragment to measure the execution times of a function (a block),
+and to show it as histogram.
+The operation to be measured counts the number of $x characters in a string.
+It is repeated a million times to get measurable time durations.
+
+<A type="example" info="Click to execute"><CODE><PRE>
+    |function measureData|
+
+    function :=
+	    [
+		1000000 timesRepeat:[
+		    'abcdefxghijklxmn' occurrencesOf:$x
+		]
+	    ].
+
+    measureData := (1 to:30)
+			collect:[:n |
+			     Time millisecondsToRun: function.
+			].
+
+    CodingExamples_GUI::HistogrammView new
+	extent:750@400;
+	labels:nil;
+	values:measureData;
+	open.
+</PRE></CODE></A>
+Notice again, that higher order functions are used as the function itself,
+with the timesRepeat and with the collect: expressions.
+
+
+
+<H3><A HREF="tutorial.html#I_SYNTACTICSUGAR" NAME="SYNTACTICSUGAR">Syntactic Sugar</A></H3>
+
+The term "<DFN>Syntactic Sugar</DFN>" is used for language constructs that do not offer new functionality
+(i.e. new semantic), but solely exist to make the life of the programmer easier.
+Typically these are syntactic variants of other constructs created to be shorter (for faster coding)
+and/or to be more readable (for better understandability).
+<P>
+Historically, due to its very readable, English-like syntax, Smalltalk does not have lots of syntactic sugar.
+Everything was expressed as message-sends to objects.
+This includes class- and method-definition, variable initialization, looping, exception handling etc.
+<P>
+In contrast, most other programming languages typically provide separate syntactic constructs for each of the above mentioned issues
+(lisp being a well-respected exception here).
+The only existing syntactic sugar is the additional message syntax for binary selectors (which was added to make
+mathematic expressions more readable) and the cascade message.
+
+
+
+<H4><A HREF="tutorial.html#I_BRACE" NAME="BRACE">Brace-Array-Constructor</A></H4>
+
+In more recent times, one syntactic construct which originated in the Squeak community,
+has become very popular: the "brace-constructor" to construct arrays at run time.
+<BR>
+Its syntax form is:
+<CODE><PRE>
+    { <I>expression1</I> . <I>expression2</I> .  ... <I>expressionN</I> }
+</PRE></CODE>
+to construct a new Array (at runtime) with N elements,
+computed by the corresponding expressions.
+Please notice the separating periods (to separate the expressions).
+
+<BR>
+For example:
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    { 'str'.  Date today.  Time now. 1.  #sym }
+</PRE></CODE></A>
+creates a 5-element array at run time.
+<P>
+Notice that the brace-constructor shows the <B>same</B> behavior as a multi-new-message to
+the <CODE>Array</CODE> class, or (for more than a small number of elements),
+for an <CODE>"Array new:"</CODE> followed by
+a bunch of <CODE>at:put:</CODE> messages;
+in other words: it is equivalent to:
+<CODE><PRE>    Array with:<I>expression1</I> with:<I>expression2</I> ... with:<I>expressionN</I></PRE></CODE>
+but without the restriction on the max. number of arguments.
+<P>
+Thus, the above is equivalent to:
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    (Array new:5)
+	at:1 put:'str';
+	at:2 put:(Date today);
+	at:3 put:(Time now);
+	at:4 put:1;
+	at:5 put:#sym;
+	yourself
+</PRE></CODE></A>
+
+If you use this feature, be aware that "#( )" and "{ }" both return an empty array.
+However, the array returned by "#( )" has been created at compilation time, and the
+same identical object will be returned, whenever the "#( )"-expression is evaluated again.
+<BR>
+In contrast, every evaluation of "{ }" will construct and return a <B>new</B> Array at runtime.
+<P>
+(Notice by the author: I personally have one critique on the brace constructor:
+why should the Array class be so special as to justify a special syntactic sugar construct?
+Most collections in real life are variable in size,
+so creating an OrderedCollection could pretty much the same be justified.
+But then, why exclude Set, Dictionary and all other fancy collections?
+Why exclude Matrix or Vectors?
+In addition, those with a functional background would definitely love to have a simple constructor
+for Lisp-like linked lists or cons-objects.
+<br>
+In other words:
+the brace constructor seems to be a quick hack for a single programmer's needs (lazyness?).
+It should have been more thought-through,
+for a more generic solution, before finding its way into thousands of methods...)
+
+
+
+<H4><A HREF="tutorial.html#I_CLASSLIB" NAME="CLASSLIB">Class Library</A></H4>
+<P>
+Now, we reached a point, where we realize that the key to
+becoming a <VAR>Smalltalker</VAR> lies in the knowledge of the
+system's class library. Although this is true for all big programming
+systems, it is even more true for Smalltalk, since even control structures
+and looping is implemented by message protocol as opposed to being a
+syntax feature.
+
+<P>
+No programming is possible if you don't
+know the protocol of the classes in the system, or at least part of it.
+<BR>
+To give you a starting point, we have compiled a
+list of the most useful messages as implemented by
+various classes in the
+<A HREF="../programming/selectors.html">``list of useful selectors''</A>
+document.
+<P>
+
+<FORM ACTION="../misc/onlyInSTX.html"
+      METHOD="DOIT |
+	Processor activeProcess withLowerPriorityDo:[
+	    HTMLDocumentPrinter
+		print:(self currentDirectoryName
+			, '/../programming/selectors.html').
+	]
+    ">
+Beginners may want to
+<INPUT TYPE="submit" VALUE="print"> this list and use it as a reference card.
+</FORM>
+
+A rough overview of the most common classes and
+their typical use is found in the
+<A HREF="../overview/basicClasses/TOP.html">"Basic Classes Overview"</A>.
+Please, read this document now.
+
+
+<P>
+<HR>
+Continue in <A HREF="tut_2b.html">"Playing with objects"</A>.
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif" ALT="[stx-logo]">
+<BR>Copyright &copy; Claus Gittinger Development & Consulting
+<BR>Copyright &copy; eXept Software AG
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.26 $ $Date: 1999/10/14 13:13:06 $
+
+</BODY>
+</HTML>

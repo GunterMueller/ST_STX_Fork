@@ -1,0 +1,10 @@
+LIBRARY         stx_libview
+DESCRIPTION     'Smalltalk/X View classes'
+VERSION         3.5
+CODE            EXECUTE READ
+DATA            READ WRITE
+SECTIONS
+    INITCODE    READ EXECUTE
+    INITDATA    READ WRITE
+EXPORTS
+    _stx_libview_Init

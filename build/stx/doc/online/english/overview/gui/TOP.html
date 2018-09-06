@@ -1,0 +1,122 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Graphical user interface (GUI) classes</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="../basicClasses/TOP.html" INFO="Previous Chapter" > <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="../TOP.html"> <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+
+<H1>Graphical user interface (GUI) classes</H1>
+<P>
+The GUI classes are packaged into multiple libraries of which some can be left
+out even for a fully working system with graphical user interface.
+<BR>
+For example, all classes related to program development
+have been packaged into separate libraries (libtool, libtool2);
+required widgets have been separated from less frequently used ones etc.
+<BR>
+This was done to make packaging of end user applications easier.
+<P>
+For special needs, enduser applications can even be built by specifying each individual
+class thats to be included. Of course, on systems which support dynamic shared
+libraries, there is no need (and no advantage) in doing so.
+<P>
+Since no smalltalk standard exists for the GUI classes, each smalltalk vendor's
+GUI interface differs more or less (there are also legal reasons for this).
+Thus, porting graphical applications involves some effort and recoding
+(however, in separating the presentation from the functionality of application
+objects, this effort can be reduced considerably).
+<P>
+The following gives you a rough idea of existing widgets. For more detailed
+information, please read the
+<A HREF="../../programming/viewintro.html">introduction to view programming</A>
+which gives you a step by step intro and is very valuable for a quick entry.
+<P>
+Detailed information on individual classes is found in the
+<A HREF="../../classDoc/TOP.html">class documentation</A>.
+
+
+
+<P>
+The <CITE>Smalltalk/X</CITE> low level GUI support classes support (among others):
+<UL>
+<LI> <A NAME="I_DISPLAY">physical display interface</A>
+<LI> <A NAME="I_COLOR" HREF="color.html">Color and Cursor representation</A>
+<LI> <A NAME="I_IMAGE" HREF="image.html">B & W, greyscale and color images</A>
+<LI> <A NAME="I_VIEW" HREF="view.html">Drawables and views</A>
+</UL>
+The higher level views (so called <VAR>widgets</VAR>) are built using the above
+basic objects or derived from the generic view classes.
+Among others there are:
+<UL>
+<LI> <A NAME="I_INTERACTORS" HREF="interactors.html">Button, Toggle, Scrollbar etc</A>
+<LI> <A NAME="I_MENUS" HREF="menus.html">Popup and Pulldown menus</A>
+<LI> <A NAME="I_LAYOUT" HREF="layout.html">Various layout views, panels and other geometry managers</A>
+<LI> <A NAME="I_LISTS" HREF="lists.html">Views to present text, lists, filelists etc.</A>
+<LI> <A NAME="I_SCROLLER" HREF="scroller.html">Wrapping scrollbars around any other view</A>
+<LI> <A NAME="I_OBJECTVIEW" HREF="objectview.html">Generic view to display structured graphics</A>
+</UL>
+
+These components are typically glued together by valueHolders - these are
+object, which hold a reference to some object (the so-called model of a
+widget) and notify others whenever the model changes.
+Typical models values are: Booleans (buttons, toggles etc.), Strings (inputFields,
+editText widgets, Lists (selection-in-list widgets, fileSelection widgets)
+or hierarchical trees (treeview, fileTreeView etc.).
+<BR>
+All of those valueHolders are normally created and maintained by an application;
+in ST/X (and other smalltalks), this is typically an instance of ApplicationModel.
+This class provides a generic and powerful framework for GUI applications,
+in that it provides support for view building (from a so-called windowSpecification),
+widget interaction and closeDown.
+<P>
+Although it is possible to create an applications GUI manually (by creating widgets
+and glueing them together), this work is usually done by creating a windowSpec
+with the GUI painter tool. This lets you compose an application by dragging
+components into a canvas and defining the valueHolder names (so called aspects).
+<P>
+Built on top of these are building blocks for complex user interactions:
+<UL>
+<LI> Warnbox, Infobox, Dialogbox, FileSelectionBox, FileSaveBox, ImageSelectionBox etc.
+</UL>
+<P>
+and finally the Smalltalk programming tools themself:
+<UL>
+<LI> Browsers, Debugger, Editors and Monitors
+</UL>
+<P>
+All user interface widget classes and tools are implemented completely in
+smalltalk.
+All of the smalltalk source code is included in the distribution.
+<P>
+Notice that these can be used either as building blocks to create complex views
+consisting of many elements, or (by subclassing) as a starting point to create modified
+versions; either for changed behavior or changed presentation.
+<P>
+The <CITE>Smalltalk/X</CITE> view classes support both the traditional
+Model-View-Controller (MVC)
+programming paradigma and an action driven scheme. The later being perfect for
+simple interaction, in that no MVC relations have to be setup for actions
+like 'doing something on a buttonpress'.
+<P>
+The look of the view classes is configurable via stylesheet files.
+
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif">
+Copyright © 1995 Claus Gittinger Development & Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.17 $ $Date: 2016-11-04 00:19:00 $
+<BODY>
+</HTML>

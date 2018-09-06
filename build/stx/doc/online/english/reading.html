@@ -1,0 +1,248 @@
+<HTML>
+
+<HEAD>
+<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<TITLE>Smalltalk/X Online Documentation - Reading list</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="TOP.html"
+	   INFO="Back to documentation's main page" >
+  <IMG SRC="../icons/DocsUpArrow.gif"
+       ALT="[up]">
+</A>
+
+<P>
+<H1>Reading list</H1>
+<P>
+
+<TABLE WIDTH=100%>
+<TR>
+<TD WIDTH=40%>  </TD>
+<TD WIDTH=55%><CITE>Historically, languages designed for other people
+ to use have been bad: Cobol, PL/I, Pascal, Ada, C++.
+<BR>The good languages have been those that were designed
+for their own creators: C, Perl, Smalltalk, Lisp.
+<P>
+(Paul Graham)
+</CITE></TD>
+</TR>
+</TABLE>
+
+
+<H2>How to use the System</H2>
+
+<UL>
+<LI>Read <A HREF="getstart/TOP.html">"Getting Started"</A>.
+This document describes how to start & stop the <cite>Smalltalk/X</cite> system,
+how to edit text and how pop up-menus are used. Also, command line arguments and
+scripting options are described in detail.
+</UL>
+
+<H2>If you don't know the Smalltalk language</H2>
+
+<UL>
+<LI>Read the <A HREF="getstart/tutorial.html">"Smalltalk tutorial"</A>.
+Although this document is not yet finished, it gives some information
+on the concepts of objects, classes, messages etc.
+
+<P>
+<LI>Read a textbook on the Smalltalk language
+<BR>
+A good introduction is Ivan Tomek's <A HREF="../../books/JoyOfST/JoyOfST.pdf">"The Joy Of Smalltalk"</A>,
+which (many thanks to the author) can be freely used and copied.
+<BR>
+Although originally written for VisualWorks Smalltalk, the information therein also
+applies to other Smalltalk systems (be prepared, that some examples do not work 100% in Smalltalk/X).
+<br>
+In addition, Ivans <A HREF="../../books/JoyOfST/IntroToST.html">"Introduction to Smalltalk"</A>
+contains a step-by-step quick introduction and executable code examples.
+This document has been adapted to Smalltalk/X.
+<br>
+Thanks a lot, Ivan!
+<P>
+Canol Gökel has written an introduction for GNU-Smalltalk called
+<A HREF="../../books/computer_programming_using_gnu_smalltalk.pdf">"Computer Programming using GNU-Smalltalk"</A>,
+which is also valid for Smalltalk/X (mostly).
+To evaluate the step-by-step examples of that text,
+you can:
+<ul><li>either use an
+<A HREF="onlyInSTX.html" ACTION="doit:WorkspaceApplication openEvaluationWorkspace" INFO="Click to open an Evaluation Workspace">
+Evaluation Workspace</A>, type in the examples there,
+and execute them with the <I>DoIt</I> function,
+<li>or start Smalltalk/X with the <A HREF="getstart/TOP.html#REPLMODE">"--repl"</A> (i.e. Read-Eval-Print-Loop) <A HREF="getstart/TOP.html#COMMANDLINE">command line option</A>,
+and execute the examples without a graphical user interface.
+</ul>
+
+<P>
+More literature links are found
+<A HREF="overview/literature.html">here</A>.
+
+<P>
+<LI>Read the
+<A HREF="overview/TOP.html">"overview"</A> document,
+which gives you a very rough idea of which
+classes are included and what they are used for. Things are not
+described in much detail there, but you will get an idea of
+what is most interesting and where (i.e. in which classes) to look for more
+details.
+
+<P>
+<LI>Get a feeling for the basic classes.
+<BR>See the <A HREF="overview/basicClasses/TOP.html">class overview documents</A> for a starting point.
+
+<P>
+<LI>C++ and Java Programmers who have problems reading Smalltalk, should read
+<A HREF="../../miscDocuments/readingSmalltalk.pdf">"I can Read C++ and Java but not Smalltalk (PDF)"</A>,
+by Wilf LaLonde.
+
+<P>
+<LI>Lisp Programmers will find many familiar concepts in Smalltalk.
+They sure will like
+<A HREF="programming/stForLispers.html">"Smalltalk for Lispers"</A>
+which describes these similarities.
+
+<P>
+<LI>Write little programs
+<BR>
+Since Smalltalk is well aimed for applications with a graphical user
+interface, start in that area. It is much easier than in other languages
+and you will be rewarded with something 'you can look at' quite early.
+<BR>
+Start with simple board games, notepads, telephone/address/todo list browsers.
+
+</UL>
+
+Another useful starter is the
+<A HREF="programming/selectors.html">"List of useful selectors"</A>;
+if used with the
+<A HREF="tools/sbrowser/TOP.html">SystemBrowser</A>,
+this list helps you to find out how and where classes and their methods are used.
+Almost all classes source is there, and most of the stuff is well documented.
+<BR>
+Also, all classes include some documentation and examples
+(usually found in the classes <VAR>documentation</VAR> category)
+which can be viewed with the browser.
+<P>
+Finally, many methods contain a comment which demonstrates a typical use
+of that method.
+<P>
+Although the Smalltalk language itself is simple and easy to learn,
+there is a huge class library containing ready to be used building blocks.
+<BR>
+Don't get shocked by the number of existing classes and methods
+- you don't have to know and remember everything by heart
+(even the authors of those systems need the browser to find their way through ;-).
+<BR>
+
+
+<H2>If you know Smalltalk, but want to see interesting things about ST/X</H2>
+
+On the basic class level, <CITE>Smalltalk/X</CITE> is pretty much
+compatible to other Smalltalk implementations.
+So if you already know collections, streams & friends, read:
+<UL>
+<LI><A HREF="programming/differences.html">"Differences between ST/X and other Smalltalks"</A>,
+<BR>
+for an (incomplete) list of differences
+</UL>
+Also, interesting information is found in:
+<UL>
+<LI><A HREF="programming/debugging.html">"Advanced debugging support in ST/X"</A>,
+<LI><A HREF="programming/exceptions.html">"Exception handling and signals"</A>,
+<LI><A HREF="programming/processes.html">"Working with processes"</A>,
+<LI><A HREF="programming/timing.html">"Working with time, delays and interrupts"</A>,
+<LI><A HREF="programming/finalization.html">"Object finalization"</A>,
+</UL>
+However, for experienced programmers, most of this is well known.
+<P>
+The main differences are found in the implementation of the view classes;
+it is recommended, to read:
+<UL>
+<LI><A HREF="programming/viewintro.html">"Quick introduction to view programming"</A>
+</UL>
+which gives you a step-by-step tutorial on this.
+<P>
+If you want to do some GUI programming, read:
+<UL>
+<LI><A HREF="tools/uipainter/TOP.html">"Using the UIPainter"</A>
+</UL>
+which gives a short introduction on how to use the UIPainter, which is
+a tool for painting graphical user interfaces.
+
+<P>
+When programming, start with some of the included graphical demos.
+Load them using the
+<A HREF="tools/fbrowser/TOP.html">FileBrowser</A>
+and have a look at and understand the code.
+<P>
+Nice short demos are found in the directory <NOBR>"<CODE>doc/coding</CODE>"</NOBR>
+and <NOBR>"<CODE>clients/Demos</CODE>".</NOBR>
+Most of those demos try to point out a specific feature.
+The stuff in <NOBR>"<CODE>doc/coding</CODE>"</NOBR> is less oriented toward graphics.
+<P>
+Then turn to the more complex demos - the <CODE>DrawTool</CODE> is a pretty
+(and powerful) application to look at.
+<BR>
+Also, the 3D demos found in "<CODE>clients/GLdemos</CODE>" invite to play and try new things.
+
+
+
+<H2>If you know Smalltalk, and want to write primitives and inline C code</H2>
+
+Read:
+<UL>
+<LI><A HREF="programming/primitive.html">"How to write inline C code"</A>
+<BR>
+to learn about how primitive C code is written and
+<P>
+<LI><A HREF="programming/compiling.html">"How to create & add binary classes/libraries"</A>
+<BR>
+on how to get them compiled and integrated into your Smalltalk.
+</UL>
+<P>
+The later text also gives you a step-by-step guide and examples of
+how you can create and include your own binary class libraries.
+<P>
+Look into already existing methods which include primitive code to see
+concrete examples. A browser on all methods with primitive code is opened by:
+<A TYPE="example" INFO="do it" >
+<CODE><PRE>
+    Tools::NewSystemBrowser
+	browseMethodsWhere:[:cls :mthd :sel | mthd hasPrimitiveCode]
+	title:'methods with primitive code'
+</PRE></CODE>
+</A>
+(be a bit patient; startup takes a while, since the source of all methods has to be processed...)
+<P>
+If your system supports dynamic loading of binary code (currently SYS5-based, Solaris, Linux
+and Windows-based systems),
+primitive (i.e. C-) code can be typed right into the browser and accepted.
+
+<H2>If you know Smalltalk, but are interested in its history and some philosophic background</H2>
+
+Alan Kay wrote an interesting paper on the early history of Smalltalk:
+<A HREF="../../books/SmalltalkHistoryHOPL.pdf">"The Early History of Smalltalk (pdf)"</A>
+
+
+
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN="top" SRC="../icons/stx.gif" ALT="[stx-logo]">
+<BR>
+Copyright © 1996-2017 Claus Gittinger Development & Consulting, all rights reserved
+<BR>
+Copyright © 2003-2017 eXept Software AG, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+</BODY>
+
+<HR>
+Doc $Revision: 1.52 $ $Date: 2018-05-06 15:47:14 $
+</HTML>

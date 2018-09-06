@@ -1,0 +1,400 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Help - Communication Settings</Title>
+</HEAD>
+
+<BODY>
+
+<H1>Communication Settings</H1>
+
+<H2><A NAME="INDEX">Help index</A></H2>
+
+<UL>
+<LI><A HREF="#RDOIT">RDoit Communication</A>
+  <UL>
+    <LI><A HREF="#RDOIT_ENABLED">Remote Doits Enabled</A>
+  </UL>
+  <P>
+
+<LI><A HREF="#SCRIPTING">JS/ST-Scripting via Telnet</A>
+  <UL>
+    <LI><A HREF="#SCRIPTING_ENABLED">JS/ST-Scripting Enabled</A>
+  </UL>
+  <P>
+
+<LI><A HREF="#OSI">OSI Communication</A>
+  <UL>
+    <LI><A HREF="#OSI_ACSE">OSI-ACSE Logging</A>
+    <LI><A HREF="#OSI_ROSE">OSI-ROSE Logging</A>
+    <LI><A HREF="#OSI_CMISE">OSI-CMISE Logging</A>
+  </UL>
+  <P>
+
+<LI><A HREF="#MISC">Misc</A>
+  <UL>
+    <LI><A HREF="#EMAIL_SMTP">SMTP Server Configuration</A>
+    <LI><A HREF="#WINDOWMIGRATION">Window Migration</A>
+    <LI><A HREF="#REMOTEBROWSING">Remote Browsing</A>
+    <LI><A HREF="#SMALLTEAM">SmallTeam Server</A>
+    <UL>
+      <LI><A HREF="#SMALLTEAMSERVERENABLED">SmallTeam Server Enabled</A>
+      <LI><A HREF="#SMALLTEAMHOSTS">SmallTeam Hosts</A>
+    </UL>
+    <LI><A HREF="#DOTNETBRIDGE">DotNET Bridge</A>
+    <UL>
+      <LI><A HREF="#DOTNETBRIDGE_VERBOSE">Verbose</A>
+      <LI><A HREF="#DOTNETBRIDGE_RUNNING_IN_IDE">Running in IDE</A>
+    </UL>
+  </UL>
+  <P>
+
+<LI><A HREF="#SQLSERVER">SQLServer</A>
+  <P>
+
+<LI><A HREF="#HTTPSERVER">HTTPServer</A>
+
+</UL>
+
+<HR>
+
+
+
+<A NAME="RDOIT" HREF="#INDEX"></A>
+<H2><A NAME="RDOIT_ENABLED" HREF="#INDEX">Remote Doits Enabled</A></H2>
+
+If enabled, a server process is started within Smalltalk,
+which handles and serves "RDoit" requests.
+These allow Smalltalk expressions
+to be evaluated via the <I>rdoit</I> shell command
+(the source of the rdoit program is found in the "goodies/rdoit" directory).
+<BR>
+This is especially useful, to start Smalltalk applications via the
+window manager or from shell/batch scripts, or to open Smalltalk-dialogs from
+non-Smalltalk programs (shell-scripts).
+It can also be used to access Smalltalk services from other non-Smalltalk applications.
+As Smalltalk also provides an rDoit client, it can also be used for a very simple
+Smalltalk-to-Smalltalk remote procedure call mechanism.
+
+<H3>Warning</H3>
+RDoit expressions are not evaluated in a secure environment;
+if enabled, any expression (even destructive) can be evaluated via the rdoit command.
+<br>
+Although exceptions are cought, a bad guy could send you something like
+<CODE>"Smalltalk exit"</CODE> and finish your Smalltalk session.
+Even worse, attacks are possible
+by sending something like <CODE>"OperatingSystem removeFile"</CODE> to harm your system,
+or <CODE>"OperatingSystem executeCommand"</CODE>,
+to install a virus.
+<P>
+In order to provide a bit of security, the RDoitServer opens a
+confirmation dialog for every new host trying to connect.
+This allows denying requests from other hosts.
+<P>
+Also, the rdoit server can be configured to either serve a tcp socket or
+a unix-domain socket (not under Windows, of course).
+<br>
+Using unix domain sockets, you can ensure that rdoit-evaluations are only
+possible from the local machine.
+<br>
+Do not enable this feature, if your machine can be reached via untrusted machines
+(i.e. the internet). Only enable this to a limited set of machines
+in controlled environments. For example, to partners in a programming team,
+or to a cooperating host in a secure, controlled multi-machine control application.
+Never allow for untrusted humans to enter the rDoit command string without validation
+against a set of allowed, harmless commands.
+
+
+<H3>The "rdoit" command</H3>
+The <I>rdoit</I> command (i.e. the reqestors code) is provided in source in the
+<CODE>"goodies/rdoit"</CODE> directory. It may be useful to install
+this command in <CODE>"/usr/local/bin"</CODE> or any other directory
+along your shell PATH.
+<P>
+Two example shell scripts are provided: <I>edit.sh</I>, which opens a
+Smalltalk editor, and <I>fb.sh</I>, which opens a file browser.
+<P>
+The other check boxes in the settings dialog control if logging information is
+to be sent to Smalltalk's transcript or standard output (i.e. the xterm).
+
+<H3>Example</h3>
+<BR>
+Suppose, you have installed the <I>rdoit</I> executable program in your path,
+you can evaluate Smalltalk expressions from the UNIX shell as:
+<CODE><PRE>
+    rdoit "SystemBrowser open"
+</PRE></CODE>
+or, to print the result of some expression:
+<CODE><PRE>
+    rdoit -p "1000 factorial"
+</PRE></CODE>
+or, to open a dialog:
+<CODE><PRE>
+    rdoit -p "Dialog request:'How are you '"
+</PRE></CODE>
+
+<H3>The RDoItClient class</H3>
+For Smalltalk-to-Smalltalk communication,
+the rdoit functionality is also available in the <A href="../../misc/onlyInSTX.html" action="doit:RDoItClient browse"<CODE>RDoItClient</CODE></A> class.
+
+<P>
+<HR>
+<P>
+
+<A NAME="SCRIPTING" HREF="#INDEX"></A>
+<H2><A NAME="SCRIPTING_ENABLED" HREF="#INDEX">JS/ST-Scripting Enabled</A></H2>
+
+If enabled, a server process is started within Smalltalk,
+which handles and serves "Scripting" requests.
+These allow expressions in a JavaScript-like or the Smalltalk syntax
+to be sent to and evaluated by <CITE>ST/X</CITE>.
+It is also useful to provide remote-control capabilities
+to a standalone enduser application.
+<P>
+One particular application is to remote control an application for automated tests
+(such as regression tests of GUI applications using the <CITE>eXpecco</CITE> testing framework.
+<P>
+Being completely text-based, with a simple message format,
+it can also be used to access Smalltalk services or services of a standalone application
+written in Smalltalk from other non-Smalltalk applications.
+
+<H3>Warning</H3>
+Script expressions are not evaluated in a secure environment;
+if enabled, any expression (even destructive) can be evaluated via the scripting interface.
+Although exceptions are cought, a bad guy could send you something like
+<CODE>"Smalltalk.exit()"</CODE> and finish your Smalltalk session.
+Even worse attacks are possible,
+by sending something like <CODE>"OperatingSystem.removeFile(...)"</CODE> to harm your system,
+or <CODE>"OperatingSystem.executeCommand(...)"</CODE>,
+to install a virus.
+<P>
+In order to provide a bit of security, the ScriptingServer can be configured
+to only allow connections from the local host or to limit access to a
+small group of known hosts. However, even this is not 100% secure.
+Therefore, scripting should only be enabled and used in a secure lab-environment.
+<P>
+Do not enable this feature, if your machine can be reached via untrusted machines
+(i.e. the internet). Only enable this to a limited set of machines
+in controlled environments. For example, to a partner in a programming team,
+or to a cooperating host in a secure, controlled multi-machine application.
+Never allow for untrusted humans to enter script commands.
+
+
+<H3>Connecting to the Script Server</H3>
+Any line oriented connection program can be used to talk to the scripting server.
+A wellknown and generally available tool is "<I>telnet</I>". Don't forget the port-argument.
+
+<BR>
+Suppose, you have started the scripting server to serve its default port 8008.
+You can then evaluate scripts from the UNIX shell or MSDOS command prompt via:
+<CODE><PRE>
+    telnet localhost 8008
+</PRE></CODE>
+You will get a prompt with additional usage information.
+<P>
+<H3>Example</h3>
+An example session is:
+<CODE><PRE>
+    telnet localhost 8008
+    Welcome to ST/X (Type ~? for help)
+    > 1+2;
+    3
+    > 10.factorial();
+    3628800
+    > var v;
+    > v = View.new().open();
+    a View
+    > v.viewBackground( Color.red() );
+    a View
+    > v.clear();
+    a View
+    > v.destroy();
+    a View
+    > ~.
+</PRE></CODE>
+
+
+<H3>Starting an Application with Scripting enabled via Stdin/Stdout</H3>
+
+[... to be implemented ...]
+
+<P>
+<HR>
+<P>
+
+<A NAME="OSI" HREF="#INDEX"></A>
+<H2><A NAME="OSI_ACSE" HREF="#INDEX">OSI-ACSE Logging</A></H2>
+
+These checkBoxes are only enabled, if the addOn OSI-ACSE-Protocol package (*)
+is present in the ST/X system.
+
+<P>
+If enabled, errors, connection-related events and data transfers
+are logged on the standard-error.
+<BR>
+The default is off.
+
+<H2><A NAME="OSI_ACSE" HREF="#INDEX">OSI-ROSE Logging</A></H2>
+
+These checkBoxes are only enabled, if the addOn OSI-ROSE-Protocol package (*)
+is present in the ST/X system.
+<P>
+If enabled, errors, remote operation invocations and responses
+are logged on the standard-error.
+<BR>
+The default is off.
+
+<H2><A NAME="OSI_CMISE" HREF="#INDEX">OSI-CMISE Logging</A></H2>
+
+These checkBoxes are only enabled, if the addOn OSI-CMISE-Protocol package (*)
+is present in the ST/X system.
+<P>
+If enabled, errors, CMISE messages (m_get, m_set, m_action etc.)
+are logged on the standard-error.
+<BR>
+The default is off.
+<P>
+(*)
+<BR>
+This is a non-free addOn package, which implements the OSI protocol stack in
+Smalltalk. Please contact exept for availability and pricing.
+
+<P>
+<HR>
+<P>
+
+<A NAME="MISC" HREF="#INDEX"></A>
+
+<H2><A NAME="EMAIL_SMTP" HREF="#INDEX">SMTP Server Configuration</A></H2>
+
+The SMTP Server is responsible for email-delivery to other systems.
+The values defined in this dialog provide default values for the email delivery
+options in the debugger (to email an error report) and the browser (email class-source to).
+
+<H2><A NAME="WINDOWMIGRATION" HREF="#INDEX">Window Migration Enabled</A></H2>
+
+The window migration feature allows for Smalltalk windows to be grabbed from another display
+(X-displays only). I.e. it allows you to actively ask for a window to be moved and reopened on
+another machine (sending this request from the other machine).
+
+<H2><A NAME="REMOTEBROWSING" HREF="#INDEX">Remote Browsing Enabled</A></H2>
+
+The remote browsing features allows for a SystemBrowser to be opened on and
+inspect another running image.
+<BR>
+This allows multiple programmers to work simultaneously in a single image.
+
+<H4>Warning</H4>
+Enabling remote browsing opens a possible security hole, in allowing others to modify the code which
+is executed by your running Smalltalk system.
+It should never be enabled, if your machine can be reached via untrusted machines
+(i.e. the internet).
+
+
+<H2><A NAME="SMALLTEAM" HREF="#INDEX">SmallTeam</A></H3>
+
+The SmallTeam subsystem allows for multiple Smalltalk developers
+to automatically pass information about changes in the code to each other.
+Technically, change messages as normally written to the change-file are
+also sent to other team members. The Systembrowser is aware of such changes and
+marks classes and methods which have been changed by other team members.
+Also, the SystemBrowser provides explicit smallTeam synchronization functions in
+its class- and method menus.
+
+
+<H3><A NAME="SMALLTEAMSERVERENABLED" HREF="#INDEX">SmallTeam Server Enabled</A></H3>
+
+Enables the SmallTeam service, which allows for other Smalltalk/X users to
+be notified of changes done in your image and to automatically synchronize their
+images with yours.
+<BR>
+This has no effect on your image, but allows read access to other users.
+
+<H4>Warning</H4>
+Enabling the SmallTeam service opens a possible security hole,
+in allowing others to load pieces of code from your running Smalltalk system,
+and also allows for untrusted code to be imported into your system.
+It should never be enabled for untrusted machines.
+
+
+<H3><A NAME="SMALLTEAMHOSTS" HREF="#INDEX">SmallTeam Hosts</A></H3>
+
+Defines the list of hosts which are allowed to connect to your SmallTeam server
+and to which change-notifications are send whenever code is changed in your image.
+
+
+
+<H2><A NAME="DOTNETBRIDGE" HREF="#INDEX">DotNET Bridge</A></H2>
+
+The DotNET bridge functions as a message forwarder to and from the
+microsoft .NET environment. In addition to message marshalling and forwarding of messages,
+the bridge also keeps track of object-references and provides a .NET-object proxy mechanism for
+Smalltalk. This allows for Smalltalk code to handle .NET object almost transparently like any
+other object (with a few exceptions).
+
+<H3><A NAME="DOTNETBRIDGE_VERBOSE" HREF="#INDEX">Verbose</A></H3>
+
+Enables protocol debugging. If enabled, incoming and outgoing messages are
+recorded in the Transcript window.
+<BR>
+This is probably only useful to developers of the bridge.
+
+<H3><A NAME="DOTNETBRIDGE_RUNNING_IN_IDE" HREF="#INDEX">Running in IDE</A></H3>
+
+If enabled, the .NET-part of the bridge is assumed to be started in the Visualstudio IDE environment,
+and the communication between Smalltalk and .NET is via a fixed port number.
+If disabled (the default), the .NET-part of the bridge is started as a subprocess
+from Smalltalk, and the communication port number is passed as command line argument.
+<BR>
+This is probably only useful to developers of the bridge.
+
+<P>
+<HR>
+<P>
+
+<H2><A NAME="SQLSERVER" HREF="#INDEX">SQLServer</A></H2>
+
+The SQLServer implementation consists of an SQLParser and an associated socket interface server,
+which allows for SQL requests to be sent to the Smalltalk system via a standard ODBC based database
+client.
+<BR>
+Hereby, the Smalltalk system "mimics" the behavior of an SQL database engine;
+however, the generation of results (rowsets) is completely under control of a Smalltalk
+class. Therefore allowing relational access to arbitrary Smalltalk objects.
+<P>
+This is an experimental, nonfree addOn feature, which is available upon special request.
+
+<P>
+<HR>
+<P>
+
+<H2><A NAME="HTTPSERVER" HREF="#INDEX">HTTPServer</A></H2>
+
+The HTTPServer framework provides functions comparable to those provided by other
+well known HTTP servers (such as apache).
+<BR>
+It can either run in master-mode, where the HTTP-socket is served directly,
+or in slave mode,
+under control of a real apache server which serves the HTTP-socket,
+and forwards requests to Smalltalk via the FCGI interface.
+<p>
+The HTTPServer settings are documented in a separate document:
+<A HREF="../HTTPServer/index.html">"HTTPServer Help Index"</A>.
+
+<P>
+<P>
+
+
+
+<HR>
+<P>
+<P>
+Copyright &copy; 1999-2008 eXept Software AG, all rights reserved
+<P>
+<P>
+
+<HR>
+Doc $Revision: 1.15 $
+
+</BODY>
+</HTML>

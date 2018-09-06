@@ -1,0 +1,160 @@
+<TITLE>HTML Forms</TITLE>
+<H1>The FORM element</H1>
+
+<B>Permitted Context:</B> %Body.Content<BR>
+<B>Content Model:</B> %Body.Content <i>plus</i>
+<a href="input.html">INPUT</a>, <a href="textarea.html">TEXTAREA</a>,
+and <a href="menus.html">SELECT</a><BR>
+Note you are not allowed to nest FORM elements!
+
+<P>HTML fill-out forms can be used for questionaires, hotel reservations,
+order forms, data entry and a wide variety of other applications. The
+form is specified as part of an HTML document. The user fills in the form
+and then <i>submits</i> it. The user agent then sends the form's contents
+as designated by the FORM element. Typically, this is to an HTTP server,
+but you can also email form contents for asynchronous processing.
+
+<P>Forms are created by placing input fields within paragraphs,
+preformatted text, lists and tables. This gives considerable
+flexibility in designing the layout of forms.
+
+<P>HTML 3.0 supports the following kinds of fields:
+
+<UL>
+<LI>Simple text fields
+<LI>Multi-line text fields
+<LI>Radio buttons
+<LI>Checkboxes
+<LI>Range controls (sliders, or knobs)
+<LI>Single/multiple choice menus
+<LI>Scribble on image
+<LI>File widgets for attaching files to forms.
+<LI>Submit buttons for sending form contents
+<LI>Reset buttons for resetting fields to their
+    initial values
+<LI>Hidden fields for book keeping information
+</UL>
+
+<P>It is expected that future revisions to HTML will add support for
+audio fields, multi-row entry of database tables, and extending
+multi-line text fields to support a range of other data types, in
+addition to plain text. Client-side scripts will provide the means to
+constrain field values and to add new field types.
+
+<H3>Example of a form</H3>
+
+<P>This fictitious example is a questionnaire. It uses the INPUT element
+for simple text fields, radio buttons, checkboxes, and the submit and
+reset buttons. The TEXTAREA field is used for a multi-line text entry
+field. The form fields are laid out with several paragraph elements and
+an unordered list. Notice the use of the NAME attribute to name each
+field:
+
+<PRE>
+&lt;TITLE&gt;Sample Questionaire&lt;/TITLE&gt;
+&lt;H1&gt;Sample Questionaire&lt;/H1&gt;
+
+&lt;P&gt;Please fill out this questionaire:
+
+&lt;FORM METHOD=post ACTION="http://www.hal.com/sample"&gt;
+&lt;P&gt;Your name: &lt;input name="name" size="48"&gt;
+&lt;P&gt;&lt;input name="male" type=radio&gt; Male
+&lt;P&gt;&lt;input name="female" type=radio&gt;Female 
+  Number in family: &lt;input name="family" type=int&gt;
+  
+&lt;P&gt;Cities in which you maintain a residence:
+
+&lt;UL PLAIN&gt;
+&lt;LI&gt;&lt;input name="city" type=checkbox value="kent"&gt; Kent
+&lt;LI&gt;&lt;input name="city" type=checkbox value="miami"&gt; Miami
+&lt;LI&gt;Others &lt;textarea name="other" cols=48 rows=4&gt;&lt;/textarea&gt;
+&lt;/UL&gt;
+
+&lt;P&gt;Nickname: &lt;INPUT NAME="nickname" size ="42"&gt;
+
+&lt;P&gt;Thank you for responding to this questionaire.
+&lt;P&gt;&lt;INPUT TYPE=SUBMIT&gt; &lt;INPUT TYPE=RESET&gt;
+&lt;/FORM&gt;
+</PRE>
+
+<P>Every form must be enclosed within a FORM element. There can be
+several forms in a single document, but the FORM element can't be
+nested. The browser is responsible for handling the input focus, i.e.
+which field will currently get keyboard input. Many platforms have
+existing conventions for forms, for example, using Tab and Shift-Tab
+to move the keyboard focus forwards and backwards between fields, and
+using the Enter (aka Return) key to submit the form.
+
+<P>This standard defines and requires support for the HTTP access
+protocol only. Under any protocol, the submitted contents of the form
+logically consist of a list of name/value pairs where the names are
+given by the NAME attributes of the various fields in the FORM. Each
+field will normally be given a distinct name. Several radio buttons can
+share the same name, as this is how you specify that they belong to the
+same control group - at any time, only one button in the group can be
+selected.
+
+<P><B>Note:</B> The contents list of name/value pairs excludes unselected
+radio buttons and checkboxes. In general, any field with a null value can
+be omitted from the contents list.
+
+<H3>Client-side scripts and fill-out forms</h3>
+
+<P>HTML 3.0 doesn't provide direct support for constraining the values
+entered into text fields, or for derived fields whose values are
+calculated from the values of other fields. Rather than extending the
+markup to support these features, HTML 3.0 provides a means for
+associating the form with a script. Support for scripts is not
+required, however, and the HTML 3.0 specification doesn't cover the
+scripting languages or the details of their interface with the user agent
+
+<P>The SCRIPT attribute of the FORM element specifies the script via a
+URI. The user agent down-loads the script and interprets it locally.
+Scripts handle a variety of messages for individual fields and the form
+as a whole. These messages correspond to events such as:
+
+<UL>
+<LI>Enter/Leave Form (for initialization and clean up)
+<LI>When a field gains or loses the input focus
+<LI>Mouse clicks and drags over a field
+<LI>Keyboard events
+</UL>
+
+<P>Scripts can examine and set properties of fields. They can also 
+examine a small set of standard properties of the user agent, for
+instance the user's name, the time of day, the type of user agent,
+and so on.
+
+<P>Scripts can't do anything that might jeopardize the user or the host
+machine. Scripts can't send messages over the network, or read or write
+files. The library calls that are allowed are restricted to a very small
+and well defined set. These precautions are necessary for untrusted
+scripts. It is envisaged that script interpreters will offer a much wider
+application programming interface to trusted scripts, as determined on
+the basis of a digital signature by a trusted third party.
+
+<H3>Permitted Attributes for FORM</h3>
+
+<DL>
+<DT>ACTION <DD>The ACTION attribute is a URL specifying the location to
+which the contents of the form is submitted to elicit a response. If
+the ACTION is missing, the URL for the document itself is assumed. The
+way data is submitted varies with the access protocol of the URL, and
+with the values of the METHOD and ENCTYPE attributes.
+
+<DT>METHOD <DD>This specifies variations in the protocol used to send
+the form contents. It is currently restricted to GET (the default) or
+POST. The attribute was introduced to inform user agents which HTTP
+methods the server supports.
+
+<DT>ENCTYPE <DD>This attribute specifies the MIME content type to be used
+to encode the form contents. It defaults to the string:
+"application/x-www-form-urlencoded"
+
+<DT>SCRIPT <DD>This can be used to give a URI for a script. The scripting
+language and the interface with the user agent is not part of the HTML
+3.0 specification.
+</DL>
+
+<!--NewPage-->
+

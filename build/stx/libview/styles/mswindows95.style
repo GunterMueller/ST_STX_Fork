@@ -1,0 +1,60 @@
+; View defaultStyle:#mswindows95
+;
+; $Header: /cvs/stx/stx/libview/styles/mswindows95.style,v 1.48 2015-03-02 10:26:59 cg Exp $
+
+comment  'win95/nt lookalike'
+
+#if (Language == #german) or:[Language == #de]
+comment  'an Windows95 angelehnter Stil'
+#endif
+
+#if (Language == #french) or:[Language == #fr]
+comment  'Un style qui résemble Windows95'
+#endif
+
+name                            #win95
+previewFileName                 'viewStyleSample_win95.png'
+
+;
+; notice: the values below
+; are not used when running under native Windows
+; (uses system-settings values then)
+;
+#if Screen current hasGreyscales
+
+selectionBlue                   (Color red:0 green:0 blue:50) exactOrNearestOn:(Screen current)
+
+; viewGrey                        (Color grey:67) exactOrNearestOn:(Screen current)
+viewGrey                        (Color grey:77) exactOrNearestOn:(Screen current)
+; viewLightGrey                   (Color grey:80) exactOrNearestOn:(Screen current)
+viewLightGrey                   (Color grey:90) exactOrNearestOn:(Screen current)
+lightColor                      Color white
+halfShadowColor                 (Color grey:33) exactOrNearestOn:(Screen current)
+; halfLightColor                  (Color grey:67) exactOrNearestOn:(Screen current)
+; halfLightColor                  Color white "/ grey:67
+halfLightColor                  =viewGrey
+shadowColor                     (Color grey:33) exactOrNearestOn:(Screen current)
+
+; shadowColor                     Color black
+
+#else
+
+selectionBlue                   Color black
+viewGrey                        Color white
+viewLightGrey                   Color white
+lightColor                      Color grey:50
+shadowColor                     Color black
+
+#endif
+
+#if Screen current platformName = 'WIN32'
+
+selectionBlue                   [Screen current getSystemColor:#'COLOR_HIGHLIGHT']
+menu.backgroundColor            [Screen current getSystemColor:#'COLOR_MENU'     ]
+menu.foregroundColor            [Screen current getSystemColor:#'COLOR_MENUTEXT' ]
+pullDownMenu.backgroundColor    [Screen current getSystemColor:#'COLOR_MENU'     ]
+viewGrey                        [Screen current getSystemColor:#'COLOR_BTNFACE'  ]
+
+#endif
+
+#include 'mswindows95.common'

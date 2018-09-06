@@ -1,0 +1,712 @@
+<HEAD>
+<TITLE>Using the New System Browser - Introduction</TITLE>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="TOP.html">  <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="menu.html"> <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+
+<H2><A NAME="INTRO" HREF="TOP.html#I_INTRO">Introduction</A></H2>
+  The New SystemBrowser provides all functionality of the previous (and still available)
+  SystemBrowser but offers a much improved user experience.
+  If you are new to the ST/X tools,
+  you may want to read the
+  <A HREF="../sbrowser/TOP.html">old SystemBrowser's documentation</A> for additional information
+  on the meaning of some operations.
+<P>
+  Additional functionality provided by the new SystemBrowser includes:
+<UL>
+<LI>Multiple buffers, change and visited history
+<BR>these avoid the "many open views" confusion, and help to keep track of browsed code
+<P>
+
+<LI>Undo support
+<BR>both the editor and the browser itself support very sophisticated multi-level undo and redo.
+<P>
+
+<LI>Multi-select in all lists
+<BR>to apply menu functions on a set of items.
+<P>
+
+<LI>View classes by category (as done in the old browser), by namespace, by project or by inheritance.
+<P>
+
+<LI>More powerful search functions ("senders of any", "search for variables", "code search" etc.)
+<BR>in addition, all searches can be limited in scope to the current project, namespace, category, hierarchy etc.
+<P>
+
+<LI>Integrated functionality from the Refactoring Browser and SmallLint tools.
+<BR>(code search, rewriting, checking and undo history)
+<P>
+
+<LI>Additional convenient code generation functionality.
+<BR>(accessors, change & update, visitor pattern)
+<P>
+
+<LI>Drag & Drop for category, class and package change
+<BR>also to copy code to other classes (press CTRL)
+<P>
+
+<LI>Improved dialogs with entry completion
+<BR>most dialogs provide very reasonable defaults,
+for DWIM ("do what I mean") behavior.
+<br>Try changing a method's category and look at the dialog's default ;-)
+<P>
+
+<LI>Lots of informative feedback
+<BR>this includes immediate highlight of variable-accessing methods,
+instant syntax coloring, quick information about the selected class/method
+in an info area, additional icons in the lists etc.
+Select a variable in the inst-var list and see immediately where it is read or written.
+Also, modified classes & methods are highlighted with a different colour in the browser lists.
+<P>
+
+<LI>Code completion on Tab-key, or "as you type"
+<P>
+
+<LI>Completely re-writtten, using the GUI painter.
+<BR>this allows for easier extension (for example to add additional menu items)
+<P>
+
+<LI>Pseudo class categories (such as "<I>changed</I>") and pseudo method categories
+(such as "<I>redefined</I>").
+<P>
+
+<LI>Embedded Menu, Canvas and Image editors for resource methods.
+<P>
+
+<LI>The new code view shows line numbers, highlights variables
+and provides the CTRL-click menus for implementors and senders.
+It also supports statement level break- and trace points
+and lint checks.
+<P>
+
+<LI>Coverage analysis display. Classes or individual methods can be recompiled with instrumentation
+and code is shown in different colors in the browser depending on whether it has been executed or not.
+<P>
+
+<LI>Embedded sunit test runner and indicator of the last result in the method list.
+
+</UL>
+<BR>
+With the new SystemBrowser, we have concentrated on making the tool as useful as
+possible; a lot of work has been put in offering intelligent and useful default
+values whenever user information is required - for example, when asking for a
+search string, the current selection, previous searches etc. all are considered as
+initial answers in the dialog. Also, when moving methods to other classes or packages,
+the previous choices are typically remembered and offered first.
+<P>
+
+
+As the NewSystemBrowser is still being enhanced, and new features are added,
+the following pictures may be outdated
+and/or the menu description be incomplete.
+
+
+<P>
+When started, the new System Browser displays 6 major subviews and two toggle/filter panes; these are:
+<P>
+
+<IMG SRC="../../../pictures/NewSystemBrowser.gif" ALT="[Fig: newSystemBrowser hardcopy]">
+<BR>
+the actual appearance of the browser depends on the viewStyle setting;
+the picture above was taken with the "motif-style" in effect.
+Also, newer versions of the browser may look different.
+<P>
+<OL>
+<LI>Organization List (category / namespace / package)
+<LI>Class List (flat or hierarchical)
+<LI>Variable List
+<LI>Class/Instance Toggle
+<LI>Method Category (aka Protocol-) List
+<LI>Method (aka selector-) List
+<LI>Namespace Filter
+<LI>Code View
+</OL>
+<P>
+This default appearance is similar to the old browser's appearance;
+however, the popup menus as available in the various list views are duplicated
+in the browser's main menu panel.
+<H3>Organization</H3>
+By default, classes are grouped by their class category (as was the case with the old browser).
+In this mode, all classes from all namespaces and all projects are shown together,
+grouped only by their class category.
+<BR>
+This aspect can be changed via the <I>view</I>-menu:
+<BR>
+<IMG SRC="../../../pictures/NewSystemBrowserMenuView.gif" ALT="[Fig: view menu hardcopy]">
+<BR>
+<P>
+You can change the grouping, by selecting one of the other items in the view-menu.
+<P>
+A useful grouping is the <I>Project</I> view:
+<BR>
+<IMG SRC="../../../pictures/NewSystemBrowser_projectView.gif" ALT="[Fig: view menu hardcopy]">
+<BR>
+This enables you to organize your own projects into different packages.
+
+<P>
+  For examples on
+<A NAME="I_HOWTO" HREF="hints.html#HOWTO">typical uses</A> of the browser,
+see the last section(s) of this document.
+<P>
+
+<H2><A NAME="CLASS_VS_INST" HREF="TOP.html#I_CLASS_VS_INST">Class vs. Instance</A></H2>
+
+  The browser can operate on both a class and its metaclass (i.e. the classes class).
+  Smalltalk beginners should keep in mind,
+  that classes are objects like anything else in the system.
+  Thus the behavior of a class is described
+  by another class - the so called "<VAR>metaclass</VAR>".
+<BR>
+  The set of messages understood by instances of a
+  class is called "<VAR>instance protocol</VAR>",
+  while the set of messages understood by the class
+  is called the "<VAR>class protocol</VAR>".
+<BR>
+  Just like instances inherit protocol from the superclass(es),
+  class protocol is inherited from the metaclass's superclass(es).
+<P>
+  To switch, there are two toggle buttons named "<VAR>class</VAR>" and
+  "<VAR>instance</VAR>".
+
+  Selecting "<VAR>instance</VAR>" (which is the default) makes your changes
+  affect the class, and therefore the set of messages which are understood by instances;
+selecting "<VAR>class</VAR>" lets you change the metaclass, and therefore the
+set of messages which are understood by the <B>class</B> (typically instance creation and initialization messages).
+<P>
+If you are not too familiar with this concept, and you have a Java or C# background,
+think of the class protocol roughly as "static functions" of the class.
+However, in contrast to Java, the normal inheritance- and redefinition rules apply in Smalltalk.
+In other words: in Smalltalk, it is possible and quite common to make use of
+inherited class protocol or tp redefine it in a subclass.
+
+
+<H2><A NAME="TOOLBAR" HREF="TOP.html#I_TOOLBAR">Toolbar</A></H2>
+
+The browser's toolbar provides items for the most heavily used functions:<BR>
+<IMG SRC="../../../pictures/NewSystemBrowser_toolBar.gif" ALT="[Image: toolBar]">
+
+<UL>
+<LI>New Buffer
+<BR>
+Adds another buffer (Tab). Initially, a full class view on the current class is provided.
+<P>
+
+<LI>Hierarchy Toggle
+<BR>
+Toggles between hierarchical and flat mode in the class list.
+<P>
+
+<LI>Recently Changed Methods
+<BR>
+Quick navigation to the most recently changed methods.
+<P>
+
+<LI>Recently Visited
+<BR>
+Quick navigation to the most recently visited methods and classes.
+<P>
+
+<LI>Show Inherited Methods
+<BR>
+Toggles between single-class and full class mode in the selector list.
+<P>
+
+<LI>Format
+<BR>
+Prettyprint the current method.
+<P>
+
+<LI>Breakpoint
+<BR>
+Set/Clear Breakpoints on the current method(s).
+<P>
+
+<LI>Class / Selector search and history
+<BR>
+To navigate to a class name or selector. <!-- The pull down list shows a class history. -->
+
+</UL>
+
+<A NAME="TOOLBAR_TESTRUNNER"></A>
+If there are any classes selected, which inherit from TestCase, two additional icons
+are shown:<BR>
+<IMG SRC="../../../pictures/NewSystemBrowser_toolBarTestCases.gif" ALT="[Image: toolBar]">
+
+<UL>
+<LI>Run TestCases
+<BR>
+Executes all selected testcases (if no protocol is selected, all of the selected classes' testcases
+are executed; if no method is selected, all testcases of the selected protocols are executed).
+<br>
+No debugger is opened in case of an exception (however, exceptions are remembered and the corresponding method
+is marked with a fail-icon).
+<P>
+
+<LI>Debug TestCases
+<BR>
+Like above, but opens a debugger in case of an exception.
+<P>
+</UL>
+
+
+<H2><A NAME="PSEUDOCATEGORIES" HREF="TOP.html#I_PSEUDOCATEGORIES">Pseudo Categories / Pseudo Protocols</A></H2>
+
+The class category list contains a number of additional pseudo categories:
+<UL>
+<LI><I>* all *</I>
+<BR>
+if selected, all classes are shown in the class list
+<P>
+
+<LI><I>* as yet unknown category *</I>
+<BR>
+filter for autoloaded classes, for which the category is not yet known
+<P>
+
+<LI><I>* undocumented *</I>
+<BR>
+if selected, classes without a "<I>documentation</I>"-method are shown in the class list
+<P>
+
+<LI><I>* unloaded *</I>
+<BR>
+if selected, as-yet-unloaded Autoload-classes are shown in the class list
+<P>
+
+<LI><I>* changed *</I>
+<BR>
+if selected, classes which have been modified but not yet commited into the
+sourcecode repository are shown in the class list
+<P>
+
+<!--
+<LI><I>* recent *</I>
+<BR>
+if selected, classes which have recently been visited are shown in the class list
+<P>
+
+<LI><I>* bookmarked *</I>
+<BR>
+if selected, classes which have been bookmarked are shown in the class list
+<P>
+-->
+
+</UL>
+The method category list adds the following pseudo protocols:
+<UL>
+<LI><I>* all *</I>
+<BR>
+if selected, all methods are shown in the method list
+<P>
+
+<LI><I>* super *</I>
+<BR>
+this pseudo protocol contains methods which perform a super send
+<P>
+
+<LI><I>* obsolete *</I>
+<BR>
+contains methods which are marked as obsolete
+<P>
+
+<LI><I>* long *</I>
+<BR>
+contains long methods (>30 lines).
+The limit can be changed by evaluating
+"<CODE>UserPreferences current at:#numberOfLinesForLongMethod put:NNN"</CODE>.
+<P>
+
+<LI><I>* uncommented *</I>
+<BR>
+contains methods which have no comment
+<P>
+
+<LI><I>* documentation *</I>
+<BR>
+contains pure documentation methods (no code, but a comment).
+Select all classes of a package and select this protocol to get to the documentation quickly.
+<P>
+
+<LI><I>* redefined *</I>
+<BR>
+contains methods which redefine existing protocol from a superclass.
+<P>
+
+<LI><I>* must be redefined *</I>
+<BR>
+contains methods which send "subclassResponsibility".
+These usually need to be redefined in subclasses.
+<P>
+
+<LI><I>* required *</I>
+<BR>
+contains methods which have been marked as "subclassResponsibility"
+in a superclass, but are not defined in this class.
+This is somewhat funny, as the codeView shows code which does not really exist:
+the shown code is a template which can be used as a start to implement
+these required methods.
+Such non-existing methods are shown in a red color both in the method-list
+and in the codeView. You can disable those methods via the "Show Syntetic Methods" toggle
+in the browser's "<VAR>View</VAR>"-"<VAR>Selector</VAR>" menu.
+<P>
+
+<LI><I>* extension *</I>
+<BR>
+contains methods which are extensions from other packages.
+These are methods which are not contained in the classes own package,
+but instead have been added by loading another package. These are also called
+"extension methods", "class extensions" or simply "extensions".
+<P>
+
+<LI><I>* overrides *</I>
+<BR>
+contains only those extensions which have actually overwritten an existing method
+in the extended class. You should be <B>alerted</B>, if you find those in your
+project/package, as these may lead to unexpected results, if the semantics of the original
+method is changed in an incompatible way. This kind of conflict can be resolved by
+using a selector namespace.
+<P>
+
+<LI><I>* shadowed *</I>
+<BR>
+contains overwritten (shadowed) original methods,
+along with their overwriting extension method.
+<P>
+
+<LI><I>* coverage unknown or not instrumented *</I>
+<BR>
+contains methods for which no coverage analysis data is available.
+For coverage analysis, classes or methods must be instrumented,
+and a test run (for example, running a unit test) is required.
+Classes are instrumented for coverage anylysis via the "<i>Class</i>"-"<i>Debug</i>"-"<i>Compile Instrumented</i>"
+menu item.
+
+<P>
+Because source code has to be fetched and analyzed,
+the generation of pseudo protocol information may take some
+time - especially for large classes.
+If you don't like this feature, disable it via the browser's
+"<VAR>View</VAR>"-"<VAR>Protocol</VAR>"-"<VAR>Show Pseudo Protocols</VAR>" menu item.
+</UL>
+
+
+<H2><A NAME="ICONS" HREF="TOP.html#I_ICONS">Icons and Indicators</A></H2>
+
+By default, the NewSystemBrowser uses icons and other emphasis to highlight special
+attributes of classes and methods;
+this can be disabled by clearing the appropriate flags in the browser's <I>View</I> menu.
+
+<P>
+General indicators after list items are:
+<UL>
+<LI>Number of Items - "(x)" or "(x+y)"
+<BR>in a class category or package list, "(x)" shows the number of classes in the category/package.
+In a class list, "(x+y)" shows the number of instance- and class methods in that class.
+In a method-protocol list, the number of methods in that protocol is shown.
+<P>
+<LI>Changed Indicator - "&#652;"
+<BR>an indication that the corresponding item is or has parts in the current changeSet.
+This typically means, that a class/method has been modified, but not yet been checked into
+the source code repository. In addition to the indicator,
+list items are also presented in <b><font color="#7F0000">bold and a redish</font></b> color (see below).
+<P>
+<LI>Extension Indicator - "+"
+<BR>an indication that the class contains extensions from other packages.
+For a method, this indicates that the method's package is different from the classes package
+(i.e. it's either an extension or is a loose method, which has not yet been assigned to any package).
+<P>
+<LI>SmallTeam Modification Indicator - "!"
+<BR>an indication that the class or method was modified by someone else in your team.
+This requires the SmallTeam development support package to be loaded and active.
+</UL>
+
+ClassType indicators are:
+<UL PLAIN>
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_applicationIcon.gif" ALT="[Icon: application]"> (launchable UI)
+<BR>A visual application (i.e. a subclass of ApplicationModel). These can be started directly from within
+the browser, by double-clicking on the class.
+<P>
+
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_startableMainIcon.gif" ALT="[Icon: program]"> (launchable non-UI)
+<BR>A non-GUI program.
+A non-visual application. The classes' 'main'-method can be invoked directly from within
+the browser, by double-clicking on the class.
+<BR>
+(To be honest: this has only been added for C/Java freaks asking: "where is the main ?".)
+<P>
+
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_containerIcon.gif" ALT="[Icon: container]"> (container)
+<BR>A container class (i.e. a subclass of Collection).
+<BR>Abstract collection classes show an "A" in brackets i.e. "[A]".
+<P>
+
+<LI>U (utility class)
+<BR>A utitity class is one which only provides helper function methods on the class side.
+<P>
+
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_sharedPoolIcon.gif" ALT="[Icon: shared pool]"> (shared pool)
+<BR>A shared pool (i.e. a subclass of SharedPool).
+<P>
+
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_viewIcon.gif" ALT="[Icon: widget]"> (widget)
+<BR>A widget class (i.e. a subclass of View).
+<P>
+
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_exceptionIcon.gif" ALT="[Icon: exception]"> (exception)
+<BR>An exception class (i.e. a subclass of Exception).
+<P>
+
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_errorIcon.gif" ALT="[Icon: error]"> (error)
+<BR>An error class (i.e. a subclass of Error).
+<P>
+
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_warningIcon.gif" ALT="[Icon: warning]"> (warning)
+<BR>A warning class (i.e. a subclass of Warning).
+<P>
+
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_notificationIcon.gif" ALT="[Icon: notification]"> (notification)
+<BR>A notification class (i.e. a subclass of Notification).
+<P>
+
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_queryIcon.gif" ALT="[Icon: query]"> (query)
+<BR>A query class (i.e. a subclass of Query).
+<P>
+
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_testCaseIcon.gif" ALT="[Icon: test]"> (test)
+<BR>A testCase which has not been executed yet. Will change to a green thumbs-up or red thumbs-down, when executed.
+<P>
+
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_testCaseOKIcon.gif" ALT="[Icon: testOK]"> (testOK)
+<BR>A testCase - the icon's color (red/green) and form (thumb-up/down) reflects the result of the last test-run.
+<P>
+
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_autoloadIcon.gif" ALT="[Icon: autoloaded]"> (autoloaded)
+<BR>An autoloaded class - the class as present is only a stub class (proxy).
+The real class is automagically loaded when required
+(actually: when any message - especially instance creation - is sent to it).
+<BR>
+The class can be forced to load immediately, by either double-clicking on its name,
+or via the "<I>Load</I>"-menu-Item in the "<I>Class</I>" menu.
+
+
+</UL>
+
+Package Description Classes are marked with one of the following indicators:
+<UL PLAIN>
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_packageYellow.gif" ALT="[Icon: Class Library]"> (library)
+- A class library-description.
+<P>
+
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_packageGreen.gif" ALT="[Icon: GUI Application]"> (application)
+- A GUI application's description.
+<P>
+
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_packageGrey.gif" ALT="[Icon: nonGUI Application]"> (utility)
+- A non-GUI (console) application's description.
+</UL>
+
+MethodType indicators are:
+<UL PLAIN>
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_inheritIcon.gif" ALT="[Icon: overwrite]">
+- Method overwrites a corresponding superclass implementation.
+<P>
+
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_redefIcon.gif" ALT="[Icon: redefined]">
+- Method is redefined in a subclass.
+<P>
+
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_windowSpecIcon.gif" ALT="[Icon: winSpec]">
+- Method is a windowSpec method (i.e. defines a GUI) - double click opens a GUI Painter.
+<P>
+
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_menuSpecIcon.gif" ALT="[Icon: menuSpec]">
+- Method is a menuSpec method (i.e. defines a Menu) - double click opens a Menu Painter.
+<P>
+
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_imageSpecIcon.gif" ALT="[Icon: imageSpec]">
+- Method is a bitmap-image-returning method - double click opens a Bitmap Editor.
+<P>
+
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_privateMethod.png" ALT="[Icon: private/protected]">
+- Method is private (can only be called from code within the class) or
+protected (can only be called from code within the class or subclasses).
+
+</UL>
+
+In addition to the above, trace- and breakpoints are indicated via icons:
+<BR>
+These indicators are:
+<UL PLAIN>
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_stopIcon.gif" ALT="[Icon: stop]">
+- a breakPoint is set on the method.
+<P>
+
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_traceIcon.gif" ALT="[Icon: attention]">
+- a trace is set on the method.
+</UL>
+
+Colors are used to mark other attributes:
+<UL>
+<LI>a <font color="#007F00">darkened green</font>
+<BR>marks extensions; the category, class or protocol includes method extensions from other packages.
+<BR>In addition, the class is marked with a trailing "[+]"-string.
+Notice that extensions are packaged and deployed as part of their package,
+not the package of the method's class.
+<P>
+If there are unassigned (loose) methods in the class
+(these are methods that have not yet been assigned to any package),
+the class, category and methods are marked with a trailing "*"-string.
+<P>
+
+<LI>a <font color="#7F0000">darkened red</font>
+<BR>marks changes; the category, class or protocol includes methods which have been changed.
+<BR>This red coloring will vanish when the class is checked into the source code repository,
+or the class menus <I>"special - cleanup changeSet"</I> function is invoked.
+<P>
+
+<LI><u>underlined</u> methods (with a variable selected)
+<BR>marks all readers of the selected variable(s)
+<P>
+
+<LI><u><font underline-color="#FF0000">red underlined methods</font></u> (with a variable selected)
+<BR>marks all writers of the selected variable(s)
+<P>
+
+</UL>
+
+If the OO-metrics package is loaded,
+and the complexity display is enabled in the browser's "<VAR>View</VAR>"-menu,
+methods are analyzed for their complexity,
+and an up-to-date feedback is given
+via little additional (smiley-) icons beside the methods' names.
+The OO-metrics package is not part of the standard (free) delivery.
+<BR>
+These complexity indicators are:
+
+<UL PLAIN>
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_complexity_biggrin.gif" ALT="[Icon: low complexity]">
+- "happy" - a very simple method.
+<P>
+
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_complexity_cool.gif" ALT="[Icon: mediumLow complexity]">
+- "cool" - a simple method.
+<P>
+
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_complexity_smile.gif" ALT="[Icon: medium complexity]">
+- "fine" - some complexity.
+<P>
+
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_complexity_ok.gif" ALT="[Icon: medium complexity]">
+- "still fine" - some more (but still acceptable) complexity.
+<P>
+
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_complexity_mhmh.gif" ALT="[Icon: mediumHigh complexity]">
+- "mhmh questionable" - take a look, the code might need some simplifications.
+<P>
+
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_complexity_frown.gif" ALT="[Icon: mediumHigh complexity]">
+- "ouch" - slightly too complex. Try to simplify.
+<P>
+
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_complexity_eek.gif" ALT="[Icon: high complexity]">
+- "oh" - rather complex. Should be splitted, parts extracted or otherwise simplified.
+<P>
+
+<LI><IMG SRC="../../../pictures/NewSystemBrowser_complexity_angry.gif" ALT="[Icon: veryHigh complexity]">
+- "angry" - very complex. This definitely needs a rewrite.
+<P>
+
+
+</UL>
+
+
+<H2><A NAME="DOUBLECLICK" HREF="TOP.html#I_DOUBLECLICK">Double Clicking</A></H2>
+
+<H3><A NAME="DOUBLECLICK_CLASSCATEGORY" HREF="TOP.html#I_DOUBLECLICK_CLASSCATEGORY">Double Clicking on a Class Category</A></H3>
+
+A double click on a class category will add a new buffer for browsing classes in that category.
+
+
+<H3><A NAME="DOUBLECLICK_NAMESPACE" HREF="TOP.html#I_DOUBLECLICK_NAMESPACE">Double Clicking on a NameSpace</A></H3>
+
+A double click on a namespace will add a new buffer for browsing classes in that namespace.
+<BR>
+Initially, the namespace list is hidden - it can be made visible, by toggling the <I>'namespace'</I> item in
+the <I>'View'</I> menu.
+
+
+<H3><A NAME="DOUBLECLICK_PROJECT" HREF="TOP.html#I_DOUBLECLICK_PROJECT">Double Clicking on a Project</A></H3>
+
+A double click on a project will add a new buffer for browsing classes in that project.
+<BR>
+Initially, the project list is hidden - it can be made visible, by toggling the <I>'project'</I> item in
+the <I>'View'</I> menu.
+
+
+<H3><A NAME="DOUBLECLICK_CLASS" HREF="TOP.html#I_DOUBLECLICK_CLASS">Double Clicking on a Class</A></H3>
+
+<UL>
+<LI>
+A double click on an application class, (i.e. subclass of ApplicationModel or a TopView application),
+starts (opens) the application.
+<BR>
+Actually, any class which returns true from the <CODE>#isVisualStartable</CODE> query message
+can be started this way.
+<BR>
+Of course, this is the same as evaluating "<VAR>className</VAR> <CODE>open</CODE>" in a workspace.
+
+<P>
+<LI>
+A double click on a class which implements a <CODE>#main</CODE> method invokes that
+method (this has been added for all users who asked the standard question: 'where is the main' ;-)
+
+<P>
+<LI>
+A double click on an unloaded (i.e. autoloaded) class, forces the class to be loaded into the system.
+<P>
+<LI>
+A double click on a TestCase (i.e. a subclass of TestCase)
+opens the <A HREF="../misc/TOP.html#SUNIT">SUnit TestRunner</A> on this testcase.
+</UL>
+
+
+<H3><A NAME="DOUBLECLICK_VARIABLE" HREF="TOP.html#I_DOUBLECLICK_VARIABLE">Double Clicking on a Variable</A></H3>
+
+Double clicking on a variable (in the variable-list) will show all methods which refer to that
+variable (see also: variable search functions).
+
+
+<H3><A NAME="DOUBLECLICK_METHOD" HREF="TOP.html#I_DOUBLECLICK_METHOD">Double Clicking on a Method</A></H3>
+
+For selectors, which are marked as <VAR>windowSpec</VAR>, <VAR>menuSpec</VAR> or <VAR>imageSpec</VAR> methods,
+a corresponding editor application is opened on double-click.
+<BR>
+That means, that a GUI-Painter is opened when you double-click a windowSpec-method,
+an imageEditor is opened when you double-click an imageSpec-method and so on.
+<P>
+
+Double clicking on a method with a break- or trace-point will remove the break- or trace-point.
+<P>
+Double clicking on any other method will look if the method redefines an inherited method
+or is redefined by an inherited method, and will add an inheritance browser page if so.
+
+<P>
+<HR>
+<A HREF="menu.html">Next: Menu Functions</A>
+<HR>
+
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif" ALT="[stx logo]">
+Copyright &copy; 2000 eXept Software AG, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+<HR>
+Doc $Revision: 1.59 $ $Date: 2018-05-09 14:04:29 $
+
+</BODY>
+</HTML>

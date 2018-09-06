@@ -1,0 +1,79 @@
+# Makefile for zlib - Borland C
+#
+# Updated for zlib 1.2.x by Cosmin Truta, 11-Mar-2003
+# Last updated: 28-Aug-2003
+#
+# Usage:
+#  make -f win32/Makefile.bor
+#  make -f win32/Makefile.bor LOCAL_ZLIB=-DASMV OBJA=match.obj OBJPA=+match.obj
+
+# ------------ Borland C++ ------------
+TOP=..\..
+INCLUDE_TOP=$(TOP)\..
+
+!INCLUDE $(TOP)\rules\stdHeader_bc
+
+# INCL=-Ic:\borland\bcc55\include -Ic:\programme\borland\bcc55\include -Ie:\programme\borland\bcc55\include -Ic:\tools\bcc55\include
+INCL=-I$(BCB)\include
+
+OUTDIR=objbc\\
+
+# Optional nonstandard preprocessor flags (e.g. -DMAX_MEM_LEVEL=7)
+# should be added to the environment via "set LOCAL_ZLIB=-DFOO" or
+# added to the declaration of LOC here:
+LOC = $(LOCAL_ZLIB)
+
+CC = bcc32
+AS = bcc32
+LD = bcc32
+AR = tlib
+CFLAGS  = -a -d -k- -O2 $(LOC) $(INCL)
+ASFLAGS = $(LOC)
+LDFLAGS = $(LOC)
+
+# variables
+BZ2LIB_LIB = bz2lib.lib
+
+OBJS = $(OUTDIR)blocksort.$(O) $(OUTDIR)huffman.$(O) \
+       $(OUTDIR)crctable.$(O) $(OUTDIR)randtable.$(O) \
+       $(OUTDIR)compress.$(O) $(OUTDIR)decompress.$(O) \
+       $(OUTDIR)bzlib.$(O)
+
+OBJSLINK = +$(OUTDIR)blocksort.$(O)+$(OUTDIR)huffman.$(O)+$(OUTDIR)crctable.$(O)+$(OUTDIR)randtable.$(O)+$(OUTDIR)compress.$(O)+$(OUTDIR)decompress.$(O)+$(OUTDIR)bzlib.$(O)
+
+# targets
+all: $(BZ2LIB_LIB)
+
+full:: all
+
+$(OUTDIR):
+	-md $(OUTDIR)
+
+$(OBJS): bzlib.h bzlib_private.h
+
+.c.obj:
+	$(CC) -c $(CFLAGS) -o$*.obj $<
+
+.asm.obj:
+	$(AS) -c $(ASFLAGS) $<
+
+
+
+$(BZ2LIB_LIB): $(OUTDIR) $(OBJS)
+	-del $(BZ2LIB_LIB)
+	$(AR) $(BZ2LIB_LIB) $(OBJSLINK)
+
+
+# cleanup
+clean:
+	-del $(OUTDIR)*.$(O) $(OUTDIR)*.$(LIB) $(OUTDIR)*.bak
+	-del *.obj *.lib *.exe *.tds
+	-del zlib.bak
+	-del foo.gz
+
+clobber:    clean
+	-rmdir /s /q objbc
+	-rmdir /s /q objvc
+	-rmdir /s /q objlcc
+	-rmdir /s /q objtcc
+	-rmdir /s /q objmingw

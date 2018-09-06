@@ -1,0 +1,26 @@
+/* XPM */
+static char *menu_font_fett_16x16_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 3 1",
+/* colors */
+"a c black",
+"b c #DAE0F1",
+"c c none",
+/* pixels */
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"ccccaaaaaaaaaccc",
+"cccccaaaccccaccc",
+"cccccaaacccccccc",
+"cccccaaaccaccccc",
+"cccccaaaaaaccccc",
+"cccccaaaccaccccc",
+"cccccaaacccccccc",
+"cccccaaacccccccc",
+"ccccaaaaaccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+};

@@ -1,0 +1,310 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+   <META NAME="Author" CONTENT="Thomas Zwick, eXept software AG, Germany">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.04 [en] (X11; I; Linux 2.0.30 i586) [Netscape]">
+   <TITLE>The Entry Field Widget</TITLE>
+</HEAD>
+<BODY>
+<A HREF="Label.html" NOPRINT><IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="The Label Widget" NOSAVE HEIGHT=30 WIDTH=30></A><A HREF="TOP.html#TABLEOFTHEWIDGETS" NOPRINT><IMG SRC="../../../icons/DocsUpArrow.gif" ALT="Table of the Widgets" NOSAVE HEIGHT=30 WIDTH=30></A><A HREF="TextEditor.html" NOPRINT><IMG SRC="../../../icons/DocsRightArrow.gif" ALT="The Text Editor Wigdet" NOSAVE HEIGHT=30 WIDTH=30></A>
+<BR>&nbsp;
+<HR ALIGN=LEFT WIDTH="100%">
+<H1>
+<FONT SIZE=+4>The Entry Field (InputField) Widget</FONT></H1>
+<IMG SRC="../../../pictures/GUIPainterWidgetEntryField.gif" ALT="A View of a Entry Field Widget" NOSAVE HEIGHT=24 WIDTH=207>
+<P>View Class: <TT>EditField</TT>
+<BR>Spec Class: <TT>InputFieldSpec</TT>
+
+<P>The<B> Entry Field Widget</B> (called <I>InputField</I> in VisualWorks) is used to provide single-line text entry
+and edit capabilities. The user can type in any alpha-numeric characters
+into the entry field. If the entry string exceeds the width of the entry
+field, the field will automatically (horizontally) scroll to hold the edit
+cursor on focus.
+<BR>The EditField supports selection, copy, cut and paste (both via keyboard
+shortcuts and via its popUpMenu.
+<P>
+In principle, editFields operate on a string aspect; however, a typeConverter
+can be specified, which performs automatic conversion of the entered string
+into some other object type (and also vice-versa, converts the object into
+a printed string representation).
+<H3>
+
+<HR ALIGN=LEFT WIDTH="100%"></H3>
+
+<H3>
+The <I>Basics</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>ID</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Unique symbolic name (ID) of the entry
+field.&nbsp;</B>&nbsp;
+<BR>This ID can be used by the application to access the widget
+via <TT>"builder &#187; componentAt:#ID"</TT>.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Group ID</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Unique symbolic name (ID) for the group
+of the entry field.&nbsp;</B>&nbsp;
+<BR>Entry fields within a common group ID can be reached by the cursor keys.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Model</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for the object
+which is shown (& edited) in the entry field (i.e. its model).</B>&nbsp;
+<BR>It should return a&nbsp;
+
+<P><TT>&nbsp;&nbsp;&nbsp; - String</TT> instance (only for static behavior)&nbsp;
+<BR><TT>&nbsp;&nbsp;&nbsp; - <A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance with a <TT>String</TT> instance&nbsp;
+<BR>&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Type</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines how the entry string is converted
+to an object (which is stored into the aspect-holder).</B>&nbsp;
+<BR>Beside a number of standard typeConverters, an application may
+provide a specialized converter via the Converter aspect.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Converter</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>If non-empty, this defines an aspect or
+binding for the typeConverter</B><br>(usually, the name of a method in the application, which
+returns an instance of TypeConverter).</TD>
+</TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Size</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Maximum number of characters which can
+be typed in.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Format String</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>A format string for conversion</B> (enabled if type = "date" or "time")<br><br>Useful examples:<br>
+<CODE>%y%m%d</CODE> (date)<br>
+<CODE>%y-%m-%d</CODE> (date)<br>
+<CODE>%d%m%Y</CODE> (date)<br>
+<CODE>%m/%d/%y</CODE> (date us format)<br>
+<CODE>%D-%(monthName)-%y</CODE> (date)<br>
+<br>
+<CODE>%h:%m:%s</CODE> (time)<br>
+<CODE>%h:%m:%s.%i</CODE> (time + ms)<br>
+<CODE>%u:%m:%s %a</CODE> (time us format)<br>
+<br>
+<CODE>%(year)-%(month)-%(day)T%h:%m:%s.%(milli2)%(TZD)</CODE> (timestamp ISO)<br>
+<br>For a full list, see "Date>>addPrintBindingsTo:" and "Time>>addPrintBindingsTo:".
+
+</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>MinValue</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Minimum allowed value to be entered</B> (enabled if type = "NumberInRange")</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>MaxValue</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Maximum allowed value to be entered</B> (enabled if type = "NumberInRange")</TD>
+</TR>
+
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+
+
+
+
+<H3>
+The <I>Details</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Font</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the font style of the entry field.</B>&nbsp;
+<BR>After selecting the check toggle the font style can be chosen by selecting
+one of the Family/Face/Style/Size buttons. If no font style is selected,
+the entry field takes its default font style from the style sheet.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>FG-Color</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the foreground color of the entry
+field.</B>&nbsp;
+<BR>After selecting the check toggle the foreground color can be chosen
+by selecting the desired colored button. If no color&nbsp; is selected,
+the entry field takes its default foreground color from the style sheet.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>BG-Color</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the background color of the entry
+field.</B>&nbsp;
+<BR>After selecting the check toggle the background color can be chosen
+by selecting the desired colored button. If no color&nbsp; is selected,
+the entry field takes its default background color from the style sheet.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Accept-Immediate</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>If on, each change will be immediately
+sent to the model
+<BR></B>(i.e. each keyPress will immediately force an accept)
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Accept-On Return</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>If on,
+the entry string will be sent to the model
+<BR>when the RETURN-key is pressed.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Accept-On Tab</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>If on,
+the entry string will be sent to the model
+<BR>when the TAB-key is pressed.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Accept-On Leave</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>If on,
+the entry string will be sent to the model
+<BR>when the field is left (via RETURN, TAB or cursor keys).
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Accept-On Lost Focus</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>If on,
+the entry string will be sent to the model
+<BR>when the field looses the keyboard focus.
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>AcceptChannel</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>A valueHolder which allows forced accept
+by the application</B>
+<BR>(by storing a true value into the holder).
+<BR>
+This can be done in a dialogs OK-action.
+</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Initially Disabled</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the entry field is initially
+disabled.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Initially Invisible</B></TD>
+
+<TD ALIGN=LEFT VALIGN=TOP BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that
+the entry field is initially invisible.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Can Tab</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the entry field can be
+reached by tabbing.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Read Only</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the entry field can be
+modified.</B></TD>
+</TR>
+</TABLE>
+
+<P>
+Be careful, when combining Immediate accept with a typeconverter;
+since the typeconverter is invoked for every key, it may be given invalid
+input and fail to convert the string correctly.
+<P>
+The recommended/normal setup is to either 'accept-on-lost-focus' or
+to use an acceptChannel, which is set by a dialogs OK-Button-action.
+
+
+&nbsp;
+<BR>&nbsp;
+<H3>The <I>Channels</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Enable</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE>
+<B>Aspect selector or binding for en-/disabling the entry field.</B>&nbsp;
+<BR>It should return a&nbsp;
+
+<P>&nbsp;&nbsp;&nbsp; - <TT>Boolean</TT> instance** (only for static behavior)&nbsp;
+<BR>&nbsp;&nbsp;&nbsp; - <TT><A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance with a <TT>Boolean</TT> instance**&nbsp;
+
+<P>A value model is used to dynamically enable/disable the entry field.</TD>
+</TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Modified</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for the modified flag.</B>&nbsp;
+<BR>It should return a <TT><A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance holding a <TT>Boolean</TT>
+or a block, responding to <TT>#value:</TT>.
+
+<P>The valueHolder/block will get a true value, when the user edits the fields contents
+(i.e. modifies the input).</TD>
+</TR>
+
+
+</TABLE>
+<TT>*&nbsp; = ValueHolder, AspectAdaptor, BufferedValueHolder, RangeAdaptor,
+TriggerValue</TT>
+<BR><TT>** = true, false</TT>
+<BR>&nbsp;
+<H3>
+The <I>Help</I> Section:</H3>
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="HelpTool.html">Using the Help Tool</A>"
+<BR>&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Layout</I> Section:</H3>
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="LayoutTool.html">The Layout of the Widgets</A>"
+<BR>&nbsp;
+<BR>&nbsp;
+
+<P>
+<HR>
+
+<P><IMG SRC="../../../icons/stx.gif" ALT="[stx-logo]" NOSAVE NOPRINT HEIGHT=48 WIDTH=47 ALIGN=CENTER>
+<BR><TT>Copyright &copy; 1998 eXept Software AG, all rights reserved</TT>
+<BR>
+<HR>
+</BODY>
+</HTML>

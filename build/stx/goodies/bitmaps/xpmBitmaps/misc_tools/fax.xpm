@@ -1,0 +1,32 @@
+/* XPM */
+static char *fax_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"22 22 3 1",
+/* colors */
+"a c white",
+"b c black",
+"c c none",
+/* pixels */
+"cccccccccccccccccccccc",
+"cbbbaabbbbbbbbbccccccc",
+"cbabbaaaaaaaaabbcccccc",
+"cbaabbaaaaaaaababccccc",
+"cbaaabbaaaaaaababbcccc",
+"cbaaaabbaaaaaabababccc",
+"cbaaaaabbaaaaabababccc",
+"cbaaaaaabbaaaabababccc",
+"cbaaaaaaabbaaabababccc",
+"cbaaaaaaabbbaabababccc",
+"cbaaaabbbbaaaabababccc",
+"cbaabbbbaaaaaabababccc",
+"cbaabbaaaaaaaabababccc",
+"cbaaabbaaaaaaabababccc",
+"cbaaaabbaaaaaabababccc",
+"cbaaaaabbaaaaabababccc",
+"cbaaaaaabbaaaabababccc",
+"cbbbbbbbabbababababccc",
+"cbaaaaaaaabbbaaababccc",
+"ccbbbbbbaabbbabbbabccc",
+"cccbaaaaabbbbaaaaabccc",
+"ccccbbbbaaaaaabbbbbccc",
+};

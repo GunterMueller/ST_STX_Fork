@@ -1,0 +1,8 @@
+[phases]
+publish = false
+
+[paths]
+canonical = https://bitbucket.org/janvrany/stx-goodies-libcairo
+staging = https://bitbucket.org/janvrany/stx-goodies-libcairo
+default = https://bitbucket.org/janvrany/stx-goodies-libcairo
+

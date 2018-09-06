@@ -1,0 +1,158 @@
+<?xml version="1.0"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document url="filter.html">
+
+  &project;
+
+  <properties>
+    <title>Container Provided Filters</title>
+  </properties>
+
+<body>
+
+<section name="Table of Contents">
+<toc/>
+</section>
+
+<section name="Introduction">
+
+  <p>Tomcat provides a number of <strong>Filters</strong> which may be
+  configured for use with all web applications using
+  <code>$CATALINA_BASE/conf/web.xml</code> or may be configured for individual
+  web applications by configuring them in the application's
+  <code>WEB-INF/web.xml</code>. Each filter is described below.</p>
+
+    <blockquote><em>
+    <p>This description uses the variable name $CATALINA_BASE to refer the
+    base directory against which most relative paths are resolved. If you have
+    not configured Tomcat for multiple instances by setting a CATALINA_BASE
+    directory, then $CATALINA_BASE will be set to the value of $CATALINA_HOME,
+    the directory into which you have installed Tomcat.</p>
+    </em></blockquote>
+
+</section>
+
+
+<section name="CSRF Prevention Filter">
+
+  <subsection name="Introduction">
+
+    <p>This filter provides basic CSRF protection for a web application. The
+    filter assumes that it is mapped to <code>/*</code> and that all URLs
+    returned to the client are encoded via a call to
+    <code>HttpServletResponse#encodeRedirectURL(String)</code> or
+    <code>HttpServletResponse#encodeURL(String)</code>.</p>
+    
+    <p>This filter prevents CSRF by generating a nonce and storing it in the
+    session. URLs are also encoded with the same nonce. When the next request is
+    received the nonce in the request is compared to the nonce in the session
+    and only if they are the same is the request allowed to continue.</p>
+    
+  </subsection>
+
+  <subsection name="Filter Class Name">
+
+    <p>The filter class name for the CSRF Prevention Filter is
+    <strong><code>org.apache.catalina.filters.CsrfPreventionFilter</code>
+    </strong>.</p>
+
+  </subsection>
+
+  <subsection name="Initialisation parameters">
+
+    <p>The CSRF Prevention Filter supports the following initialisation
+    parameters:</p>
+
+    <attributes>
+
+      <attribute name="entryPoints" required="false">
+        <p>A comma separated list of URLs that will not be tested for the
+        presence of a valid nonce. They are used to provide a way to navigate
+        back to a protected application after having navigated away from it.
+        Entry points will be limited to HTTP GET requests and should not trigger
+        any security sensitive actions.</p>
+      </attribute>
+      
+      <attribute name="nonceCacheSize" required="false">
+        <p>The number of previously issued nonces that will be cached on a LRU
+        basis to support parallel requests, limited use of the refresh and back
+        in the browser and similar behaviors that may result in the submission
+        of a previous nonce rather than the current one. If not set, the default
+        value of 5 will be used.</p>
+      </attribute>
+      
+      <attribute name="randomClass" required="false">
+        <p>The name of the class to use to generate nonces. The class must be an
+        instance of <code>java.util.Random</code>. If not set, the default value
+        of <code>java.security.SecureRandom</code> will be used.</p>
+      </attribute>
+      
+    </attributes>
+    
+  </subsection>
+
+</section>
+
+
+<section name="Failed Request Filter">
+
+  <subsection name="Introduction">
+
+    <p>This filter triggers parameters parsing in a request and rejects the
+    request if some parameters were skipped during parameter parsing because
+    of parsing errors or request size limitations (such as
+    <code>maxParameterCount</code> attribute in a
+    <a href="http.html">Connector</a>).
+    This filter can be used to ensure that none parameter values submitted by
+    client are lost.</p>
+
+    <p>Note that parameter parsing may consume the body of an HTTP request, so
+    caution is needed if the servlet protected by this filter uses
+    <code>request.getInputStream()</code> or <code>request.getReader()</code>
+    calls. In general the risk of breaking a web application by adding this
+    filter is not so high, because parameter parsing does check content type
+    of the request before consuming the request body.</p>
+
+    <p>The request is rejected with HTTP status code 400 (Bad Request).</p>
+
+  </subsection>
+
+  <subsection name="Filter Class Name">
+
+    <p>The filter class name for the Failed Request Filter is
+    <strong><code>org.apache.catalina.filters.FailedRequestFilter</code>
+    </strong>.</p>
+
+  </subsection>
+
+  <subsection name="Initialisation parameters">
+
+    <p>The Failed Request Filter does not support any initialization parameters.</p>
+
+  </subsection>
+
+</section>
+
+
+</body>
+
+
+</document>

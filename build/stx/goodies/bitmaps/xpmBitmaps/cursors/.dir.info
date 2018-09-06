@@ -1,0 +1,13 @@
+These cursors can be loaded with:
+
+    Cursor fromImage:(Image fromFile:'bitmaps/xpmBitmaps/cursors/XXX.xpm')
+
+for example:
+
+    |c v|
+
+    v := View new.
+    c := Cursor fromImage:(Image fromFile:'bitmaps/xpmBitmaps/cursors/cross2.xpm').
+    v cursor:c.
+    v open
+

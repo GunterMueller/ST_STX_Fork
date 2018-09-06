@@ -1,0 +1,19 @@
+; View defaultStyle:#normal2 
+;
+; like good-old normal style - with some added colors
+;
+; $Header: /cvs/stx/stx/libview/styles/normal2.style,v 1.5 1997-11-02 19:49:10 cg Exp $
+
+#include 'normal.style'
+
+comment  'plain good old 2D style\\with changed selection & menu-border colors'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Guter alter 2D Stil\mit geänderten Farben für Menurahmen und Selektionen'
+#endif
+
+selection.hilightBackgroundColor     Color blue
+selection.hilightFrameColor          Color black
+
+popup.borderColor                    Color red
+popup.borderWidth                    2

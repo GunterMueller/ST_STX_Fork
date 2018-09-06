@@ -1,0 +1,164 @@
+; View defaultStyle:#macosx_yosemite
+;
+; how ugly!
+; mac is looking more and more like windows8!
+;
+; $Header$
+
+ToolbarIconLibrary              (Smalltalk at:#ToolbarIconLibrary put:(Smalltalk at:#MacOSX2ToolbarIconLibrary))
+
+viewGrey                        ?(Color rgbValue:16rF2F2F5)
+viewLightGrey                   Color white
+
+#include 'macosx.style'
+
+name                            #macosx_yosemite
+
+ToolbarIconLibrary              (Smalltalk at:#ToolbarIconLibrary put:(Smalltalk at:#MacOSX2ToolbarIconLibrary))
+viewGrey                        (Color rgbValue:16rF2F2F5)
+halfLightColor                  =viewGrey
+
+;
+; unfinished
+;
+
+comment                 'OSX Yosemite lookalike (unfinished)'
+previewFileName         'viewStyleSample_macosx_yosemite.png'
+
+#if (Language == #german) or:[Language == #de]
+comment  'an MacOSX Yosemite angelehnter Stil (unvollständig)'
+#endif
+
+#if (Language == #french) or:[Language == #fr]
+comment  'Un style qui résemble MacOSX Yosemite (incomplet)'
+#endif
+
+; button.font                              (Font family:'helvetiva' face:'roman' style:'bold' size:14 )
+
+selection.backgroundColor                   (Color white)
+; selection.backgroundColor                   (Color rgbValue:16rf0f1f4)
+; selection.hilightBackgroundColor            (Color rgbValue:16rf0f1f4)
+selection.hilightBackgroundColorNoFocus     (Color rgbValue:16rd7dce1)
+; selection.font                              (Font family:'lucida' face:'roman' style:'bold' size:14 )
+
+menu.iconIndicationOn.bitmap                (ToolbarIconLibrary checkToggleOnIcon)
+menu.iconIndicationOff.bitmap               (ToolbarIconLibrary checkToggleOffIcon)
+menu.iconDisabledIndicationOn.bitmapFile    (ToolbarIconLibrary checkToggleOnDisabledIcon)
+menu.iconDisabledIndicationOff.bitmapFile   (ToolbarIconLibrary checkToggleOffDisabledIcon)
+menu.iconRadioOn.bitmap                     (ToolbarIconLibrary radioOnIcon)
+menu.iconRadioOff.bitmap                    (ToolbarIconLibrary radioOffIcon)
+menu.iconDisabledRadioOn.bitmap             (ToolbarIconLibrary radioOnDisabledIcon)
+menu.iconDisabledRadioOff.bitmap            (ToolbarIconLibrary radioOffDisabledIcon)
+menu.backgroundColor                       = viewGrey
+; menu.backgroundColor                        (Color grey:95)
+
+
+comboView.downForm                      (ToolbarIconLibrary scrollDownOffIcon)
+comboView.disabledDownForm              (ToolbarIconLibrary scrollDownOffIcon)
+comboView.enteredDownForm               (ToolbarIconLibrary scrollDownOffEntered2Icon)
+comboView.activeDownForm                (ToolbarIconLibrary scrollDownActiveIcon)
+
+radioButton.passiveImage           (ToolbarIconLibrary radioOffIcon)
+radioButton.activeImage            (ToolbarIconLibrary radioOnIcon)
+radioButton.enteredPassiveImage    (ToolbarIconLibrary radioOffIcon)
+radioButton.enteredActiveImage     (ToolbarIconLibrary radioOnIcon)
+radioButton.disabledPassiveImage   (ToolbarIconLibrary radioOffDisabledIcon)
+radioButton.disabledActiveImage    (ToolbarIconLibrary radioOnDisabledIcon)
+checkToggle.disabledActiveImage   (ToolbarIconLibrary checkToggleOnDisabledIcon)
+checkToggle.disabledPassiveImage  (ToolbarIconLibrary checkToggleOffDisabledIcon)
+checkToggle.activeImage           (ToolbarIconLibrary checkToggleOnIcon)
+checkToggle.passiveImage          (ToolbarIconLibrary checkToggleOffIcon)
+checkToggle.enteredPassiveImage   (ToolbarIconLibrary checkToggleOffEnteredIcon)
+checkToggle.enteredActiveImage    (ToolbarIconLibrary checkToggleOnEnteredIcon)
+;
+menu.iconIndicationOn             (ToolbarIconLibrary checkToggleOnIcon)
+menu.iconIndicationOff            (ToolbarIconLibrary checkToggleOffIcon)
+menu.iconDisabledIndicationOn     (ToolbarIconLibrary checkToggleOffDisabledIcon)
+menu.iconDisabledIndicationOff    (ToolbarIconLibrary checkToggleOffIcon)
+
+button.style                           #MacOSX
+button.borderStyle                     #MacFlatButtonBorder
+button.borderWidth                     0
+
+button.level                           0
+button.activeLevel                     0
+button.passiveLevel                    0
+button.enteredLevel                    0
+button.ignoreLevel                     true
+
+button.activeBackgroundColor1          (Color rgbValue:16r6EB2F7)
+button.activeBackgroundColor2          (Color rgbValue:16r2A7FFB)
+button.activeBackgroundColor           (GradientBackground vertical:(Color rgbValue:16r6EB2F7) to:(Color rgbValue:16r2A7FFB))
+
+; button.backgroundColor                 Color white
+button.passiveBackgroundColor1         (Color rgbValue:16rFFFFFF)
+button.passiveBackgroundColor2         (Color rgbValue:16rF2F2F2)
+button.passiveBackgroundColor          (GradientBackground vertical:(Color rgbValue:16rF2F2F2) to:(Color rgbValue:16rFFFFFF))
+
+;button.passiveBorderColor              Color white
+; button.activeBorderColor               =button.activeBackgroundColor2
+button.passiveBorderColor               nil
+
+; ((GradientBackground vertical:(Color rgbValue:16r6EB2F7) to:(Color rgbValue:16r2A7FFB)) usedLength:24)
+;button.enteredBackgroundColor           ((GradientBackground vertical:(Color rgbValue:16rEBF3FB) to:(Color rgbValue:16rDCEBFB)) usedLength:24)
+;button.activeBackgroundColor            ((GradientBackground vertical:(Color rgbValue:16rDAEBFB) to:(Color rgbValue:16rC3E0FB)) usedLength:24)
+; button.activeForegroundColor            (Color white)
+
+;button.frameColor                       (Color redByte:16rAC greenByte:16rAC blueByte:16rAC)
+;button.enteredFrameColor                (Color red:50 green:70 blue:92)
+;button.activeFrameColor                 (Color red:34 green:62 blue:90)
+;button.enteredBackgroundColor           ((GradientBackground vertical:(Color rgbValue:16rEBF3FB) to:(Color rgbValue:16rDCEBFB)) usedLength:24)
+;button.activeBackgroundColor            ((GradientBackground vertical:(Color rgbValue:16rDAEBFB) to:(Color rgbValue:16rC3E0FB)) usedLength:24)
+;button.activeForegroundColor            (Color black)
+
+arrowButton.upForm                  [ToolbarIconLibrary scrollUpIcon]
+arrowButton.enteredUpForm           [ToolbarIconLibrary scrollUpEnteredIcon]
+arrowButton.activeUpForm            [ToolbarIconLibrary scrollUpActiveIcon]
+arrowButton.disabledUpForm          [ToolbarIconLibrary scrollUpDisabledIcon]
+
+arrowButton.downForm                [ToolbarIconLibrary scrollDownIcon]
+arrowButton.enteredDownForm         [ToolbarIconLibrary scrollDownEnteredIcon]
+arrowButton.activeDownForm          [ToolbarIconLibrary scrollDownActiveIcon]
+arrowButton.disabledDownForm        [ToolbarIconLibrary scrollDownDisabledIcon]
+
+arrowButton.leftForm                [ToolbarIconLibrary scrollLeftIcon]
+arrowButton.enteredLeftForm         [ToolbarIconLibrary scrollLeftEnteredIcon]
+arrowButton.activeLeftForm          [ToolbarIconLibrary scrollLeftActiveIcon]
+arrowButton.disabledLeftForm        [ToolbarIconLibrary scrollLeftDisabledIcon]
+
+arrowButton.rightForm               [ToolbarIconLibrary scrollRightIcon]
+arrowButton.enteredRightForm        [ToolbarIconLibrary scrollRightEnteredIcon]
+arrowButton.activeRightForm         [ToolbarIconLibrary scrollRightActiveIcon]
+arrowButton.disabledRightForm       [ToolbarIconLibrary scrollRightDisabledIcon]
+
+scroller.viewBackground             (Color rgbValue:16rfafafa) "/ Color white
+; scrollBar.hideIfPointerOutside      true
+scrollableView.level                0
+scrolledView.level                  0
+
+arrowButton.backgroundColor         =scroller.viewBackground
+arrowButton.activeBackgroundColor   =scroller.viewBackground
+arrowButton.enteredBackgroundColor  =scroller.viewBackground
+
+comboView.downForm                      [ToolbarIconLibrary comboViewIcon]
+comboView.disabledDownForm              [ToolbarIconLibrary comboViewDisabledIcon]
+comboView.enteredDownForm               [ToolbarIconLibrary comboViewEnteredIcon]
+comboView.activeDownForm                [ToolbarIconLibrary comboViewActiveIcon]
+
+variablePanel.barHeight         8
+variablePanel.barWidth         8
+variablePanel.minBarHeight      8
+
+framedBox.3DFrame               false
+framedBox.frameColor            Color grey
+;; framedBox.MacRoundFrame       true
+
+;;
+;; no: that is really too ugly
+;; activeHelp.backgroundColor          (Color grey:95)
+activeHelp.borderColor              (Color grey:70)
+activeHelp.font                     (Font family:'helvetica' face:'roman' style:'bold' size:14)
+
+dataSet.labelView.backgroundColor         (Color rgbValue:16rF2F2F2)
+
+launcher.editorLevel        0

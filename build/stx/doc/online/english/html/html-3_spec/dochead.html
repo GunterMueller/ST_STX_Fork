@@ -1,0 +1,317 @@
+<TITLE>The Head Element and Related Elements</TITLE> <H1>The Head
+Element and Related Elements</H1> <H2>HEAD</H2>
+
+The HEAD element has no attributes and the start and end tag can always
+be safely omitted as they can be readily inferred by the parser.
+Information in the HEAD element corresponds to the top part of a memo
+or mail message. It describes properties of the document such as the
+title, the document toolbar, and additional meta-information. There is
+no intended significance to the order of elements in the document head.
+Note that the TITLE element is always required. In fact, the minimal
+HTML 3.0 document consists of the TITLE element alone!
+
+<P>Within the HEAD element, only certain elements are allowed.
+Information in the HEAD element may include the following elements
+(arranged alphabetically):
+
+<HR> <H2>BASE</H2>
+
+<P>The BASE element allows the URL of the document itself to be
+recorded in situations in which the document may be read out of
+context. URLs within the document may be in a "partial" form relative
+to this base address. The default base address is the URL used to
+retrieve the document.
+
+<P>For example:
+
+<pre>    &lt;base href="http://acme.com/docs/mydoc.html"&gt;
+    ... 
+    &lt;img src="images/me.gif"&gt;</pre>
+
+<P>which resolves to <tt>"http://acme.com/docs/images/me.gif"</tt>.
+
+<HR> <H2>ISINDEX</H2>
+
+<P>The ISINDEX element informs the HTML user agent that the document is
+an index document. As well as reading it, the reader may use a keyword
+search.
+
+<P>The document can be queried with a keyword search by adding a
+question mark to the end of the document address, followed by a list of
+keywords separated by plus signs. See the network address format for
+more information.
+
+<P><B>Note:</B> A server normally generates the ISINDEX tag
+automatically. If added by hand to an HTML document, the browser
+assumes that the server can handle a search on the document. Obviously
+the server must have this capability for it to work: simply adding
+&lt;ISINDEX&gt; in the document is not enough to make searches happen
+if the server does not have a search engine!
+
+<P>Example:
+
+<PRE>    &lt;ISINDEX&gt;</PRE>
+
+<P>The URL used for processing queries can be overridden with the HREF
+attribute. You can also use the PROMPT attribute to change the default
+prompt supplied by the browser, e.g.
+
+<PRE>    &lt;ISINDEX HREF="phone.db" PROMPT="Enter Surname:"&gt;</PRE>
+
+<HR>
+<H2>LINK</H2>
+
+<P>The LINK element indicates a relationship between the document and
+some other object. A document may have any number of LINK elements. The
+LINK element is empty (does not have a closing tag), but takes the same
+attributes as the anchor element. The important attributes are:
+
+<dl>
+<dt>REL <dd>This defines the relationship defined by the link.
+
+<dt>REV <dd>This defines a reverse relationship. A link from document A
+to document B with REV=<i>relation</i> expresses the same relationship
+as a link from B to A with REL=<i>relation</i>. REV=made is sometimes
+used to identify the document author, either the author's email address
+with a <i>mailto</i> URI, or a link to the author's home page.
+
+<dt>HREF <dd>This names an object using the URI
+notation. </dl>
+
+<h3>Using LINK to define document specific toolbars</h3>
+
+<P>An important use of the LINK element is to define a toolbar of
+navigation buttons or an equivalent mechanism such as menu items.
+
+<P>LINK relationship values reserved for toolbars are:
+
+<dl>
+<dt>REL=Home <dd>The link references a home page or the top of some
+hierarchy.
+
+<dt>REL=ToC <dd>The link references a document serving
+as a table of contents.
+
+<dt>REL=Index <dd>The link references a
+document providing an index for the current document.
+
+<dt>REL=Glossary <dd>The link references a document providing a glossary
+of terms that pertain to the current document.
+
+<dt>REL=Copyright <dd>The link references a copyright statement for
+the current document.
+
+<dt>REL=Up <dd>When the document forms part of a hierarchy, this link
+references the immediate parent of the current document.
+
+<dt>REL=Next <dd>The link references the next document to visit in a
+guided tour.
+
+<dt>REL=Previous <dd>The link references the previous document in a
+guided tour.
+
+<dt>REL=Help <dd>The link references a document offering help, e.g.
+describing the wider context and offering further links to relevant
+documents. This is aimed at reorienting users who have lost their way.
+
+<dt>REL=Bookmark <dd>Bookmarks are used to provide direct
+links to key entry points into an extended document. The TITLE
+attribute may be used to label the bookmark. Several bookmarks may be
+defined in each document, and provide a means for orienting users in
+extended documents.
+</dl>
+
+<P>An example of toolbar LINK elements:
+
+<pre>    &lt;LINK REL=Previous HREF=doc31.html&gt;
+    &lt;LINK REL=Next HREF=doc33.html&gt;
+    &lt;LINK REL=Bookmark TITLE="Order Form" HREF=doc56.html&gt;</pre>
+
+<h3><a name="banners">Using LINK to include a Document Banner</a></h3>
+
+The LINK element can be used with REL=Banner to reference another
+document to be used as banner for this document. This is typically
+used for corporate logos, navigation aids, and other information which
+shouldn't be scrolled with the rest of the document.
+For example:
+
+<pre>    &lt;LINK REL=Banner HREF=banner.html&gt;</pre>
+
+<P>The use of a LINK element in this way, allows a banner to be shared
+between several documents, with the benefit of being able to separately
+cache the banner. Rather than using a linked banner, you can also include
+the banner in the document itself, using the
+<a href="banners.html">BANNER</a> element.
+
+<h3>Link to an associated Style Sheet</h3>
+
+The LINK element can be used with REL=StyleSheet to reference a style
+sheet to be used to control the way the current document is rendered.
+For example:
+
+<pre>    &lt;LINK REL=StyleSheet HREF=housestyle.dsssl&gt;</pre>
+
+<h3>Other uses of the LINK element</h3>
+
+<P>Additional relationship names have been proposed, but do not form
+part of this specification. Servers may also allow links to be added by
+those who do not have the right to alter the body of a document.
+
+<HR> <H2>META</H2>
+
+<P>The META element is used within the HEAD element to embed document
+meta-information not defined by other HTML elements. Such information
+can be extracted by servers/clients for use in identifying, indexing
+and cataloging specialized document meta-information.
+
+<P>Although it is generally preferable to used named elements that have
+well defined semantics for each type of meta-information, such as
+title, this element is provided for situations where strict SGML
+parsing is necessary and the local DTD is not extensible.
+
+<P>In addition, HTTP servers can read the contents of the document head
+to generate response headers corresponding to any elements defining a
+value for the attribute HTTP-EQUIV. This provides document authors with
+a mechanism (not necessarily the preferred one) for identifying
+information that should be included in the response headers of an HTTP
+request.
+
+<P>The META element has three attributes:
+
+<dl>
+<dt>NAME <dd>Used to name a property such as author, publication
+date etc. If absent, the name can be assumed to be the same as the
+value of HTTP-EQUIV.
+
+<dt>CONTENT <dd>Used to supply a value for a named property.
+
+<dt>HTTP-EQUIV <dd>This attribute binds the element to an
+HTTP response header. If the semantics of the HTTP response header
+named by this attribute is known, then the contents can be processed
+based on a well defined syntactic mapping, whether or not the DTD
+includes anything about it. HTTP header names are not case sensitive.
+If absent, the NAME attribute should be used to identify this
+meta-information and it should not be used within an HTPP response
+header. </dl>
+
+<P>Examples:
+
+<P>If the document contains:
+
+<pre>&lt;META HTTP-EQUIV=Expires CONTENT="Tue, 04 Dec 1993 21:29:02 GMT"&gt;
+&lt;META HTTP-EQUIV="Keywords" CONTENT="Nanotechnology, Biochemistry"&gt;
+&lt;META HTTP-EQUIV="Reply-to" CONTENT="dsr@w3.org (Dave Raggett)"&gt;
+</pre>
+
+The server will include the following response headers:
+
+<PRE>Expires: Tue, 04 Dec 1993 21:29:02 GMT
+Keywords: Nanotechnology, Biochemistry
+Reply-to: dsr@w3.org (Dave Raggett)</pre>
+
+<p>When the HTTP-EQUIV attribute is absent, the server should not
+generate an HTTP response header for this meta-information, e.g.
+
+<PRE>&lt;META NAME="IndexType" CONTENT="Service"&gt;</pre>
+
+<P>Do not use the META element to define information that should be
+associated with an existing HTML element.
+
+<P>Example of an inappropriate use of the META element:
+
+<pre>&lt;META NAME="Title" CONTENT="The Etymology of Dunsel"&gt;</pre>
+
+<p>Do not name an HTTP-EQUIV attribute the same as a response header
+that should typically only be generated by the HTTP server. Some
+inappropriate names are "Server", "Date", and "Last-Modified". Whether
+a name is inappropriate depends on the particular server
+implementation. It is recommended that servers ignore any META elements
+that specify HTTP equivalents (case insensitively) to their own
+reserved response headers.
+
+
+<HR> <H2>NEXTID</H2>
+
+<P>The NEXTID is a parameter read and generated by text editing
+software to generate unique identifiers. This tag takes a single
+attribute which is the the next document-wide alpha-numeric identifier
+to be allocated of the form z123.
+
+<P>When modifying a document, existing anchor identifiers should not be
+reused, as these identifiers may be referenced by other documents.
+Human writers of HTML usually use mnemonic alphabetical identifiers.
+
+<P>Example:
+
+<PRE>    &lt;NEXTID N=Z27&gt;</PRE>
+
+<P>HTML user agents may ignore the NEXTID element. Support for NEXTID
+does not impact HTML user agents in any way.
+
+<P><I>I want to get rid of NEXTID, or at least deprecate it!</i>
+
+<HR> <H2>RANGE</H2>
+
+<P>The RANGE element is used to mark a range of the document, for example
+for highlighting regions of the document matching some search criteria,
+or which are the subject of an annotation etc.
+
+<PRE>    &lt;RANGE CLASS=Search FROM=spot01 UNTIL=spot02&gt;</PRE>
+
+The FROM and UNTIL attributes specify positions in the document using
+SGML identifiers. Most elements in the document body can define such
+identifiers using ID attributes. The SPOT element is useful in this
+regard, as it allows search software etc. to insert IDs at random places:
+
+<PRE>    &lt;SPOT ID=spot01&gt; ... &lt;SPOT ID=spot02&gt;</PRE>
+
+<P>The RANGE element supports the following attributes:
+<DL>
+<DT>ID<DD>An SGML identifer used to name the range element.
+<DT>CLASS<DD>A character string used to subclass the range element.
+<DT>FROM<DD>References an SGML identifier for an element in the
+document body. It identifies the start of the marked range.
+<DT>UNTIL<DD>References an SGML identifier for an element in the
+document body. It identifies the end of the marked range.
+</DL>
+
+<HR> <H2>STYLE</H2>
+
+<P>The STYLE element provides a means for including rendering information
+using a specified style notation. Information in the STYLE element
+overrides client defaults and that of linked style sheets. It allows
+authors to specify overrides, while for the most part using a generic
+style sheet, and as such improves the effectiveness of caching schemes
+for linked style sheets. There is one attribute - NOTATATION - which
+specifies an entity identifying an SGML notation in the HTML 3.0 DTD,
+for example:
+
+<pre>    &lt;style notation=dsssl-lite&gt;
+      <i>some dsssl-lite stuff ...</i>
+    &lt;/style&gt;</pre>
+
+<p>Stylistic rules will in general match tag names and attribute values
+for elements in the document body. Context sensitive rules may be used
+for such purposes as rendering drop down capitals for the initial
+letter in the first paragraph following a header.
+
+<HR> <H2>TITLE</H2>
+
+<P>Every HTML document must contain a TITLE element. The title should
+identify the contents of the document in a global context, and may be
+used in a history lists and as a label for the window displaying the
+document. Unlike headings, titles are not normally displayed in the
+text of a document itself.
+
+<P>The TITLE element must occur within the head of the document, and
+may not contain anchors, paragraph tags, or highlighting. There may
+only be one TITLE in any document.
+
+<P>The length of titles is unlimited, however, long titles may be
+truncated in some applications. To minimize this possibility, keep
+titles to fewer than 64 characters. Also keep in mind that a short
+title, such as Introduction, may be meaningless out of context. An
+example of a meaningful title might be:
+
+<PRE>    &lt;Title&gt;Recent Advances in Nanotechnology&lt;/Title&gt;</PRE>
+<!--NewPage-->

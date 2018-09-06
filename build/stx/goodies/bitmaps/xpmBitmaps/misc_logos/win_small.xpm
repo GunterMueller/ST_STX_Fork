@@ -1,0 +1,29 @@
+/* XPM */
+static char *win_small_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 6 1",
+/* colors */
+"a c black",
+"b c red",
+"c c green",
+"d c #0000FF",
+"e c yellow",
+"f c none",
+/* pixels */
+"ffffffffffffffff",
+"fffffffffaaaafff",
+"fffffffaaaaaaaaf",
+"afffffaaabaacaaa",
+"afafaaaabbaaccaa",
+"ffaaaaaabbaaccaa",
+"bfffffaabaaaacaa",
+"bfbfbbaaaaaaaaaa",
+"ffbbbbaaadaaeaaa",
+"dfffffaaddaaeeaa",
+"dfdfddaaddaaeeaa",
+"ffddddaadaaaaeaa",
+"afffffaaaaaaaaaa",
+"afafaaaaaffffaaa",
+"ffaaaaaffffffffa",
+"ffffffffffffffff",
+};

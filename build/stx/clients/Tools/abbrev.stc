@@ -1,0 +1,4 @@
+FTPTool FTPTool stx:clients/Tools 'demos-Tools-System' 0
+SerialLineTerminal SerialLineTerminal stx:clients/Tools 'demos-Tools-System' 0
+TelnetTool TelnetTool stx:clients/Tools 'demos-Tools-System' 0
+ZipTool ZipTool stx:clients/Tools 'demos-Tools-System' 0

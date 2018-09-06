@@ -1,0 +1,294 @@
+; View defaultStyle:#macosx
+;
+; $Header$
+
+ToolbarIconLibrary              (Smalltalk at:#ToolbarIconLibrary put:(Smalltalk at:#MacOSXToolbarIconLibrary))
+
+viewGrey                        ?(Color rgbValue:16rEDEDED)
+viewLightGrey                   Color white
+
+#include 'Adwaita.style'
+
+name                            #macosx
+
+ToolbarIconLibrary              (Smalltalk at:#ToolbarIconLibrary put:(Smalltalk at:#MacOSXToolbarIconLibrary))
+
+;
+; unfinished
+;
+
+viewGrey                        (Color rgbValue:16rEDEDED)
+viewLightGrey                   Color white
+lightColor                      Color white
+halfShadowColor                 (Color grey:80)
+halfLightColor                  =viewGrey
+shadowColor                     (Color grey:60)
+
+selectionBlue                   (Color red:22 green:46 blue:84)
+selectionGrey                   (Color grey:84)
+
+comment                 'OSX lookalike (unfinished)'
+previewFileName         'viewStyleSample_macosx.png'
+
+#if (Language == #german) or:[Language == #de]
+comment  'an MacOSX angelehnter Stil (unvollständig)'
+#endif
+
+#if (Language == #french) or:[Language == #fr]
+comment  'Un style qui résemble MacOSX (incomplet)'
+#endif
+
+previewFileName         'viewStyleSample_macosx.png'
+
+selection.hilightFrameColor             nil
+selection.hilightBackgroundColorNoFocus =selectionGrey
+selection.hilightForegroundColorNoFocus (Color black)
+selection.hilightBackgroundColor        =selectionBlue
+selection.hilightForegroundColor        (Color white)
+selection.hilightStyle                  #macosx
+
+menu.enteredLevel               0
+
+;; enable this, when old menuView cares for it also
+;; menu.itemMargin                          1
+menu.backgroundColor                        (Color white)
+menu.hilightBackgroundColor                 =selectionBlue
+menu.hilightForegroundColor                 (Color white)
+menu.selectionFollowsMouse                  true
+menu.enteredBackgroundColor                 =menu.hilightBackgroundColor
+menu.enteredForegroundColor                 =menu.hilightForegroundColor
+menu.iconIndicationOn.bitmap                (ToolbarIconLibrary checkToggleOnIcon)
+menu.iconIndicationOff.bitmap               (ToolbarIconLibrary checkToggleOffIcon)
+menu.iconDisabledIndicationOn.bitmapFile    (ToolbarIconLibrary checkToggleOnDisabledIcon)
+menu.iconDisabledIndicationOff.bitmapFile   (ToolbarIconLibrary checkToggleOffDisabledIcon)
+menu.iconRadioOn.bitmap                     (ToolbarIconLibrary radioOnIcon)
+menu.iconRadioOff.bitmap                    (ToolbarIconLibrary radioOffIcon)
+menu.iconDisabledRadioOn.bitmap             (ToolbarIconLibrary radioOnDisabledIcon)
+menu.iconDisabledRadioOff.bitmap            (ToolbarIconLibrary radioOffDisabledIcon)
+
+
+button.edgeStyle                       nil
+button.borderWidth                     1
+button.activeLevel                     0
+button.passiveLevel                    0
+
+button.frameColor                       (Color redByte:16rAC greenByte:16rAC blueByte:16rAC)
+button.enteredFrameColor                (Color red:50 green:70 blue:92)
+button.activeFrameColor                 (Color red:34 green:62 blue:90)
+button.enteredBackgroundColor           ((GradientBackground vertical:(Color rgbValue:16rEBF3FB) to:(Color rgbValue:16rDCEBFB)) usedLength:24)
+; button.activeBackgroundColor            ((GradientBackground vertical:(Color rgbValue:16rDAEBFB) to:(Color rgbValue:16rC3E0FB)) usedLength:24)
+button.activeForegroundColor            (Color black)
+
+button.style                           #MacOSX
+button.borderStyle                     #MacButtonBorder
+button.borderWidth                     0
+button.activeLevel                     0
+button.passiveLevel                    0
+
+;; button.backgroundColor                 Color white
+;button.passiveBackgroundColor1         (Color rgbValue:16rC5DCF0)
+;button.passiveBackgroundColor2         (Color rgbValue:16r7bb6e7)
+;button.passiveBackgroundColor3         (Color rgbValue:16rc8f5fb)
+
+button.passiveBackgroundColor1         (Color grey:91)
+button.passiveBackgroundColor2         (Color grey:100)
+button.passiveBackgroundColor3         (Color grey:95)
+
+button.disabledBackgroundColor1        (Color grey:84)
+button.disabledBackgroundColor2        (Color grey:66)
+button.disabledBackgroundColor3        (Color grey:91)
+
+button.enteredBackgroundColor1         (Color rgbValue:16rd3f4f3)
+button.enteredBackgroundColor2         (Color rgbValue:16r9cc8ed)
+button.enteredBackgroundColor3         (Color rgbValue:16rd5f9fe)
+
+button.activeBackgroundColor1          (Color rgbValue:16rd3f4f3)
+button.activeBackgroundColor2          (Color rgbValue:16r9cc8ed)
+button.activeBackgroundColor3          (Color rgbValue:16rd5f9fe)
+
+button.passiveBorderColor              (Color rgbValue:16r2257AD "16rB7B7B7")
+button.activeBorderColor               =button.activeBackgroundColor2
+button.enteredBorderColor              =button.enteredBackgroundColor2
+
+arrowButton.borderWidth                 0
+checkToggle.borderWidth                 0
+radioButton.borderWidth                 0
+comboView.button.borderWidth            0
+
+comboView.downForm                      (ToolbarIconLibrary scrollDownOffIcon)
+comboView.disabledDownForm              (ToolbarIconLibrary scrollDownOffIcon)
+comboView.enteredDownForm               (ToolbarIconLibrary scrollDownOffEntered2Icon)
+comboView.activeDownForm                (ToolbarIconLibrary scrollDownActiveIcon)
+; comboView.downFormFile                  'ComboDn_xp.xpm'.
+; comboView.disabledDownFormFile          'ComboDn_disabled_xp.xpm'.
+; comboView.activeDownFormFile            'ComboDn_active_xp.xpm'.
+; comboView.enteredDownFormFile           'ComboDn_entered_xp.xpm'.
+comboView.button.activeLevel            0
+comboView.button.passiveLevel           0
+comboView.button.activeBackgroundColor  =viewGrey
+; comboView.button.activeBackgroundColor  (Color white)
+; comboView.button.backgroundColor        (Color white)
+; comboView.level                         0
+
+; selection.highlightEnterItem       true         "/ underline-highlight item under cursor
+
+slider.NTallyMarks               nil
+
+scrollBar.position               #right
+scrollBar.buttonPositions        #bottom
+scrollBar.vScrollBarWidth        12
+scrollBar.hScrollBarHeight       12
+scrollBar.viewBackground         16rF0F0F0
+; scrollBar.hideIfPointerOutside   true
+
+scroller.viewBackground          16rF0F0F0
+scroller.NTallyMarks             nil
+scroller.tallyLevel              nil
+scroller.tallyInset              nil
+scroller.tallyDistance           nil
+scroller.thumbEdgeStyle          nil
+scroller.thumbInset              2
+scroller.thumbLevel              0
+scroller.thumbColor              16rB0B0B0
+scroller.thumbFrameColor         nil
+scroller.thumbEnteredColor       16r808080
+scroller.thumbActiveColor        16r808080
+scroller.thumbShadowColor        nil
+scroller.thumbLightColor         nil
+scroller.thumbHalfLightColor     nil
+scroller.roundStyle              true
+scroller.vista3DStyle            false
+
+;
+;miniScroller.size               3     "/ in millimeters
+;
+;
+;arrowButton.upForm                  (ToolbarIconLibrary scrollUpOffIcon)
+;arrowButton.enteredUpForm           (ToolbarIconLibrary scrollUpOffEntered2Icon)
+;arrowButton.activeUpForm            (ToolbarIconLibrary scrollUpActiveIcon)
+;arrowButton.disabledUpForm          (ToolbarIconLibrary scrollUpOffIcon)
+;
+;arrowButton.downForm                (ToolbarIconLibrary scrollDownOffIcon)
+;arrowButton.enteredDownForm         (ToolbarIconLibrary scrollDownOffEntered2Icon)
+;arrowButton.activeDownForm          (ToolbarIconLibrary scrollDownActiveIcon)
+;arrowButton.disabledDownForm        (ToolbarIconLibrary scrollDownOffIcon)
+;
+;arrowButton.leftForm                (ToolbarIconLibrary scrollLeftOffIcon)
+;arrowButton.enteredLeftForm         (ToolbarIconLibrary scrollLeftOffEntered2Icon)
+;arrowButton.activeLeftForm          (ToolbarIconLibrary scrollLeftActiveIcon)
+;arrowButton.disabledLeftForm        (ToolbarIconLibrary scrollLeftOffIcon)
+;
+;arrowButton.rightForm               (ToolbarIconLibrary scrollRightOffIcon)
+;arrowButton.enteredRightForm        (ToolbarIconLibrary scrollRightOffEntered2Icon)
+;arrowButton.activeRightForm         (ToolbarIconLibrary scrollRightActiveIcon)
+;arrowButton.disabledRightForm       (ToolbarIconLibrary scrollRightOffIcon)
+;
+;
+;arrowButton.leftFormFile          'ScrollLt.xp.xpm'
+;arrowButton.enteredLeftFormFile   'ScrollLt_entered.xp.xpm'
+;arrowButton.activeLeftFormFile    'ScrollLt_active.xp.xpm'
+;arrowButton.disabledLeftFormFile  'ScrollLt_disabled.xp.xpm'
+;
+;arrowButton.rightFormFile         'ScrollRt.xp.xpm'
+;arrowButton.enteredRightFormFile  'ScrollRt_entered.xp.xpm'
+;arrowButton.activeRightFormFile   'ScrollRt_active.xp.xpm'
+;arrowButton.disabledRightFormFile 'ScrollRt_disabled.xp.xpm'
+;
+;arrowButton.passiveLevel          0
+;arrowButton.activeLevel           0
+;arrowButton.backgroundColor       =scroller.viewBackground
+;arrowButton.activeBackgroundColor =scroller.viewBackground
+;
+;noteBook.backgroundColor          =lightenedViewGrey
+;noteBook.activeBackgroundColor    =viewBackground
+;noteBook.foregroundColor          Color black
+;noteBook.lightColor               =darkenedViewGrey
+;noteBook.shadowColor              =darkenedViewGrey
+;noteBook.passiveBackgroundColor   =lightenedViewGrey
+;
+;checkToggle.bitmapFile            'CheckOn10_xp.xpm'
+radioButton.passiveImage           (ToolbarIconLibrary radioOffIcon)
+radioButton.activeImage            (ToolbarIconLibrary radioOnIcon)
+radioButton.enteredPassiveImage    (ToolbarIconLibrary radioOffIcon)
+radioButton.enteredActiveImage     (ToolbarIconLibrary radioOnIcon)
+radioButton.disabledPassiveImage   (ToolbarIconLibrary radioOffDisabledIcon)
+radioButton.disabledActiveImage    (ToolbarIconLibrary radioOnDisabledIcon)
+checkToggle.disabledActiveImage   (ToolbarIconLibrary checkToggleOnDisabledIcon)
+checkToggle.disabledPassiveImage  (ToolbarIconLibrary checkToggleOffDisabledIcon)
+checkToggle.activeImage           (ToolbarIconLibrary checkToggleOnIcon)
+checkToggle.passiveImage          (ToolbarIconLibrary checkToggleOffIcon)
+checkToggle.enteredPassiveImage   (ToolbarIconLibrary checkToggleOffEnteredIcon)
+checkToggle.enteredActiveImage    (ToolbarIconLibrary checkToggleOnEnteredIcon)
+checkToggle.activeLevel           0
+checkToggle.passiveLevel          0
+checkToggle.disabledBackgroundColor     =viewGrey
+checkToggle.backgroundColor             =viewGrey
+checkToggle.activeBackgroundColor       =viewGrey
+;
+menu.iconIndicationOn             (ToolbarIconLibrary checkToggleOnIcon)
+menu.iconIndicationOff            (ToolbarIconLibrary checkToggleOffIcon)
+menu.iconDisabledIndicationOn     (ToolbarIconLibrary checkToggleOffDisabledIcon)
+menu.iconDisabledIndicationOff    (ToolbarIconLibrary checkToggleOffIcon)
+;
+;noteBook.activeTabMarkerColor       (Color red:100 green:78 blue:23)
+noteBook.canvasLevel        0
+noteBook.tabLevel           1
+;
+;popup.borderColor                   (Color grey:50)
+;popup.borderWidth                   1
+;
+;editField.level                     0
+;editField.borderWidth               1
+editField.borderColor               (Color brightness:0.75)
+;
+;comboView.level                   0
+;comboView.borderWidth             1
+;comboView.borderColor             (Color redByte:175 greenByte:190 blueByte:240)
+;
+;; label.foregroundColor             (Color redByte:0 greenByte:70 blueByte:213)
+;; button.foregroundColor            (Color black)
+;; radioButton.foregroundColor       (Color black)
+;; checkBox.labelForegroundColor     (Color black)
+;
+;; noteBook.foregroundColor          (Color redByte:0 greenByte:70 blueByte:213)
+;framedBox.foregroundColor         (Color redByte:0 greenByte:70 blueByte:213)
+;
+variablePanel.handleLevel       0
+variablePanel.handleStyle       #iris
+
+variablePanel.snapLevel         0
+variablePanel.snapEnterLevel    1
+variablePanel.selectedLevel     0
+
+;
+;infoBox.iconFile                'bitmaps/Information_XP.xpm'
+;warningBox.iconFile             'bitmaps/Warning_XP.xpm'
+;requestBox.iconFile             'bitmaps/Request_XP.xpm'
+;errorBox.iconFile               'bitmaps/Error_XP.xpm'
+;
+;selection.backgroundColor       (Color white)
+;
+;;selection.hilightForegroundColor    (Color black)
+;;selection.hilightBackgroundColor    (Color rgbValue:16rDFF0F8)
+;;selection.hilightFrameColor         (Color rgbValue:16r96D9F9)
+;
+;;;;menu.hilightForegroundColor         (Color black)
+;;;;menu.hilightBackgroundColor         (Color rgbValue:16rDAEBF3)
+;;;;menu.hilightFrameColor              (Color rgbValue:16rA8D8EB)
+;
+;editField.selectionBackgroundColor   =selectionBlue
+;editField.selectionForegroundColor   (Color white)
+
+text.selectionBackgroundColor   (Color rgbValue:16rb3d7fd)
+text.selectionForegroundColor   Color black
+
+codeView2.level             0
+
+;scrolledView.level      0
+
+; activeHelp.backgroundColor       Color rgbValue:16F0F0F0
+activeHelp.borderWidth           1
+activeHelp.borderColor           (Color grey:70)
+activeHelp.font                  (Font family:'helvetica' face:'roman' style:'bold' size:14)
+
+dialogBox.okAtLeft                 true

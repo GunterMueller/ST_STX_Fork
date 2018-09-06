@@ -1,0 +1,140 @@
+<HEAD>
+<TITLE>Using the New File Browser - Introduction</TITLE>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="TOP.html">         <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="newFeatures.html">   <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H2><A NAME="INTRO" HREF="TOP.html#I_INTRO">Introduction</A></H2>
+
+The new FileBrowser is an improved version of the existing <A HREF="../fbrowser/TOP.html">FileBrowser</A> tool.
+In addition to a tree-oriented presentation of the browser directory,
+it offers bookmarks, improved history, multiple document editing (notebook)
+ctags support and other many other new features.
+
+<P>
+A new fileBrowser can be either started via the
+<A HREF="../misc/TOP.html#LAUNCHER">Launcher</A>,
+or by evaluating the Smalltalk expression:
+<BR>
+<A TYPE="example">
+<CODE><PRE>
+    FileBrowserV2 open</PRE></CODE>
+</A>
+in a
+<A HREF="../misc/TOP.html#WORKSPACE">Workspace</A>
+or from within your program.
+<P>
+The above starts the browser in the last visited directory.
+To start a browser on some other directory, evaluate:
+<BR>
+<CODE><PRE>
+    FileBrowserV2 openOn:'someDirectory'</PRE></CODE>
+
+<P>
+Typically, after startup, it looks like:
+<P>
+<IMG SRC="../../../pictures/fbrowserV2.gif" ALT="[fig: filebrowserV2 hardcopy]">
+<P>
+It consists of 3 main subviews plus a variety of menu panels and fields.
+These components are:
+
+<OL>
+<LI><A HREF="#TOOLBAR">Toolbar Menu</A>
+<BR>Provides buttons for the most frequently used (menu-) functions.
+<P>
+
+<LI><A HREF="#PATTERNFIELD">Path Field</A>
+<BR>shows the name of the current file/directory and (via a pulldown list) a history of previously
+visited directories. Also allows changing the directory.
+<P>
+
+<LI><A HREF="#FITLERFIELD">Filter Field</A>
+<BR>allows a file name match pattern to be entered. Only files whose name matches the pattern are
+shown in the directory-contents-filelist.
+<P>
+
+<LI><A HREF="dirTree.html">Directory Tree</A>
+<BR>displays the directory hierarchy.
+<P>
+
+<LI><A HREF="dirContents.html">Directory Contents</A>
+<BR>shows the selected directory's contents.
+<P>
+
+<LI><A HREF="tagsView.html">Tag List View (not shown in the above image)</A>
+<BR>displays a teg list for the selected file.
+This is contents specific; for example, for a C-source code file,
+a list of functions is shown. For an html document, a list if header tags is presented.
+This list allows for fast navigation within a file.
+
+<P>
+
+<LI><A HREF="contentsView.html">Contents View</A>
+<BR>displays the selected file's contents.
+<P>
+
+<LI><A HREF="#INFOFIELD">Info Fields</A>
+<BR>displays information related to the last operation, the currently edited file
+and the currently shown directory.
+In addition, it shows the encoding of the file being edited, the cursor position and
+the editing mode.
+
+</OL>
+
+<A NAME = "PATTERNFIELD">The</A>
+directory contents list will only show files matching the pattern in
+the pattern field (if a pattern was entered).
+<P>
+<P>
+To see the contents of a file, simply double-click on the
+corresponding name entry in the directory contents list.
+If the selected item is a text file, its contents is shown in the
+contents-view.
+<BR>
+The contents view knows how to present certain files;
+for example, if you select a bitmap file, the bitmap image is shown.
+<P>
+
+All of the above mentioned subviews provide a popup menu, which is
+activated by the middle mouse button
+(or the right button, if you use a 2-button mouse).
+<P>
+
+<DL>
+<DT>By the way:
+<DD>
+pressing an alphabetic key in the fileList will make it scroll
+to the next entry whose name starts with that character.
+<P>If you press <KBD>"SHIFT"</KBD> at the same time, it
+finds the previous entry starting with that character.
+<P>
+Typing <KBD>"RETURN"</KBD> executes the double click function
+on the selected entry.
+<P>
+Also notice that <KBD>"CURSOR_UP"</KBD>, <KBD>"CURSOR_DOWN"</KBD>
+<KBD>"HOME"</KBD> and <KBD>"END"</KBD> keys
+too can be used to change the selection, while <KBD>"PAGE_UP"</KBD>
+and <KBD>"PAGE_DOWN"</KBD>
+scroll the list.
+<P>
+This is true for all views which show a list to select entries from.
+</DL>
+
+<HR>
+<A HREF="newFeatures.html">Next: New Features</A>
+<HR>
+
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif" ALT="[stx logo]">
+Copyright &copy; 2002 eXept Software AG, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+<HR>
+Doc $Revision: 1.12 $ $Date: 2016-09-14 09:41:13 $
+
+</BODY>
+</HTML>

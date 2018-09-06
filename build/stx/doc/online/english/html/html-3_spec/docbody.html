@@ -1,0 +1,71 @@
+<TITLE>The Body Element and Related Elements</TITLE> <H1>The Body
+Element and Related Elements</H1>
+
+<h2><A NAME=Body>The BODY element</A></h2>
+
+<B>Permitted Context:</B> HTML<BR>
+<B>Content Model:</B> %Body.Content
+
+<P>Within the BODY element, you can structure text into paragraphs, and
+lists, as well as highlighting phrases and creating links, amongst
+other things. The BODY element has the following attributes, all of
+which are optional:
+
+<P><B>Note</B> that the ID, LANG and CLASS attributes can be used with
+virtually all of the elements permitted in the document body.
+
+<DL> <DT>ID <DD>An SGML identifier used as the target for hypertext
+links or for naming particular elements in associated style sheets.
+Identifiers are NAME tokens and must be unique within the scope of the
+current document.
+
+<DT>LANG <DD>This is one of the ISO standard language abbreviations,
+e.g. "en.uk" for the variation of English spoken in the United Kingdom.
+It can be used by parsers to select language specific choices for
+quotation marks, ligatures and hypenation rules etc. The language
+attribute is composed from the two letter language code from ISO 639,
+optionally followed by a period and a two letter country code from ISO
+3166.
+
+<DT>CLASS <DD>This a space separated list of SGML NAME tokens and is
+used to subclass tag names. For instance, &lt;P
+CLASS=STANZA.COUPLET&gt; defines a paragraph that acts as a couplet in
+a stanza. By convention, the class names are interpreted
+hierarchically, with the most general class on the left and the most
+specific on the right, where classes are separated by a period. The
+CLASS attribute is most commonly used to attach a different style to
+some element, but it is recommended that where practical class names
+should be picked on the basis of the element's semantics, as this will
+permit other uses, such as restricting search through documents by
+matching on element class names. The  conventions for choosing class
+names are outside the scope of this specification.
+
+<DT>BACKGROUND <DD>This can be used to specify a URI for an image tile
+to cover the document background. This provides a way of giving a group
+of documents a distinctive appearence. Clients may ignore this
+attribute. It is included here for the benefit of clients that don't
+support style sheets. Note that the text color may need to be adjusted to
+show an adequate contrast with the background.
+</DL>
+
+<P><B>Note</B> that you don't need to include a BODY tag unless you
+want to specify one of the above attributes.
+
+<h2>Body Structure</h2>
+
+<p>The document body is composed from zero or more of the following
+elements:
+
+<ul> <li>DIV - used for hierarchical containers and static banners
+<li>Headings (H1, to H6) - a set of headers of varying levels of
+importance <li>Block elements - paragraphs, lists, forms, tables,
+figures and other elements <li>Horizontal rules, and the ADDRESS
+element
+
+<li>Text and character level markup including emphasis, images, math,
+hypertext links and miscellaneous elements. </ul>
+
+<P><B>Note</B> that text and character level markup are only permitted
+at this level for backwards compatibility with legacy documents. The
+HTML.Recommended flag enforces a more structured approach to authoring
+HTML documents. <!--NewPage-->

@@ -1,0 +1,291 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Application Notes</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="viewexample1.html"> <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">       <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="vmodels.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Application Notes on Widget Programming</H1>
+
+<H2>Contents</H2>
+<UL>
+ <LI><A HREF="#INTRO" NAME="I_INTRO">Introduction</A>
+ <LI><A HREF="#DIALOGS" NAME="I_DIALOGS">Dialogs</A>
+ <UL>
+   <LI><A HREF="#BUTTONS_AND_DIALOGS" NAME="I_BUTTONS_AND_DIALOGS">Opening modal dialogs from a button</A>
+ </UL>
+ <LI><A HREF="#ARRANGING" NAME="I_ARRANGING">Arranging widgets row-wise</A>
+ <LI><A HREF="#MENUBUILDING" NAME="I_MENUBUILDING">Constructing a menu</A>
+</UL>
+
+
+<H2><A HREF="#I_INTRO" NAME="INTRO">Introduction</A></H2>
+  This document collects various application notes and hints.
+<BR>
+  It is not meant as an introductionary text, but instead is a collection
+  of frequently asked questions and answers.
+<BR>
+
+
+<H2><A HREF="#I_DIALOGS" NAME="DIALOGS">Dialogs</A></H2>
+
+<H3><A HREF="#I_BUTTONS_AND_DIALOGS" NAME="BUTTONS_AND_DIALOGS">Opening modal dialogs from a button</A></H3>
+
+If you open a modal dialog in a buttons pressAction block,
+it may seem to stay pressed after the dialog is closed.
+It redraws itself correctly, after some mouse movement in and out of the
+buttons area.
+<P>
+The reason for this behavior is that the button 
+may not get a buttonRelease notification,
+because at the time you release the mouse button, it is covered by the dialog
+(which gets the release event, but does not care).
+Thus, the button ``thinks'' that the mouse button is still pressed after the
+dialog is closed - until you move the mouse.
+<BR>
+This problem only appears if you have the button trigger-on-press or
+use the pressAction (in contrast to the default behavior, where the action
+is triggered in release).
+
+<P>
+The following example illustrates that behavior:
+<A TYPE="example">
+<CODE><PRE>
+    |top b dialog|
+
+    top := HorizontalPanelView new.
+    top extent:300@300.
+    top horizontalLayout:#center; verticalLayout:#center.
+
+    dialog := WarningBox label:'some dialog'.
+
+    b := Button label:'press me' in:top.
+    b pressAction:[dialog open].
+
+    top open
+</PRE></CODE>
+</A>
+a solution to this problem is to either let the button trigger on release
+(which is its default) or to manually turn the button back to the off-position
+within the action:
+<A TYPE="example">
+<CODE><PRE>
+    |top b dialog|
+
+    top := HorizontalPanelView new.
+    top extent:300@300.
+    top horizontalLayout:#center; verticalLayout:#center.
+
+    dialog := WarningBox label:'some dialog'.
+
+    b := Button label:'press me' in:top.
+    b pressAction:[dialog open. b turnOff. ].
+
+    top open
+</PRE></CODE>
+</A>
+
+Notice:
+<BR>
+It is not a good idea to setup a button to perform its action on press -
+the default behavior (i.e. action-on-release) allows the user of your
+program to change her mind, by moving the mouse-pointer out of the button
+before releasing the mouse-button. Action-on-press should only be
+used for scrollBar-like positioning buttons.
+
+
+<H2><A HREF="#I_ARRANGING" NAME="ARRANGING">Arranging widgets row-wise</A></H2>
+
+If a bunch of widgets (typically: buttons) is to be arranged row-wise
+or column-wise, the easiest way to acomplish this is to use nested panelViews.
+<BR>
+For example, to arrange for 16 buttons to be arranged in a topLeft-to-bottomRight
+grid, use a vertical panel, add four horizontal panels, and place the
+buttons into them.
+<BR>
+(of course, you can also create all buttons in the top view and give each of
+ them a relative origin/extent or layout - however, this will be very hard to maintain,
+ and require a rewrite if additional buttons are to be added later ...)
+<P>
+A calculator-like arrangement is acomplished with:
+<A type=example>
+<CODE><PRE>
+    |top vPanel hPanels buttons|
+
+    buttons := (1 to:16) collect:[:i | Button label:i printString].
+
+    top := StandardSystemView extent:300@300.
+    vPanel := VerticalPanelView origin:0.0@0.0 corner:1.0@1.0 in:top.
+    hPanels := (1 to:4) collect:[:i | HorizontalPanelView in:vPanel].
+
+    1 to:4 do:[:hPanelNr |
+	1 to:4 do:[:buttNr |
+	    |butt|
+
+	    butt := buttons at:((hPanelNr - 1 * 4) + buttNr).
+	    (hPanels at:hPanelNr) addSubView:butt.
+	].
+    ].
+
+    top open
+</PRE></CODE>
+</A>
+well, almost - we need to specify a useful layout (by default, the panels
+layout is #center).
+<BR>
+Adding corresponding layout messages fixes this:
+<A type=example>
+<CODE><PRE>
+    |top vPanel hPanels buttons|
+
+    buttons := (1 to:16) collect:[:i | Button label:i printString].
+
+    top := StandardSystemView extent:300@300.
+    vPanel := VerticalPanelView origin:0.0@0.0 corner:1.0@1.0 in:top.
+    vPanel horizontalLayout:#fit.
+    vPanel verticalLayout:#fitSpace.
+    hPanels := (1 to:4) collect:[:i |
+				    |panel|
+
+				    panel := HorizontalPanelView in:vPanel.
+				    panel horizontalLayout:#fitSpace.
+				    panel verticalLayout:#fit.
+				].
+
+    1 to:4 do:[:hPanelNr |
+	1 to:4 do:[:buttNr |
+	    |butt|
+
+	    butt := buttons at:((hPanelNr - 1 * 4) + buttNr).
+	    (hPanels at:hPanelNr) addSubView:butt.
+	].
+    ].
+
+    top open
+</PRE></CODE>
+</A>
+
+The same setup can (of course) be generated if you use the GUI painter.
+However, you have to manually add those buttons (use copy-paste ... to create
+all those buttons).
+
+
+
+<H2><A HREF="#I_MENUBUILDING" NAME="MENUBUILDING">Constructing a menu</A></H2>
+
+Most menus are now built using the MenuEditor tool;
+however, in certain situations, it may be required to
+dynamically construct a menu programatically.
+<BR>
+A typical situation is when some history information is to be presented
+as a menu.
+<BR>
+To do so, write a method which returns a Menu instance;
+for example:
+<CODE><PRE>
+    constructMyDynamicMenu
+	|myMenu item|
+
+	myMenu := Menu new.
+
+	item := MenuItem label:'action1'.
+	item value:#theActionSelector1.
+	myMenu addItem:item.
+
+	item := MenuItem label:'action2'.
+	item value:#theActionSelector2.
+	myMenu addItem:item.
+
+	^ myMenu
+</PRE></CODE>
+and an aspect method, which returns a block to construct the menu
+whenever invoked:
+<CODE><PRE>
+    myDynamicMenu
+	^ [ self constructMyDynamicMenu]
+</PRE></CODE>
+
+In the GUI-painter, set the menu-aspect to <CODE>#myDynamicMenu</CODE>.
+
+<P>
+The above menu will invoke the methods named <CODE>theActionSelector1</CODE> and
+<CODE>theActionSelector2</CODE> in the application.
+<BR>
+Sometimes, it is useful to invoke the same method, but pass different arguments.
+<BR>
+This can be done by giving each menuItem the same selector, and an
+additional argument, as in:
+<CODE><PRE>
+    constructMyDynamicMenu
+	|myMenu item|
+
+	myMenu := Menu new.
+
+	item := MenuItem label:'action1'.
+	item value:#'theActionSelector:'.
+	item argument:'Argument 1'.
+	myMenu addItem:item.
+
+	item := MenuItem label:'action2'.
+	item value:#'theActionSelector:'.
+	item argument:'Argument 2'.
+	myMenu addItem:item.
+
+	^ myMenu
+</PRE></CODE>
+
+FInally, it may be useful to combine some fix menu (as constructed in the
+MenuEditor) with a variable part (as constructed above).
+<BR>
+To do this, define the menu as usual (in the MenuEditor), and save it.
+Here, we assume that the menu was saved under the 
+name <CODE>baseMenu</CODE>.
+<BR>
+On the instance side, define a method as above, which should look like:
+<CODE><PRE>
+    constructMyDynamicMenu
+	|myMenu item|
+
+	myMenu := self class baseMenu decodeAsLiteralArray.
+
+	item := MenuItem label:'-'.     "/ separator
+	myMenu addItem:item.
+
+	item := MenuItem label:'action1'.
+	item value:#'theActionSelector:'.
+	item argument:'Argument 1'.
+	myMenu addItem:item.
+
+	item := MenuItem label:'action2'.
+	item value:#'theActionSelector:'.
+	item argument:'Argument 2'.
+	myMenu addItem:item.
+
+	^ myMenu
+</PRE></CODE>
+Notice the <CODE>decodeAsLiteralArray</CODE>;
+this is needed since the menuSpec methods as generated by the MenuEditor
+return a literal-encoded specification (i.e. an encoded Array).
+<BR>
+In order to append more items, a real Menu instance is needed.
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 1995 Claus Gittinger Development &amp; Consulting, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.21 $ $Date: 2016-07-11 09:24:05 $
+</BODY>
+</HTML>

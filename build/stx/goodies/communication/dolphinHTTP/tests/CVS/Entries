@@ -1,0 +1,27 @@
+/.cvsignore/1.1.1.1/Fri Sep 23 14:36:56 2011//
+/Make.proto/1.2/Tue Oct  4 16:44:39 2011//
+/Make.spec/1.3/Wed Jan 30 11:19:20 2013//
+/SptBasicCredentialsTest.st/1.1/Fri Sep 23 14:37:19 2011//
+/SptHTTPChallengeTest.st/1.1/Fri Sep 23 14:37:13 2011//
+/SptHTTPConnectionTest.st/1.2/Fri Sep 23 17:58:35 2011//
+/SptHTTPCookieJarTest.st/1.2/Fri Sep 23 17:59:09 2011//
+/SptHTTPCookieTest.st/1.1/Fri Sep 23 14:38:11 2011//
+/SptHTTPEntityTest.st/1.2/Fri Sep 23 20:39:08 2011//
+/SptHTTPHostCacheTest.st/1.2/Fri Sep 23 17:58:59 2011//
+/SptHTTPProxySettingsTest.st/1.2/Fri Sep 23 17:58:55 2011//
+/SptHTTPProxyTestExept.st/1.2/Wed Oct  5 16:16:35 2011//
+/SptHTTPRequestTest.st/1.5/Tue Oct  4 16:48:17 2011//
+/SptHTTPResponseTest.st/1.3/Fri Sep 23 20:39:10 2011//
+/SptHTTPSessionStateTest.st/1.3/Tue Oct  4 13:12:18 2011//
+/SptHTTPStatusTest.st/1.3/Fri Sep 23 20:22:54 2011//
+/SptHTTPTests.st/1.2/Fri Sep 23 17:58:44 2011//
+/SptHTTPUrlTest.st/1.2/Fri Sep 23 17:58:40 2011//
+/SptHTTPUserTest.st/1.1/Fri Sep 23 14:37:43 2011//
+/abbrev.stc/1.2/Tue Oct  4 16:44:46 2011//
+/bc.mak/1.3/Tue May 28 10:23:22 2013//
+/bmake.bat/1.1/Fri Sep 23 15:57:46 2011//
+/libInit.cc/1.2/Tue Oct  4 16:44:58 2011//
+/stx_goodies_communication_dolphinHTTP_tests.st/1.2/Tue Oct  4 16:44:59 2011//
+/tests.rc/1.2/Tue Oct  4 16:44:53 2011//
+/vcmake.bat/1.1/Fri Sep 23 15:57:50 2011//
+D

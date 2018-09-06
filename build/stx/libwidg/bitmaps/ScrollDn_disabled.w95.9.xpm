@@ -1,0 +1,19 @@
+/* XPM */
+static char *ScrollDn_disabled.w95.9_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"9 9 3 1",
+/* colors */
+"a c white",
+"b c #808080",
+"c c none",
+/* pixels */
+"ccccccccc",
+"ccccccccc",
+"ccccccccc",
+"cbbbbbbbc",
+"ccbbbbbac",
+"cccbbbacc",
+"ccccbaccc",
+"ccccacccc",
+"ccccccccc",
+};

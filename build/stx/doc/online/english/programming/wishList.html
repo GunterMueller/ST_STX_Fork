@@ -1,0 +1,201 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk wish list</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="howToWriteInefficientCode.html">     <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="humor.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Smalltalk wish list</H1>
+<P>
+
+This page lists things I would like to see in any upcoming
+smalltalk language standard.
+Please feel free to send additional suggestions to the author
+for inclusion in this document.
+
+<UL>
+
+<LI>conditional compilation</VAR>
+<P>
+Many organizations use various dialects of smalltalk concurrently
+(today, mostly <CITE>ParcPlace</CITE> vs. <CITE>DigiTalk</CITE> or <CITE>VisualAge</CITE>).
+Reusing code between these dialects is especially difficult,
+since smalltalk provides no facilities for conditional compilation.
+<BR>
+Therefore, different versions of a classes methods cannot be easily
+kept in one sourcefile, making maintenance a nightmare.
+<BR>
+With other smalltalks like <CITE>SmalltalkAgents</CITE>, <CITE>Enfin</CITE>
+and <CITE>Smalltalk/X</CITE>
+appearing, things will become even worse.
+<P>
+Smalltalk requires conditional compilation at least on a per method basis
+(better yet: some kind of <CODE>#ifdef</CODE> within a method).
+<P>
+A suggestion for per method conditional compilation is a construct like:
+<CODE><PRE>
+    !MyClass methodsFor:'category' forSystem:'name of system'!
+</PRE></CODE>
+where <VAR>"name of system"</VAR> could be something like
+<VAR>"VV2.0"</VAR>, <VAR>"STX"</VAR> etc.
+<P>
+As a first step, systems should check and ignore methods (at fileIn time)
+which are not meant for them. However, to allow for all those versions to
+be at least edited and managed in a browser, methods for other systems should
+be read and kept in the class as hidden and/or non-executable methods.
+<P>
+Browser support for these has to be added.
+<P>
+<CITE>Smalltalk/X</CITE> already provides the required internal mechanisms
+to implement such a scheme: methods can be declared as <CITE>ignored</CITE>.
+These methods are visible on the browser level, but ignored with respect to
+method lookup. The <CITE>ST/X</CITE> browser already handles those ignored methods;
+they can be filed in and filed out just like any other method.
+<BR>
+Adding a conditional ignore feature to this basic mechanism would be an
+easy task.
+<P>
+<HR>
+<P>
+
+<LI>A standard for end of line comments</VAR>
+<P>
+End of line comments are useful and a common standard is required.
+<P>
+<CITE>ST/X</CITE> uses <CODE>"/</CODE> (double quote followed by slash)
+which is backward compatible
+with existing code (there has not been one class in all freeware classes
+which failed to load due to this new comment syntax).
+
+<P>
+
+<LI>A standard for token block comments</VAR>
+<P>
+It has always been a pain, to comment a piece of code
+which contains comments.
+Although the above mentioned "End of line" comments are helpful and
+at least solve the problem of commenting-out code in the browser,
+it is still insufficient for documentation methods,
+if the code there shall contain comments (either EOL or regular comments).
+<P>
+For this,
+<CITE>ST/X</CITE> supports token block comments, which start with
+<CODE>"&lt;&lt;token</CODE> (double quote followed by two less-characters and a token word)
+end ends until a line is encountered which starts with the token.
+For example,
+<CODE><PRE>
+    "&lt;&lt;END
+	this is all commented
+	and may contain other "comments"
+	or
+	"/ end of line comments
+    END
+</PRE></CODE>
+
+<P>
+<HR>
+<P>
+
+<LI>A standard for number types</VAR>
+<P>
+<CITE>ST-80</CITE> uses the "d"-character to mark double number literals;
+i.e. "1.0" generates a float literal, while "1.0d" generates a double
+literal.
+<BR>
+<CITE>VisualAge</CITE> uses the "d" to mark <VAR>Decimal</VAR> number literals,
+which are (to add more confusion) called <VAR>FixedPoint</VAR> in both <CITE>ST-80</CITE>
+and <CITE>ST/X</CITE>.
+<BR>
+To make things more complicated: <CITE>ST/X</CITE> generates double floats
+for all number constants which contain a decimal point.
+In <CITE>ST/X</CITE>, the corresponding class is called <VAR>Float</VAR>.
+<BR>
+(<CITE>ST/X</CITE> does support single precision floats, but those are called
+ <VAR>ShortFloat</VAR> here).
+<P>
+The reason for <CITE>ST/X</CITE> doing things that way is to make
+things as easy is possible, when code is ported from other systems;
+<VAR>Float</VAR> is the one supported by any of them - therefore, this is the
+default here. In <CITE>ST/X</CITE>, <VAR>Double</VAR> is an alias for
+<VAR>Float</VAR> - to avoid trouble if anyone accesses this class explicitely.
+<P>
+There is definitely a need for a proper standard here.
+
+<P>
+<HR>
+<P>
+
+<LI>character escapes in string constants</VAR>
+<P>
+There should be some way to put graphical or control characters into
+a string constant; similar to (for example) the way this is done
+in the C language, using a backslash as escape character.
+<P>
+Although such an extension is easy to implement, no standard exists
+yet; and, worse, the backslash is already used to mark carriage returns
+to be replaced by the <CODE>#withCRs</CODE> method.
+<P>
+In <CITE>ST/X</CITE>, you can use the <CODE>#withEscapes</CODE> method,
+which translates C-language like escape sequences. Currently, this translation
+is done at execution time, but future versions of
+the compilers will detect sends of this selector to a string constant
+and perform
+this translation at compile time
+<BR>
+(but only, if the
+<A HREF="../help/Launcher/compilerSettings.html#LITERALARRAYS">immutableArrays option</A>
+is turned on).
+
+<P>
+<HR>
+<P>
+
+<LI>16bit (or more) string constants
+<P>
+There should be some smalltalk syntax for 16bit string constants.
+
+<P>
+<HR>
+<P>
+
+<LI>a language standard for multiple name spaces
+<P>
+<CITE>ST/X</CITE> already includes a mechanism to define private classes
+and namespaces.
+<BR>
+It would be nice to have a common language standard for this.
+<P>
+<HR>
+<P>
+
+<LI>a standard binary file format
+<P>
+Although some vendors may not like this idea, a standard binary format
+(and of course: a standard bytecode representation) should definitely be added
+to all systems - this would allow code interchange the "java way".
+<P>
+Even if no common bytecode-encoding is possible,
+an intermediate bytecode representation could be defined, which is translated
+at load time to the particular implementation's encoding.
+<BR>
+Technically, this should not be too difficult, since the various smalltalk
+implementations bytecodes differ mostly in their encodings - less so in the
+semantic of the codes.
+<P>
+<HR>
+<P>
+
+</UL>
+
+Expect more to be added here ...
+
+<HR>
+Doc $Revision: 1.21 $ $Date: 2018-02-19 13:12:07 $
+
+</BODY>
+</HTML>

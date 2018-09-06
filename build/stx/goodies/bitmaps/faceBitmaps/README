@@ -1,0 +1,8 @@
+This image format used to be used in the 90s for people's faces
+and could be obtained from some ftp-servers, to improve mail- and/or newsreaders :-).
+They were called "blit images".
+
+Other than above, that format is not used often, if at all.
+The files here are test files for the BlitImageReader class.
+
+(BlitImageReader fromFile:'../../goodies/bitmaps/faceBitmaps/unknown.48x48x1') inspect

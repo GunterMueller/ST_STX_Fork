@@ -1,0 +1,52 @@
+<HTML>
+  <HEAD>
+    <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+    <TITLE>Button Labels with Images</Title>
+  </HEAD>
+  <BODY>
+You can have both a label and a string side by side as a label in a Label,
+Button, Menu
+or even as items in a SelectionInListView.
+<P>
+Use an instance of LabelAndIcon for a image+string (image on the left)
+and LabelAndTwoIcons for either image1+string+image2 (two images) or string+image (image on the right).
+<P>
+For example:
+<CODE><PRE><A type="example">
+    |b|
+
+    b := Button new.
+    b label:(LabelAndIcon new
+		string:'Press';
+		icon:(ToolbarIconLibrary leftArrow24x24Icon)).
+    b open
+</A></PRE></CODE>
+or:
+<CODE><PRE><A type="example">
+    |b|
+
+    b := Label new.
+    b label:(LabelAndTwoIcons new
+		string:'Press';
+		image2:(ToolbarIconLibrary rightArrow24x24Icon)).
+    b open
+</A></PRE></CODE>
+or even:
+<CODE><PRE><A type="example">
+    |v list|
+
+    list := OrderedCollection new.
+    list add:(LabelAndTwoIcons new
+		string:'Left';
+		image2:(ToolbarIconLibrary leftArrow24x24Icon)).
+    list add:(LabelAndTwoIcons new
+		string:'Right';
+		image2:(ToolbarIconLibrary rightArrow24x24Icon)).
+    v := SelectionInListView new.
+    v list:list.
+    v selection:1.
+    v open
+</A></PRE></CODE>
+
+  </BODY>
+</HTML>

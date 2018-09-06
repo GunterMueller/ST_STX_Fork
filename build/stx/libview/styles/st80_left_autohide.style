@@ -1,0 +1,22 @@
+; View defaultStyle:#'st80_left_autohide' 
+;
+; like st80, but with autohiding scrollbars on the left
+;
+; $Header: /cvs/stx/stx/libview/styles/st80_left_autohide.style,v 1.2 1997-11-02 19:49:19 cg Exp $
+
+#include 'st80_left.style'
+
+comment  'old` ST80'' 3D look alike;\\with autohiding scrollbars on the left'
+
+#if (Language == #german) or:[Language == #de]
+comment  'An früheres `ST-80'' angelehnt\Verschiebebalken werden links ausgeblended'
+#endif
+
+name                  #st80
+scrollBar.hiding       true               "/ automatic hiding of useless scrollBars
+
+
+
+
+
+

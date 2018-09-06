@@ -1,0 +1,25 @@
+/* XPM */
+static char *euroSans_16x16_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 2 1",
+/* colors */
+"a c black",
+"b c white",
+/* pixels */
+"bbbbbbbbbbbbbbbb",
+"bbbbbbaaaaaabbbb",
+"bbbbbaaaaaaaaabb",
+"bbbbaaabbbbbaabb",
+"bbbaaabbbbbbbbbb",
+"bbbaabbbbbbbbbbb",
+"baaaaaaaaaaaabbb",
+"aaaaaaaaaaaabbbb",
+"bbbaabbbbbbbbbbb",
+"baaaaaaaaaaabbbb",
+"aaaaaaaaaaabbbbb",
+"bbbaabbbbbbbbbbb",
+"bbbaaabbbbbbbabb",
+"bbbbaaabbbbbaabb",
+"bbbbbaaaaaaaabbb",
+"bbbbbbaaaaaabbbb",
+};

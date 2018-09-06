@@ -1,0 +1,191 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Help - Tool Settings</Title>
+</HEAD>
+
+<BODY>
+
+<H1>Tool settings</H1>
+
+<H2><A NAME="INDEX">Help Index</A></H2>
+
+<UL>
+  <LI><A HREF="#USENEWSYSTEMBROWSER">Use the New System Browser</A>
+  <LI><A HREF="#USENEWFILEBROWSER">Use the New File Browser</A>
+  <LI><A HREF="#USENEWVERSIONDIFFBROWSER">Use the New VersionDiff Browser</A>
+  <LI><A HREF="#USENEWFILETREEDIALOG">Use the New File Tree Dialog</A>
+  <LI><A HREF="#USENEWSETTINGSDIALOG">Use the New Settings Dialog</A>
+  <LI><A HREF="#USENEWSETTINGSDIALOG">Use the New Process Monitor</A>
+
+  <LI><A HREF="#USENEWCHANGESBROWSER">Use the New Changes Browser</A>
+  <LI><A HREF="#HIERARCHICALINSPECTOR">Use the Hierarchical Inspector</A>
+
+  <LI><A HREF="#SMALLTALKDOCUMENTVIEWER">Use the Smalltalk Document Viewer</A>
+<p>
+  <LI><A HREF="#SHOWTIPOFTHEDAY">Show "Tip of the Day" at Startup</A>
+  <LI><A HREF="#CLOCKINLAUNCHER">Show Clock in Launcher</A>
+<p>
+  <LI><A HREF="#TRANSCRIPTBUFFERSIZE">Transcript's Buffer Size</A>
+  <LI><A HREF="#AUTORAISETRANSCRIPT">Autoraise Transcript</A>
+</UL>
+<P>
+
+<HR>
+
+
+<H2><A NAME="USENEWSYSTEMBROWSER" HREF="#INDEX">Use the New System Browser</A></H2>
+
+Controls if the new or old SystemBrowser should be used.
+<BR>
+The new SystemBrowser offers many additional features, among them:
+multiple buffers, undo, advanced search functionality, refactory support and others.
+<BR>
+The default is on (i.e. to use the new SystemBrowser).
+
+
+
+
+
+<H2><A NAME="USENEWVERSIONDIFFBROWSER" HREF="#INDEX">Use the New VersionDiff Browser</A></H2>
+
+Controls if the new VersionDiffBroser or the old DiffView should be used,
+when comparing a classes repository revision against the current version
+(via the browser's class-repository submenu).
+<BR>
+The new VersionDiffBroser offers a nicer user interface, presenting
+changes by individual methods. In contrast, the old diffViewer shows overall
+differences, based upon a classes complete source.
+<BR>
+The default is on (i.e. to use the new DiffView).
+
+
+
+
+
+<H2><A NAME="USENEWFILEBROWSER" HREF="#INDEX">Use the New File Browser</A></H2>
+
+Controls if the new or old FileBrowser should be used.
+<BR>
+The new FileBrowser offers many additional features, among them:
+multiple buffers, preview, hierarchical treeView and others.
+<BR>
+The default is on (i.e. to use the new FileBrowser).
+
+
+
+
+<H2><A NAME="USENEWFILETREEDIALOG" HREF="#INDEX">Use the New File Tree Dialog</A></H2>
+
+Controls if the new file tree dialog should be used.
+<BR>
+The new file tree dialog provides drag & drop, create directory,
+multiple selection etc.
+<BR>
+The default is off (i.e. to use the old FileSelectionBox Dialog).
+
+
+
+
+<H2><A NAME="USENEWSETTINGSDIALOG" HREF="#INDEX">Use the New Settings Dialog</A></H2>
+
+Controls if the new settings dialog should be used.
+<BR>
+the new settings dialog provides all the STX settings in one hierarchical tree application
+the menu entry is now found under System/Settings in the Launcher
+<BR>
+The default is on (i.e. to use the new Settings Dialog).
+
+
+
+
+<H2><A NAME="USENEWCHANGESBROWSER" HREF="#INDEX">Use the New Changes Browser</A></H2>
+
+Controls if the new or old ChangesBrowser should be used.
+<BR>
+The new ChangesBrowser presents a nicer user interface, but is missing some
+advanced search and compress functions.
+<BR>
+Therefore, it is not recommened (yet).
+<BR>
+The default is off (i.e. to use the old ChangesBrowser).
+
+
+<H2><A NAME="HIERARCHICALINSPECTOR" HREF="#INDEX">Use the Hierarchical Inspector</A></H2>
+
+Controls if the hierarchical inspector should be used (as opposed to the
+standard inspector) when an object is inspected.
+<BR>
+The hierarchical inspector allows for an objects references to be
+followed without a need to open dozens of other inspector views.
+<BR>
+The default is off (i.e. the standard Inspector is used).
+
+
+
+<H2><A NAME="SMALLTALKDOCUMENTVIEWER" HREF="#INDEX">Use the Smalltalk Document Viewer</A></H2>
+
+Controls if the built-in ST/X viewer should be used to present the documentation,
+or if a system tool (typically: Firefox or Internet Explorer) is used.
+<BR>
+The builtin tool is known to have some bugs in its handling of
+tables and complicated layouts, therefore many documents will show up incorrect or
+badly formatted.
+<br>
+However, it is much more convenient to view coding examples,
+as it has some powerful interactive features builtIn,
+which allow it to access internals of the
+Smalltalk system (such as class definitions, or interpretive execution).
+<P>
+For example, the builtin viewer is able to display the results of a code-example's
+evaluation right in the browser, which is not possible with the standard browsers.
+<BR>
+The default is on (i.e. the Smalltalk tool is used).
+<P>
+Notice, that none of the provided ST/X document files requires complicated layouts or
+tables, so there is no need to use a more sophisticated browser.
+
+
+<H2><A NAME="SHOWTIPOFTHEDAY" HREF="#INDEX">Show "Tip of the Day" at Startup</A></H2>
+If on, a "Did you know - tip of the day" window is shown when ST/X
+is started. You can also start this tool manually, via the launcher's
+help menu.
+
+<H2><A NAME="CLOCKINLAUNCHER" HREF="#INDEX">Show Clock in Launcher</A></H2>
+
+Controls if a clock is shown in the launcher.
+<BR>Normally, this is enabled, but you may want to disable the clock, if ST/X has its display connected
+via a dialUp line (X-display via ISDN, for example),
+to avoid the periodic redial/reconnect due to clock updates.
+
+
+
+
+<H2><A NAME="TRANSCRIPTBUFFERSIZE" HREF="#INDEX">Transcript's Buffer Size</A></H2>
+
+Controls how many lines of text are remembered in the Transcript window.
+<BR>Increasing this number may lead to additional memory use.
+
+
+<H2><A NAME="AUTORAISETRANSCRIPT" HREF="#INDEX">Autoraise Transcript</A></H2>
+If on, the Transcript window will be automatically deiconified and raised, whenever
+a new notification message is shown.
+
+
+<P>
+<P>
+
+
+
+<HR>
+<P>
+<P>
+Copyright &copy; 1998 eXept Software AG, all rights reserved
+<P>
+<P>
+
+<HR>
+Doc $Revision: 1.14 $ $Date: 2016-09-14 09:41:12 $
+
+</BODY>
+</HTML>

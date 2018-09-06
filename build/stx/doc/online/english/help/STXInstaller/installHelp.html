@@ -1,0 +1,137 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Help - Installation</Title>
+</HEAD>
+
+<BODY>
+<H2><A NAME="INDEX">Help index</A></H2>
+
+<UL>
+<LI><A HREF="#FULLINSTALL">Full installation</A>
+<LI><A HREF="#PARTINSTALL">Partial installation</A>
+<UL>
+  <LI><A HREF="#BINDIR">Binary directory</A>
+  <LI><A HREF="#LIBBINDIR">Library directory</A>
+  <LI><A HREF="#LIBDIR">Help files directory</A>
+</UL>
+</UL>
+
+<HR>
+
+<H2><A NAME="FULLINSTALL" HREF="#FULLINSTALL">Full installation</A></H2>
+
+The full installation will copy ALL files from the CD to some destination
+directory on your hard disk. This allows you to recompile all Smalltalk/X
+class libraries, to add additional classes/libraries and to change the
+set of classes which are contained in your Smalltalk executable.
+<BR>
+A full installation is also required if you want to generate standAlone
+executables.
+<P>
+For your convenience, precompiled object files for the compiled classes
+are already contained on the CD, and will be copied into the specified
+destination directory. This saves some time later, in that a full recompile
+is not required.
+<P>
+Be aware, that a full installation requires quite some amount disk space,
+especially, if all intermediate object files are kept (roughly 90-120Mb).
+<P>
+
+
+<H2><A NAME="PARTINSTALL" HREF="#PARTINSTALL">Partial installation</A></H2>
+
+The partial installation only copies a preconfigured Smalltalk executable,
+the required libraries and (optionally) the sources plus documentation
+to your hard disk.
+<BR>
+A partial installation still provides all of the known Smalltalk environment,
+but will not enable you to add additional precompiled classes to your
+Smalltalk excutable.
+<P>
+A partial installation requires roughly 30-50Mb of disk space.
+
+
+
+
+<H3><A NAME="BINDIR" HREF="#BINDIR">Binary directory</A></H2>
+
+Specifies the directory where the <CITE>ST/X</CITE> binaries should be copied to
+during a partial installation.
+<BR>
+These binaries include the <CITE>smalltalk</CITE> executable,
+the <CITE>stc</CITE> compiler, and a few other executables and shell scripts.
+<P>
+The recommended directory is <CODE>"/usr/local/bin"</CODE> here.
+
+
+<H3><A NAME="LIBBINDIR" HREF="#LIBBINDIR">Library directory</A></H2>
+
+Specifies the directory where the <CITE>ST/X</CITE> libraries and shared libraries
+should be copied to
+during a partial installation.
+<BR>
+These include all the libXXX (possibly shared-) classLibraries.
+<P>
+If your system uses shared libraries (Linux-ELF, Unixware, IRIX, Solaris
+and some others), this directory must be either one of the
+standard library directories (<CODE>"/usr/local/lib"</CODE>,
+<CODE>"/usr/lib"</CODE> or <CODE>"/lib"</CODE>),
+or else be defined in the <CODE><STRONG>LD_LIBRARY_PATH</STRONG></CODE> environment variable.
+<BR>
+If you do not specify a standard directory, make certain that <CODE>LD_LIBRARY_PATH</CODE>
+is set correctly (add a corresponding entry to your <CODE>".profile"</CODE>
+or <CODE>".login</CODE> file).
+<P>
+The recommended directory is <CODE>"/usr/local/lib"</CODE> here.
+<P>
+
+
+<H3><A NAME="LIBDIR" HREF="#LIBDIR">Help file directory</A></H2>
+
+Specifies the directory where other <CITE>ST/X</CITE> help & auxiliary files
+should be copied to
+during a partial installation.
+<BR>
+These include bitmaps, configurations files, startup scripts and
+resource files (which contain the national language translation strings).
+<P>
+For <CITE>ST/X</CITE> to be able to find those files,
+these must be either installed to a standard location (<CODE>"/usr/local/lib/smalltalk"</CODE>,
+<CODE>"/usr/lib/smalltalk"</CODE> or else define the location in
+the <CODE><STRONG>STX_LIBDIR</STRONG></CODE> environment variable.
+<BR>
+If you do not specify a standard directory, make certain that <CODE>STX_LIBDIR</CODE>
+is set correctly (add a corresponding entry to your <CODE>".profile"</CODE>
+or <CODE>".login</CODE> file).
+<P>
+The recommended directory is <CODE>"/usr/local/lib/smalltalk"</CODE>.
+
+
+<H2><A NAME="MORE_INFO" HREF="#INDEX">Further reading</A></H2>
+
+You may want to read
+<A HREF="../../installation/TOP.html">`how to install ST/X'</A>
+for more details on the installation options. This document also
+describes in detail, which files are going to be installed,
+and where the end up.
+<BR>
+(This is mostly background information and not required
+ in order to install and execute <CITE>ST/X</CITE>).
+
+
+
+<HR>
+<P>
+<P>
+Copyright &copy; eXept Software AG, all rights reserved
+<P>
+<P>
+
+<HR>
+Doc $Revision: 1.6 $ $Date: 2016-09-14 09:41:12 $
+
+</BODY>
+</HTML>
+
+

@@ -1,0 +1,53 @@
+<element 
+    xmlns="http://relaxng.org/ns/structure/1.0"
+    xmlns:b="http://www.volny.cz/janfrog/xmlsuite/binding"
+    datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
+
+    name="addressbook"
+    b:class="RNG::BindingTests::AddressBook">
+
+  <oneOrMore>
+    <element name="group"
+	     b:class="RNG::BindingTests::Group"
+	     b:iv="groups"
+	     b:ivType="Set">
+      <attribute name="name" b:iv="name">
+	<data type="string"/>
+      </attribute>
+      <oneOrMore>
+	<element name="person" 
+		 b:class="RNG::BindingTests::Person"
+		 b:iv="persons"
+		 b:ivType="Set"
+		 b:referenceAtt="ref">
+	  <choice>
+	    <attribute name="ref">
+	      <data type="IDREF" />
+	    </attribute>
+	    <group>
+	      <optional>
+		<attribute name="id" ns="http://www.w3.org/XML/1998/namespace">
+		  <data type="ID" />
+		</attribute>
+	      </optional>
+	      <element name="name" b:iv="name">
+		<data type="string"/>
+	      </element>
+	      <element name="surname" b:iv="surname">
+		<data type="string"/>
+	      </element>
+	      <optional>
+		<element name="nick" b:iv="nick"><data type="string"/></element>
+	      </optional>
+	      <zeroOrMore>
+		<element name="email" b:iv="emails" b:ivType="Set">
+		  <data type="string"/>
+		</element>
+	      </zeroOrMore>
+	    </group>
+	  </choice>
+	</element>	
+      </oneOrMore>
+    </element>
+  </oneOrMore>
+</element>

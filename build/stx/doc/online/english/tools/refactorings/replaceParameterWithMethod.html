@@ -1,0 +1,37 @@
+<html><head><title>Refactoring: 
+
+
+
+Replace Parameter with Method</title></head><body>
+
+
+<H1>
+
+
+
+Replace Parameter with Method</H1>
+<P><I><CENTER>
+
+An object invokes a method, then passes the result as a parameter for a method. The receiver can also invoke this method.</CENTER></I></P>
+<P><B><CENTER>
+
+Remove the parameter and let the receiver invoke the method.</CENTER></B></P>
+
+<PRE>
+		int basePrice = _quantity * _itemPrice;
+		discountLevel = getDiscountLevel();
+		double finalPrice = discountedPrice (basePrice, discountLevel);
+
+</PRE><P><CENTER><IMG SRC="arrow.gif"/></CENTER></P>
+<PRE>
+		int basePrice = _quantity * _itemPrice;
+		double finalPrice = discountedPrice (basePrice);
+
+</PRE>
+
+
+<P>For more information see page 
+	<font color="#FF0000">292</font>
+	of <I>Refactoring</I></P>
+
+<P /><P /><P><CENTER><A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A></CENTER></P></body></html>

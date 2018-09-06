@@ -1,0 +1,31 @@
+<ivy-module version="2.0">
+    <info
+        organisation="SWING Research Group &amp; eXept Software A.G."
+        module="stx.libjava.benchmarks"/>
+
+   <configurations>
+        <conf name="sources"  description="Source jars"/>
+        <conf name="binaries" description="Binary jars"/>
+    </configurations>
+
+    <dependencies>
+	<!--
+	asperReports Library
+
+	http://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports/3.7.4
+	-->
+	<dependency
+		org="net.sf.jasperreports"
+		name="jasperreports"
+		rev="3.7.4"
+		conf="binaries->default">
+		<exclude name='jdtcore' />
+	</dependency>
+
+	<dependency
+		org="net.sf.jasperreports"
+		name="jasperreports"
+		rev="3.7.4"
+		conf="sources->sources"/>
+    </dependencies>
+</ivy-module>

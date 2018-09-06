@@ -1,0 +1,558 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Basic classes - Stream classes</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="collections.html"> <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">         <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="numeric.html">     <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Stream classes</H1>
+<P>
+Streams offer a means to sequentially access elements of a collection.
+Technically they are statefull objects, holding on a collection or file-handle,
+and a position. The position is advanced when reading/writing.
+In addition to internal streams (which operate on a collection),
+there are also external streams to access files, directories, pipes or sockets.
+<P>
+The most useful stream classes are:
+<UL>
+<LI> <A HREF="#READSTREAM" NAME="I_READSTREAM">ReadStream</A>- stream to read a collection
+<LI> <A HREF="#WRITESTREAM" NAME="I_WRITESTREAM">WriteStream</A> - stream write to into a collection
+<LI> <A HREF="#EXTSTREAM" NAME="I_EXTSTREAM">ExternalStream</A>- general exernal streams
+<LI> <A HREF="#FILESTREAM" NAME="I_FILESTREAM">FileStream</A>- file I/O
+<LI> <A HREF="#PIPESTREAM" NAME="I_PIPESTREAM">PipeStream </A>- interprocess communication via pipes
+<LI> <A HREF="#SOCKET" NAME="I_SOCKET">Socket </A>- interprocess communication via sockets
+</UL>
+
+Although it is possible to stream any collection,
+containing any type of elements,
+the most common use is when streaming over
+Character elements. Such streams may be either
+internal streams (reading characters from
+a string or writing into a string) or
+external streams (reading/writing files, pipes, sockets etc.).
+<P>
+External streams only support byte-sized elements.
+These must be either small integers (0..255) or characters in the single-byte range.
+
+<H2><A HREF="#I_READSTREAM" NAME="READSTREAM">ReadStream</A></H2>
+
+ReadStreams can be used to process elements of a collection sequentially.
+<BR>
+The typical use of readStreams is:
+<P>
+<UL>
+<LI> creation:
+<CODE><PRE>
+    <VAR>aStream</VAR> := ReadStream on:<VAR>aCollection</VAR>
+or:
+    <VAR>aCollection</VAR> readStream
+</PRE></CODE>
+<LI> asking if the end is reached:
+<CODE><PRE>
+    <VAR>aStream</VAR> atEnd ifTrue:[ ... ]
+</PRE></CODE>
+<LI> reading the next element(s):
+<CODE><PRE>
+    <VAR>nextElement</VAR> := <VAR>aStream</VAR> next
+
+    <VAR>aCollection</VAR> := <VAR>aStream</VAR> next:<VAR>count</VAR>
+</PRE></CODE>
+
+<LI> skipping elements:
+<CODE><PRE>
+    <VAR>aStream</VAR> skip
+
+    <VAR>aStream</VAR> skip:<VAR>count</VAR>
+</PRE></CODE>
+
+<LI> reading objects (character streams only):
+<CODE><PRE>
+    Integer readFrom:<VAR>aStream</VAR>
+    Integer readFrom:<VAR>aStream</VAR> onError:[...]
+    Float readFrom:<VAR>aStream</VAR>
+    Float readFrom:<VAR>aStream</VAR> onError:[...]
+    Number readFrom:<VAR>aStream</VAR>
+    Number readFrom:<VAR>aStream</VAR> onError:[...]
+
+    <VAR>formatString</VAR> scanf:<VAR>readStream</VAR>
+</PRE></CODE>
+
+</UL>
+
+
+<H3><A NAME="READSTREAM_EXAMPLES">Examples:</A></H3>
+<BR>
+<H4>Separating a string into individual words:</H4>
+<BR>
+<A TYPE="example">
+<CODE><PRE>
+    |string stream word1 word2 num1 num2 num3|
+
+    string := 'one two 12345 567.678'.
+    stream := string readStream.
+
+    word1 := stream nextAlphaNumericWord.
+    stream skipSeparators.
+    word2  := stream upToSeparator.
+    num1   := Number readFrom:stream.
+    num2   := Number readFrom:stream.
+    num3   := Number readFrom:stream onError:[ 'NothingMore' ].
+
+    Transcript showCR:word1.
+    Transcript showCR:word2.
+    Transcript showCR:num1.
+    Transcript showCR:num2.
+    Transcript showCR:num3.
+</PRE></CODE>
+</A>
+notice, that there are other ways to perform the above;
+tokenization could also be done with:
+<A TYPE="example">
+<CODE><PRE>
+    |string words word1 word2 num1 num2 num3|
+
+    string := 'one two 12345 567.678'.
+    words := string asCollectionOfWords.
+
+    word1  := words first.
+    word2  := words at:2.
+    num1   := Number readFrom:(words third).
+    num2   := Number readFrom:(words at:4).
+    num3   := Number readFrom:(words at:5 ifAbsent:nil) onError:[ 'NothingMore' ].
+
+    Transcript showCR:word1.
+    Transcript showCR:word2.
+    Transcript showCR:num1.
+    Transcript showCR:num2.
+    Transcript showCR:num3.
+</PRE></CODE>
+</A>
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in the
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of ReadStream" ACTION="html:HTMLDocGenerator htmlDocOf:ReadStream backRef:'streams.html'">
+"<CODE>ReadStream</CODE> class documentation</A>".
+
+
+
+
+<H2><A HREF="#I_WRITESTREAM" NAME="WRITESTREAM">WriteStream</A></H2>
+WriteStreams can be used to collect elements in a collection.
+<BR>
+The typical use of writeStreams is:
+<P>
+<UL>
+<LI> creation:
+<CODE><PRE>
+    <VAR>aStream</VAR> := WriteStream on:<VAR>aCollection</VAR>
+<BR>
+<VAR>aCollection</VAR> writeStream
+</PRE></CODE>
+<LI> appending:
+<CODE><PRE>
+    <VAR>aStream</VAR> nextPut:<VAR>nextElement</VAR>
+<BR>
+    <VAR>aStream</VAR> next:<VAR>count</VAR> put:<VAR>nextElement</VAR>
+<BR>
+    <VAR>aStream</VAR> nextPutAll:<VAR>aCollection</VAR>
+</PRE></CODE>
+<LI> getting what we have collected so far:
+<CODE><PRE>
+    <VAR>collection</VAR> := <VAR>aStream</VAR> contents
+</PRE></CODE>
+</UL>
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in the
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of WriteStream" ACTION="html:HTMLDocGenerator htmlDocOf:WriteStream backRef:'streams.html'">
+"<CODE>WriteStream</CODE> class documentation</A>".
+
+
+
+<H2><A HREF="#I_EXTSTREAM" NAME="EXTSTREAM">ExternalStream</A></H2>
+
+This is an abstract class - i.e. there are no instances of ExternalStream.
+Instead, it provides the common behavior for all streams which are
+associated with an external (OperatingSystem-) stream.
+Examples are <CODE>FileStream</CODE>, <CODE>PipeStream</CODE>,
+<CODE>Socket</CODE> and <CODE>DirectoryStream</CODE>.
+<BR>
+Therefore, the following protocol is valid for all off the above mentioned
+classes.
+<BR>
+ExternalStreams elements are normally characters, however, they also
+support a so called <CITE>binary mode</CITE> in which byte-valued
+integers are processed.
+<BR>
+Typical operations:
+<P>
+<UL>
+
+<LI> appending a character (in text mode):
+<CODE><PRE>
+    <VAR>aStream</VAR> nextPut:<VAR>aCharacter</VAR>
+</PRE></CODE>
+
+<LI> appending a byte (in binary mode):
+<CODE><PRE>
+    <VAR>aStream</VAR> nextPut:<VAR>aByteValueInteger</VAR>
+</PRE></CODE>
+
+<LI> appending a byte (in any mode):
+<CODE><PRE>
+    <VAR>aStream</VAR> nextPutByte:<VAR>aByteValueInteger</VAR>
+</PRE></CODE>
+
+<LI> appending all elements of a collection (strings or byteArrays in binary mode):
+<CODE><PRE>
+    <VAR>aStream</VAR> nextPutAll:<VAR>aCollection</VAR>
+</PRE></CODE>
+
+<LI> appending a carriage return (line end):
+<CODE><PRE>
+    <VAR>aStream</VAR> cr
+</PRE></CODE>
+
+<LI> reading a character:
+<CODE><PRE>
+    <VAR>aStream</VAR> next
+</PRE></CODE>
+
+<LI> reading a line (i.e. up to a newline character):
+<CODE><PRE>
+    <VAR>aStream</VAR> nextLine
+</PRE></CODE>
+
+<LI> reading a number of characters:
+<CODE><PRE>
+    <VAR>aStream</VAR> next:<VAR>howMany</VAR>
+</PRE></CODE>
+
+<LI> switching to binary mode:
+<CODE><PRE>
+    <VAR>aStream</VAR> binary
+</PRE></CODE>
+
+<LI> switching back to text mode:
+<CODE><PRE>
+    <VAR>aStream</VAR> text
+</PRE></CODE>
+
+<LI> bulk writing bytes in any mode (use for process mass-data):
+<CODE><PRE>
+    <VAR>aStream</VAR> nextPutBytes:<VAR>count</VAR> from:<VAR>aByteCollection</VAR> startingAt:<VAR>indexOfFirstByte</VAR>
+</PRE></CODE>
+
+<LI> bulk reading bytes in any mode (use for process mass-data):
+<CODE><PRE>
+    <VAR>aStream</VAR> nextBytes:<VAR>count</VAR> into:<VAR>aByteCollection</VAR> startingAt:<VAR>indexOfFirstByte</VAR>
+</PRE></CODE>
+
+</UL>
+Notice, that in binary mode, externalStreams expect byte-value (0..255)
+integers in all <CODE>nextPut:</CODE>-like messages, and return small integer
+values in all <CODE>next</CODE>-like messages.
+<BR>
+Thus, to read the first 5 bytes of a file into a byteArray, use:
+<BR>
+<A TYPE="Example">
+<CODE><PRE>
+    |s bytes|
+
+    s := 'patches' asFilename readStream.
+    s binary.
+    bytes := s next:5.
+    s close.
+    bytes inspect.
+</PRE></CODE>
+</A>
+Also, there a methods to read and write low-level machine objects,
+such as 2,4 and 8-byte integers.
+These can be processed both in least-significant-byte-first (LSB) or most-significant-byte-first (MSB)
+order.
+<UL>
+
+<LI> writing a 2-byte integer:
+<CODE><PRE>
+    <VAR>aStream</VAR> nextPutShort:<VAR>aNumber</VAR> MSB:<VAR>msbFlag</VAR>
+</PRE></CODE>
+<LI> writing a 4-byte integer:
+<CODE><PRE>
+    <VAR>aStream</VAR> nextPutLong:<VAR>aNumber</VAR> MSB:<VAR>msbFlag</VAR>
+</PRE></CODE>
+<LI> reading a 2-byte signed integer:
+<CODE><PRE>
+    <VAR>aStream</VAR> nextShortMSB:<VAR>msbFlag</VAR>
+</PRE></CODE>
+<LI> reading a 2-byte unsigned integer:
+<CODE><PRE>
+    <VAR>aStream</VAR> nextUnsignedShortMSB:<VAR>msbFlag</VAR>
+</PRE></CODE>
+<LI> reading a 4-byte signed integer:
+<CODE><PRE>
+    <VAR>aStream</VAR> nextLongMSB:<VAR>msbFlag</VAR>
+</PRE></CODE>
+<LI> reading a 4-byte unsigned integer:
+<CODE><PRE>
+    <VAR>aStream</VAR> nextUnsignedLongMSB:<VAR>msbFlag</VAR>
+</PRE></CODE>
+</UL>
+
+
+All external streams are automatically closed (towards the OperatingSystem)
+when the stream object is reclaimed by the garbage collector.
+However, since this may happen at any unspecified later time,
+it is wise to explicitely close a file when no longer used
+(to release system resources earlier).
+<BR>
+In addition, any writeStream should also be closed as soon
+as possible, because some written data may remain in internal buffers
+(and therefore: be not in the file) until closed.
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in the
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of ExternalStream" ACTION="html:HTMLDocGenerator htmlDocOf:ExternalStream backRef:'streams.html'">
+"<CODE>ExternalStream</CODE> class documentation</A>".
+
+
+
+<H2><A HREF="#I_FILESTREAM" NAME="FILESTREAM">FileStream</A></H2>
+
+FileStreams support all of ExternalStreams protocol.
+They can be created to read, write, readWrite or append from/to a file.
+<BR>
+Creation:
+<P>
+<UL>
+<LI> for reading:
+<CODE><PRE>
+    <VAR>aStream</VAR> := FileStream readonlyFileNamed:<VAR>aFilenameString</VAR>
+</PRE></CODE>
+<LI> to read/write an existing file:
+<CODE><PRE>
+    <VAR>aStream</VAR> := FileStream oldFileNamed:<VAR>aFilenameString</VAR>
+</PRE></CODE>
+<LI> to create a new file for writing:
+<CODE><PRE>
+    <VAR>aStream</VAR> := FileStream newFileNamed:<VAR>aFilenameString</VAR>
+</PRE></CODE>
+</UL>
+
+The above was the internal low level instance creation protocol, which is somewhat politically incorrect to use.
+For portability, please use the companion class <CODE>Filename</CODE> to create fileStreams:
+<UL>
+<LI> for reading:
+<CODE><PRE>
+    <VAR>aStream</VAR> := <VAR>aFilenameString</VAR> asFilename readStream
+</PRE></CODE>
+<LI> to read/write an existing file:
+<CODE><PRE>
+    <VAR>aStream</VAR> := <VAR>aFilenameString</VAR> asFilename readWriteStream
+</PRE></CODE>
+<LI> to create a new file for writing:
+<CODE><PRE>
+    <VAR>aStream</VAR> := <VAR>aFilenameString</VAR> asFilename writeStream
+</PRE></CODE>
+<LI> to append to an existing file:
+<CODE><PRE>
+    <VAR>aStream</VAR> := <VAR>aFilenameString</VAR> asFilename appendingWriteStream
+</PRE></CODE>
+</UL>
+
+<P>
+
+<H3><A NAME="FILESTREAM_EXAMPLES">Examples:</A></H3>
+<BR>
+<H4>Reading a file:</H4>
+<BR>
+If the file is small (say smaller than a megabyte), it may make sense to read the
+files contents as a whole into either a collection of lines:
+<A TYPE="example">
+<CODE><PRE>
+    |lines|
+
+    lines := 'smalltalk.rc' asFilename contents.
+</PRE></CODE>
+</A>
+or a single (big) string:
+<A TYPE="example">
+<CODE><PRE>
+    |bigString|
+
+    bigString := 'smalltalk.rc' asFilename contents asString.
+</PRE></CODE>
+</A>
+If the file is big, you may want to enumerate byte-blocks with
+<A TYPE="example">
+<CODE><PRE>
+    |stream eachLine block|
+
+    stream := 'stx.exe' asFilename readStream.
+    [stream atEnd] whileFalse:[
+	block := stream nextBytes:(8*1024).
+	"/ do something with block here; the last one might be smaller than 8k
+	Transcript showCR:block size.
+    ].
+    stream close.
+</PRE></CODE>
+</A>
+or enumerate individual lines with:
+<A TYPE="example">
+<CODE><PRE>
+    |stream eachLine|
+
+    stream := 'smalltalk.rc' asFilename readStream.
+    [stream atEnd] whileFalse:[
+	eachLine := stream nextLine.
+	"/ do something with line here
+    ].
+    stream close.
+</PRE></CODE>
+</A>
+of course, linewise enumeration is also possible in the above (reading all first) case:
+<A TYPE="example">
+<CODE><PRE>
+    |lines|
+
+    lines := 'smalltalk.rc' asFilename contents.
+    lines do:[:eachLine |
+	"/ do something with eachLine here
+    ].
+</PRE></CODE>
+</A>
+
+<H4>Writing a file:</H4>
+<BR>
+The following code fragment opens a file and writes a few lines into it:
+
+<A TYPE="example">
+<CODE><PRE>
+    |stream eachLine|
+
+    stream := 'newFile' asFilename writeStream.
+
+    stream nextPutLine:'hello - this is line1'.
+    stream nextPutAll:'this is line2'.
+    stream spaces:8.
+    stream nextPutAll:'more into line2'.
+    stream cr.
+    stream nextPutLine:'this is line3'.
+    stream cr.
+    stream cr.
+    stream cr.
+    stream close.
+</PRE></CODE>
+</A>
+
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in the
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of FileStream" ACTION="html:HTMLDocGenerator htmlDocOf:FileStream backRef:'streams.html'">
+"<CODE>FileStream</CODE> class documentation</A>" or
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of Filename" ACTION="html:HTMLDocGenerator htmlDocOf:Filename backRef:'streams.html'">
+"<CODE>Filename's</CODE> class documentation</A>".
+
+
+
+
+<H2><A HREF="#I_PIPESTREAM" NAME="PIPESTREAM">PipeStream</A></H2>
+
+PipeStreams allow reading the output of any unix command or
+sending text for input to a unix command.
+Once created, they behave like any other ExternalStream.
+<BR>
+Creation:
+<P>
+<UL>
+<LI> for reading:
+<CODE><PRE>
+    <VAR>aStream</VAR> := PipeStream readingFrom:<VAR>aCommandString</VAR>
+</PRE></CODE>
+<LI> for writing:
+<CODE><PRE>
+    <VAR>aStream</VAR> := PipeStream writingTo:<VAR>aCommandString</VAR>
+</PRE></CODE>
+</UL>
+For example, to get a list of users logged in your machine,
+get the output of the <CODE>"who"</CODE> <VAR>UNIX</VAR> command:
+<A TYPE="example">
+<CODE><PRE>
+    |s line|
+
+    s := PipeStream readingFrom:'who'.
+    [(line := s nextLine) notNil] whileTrue:[
+	Transcript showCR:line
+    ].
+    s close
+</PRE></CODE>
+</A>
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in the
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of PipeStream" ACTION="html:HTMLDocGenerator htmlDocOf:PipeStream backRef:'streams.html'">
+"<CODE>PipeStream</CODE> class documentation</A>".
+
+
+
+<H2><A HREF="#I_SOCKET" NAME="SOCKET">Socket</A></H2>
+
+Sockets allow the sending/receiving of unstructured data via TCP/IP connections.
+<BR>
+Due to a somewhat more complex naming and connection procedure,
+the protocol for Socket creation is a bit more inconvenient than for the above
+streams; however, for simple client/server TCP connections,
+an ``<VAR>easy instance creation</VAR>'' protocol is provided:
+<UL>
+<LI>creating a server socket:
+<BR>
+<CODE><PRE>
+    <VAR>aSocketStream</VAR> := Socket provide:<VAR>aService</VAR>
+</PRE></CODE>
+where <VAR>aService</VAR> is either a port number or a service name
+<BR>
+(as found in the <CODE>"/etc/services"</CODE> file.
+<P>
+
+<LI>connecting to a server socket (client side):
+<BR>
+<CODE><PRE>
+    <VAR>aSocketStream</VAR> := Socket connectTo:<VAR>aService</VAR> on:<VAR>aHostName</VAR>
+</PRE></CODE>
+<BR>
+</UL>
+after that, communication through the socket object is performed as described above.
+<P>
+See examples in the <CODE>"doc/coding"</CODE> directory for more details.
+<P>
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in the
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of Socket" ACTION="html:HTMLDocGenerator htmlDocOf:Socket backRef:'streams.html'">
+"<CODE>Socket</CODE> class documentation</A>".
+
+
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif">
+Copyright © 1996 Claus Gittinger Development & Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.27 $ $Date: 2016-09-14 09:41:12 $
+</BODY>
+</HTML>

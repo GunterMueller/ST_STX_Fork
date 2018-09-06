@@ -1,0 +1,301 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+   <META NAME="Author" CONTENT="Claus Atzkern, eXept software AG, Germany">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.04 [en] (X11; I; Linux 2.0.30 i586) [Netscape]">
+   <TITLE>Implementing Drag & Drop</TITLE>
+</HEAD>
+<BODY>
+<A HREF="Label.html" NOPRINT><IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="The Label Widget" NOSAVE HEIGHT=30 WIDTH=30></A><A HREF="TOP.html#TABLEOFTHEWIDGETS" NOPRINT><IMG SRC="../../../icons/DocsUpArrow.gif" ALT="Table of the Widgets" NOSAVE HEIGHT=30 WIDTH=30></A><A HREF="TextEditor.html" NOPRINT><IMG SRC="../../../icons/DocsRightArrow.gif" ALT="The Text Editor Wigdet" NOSAVE HEIGHT=30 WIDTH=30></A>
+<BR>&nbsp;
+<HR ALIGN=LEFT WIDTH="100%">
+<H1>
+<FONT SIZE=+4>Implementing Drag & Drop</FONT></H1>
+
+<P>This section describes how to add an object of the widget to the <B>Drag & Drop Control</B> and
+how to get information about the current dragged object(s).
+</P>
+
+<H3>
+
+<HR ALIGN=LEFT WIDTH="100%"></H3>
+
+<H3>
+The <I>Source</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Start</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Optional Message
+</B>
+<BR><BR>This <B>'Two Arguments Message'</B> can be used by setup your own Drag & Drop handler,
+an instance of class <B>DragAndDropManager</B>. This allows you to setup your own cursors and cursor
+position used during the Drag & Drop operation is active:
+
+<PRE>
+    <B>#disabledCursor:</B> (an instance of Cursor)
+	cursor shown if the underlaying widget cannot drop the context.
+    <B>#enabledCursor:</B> (an instance of Cursor)
+	cursor shown if the underlaying widget can drop the context.
+    <B>#alienCursor:</B> (an instance of Cursor)
+	cursor shown if the underlaying widget is not a STX-Widget.
+</PRE>
+
+Example:
+
+<PRE>
+    doStartDrag:aDropSource in:aTheWidget
+	|dragAndDropHandler|
+
+	dragAndDropHandler = DragAndDropManager <I>new</I>.
+
+	"/ setting the cursors shown during Drag & Drop
+
+	dragAndDropHandler disabledCursor:(Cursor down).
+	dragAndDropHandler  enabledCursor:(Cursor up).
+
+	"/ now we <B>Start The Drag & Drop Operation</B>;
+	"/ setting the cursor to the top left edge of your display
+	"/ objects shown during the drag is active (#topLeft).
+
+	dragAndDropHandler <B>startDragFrom:</B>aTheWidget
+			      <B>dropSource:</B>aDropSource
+				  <B>offset:</B>#topLeft.
+</PRE>
+The <B>DropSource</B> contains information about the widget the <B>Drag Operation</B>
+is instanciated from and the mouse position...
+<BR>
+</TD></TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Argument</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Optional Argument</B>
+<BR><BR>This optional argument is stored in the DropSource instance and can be
+used as an identifier or...
+</TD></TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Feed Back</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Optional Message</B>
+<BR><BR>This <B>'One Argument Message'</B> is used to inform you that the Drag & Drop operation
+is finished. The argument to the message is an instance of class <B>DropContext</B> which contains
+the DropTarget of the last widget and you can ask the context whether the dragged objects are dropped.
+<PRE>
+    <B>#hasDropped</B>
+	returns true if the dragged objects are dropped.
+    <B>#dropSource</B>
+	returns an instance of class DropSource which contains
+	information about the widget which starts the operation.
+    <B>#dropTarget</B>
+	returns an instance of class DropTarget which contains
+	information about the widget which drops (if accepted)
+	the objects.
+</PRE>
+For more information see the classes:
+<B>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- DropContext
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- DropSource
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- DropTarget
+</B><BR>
+</TD></TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Objects</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Required Message</B>
+<BR><BR>This <B>'One Argument Message'</B> is invoked by the Drag & Drop handler to access
+the list of dragged objects, which are kind of class <B>DropObject</B>.
+<BR>
+<BR>To create a specific DropObect there exists creation methods:
+<PRE>
+    <B>#newClass:</B>(aClass)
+	returns a DropObject, which returns true if asked for <B>isClassObject</B>.
+    <B>#newColor:</B>(an instance of Color)
+	returns a DropObject, which returns true if asked for <B>isColorObject</B>.
+    <B>#newFile:</B>(an instance of Filename)
+	returns a DropObject, which returns true if asked for <B>isFileObject</B>.
+    <B>#newFileInArchive:</B>(an instance of Filename)
+	returns a DropObject, which returns true if asked for <B>isFileInArchive</B>.
+    <B>#newImage:</B>(an instance of Image or Icon)
+	returns a DropObject, which returns true if asked for <B>isImageObject</B>.
+    <B>#newText:</B>(an instance of String)
+	returns a DropObject, which returns true if asked for <B>isTextObject</B>.
+    <B>#newMethod:</B>(an instance of Method)
+	returns a DropObject, which returns true if asked for <B>isMethodObject</B>.
+
+    <B>#new:</B>(something)
+	returns a DropObject dependent on something.
+
+    To access the real instance of the DropObject, there exists the
+    message <B>#theObject</B> which you can ask for example:
+
+	<B>#isColor</B>
+	    returns true if the receiver is a Color
+	<B>#isKindOf:</B>
+	    returns true, if the receiver is an instance of aClass or one
+	    of its subclasses.
+	<B>.......</B>     
+</PRE>
+For more information see the class: <B>DropObject</B>
+<BR>
+</TD></TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Display<BR>Objects</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Optional Message</B>
+<BR><BR>This <B>'One Argument Message'</B> is invoked by the Drag & Drop handler to access
+the list of display objects used during the drag operation is active. Returns a list of
+String(s), LabelAndIcon(s) or Image(s).
+<BR><BR>
+On default the DropObject's are asked for.
+<BR>
+</TR>
+
+</TABLE>
+
+&nbsp;
+<BR>&nbsp;
+<H3>
+
+The <I>Target</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Drop</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Required Message
+</B>
+<BR><BR>This <B>'One or Two Argument(s) Message'</B> is invoked by the Drag & Drop handler
+to perform the drop. The argument to the message is the DropContext and optional the argument.
+<BR><BR>
+Example:
+<PRE>
+    doDrop:aDropContext
+	|dropObjects|
+
+	dropObjects := aDropContext dropObjects.
+
+	dropObjects do:[:aDropObject|
+	    realObject := aDropObject theObject.
+	    "/ do something with the real object
+	].
+</PRE>
+</TD></TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Argument</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Optional Argument</B>
+<BR><BR>This optional argument is stored in the DropContext instance and can be
+used as an identifier or...<BR>
+The optional argument to the #drop message described above.
+</TD></TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Can Drop</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Required Message
+</B>
+<BR><BR>This <B>'One Argument Message'</B> is invoked by the Drag & Drop handler
+to ask the receiver whether the DropContext is dropable or not. The argument to the message is an
+instance of DropContext.
+<BR><BR>
+Example:
+<PRE>
+    canDrop:aDropContext
+	|dropObjects|
+
+	dropObjects := aDropContext dropObjects.
+
+	dropObjects do:[:aDropObject| |fileName|
+	    "/ onnly file objects are dropable
+	    aDropObject isFileObject ifFalse:[ ^ false ].
+
+	    "/ and only directories are allowed.
+	    fileName := aDropObject theObject.
+	    fileName isDirectory ifFalse:[ ^ false ].
+	].
+	^ true   "/ ok, can drop the context
+</PRE>
+</TD></TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Enter</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Optinal Message
+</B>
+<BR><BR>This <B>'One Argument Message'</B> is invoked by the Drag & Drop handler
+to inform the receiver that the mouse is entered the underlaying widget. The argument to the message
+is an instance of DropContext.
+<BR><BR>
+Example:
+<PRE>
+    dropEnterWith:aDropContext
+	|targetWidget targetPoint|
+
+	"/ the widget under the mouse
+	targetWidget := aDropContext targetWidget.
+
+	"/ mouse position within the target
+	targetPoint  := aDropContext targetPoint.
+
+	"/ perform some operations ect.
+	"/ if the widget changes the background color or something
+	"/ you are obligated to inform the context that the drawable
+	"/ will change.
+	aDropContext contentsWillChange.
+
+	"/ now you can change the background color or something else.
+</PRE>
+</TD></TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Over</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Optinal Message
+</B>
+<BR><BR>This <B>'One Argument Message'</B> is invoked by the Drag & Drop handler
+to inform the receiver that the mouse moves over the underlaying widget. The argument to the message
+is an instance of DropContext.
+<BR><BR>
+Example:
+<PRE>
+    dropOverWith:aDropContext
+	"/ see the example under <B>#enter</B>.
+	"/ perform some operations on the widget
+</PRE>
+</TD></TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Leave</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Optinal Message
+</B>
+<BR><BR>This <B>'One Argument Message'</B> is invoked by the Drag & Drop handler
+to inform the receiver that the mouse leaves the underlaying widget. The argument to the message
+is an instance of DropContext.
+<BR><BR>
+Example:
+<PRE>
+    dropLeaveWith:aDropContext
+	"/ see the example under <B>#enter</B>.
+	"/ perform some operations on the widget
+	"/ maybe you have to restore the background color or ...
+</PRE>
+</TD></TR>
+
+</TABLE>
+
+
+
+<HR>
+<P><IMG SRC="../../../icons/stx.gif" ALT="[stx-logo]" NOSAVE NOPRINT HEIGHT=48 WIDTH=47 ALIGN=CENTER>
+<BR><TT>Copyright &copy; 1998 eXept Software AG, all rights reserved</TT>
+<BR>
+<HR>
+</BODY>
+</HTML>

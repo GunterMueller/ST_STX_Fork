@@ -1,0 +1,50 @@
+; View defaultStyle:#rocky2 
+;
+; more windows for wilma ...
+; fun style; like motif, but with different view background
+; needs some rework to make text readable in selectionInListViews
+; and menus.
+;
+; $Header: /cvs/stx/stx/libview/styles/oldStyles/rocky2.style,v 1.6 2000-08-16 14:24:30 ca Exp $
+
+
+#include 'motif.style'
+
+comment  'Fun style.\Like `motif'' with rock solid views and changed\selection colors'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Wie `motif'' mit beinhartem Hintergrund.\andere Farbe für Selektionen'
+#endif
+
+shadowColor                        Color black
+lightColor                         Color lightGrey
+
+darkGranite                        (Smalltalk imageFromFileNamed:'bitmaps/granite2.tiff' inPackage:'stx:libwidg3') 
+#brightGranite                     (Smalltalk imageFromFileNamed:'bitmaps/granite.tiff' inPackage:'stx:libwidg3') 
+brightGranite                      (Smalltalk imageFromFileNamed:'bitmaps/granite_small.tiff' inPackage:'stx:libwidg3') 
+
+viewBackground                     =brightGranite
+
+selection.backgroundColor           =viewBackground
+selection.foregroundColor           Color white
+selection.hilightBackgroundColor     =darkGranite "/ Color red
+selection.hilightForegroundColor    Color white
+selection.hilightLevel              1
+selection.disabledForegroundColor   Color grey:10     "/ default grey is invisible on granite
+
+menuBackground                     =viewBackground
+menu.foregroundColor                Color white
+menu.backgroundColor                =viewBackground
+menu.hilightForegroundColor         Color white
+menu.hilightBackgroundColor         Color red
+menu.disabledForegroundColor      Color grey:10     "/ default grey is invisible on granite
+pullDownMenu.font                   =fatFont
+
+scroller.viewBackground             =viewBackground
+
+button.activeForegroundColor        Color white
+button.activeBackgroundColor        =darkGranite 
+button.foregroundColor              Color grey:80
+button.backgroundColor              =viewBackground 
+button.disabledForegroundColor      Color grey:10     "/ default grey is invisible on granite
+

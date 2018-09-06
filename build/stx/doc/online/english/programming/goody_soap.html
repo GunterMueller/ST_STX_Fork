@@ -1,0 +1,202 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - SOAP</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="xmlObjectStorage.html">     <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="goody_xmlrpc.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>SOAP</H1>
+
+<H2>Overview</H2>
+
+SOAP (Simple Object Access Protocol) is (no longer) a lightweight,
+XML based protocol for exchange of information in a distributed environment.
+<BR>
+The SOAP protocol is also used by Microsofts .NET web service architecture.
+<P>
+For the programmer, SOAP makes available an easy to use,
+language and system independent remote procedure call mechanism,
+as SOAP implementations are available for a wide range of programming languages
+and operating system configurations.
+
+
+<H2>Documentation</H2>
+Information on SOAP itself is found on www.w3.org.
+<br>
+Information on SOAPOpera, the SOAP implementation for Smalltalk is found on its home site,
+<A HREF="http://www.mars.dti.ne.jp/~umejava/smalltalk/soapOpera/soapCore.html">
+http://www.mars.dti.ne.jp/~umejava/smalltalk/soapOpera/soapCore.html
+</A>
+
+<P>
+If you cannot access the internet, here is an extract from that site;
+<br>
+in addition, use the source - Luke, for information on the implementation.
+<P>
+<p class="SubTitle">- a Squeak SOAP RPC implementation -</p>
+
+<h3>SoapCore Examples:</h3>
+<p>SoapCore is a SOAP part of <a href="index.html">SoapOpera</a>.</p>
+
+<p>SoapCore provides very simple API for Soap RPC.</p>
+
+<h4>Server side:</h4>
+<p>Suppose you have a <code>HelloWorldImpl</code> class which has method named <code>helloWorld</code>.
+<br>
+To register the helloWorld service:</p>
+<pre><code>
+    service := SoapService implementor: (HelloWorldImpl new ) selector: #helloWorld.
+    service signature: (SoapServiceSignature name: 'helloWorld').
+    SoapServiceHandler default add: service
+</code></pre>
+
+
+<h4>Client side:</h4>
+<p>Suppose you have registered the helloWorld service in the host named 'someHost'.
+<br>To invoke the helloWorld service:</p>
+
+<pre><code>
+    call := (SoapCallEntry tcpHost: 'someHost') newCall.
+    call transport: #http.
+    call methodName: 'helloWorld'.
+    ^ call invokeAndReturn.
+</code></pre>
+
+there is also a shorter call-setup alternative:
+<pre><code>
+    call := SoapCall methodName: 'helloWorld' tcpHost: 'someHost'.
+    ^ call invokeAndReturn.
+</code></pre>
+
+<h3><a name="interop">*SoapCore Interop Examples*:</a></h3>
+<p>SoapOpera0.5 has achieved some interoperability with other SOAP implementations.
+<P>
+The World will become one. Enjoy!</p>
+
+
+<h4>1: Example: SOAP call from <a href="http://www.ruby-lang.org/en/">Ruby</a></h4>
+
+<p>From <a href="http://www.jin.gr.jp/~nahi/Ruby/SOAP4R/">SOAP4R</a> Client:
+<br>DOWNLOAD: <a href="rubyClients.zip">SOAP4R Client Examples</a></p>
+
+<p>To invoke the helloWorld service:</p>
+<pre><code>
+    #!/usr/bin/env ruby
+
+    require 'soap/driver'
+
+    server = 'http://someHost:8823/'
+    drv = SOAP::Driver.new( nil, nil, nil, server)
+    drv.addMethod('helloWorld')
+    drv.setWireDumpDev( STDERR )
+    p drv.helloWorld()
+</code></pre>
+<p>Currently, sending data types are very limited. But It works!</p>
+
+<h4>2:Example: SOAP call from <a href="http://www.object-arts.com">Dolphin Smalltalk</a> (or any other Spray SOAP implementation)</h4>
+
+<p>There is a guide for <a href="http://www.dolphinharbor.org/dh/projects/spray/docs/soapOpera/SoapOperaInterop.html">Dolphin Spray and SoapOpera Interop</a> (<a href="http://www.chartexplorer.com/WikiSplash/sossSplashClient.gif">screenshot</a>).
+<br>
+You should read it first. (Thanks Steve Waring!)</p>
+
+<p>DOWNLOAD: <a href="SplashSpraySoapOperaInteropExamples.zip">Spray-SoapOpera interop Examples</a></p>
+<p>From <a href="http://www.dolphinharbor.org/dh/projects/spray/index.html">Spray</a> Client -&gt; SoapOpera Server: </p>
+<p>To invoke the reverseString service:</p>
+<pre><code>
+    &quot;call 'reverseString' service&quot;
+    request := SplashRPCRequest method: 'reverseString' </code>
+				<code>ns: #'http://www.mars.dti.ne.jp/~umejava/smalltalk/soapOpera/rpc/'.
+    request parameterAt: #aString put: 'Hello from Dolphin'.
+    response := request responseFrom: 'http://localhost:8823/' soapAction: nil.
+    response return.
+</code></pre>
+
+<h4>3:Example: SOAP call from any other SOAP Opera implementation</h4>
+
+<p>From SoapOperaClient -&gt; <a href="http://www.dolphinharbor.org/dh/projects/spray/index.html">Spray</a> Server:</p>
+<p><a href="http://www.dolphinharbor.org/services/soapOperaInterop">There is a Spray interop test server available in the internet</a>. <br>
+You can call services from SoapOpera Client.
+<br>To invoke the browseClassDefinition service:</p>
+<pre><code>
+    | call resp |
+    call := (SoapCallEntry tcpHost: 'www.dolphinharbor.org' port: 80) newCall.
+    call targetObjectURI: '/services/soapOperaInterop'.
+    call methodName: 'browseClassDefinition'.
+    call addParameter: (SoapVariable name: #className value: 'SoapOperaInterop').
+    call invokeAndReturn.
+    </code></pre>
+
+
+<h3>Suggestions?</h3>
+Any feedback is welcome.
+<address><a href="mailto:umejava@mars.dti.ne.jp?Subject=[SoapOpera] feedback">Masashi Umezawa</a></address>
+
+
+
+<H2>Code Examples</H2>
+Have a look at the example classes found in the "SOAP-ExampleClients" category .
+These examples implement various clients towards existing SOAP-based web services,
+among them are a translation service (BabelFish), spelling corrector (Google), a Stock-Quote requestor,
+and a currency exchange rate converter (browse the SOAP-ExampleClients category to see the code).
+<P>
+The
+<A HREF="../misc/onlyInSTX.html" INFO="Browse it" ACTION="doit:SOAP::HelloWorldServer autoload. Smalltalk browseInClass:SOAP::HelloWorldServer">HelloWorldServer</A>
+class implements both a server and a client API, and is probably the
+easiest possible demo.
+<BR>
+A real world SOAP client application is the
+<A HREF="../misc/onlyInSTX.html" INFO="Browse it" ACTION="doit:SOAP::TranslationServiceApplication autoload. Smalltalk browseInClass:SOAP::TranslationServiceApplication">TranslationServiceApplication</A>,
+which uses the BabelFish translation service (see <A HREF="www.xmethods.net">www.xmethods.net</A>).
+
+
+<H2>Server Setup</H2>
+
+To provide a Web service as a Server, the HTTPServer must be configured and running.
+Notice, that no HTTP services are required for SOAP net services - i.e. the HTTPServer can
+be configured without any HTTP service, but with SOAP enabled.
+(that results in an HTTPServer, which ONLY serves SOAP requests).
+<BR>
+Also notice, that the HTTPServer can be configured to listen on any port - for SOAP services,
+the typical (default) port is 8823.
+
+
+<H2>Licensing</H2>
+These addOn packages are NOT to be considered part of the base ST/X system.
+They are provided physically with the ST/X delivery, but only for your convenience.
+<P>
+Legally, they are freeware or public domain goodies, as specified in corresponding
+goodies copyright notices.
+<BR>
+See the licence info files found in the goodies directories and/or the class files',
+and/or the classes documentation methods.
+
+
+<H2>No Warranty</H2>
+This goody is provided AS-IS without any warranty whatsoever.
+
+
+<H2>Origin/Authors</H2>
+<P>
+Masashi Umezawa (SoapOpera and SoapOrb)
+<BR>
+Steve Waring (Spray Dolphin version)
+
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.19 $
+</BODY>
+</HTML>

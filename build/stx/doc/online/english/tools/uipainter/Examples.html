@@ -1,0 +1,666 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+   <META NAME="Author" CONTENT="Thomas Zwick, eXept software AG, Germany">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.04 [en] (X11; I; Linux 2.0.30 i586) [Netscape]">
+   <TITLE>GUI Examples</TITLE>
+</HEAD>
+<BODY>
+<A HREF="Functions.html" NOPRINT><IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="Functions" NOSAVE HEIGHT=30 WIDTH=30></A>
+<A HREF="TOP.html" NOPRINT><IMG SRC="../../../icons/DocsUpArrow.gif" ALT="Using the GUI Painter" NOSAVE HEIGHT=30 WIDTH=30></A>
+<BR>&nbsp;
+<HR ALIGN=LEFT WIDTH="100%">
+<H1>
+<FONT SIZE=+4>GUI Examples</FONT></H1>
+
+<H2>
+Index</H2>
+
+<UL>
+<LI>
+<A HREF="#ASIMPLEEXAMPLE">A Simple Example</A></LI>
+
+<LI>
+<A HREF="#ANADVANCEDEXAMPLE">An Advanced Example</A></LI>
+
+<UL>
+<LI>
+<A HREF="#ADDINGAPOPUPMENU">Adding a Popup Menu</A></LI>
+
+<LI>
+<A HREF="#ADDINGADIALOG">Adding a Dialog</A></LI>
+</UL>
+
+<LI>
+<A HREF="#HINTS">Hints &amp; Recommendation</A></LI>
+</UL>
+&nbsp;
+
+
+The following are very simple examples - for real world applications,
+"use the source, Luke".
+
+<HR ALIGN=LEFT WIDTH="100%">
+
+<H2>
+<A NAME="ASIMPLEEXAMPLE"></A><B>A Simple Example</B></H2>
+The following example will give an understanding in value holders. We will
+design an application having an interface with several widgets, which operate
+on the same value holder:
+<UL><B>I. </B>Open a new GUI Painter
+
+<P><B>II.</B> Switch to the section <I>Misc</I> of the gallery, then drag
+a <A HREF="ThumbWheel.html">Thumb Wheel Widget</A> and drop it into the
+canvas. The same process is done for a <A HREF="Slider.html">Slider Widget</A>
+and a <A HREF="ProgressIndicator.html">Progress Indicator Widget.</A>
+
+<P><B>III.</B> Arrange components as you like, change the application's name
+and resize the canvas.
+
+<P>Now, our canvas should now look more or less like:
+
+<P><IMG SRC="../../../pictures/GUIPainterSimpleExampleCanvas.gif" NOSAVE HEIGHT=276 WIDTH=310>
+
+<P><B>IV.</B> Now, we want that all three widgets operate on the same
+value holder (i.e. changes in any of the widgets
+shall immediately update thei visual stage of the percentage shown in all others). To do this,
+you have to specify the same <I>aspect selector</I> for all three widgets
+by switching to the section <I>Basics</I> of the control window of the
+GUI Painter, and entering the same name (say <B><I><TT>"percentageValue"</TT></I></B>)
+into the entry field <I>Model:</I></UL>
+
+<UL><IMG SRC="../../../pictures/GUIPainterSimpleExampleSectionBasics.gif" NOSAVE HEIGHT=275 WIDTH=567></UL>
+
+<OL>During application startup, the application will be asked for
+the aspects (by the interface builder).
+Your application should provide those
+as ValueHolders (usually, but not limited to).
+<BR>There are 3 possible techniques to do that:
+<BR>&nbsp;
+<OL>
+<LI>
+implement a method in the instance protocol, which returns the aspect.
+<BR>
+The method should look like:</LI>
+
+<PRE>
+percentageValue
+    |holder|
+
+    holder := builder bindingAt: #percentageValue.
+    holder isNil ifTrue:[
+	builder
+	    aspectAt:#percentageValue
+	    put:(ValueHolder with:0)
+    ].
+    ^ holder
+</PRE>
+
+<LI>
+As an alternative, the aspect could also be held in an instance variable
+(typically, named like the aspect):
+<BR>as in:
+<PRE>
+percentageValue
+    percentageValue isNil ifTrue:[
+	percentageValue := (ValueHolder with:0)
+    ].
+    ^ percentageValue
+</PRE>
+(assuming, that the application contains an instance variable
+named "percentageValue")
+
+<P>The GUI Painter can automatically generate
+aspect methods like the above
+(via the <i>'Generate aspect methods'</i> menu item).
+<P>
+Via the <I>Settings</I> menu, you can control if the aspect method
+should use the builders bindings dictionary or use an instance variable
+to hold the aspect.
+
+
+<BR>Note: This function will not overwrite existing aspect accessor methods
+- your changed methods are safe from being overwritten when this function
+is called. This also means, that obsolete aspect methods have to be removed
+manually.
+<BR>&nbsp;
+<LI>
+keep a dictionary containing the aspects
+as an instance variable (called <TT>aspects</TT> - for example)  and
+set it your applications
+<TT>initialize</TT>-method (which is invoked automatically
+after your application got instantiated).
+<BR>
+i.e.:
+<PRE>
+initialize
+    super initialize.
+
+    aspects := IdentityDictionary new.
+    aspects
+	at:#percentageValue
+	put:(ValueHolder with:0).
+</PRE>
+
+<P>and provide access to this value by implementing:
+
+<PRE>
+aspectFor:aKey
+    ^ aspects
+	at:aKey
+	ifAbsent:[super aspectFor:aKey].
+</PRE>
+
+</OL>
+
+<P>If you want an update message to be sent to your application
+(whenever an aspect is changed),
+you can extent the above method as in:
+<PRE>
+initialize
+    |holder|
+
+    super initialize.
+    aspects := IdentityDictionary new.
+    aspects
+	at:#percentageValue
+	put:(holder := ValueHolder with:0).
+
+    holder addDependent:self
+</PRE>
+
+<P>This will arrange for the <CODE>#update:with:from:</CODE>
+method to be invoked, whenever a new value is stored into the
+valueHolder.
+<PRE>
+update:something with:aParameter from:someObject
+    super update:something with:aParameter from:someObject.
+
+    ...
+    your update code
+    ...
+</PRE>
+
+<P>where
+<BR><I><B>&nbsp;&nbsp;&nbsp; </B><TT>something</TT></I> indicates what
+has changed (for example <I><TT>#value</TT></I>, <I><TT>#list</TT></I>,
+etc.),
+<BR><I><B>&nbsp;&nbsp;&nbsp; </B><TT>aParameter</TT></I> can be an argument
+passed with,
+<BR><I><B>&nbsp;&nbsp;&nbsp; </B><TT>someObject</TT></I> is the value holder
+that has invoked the update message.
+
+<P>The advantages of using a dictionary for the aspects are:
+<UL>
+<LI>
+not having your application clobbered with
+many individual aspect access methods</LI>
+
+<LI>
+the added ability to change the set of aspects dynamically
+(for example: in a application having a <TT>NoteBookView</TT>)</LI>
+
+<LI>
+no need to know the set of aspects in advance (for example: if sub applications
+are contained as widgets)</LI>
+
+<LI>
+if you already have such a collection at hand (for example: from some kind of
+database/record specification) and you want
+to open a dialog or other view on those aspects.</LI>
+</UL>
+
+
+<B>V.</B> Save the window spec (by default, it creates a method named
+<TT>windowSpec</TT> on a class named <TT>NewApplication</TT>)
+<BR>&nbsp;</OL>
+Now, you are ready to test it by selecting the menu item <I>Test/Start
+Application</I> or pressing the button&nbsp;<IMG SRC="../../../pictures/StartButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32>.
+<P>
+The application can also be started in a <TT>Workspace</TT> by evaluating
+<TT>"NewApplication open"<B></B></TT>, by the SystemBrowser (double-click on
+the classes name), or
+by writing a program containing the open-message.
+<BR>
+While playing with
+the demo, you may notice that the range of the sliders value is 0..100,
+while the thumb wheel has a default range of 0..360. To change this, select
+the thumb wheel in the GUI Painter, switch to the section <I>Details</I>,
+and enter 0, 100, 1 into the entry fields <I>Min:</I>, <I>Max:</I>, and
+<I>Step: </I>respectively.
+<UL><IMG SRC="../../../pictures/GUIPainterSimpleExampleSectionDetails.gif" NOSAVE HEIGHT=274 WIDTH=567></UL>
+&nbsp;
+<BR>&nbsp;
+<H2>
+
+<HR ALIGN=LEFT WIDTH="100%"></H2>
+
+<H2>
+<A NAME="ANADVANCEDEXAMPLE"></A><FONT SIZE=+3>An Advanced Example</FONT></H2>
+<FONT SIZE=+0>A somewhat more complicated example could be an application
+which consists of a interface showing a List and a Text Editor widget.
+Both widgets are to be aligned vertically, each taking half of the window's
+height.</FONT> The list is going to show a list of file names whose contents
+- when selected - is to be displayed in the lower half.
+<UL><B>I. </B>Open a new&nbsp; GUI Painter
+
+<P><B>II. </B>Switch to the section <I>Lists</I> of the widget gallery
+and drag a <A HREF="List.html">List Widget </A>and drop it into the canvas.
+
+<P>Align the top border of the widget's view to the top border of the canvas,
+by pressing the <I>Align/Top</I> button:&nbsp;<IMG SRC="../../../pictures/AlignTopButton.gif" ALT="[missing fig.: building]" NOSAVE HEIGHT=32 WIDTH=32>&nbsp;
+and the left and right borders by pressing the <I>Align/Left &amp; Right</I>
+button:&nbsp;<IMG SRC="../../../pictures/AlignLeftRightButton.gif" ALT="[missing fig.: building]" NOSAVE HEIGHT=32 WIDTH=32>&nbsp;
+now, your canvas will look somewhat like:
+
+<P><IMG SRC="../../../pictures/GUIPainterAdvancedExampleCanvas1.gif" NOSAVE HEIGHT=343 WIDTH=337></UL>
+
+<UL>to force the List's vertical size to one half of the canvas window's
+height we have to change its bottom to a relative value of "0.5". Switch
+to the section <I>Layout/Frame</I> of the control window and change the
+value in the fields <I>Bottom:</I> to "0.5" for the relative value and
+to "0" for the offset value. To accept it, click on <I>OK</I>.</UL>
+
+<UL><IMG SRC="../../../pictures/GUIPainterAdvancedExampleSectionLayoutFrame.gif" NOSAVE HEIGHT=287 WIDTH=582></UL>
+
+<UL>The same is done to create the <A HREF="TextEditor.html">Text Editor
+Widget </A>in the lower half of the canvas (drag it from the gallery, align
+its bottom to the canvas window's bottom and change its top to a relative
+value of "0.5").
+<BR>Finally, your canvas should look like:</UL>
+
+<UL>&nbsp;<IMG SRC="../../../pictures/GUIPainterAdvancedExampleCanvas2.gif" NOSAVE HEIGHT=343 WIDTH=337>
+<BR>&nbsp;</UL>
+
+<UL><B>III. </B>Now, we have to define the models. In our example, let's
+define the name for the List's model access method as <I><TT>fileListHolder</TT></I>
+and the name of the Text Editor's access method as <I><TT>fileContentsHolder</TT></I>:.
+Like in the example above put the names in the entry fields <I>Model:</I>
+for both.</UL>
+
+<OL><B>IV.</B> We are now ready to create the code for the application.
+This is done in 2 steps:
+<OL>
+<LI>
+generating the window spec method by selecting <I>File/Save</I> or pressing
+the button&nbsp;<IMG SRC="../../../pictures/SaveButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32>
+and</LI>
+
+<LI>
+generating stub methods to create &amp; access the models by selecting
+<I>Generate/Aspect Methods</I></LI>
+</OL>
+&nbsp;
+
+<P>You will be asked for a class and method name, when doing the for the
+first time. You may want to change the class name to some more useful name.
+The name of the window spec method usually needs no renaming. If your application
+consists of multiple interfaces, then different names for the window spec
+methods are required.</OL>
+
+<UL>The generated aspect methods contain preferred types of value holder
+of the widgets. Here, these are in each case an instance of class<TT> ValueHolder</TT>
+and <TT>SelectionInList</TT>. You may have to modify the aspect methods,
+if these are not correct for your application.
+
+<P>If you start the application, you will recognize that the view of the
+file list is still empty. Of course, since the model <TT>SelectionInList</TT>
+is never filled with a list of file names, the view still displays an empty
+list. To pass a list of file names, we can set the list in the program
+either in the access method, or alternatively redefine one of the application's
+startup methods.
+
+<P>Here, let's redefine the <TT>postBuildWith:</TT> method, which is invoked
+during application startup (and provided to concrete subclasses of <TT>ApplicationModel</TT>
+as a hook for specific setup).
+
+<P>Open a System Browser and add following method codes to the application
+class in the instance method protocol. For the first method create a new
+method category named <I>startup / release</I>:
+
+<P>&nbsp;<TT>postBuildWith: aBuilder</TT>
+<BR>&nbsp;
+<UL><TT>super postBuildWith: aBuilder.</TT>
+<BR><TT>self setFileList</TT></UL>
+&nbsp;
+
+<P>The next method does set the list of files. A convenient method category
+could be <I>private</I>:
+
+<P>&nbsp;<TT>setFileList</TT></UL>
+
+<UL>
+<UL><TT>&nbsp;|listOfFiles|</TT>
+
+<P><TT>"get a list of file names contained in your current directory"</TT>
+<BR><TT>self fileListHolder list: Filename homeDirectory directoryContents.</TT>
+
+<P><TT>"reject all sub directories"</TT>
+<BR><TT>listOfFiles := listOfFiles reject: [:name| name asFilename isDirectory].</TT>
+
+<P><TT>"put the list into the value holder"</TT>
+<BR><TT>self fileListHolder list: listOfFiles</TT>
+<BR>&nbsp;</UL>
+For the first, the started application displays a list of file names.</UL>
+
+<UL><IMG SRC="../../../pictures/GUIPainterAdvancedExample1.gif" NOSAVE HEIGHT=343 WIDTH=337></UL>
+
+<UL><B>V.</B> Finally, we would like to get the contents of the file which
+has been selected by the user before. To do this, we have to go back to
+the control window, select the widget for the list with the file names,
+then choose the section <I>Details</I>.
+
+<P>Here, a callback selector in your application needs to be defined, which
+is invoked whenever the selection changes. Let's enter a name for the selector
+(say <I><TT>fileNameSelected</TT></I>) into the entry field <I>Select:</I>:</UL>
+
+<UL><IMG SRC="../../../pictures/GUIPainterAdvancedExampleSectionMisc.gif" NOSAVE HEIGHT=237 WIDTH=582></UL>
+
+<UL>Accept the modification and save the window spec.</UL>
+
+<UL>The application will invoke the <TT>fileNameSelected</TT> method whenever
+a file is selected. Therefore, this method must be implemented by the System
+Browser before we can start the application. Add the following method code
+to your application class in the method category named <I>user actions</I>
+which might be created before:</UL>
+
+<UL>&nbsp;<TT>fileNameSelected</TT></UL>
+
+<UL>
+<UL><TT>&nbsp;|selectedFileNameString contents|</TT>
+
+<P><TT>"get the selected file name"</TT>
+<BR><TT>selectedFileNameString := self fileListHolder selection.</TT></UL>
+</UL>
+
+<UL>
+<UL><TT>"get the contents of the file having that name"</TT>
+<BR><TT>contents := selectedFileNameString asFilename contentsOfEntireFile.</TT>
+
+<P><TT>"put the file contents into the text view"</TT>
+<BR><TT>self fileContentsHolder value: contents</TT></UL>
+&nbsp;
+
+<P>After starting the application, you can now select the file names in
+order to get the file contents:</UL>
+
+<UL><IMG SRC="../../../pictures/GUIPainterAdvancedExample2.gif" NOSAVE HEIGHT=343 WIDTH=337></UL>
+&nbsp;
+<H3>
+<A NAME="ADDINGAPOPUPMENU"></A>Adding a Popup Menu</H3>
+For some widgets a popup menu can be defined accessible by the right mouse
+button. In this example, we want to add a popup menu to the view of the
+file list. It shall contain the menu items <I>Rename</I> and <I>Remove</I>.
+<UL><B>I.</B> Select the widget of the file list and switch to the section
+<I>Basics</I>; then enter a selector name for the menu spec method in the
+<I>Menu:</I> field (say <I><TT>fileListMenu</TT></I>). Accept the modification
+and save the window spec by selecting <I>File/Save</I>.
+
+<P><B>II. </B>Define the entries of the popup menu. By pressing the button
+<I>Menu: </I>at the left side of the menu entry field a Menu Editor appears.
+Remove the default first entry, then add two menu items by pressing the
+button&nbsp;<IMG SRC="../../../pictures/MenuEditorAddMenuItemButton.gif" NOSAVE HEIGHT=32 WIDTH=32>.
+Enter for the labels of the menu items <I>Rename</I> and <I>Remove</I>
+into the entry fields <I>Label:</I>. For the action selectors enter <I>renameFile</I>
+and <I>removeFile</I> into the entry fields <I>Action:</I>.&nbsp; After
+each edit action accept your modifications. If you have completed your
+work with the Menu Editor, you can save the menu spec by pressing the button&nbsp;<IMG SRC="../../../pictures/SaveButton.gif" NOSAVE HEIGHT=32 WIDTH=32>,
+then close the Menu Editor.
+
+<P>To get more information about the Menu Editor open the document "<A HREF="../../tools/MenuEditor/TOP.html">Using
+the Menu Editor</A>".
+
+<P><B>III.</B> The last step is to implement the action methods. Open a
+System Browser and add following method codes to the method category <I>user
+actions</I>:
+
+<P><TT>removeFile</TT>
+<BR><TT>&nbsp;</TT>
+<UL><TT>|selectedFileNameString|</TT>
+
+<P><TT>"get the selected file name"</TT>
+<BR><TT>selectedFileNameString := self fileListHolder selection.</TT>
+
+<P><TT>"open a confirmation dialog"</TT>
+<BR><TT>(self confirm:('Remove ' , selectedFileNameString , '?'))</TT>
+<BR><TT>ifTrue:</TT>
+<BR><TT>[</TT>
+<UL><TT>"remove the file"</TT>
+<BR><TT>selectedFileNameString asFilename remove.</TT>
+
+<P><TT>"update the fileList"</TT>
+<BR><TT>self setFileList</TT></UL>
+<TT>]</TT>
+<BR>&nbsp;</UL>
+the second method:
+
+<P><TT>renameFile</TT>
+<BR><TT>&nbsp;</TT>
+<UL><TT>|selectedFileNameString oldFileNameHolder newFileNameHolder bindings|</TT>
+
+<P><TT>"get the selected file name"</TT>
+<BR><TT>selectedFileNameString := self fileListHolder selection.</TT>
+
+<P><TT>"put the data into value holders"</TT>
+<BR><TT>oldFileNameHolder&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; := selectedFileNameString
+asValue.</TT>
+<BR><TT>newFileNameHolder&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; := '' asValue.</TT>
+
+<P><TT>"create the bindings for builder of the dialog"</TT>
+<BR><TT>bindings := IdentityDictionary new.</TT>
+<BR><TT>bindings at: #oldFileName put: oldFileNameHolder.</TT>
+<BR><TT>bindings at: #newFileName put: newFileNameHolder.</TT>
+
+<P><TT>"open the dialog"</TT>
+<BR><TT>(self openDialogInterface: #dialogSpecForRenamingFiles withBindings:
+bindings)</TT>
+<BR><TT>ifTrue:</TT>
+<BR><TT>[</TT>
+<UL><TT>"do the rename"</TT>
+<BR><TT>selectedFileNameString asFilename renameTo: newFileNameHolder value.</TT>
+
+<P><TT>"update the file list"</TT>
+<BR><TT>self setFileList</TT></UL>
+<TT>]</TT>
+<BR>&nbsp;</UL>
+In the last method we want to use a dialog for renaming the files. In the
+next chapter we will learn how to implement additional interfaces for dialogs.</UL>
+<TT>&nbsp;</TT>
+<H3>
+<A NAME="ADDINGADIALOG"></A><FONT SIZE=+1>Adding a Dialog</FONT></H3>
+Often, your applications requires some dialogs. Dialogs are defined like
+the main interface of the application as described above. However, you
+should care to give each window spec selector a distinct (and user friendly)
+name. In your application dialogs are opened by evaluating the following
+code:
+<UL><TT>...</TT>
+<BR><TT>self openDialogInterface: <I>#dialogSpecSelector</I></TT>
+<BR><TT>...</TT></UL>
+In the starting phase the dialog fetches its models through corresponding
+access methods from your application.
+<BR>In some situations, it is more convenient to prepare a collection of
+models into a dictionary (associating access selectors to value holder),
+and passing this collection to
+<UL><TT>...</TT>
+<BR><TT>self</TT>
+<UL><TT>openDialogInterface: <I>#nameOfDialogSpecMethod</I></TT>
+<BR><TT>withBindings: <I>collectionOfBindings</I></TT></UL>
+<TT>...</TT></UL>
+Well, let's define the interface of the dialog for the example above:
+<UL><B>I. </B>Open a new&nbsp; GUI Painter</UL>
+
+<UL><B>II. </B>For the renaming of the files we need to add 2 labels, 2
+entry fields and both an OK-button and a Cancel-button. After completed,
+the canvas of the dialog should look like this:</UL>
+
+<UL><IMG SRC="../../../pictures/GUIPainterAdvancedExampleCanvasDialog.gif" NOSAVE HEIGHT=142 WIDTH=310>
+
+<P><B>III. </B>Define the aspect selectors of the <TT>EntryFields</TT>
+as <B><I>oldFileName</I></B> and <B><I>newFileName</I></B>. Both the Cancel-
+and the OK-button already have default aspects, which are correct for our
+need. Finally, make the oldFileName entry field a read-only field, by selecting
+the <I>Read Only</I> attribute.</UL>
+
+<UL><B>IV.</B> Before saving the window spec, make certain, that the names
+of the class and selector are set correctly, i.e. the name of the class
+must be the same as the name of the application class, but (!) the name
+of the selector must differ from the common used name for the main interface
+"windowSpec".&nbsp; A possible way to avoid this could be:
+<UL>
+<LI>
+naming additional window specs as "windowSpecFor<I>TheTypeOfUsing</I>",</LI>
+
+<LI>
+the window specs for the dialogs could be named as "dialogSpecFor<I>TheTypeOfUsing</I>"</LI>
+</UL>
+In this example, we choose as selector name <TT>dialogSpecForRenamingFiles</TT>.
+Because we pass all binding aspects in a single collection (see last method
+code in last chapter), there is no need to generate aspect methods by the
+GUI Painter.</UL>
+Finally, this example is successfully completed. Be careful in using this
+simple file browser: Do not remove or rename important files needed by
+the operation system.
+
+<P>If you like to play with the previous example, the class of this example
+can be found as <TT>"SimpleGUIDemoApplication"</TT> in the <TT>"CodingExamples_GUI"</TT>
+namespace (autoloaded). Also, the corresponding source code can be found
+in <TT><A HREF="../../demos/coding/SimpleGUIDemoApplication.st">"doc/coding/SimpleGUIDemoExample.st"</A></TT>.
+<BR>&nbsp;
+<BR>&nbsp;
+<H2>
+
+<HR ALIGN=LEFT WIDTH="100%"></H2>
+
+<H2>
+<A NAME="HINTS"></A>Hints &amp; Recommendations</H2>
+The following lists problems encountered by users of the GUI Painter for
+your reference and tries to answer common questions:
+<UL>
+<LI>
+<B>Name of Aspect Selectors</B></LI>
+</UL>
+
+<UL>Be <B>careful</B> with the names of your aspect methods; especially,
+never call them <I><TT>value</TT> </I>(i.e. avoid names of messages, which
+are used throughout the system and have different meaning). Try to choose
+selectors like <I><TT>valueOfPersons</TT></I> or <I><TT>listOfAccounts</TT></I>
+for example. Avoid redefining methods from classes <TT>Object</TT> or <TT>ApplicationModel</TT>
+by accident.
+<BR>&nbsp;
+
+<!-- No longer recommended
+<LI>
+<B>Sequence of Focus (focus tabbing)</B></LI>
+</UL>
+
+<UL>By default, items which have the <I>Can Tab</I> attribute set can be
+tabbed in the application - the tabbing order is the order as defined in
+the list of the widgets. You may rearrange widget items in the tree view
+of the GUI Painter to change the tabbing order.
+
+<P>If that does not provide a satisfying tabbing order (or you have complicated
+widget setups with nested panels), we recommend that you application provides
+the tabbing order by redefining the method <TT>focusSequence</TT>. Typically,
+such a redefined <TT>focusSequence</TT> method (in your application class)
+looks like:
+
+<P><TT>focusSequence</TT>
+<BR>&nbsp;
+<UL><TT>|theOrder|</TT>
+
+<P><TT>theOrder := OrderedCollection new.</TT>
+<BR><TT>theOrder add:(self builder componentAt:<I>#nameOfWidget1</I>).</TT>
+<BR><TT>theOrder add:(self builder componentAt:<I>#nameOfWidget2</I>).</TT>
+<BR><TT>&nbsp;...</TT>
+<BR><TT>theOrder add:(self builder componentAt:<I>#nameOfWidgetN</I>).</TT>
+
+<P><TT>^theOrder</TT>
+<BR>&nbsp;</UL>
+In above method <I><TT>nameOfWidgetI</TT></I> stands for the name (or ID)
+of the widget as was specified in the section <I>Basics</I>. Redefinition
+of the <TT>focusSequence</TT> is especially useful, if widgets are dynamically
+added/removed by the application.
+
+<P>Notice: A real smalltalk programmer might write the method above as:
+
+<P><TT>focusSequence</TT>
+<BR>&nbsp;
+<UL><TT>^#(</TT>
+<BR><I><TT>nameOfWidget1</TT></I>
+<BR><I><TT>nameOfWidget2</TT></I>
+<BR><TT>...</TT>
+<BR><I><TT>nameOfWidgetN</TT></I>
+<BR><TT>)</TT>
+<BR><TT>collect:[:widgetName | self builder componentAt:wigetName]</TT>
+
+<P>&nbsp;</UL>
+
+--->
+
+<LI>
+<B>Hooks for the Application</B></LI>
+</UL>
+
+<UL>Your application may redefine some methods from the <TT>ApplicationModel</TT>
+class in order to get control during the build and window open procedure.
+This allows for special initialization/startup/cleanup processing to be
+done.
+
+<P>The following startup and release messages are of particular interest:
+<BR>&nbsp;
+<UL>
+<LI>
+<B><TT>preBuildWith: <I>aBuilder</I></TT></B></LI>
+
+<BR>This message is sent right before views of the widgets in the application
+are created from the window spec. This message is sent from <TT>#allButOpenFrom:
+</TT>in <TT>ApplicationModel</TT> (which itself can be redefined). At this
+time, no <TT>ValueHolders</TT> have been created yet - however, your application
+may create them with initialized values and place them in the <TT>builder</TT>'s
+bindings<I> </I>dictionary (if your aspect accessors return those).
+<BR>&nbsp;
+<LI>
+<B><TT>postBuildWith: <I>aBuilder</I></TT></B></LI>
+
+<BR>This message is sent after the views of the widgets have been created
+but before the application is finally opened. This message is also sent
+from <TT>#allButOpenFrom:.</TT> At this time, all <TT>ValueHolders</TT>
+have been created (by calls to your aspect accessor methods). Typically,
+this is a good place to perform any startup actions (such as reading directories,
+files etc. which are to be put into the <TT>ValueHolders</TT>).
+<BR>&nbsp;
+
+<LI>
+<B><TT>preOpenWith: <I>aBuilder</I></TT></B></LI>
+
+<BR>This message is sent right before the application's window is opened.
+<BR>&nbsp;
+
+<LI>
+<B><TT>postOpenWith: <I>aBuilder</I></TT></B></LI>
+
+<BR>This message is sent after the application's window has been opened.
+<BR>&nbsp;
+<LI>
+<B><TT>closeRequest / closeRequestFor: <I>aView</I></TT></B></LI>
+
+<BR>These message are sent when the application (or any of your applications
+top views) is about to be closed. If you redefine any of those, make certain
+that you invoke the original method via a super send - otherwise, your
+application may not be closable.
+
+<P>A redefinition of this method is a good place to confirm close requests
+of the user to the running application. For example, there can be opened
+a dialog asking the user whether the contents of the application.should
+be saved or wasted, before the application is going to shut down. If the
+user does not confirm, the super send is simply not performed.</UL>
+</UL>
+
+<HR>
+
+<P><IMG SRC="../../../icons/stx.gif" ALT="[stx-logo]" NOSAVE NOPRINT HEIGHT=48 WIDTH=47 ALIGN=CENTER>
+<TT>Copyright &copy; 1998 eXept Software AG, all rights reserved</TT>
+<BR>
+<HR>
+</BODY>
+</HTML>

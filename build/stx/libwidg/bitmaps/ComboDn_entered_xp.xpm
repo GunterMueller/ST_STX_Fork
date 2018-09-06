@@ -1,0 +1,38 @@
+/* XPM */
+static char *ComboDn_entered_xp_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"17 19 12 1",
+/* colors */
+"a c #DAE6FE",
+"b c #E6EEFC",
+"c c white",
+"d c #D9E3F6",
+"e c #C5D5FC",
+"f c #DCE6F9",
+"g c #CAD8FD",
+"h c #D4E1FC",
+"i c #4D6185",
+"j c #D8E3FC",
+"k c #E1EAFE",
+"l c #DBE3F8",
+/* pixels */
+"ccccccccccccccccc",
+"cbbbkffffflljkkfc",
+"cbbbbbbbbkkkkkffc",
+"cbbbbbbkkkkkkkffc",
+"ckbbbkkkkkaaaaffc",
+"ckbbbkkkkkaaaaffc",
+"cfbbkkkkkaaaaaafc",
+"cfbbkiakaaaikkkkc",
+"cfkkiiiaaaiiikkkc",
+"cfkkgiiiaiiikaafc",
+"clkkkkiiiiikkaafc",
+"cjkkkkeiiikkaaalc",
+"cjkkkkkkikaaaajjc",
+"chkkkkkkkkaaaajjc",
+"chkkkkkkkkaaaajjc",
+"chakkkkkkaaaaajjc",
+"chaaffffaaaajjjlc",
+"clllffffljjjjjjdc",
+"ccccccccccccccccc",
+};

@@ -1,0 +1,79 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Online documentation - Common Functions</Title>
+</HEAD>
+
+<BODY>
+<A HREF="../TOP.html"> <IMG SRC="../../icons/DocsUpArrow.gif" ALT="back"></A>
+
+<H1>Common Menu &amp; Edit Functions</H1>
+
+<UL>
+
+<LI><A NAME="CUT">Cut</A>
+<BR>
+<VAR>Cut</VAR> removes the selected text and places a copy into
+the <VAR>cut&amp;paste buffer</VAR> (<VAR>clipBoard</VAR>).
+<P>
+
+
+<LI><A NAME="PASTE">Paste</A>
+<BR>
+<VAR>Paste</VAR> inserts the contents of the <VAR>cut&amp;paste buffer</VAR> (<VAR>clipBoard</VAR>)
+and inserts it at the current cursor position.
+If there was a selection, the selection will be <VAR>replaced</VAR> by
+the contents of the <VAR>cut&amp;paste buffer</VAR>.
+<P>
+
+
+<LI><A NAME="REPLACE">Replace</A>
+<BR>
+see <VAR>Paste</VAR>
+<P>
+
+
+<LI><A NAME="UNDO">Undo</A>
+<BR>
+Undo the last editing operation.
+<P>
+
+
+<LI><A NAME="AGAIN">Again</A>
+<BR>
+<VAR>Again</VAR> repeats the last <VAR>Cut</VAR> or <VAR>Replace</VAR> operation after
+searching forward in the text for
+the next occurence of the relevant character sequence.
+<BR>
+For example, to change all occurences of <KBD>"foo"</KBD> by <KBD>"bar"</KBD> in your text,
+go to the first <KBD>"foo"</KBD>, select it, type <KBD>"bar"</KBD> and repeat this operation
+by pressing <VAR>again</VAR> until no more occurences are found in the text.
+<P>
+
+
+
+
+<LI><A NAME="ACCEPT">Accept</A>
+<BR>
+<VAR>Accepting</VAR> means "<VAR>take that text and make it permanent</VAR>".
+<P>
+In Smalltalk, most editing is modeless - this means, that your changes do not
+affect the underlying text or object until you say so by "<VAR>accepting</VAR>".
+<P>
+The exact meaning of "<VAR>accept</VAR>" depends on the context in which this command is executed:
+<UL>
+<LI>
+A fileBrowser will save the text in the edited file.
+<LI>
+A systemBrowser, will compile and install the code or class being edited.
+<LI>
+Other editors would save their model.
+</UL>
+
+</UL>
+
+
+<HR>
+Doc $Revision: 1.4 $ $Date: 2016-01-21 16:22:39 $
+</BODY>
+</HTML>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    emulate a "mixed" dtd that switches namespaces by
+    setting the xmlns attribute (= default namespace)
+    -->
+<!DOCTYPE html SYSTEM "fake-xhtml.dtd" [
+    <!ELEMENT math (equation, (equation)* ) >
+    <!ATTLIST math
+      id          ID             #IMPLIED
+      xmlns       CDATA          #FIXED 'http://localhost/fake-math'
+      >
+    <!ELEMENT equation (#PCDATA) >
+
+    <!ENTITY % Flow.mix " | math " >
+]>
+<html>
+    <head>
+        <title>Title</title>
+        <meta content="asdf" />
+    </head>
+    <body>
+
+        <h1>Heading Level 1</h1>
+
+        <p>This is a paragraph</p>
+
+        <math><equation> E = m c^2 </equation></math>
+
+    </body>
+</html>

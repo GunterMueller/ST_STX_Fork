@@ -1,0 +1,28 @@
+; View defaultStyle:#mswindows95MiniScroller
+;
+; $Header: /cvs/stx/stx/libview/styles/mswindows95_ca.style,v 1.2 2014-11-26 19:13:52 cg Exp $
+
+#include 'mswindows95.style'
+
+comment  'like win95, with non-hiding scrollbars on the left (+ block-cursor)'
+
+#if (Language == #german) or:[Language == #de]
+comment  'wie Win95, mit Scrollbars links, BlockCursor'
+#endif
+
+
+name                            #xxx
+
+scrollBar.neverMini              false
+scrollBar.position               #left
+scrollBar.hiding                 false
+scrolledView.margin              0
+scrollBar.spacing                1
+
+textCursor.type                  #block
+
+; thin scrollbars
+arrowButton.upFormFile                   'ScrollUp.w95.9.xbm'.
+arrowButton.downFormFile                 'ScrollDn.w95.9.xbm'.
+arrowButton.leftFormFile                 'ScrollLt.w95.9.xbm'.
+arrowButton.rightFormFile                'ScrollRt.w95.9.xbm'.

@@ -1,0 +1,292 @@
+"*
+ * Encoding: iso8859-1
+ *
+ * $Header$
+ *
+ * MIMEType: application/x-smalltalk-source
+ *
+ * ST/X startup configuration & command file:
+ *
+ * sample private.rc - file
+ *
+ * a copy of this file can (should) reside in $home/.smalltalk/private.rc or
+ * in the current directory - put all private preferences in here.
+ *
+ *
+ * notice, you will find some things enclosed in
+ *  ... thisIsMySystem ifTrue:[
+ *  ... claus ifTrue:[
+ *
+ * these are my personal preferences which will be
+ * ignored in your environment, but are taken in mine.
+ * That way, I dont have to maintain two different 'private.rc' files.
+ * (you may want to have a look into it - some is of general interest)
+ *"
+
+"/
+"/ define the language (you can also set the LANG-shell variable)
+"/ (currently #en, #de, #es and some #fr and #it are supported).
+"/ some fragments for other languages (japanese ;-) exist.
+"/ Setting it here will override the LANG variable setting,
+"/ if neither set here nor in LANG, #english is the default.
+"/ see (and enhance) the resource files
+"/
+"/ Smalltalk language:#de.
+"/ Smalltalk language:#en.
+
+"/
+"/ you may limit the amount of memory allocated to
+"/ dynamic compiled code ...
+"/ The default is unlimited;
+"/ If you run in a multiuser environment, or
+"/ short on swapSpace, a good limit is some 0.5 to 1Mb.
+"/
+
+"/ ObjectMemory dynamicCodeLimit:500000.
+
+"/
+"/ If local sources should have preference over source code management
+"/ (only useful, if you have the full version (including sourceCode mgmnt),
+"/ and CVS access is slow.
+"/
+"/ Class tryLocalSourceFirst:true.
+
+"/
+"/ this turns off error/fatal messages from the VM
+"/ (it does not really make sense to turn them off)
+"/
+"/ Smalltalk debugPrinting:false.
+
+"/
+"/ set the package for fileIns done below
+"/
+Project notNil ifTrue:[
+	|p|
+
+	p := Project new.
+	p package:#'goody-fileIn'.
+	Project current:p.
+].
+!
+
+|whoAmI domain thisIsMySystem thisIsExeptsDomain conf systemType incDir includes|
+
+whoAmI := OperatingSystem getLoginName.
+domain := OperatingSystem getDomainName.
+thisIsExeptsDomain := (domain = 'exept.de').
+thisIsMySystem := (whoAmI = 'cg') and:[thisIsExeptsDomain].
+
+thisIsMySystem ifTrue:[
+	"/
+	"/ I want the hostname to be prepended to a windows label
+	"/
+	StandardSystemView includeHostNameInLabel:true.
+].
+
+thisIsMySystem ifTrue:[
+	"/
+	"/ I prefer a smaller menu font
+	"/
+	"/ MenuView defaultFont:(MenuView defaultFont size:10).
+].
+
+"/ add my private directories to the systemPath ...
+"/ This does not make sense in your environment.
+"/ However, I leave the code here to show how its done.
+"/
+thisIsMySystem ifTrue:[
+	#(
+"/        '../../not_delivered'
+"/        '../../private_classes'
+"/        '../../fileIn/not_delivered'
+"/        '../../libpro'
+	 ) do:[:p |
+	p asFilename exists ifTrue:[
+		(Smalltalk systemPath includes:(p asFilename pathName)) ifFalse:[
+		Smalltalk systemPath addFirst:(p asFilename pathName).
+		]
+	]
+	].
+].
+
+"/ since smalltalk keeps track of which directories exist
+"/ in the path, this cache has to be flushed whenever new directories
+"/ are added to the system path:
+"/
+Smalltalk flushPathCaches.
+
+"/
+"/ color allocation strategy:
+"/
+"/ the default is to allocate from the colormap as required.
+"/ As long as the number of distinct colors used is less than the number
+"/ of available colors (which is usually the case) this leads to better looking
+"/ images.
+"/ However, if many images are to be displayed simulatiously, images displayed
+"/ first may steal too many colors required in images displayed later.
+"/ In this case, it is better to preallocate some colors, and dither all images
+"/ using theese. Of course, while making the worst case better, this makes
+"/ the best case worse. You can decide ...
+"/   Display depth == 8 ifTrue:[
+"/       Color getColors6x6x4.
+"/   ]
+
+"/ claus:
+"/     The history manager automatically adds a history line to changed
+"/     methods and optionally to a classes history method.
+"/     if you dont like this, comment the following lines.
+"/
+thisIsExeptsDomain ifTrue:[
+	HistoryManager notNil ifTrue:[
+	'private.rc [info]: activating HistoryManager...' infoPrintCR.
+	HistoryManager activate.
+	]
+].
+
+"/ claus:
+"/     I startup the rdoit server process;
+"/     (using rdoit to start ST/X views via window manager menus ...)
+"/     If you like (and want) this to be also started automatically,
+"/     replace the if- by 'true ifTrue:...' or remove the if.
+"/
+"
+thisIsMySystem ifTrue:[
+	'private.rc [info]: starting RDoItServer...' infoPrintCR.
+	Autoload autoloadFailedSignal handle:[:ex |
+	'private.rc [warning]: cannot load RDoItServer' errorPrintCR
+	ex return
+	] do:[
+	RDoItServer autoload.
+	RDoItServer start.
+	RDoItServer allowHost:'localhost'.
+	]
+].
+"
+
+"/ claus:
+"/     I dont want those warnings about stx features being non-portable ...
+"/     However, you should (at least when new to the system) see them.
+"/     Once you get bored about them, make the below unconditional.
+"/     (you can also turn them off in the Launchers settings menu ...)
+"/
+Compiler warnPossibleIncompatibilities:false.
+Compiler warnSTXSpecials:false.
+Compiler allowUnderscoreInIdentifier:true.
+Compiler warnUnderscoreInIdentifier:false.
+
+
+"/ set the package back to some useful default for programming
+"/ this is the package token assigned (by default) to all new methods/classes
+"/ (so you can use a browser on package=#private to find all of your new
+"/ stuff easily. (the conditional on Project being nonNil is for stripped down
+"/ systems without a Project class)
+
+Project notNil ifTrue:[
+	Project setDefaultProject.
+	"/ Project current package:#'private'.
+].
+!
+
+'MyWorkspace.wsp' asFilename exists ifFalse:[
+	'MyWorkspaceSample.wsp' asFilename exists ifTrue:[
+	'MyWorkspaceSample.wsp' asFilename copyTo:'MyWorkspace.wsp'
+	]
+].
+
+"/
+"/ any personal file (p_<username>.rc) ?
+"/
+Smalltalk fileIn:('p_' , OperatingSystem getLoginName , '.rc').
+
+(Smalltalk commandLine includes:'-q') ifFalse:[
+	"/
+	"/ Object infoPrinting:
+	"/      this turns off/on information messages from classes
+	"/      (such as 'D8IMAGE: allocating colors ...'
+	"/
+	"/ ObjectMemory infoPrinting
+	"/      this turns off/on information messages from the VM
+	"/      (such as 'MEM: chitty chatty ...'
+	"/
+
+	"/ Object infoPrinting:false.
+	"/ ObjectMemory infoPrinting:false.
+	OperatingSystem hasConsole ifTrue:[
+	Object infoPrinting:true.
+	ObjectMemory infoPrinting:true.
+	]
+].
+
+"/
+"/ startBlocks will be evaluated after the thread-scheduler have been started
+"/ and the displays event dispatcher is running.
+"/
+Smalltalk isPlugin ifFalse:[
+    |idx file|
+
+    Smalltalk addStartBlock:[
+        Display isNil ifTrue:[
+            '' errorPrintCR.
+            'Textmode (enter smalltalk expressions terminated by single exclamation mark;' errorPrintCR.
+            OperatingSystem isUNIXlike ifTrue:[
+                '          CTRL-D to leave line-by-line interpreter.)' errorPrintCR.
+            ] ifFalse:[
+                '          CTRL-Z to leave line-by-line interpreter.)' errorPrintCR.
+            ].
+            Smalltalk readEvalPrintLoop.            
+            Smalltalk exit.
+        ] ifFalse:[
+            |i fn|
+
+            "/
+            "/ start some views ...
+            "/ you can add all stuff you'd like to come up by default
+            "/ the first time.
+            "/
+
+            'private.rc [info]: starting Launcher...' infoPrintCR.
+            NewLauncher open.
+
+            ((Smalltalk commandLineArguments includes:'--quick')
+            or:[(Smalltalk commandLineArguments includes:'--faststart')
+            or:[(Smalltalk commandLineArguments includes:'--fastStart')]])
+            ifFalse:[
+                "/
+                "/ disable this if you don't like the other window to come up
+                "/
+                'private.rc [info]: starting SystemWorkspace...' infoPrintCR.
+                WorkspaceApplication openSystemWorkspace.
+            ].
+
+            UserPreferences current showTipOfTheDayAtStartup ifTrue:[
+                'private.rc [info]: starting DidYouKnow...' infoPrintCR.
+                DidYouKnowTipViewer open
+            ].
+
+            UserPreferences current flyByHelpActive ifTrue:[
+                FlyByHelp start
+            ].
+
+            "/ an additional --run <file> argument...
+            (i := Smalltalk commandLineArguments indexOf:'--run') ~~ 0 ifTrue:[
+                fn := Smalltalk commandLineArguments at:i+1.
+                ('private.rc [info]: executing "',fn,'"...') infoPrintCR.
+                Smalltalk fileIn:fn.
+            ]
+        ].
+    ].
+
+    idx := Smalltalk commandLineArguments indexOf:'--edit'.
+    idx ~~ 0 ifTrue:[
+    file := Smalltalk commandLineArguments at:idx+1.
+    Smalltalk commandLineArguments removeAtIndex:idx+1; removeAtIndex:idx.
+    Smalltalk addStartBlock:
+    	[
+    	(UserPreferences current changeSetBrowserClass)
+    		openOnFile:file asFilename
+    	].
+    ].
+].
+
+!
+

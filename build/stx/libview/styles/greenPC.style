@@ -1,0 +1,87 @@
+; View defaultStyle:#greenPC
+;
+; green PC - living in a box -- recycle you windows :-)
+;
+; I guess, you have never seen smalltalk views as charming as this ...
+;
+; fun style; like motif, but with different viewbackground
+; this style does not work on B&W displays
+;
+; On my SGI, this one looks great; on VGA's, the colors come out
+; a bit too dark.
+;
+; $Header: /cvs/stx/stx/libview/styles/greenPC.style,v 1.12 2014-11-26 20:02:48 cg Exp $
+
+previewFileName         'viewStyleSample_greenpc.png'
+
+#if Screen current hasGreyscales
+wooden             (Smalltalk imageFromFileNamed:'bitmaps/wood2H.tiff' inPackage:'stx:libwidg3')
+granite            (Smalltalk imageFromFileNamed:'bitmaps/granite3.tiff' inPackage:'stx:libwidg3')
+
+graniteLight       = granite lightened
+
+viewGrey           =wooden
+viewBackground     =wooden
+
+woodColor          =wooden averageColorIn:(0@0 corner:9@9)
+graniteColor       =granite averageColorIn:(0@0 corner:9@9)
+; woodColor          Color red:58 green:48 blue:8
+
+lightColor         =woodColor lightened
+shadowColor        =woodColor darkened darkened
+mediumColor        =woodColor darkened
+
+#endif
+
+#include 'motif.common'
+
+comment  'Fun style; "motif", with cute (back to nature) viewbackground.\Not recommended for slow display servers.'
+
+name #greenPC
+
+#if (Language == #german) or:[Language == #de]
+comment  'Fun Style; "motif" mit geändertem (zurück zur Natur) Hintergrund.\\Nicht sinnvoll bei langsamen Maschinen.'
+#endif
+
+#if Screen current hasGreyscales
+button.activeForegroundColor      Color white
+button.activeBackgroundColor      =granite
+button.foregroundColor            Color grey:80
+button.backgroundColor            =granite
+button.disabledBackgroundColor    =graniteLight
+
+radioButton.backgroundColor       =wooden
+radioButton.foregroundColor       Color black "Color grey:80"
+
+label.foregroundColor             Color black
+
+arrowButton.activeForegroundColor Color white
+arrowButton.foregroundColor       Color grey:80
+
+scroller.thumbColor               =granite "Color black"
+scroller.viewBackground           =wooden
+scroller.ghostColor               =shadowColor
+scroller.ghostLevel               -1
+
+selection.hilightFrameColor       Color white
+selection.hilightForegroundColor    (Color yellow)
+; selection.hilightBackgroundColor    (Color rgbValue:16rDFF0F8)
+; selection.disabledForegroundColor Color grey:20 "need darker grey for more contrast"
+selection.disabledForegroundColor =woodColor lightened
+selection.hilightStyle            #motifgreen
+menu.disabledForegroundColor      =woodColor lightened
+button.disabledForegroundColor    =woodColor lightened
+
+menu.viewBackground               =wooden
+menu.hilightFrameColor            Color white
+menu.hilightForegroundColor       (Color yellow)
+menu.hilightBackgroundColor       Color black
+
+; editField.backgroundColor       Color red:100 green:75 blue:75
+editField.backgroundColor         =woodColor lightened lightened
+
+html.backgroundColor                    =woodColor lightened lightened lightened
+html.anchorForegroundColor              =woodColor darkened
+html.visitedAnchorForegroundColor       =woodColor
+
+#endif

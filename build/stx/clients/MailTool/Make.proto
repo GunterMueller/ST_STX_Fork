@@ -1,0 +1,64 @@
+# $Header: /cvs/stx/stx/clients/MailTool/Make.proto,v 1.9 2016-01-14 14:49:09 mawalch Exp $
+#
+# -------------- no need to change anything below ----------
+
+TOP=../..
+MODULE=stx
+MODULE_DIR=clients/MailTool
+PACKAGE=$(MODULE):$(MODULE_DIR)
+SUBDIRS=
+RCSSOURCES=*.st Make.proto bitmaps/*.xbm resources/*.rs
+
+FILEIN=$(TOP)/fileIn
+DOCTOOL=$(TOP)/clients/DocTool
+SYSLIBS    = -lX11
+
+STCOPT=$(CLIENT_STCOPT)
+# OPT=-DSTATISTIC
+# DBG=-DDEBUG
+
+# CFLAGS     = -I$(INCLUDE) $(OS) $(OPT) $(DBG) $(DEFS)
+STCFLAGS   = -CC="$(CC)" -I. -I$(INCLUDE) $(STCOPT)
+
+LIBNAME=mailTool
+
+STARTUP_CLASS=MailTool
+STARTUP_SELECTOR="start"
+
+PROGS      = MailTool
+
+all::       $(PROGS)
+
+OBJS =      \
+	    MailView.o                  \
+	    MailHndlr.o                 
+
+DOCOBJS= \
+	    ../DocTool/DocView.o                        \
+	    ../DocTool/DocReader.o                      \
+	    ../DocTool/DisplPic.o                       \
+	    ../DocTool/DisplIcon.o              \
+	    ../DocTool/DisplText.o              
+
+MailTool::  main.o MailTool.obj $(DOCOBJS)
+	    $(LD) $(LDFLAGS) -o MailTool \
+		  $(CRT0) main.o mailTool$(OBJNAME) $(DOCOBJS) \
+				 $(LIBWIDGDIR)/libwidg.obj \
+				 $(LIBVIEWDIR)/libview.obj \
+				 $(LIBBASICDIR)/libbasic.obj \
+				 $(LIBRUNDIR)/hidata.o \
+				 $(LIBRUN) \
+				 $(MATHLIB) $(SYSLIBS) \
+				 $(OTHERLIBS) $(CRTN)
+	    @-rm -f main.o
+
+$(PROGS)::   $(INCLUDE)/stc.h $(INCLUDE)/stcIntern.h $(MAIN)
+
+MailTool.obj:: $(OBJS) obj
+
+libs:       $(LIBS)
+
+objs::  $(OBJS)
+
+# BEGINMAKEDEPEND
+# ENDMAKEDEPEND

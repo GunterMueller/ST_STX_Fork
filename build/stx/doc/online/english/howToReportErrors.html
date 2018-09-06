@@ -1,0 +1,257 @@
+<HTML>
+
+<HEAD>
+<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<TITLE>Smalltalk/X Online Documentation - How to Report Errors</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="TOP.html" INFO="Back to documentation's main page" > <IMG SRC="../icons/DocsUpArrow.gif" ALT="[up]"></A>
+
+<TABLE WIDTH=100%>
+<TR>
+<TD WIDTH=50%>  </TD>
+<TD WIDTH=50%><CITE>
+To err is human.
+<BR>We are human.
+</CITE></TD>
+</TR>
+</TABLE>
+
+<H1>How to Report Errors</H1>
+<P>
+
+This page is meant to give you a guideline on what should be done when an error
+happens and how they should be reported to others.
+
+<H2>Introduction</H2>
+
+Sooner or later, you will probably encounter a bug somewhere,
+and run into a debugger.
+If the bug happens to be in some of your own code,
+matters are obvious and you should fix the code.
+If it is encountered in a part of the ST/X base system,
+you've found a bug in ST/X.
+<P>
+First: Don't be afraid - Don't panic.
+<P>
+Smalltalk in general is pretty robust.
+That means, that bugs usually only have local effects.
+Even if some functionality in an application
+ has a defect, other parts of the system and usually also other parts
+ of the buggy application are not affected, and continue to function.
+<BR>
+
+<H2>What kind of bugs typically occurr ?</H2>
+
+From our experience, most bugs are "UndefinedObject does not understand"-kind of
+bugs. That means, that at some point in the program, a variable was
+not initialized and, as a consequence, a followup message was not understood.
+<P>
+Another class of bugs is related to assuming that something is in a container, which is not.
+I.e. when accessing a dictionary ("no such element"-bug) or when removing from an
+already empty container.
+<P>
+A bit more subtle are index bugs - often resulting from a previous search, which
+failed to find an element (and the bad index which is usually 0 is then used).
+<P>
+Although very seldom, but still occasionally happening are FileNotFound exceptions.
+<P>
+There could even still be code generator bugs in the compiler
+and even crashes of the support system (Virtual Machine).
+<BR>
+But, luckily, these are very very rare.
+
+
+
+<P>
+Interestingly, wrong type errors (i.e. sending a message to some object which it does not implement)
+are actually very rare (except for the UndefinedObject case above).
+This is in contrast to what many advocates of static typed languages promote.
+
+
+
+<H2>What should I do when a debugger opens up ?</H2>
+
+In most situations (>>90%), the bug does not affect other parts of the system,
+and it will still be usable, after you either ignore the bug (proceed/continue in the debugger),
+or abort the operation (click on the "Abort"-Button in the debugger).
+<P>
+A bug is proceedable, if it occurred in some notifier, message output, or draw
+function.
+<P>
+You should abort, if the bug produces followup errors
+(due to missing or wrong intermediate and return values).
+<BR>
+Remember, that the "abort" action in the debugger brings you right back into an application's
+main event handling loop - whatever action it was currently executing, will be aborted.
+<BR>
+That means: if it was performing a menu action, that menu action is aborted;
+if it was handling a keyStroke, that processing is aborted; and if it was doing a redraw,
+the redraw will be aborted.
+<P>
+Of course, whatever function it was performing will not be completed and you will see a partially
+drawn window, or a partially performed menu-function's result.
+<BR>
+If the error happened during a file-write operation, that file may now be incomplete and
+contain garbage - be careful to not loose any data.
+Most of the file-write operations in the ST/X system are aware of possible errors
+and will either keep a backup version of the file which is being overwritten,
+or first write into a new temporary file and rename that at the end,
+when the actual write has finished with success.
+So you should either have a backup version of the file around,
+or the original file unchanged.
+If your own program writes files, it is a good idea to use this strategy as well,
+because there is a non-zero chance for such failures, even if ST/X and
+your program work well
+(power failure, system crash/shutdown, communication failures,
+user interrupts etc.).
+<P>
+
+
+In some (rare) situations, the application in which the error occurred is corrupt
+(due to some internal state, which is now bad) and errors continue to pop up.
+One example is an invalid value (typically nil) which is used in a window's redraw
+operation. This will open a debugger whenever the view is about to be drawn,
+and again, when the debugger is closed and the window is uncovered.
+<BR>
+In that case, you should try to save any modified data and close that window
+(not ST/X as a whole), reopen the application and try again.
+If the application window does not react to a click on the close-icon,
+open a <A HREF="tools/misc/TOP.html#PROCESSMONITOR">Process Monitor</A> and terminate the application thread there.
+<P>
+There is also a menu function in the launcher ("Select window and destroy"),
+which lets you click on any window on the screen and close/destroy it.
+This menu function is especially useful to close windows which
+have somehow lost their window event handling thread.
+
+<P>
+In very rare situations, the whole system is corrupted and the only chance is to restart
+ST/X from the last snapshot. Thus it is useful to save snapshots from time to time.
+However, be sure that you don't write a snapshot of an already corrupted image over
+your previous (good) image file. A good strategy is to use names such as "<CODE>stN.img</CODE>",
+with N counted up. When you are certain that the state saved in "<CODE>stN.img</CODE>" was a good one,
+you can ocasionally remove older snapshots.
+<P>
+To start ST/X with one of your previous snapshots,
+enter "<CODE>smalltalk -i stN.img</CODE>".
+<P>
+The snapshot save utility keeps the previous snapshot image as "<CODE>st.bak</CODE>" around,
+which is sometimes helpful (to start ST/X with this backup-snapshot, enter "<CODE>smalltalk -i st.bak</CODE>").
+
+<H2>What if I have no good snapshot image file at all ?</H2>
+
+If all of the previous snapshot files (if any) got corrupted, or you deleted them by accident,
+you can still restart from scratch (i.e. without a snapshot) eihter by deleting "<CODE>st.img</CODE>"
+and then starting ST/X, or by telling ST/X to ignore the image with the <CODE>-I</CODE> flag as in "<CODE>stx -I</CODE>".
+<br>
+Of course, all of your changes will not be present initially;
+however, after opening a
+<A HREF="tools/cbrowser/TOP.html">Changes Browser</A> and re-applying all of you changes individually.
+Make sure to skip or stop before the change which was responsible for the crash (if it was one of your changes).
+<P>
+In addition to full snapshots, there is also a "Save Session Changes" option
+in the Launcher's file-menu.
+Open a change-browser on that, if you have a session-change-file
+available.
+
+<H2>Can I fix an error myself ?</H2>
+
+Of course you can - and you are welcome to do so !
+<P>
+Smalltalk systems are meant to be used, modified and adjusted. As opposed to closed
+systems, where you MUST call for and wait for bug fixes, Smalltalk is open and
+you are free to change things, and fix bugs right away.
+
+
+<H2>How should I report an error ?</H2>
+
+Of course, whether you fix a bug or not, it is useful and fair if you let others know
+about it, any possible workarounds and (if possible) even fixes, patches etc.
+
+<P>
+However, in order for us to be able to handle bug reports efficiently,
+we would like to ask you to include the following information in all bug reports:
+<OL>
+<LI>Platform
+<BR>
+That is the machine type, OperatingSystem-brand and OS-version.
+<BR>
+The reason is that often errors only happen in certain environments and are hard to reproduce on
+other systems. Especially, Windows systems often behave quite different from Unix systems...
+<P>
+
+<LI>ST/X version
+<BR>
+no comment - that's obvious. maybe the bug was already fixed in a newer version.
+<P>
+
+<LI>Description
+<BR>
+Information like "the system crashes", "it does not come up" or "it compiles wrong" etc.
+are obviously not very helpful.
+<BR>
+The bug should be described in as much detail as possible.
+<P>
+
+<LI>Scenario
+<BR>
+This is probably the most useful information: how did you get the error, and
+how can it be reproduced.
+If a bug cannot be reproduced, it is *VERY* difficult for us to fix it.
+<P>
+
+<LI>ST/X state information
+<BR>
+A *VERY* useful piece of information is the debugger's stack-backtrace,
+and it should be included in a bug report.
+<BR>
+To make this easy, the debugger provides two menu functions: "copy walkback stack"
+and "mail report".
+<BR>
+The first copies the walkback text into the clipboard, for inclusion into a bug report.
+<BR>
+The later provides a bug report template (including the walkback), and offers to send a report
+to us (eXept).
+<P>
+
+<LI>BugFix
+<BR>
+If you have a fix, please go ahead and publish it.
+The best form is as a patch in Smalltalk code-chunk format.
+This is the format in which the changes file is written.
+Individual patches are created either in the browser ("FileOut As" of an individual method),
+in the changes browser ("Save Change As")
+or as session changes (in the Launcher: "Save Session Changes").
+
+</OL>
+
+Starting with Summer 2004, there is a central service for ST/X bug tracking, based upon
+the <B>Bugzilla</B> bugtracking tool.
+Please report any bug via the webservice at: "<A HREF="http://bugs.exept.de/">http://bugs.exept.de</A>".
+
+
+<H2>Summary</H2>
+
+Don't fear the bug - they are part of human life!
+<P>
+
+
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../icons/stx.gif" ALT="[stx-logo]">
+<BR>
+Copyright © 2003 eXept Software AG, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+</BODY>
+<HR>
+Doc $Revision: 1.18 $ $Date: 2016-11-04 00:18:58 $
+</BODY>
+</HTML>

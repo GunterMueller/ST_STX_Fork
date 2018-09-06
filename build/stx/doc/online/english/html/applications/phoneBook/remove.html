@@ -1,0 +1,53 @@
+<HTML>
+<HEAD>
+  <TITLE>Remove a new telephone number</TITLE>
+
+  <SCRIPT language="smalltalkScript">
+
+	!methods!
+
+	removeFromDB
+	    |name db homeDir phoneDataBase message|
+
+	    name := window document forms entryForm nameField contents.
+	    name withoutSeparators isEmpty ifTrue:[^ self].
+
+	    homeDir := OperatingSystem getHomeDirectory.
+	    phoneDataBase := homeDir asFilename construct:'.phone.db'.
+
+	    db := PersistencyManager file:phoneDataBase pathName.
+	    (db includesKey:name) ifTrue:[
+		db removeKey:name.
+		message := ('Entry for ' , name , ' removed.') asText allBold
+	    ] ifFalse:[
+		window view device beep.
+		message := ('No entry for ' , name , '.') 
+				asText
+				emphasizeAllWith:(Array with:#color->Color red
+							with:#bold)
+	    ].
+	    window view showInfo:message.
+	    db release.
+	! !
+
+  </SCRIPT>
+</HEAD>
+
+
+<BODY>
+  <H1>Remove Phone number</H1>
+
+  <FORM NAME=entryForm ONSUBMIT="removeFromDB">
+    <TABLE>
+     <TR>
+       <TH> Name:   <TD>  <INPUT SIZE=40 NAME="nameField">
+    </TABLE>
+
+    <INPUT TYPE="button" VALUE="accept ..." onclick="removeFromDB">
+  </FORM>
+</BODY>
+
+<HR>
+  <A HREF="TOP.html">back to main menu</A>
+</HTML>
+

@@ -1,0 +1,44 @@
+a Digital Logic simulator (in construction)
+
+Its not finished and might have bugs ....
+
+start with:
+
+       LogicTool open
+
+(will be autoloaded)
+
+Inspired by a similar program I've seen once on a mac.
+A nice example for object oriented programming (easy to
+add new elements, without changing the view/simulation
+classes)
+
+This was written a long time ago (especially before I had
+resource files - the dual-language handling is stupid).
+
+todo:
+    - add more primitive elements (flip-flops, clock-generators etc)
+    - add a library of standard ttl-components
+    - simulate exact timing (i.e. have the exact delays (in ns) somewhere
+      around, simulate using a priority queue of upcoming changes
+    - add logic probes, logic analizer, printout of simulation results etc.
+    - and much more
+
+note:
+    - use 'simulation start' in the pull-down menu
+
+
+the bitmaps-subdirectory contains the bitmaps for the gate-icons. 
+
+the _g bitmaps are for germans (europeans ?)
+the others are for americans.
+
+The basename is the filename must be the gate-classes name.
+(it is constructed from the classname)
+
+NO WARRANTY
+This is a demo client or goody. If it works, use it for
+your application, subclass it or extract code from it.
+If it does not work as expected, fix it and return the
+changes to cg@ssw.de. Thanks.
+

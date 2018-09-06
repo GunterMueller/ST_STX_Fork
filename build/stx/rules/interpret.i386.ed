@@ -1,0 +1,19 @@
+/jmp \*/
+-
+-
+p
+d
+p
+d
++
+//
+-
+-
+p
+d
+p
+d
++
++
+w interpret.S
+q

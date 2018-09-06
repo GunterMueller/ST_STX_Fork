@@ -1,0 +1,303 @@
+#!/bin/sh
+
+# $Header: /opt/data/cvs/stx/goodies/xmlsuite/xquery/distutils/src-unix/bin/xquery-workspace,v 1.1 2007-02-11 22:58:21 vranyj1 Exp $
+#
+#
+# startup script for smalltalk
+# actually, simply calls stx, passing all arguments.
+#
+
+# In previous versions, smalltalk used to be the executable itself.
+# This lead to problems on systems, where things like LD_LIBRARY_PATH
+# should be set in advance. 
+# Now, here is a place to do such things ...
+
+#
+# -x name specifies an explicit executable
+#         to avoid executing another stx from some directory along the PATH
+#         (i.e to force use: ./smalltalk -x ./stx)
+#
+# -X name specifies an explicit path to the stx executable 
+#         to avoid executing another stx from some directory along the PATH
+#         (i.e to force use: ./smalltalk -X .)
+#         [almost the same as above]
+#
+# -ldd    show ldd-output (to debug, which libs are loaded)
+#
+# all other args go to stx & the user classes
+#
+
+export STX_PACKAGEPATH=$(dirname $0)/../applications/xquery-workspace/packages:$(dirname $0)/../packages
+
+
+if [ "$1" = "--help" ]
+then
+    echo
+    echo "usage: smalltalk [-x prog] [-X dir] [--ldd] [--gdb] stx-args"
+    echo
+    echo "Args to the smalltalk startup shell script:"
+    echo "   -x prog    use prog instead of stx as executable"
+    echo "   -X dir     use stx from dir instead of default (PATH)"
+    echo "   --ldd      show which shared libraries are used"
+    echo "   --gdb      run with gdb-Debugger (type r in debugger to start)"
+    echo "   stx-args   stx arguments as follows."
+    echo
+    echo "STX args:"
+fi
+
+STX=stx-bin
+STX_BINDIR=.
+DEBUGGER=
+
+if test -x `dirname $0`/stx-bin; then
+    STX_BINDIR=`dirname $0`
+    STX=$STX_BINDIR/stx-bin
+#    cd $STX_BINDIR
+fi
+
+if [ "$STX_LIBDIR" != "" ]
+then
+    if [ ! -f $STX_LIBDIR/smalltalk.rc ]
+    then
+	echo "smalltalk [warning]: ignore wrong STX_LIBDIR setting"
+	STX_LIBDIR=""
+    fi
+fi
+
+
+# notice: STXLIBDIR is filled in here by install-sh script
+if test -z "$STX_LIBDIR"
+then
+	bindir=`dirname $0`
+	case "$bindir" in
+	    /* )
+		;;
+	    .* )
+		bindir=`( cd $bindir; pwd ) 2> /dev/null`
+		;;
+	esac
+	if [ -d ${bindir}/../lib ]
+	then
+	    STX_LIBDIR=`cd ${bindir}/../lib ; pwd`
+	fi
+fi
+
+if [ -z "$STX_LIBDIR" ]
+then
+    if [ -d ../lib ]
+    then
+	STX_LIBDIR=`cd ../lib ; pwd`
+    fi
+fi
+if [ ! -d "$STX_LIBDIR" ]
+then
+    if [ -d ../lib ]
+    then
+	STX_LIBDIR=`cd ../lib ; pwd`
+    fi
+fi
+
+if test -z "$STX_PACKAGEDIR"
+then
+    if [ -d ../packages ]
+    then
+		STX_PACKAGEDIR=`cd .. ; pwd`
+    else
+	if [ -d $STX_LIBDIR/../packages ]
+	then
+	    STX_PACKAGEDIR=`cd $STX_LIBDIR/../packages ; pwd`
+	else
+	    if [ -f $STX_BINDIR/smalltalk.rc ]
+	    then
+			STX_PACKAGEDIR=`cd $STX_BINDIR/../../.. ; pwd`
+	    fi
+	fi
+    fi
+fi
+
+if test -z "$STX_TOPDIR"
+then
+    if [ -f ../lib/smalltalk.rc ]
+    then
+	STX_TOPDIR=`cd .. ; pwd`
+    else
+	if [ -f $STX_LIBDIR/../lib/smalltalk.rc ]
+	then
+	    STX_TOPDIR=`cd $STX_LIBDIR/.. ; pwd`
+	else
+	    if [ -f $STX_BINDIR/smalltalk.rc ]
+	    then
+		STX_TOPDIR=`cd $STX_BINDIR/../.. ; pwd`
+	    fi
+	fi
+    fi
+fi
+
+# echo STX_LIBDIR is $STX_LIBDIR
+# echo STX_TOPDIR is $STX_TOPDIR
+echo STX_PACKAGEDIR is $STX_PACKAGEDIR
+
+export STX_LIBDIR STX_PACKAGEDIR STX_TOPDIR
+
+# echo STX is $STX
+
+if [ "$1" = "-x" ]
+then
+    shift
+    STX=$1
+    shift
+fi
+
+if [ "$1" = "-X" ]
+then
+    shift
+    STX=$1/stx
+    shift
+fi
+
+if [ "$1" = "--gdb" ]
+then
+    shift
+    DEBUGGER=gdb
+fi
+
+if [ "$1" = "--ldd" ]
+then
+    shift
+    DEBUGLIB=yes
+fi
+
+#
+#
+# some have Xlibs in /usr/openwin/lib ...
+#
+if [ -d /usr/openwin/lib ]
+then
+    if [ "$LD_LIBRARY_PATH" != "" ]
+    then
+	LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/openwin/lib:/usr/local/lib/smalltalk/lib
+    else
+	LD_LIBRARY_PATH=/usr/openwin/lib:/usr/local/lib/smalltalk/lib
+    fi
+    if [ "$SHLIB_PATH" != "" ]
+    then
+	SHLIB_PATH=$SHLIB_PATH:/usr/openwin/lib:/usr/local/lib/smalltalk/lib
+    else
+	SHLIB_PATH=/usr/openwin/lib:/usr/local/lib/smalltalk/lib
+    fi
+else
+    if [ "$LD_LIBRARY_PATH" != "" ]
+    then
+	LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/smalltalk/lib
+    else
+	LD_LIBRARY_PATH=/usr/local/lib/smalltalk/lib
+    fi
+    if [ "$SHLIB_PATH" != "" ]
+    then
+	SHLIB_PATH=$SHLIB_PATH:/usr/local/lib/smalltalk/lib
+    else
+	SHLIB_PATH=/usr/local/lib/smalltalk/lib
+    fi
+fi
+
+#
+# my own libs may be found in STX_LIBDIR/lib
+# STX_LIBDIR is to be set to the top of the smalltalk installation
+# (i.e. where all the .rc files are located)
+#
+
+if [ "$STX_LIBDIR" != "" ]
+then
+    if [ "$STX_LIBDIR" != "/usr/local/smalltalk" ]
+    then
+	LD_LIBRARY_PATH=$STX_LIBDIR:$STX_LIBDIR/lib:$LD_LIBRARY_PATH
+	SHLIB_PATH=$STX_LIBDIR:$STX_LIBDIR/lib:$SHLIB_PATH
+    fi
+else
+    STX_LIBDIR=$STX_BINDIR
+fi
+
+#
+# and in STX_BINDIR
+#
+
+if [ "$STX_BINDIR" != "" ]
+then
+    if [ "$STX_BINDIR" != "/usr/local/bin" ]
+    then
+	LD_LIBRARY_PATH=$STX_BINDIR:$LD_LIBRARY_PATH
+	SHLIB_PATH=$STX_BINDIR:$SHLIB_PATH
+    fi
+fi
+
+LD_LIBRARY_PATH=.:./lib:$LD_LIBRARY_PATH
+SHLIB_PATH=.:./lib:$SHLIB_PATH
+export LD_LIBRARY_PATH
+export SHLIB_PATH
+
+#
+# if started via ./smalltalk, prepend . to the PATH 
+# (to allow test of ./stx even when stx is found along the PATH)
+#
+case $0 in
+    ./*)
+	PATH=.:$PATH
+	export PATH
+	;;
+esac
+
+#
+# debugging which stx & shared libs are used ...
+#
+whichOne=`/bin/sh -c "type $STX"`
+if [ "$STX" = "stx" ]
+then
+  if [ -f stx ]
+  then
+    whichOne=`/bin/sh -c "type stx"`
+    if [ "$whichOne" != "stx is ./stx" ]
+    then
+      echo "************* WARNING the executed" $whichOne
+      echo "************* (may not be appropriate for used shared libs)"
+      echo "************* Try './smalltalk -ldd' for more details"
+      echo "************* or force the local stx to be used with"
+      echo "************* './smalltalk -x ./stx'"
+      echo
+    fi
+  fi
+fi
+
+if [ "$DEBUGLIB" = "yes" ]
+then
+  echo "used " $whichOne
+  echo "used LD_LIBRARY_PATH is " $LD_LIBRARY_PATH
+  echo "used SHLIB_PATH is " $SHLIB_PATH
+  echo "used STX_LIBDIR is " $STX_LIBDIR
+  case `uname` in
+    HP-UX*)
+      chatr $STX
+      ;;
+
+    *)
+      ldd -r $STX
+      ;;
+  esac
+fi
+
+#
+# how did HP mess up things so badly ?
+# It takes a veeeery long time for stx to start
+# (the spinning wheel is shown when stx's main 
+#  starts to run - all the time in between is
+#  spent in the systems loader ...)
+#
+# if [ "`uname`" = "HP-UX" ]
+# then
+#     echo "Please be patient - hp systems are very slow."
+# fi
+
+PATH=$PATH:$STX_BINDIR
+export PATH
+# echo PATH is $PATH
+# echo DISPLAY is $DISPLAY
+exec $DEBUGGER $STX -f xquery-workspace.rc ${1+"$@"}

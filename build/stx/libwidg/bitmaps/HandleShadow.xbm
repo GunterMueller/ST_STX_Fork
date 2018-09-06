@@ -1,0 +1,4 @@
+#define HandleShadow_width 8
+#define HandleShadow_height 8
+static char HandleShadow_bits[] = {
+   0x3c, 0x06, 0x03, 0x03, 0x03, 0x03, 0x02, 0x00};

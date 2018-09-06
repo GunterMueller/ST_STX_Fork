@@ -1,0 +1,71 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Help - Database Repository Setup Dialog</Title>
+</HEAD>
+
+<BODY>
+
+<H1>Database Repository Setup Dialog</H1>
+
+<H2><A NAME="INDEX">Help index</A></H2>
+
+<UL>
+ <LI><A HREF="#INTRODUCTION">Introduction</A>
+ <LI><A HREF="#SETTINGS">Settings Dialog</A>
+ <UL>
+   <LI><A HREF="#DEFAULT_ROOT">Root Default</A>
+   <LI><A HREF="#PERMODULE_ROOT">Root per Module</A>
+ </UL>
+</UL>
+
+<H2><A NAME="INTRODUCTION" HREF="#INDEX">Introduction</A></H2>
+
+This source code manager uses a relational database for source code version management.
+It is currently being developed and cannot be used yet for serious project work.
+<P>
+For a general introduction to source code management,
+please consult the
+<A HREF="../../programming/sourcemanager.html">
+"<I>Programmer's Guide to ST/X - Sourcecode & Revision Management</I>"</A>.
+
+<H2><A NAME="SETTINGS" HREF="#INDEX">Settings Dialog</A></H2>
+
+<H3><A NAME="DEFAULT_ROOT" HREF="#INDEX">Root Default</A></H3>
+
+Specifies the root directory of the repository for all classes which do not
+belong to a module listed in the root-per-module list.
+<BR>
+I.e. its the fallback root used for all other classes, not listed below.
+
+
+
+<H3><A NAME="PERMODULE_ROOT" HREF="#INDEX">Root per Module</A></H3>
+
+In ST/X, class packages form a hierarchical tree and are mapped in the
+repository to source files located in subdirectories below the so called
+module root. The module itslef is specified by the first component of a package
+path.
+For example:
+<br>
+The "Array"-class is found in the "stx:libbasic" package.
+<BR>Therefore, its module is "stx" and its version source files are found in the "libbasic"
+sub-directory, of the repository which has been associated to the "stx" module.
+<P>
+This allows placing different packages into a separate code repositories.
+<BR>
+<P>
+
+
+<HR>
+<P>
+<P>
+Copyright &copy;  eXept Software AG, all rights reserved
+<P>
+<P>
+
+<HR>
+Doc $Revision: 1.4 $ $Date: 2012-06-02 07:28:22 $
+
+</BODY>
+</HTML>

@@ -1,0 +1,136 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Help - Documentation for the File Service</Title>
+</HEAD>
+<Body>
+
+<H1>File Service Settings</H2>
+
+The File-service simply retrieves regular files from the file-system
+as answer to a request.
+<BR>
+
+
+
+<H2><A NAME="INDEX">Help index</A></H2>
+
+<UL>
+<LI><A HREF="#ROOT_DIR">Service Root Directory</A>
+<LI><A HREF="#DEFAULT_FILENAME">Default Filename</A>
+<LI><A HREF="#DIRECTORY_LISTING_ALLOWED">Directory Listing Allowed</A>
+<LI><A HREF="#SHOW_WORLD_READABLE_ONLY">Show World Readable Files Only</A>
+<LI><A HREF="#ALLOW_REMOVE_FILE">Allow Remove File</A>
+<LI><A HREF="#CHECK_REFERRER">Check Referrer (Inhibit Cross Links)</A>
+<LI><A HREF="#MAX_CACHE_DOCUMENT_SIZE">Max Cache Document Size</A>
+<LI><A HREF="#MAX_CACHE_SIZE">Max Nr. of Cached Files</A>
+<LI><A HREF="#CACHE_EXPIRATION_DELTA">Cache Expiration Delta</A>
+<LI><A HREF="#EXPIRATION_DELTA">Expiration Delta</A>
+</UL>
+
+<HR>
+
+<H2><A NAME="ROOT_DIR" HREF="#INDEX">Service Root Directory</A></H2>
+
+    Specifies the directory which holds the service's files.
+<p>
+
+
+
+<H2><A NAME="DEFAULT_FILENAME" HREF="#INDEX">Default Filename</A></H2>
+
+    Name of the file which is answered, if the requested file is not found.
+<BR>
+    If left empty, an error response will be generated for such a request.
+<P>
+
+
+<H2><A NAME="DIRECTORY_LISTING_ALLOWED" HREF="#INDEX">Directory Listing Allowed</A></H2>
+
+    If on, clients are allowed to list the contents of a directory (by providing the directories
+    name in the URL).
+<BR>
+    By default, the contents of a directory is not listed to clients,
+    which means that a client needs to know a documents name (either via a link,
+    or by other communication, or by guess)
+<P>
+
+
+<H2><A NAME="SHOW_WORLD_READABLE_ONLY" HREF="#INDEX">Show World Readable Files Only</A></H2>
+
+    If on, only world-readable files are shown and provided.
+    If off, all files which are accessible by the user-rights of the executing Smalltalk
+    executable are accessible by clients.
+<BR>
+    By default, only world-readable files are visible to clients, for security reasons.
+<P>
+
+
+<H2><A NAME="ALLOW_REMOVE_FILE" HREF="#INDEX">Allow Remove File</A></H2>
+
+    If on, clients are allowed to remove files on the server.
+    This maz be useful if a directorz is used as a black-board or container for
+    file exchange (i.e. upload/download directory), and the access is restricted by
+    the authorization mechanism to a limited set of users.
+<BR>
+    By default, this is disabled, for security reasons.
+<P>
+
+
+<H2><A NAME="CHECK_REFERRER" HREF="#INDEX">Check Referrer (Inhibit Cross Links)</A></H2>
+
+    If on, only allow files to be accessed which are referred from another document
+    within originated from this host. I.e. do not allow cross-site references to
+    these files from other sites and do not allow accesses which have been directly entered
+    into the browser's URL-field by the user.
+<BR>
+    Notice, that this depends upon the HTTP-referrer field, which can be easily faked by
+    modified browsers or hget-like programs. It is therefore not useful for any security or
+    access control. It does, however, at least potentially reduce the amount of cross-site
+    accesses.
+<P>
+
+
+
+<H2><A NAME="MAX_CACHE_SIZE" HREF="#INDEX">Max Nr. of Cached Files</A></H2>
+
+    The number of file documents that will be held in memory for fast access.
+<P>
+
+
+
+
+<H2><A NAME="MAX_CACHE_DOCUMENT_SIZE" HREF="#INDEX">Max Cache Document Size</A></H2>
+
+    The maximum size of a file document for caching.
+    Files larger than that are not cached.
+<P>
+
+
+
+<H2><A NAME="CACHE_EXPIRATION_DELTA" HREF="#INDEX">Cache Expiration Delta</A></H2>
+
+    Specifies the amount of time (in seconds),
+    after which files which have not been accessed will be removed from the cache.
+<p>
+
+
+
+<H2><A NAME="EXPIRATION_DELTA" HREF="#INDEX">Expiration Delta</A></H2>
+
+    Specifies the files expiration time (in hours) as reported to the web-browser.
+    This is the time the browser is allowed to keep a local copy.
+
+
+<HR>
+<P>
+<P>
+Copyright &copy; 2003-2008 eXept Software AG, all rights reserved
+<P>
+<P>
+
+<HR>
+Doc $Revision: 1.4 $ $Date: 1997/08/07 15:06:09 $
+
+</BODY>
+</HTML>

@@ -1,0 +1,31 @@
+/* XPM */
+static char *valencian_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 20 4 1",
+/* colors */
+"a c #CC3300",
+"b c #003399",
+"c c #006600",
+"d c #FFCC00",
+/* pixels */
+"bbbbbbdaaddddddddddddddddddddddd",
+"bbbbbbdaaddddddddddddddddddddddd",
+"bbbdbbdaaddddddddddddddddddddddd",
+"bbdddddccaaaaaaaaaaaaaaaaaaaaaaa",
+"bbbdbbdccaaaaaaaaaaaaaaaaaaaaaaa",
+"bbbbbddaaddddddddddddddddddddddd",
+"bbdddbdaaddddddddddddddddddddddd",
+"bbbbbddccaaaaaaaaaaaaaaaaaaaaaaa",
+"bbbbbbdccaaaaaaaaaaaaaaaaaaaaaaa",
+"bbbdbbdaaddddddddddddddddddddddd",
+"bbdddddaaddddddddddddddddddddddd",
+"bbbdbbdccaaaaaaaaaaaaaaaaaaaaaaa",
+"bbbbbddccaaaaaaaaaaaaaaaaaaaaaaa",
+"bbdddbdaaddddddddddddddddddddddd",
+"bbbbbddaaddddddddddddddddddddddd",
+"bbbdbbdccaaaaaaaaaaaaaaaaaaaaaaa",
+"bbdddddccaaaaaaaaaaaaaaaaaaaaaaa",
+"bbbdbbdaaddddddddddddddddddddddd",
+"bbbbbbdaaddddddddddddddddddddddd",
+"bbbbbbdaaddddddddddddddddddddddd",
+};

@@ -1,0 +1,13 @@
+*.sth
+*.STH
+*.sc
+objbc
+objvc
+objmingw
+*.res
+ntLibInit.c
+*.log
+results
+modules
+st.chg
+*.c

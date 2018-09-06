@@ -1,0 +1,257 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X GUI classes - Color and Cursor representation</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="TOP.html#I_COLLECTIONS">     <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="image.html"> <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<P>
+Classes you should know about are:
+<UL>
+<LI> <A HREF="#COLOR" NAME="I_COLOR">Color</A>
+<LI> <A HREF="#CURSOR" NAME="I_CURSOR">Cursor</A>
+</UL>
+
+
+
+<H2><A href="#I_COLOR" NAME="COLOR">Color</A></H2>
+<P>
+This class implements a machine independent represenation of colors.
+Your application will run unchanged, independent of the type of display (b & w,
+greyscale or color) and resolution (4bit, 8bit etc).
+<BR>
+On systems with lower color resolution, colors are automatically represented
+as dithered patterns to approximate the desired look.
+<BR>
+All resource management is done automatically - colors are freed in the display
+when no longer needed (you don't have to manually keep track of which colors are
+still in use).
+<P>
+In most places, patterns can be used instead of pure colors for drawing.
+<P>
+Colors can be defined by name, by R/G/B components or by H/L/S values.
+<BR>
+For <CITE>ST-80</CITE> compatibility, a subclass of <CODE>Color</CODE> exists
+(named <CODE>ColorValue</CODE>) which expects its r/g/b components in fractions
+of 1 instead of percentage values.
+<BR>
+Some typical messages used with Color are:
+<P>
+<UL>
+<LI> creation:
+<CODE><PRE>
+<VAR>aColor</VAR> := Color red:<VAR>redPercent</VAR> green:<VAR>greenPercent</VAR> blue:<VAR>bluePercent</VAR>
+</PRE></CODE>
+
+<LI> creation (by h/l/s):
+<CODE><PRE>
+<VAR>aColor</VAR> := Color hue:<VAR>hueValue</VAR> light:<VAR>lightPercent</VAR> saturation:<VAR>saturationPercent</VAR>
+</PRE></CODE>
+
+<LI> colorcell creation (a writable colorcell):
+<CODE><PRE>
+<VAR>aColor</VAR> := Color variableColorOn:<VAR>aDevice</VAR>
+</PRE></CODE>
+
+<LI> creation (<CITE>ST-80</CITE> compatibility):
+<CODE><PRE>
+<VAR>aColor</VAR> := ColorValue red:<VAR>redFraction</VAR>green:<VAR>greenFraction</VAR> blue:<VAR>blueFraction</VAR>
+</PRE></CODE>
+
+<LI> asking for a color component:
+<CODE><PRE>
+<VAR>redPercentage</VAR> := <VAR>aColor</VAR> red
+</PRE></CODE>
+
+<LI> asking for its hue:
+<CODE><PRE>
+<VAR>hueValue</VAR> := <VAR>aColor</VAR> hue
+</PRE></CODE>
+</UL>
+
+uses of color instances (typically with views):
+<UL>
+<LI> setting the paint color:
+<CODE><PRE>
+<VAR>someView</VAR> paint:<VAR>aColor</VAR>.
+<VAR>someView</VAR> displayLineFrom:<VAR>point1</VAR> to:<VAR>point2</VAR>.
+</PRE></CODE>
+<LI> setting the views background color:
+<CODE><PRE>
+<VAR>someView</VAR> viewBackground:<VAR>aColor</VAR>.
+</PRE></CODE>
+<LI> setting a buttons color:
+<CODE><PRE>
+<VAR>aButton</VAR> backgroundColor:<VAR>aColor</VAR>.
+<VAR>aButton</VAR> foregroundColor:<VAR>aColor</VAR>.
+</PRE></CODE>
+</UL>
+
+<P>
+For example, setting the foreground color of a button is
+as simple as:
+<A TYPE="example">
+<CODE><PRE>
+    |someButton|
+
+    someButton := Button label:'hello'.
+    someButton foregroundColor:(Color red:100 green:0 blue:0).
+    someButton open
+</PRE></CODE>
+</A>
+<h5>Notice, you can execute the above code example by clicking on it ...</h5>
+
+<P>
+Press here for more details about:
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:Color backRef:'color.html'">
+<CODE>Color</CODE></A>.
+
+
+
+<H2><A HREF="#I_CURSOR" NAME="CURSOR">Cursor</A></H2>
+<P>
+Instances of this class represent cursors; both a number of standard cursors
+(such as hourglass, arrow, textCursor etc.) and user defined cursors are
+supported.
+<BR>
+Typical uses cursors are:
+<P>
+<UL>
+
+<LI> creation (a standard cursor):
+<CODE><PRE>
+<VAR>aCursor</VAR> := Cursor normal
+</PRE></CODE>
+
+<LI> creation (a standard cursor):
+<CODE><PRE>
+<VAR>aCursor</VAR> := Cursor wait
+</PRE></CODE>
+
+<LI> creation (from a bitmap):
+<CODE><PRE>
+<VAR>aCursor</VAR> := Cursor extent:<VAR>extent</VAR> fromArray:<VAR>bytes</VAR> offset:<VAR>hotSpot</VAR>
+</PRE></CODE>
+
+<LI> creation (from a bitmap, both image & mask are given):
+<CODE><PRE>
+<VAR>aCursor</VAR> := Cursor extent:<VAR>extent</VAR> sourceArray:<VAR>bytes</VAR> maskArray:<VAR>maskBytes</VAR> offset:<VAR>hotSpot</VAR>
+</PRE></CODE>
+
+</UL>
+
+<BR>
+Examples:
+<P>
+A standard cursor:
+<A TYPE="example">
+<CODE><PRE>
+    |someView|
+
+    someView := View new.
+    someView cursor:(Cursor wait).
+    someView open
+</PRE></CODE>
+</A>
+
+<P>
+
+a bitmap cursor:
+<A TYPE="example">
+<CODE><PRE>
+    |someView|
+
+    someView := View new.
+    someView cursor:(Cursor
+			extent:16@16
+			fromArray:#(2r11111111 2r11111111
+				    2r11000000 2r00000011
+				    2r10100000 2r00000101
+				    2r10010000 2r00001001
+				    2r10001000 2r00010001
+				    2r10000100 2r00100001
+				    2r10000010 2r01000001
+				    2r10000001 2r10000001
+				    2r10000001 2r10000001
+				    2r10000010 2r01000001
+				    2r10000100 2r00100001
+				    2r10001000 2r00010001
+				    2r10010000 2r00001001
+				    2r10100000 2r00000101
+				    2r11000000 2r00000011
+				    2r11111111 2r11111111)
+			offset:-8 @ -8).
+    someView open
+</PRE></CODE>
+</A>
+
+a bitmap cursor with a mask:
+<A TYPE="example">
+<CODE><PRE>
+    |someView|
+
+    someView := View new.
+    someView cursor:(Cursor
+			extent:16@16
+		      sourceArray:#(2r11111111 2r11111111
+				    2r11000000 2r00000011
+				    2r10100000 2r00000101
+				    2r10010000 2r00001001
+				    2r10001000 2r00010001
+				    2r10000100 2r00100001
+				    2r10000010 2r01000001
+				    2r10000001 2r10000001
+				    2r10000001 2r10000001
+				    2r10000010 2r01000001
+				    2r10000100 2r00100001
+				    2r10001000 2r00010001
+				    2r10010000 2r00001001
+				    2r10100000 2r00000101
+				    2r11000000 2r00000011
+				    2r11111111 2r11111111)
+
+			maskArray:#(2r11111111 2r11111111
+				    2r11111111 2r11111111
+				    2r11110000 2r00000111
+				    2r11111000 2r00011111
+				    2r11011100 2r00111011
+				    2r11001110 2r01110011
+				    2r11000111 2r11100011
+				    2r11000011 2r11000011
+				    2r11000011 2r11000011
+				    2r11000111 2r11100011
+				    2r11001110 2r01110011
+				    2r11011100 2r00111011
+				    2r11111000 2r00011111
+				    2r11110000 2r00001111
+				    2r11111111 2r11111111
+				    2r11111111 2r11111111)
+			offset:-8 @ -8).
+    someView open
+</PRE></CODE>
+</A>
+
+<P>
+Press here for more details about:
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:Cursor backRef:'color.html'">
+<CODE>Cursor</CODE></A>.
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif">
+Copyright © 1995 Claus Gittinger Development & Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.20 $ $Date: 2016-01-21 16:22:39 $
+</BODY>
+</HTML>

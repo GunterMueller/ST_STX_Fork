@@ -1,0 +1,26 @@
+/* XPM */
+static char *mac_thumb_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"14 15 4 1",
+/* colors */
+"a c #aaaaaa",
+"b c #cccccc",
+"c c #333366",
+"d c #666666",
+/* pixels */
+"bbbbbbbbbbbbbc",
+"baaaaaaaaaaaac",
+"baaaaaaaaaaaac",
+"baaabbbbbbaaac",
+"baaaddddddaaac",
+"baaabbbbbbaaac",
+"baaaddddddaaac",
+"baaabbbbbbaaac",
+"baaaddddddaaac",
+"baaabbbbbbaaac",
+"baaaddddddaaac",
+"baaabbbbbbaaac",
+"baaaaaaaaaaaac",
+"baaaaaaaaaaaac",
+"cccccccccccccc",
+};

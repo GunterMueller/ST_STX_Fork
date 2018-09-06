@@ -1,0 +1,269 @@
+;
+; $Header: /cvs/stx/stx/libview/styles/mswindows95.common,v 1.20 2014-03-28 15:30:14 stefan Exp $
+;
+
+is3D                            true
+
+borderWidth                     0
+viewBackground                  =viewGrey
+focusStyle                      #win95
+focusHighlightStyle             #win95
+
+popup.borderWidth               1
+popup.shadow                    false
+popup.level                     1
+
+;
+; this reverses the ok-cancel order in dialogs;
+; some may be used to ok being on the left ...
+;
+dialogBox.okAtLeft                 true
+
+
+#if (Screen current platformName = 'WIN32')
+textFont          (Font family:'courier new' face:'medium' style:'roman' size:10 encoding:'ms-ansi') onDevice:Screen current
+font              ((Screen current getSystemParametersInfo:#SPI_GETNONCLIENTMETRICS) at:#messageFont) onDevice:Screen current
+menu.font         ((Screen current getSystemParametersInfo:#SPI_GETNONCLIENTMETRICS) at:#menuFont) onDevice:Screen current
+activeHelp.font   ((Screen current getSystemParametersInfo:#SPI_GETNONCLIENTMETRICS) at:#statusFont) onDevice:Screen current
+#else
+# try scaled fonts first, if they are not available, they will be replaced
+# if (OperatingSystem isOSXlike)
+textFont          Font family:'courier' face:'medium' style:'roman' size:12 encoding:#'iso10646-1'
+font              Font family:'helvetica' face:'medium' style:'roman' size:14 encoding:#'iso10646-1'
+# else
+textFont          Font family:'courier new' face:'medium' style:'roman' size:10 encoding:#'iso10646-1'
+font              Font family:'arial' face:'medium' style:'roman' size:10 encoding:#'iso10646-1'
+# endif
+menu.font         =font
+#take activeHelp.font from SimpleView default settings
+#activeHelp.font   =font
+#endif
+
+button.font       =font
+
+focus.showBorder        false
+focus.takeOnClick       true
+
+textCursor.type                          #ibeam
+textCursor.noFocusForegroundColor        Color grey
+
+#if Screen current hasGrayscales
+; editField.backgroundColor                Color grey:90
+editField.backgroundColor                Color white
+#else
+editField.backgroundColor                Color white
+editField.shadowColor                    Color black
+editField.lightColor                     Color grey:80
+#endif
+
+checkToggle.activeLevel                  -2
+checkToggle.passiveLevel                 -2
+checkToggle.foregroundColor              Color black
+checkToggle.backgroundColor              Color white
+checkToggle.activeForegroundColor        Color black
+checkToggle.activeBackgroundColor        Color white
+checkToggle.bitmapFile                   'CheckOn10.xbm'
+
+#if Screen current hasGreyscales
+menu.hilightForegroundColor              Color white
+menu.hilightBackgroundColor              =selectionBlue
+#else
+menu.hilightForegroundColor              Color white
+menu.hilightBackgroundColor              Color black
+#endif
+menu.buttonEnteredLevel                  1
+menu.buttonPassiveLevel                  0
+menu.buttonActiveLevel                   -1
+menu.buttonItemSpace                     2
+
+menu.itemSpace                           5
+
+; windows does NOT align the help-group at the right end of the menu
+menuPanel.ignoreConditionalStartGroupRight  true
+
+pullDownMenu.separatingLines             false
+;; pullDownMenu.level                       0
+pullDownMenu.level                       1
+pullDownMenu.menuLevel                   1
+
+selection.hilightStyle                   #win95
+selection.hilightForegroundColor         Color white
+#if Screen current hasGrayscales
+selection.hilightBackgroundColor         =selectionBlue
+#else
+selection.hilightBackgroundColor         Color black
+#endif
+selection.hilightFrameColor              Color black
+selection.rightArrowLevel                0
+selection.rightArrowStyle                #solid
+selection.font                           =font
+
+
+variablePanel.handlePosition             #left
+
+#if Screen current serverVendor ~= 'Silicon Graphics'
+; SGI Xserver has a bug, keeping the dashed lineStyle in its GC
+; variablePanel.trackingStyle              #dashedLine
+variablePanel.trackingStyle              #dottedLine
+#else
+variablePanel.trackingStyle              #solidLine
+#endif
+
+variablePanel.showHandle                 false     "/ the default; can be overwritten by UI-spec
+
+; variablePanel.barHeight                  4
+; variablePanel.handleLevel                0
+
+variablePanel.barHeight                  8
+variablePanel.handleLevel                1
+variablePanel.handleStyle                #full
+
+scrollableView.level                     -1
+; scrollableView.backgroundColor           =viewLightGrey
+scrolledView.borderWidth                 0
+scrolledView.level                       0
+scrolledView.margin                      1
+scrolledView.zeroOffsets                 true
+
+scrollBar.level                          0
+scrollBar.spacing                        0
+scrollBar.hiding                         true
+; scrollBar.neverMini                      true
+scrollBar.position                       #right
+scrollBar.buttonPositions                #around
+scrollBar.viewBackground                 =viewLightGrey
+scrollBar.elementSpacing                 0
+
+#if Screen current hasGreyscales
+scroller.viewBackground                  =viewLightGrey
+scroller.thumbColor                      =viewGrey
+; scroller.thumbEdgeStyle                  #soft
+scroller.thumbEdgeStyle                  #softWin95
+scroller.thumbLightColor                 =viewGrey
+scroller.thumbHalfLightColor             Color white
+#else
+scroller.viewBackground                  Color grey:87.5
+scroller.thumbColor                      Color white
+#endif
+
+scroller.thumbLevel                      2
+# scroller.borderWidth                     1
+scroller.borderWidth                     0
+scroller.level                           0
+scroller.ghostFrameColor                 Color darkGrey
+scroller.snapBack                        true
+
+;button.activeLevel                      1
+button.activeLevel                       -1 "/ 0
+button.passiveLevel                      2
+#if Screen current hasGreyscales
+; button.edgeStyle                         #soft
+button.edgeStyle                         #softWin95
+; button.activeForegroundColor           Color black
+; button.activeBackgroundColor           Color white
+; button.enteredBackgroundColor          Color lightGrey
+; button.halfShadowColor                   =viewGrey darkened exactOrNearestOn:(Screen current)
+button.halfShadowColor                   =halfShadowColor
+button.halfLightColor                    Color white
+button.disabledEtchedForegroundColor     Color white
+#else
+; button.activeBackgroundColor             Color black
+; button.activeForegroundColor             Color white
+; button.enteredBackgroundColor            Color grey:87.5
+#endif
+
+radioButton.style                       #image
+radioButton.passiveImageFile            'RadioOff_w95.xpm'
+radioButton.activeImageFile             'RadioOnBits_w95.xbm'
+
+
+; arrowButton.upFormFile                   'ScrollUp.w95.14.xbm'.
+; arrowButton.downFormFile                 'ScrollDn.w95.14.xbm'.
+; arrowButton.leftFormFile                 'ScrollLt.w95.14.xbm'.
+; arrowButton.rightFormFile                'ScrollRt.w95.14.xbm'.
+arrowButton.upFormFile                   'ScrollUp.w95.11.xbm'.
+arrowButton.downFormFile                 'ScrollDn.w95.11.xbm'.
+arrowButton.leftFormFile                 'ScrollLt.w95.11.xbm'.
+arrowButton.rightFormFile                'ScrollRt.w95.11.xbm'.
+
+selection.rightArrowForm            Image extent:16@12 depth:1 \
+				       bits:#[                       \
+					      2r00000000 2r00000000  \
+					      2r00000000 2r00000000  \
+					      2r00000000 2r00000000  \
+					      2r00000010 2r00000000  \
+					      2r00000011 2r00000000  \
+					      2r00000011 2r10000000  \
+					      2r00000011 2r11000000  \
+					      2r00000011 2r10000000  \
+					      2r00000011 2r00000000  \
+					      2r00000010 2r00000000  \
+					      2r00000000 2r00000000  \
+					      2r00000000 2r00000000  \
+					     ] \
+					pad:8
+
+comboView.level                          -1
+comboView.downFormFile                   'ScrollDn.w95.11.xbm'.
+comboView.disabledDownFormFile           'ScrollDn_disabled.w95.11.xpm'.
+
+noteBook.tabTopMargin                   1
+
+html.backgroundColor                     Color white
+; html.anchorForegroundColor               Color green darkened
+; html.visitedAnchorForegroundColor        =html.anchorForegroundColor darkened darkened
+html.visitedAnchorForegroundColor        Color red:50 green:0 blue:50
+; html.anchorUnderlines                    true
+
+dataSet.labelView.level             0
+
+activeHelp.backgroundColor               Color yellow lightened lightened lightened
+activeHelp.borderWidth                   1
+
+#if ((OperatingSystem getSystemInfo at:#version ifAbsent:'') includesString:'Ubuntu')
+activeHelp.backgroundColor               (Color grey:15)
+activeHelp.foregroundColor                Color white
+#endif
+
+;
+; if running under windows, use the systemColor settings
+;
+#if Screen current platformName = 'WIN32'
+
+menu.backgroundColor             [Screen current getSystemColor:#'COLOR_MENU'          ]
+menu.foregroundColor             [Screen current getSystemColor:#'COLOR_MENUTEXT'      ]
+pullDownMenu.backgroundColor     [Screen current getSystemColor:#'COLOR_BTNFACE'       ]
+;; pullDownMenu.backgroundColor     =menu.backgroundColor
+button.backgroundColor           [Screen current getSystemColor:#'COLOR_BTNFACE'       ]
+text.selectionForegroundColor    [Screen current getSystemColor:#'COLOR_HIGHLIGHTTEXT' ]
+text.selectionBackgroundColor    [Screen current getSystemColor:#'COLOR_HIGHLIGHT'     ]
+text.alternativeSelectionForegroundColor    Color black
+;; text.alternativeSelectionBackgroundColor    Color redByte:255 greenByte:255 blueByte:204
+text.alternativeSelectionBackgroundColor    =text.selectionBackgroundColor lightened
+scroller.thumbColor              [Screen current getSystemColor:#'COLOR_BTNFACE'       ]
+selection.hilightForegroundColor [Screen current getSystemColor:#'COLOR_HIGHLIGHTTEXT' ]
+selection.hilightBackgroundColor [Screen current getSystemColor:#'COLOR_HIGHLIGHT'     ]
+scroller.vScrollerWidth          16 "/ [Screen current getSystemMetrics:#'SM_CXVSCROLL' ]
+scroller.hScrollerHeight         16 "/ [Screen current getSystemMetrics:#'SM_CYHSCROLL' ]
+scrollBar.vScrollBarWidth        16 "/ [Screen current getSystemMetrics:#'SM_CXVSCROLL' ]
+scrollBar.hScrollBarHeight       16 "/ [Screen current getSystemMetrics:#'SM_CYHSCROLL' ]
+
+#else
+
+scroller.vScrollerWidth          16 "/ [Screen current getSystemMetrics:#'SM_CXVSCROLL' ]
+scroller.hScrollerHeight         16 "/ [Screen current getSystemMetrics:#'SM_CYHSCROLL' ]
+scrollBar.vScrollBarWidth        16 "/ [Screen current getSystemMetrics:#'SM_CXVSCROLL' ]
+scrollBar.hScrollBarHeight       16 "/ [Screen current getSystemMetrics:#'SM_CYHSCROLL' ]
+
+#endif
+
+#if (Screen current platformName = 'WIN32') and:[(Screen current getSystemColor:#'COLOR_SCROLLBAR') brightness > 0.95]
+scroller.viewBackground         [(Form width:8 height:8 fromArray:(Color ditherBits at:32) onDevice:Screen current) colorMap:(Array with:Color black with:(Screen current getSystemColor:#'COLOR_SCROLLBAR') )]
+#endif
+#if (Screen current platformName = 'WIN32') and:[(Screen current getSystemColor:#'COLOR_SCROLLBAR') brightness <= 0.95]
+scroller.viewBackground         [(Form width:8 height:8 fromArray:(Color ditherBits at:32) onDevice:Screen current) colorMap:(Array with:Color white with:(Screen current getSystemColor:#'COLOR_SCROLLBAR') )]
+#endif
+
+warningBox.iconFile             'bitmaps/Warning_w95.xpm'
+requestBox.iconFile             'bitmaps/Request_w95.xpm'
+errorBox.iconFile               'bitmaps/Error_w95.xpm'

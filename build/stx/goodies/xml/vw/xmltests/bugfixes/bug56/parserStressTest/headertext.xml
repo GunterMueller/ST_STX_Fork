@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PCDATA is not allowed in the header, this is invalid -->
+<!DOCTYPE html SYSTEM "fake-xhtml.dtd" >
+<html>
+    <head>
+        <title>Title</title>
+        Some text
+    </head>
+    <body>
+
+        <h1>Heading Level 1</h1>
+
+        <p>This is a paragraph</p>
+    </body>
+</html>

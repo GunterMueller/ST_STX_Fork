@@ -1,0 +1,247 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - SIXX - Smalltalk Instance eXchange in XML</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="goody_xmlrpc.html">     <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="goody_refact.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>SIXX - Smalltalk Instance eXchange in XML</H1>
+
+<H2>Description</H2>
+<p>SIXX is an XML serializer/deserializer written in Smalltalk
+(currently Squeak 3.2,  VisualWorks 5i.4 - 7, Dolphin XP and Smalltalk/X are supported).
+The purpose is to store and load Smalltalk objects in a portable, dialect-independent XML format,
+providing a functionality simular to <CODE>storeOn:</CODE>, <CODE>storeBinaryOn:</CODE> and <CODE>storeXMLOn:</CODE>
+(sigh - yet another format).</P>
+<P>
+
+<H2>Design Policies:</H2>
+<dl>
+  <dt><b>Simple:</b>
+  <dd>SIXX format is human and machine readable. It basically uses only one XML
+  element tag.
+(Please see
+<!--
+    <a href="http://www.mars.dti.ne.jp/~umejava/smalltalk/sixx/colorAndRectangle.xml">
+-->
+<A HREF="#Example">SIXX instance example</a>
+and
+<a href="http://www.mars.dti.ne.jp/~umejava/smalltalk/sixx/sixx.xsd">SIXX schema</a>).
+
+  <dt><b>Portable:</b>
+
+  <dd>SIXX implementation is carefully written so that it only uses portable
+  Smalltalk methods. ( It avoids using dialect-specific methods). Furthermore,
+  SIXX is not particular about XML parsers. DTD validation nor namespaces
+  support are NOT needed to implement SIXX. The present implementation (for
+  Squeak) has already been working both on YAXO and VWXML.
+  <dt><b>Smart:</b>
+  <dd>SIXX resolves shared/circular object references. Unlike classic #storeOn:
+  and #readFrom:, it never create copies. Advanced users can implement custom
+  serialization/deserialization format by overriding only a few hook methods.
+</dl>
+
+<H2>Implementation:</H2>
+<p>Currently, the implementation is provided for Squeak 3.4, VisualWorks 5i.4-7,
+Dolphin XP and Smalltalk/X. (Sorry for other dialect fans, please see the future plan.)</p>
+
+
+<H2>Prerequisites:</H2>
+<h4>XML Parser:</h4>
+
+<h5>Squeak:</h5>
+<p>Two XML parsers (YAXO and VWXML) are supported.</p>
+<ul>
+  <li><a href="http://www.squeaklet.com/Yax/index.html">YAXO</a> which is included in Squeak 3.4
+  <li>or <a href="http://minnow.cc.gatech.edu/squeak/1408">VW XML Parser</a> ported by Bijan Parsia
+</ul>
+
+<h5>VisualWorks:</h5>
+<p>Sixx runs on the default VW XML parser (VWXML). </p>
+
+<h5>Dolphin:</h5>
+<p>Sixx runs on <a href="http://www.dolphinharbor.org/dh/projects/goodies/yaxo.html">YAXO for Dolphin</a>, ported by Steve Waring.</p>
+
+<h5>Smalltalk/X:</h5>
+<p>Like with Squeak: Sixx can use YAXO or the VW XML Parser.</p>
+
+<H2>Installation:</H2>
+<h5>Squeak:</h5>
+<p>Extract the zip file to your Squeak root directory and just file in 'install.st'.</p>
+
+<h5>VisualWorks:</h5>
+<p>Extract the zip file to any parcel directory and parcel in 'SIXX-Install'.</p>
+
+<h5>Dolphin:</h5>
+<p>Extract the zip file to your Dolphin root directory and install a package
+named 'SIXX Install.pac'.</p>
+
+<h5>Smalltalk/X:</h5>
+<p>Sixx is already installed as a bunch of autoloaded classes.</p>
+
+
+<H2>Limitations:</H2>
+<ul>
+  <li>SIXX cannot store/load context objects.
+<BR>
+  as a consequence, full blocks (which refer to home-context variables) can also not be represented in sixx.
+</ul>
+
+<H2>Download:</H2>
+<h4>Current releases and snapshot:</h4>
+
+<h5>Squeak:</h5>
+<ul>
+
+  <li><a href="http://www.mars.dti.ne.jp/~umejava/smalltalk/sixx/SIXX0.1-20030611.zip">SIXX ver0.1g all</a> (2003/6/12)
+  <li><a href="http://www.mars.dti.ne.jp/~umejava/smalltalk/sixx/SIXX.sar">SIXX ver0.1g sar</a> (2003/6/12) - for Squeak 3.4-3.5 users<!-- <LI><A href="http://www.mars.dti.ne.jp/~umejava/smalltalk/sixx/">Latest SIXX ver0.1 snapshot</A>(2002/06/25) - unstable, beware!  -->
+  <ul>
+    <li><a href="http://www.mars.dti.ne.jp/~umejava/smalltalk/sixx/sixx-patchNihongo20030318.cs">sixx-patchNihongo20030318.cs</a> - a patch for SqueakNihongo4
+  </ul>
+</ul>
+
+<h5>VisualWorks:</h5>
+<ul>
+  <li><a href="http://www.mars.dti.ne.jp/~umejava/smalltalk/sixx/SIXX-VW0.1-20030611.zip">SIXX-VW ver0.1g</a> (2003/6/12)
+  <ul>
+    <li>Also available in <a href="http://www.cincomsmalltalk.com:8080/CincomSmalltalkWiki/PostgreSQL+Access+Page">Cincom Public Store Repository</a>
+  </ul>
+</ul>
+
+<h5>Dolphin:</h5>
+<ul>
+  <li><a href="http://www.mars.dti.ne.jp/~umejava/smalltalk/sixx/SIXX-Dolphin0.1-20030611.zip">SIXX-Dolphin ver0.1g</a> (2003/6/12)
+</ul>
+
+<h5>Smalltalk/X:</h5>
+<ul>
+  <li>Sixx is already included in the base system.
+</ul>
+
+
+<h4>For porters:</h4>
+<ul>
+  <li><a href="http://www.mars.dti.ne.jp/~umejava/smalltalk/sixx/SIXX20030611sif.zip">SIXX in SIF</a> (2003/6/12)
+</ul>
+<h4>For formalists:</h4>
+<ul>
+  <li><a href="http://www.mars.dti.ne.jp/~umejava/smalltalk/sixx/sixx.dtd">SIXX DTD</a>: (2003/03/25) - This is not important for just using SIXX. I wrote it
+  for advanced developers who are curious about SIXX elements and attributes
+  semantics.
+</ul>
+
+
+<H2>License:</H2>
+
+<ul>
+  <li>SIXX is under <a href="http://www.mars.dti.ne.jp/~umejava/smalltalk/sixx/license.html">original license</a> (MIT, XFree86 style), intended to be easily linked to Squeak image file.
+</ul>
+
+<H2>No Warranty</H2>
+This goody is provided AS-IS without any warranty whatsoever.
+
+<H2>How to use (Examples):</H2>
+<h4>Basic writing/reading:</h4>
+<p>SIXX is very easy to use. Like #storeString, You can generate a SIXX string
+by #sixxString.</p>
+<pre><code>
+    array := Array with: 1 with: 'Hello' with: Date today.
+    array sixxString.
+</code></pre>
+<p>This code generates a <A NAME="Example">SIXX string</A> below:</p>
+
+<pre><code>
+'&lt;sixx.object sixx.id=&quot;0&quot; sixx.type=&quot;Array&quot; &gt;
+    &lt;sixx.object sixx.id=&quot;1&quot; sixx.type=&quot;SmallInteger&quot; &gt;1&lt;/sixx.object&gt;
+
+    &lt;sixx.object sixx.id=&quot;2&quot; sixx.type=&quot;String&quot; &gt;Hello&lt;/sixx.object&gt;
+    &lt;sixx.object sixx.id=&quot;3&quot; sixx.type=&quot;Date&quot; &gt;16 June 2002&lt;/sixx.object&gt;
+
+&lt;/sixx.object&gt;
+'
+</code></pre>
+
+<p>This string can be read by #readSixxFrom:.</p>
+<pre>Object readSixxFrom: sixxString. &quot;sixxString is the above string&quot;</pre>
+
+<h4>Stream writing/reading:</h4>
+<p>SixxWriteStream and SixxReadStream are provided so that you can write/read Smalltalk objects like a binary-object-stream way. (Yes, the BOSS in VW, and the ReferenceStream in Squeak).</p>
+<p>In order to write objects to an external file, you can:</p>
+<pre><code>
+    sws := SixxWriteStream newFileNamed: 'obj.sixx'.
+    sws nextPut: &lt;object&gt;.
+    sws nextPutAll: &lt;collection of object&gt;.
+    sws close.
+</code></pre>
+
+<p>And to read objects from an external file:</p>
+<pre><code>
+    srs := SixxReadStream readOnlyFileNamed: 'obj.sixx'.
+    objects := srs contents.
+    srs close.
+</code></pre>
+
+
+<h3>Future Plan:</h3>
+<p>(2002/09/15)</p>
+<ul>
+  <li>Porting to other Smalltalks (VisualAge Smalltalk, SmallScript, etc).
+  Contributors are welcome!
+</ul>
+
+
+<h2>Related Links:</h2>
+
+<h3>Other XML object serializer/deserializers:</h3>
+<p>There are XML object serializer/deserializers already available.
+(Generally speaking, SIXX is much simpler, because it has been specialized for Smalltalk.)</p>
+
+<p>For ODMG objects:</p>
+<ul>
+  <li><a href="http://www.odmg.org/library/readingroom/oifml.pdf">OIFML</a> - Using XML as an Object Interchange Format (<a href="http://www.odmg.org/">ODMG</a>)
+</ul>
+<p>For Java objects:</p>
+<ul>
+  <li><a href="http://castor.exolab.org/">Castor</a> (<a href="http://www.exolab.org">ExoLab Group</a>)
+  <li><a href="http://www.alphaworks.ibm.com/tech/jrom">JROM</a> (IBM <a href="http://www.alphaworks.ibm.com">alphaWorks</a>)
+
+</ul>
+
+<h3>SMIX (SMalltalk Interchange Format in XML):</h3>
+<p>SIXX is designed for serializing/deserializing object instances &quot;data&quot;(states).
+If you would like to save/load Smalltalk class definitions, use <a href="http://www.mars.dti.ne.jp/~umejava/smalltalk/smix/">SMIX</a>, instead.</p>
+
+
+<h2>Suggestions?</h2>
+Any feedback is welcome.
+<address><a href="mailto:umejava@mars.dti.ne.jp?Subject=[SIXX] feedback">Masashi Umezawa</a></address>
+
+<p>Authors are:</p>
+<ul>
+  <li>Masashi Umezawa (Squeak, VW, Dolphin)
+  <li>Tetsuya Kurihara (Squeak)
+  <li>Kazuki MINAMITANI (VW, Dolphin)
+
+</ul>
+
+
+
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.5 $
+</BODY>
+</HTML>

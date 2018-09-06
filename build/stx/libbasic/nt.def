@@ -1,0 +1,10 @@
+LIBRARY libbasic
+DESCRIPTION     'Smalltalk/X Basic classes'
+VERSION         3.5
+CODE            EXECUTE READ 
+DATA            READ WRITE
+SECTIONS
+    INITCODE    READ EXECUTE 
+    INITDATA    READ WRITE 
+EXPORTS 
+    _libbasic_Init

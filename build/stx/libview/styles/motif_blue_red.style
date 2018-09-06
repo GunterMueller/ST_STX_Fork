@@ -1,0 +1,30 @@
+; View defaultStyle:#'motif_blue_red'
+;
+; blue'ish motif with red menus
+;
+; another demo - not good to work with
+; (thats how the views look in the style-guide ;-)
+;
+; $Header: /cvs/stx/stx/libview/styles/motif_blue_red.style,v 1.6 2014-11-26 19:13:52 cg Exp $
+
+#include 'motif_blue.style'
+
+comment  'like motif style;\\with blueish colors and red menus'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Wie ''motif'', aus der ``blauen Phase''''\mit roten Menüs '
+#endif
+
+menu.foregroundColor             Color white
+menuBackgroundColor              Color red:45 green:5 blue:5
+menu.backgroundColor             =menuBackgroundColor
+menu.shadowColor                 =menuBackgroundColor darkened
+menu.lightColor                  =menuBackgroundColor lightened
+menu.hilightForegroundColor      =menuForegroundColor
+
+pullDownMenu.shadowColor             =menuShadowColor
+pullDownMenu.lightColor              =menuLightColor
+pullDownMenu.foregroundColor         =menuForegroundColor
+pullDownMenu.backgroundColor         =menuBackgroundColor
+pullDownMenu.viewBackground          =menuBackgroundColor
+pullDownMenu.hilightForegroundColor  Color white

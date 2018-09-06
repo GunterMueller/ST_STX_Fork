@@ -1,0 +1,83 @@
+<title>Block Quotes</title>
+<h1>Block Quotes</h1>
+
+<B>Permitted Context:</B> %Body.Content, %flow, %block<BR>
+<B>Content Model:</B> %Body.Content followed by optional
+<a href="credits.html">CREDIT</a> element
+
+<p>The BQ element is used for extended quotations. The tag name has been
+abbreviated from HTML 2.0's BLOCKQUOTE to the more convenient BQ, and the
+content model extended to allow the source of the quotation to be
+credited.
+
+<P>Example:
+
+<PRE>&lt;BQ&gt;
+&lt;P&gt;But now I shall shortly proffer him the strength and the
+courage of the Geats in combat. He who has the right to it shall
+go once more to the mead-drinking with confident heart, after
+the morning light of another day, the sun clothed in ethereal
+radiance, shines from the south upon the children of men.
+&lt;CREDIT&gt;Beowulf replying to Unferth, from the Anglo-Saxon poem
+"Beowolf", Cotton Vitellus A xv manuscript&lt;/CREDIT&gt;
+&lt;/BQ&gt;</PRE>
+
+<P><B>Note:</B> If %html.recommended is active, the HTML 3.0 DTD expects
+you to enclose plain text in a block element such as &lt;P&gt;
+
+<H3>Permitted Attributes</h3>
+
+<DL> <DT>ID <DD>An SGML identifier used as the target for hypertext
+links or for naming particular elements in associated style sheets.
+Identifiers are NAME tokens and must be unique within the scope of the
+current document.
+
+<DT>LANG <DD>This is one of the ISO standard language abbreviations,
+e.g. "en.uk" for the variation of English spoken in the United Kingdom.
+It can be used by parsers to select language specific choices for
+quotation marks, ligatures and hypenation rules etc. The language
+attribute is composed from the two letter language code from ISO 639,
+optionally followed by a period and a two letter country code from ISO
+3166.
+
+<DT>CLASS <DD>This a space separated list of SGML NAME tokens and is
+used to subclass tag names. By convention, the class names are
+interpreted hierarchically, with the most general class on the left and
+the most specific on the right, where classes are separated by a
+period. The CLASS attribute is most commonly used to attach a different
+style to some element, but it is recommended that where practical class
+names should be picked on the basis of the element's semantics, as this
+will permit other uses, such as restricting search through documents by
+matching on element class names. The  conventions for choosing class
+names are outside the scope of this specification.
+
+<DT>CLEAR <DD>This attribute is common to all block-like elements. When
+text flows around a figure or table in the margin, you sometimes want
+to start the block quote below the figure rather than alongside it. The
+CLEAR attribute allows you to move down unconditionally:<BR><BR>
+
+<DL>
+<DT>clear=left<DD>move down until left margin is clear
+<DT>clear=right<DD>move down until right margin is clear
+<DT>clear=all<DD>move down until both margins are clear
+</DL>
+
+<P>Alternatively, you can decide to place the quote alongside the
+figure just so long as there is enough room. The minimum width needed
+is specified as:<BR><BR>
+
+<DL>
+<DT>clear="40 en"<DD>move down until there is at least 40 en units free
+<DT>clear="100 pixels"<DD>move down until there is at least 100 pixels
+free
+</DL>
+
+<P>The style sheet (or browser defaults) may provide default minimum
+widths for each class of block-like elements.
+
+<DT>NOWRAP <DD>The NOWRAP attribute is used when you don't want the
+browser to automatically wrap lines. You can then explicitly specify
+line breaks using the BR element.
+
+</DL>
+<!--NewPage-->

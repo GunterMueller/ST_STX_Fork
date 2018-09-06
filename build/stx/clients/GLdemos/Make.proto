@@ -1,0 +1,32 @@
+# $Header: /cvs/stx/stx/clients/GLdemos/Make.proto,v 1.13 2016-11-01 14:43:23 cg Exp $
+# -------------- no need to change anything below ----------
+
+TOP=../..
+MODULE=stx
+MODULE_DIR=clients/GLdemos
+PACKAGE=$(MODULE):$(MODULE_DIR)
+SUBDIRS=
+ALLSUBDIRS=
+RCSSOURCES=*.st Make.proto *.data bitmaps/*.xbm
+LINKSOURCES=*.st Make.proto *.data
+
+STCOPT=$(CLIENT_STCOPT)
+
+LIBNAME=libGL
+OBJS=   $(COMMON_OBJS) $(UNIX_OBJS)  GLXView.o GLPoint3D.o
+
+all::       classLibRule
+
+objs::      $(OBJS)
+
+CLS=    GLXView.cls     \
+	GLPoint3D.cls
+
+clean::
+	    @-rm -f *.H *.c classList.stc
+
+clobber::
+	    @-rm -f *.H *.c classList.stc
+
+# BEGINMAKEDEPEND
+# ENDMAKEDEPEND

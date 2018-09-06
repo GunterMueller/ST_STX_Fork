@@ -1,0 +1,49 @@
+# $Header: /cvs/stx/stx/clients/DocTool/Make.proto,v 1.11 2016-01-14 14:49:09 mawalch Exp $
+#
+# -------------- no need to change anything below ----------
+
+TOP=../..
+MODULE=stx
+MODULE_DIR=clients/DocTool
+PACKAGE=$(MODULE):$(MODULE_DIR)
+SUBDIRS=
+RCSSOURCES=*.st Make.proto resources/*.rs
+
+SYSLIBS    = -lX11 $(MATHLIB)
+
+STCOPT=$(CLIENT_STCOPT)
+
+LIBNAME=docTool
+
+PROGS      = DocTool
+
+OBJS =      DocView.$(O) DocReader.$(O) DisplIcon.$(O) DisplPic.$(O)    \
+	    DisplText.$(O) DisplSound.$(O)
+
+all::       $(PROGS)
+
+objs::      level0
+
+level0:                                  \
+	    DocView.$(O)                     \
+	    DocReader.$(O)                   \
+	    DisplIcon.$(O)                   \
+	    DisplPic.$(O)                    \
+	    DisplSound.$(O)                  \
+	    DisplText.o
+
+DocTool:    obj
+	    $(CC) -c $(CFLAGS) -DSTARTUP_CLASS="DocumentView" \
+			       -DSTARTUP_SELECTOR='"start"' $(MAIN)
+	    $(LD) $(LDFLAGS) -o DocTool \
+		  $(CRT0) main.o DocTool.obj \
+		  $(LIBBASICOBJ) $(LIBVIEWOBJ) $(LIBWIDGOBJ) \
+		  $(LIBRUNDIR)/hidata.o $(LIBRUN) \
+		  $(MATHLIB) $(SYSLIBS) \
+		  $(OTHERLIBS) $(CRTN)
+	    @-rm -f main.o
+
+$(PROGS):   $(MAIN)
+
+# BEGINMAKEDEPEND
+# ENDMAKEDEPEND

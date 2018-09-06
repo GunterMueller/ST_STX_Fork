@@ -1,0 +1,617 @@
+#!/bin/sh
+#
+# $Header: /cvs/stx/stx/rules/stmkmp,v 1.40 2006-09-15 14:06:40 stefan Exp $
+#
+# MIMEType: application/x-sh
+#
+# this little script creates Make.proto and Make.spec files
+#  by searching for all .st files in the current directory.
+#
+# This is just a template - you may have to edit LIBNAME and PACKAGE
+# (as a minimum) in the generated file.
+# Alternatively, call it with the [-lib <name>] arg.
+# In ADDITION:
+#     stmkmp is (currently) too dump to generate dependency information
+#     into the generated files - so the following make may fail.
+#     In this case, reorder the OBJ-items in the Make.spec file in order
+#     to compile superclasses before subclasses.
+#
+# Usage:
+#   stmkmp --help
+#   stmkmp [-lib libName] [-top topDirectoryPath]
+#
+# stmkmp searches for a reasonable top directory, if not given as
+# command line argument.
+# Alternatively, you can set the shellVariable STX_TOP.
+#
+#
+
+
+libName=
+
+if [ "$1" = "--version" ]
+then
+    echo "$Ident$"
+    exit
+fi
+
+if [ "$1" = "--help" ]
+then
+    echo "usage: stmkmp [-l <libname>] [-top <path>]"
+    echo
+    echo "stmkmp scans for files ending in '.st' and generates 'Make.proto' and 'Make.spec'"
+    echo "files to compile those into a classlibrary."
+    echo "By default, the resulting classLibrary is named after the current directories"
+    echo "name - this can be overwritten with the '-l' argument."
+    echo "If a '-top' argument is given, this is taken as the path to"
+    echo "the ST/X top directory (where include and stc subdirectories are found);"
+    echo "otherwise, stmkmp tries to find the relative path to the topDirectory."
+    echo "This may fail and you have to manually edit the resulting 'Make.proto'"
+    echo "file for the correct TOP= definition."
+    echo ""
+    echo "Depending on the brand of your operating system, the actual binary that"
+    echo "will be created will be called 'myLib.o' (linux-a.out), 'myLib.obj' (ultrix),"
+    echo "'myLib.dll' (Win32) or 'myLib.so' (linux-elf, SYSV4)."
+    echo ""
+    echo "Example: stmkmp -l myLib"
+    echo "  creates 'Make.*' files to compiles all '.st' sourcefiles found"
+    echo "  into a class library named 'myLib'"
+    exit
+fi
+
+if [ "$1" = "-l" ]
+then
+    shift
+    libName=$2
+    shift
+fi
+
+if [ "$1" = "-lib" ]
+then
+    shift
+    libName=$2
+    shift
+fi
+
+if [ "$1" = "-top" ]
+then
+    shift
+    top=$2
+    shift
+fi
+
+if [ -r Make.proto ]
+then
+    echo "stmkmp: Make.proto exists - will not clobber any existing (remove and retry)"
+    exit 1
+fi
+if [ -r Make.spec ]
+then
+    echo "stmkmp: Make.spec exists - will not clobber any existing (remove and retry)"
+    exit 1
+fi
+if [ -r nt.mak ]
+then
+    echo "stmkmp: nt.mak exists - will not clobber any existing (remove and retry)"
+    exit 1
+fi
+
+if [ "$top" = "" ]
+then
+    top=$STX_TOP
+fi
+
+#
+# stupid: try to find my path relative to TOP
+# this is limited to 6-directory levels below top.
+#
+
+dd_dd_dd_dd_dd_dd=`(cd ../../../../../..; pwd)`
+dd_dd_dd_dd_dd=`(cd ../../../../..; pwd)`
+dd_dd_dd_dd=`(cd ../../../..; pwd)`
+dd_dd_dd=`(cd ../../..; pwd)`
+dd_dd=`(cd ../..; pwd)`
+dd=`(cd ..; pwd)`
+dot=`(pwd)`
+
+module="stx"
+
+#
+# search upward for the top directory
+#
+if [ "$top" = "" ]
+then
+    if [ -f ../include/Object.H ]
+    then
+	top=".."
+	package=`basename $dot`
+    else
+	if [ -f ../../include/Object.H ]
+	then
+	    top="../.."
+	    package=`basename $dd`/`basename $dot`
+	else
+	    if [ -f ../../../include/Object.H ]
+	    then
+		top="../../.."
+		package=`basename $dd_dd`/`basename $dd`/`basename $dot`
+	    else
+		if [ -f ../../../../include/Object.H ]
+		then
+		    top="../../../.."
+		    package=`basename $dd_dd_dd`/`basename $dd_dd`/`basename $dd`/`basename $dot`
+		else
+		    if [ -f ../../../../../include/Object.H ]
+		    then
+			top="../../../../.."
+			package=`basename $dd_dd_dd_dd`/`basename $dd_dd_dd`/`basename $dd_dd`/`basename $dd`/`basename $dot`
+		    else
+			if [ -f ../../../../../../include/Object.H ]
+			then
+			    top="../../../../../.."
+			    package=`basename $dd_dd_dd_dd_dd`/`basename $dd_dd_dd_dd`/`basename $dd_dd_dd`/`basename $dd_dd`/`basename $dd`/`basename $dot`
+			else
+			    if [ -f ../../../../../../../include/Object.H ]
+			    then
+				top="../../../../../../.."
+				package=`basename $dd_dd_dd_dd_dd_dd`/`basename $dd_dd_dd_dd_dd`/`basename $dd_dd_dd_dd`/`basename $dd_dd_dd`/`basename $dd_dd`/`basename $dd`/`basename $dot`
+			    fi
+			fi
+		    fi
+		fi
+	    fi
+	fi
+    fi
+fi
+
+if [ "$top" = "" ]
+then
+    belowTop="n"
+fi
+
+#
+# search sidewards for the top directory
+#
+if [ "$top" = "" ]
+then
+    if [ -f ../stx/include/Object.H ]
+    then
+	top="../stx"
+	module=`basename $dot`
+	package=""
+    else
+	if [ -f ../../stx/include/Object.H ]
+	then
+	    module=`basename $dd`
+	    package=`basename $dot`
+	    top="../../stx"
+	else
+	    if [ -f ../../../stx/include/Object.H ]
+	    then
+		module=`basename $dd_dd`
+		package=`basename $dd`/`basename $dot`
+		top="../../../stx"
+	    else
+		if [ -f ../../../../stx/include/Object.H ]
+		then
+		    module=`basename $dd_dd_dd`
+		    package=`basename $dd_dd`/`basename $dd`/`basename $dot`
+		    top="../../../../stx"
+		fi
+	    fi
+	fi
+    fi
+fi
+
+echo top is $top
+echo module is $module
+echo package is $package
+
+#
+# search in standard places
+#
+if [ "$top" = "" ]
+then
+    echo "stmkmp: no top directory found - looking in standard places ..."
+    module=`basename $dot`
+    package=""
+
+    if [ -f /usr/local/lib/stx/include/Object.H ]
+    then
+	top="/usr/local/lib/stx"
+    else
+	if [ -f /usr/local/lib/smalltalk/include/Object.H ]
+	then
+	    top="/usr/local/lib/smalltalk"
+	else
+	    if [ -f /usr/local/stx/include/Object.H ]
+	    then
+		top="/usr/local/stx"
+	    else
+		if [ -f /usr/local/smalltalk/include/Object.H ]
+		then
+		    top="/usr/local/smalltalk"
+		else
+		    if [ -f /usr/lib/stx/include/Object.H ]
+		    then
+			top="/usr/lib/stx"
+		    else
+			if [ -f /usr/lib/smalltalk/include/Object.H ]
+			then
+			    top="/usr/lib/smalltalk"
+			else
+			    if [ -f /opt/smalltalk/include/Object.H ]
+			    then
+				top="/opt/smalltalk"
+			    else
+				if [ -f /opt/stx/include/Object.H ]
+				then
+				    top="/opt/stx"
+				fi
+			    fi
+			fi
+		    fi
+		fi
+	    fi
+	fi
+    fi
+fi
+
+if [ "$top" != "" ]
+then
+    echo "stmkmp: using $top as ST/X top directory."
+else
+    echo "stmkmp: no top directory found."
+    echo "stmkmp: *** you have to manually edit the generated Make.proto file."
+fi
+
+here=`pwd`
+hereDir=`basename $here`
+if [ "$libName" = "" ]
+then
+    libName=$hereDir
+fi
+
+# dont want expaned ID below ...
+DOLLAR='$'
+
+echo "# "$DOLLAR"Header"$DOLLAR > Make.spec
+echo "#" >> Make.spec
+echo "# --- Make.spec created by stmkmp at "`date`  >> Make.spec
+echo "#"  >> Make.spec
+echo "# This file contains specifications which are common to all platforms."  >> Make.spec
+echo "#"  >> Make.spec
+echo "# Warning: once you modify this file, do not rerun"  >> Make.spec
+echo "# stmkmp again - otherwise, your changes are lost."  >> Make.spec
+echo "#"  >> Make.spec
+
+echo "# "$DOLLAR"Header"$DOLLAR > Make.proto
+echo "#" >> Make.proto
+echo "# --- Make.proto created by stmkmp at "`date`  >> Make.proto
+echo "#"  >> Make.proto
+echo "# This file contains definitions for Unix based platforms."  >> Make.spec
+echo "#"  >> Make.spec
+echo "# Warning: once you modify this file, do not rerun"  >> Make.proto
+echo "# stmkmp again - otherwise, your changes are lost."  >> Make.proto
+echo "#"  >> Make.proto
+echo "# The Makefile as generated by this Make.proto supports the following targets:" >> Make.proto
+echo "#    make         - compile all st-files to a classLib"         >> Make.proto
+echo "#    make install - install the classLib in /opt/smalltalk/..." >> Make.proto
+echo "#    make clean   - clean all temp files"                       >> Make.proto
+echo "#    make clobber - clean all"                                  >> Make.proto
+echo >> Make.proto
+
+echo "# "$DOLLAR"Header"$DOLLAR > nt.mak
+echo "#" >> nt.mak
+echo "# --- nt.mak created by stmkmp at "`date`  >> nt.mak
+echo "#"  >> nt.mak
+echo "# This file contains make rules for the win32 platform (using borland-bcc)."  >> nt.mak
+echo "#"  >> nt.mak
+echo "# Warning: once you modify this file, do not rerun"  >> nt.mak
+echo "# stmkmp again - otherwise, your changes are lost."  >> nt.mak
+echo "#"  >> nt.mak
+echo "TOP="$top | tr "/" "\\\\" >> nt.mak
+echo >> nt.mak
+echo "!INCLUDE "$DOLLAR"(TOP)\rules\stdHeader_nt"  >> nt.mak
+echo >> nt.mak
+echo "!INCLUDE Make.spec"  >> nt.mak
+echo >> nt.mak
+echo "PACKAGE=$DOLLAR(MODULE):$DOLLAR(MODULE_DIR)"   >> nt.mak
+echo "STCLOCALOPT=-I. $DOLLAR(LOCALINCLUDES) -H. $DOLLAR(STCLOCALOPTIMIZATIONS) $DOLLAR(STCWARNINGS) $DOLLAR(LOCALDEFINES) '-P$DOLLAR(PACKAGE)' '-Z$DOLLAR(LIBNAME)' $DOLLAR(COMMONSYMFLAG) $DOLLAR(INITCODESEPFLAG)" >> nt.mak
+echo >> nt.mak
+echo "ALL::  "$DOLLAR"(LIBJPEG) "$DOLLAR"(LIBDIR)\\"$DOLLAR"(LIBNAME).lib "$DOLLAR"(BINDIR)\\"$DOLLAR"(LIBNAME).dll"  >> nt.mak
+echo >> nt.mak
+echo "!INCLUDE "$DOLLAR"(TOP)\rules\stdRules_nt"  >> nt.mak
+echo >> nt.mak
+echo "# BEGINMAKEDEPEND --- do not remove this line; make depend needs it" >> nt.mak
+echo "# ENDMAKEDEPEND --- do not remove this line"  >> nt.mak
+
+
+if [ ! -r bmake.bat ]
+then
+  echo "make.exe -N -f nt.mak %1 %2" > bmake.bat
+fi
+
+if [ ! -r Makefile ]
+then
+  cp $top/rules/samples/Makefile .
+fi
+
+
+
+echo >> Make.spec
+echo >> Make.spec
+# echo "#" >> Make.spec
+# echo "# position (of this package) in directory hierarchy:" >> Make.spec
+# echo "# (must point to ST/X top directory, for tools and includes)" >> Make.spec
+# echo "TOP="$top >> Make.spec
+
+echo >> Make.spec
+echo >> Make.spec
+echo "# module and directory-in-module;" >> Make.spec
+echo "# these should correspond to the directory hierarchy" >> Make.spec
+echo "# location (otherwise, ST/X will have a hard time to" >> Make.spec
+echo "# find out the packages location from its packageID)" >> Make.spec
+echo "MODULE=$module"   >> Make.spec
+echo "MODULE_DIR=$package"   >> Make.spec
+
+# echo >> Make.proto
+# echo >> Make.proto
+echo "#" >> Make.proto
+echo "# position (of this package) in directory hierarchy:" >> Make.proto
+echo "# (must point to ST/X top directory, for tools and includes)" >> Make.proto
+echo "TOP="$top >> Make.proto
+# echo "# default installation directory:" >> Make.proto
+# echo "# (overwrite with 'make INSTALLTOP_DIR=... install')" >> Make.proto
+# echo "# the INSTALLBASE is imported from configurations... and usually" >> Make.proto
+# echo "# defaults to something like /opt/smalltalk." >> Make.proto
+# echo "# (overwrite with 'make INSTALLBASE=... install')" >> Make.proto
+# echo "INSTALLTOP_DIR=$DOLLAR(INSTALLBASE)/packages/$DOLLAR(MODULE)/$DOLLAR(MODULE_DIR)" >> Make.proto
+# echo "INSTALLLIB_DIR=$DOLLAR(INSTALLTOP_DIR)" >> Make.proto
+# echo "INSTALLBIN_DIR=$DOLLAR(INSTALLTOP_DIR)" >> Make.proto
+
+echo >> Make.proto
+echo >> Make.proto
+echo "# subdirectories where targets are to be made:" >> Make.proto
+echo "SUBDIRS=" >> Make.proto
+
+echo >> Make.proto
+echo >> Make.proto
+echo "# subdirectories where Makefiles are to be made:" >> Make.proto
+echo "# (only define if different from SUBDIRS)" >> Make.proto
+echo "# ALLSUBDIRS=" >> Make.proto
+
+echo >> Make.spec
+echo >> Make.spec
+echo "# the name of your classLibrary:" >> Make.spec
+echo "LIBNAME="$libName >> Make.spec
+
+echo >> Make.spec
+echo >> Make.spec
+echo "# Argument(s) to the stc compiler."                             >> Make.spec
+echo "#  -H.         : create header files locally"                   >> Make.spec
+echo "#                (if removed, they will be created as common"   >> Make.spec
+echo "#  -Pxxx       : defines the package"                           >> Make.spec
+echo "#  -Zxxx       : a prefix for variables within the classLib"    >> Make.spec
+echo "#  -Dxxx       : defines passed to to CC for inline C-code"     >> Make.spec
+echo "#  -Ixxx       : include path passed to CC for inline C-code"   >> Make.spec
+echo "#  +optspace   : optimized for space"                           >> Make.spec
+echo "#  +optspace2  : optimized more for space"                      >> Make.spec
+echo "#  +optspace3  : optimized even more for space"                 >> Make.spec
+echo "#  +optinline  : generate inline code for some ST constructs"   >> Make.spec
+echo "#  +inlineNew  : additionally inline new"                       >> Make.spec
+echo "#  +inlineMath : additionally inline some floatPnt math stuff"  >> Make.spec
+echo "#"                                                        >> Make.spec
+echo "# ********** OPTIONAL: MODIFY the next line(s) ***" >> Make.spec
+echo "# STCLOCALOPTIMIZATIONS=+optinline +inlineNew"            >> Make.spec
+echo "# STCLOCALOPTIMIZATIONS=+optspace3"                       >> Make.spec
+echo "STCLOCALOPTIMIZATIONS=+optspace3"                         >> Make.spec
+
+echo >> Make.spec
+echo >> Make.spec
+echo "# Argument(s) to the stc compiler."                             >> Make.spec
+echo "#  -warn            : no warnings"                              >> Make.spec
+echo "#  -warnNonStandard : no warnings about ST/X extensions"        >> Make.spec
+echo "#  -warnEOLComments : no warnings about EOL comment extension"  >> Make.spec
+echo "#  -warnPrivacy     : no warnings about privateClass extension" >> Make.spec
+echo "#"                                                        >> Make.spec
+echo "# ********** OPTIONAL: MODIFY the next line(s) ***" >> Make.spec
+echo "# STCWARNINGS=-warn"                                      >> Make.spec
+echo "# STCWARNINGS=-warnNonStandard"                           >> Make.spec
+echo "# STCWARNINGS=-warnEOLComments"                           >> Make.spec
+echo "STCWARNINGS="                                             >> Make.spec
+
+echo >> Make.proto
+echo >> Make.proto
+echo "# if your embedded C code requires any system includes, " >> Make.proto
+echo "# add the path(es) here:, "                               >> Make.proto
+echo "# ********** OPTIONAL: MODIFY the next lines ***"          >> Make.proto
+echo "# LOCALINCLUDES=-Ifoo -Ibar"                              >> Make.proto
+echo "LOCALINCLUDES="                                           >> Make.proto
+
+echo >> Make.proto
+echo >> Make.proto
+echo "# if you need any additional defines for embedded C code, " >> Make.proto
+echo "# add them here:, "                                       >> Make.proto
+echo "# ********** OPTIONAL: MODIFY the next lines ***"          >> Make.proto
+echo "# LOCALDEFINES=-Dfoo -Dbar -DDEBUG"                       >> Make.proto
+echo "LOCALDEFINES="                                            >> Make.proto
+
+echo >> Make.proto
+echo >> Make.proto
+echo "#"                                                        >> Make.proto
+echo "# The next 2 defines should be left as-is"                >> Make.proto
+echo "#  for a class-library package, you can uncomment the following:"         >> Make.proto
+echo "#  (it does not hurt much, if you leave it as is - but you may NOT"       >> Make.proto
+echo "#   uncomment it if object files are to be loaded individually later)."   >> Make.proto
+echo "# INITCODESEPFLAG=$DOLLAR(SEPINITCODE)"                                   >> Make.proto
+echo "#"                                                                        >> Make.proto
+echo "#  the following MAY ONLY be uncommented for classes/classLibs,"          >> Make.proto
+echo "#  which are ALWAYS statically included in the executable."               >> Make.proto
+echo "#  (i.e. NEVER for those which are subject to dynamic loading)."            >> Make.proto
+echo "# COMMONSYMFLAG=$DOLLAR(COMMONSYMBOLS)"                                   >> Make.proto
+echo "#"                                                                        >> Make.proto
+echo "PACKAGE=$DOLLAR(MODULE):$DOLLAR(MODULE_DIR)"   >> Make.proto
+echo "STCLOCALOPT=-I. $DOLLAR(LOCALINCLUDES) $DOLLAR(STCLOCALOPTIMIZATIONS) $DOLLAR(STCWARNINGS) $DOLLAR(LOCALDEFINES) -H. '-P$DOLLAR(PACKAGE)' '-Z$DOLLAR(LIBNAME)' $DOLLAR(COMMONSYMFLAG) $DOLLAR(INITCODESEPFLAG)" >> Make.proto
+
+echo >> Make.proto
+echo >> Make.proto
+echo "# ********** OPTIONAL: MODIFY the next line ***"          >> Make.proto
+echo "# additional C-libraries that should be pre-linked with the class-objects" >> Make.proto
+echo "LD_OBJ_LIBS=" >> Make.proto
+
+echo >> Make.proto
+echo >> Make.proto
+echo "# ********** OPTIONAL: MODIFY the next line ***"          >> Make.proto
+echo "# additional C targets or libraries should be added below" >> Make.proto
+echo "LOCAL_EXTRA_TARGETS=" >> Make.proto
+
+echo >> Make.proto
+echo "all:: preMake classLibRule postMake" >> Make.proto
+echo >> Make.proto
+
+echo >> Make.spec
+echo "OBJS=" | tr -d '\012' >> Make.spec
+
+if [ "*.st" != '\*.st' ]
+then
+  for i in ""*.st""
+  do
+    echo " \\" >> Make.spec
+    echo "   " `basename $i .st`.'$(O)' | tr -d '\012' >> Make.spec
+  done
+fi
+
+echo >> Make.proto
+echo "# add more install actions here">> Make.proto
+echo "install::" >> Make.proto
+
+echo >> Make.proto
+echo "# add more install actions for aux-files (resources) here">> Make.proto
+echo "installAux::" >> Make.proto
+
+echo >> Make.proto
+echo "# add more preMake actions here">> Make.proto
+echo "preMake::" >> Make.proto
+
+echo >> Make.proto
+echo "# add more postMake actions here">> Make.proto
+echo "postMake:: cleanjunk" >> Make.proto
+
+
+echo >> Make.proto
+echo "cleanjunk::" >> Make.proto
+
+echo >> Make.proto
+echo "clean::" >> Make.proto
+echo "X-rm -f *.o *.H" | tr X "\\011" >> Make.proto
+
+echo >> Make.proto
+echo "clobber::" >> Make.proto
+echo "X-rm -f *.so *.dll" | tr X "\\011" >> Make.proto
+
+echo >> Make.proto
+echo "$DOLLAR(INSTALLBASE)::" >> Make.proto
+echo "X@test -d $DOLLAR@ || mkdir $DOLLAR@" | tr X "\\011" >> Make.proto
+
+echo >> Make.proto
+echo "$DOLLAR(INSTALLBASE)/packages:: $DOLLAR(INSTALLBASE)" >> Make.proto
+echo "X@test -d $DOLLAR@ || mkdir $DOLLAR@" | tr X "\\011" >> Make.proto
+
+echo >> Make.proto
+echo "$DOLLAR(INSTALLBASE)/packages/$DOLLAR(MODULE):: $DOLLAR(INSTALLBASE)/packages" >> Make.proto
+echo "X@test -d $DOLLAR@ || mkdir $DOLLAR@" | tr X "\\011" >> Make.proto
+
+echo >> Make.proto
+case $package in
+    */*/*/*)
+	d1=`dirname $package`
+	d2=`dirname $d1`
+	d3=`dirname $d2`
+	echo "$DOLLAR(INSTALLBASE)/packages/$DOLLAR(MODULE)/$d3:: $DOLLAR(INSTALLBASE)/packages/$DOLLAR(MODULE)" >> Make.proto
+	echo "X@test -d $DOLLAR@ || mkdir $DOLLAR@" | tr X "\\011" >> Make.proto
+	echo >> Make.proto
+	echo "$DOLLAR(INSTALLBASE)/packages/$DOLLAR(MODULE)/$d2:: $DOLLAR(INSTALLBASE)/packages/$DOLLAR(MODULE)/$d3" >> Make.proto
+	echo "X@test -d $DOLLAR@ || mkdir $DOLLAR@" | tr X "\\011" >> Make.proto
+	echo >> Make.proto
+	echo "$DOLLAR(INSTALLBASE)/packages/$DOLLAR(MODULE)/$d1:: $DOLLAR(INSTALLBASE)/packages/$DOLLAR(MODULE)/$d2" >> Make.proto
+	echo "X@test -d $DOLLAR@ || mkdir $DOLLAR@" | tr X "\\011" >> Make.proto
+	echo >> Make.proto
+	echo "$DOLLAR(INSTALLBASE)/packages/$DOLLAR(MODULE)/$package:: $DOLLAR(INSTALLBASE)/packages/$DOLLAR(MODULE)/$d1" >> Make.proto
+	echo "X@test -d $DOLLAR@ || mkdir $DOLLAR@" | tr X "\\011" >> Make.proto
+	;;
+
+    */*/*)
+	d1=`dirname $package`
+	d2=`dirname $d1`
+	echo "$DOLLAR(INSTALLBASE)/packages/$DOLLAR(MODULE)/$d2:: $DOLLAR(INSTALLBASE)/packages/$DOLLAR(MODULE)" >> Make.proto
+	echo "X@test -d $DOLLAR@ || mkdir $DOLLAR@" | tr X "\\011" >> Make.proto
+	echo >> Make.proto
+	echo "$DOLLAR(INSTALLBASE)/packages/$DOLLAR(MODULE)/$d1:: $DOLLAR(INSTALLBASE)/packages/$DOLLAR(MODULE)/$d2" >> Make.proto
+	echo "X@test -d $DOLLAR@ || mkdir $DOLLAR@" | tr X "\\011" >> Make.proto
+	echo >> Make.proto
+	echo "$DOLLAR(INSTALLBASE)/packages/$DOLLAR(MODULE)/$package:: $DOLLAR(INSTALLBASE)/packages/$DOLLAR(MODULE)/$d1" >> Make.proto
+	echo "X@test -d $DOLLAR@ || mkdir $DOLLAR@" | tr X "\\011" >> Make.proto
+	;;
+
+    */*)
+	d1=`dirname $package`
+	echo "$DOLLAR(INSTALLBASE)/packages/$DOLLAR(MODULE)/$d1:: $DOLLAR(INSTALLBASE)/packages/$DOLLAR(MODULE)" >> Make.proto
+	echo "X@test -d $DOLLAR@ || mkdir $DOLLAR@" | tr X "\\011" >> Make.proto
+	echo >> Make.proto
+	echo "$DOLLAR(INSTALLBASE)/packages/$DOLLAR(MODULE)/$package:: $DOLLAR(INSTALLBASE)/packages/$DOLLAR(MODULE)/$d1" >> Make.proto
+	echo "X@test -d $DOLLAR@ || mkdir $DOLLAR@" | tr X "\\011" >> Make.proto
+	;;
+
+    *)
+	;;
+esac
+
+echo >> Make.proto
+echo "$DOLLAR(INSTALLBASE)/packages/$DOLLAR(MODULE)/$DOLLAR(MODULE_DIR):: $DOLLAR(INSTALLBASE)/packages/$DOLLAR(MODULE)" >> Make.proto
+echo "X@test -d $DOLLAR@ || mkdir $DOLLAR@" | tr X "\\011" >> Make.proto
+
+echo >> Make.proto
+echo "# if other things are to be compiled,"                     >> Make.proto
+echo "# add target definitions here,"                            >> Make.proto
+echo "# and list them in LOCAL_EXTRA_TARGETS above."             >> Make.proto
+echo "# (care for make syntax - TABS are required in the actions)" >> Make.proto
+echo "# foo:  foo.o"                                             >> Make.proto
+echo "#         $DOLLAR(CC) -o foo foo.o"                        >> Make.proto
+
+echo >> Make.proto
+echo "# 'make depend' will add dependency info between"          >> Make.proto
+echo "# BEGIN...END below"                                       >> Make.proto
+echo "#"                                                         >> Make.proto
+echo "# BEGINMAKEDEPEND --- do not remove this line; make depend needs it" >> Make.proto
+echo "# ENDMAKEDEPEND --- do not remove this line" >> Make.proto
+
+
+if [ -d $top/rules ]
+then
+    if [ -d $top/configurations ]
+    then
+	if [ -f $top/configurations/myConf ]
+	then
+	    echo "stmkmp: generate Makefile for local environment (using $top as ST/X top)"
+
+	    cat $top/rules/stdHeader               >  makefile
+	    cat $top/configurations/COMMON/defines >> makefile
+	    cat $top/configurations/vendorConf     >> makefile
+	    cat $top/configurations/myConf         >> makefile
+	    if [ -f $top/configurations/myPack ]
+	    then
+		cat $top/configurations/myPack         >> makefile
+	    fi
+	    cat $top/rules/stdHeader2              >> makefile
+	    cat Make.proto                         >> makefile
+	    cat $top/rules/stdRules                >> makefile
+	    cat $top/configurations/conf.inc       >> makefile
+	    make mf
+	    exit 0
+	fi
+    fi
+fi
+
+echo "stmkmp: generating Makefile..."
+$top/rules/stmkmf $top

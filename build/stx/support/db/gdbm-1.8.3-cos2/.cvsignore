@@ -1,0 +1,7 @@
+objbc
+objvc
+*.dir
+*.pag
+*.tds
+*.gdbm
+objmingw

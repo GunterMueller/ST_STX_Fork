@@ -1,0 +1,14 @@
+; View defaultStyle:#iris2 
+;
+; another silicon graphics style
+; like iris, but hiding scrollBars if there is nothing to scroll
+;
+; $Header: /cvs/stx/stx/libview/styles/iris2.style,v 1.2 1997-11-02 19:48:55 cg Exp $
+
+#include 'iris.style'
+
+comment 'Like ''iris'', with autohiding scrollbars'
+
+scrollBar.hiding                         true
+
+

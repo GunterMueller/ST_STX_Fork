@@ -1,0 +1,25 @@
+/* XPM */
+static char *smiley_cool_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"15 15 3 1",
+/* colors */
+"a c black",
+"b c #FFCE71",
+"c c none",
+/* pixels */
+"cccccaaaaaccccc",
+"cccaabbbbbaaccc",
+"ccabbbbbbbbbacc",
+"cabbbbbbbbbbbac",
+"cabbaabbbaabbac",
+"aaaaaaabaaaaaaa",
+"abbaaaaaaaaabba",
+"abbbaabbbaabbba",
+"abbbbbbbbbbbbba",
+"abbbbbbbbbbbbba",
+"cabbabbbbbabbac",
+"cabbbaaaaabbbac",
+"ccabbbbbbbbbacc",
+"cccaabbbbbaaccc",
+"cccccaaaaaccccc",
+};

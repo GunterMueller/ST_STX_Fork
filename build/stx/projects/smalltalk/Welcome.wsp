@@ -1,0 +1,300 @@
+Hello World !
+=============
+
+Welcome to the Smalltalk/X jv-branch 8.0.0.
+
+What's new in 8.0.0 jv-branch ?
+
+    * For summary of changes in 8.0.0, see
+
+      https://swing.fit.cvut.cz/projects/stx-jv/wiki/Changelog-8.0.0
+
+    * List of issues fixed in 8.0.0
+
+      https://swing.fit.cvut.cz/projects/stx-jv/report/13
+
+What's new in 6.2.6 jv-branch ?
+
+    * Many small improvements, see
+
+      https://swing.fit.cvut.cz/projects/stx-jv/wiki/Changelog
+
+    * Many bug fixes, see
+
+      https://swing.fit.cvut.cz/projects/stx-jv/report/14
+
+What's new in 6.2.5 ?
+    many tool improvements.
+    much better macosx view style
+    better Xft font support (you need to enable those in the settings dialog).
+
+What's new in 6.2.4 ?
+    improved scripting support
+    better java and javaBridge integration
+    mercurial SCM
+    smallsense
+    initial port of the SWF (flash) file reader and writer (basil)
+
+What's new in 6.2.3 ?
+    ported Vassili Bykov's Announcements package
+    package loading speedup and fixed prerequisite package loading
+    all class libraries can now be compiled with mingw (mingwmake)
+    Thrift IDL support"
+    Cassandra Database interface
+    GOODS Database interface
+    improved monticello packager
+    additional lint checks for collection protocol usage and dialect compatibility
+    fixes and improvements in the line-breakpoint handling
+    per process debug/halt enabling & disabling in browser's debug menu
+    count method invocations per receiver class in browser's debug menu
+    timestamping of transcript messages
+    fixed and improved the VT100 terminal emulator
+    improved break- and tracepoint handling in the system browser, debugger abd breakpoint browser
+    improved code completion
+    improved code correction when accepting invalid code
+    many additional useful menu operations here and there (workspace, debugger, launcher, file browser)
+
+What's new in 6.2.2 ?
+    enhanced coverage analysis and display
+    regex package cleaned for unicode
+    browser enhancements
+    improved windows menu in the launcher
+    can be compiled/built with Visual-C (windows)
+
+What's new in 6.2.1 ?
+    Integrated Jan Vrany's enhancements: libsvn, new tools, lint
+    many tool improvements (system browser, file browser)
+    Method annotations
+    Fixed SOAP via HTTPS
+    stc generates messages in a gcc compatible format
+    ported and included: monticello, gofer
+    coverage display
+
+What's new in 6.1.1 ?
+    MOP-message lookup support.
+
+Incremented the major version number, because the layout of a fundamental class
+(Behavior) has changed.
+
+What's new in 5.4.7 ?
+    LDAP library in "stx:goodies/net/ldap"
+    XMLRPC Server and Client (stx:goodies/xml/xmlrpc)
+
+What's new in 5.4.6 ?
+    some default keyboard settings changed (F2 vs. CTRL-space)
+    many bug fixes and minor enhancements.
+    Magritte framework included
+    Merged Jan Vrany's changes. Can now load SmallRuby directly into the distributed st/x.
+    rdoit (goodies) compiles with bcc32 (WIN32)
+    inspector: new menu item: 'show widget hierarchy' (if a view is selected in the field-list)
+    packager: very easy generation of deployable standAlone programs
+    class creation wizard in the browser
+    immutableLiterals (cmd-line argument to VM)
+
+What's new in 5.4.4 ?
+    oldSpace limit increased (512Mb)
+    fixedPoint literals (like 12.34s2) supported by stc
+    splash screen support
+    remote scripting interface
+
+What's new in 5.4.3 ?
+    added abbreviations/snippet support
+    CodeView functions to insert as String Literal
+    Unicode Support: input methods, window title, filenames and attributes
+
+What's new in 5.4 ?
+    Mutex support for Win32
+    BreakPoint browser
+    GUI-Painter improvements
+    Debugger shows flyBy info
+    improved code-completion
+
+What's new in 5.3 ?
+    INIFile reader/writer
+    skip-halt feature in Debugger
+    tip of the day
+    myWorkspace feature (many other improvements in workspaces)
+    can generate self-installing deployable packages (null-soft instller packages)
+    can generate makefiles for win32 systems
+    new shared class library naming scheme
+    new external library function binding mechanism
+    glorp updated
+    FCGI support for webServer
+    ODBC support improved (threaded, nonBlocking API for Win32)
+    SharedPool support added.
+    MenuEditor: added menuSlices.
+    Browser: some refactorings on SHIFT-code-menu; better project support;
+	     build features, more project support
+	     compare two repository versions
+    Editor: sort
+    VM: dynamic library loading bug fixed; jitted-literal bug fixed
+    FFI support
+    Notebook/TabView: destroy tab feature added
+    Documentation updates
+    Win32:
+	Fixes for dual screen operation
+	Button event & focus handling fixes; better winXP look;
+	Bug fixes in the socket, externalStream and hostname handling
+	Bug fixes in the API-call cleanup code & interrupt handling
+	(cleanup when interrupting and/or aborting threaded API calls)
+	Preliminary, experimental support for native widgets (for now: only scrollbar)
+	5.2.6 was the first "non-beta" win32 release.
+
+What's new in 5.2 ?
+    General Unicode font support.
+    xpSwiki ported.
+    FileBrowser improved (is now almost a usable unicode editor !)
+
+What's new in 5.1.6 ?
+    Bug fixes in the windows version (API-wraps, exceptions etc.)
+    HTML-tree and HTTPService presenter (for flexible response-layout)
+    Font handling: FontPanel fixes; better unicode handling.
+    File-I/O: fixes for 32bit API (seek, stat etc.) to handle full 32bit
+    positions; added 64bit API (huge file support)
+
+What's new in 5.1.5 ?
+    Bug fixes in the windows version (API-wraps, exceptions etc.)
+    HTTPServer/HTTPService framework improvements.
+
+What's new in 5.1.4 ?
+    Better performance and restructured code in the HTTPServer/HTTPService framework.
+
+What's new in 5.1.2 ?
+    NewSystemBrowser and NewFileBrowsers are now the default.
+    added more features (code search) to the NewSystemBrowser.
+    SIXX (Smalltalk Instance exchange via XML) added.
+    Some bug fixes.
+
+What's new in 5.1.1 ?
+    Removed unused instance variables from Class (therefore a major version step).
+    Stream positioning is now 0-based.
+    File open errors now raise an error instead of raising a notification and returning nil.
+    Many HTTPServer improvements.
+
+What's new in 4.1.9 ?
+    Better HTTPServer administration.
+    XML-Xpath and XSL support
+    Comanche STT added (Smalltalk Templates)
+
+What's new in 4.1.8 ?
+    HTTPServer refactored for much easier pluggability
+
+    SOAP demos & examples
+	try the translation service
+	(in the workspace or via the Launchers Demos-BabelFish menu item.)
+
+    Comanche Swiki ported from Squeak
+	a *much* nicer swiki; nice look; better administration.
+
+    NewProcessMonitor
+	better look;
+
+    More configuration options and improved settings dialog
+
+    Many improvements and bug fixes all over the place (lots of WIN32 fixes)
+
+    We now recommend the use of the NewFileBrowser and NewSystemBrowser
+    tools (they are in use for quite some time now)
+
+
+What's new in 4.1.x ?
+
+A list of new features with links into the documentation
+is found via the Launchers "Help" -> "What's new in ST/X" menu item.
+
+    first of all:
+	finally a new licensing scheme;
+	Please read the files
+		TOP/README  (the README tab)
+	which contains the additional license information.
+	Make sure you agree - or else please contact us.
+
+    Settings
+	you will find a preliminary version of the pluggable settingsApp
+	in the Launchers System-Menu, if you turn ON the
+	"Use the new SettingsDialog" flag in the "Launcher-Settings-Tools" dialog.
+
+    NewSystemBrowser
+	go to the "Launcher-Settings-Tools" dialog,
+	and turn ON the "Use the new SystemBrowser" flag.
+	    (This takes a short time to load the browser,
+	    so you may want to save an image after that, to avoid the delay in the future.)
+	Please have a look into the updated HTML Documentation.
+
+	cg: it is a good idea to also turn ON the
+	   "new VersionDiff Browser" flag.
+	   However, I dont like the new ChangesBrowser anymore ;-)
+
+    NewFileBrowser
+	MultiPane, Hierarchical Tree, File Properties,
+	mime-type controlled presentation and more...
+	go to the "Launcher-Settings-Tools" dialog,
+	and turn ON the "Use the new FileBrowser" flag.
+
+
+    ChangesBrowser
+	now has multi-select capability and a pull down menu.
+	if auto-compare is ON, diffs are shown immediately in the lower pane.
+
+    SUnit testing framework
+	see the Launchers "Tools" menu, or double click on any
+	class derived from TestCase in the NewSystemBrowser.
+	Last TestResults are remembered and indicated in the browsers class-icons.
+
+Additional ported goodies:
+
+    Minnestore, an object data base
+	(status: runs almost testcases and I think it is almost usable; but who knows...)
+
+    SOAP
+	thanks to Steve Waring & Masashi Umezawa
+
+    XML-VW
+	thanks to Cincom; a portable XML parser
+	And then there were two of them ;-)
+	Some preliminary support to fileIn XML-source has also been added.
+
+    XML-YAXO
+	yet another XML parser.
+
+    SIF
+	the smalltalk interchange format
+
+    RefactoryBrowser
+	is available both in its original version
+	(see the RefactoryBrowser class)
+	and via the NewSystemBrowser (which uses the reafactorings,
+	but is not based on the refactoryBrowser other than that)
+
+    measurements
+	a units package (kelvin to fahrenheit at its best)
+
+    stMath
+	a math package (see the test cases)
+
+
+    quite a bunch of new widgets, widget improvements and bug fixes.
+    Many bug fixes in the compiler(s) and the VM.
+
+    For Windows Users:
+	winstx.exe (i.e. stx without a console window) now works again;
+	[although as a developer, I still prefer stx.exe ...)
+
+	stx.exe/winstx.exe can now be started multiple times under
+	W95/W98 (had a wrong linker flag in the nt.defs file, which
+	prevented the previous version from doing that).
+
+	stx for win can now be (re)compiled using the freeBorland tools
+	(and the free stx version actually is ...).
+	There is no longer a need to buy a compiler to add primitive
+	code to st/x.
+	Of course, if you stay on the smalltalk level, there is still no
+	need for any compiler at all - the built-in jitter does not
+	require a compiler.
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------
+This Documents Version: $Revision$

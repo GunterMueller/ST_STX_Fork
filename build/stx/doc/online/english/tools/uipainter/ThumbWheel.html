@@ -1,0 +1,194 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+   <META NAME="Author" CONTENT="Thomas Zwick, eXept software AG, Germany">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.04 [en] (X11; I; Linux 2.0.30 i586) [Netscape]">
+   <TITLE>The ThumbWheel Widget</TITLE>
+</HEAD>
+<BODY>
+<A HREF="Slider.html" NOPRINT><IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="The Slider Widget" NOSAVE HEIGHT=30 WIDTH=30></A>
+<A HREF="TOP.html#TABLEOFTHEWIDGETS" NOPRINT><IMG SRC="../../../icons/DocsUpArrow.gif" ALT="Table of the Widgets" NOSAVE HEIGHT=30 WIDTH=30></A>
+<A HREF="ProgressIndicator.html" NOPRINT><IMG SRC="../../../icons/DocsRightArrow.gif" ALT="The ProgressIndicator Widget" NOSAVE HEIGHT=30 WIDTH=30></A>
+<BR>&nbsp;
+<BR>
+<HR ALIGN=LEFT WIDTH="100%">
+<H1>
+<FONT SIZE=+4>The ThumbWheel Widget</FONT></H1>
+<IMG SRC="../../../pictures/GUIPainterWidgetThumbWheel.gif" ALT="A View of a ThumbWheel Widget" NOSAVE HEIGHT=25 WIDTH=129>
+<BR>View Class: <TT>ThumbWheel</TT>
+<BR>Spec Class: <TT>ThumbWheelSpec</TT>
+
+<H3>
+
+<HR ALIGN=LEFT WIDTH="100%"></H3>
+
+<H3>
+The <I>Basics</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>ID</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Unique symbolic name (ID) of the widget.&nbsp;</B>&nbsp;
+<BR>This ID can be used by the application to access the widget
+via <TT>"builder>>componentAt:ID"</TT>.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Model</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for the model,
+holding the thumbs value.
+<BR>Usually a <TT><A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance.</TD>
+</TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Min</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>The thumbs minimum value.&nbsp;</B>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Max</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>The thumbs maximum value.&nbsp;</B>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Step</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>The thumbs stepping value.&nbsp;</B>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>KbdStep</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>The thumbs keyboard stepping value.</B>
+<BR>This value will be used when the cursorUp/cursorDown key is pressed in the widget.
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Orientation</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Horizontal or vertical.&nbsp;</B>
+</TR>
+</TABLE>
+
+
+
+&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Details</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>BG-Color</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the background color of the thumb.</B>&nbsp;
+<BR>If the check toggle is marked, the widgets background color 
+<BR>can be chosen by selecting the desired colored button. 
+<BR>If the check toggle is not marked, the widget will use its
+<BR>default background color (from the style sheet).</TD>
+</TR>
+
+<TR NOSAVE>
+<TD><B>Initially Disabled</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the widget is initially
+disabled.</B></TD>
+</TR>
+
+<TR NOSAVE>
+<TD><B>Initially Invisible</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the widget is initially
+invisible.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Can Tab</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the widget can be reached
+by tabbing.</B></TD>
+</TR>
+
+
+</TABLE>
+
+
+
+&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Channels</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Enable</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for en-/disabling
+the widget.</B>&nbsp;
+<BR>It should return a&nbsp;
+
+<P>&nbsp;&nbsp;&nbsp; - <TT>Boolean</TT> instance** (only for static behavior)&nbsp;
+<BR>&nbsp;&nbsp;&nbsp; - <TT><A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance with a <TT>Boolean</TT> instance**&nbsp;
+
+<P>If a value holder is returned by the application,
+<BR>the widgets can be dynamically enabled/disabled simply
+<BR>by changing the valueHolders contents.
+</TD>
+</TR>
+
+</TABLE>
+
+&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>CallBacks</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Start Move</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Message selector of a method which is
+invoked when a motion action is started.</B>&nbsp;
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>End Move</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Message selector of a method which is
+invoked when a motion action is finished.</B>&nbsp;
+</TR>
+
+
+</TABLE>
+
+
+
+
+
+
+<TT>*&nbsp; = ValueHolder, AspectAdaptor, BufferedValueHolder, RangeAdaptor,
+TriggerValue</TT>
+<BR><TT>** = true, false</TT>
+
+<P>&nbsp;
+<H3>
+The <I>Help</I> Section:</H3>
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="HelpTool.html">Using the Help Tool</A>"
+<BR>&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Layout</I> Section:</H3>
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="LayoutTool.html">The Layout of the Widgets</A>"
+<BR>&nbsp;
+
+<P>
+<HR>
+
+<P><IMG SRC="../../../icons/stx.gif" ALT="[stx-logo]" NOSAVE NOPRINT HEIGHT=48 WIDTH=47 ALIGN=CENTER>
+<BR><TT>Copyright &copy; 1998 eXept Software AG, all rights reserved</TT>
+<BR>
+<HR>
+</BODY>
+</HTML>
+
+

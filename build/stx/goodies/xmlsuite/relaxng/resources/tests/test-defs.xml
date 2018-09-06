@@ -1,0 +1,145 @@
+<?xml version="1.0" ?>
+<test-defs>
+  <test name="base1" res="ok">
+    <schema>base.rng</schema>
+    <doc>base_1ok.xml</doc>
+  </test>
+  
+  <test name="base2" res="fail">
+    <schema>base.rng</schema>
+    <doc>base_2bad.xml</doc>
+    <exception>RNG::ValidationError</exception>
+    <line>3</line>
+  </test>
+
+  <test name="addressbook1" res="ok">
+    <schema>addressbook1.rng</schema>
+    <doc>addressbook1_1ok.xml</doc>
+  </test>
+
+  <test name="addressbook2" res="ok">
+    <schema>addressbook2.rng</schema>
+    <doc>addressbook2_1ok.xml</doc>
+  </test>
+
+  <test name="addressbook3" res="ok">
+    <schema>addressbook2.rng</schema>
+    <doc>addressbook2_2ok.xml</doc>
+  </test>
+
+  <test name="addressbook4" res="ok">
+    <schema>addressbook2.rng</schema>
+    <doc>addressbook2_3ok.xml</doc>
+  </test>
+
+  <test name="choice1" res="ok">
+    <schema>choice.rng</schema>
+    <doc>choice_1ok.xml</doc>
+  </test>
+
+  <test name="choice2" res="fail">
+    <schema>choice.rng</schema>
+    <doc>choice_2bad.xml</doc>
+    <exception>RNG::ValidationError</exception>
+    <line>5</line>
+  </test>
+
+  <test name="choice3" res="fail">
+    <schema>choice.rng</schema>
+    <doc>choice_3bad.xml</doc>
+    <exception>RNG::ValidationError</exception>
+    <line>5</line>
+  </test>
+
+  <test name="choice2" res="fail">
+    <schema>choice.rng</schema>
+    <doc>choice_4bad.xml</doc>
+    <exception>RNG::ValidationError</exception>
+    <line>3</line>
+  </test>
+
+  <test name="choice5" res="ok">
+    <schema>choice.rng</schema>
+    <doc>choice_5ok.xml</doc>
+  </test>
+
+  <test name="optional1" res="ok">
+    <schema>optional.rng</schema>
+    <doc>optional_1ok.xml</doc>
+  </test>
+
+  <test name="optional2" res="fail">
+    <schema>optional.rng</schema>
+    <doc>optional_2bad.xml</doc>
+    <exception>RNG::ValidationError</exception>
+    <line>3</line>
+  </test>
+
+  <test name="optional3" res="fail">
+    <schema>optional.rng</schema>
+    <doc>optional_3bad.xml</doc>
+    <exception>RNG::ValidationError</exception>
+    <line>4</line>
+  </test>
+  
+  <test name="optional4" res="fail">
+    <schema>optional.rng</schema>
+    <doc>optional_4bad.xml</doc>
+    <exception>RNG::ValidationError</exception>
+    <line>5</line>    
+  </test>
+
+  
+  
+  <test name="list1_1" res="ok">
+    <schema>list.rng</schema>
+    <doc>list_1ok.xml</doc>
+  </test>
+  
+  <test name="list1_2" res="fail">
+    <schema>list.rng</schema>
+    <doc>list_2bad.xml</doc>
+    <exception>RNG::ValidationError</exception>
+    <line>1</line>    
+  </test>
+  
+  <test name="list1_3" res="fail">
+    <schema>list.rng</schema>
+    <doc>list_3bad.xml</doc>
+    <exception>RNG::ValidationError</exception>
+    <line>1</line>    
+  </test>
+  
+  <test name="list2_1" res="ok">
+    <schema>list2.rng</schema>
+    <doc>list2_1ok.xml</doc>
+  </test>
+
+  <test name="list2_2" res="ok">
+    <schema>list2.rng</schema>
+    <doc>list2_2ok.xml</doc>
+  </test>
+
+  <test name="list2_3" res="fail">
+    <schema>list2.rng</schema>
+    <doc>list2_3bad.xml</doc>
+    <exception>RNG::ValidationError</exception>
+    <line>1</line>    
+  </test>
+
+  <test name="list2_4" res="fail">
+    <schema>list2.rng</schema>
+    <doc>list2_4bad.xml</doc>
+    <exception>RNG::ValidationError</exception>
+    <line>1</line>    
+  </test>
+
+  <test name="list3_1" res="fail">
+    <schema>list3.rng</schema>
+    <doc>list2_2ok.xml</doc>
+    <exception>RNG::SchemaParsingError</exception>
+    <!-- <line>1</line> --><!-- line must not be specified cos of bug in code --> 
+  </test>
+  
+  
+</test-defs>

@@ -1,0 +1,92 @@
+; View defaultStyle:#motif
+;
+; muddy color motif style, as found on HP greyscale machines
+; you may want to change the colors to brighter ones - they
+; are so pessimistic ;-)
+;
+; on VGA displays, where the colors are a bit darkish,
+; use motif_light
+;
+; $Header: /cvs/stx/stx/libview/styles/motif.style,v 1.24 2015-03-02 10:31:50 cg Exp $
+
+#if Screen current hasGreyscales
+;
+; use #nearestOn to avoid dithered view backgrounds
+;
+viewGrey                (Color grey:61) exactOrNearestOn:(Screen current)
+lightColor              (Color grey:84) exactOrNearestOn:(Screen current)
+shadowColor             (Color grey:33) exactOrNearestOn:(Screen current)
+mediumColor             (Color grey:52) exactOrNearestOn:(Screen current)
+#else
+viewGrey                Color white
+lightColor              Color grey:75
+shadowColor             Color black
+mediumColor             Color grey:50.
+#endif
+
+;
+; use systemColors if running on windows native
+
+#if Screen current platformName = 'xxxWIN32'
+
+; selectionBlue                   Screen current getSystemColor:#COLOR_HIGHLIGHT
+; menu.backgroundColor            Screen current getSystemColor:#COLOR_MENU
+; menu.foregroundColor            Screen current getSystemColor:#COLOR_MENUTEXT
+; pullDownMenu.backgroundColor    =menu.backgroundColor
+viewGrey                        Screen current getSystemColor:#COLOR_BTNFACE
+
+lightColor              Color white
+shadowColor             Color black
+; mediumColor             (Form width:8 height:8 fromArray:(Color ditherBits at:32) onDevice:Screen current) colorMap:(Array with:Color black with:(Screen current getSystemColor:#COLOR_BTNFACE) )
+
+#endif
+
+
+#include 'motif.common'
+
+comment  'a "Motif" look alike.\Unbelievable how ugly by todays standards...'
+
+#if (Language == #german) or:[Language == #de]
+comment  'an "Motif" angelehnter Stil.\Unglaublich h‰ﬂlich nach heutigem Standard...'
+#endif
+#if (Language == #french) or:[Language == #fr]
+comment  'un style qui resemble "Motif"'
+#endif
+
+previewFileName         'viewStyleSample_motif.png'
+
+fatFont                 Font family:'helvetica' face:'bold' style:'roman' size:12
+
+#if (Screen current platformName = 'WIN32' and:[Screen current width <= 640])
+fatFont          Font family:'helvetica' face:'bold' style:'roman' size:8
+#endif
+
+#if (Screen current platformName = 'WIN32' and:[Screen current width > 640 and:[Screen current width <= 800]])
+fatFont          Font family:'helvetica' face:'bold' style:'roman' size:10
+#endif
+
+selectionFont               =fatFont
+labelFont                   =fatFont
+menuFont                    =fatFont
+menu.itemSpace              3
+
+#try this:
+#variablePanel.handleLevel    -1
+
+#or, try that:
+#variablePanel.handleLevel    0
+#variablePanel.handleColor    Color black
+#variablePanel.handleStyle    #iris
+
+;
+; although the following is not really motif, it looks much better ...
+;
+#if Screen current hasColors
+editField.backgroundColor           (Color red:100 green:75 blue:75) exactOrNearestOn:(Screen current)
+editField.selectionBackgroundColor  Color white
+editField.selectionForegroundColor  Color black
+#else
+# if Screen current hasGrayscales not
+editField.backgroundColor           Color white
+# endif
+#endif

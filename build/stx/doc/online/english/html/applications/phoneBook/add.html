@@ -1,0 +1,59 @@
+<HTML>
+<HEAD>
+  <TITLE>Add a new telephone number</TITLE>
+
+  <SCRIPT language="smalltalkScript">
+
+	!methods!
+
+	addToDB
+	    |name phone db homeDir phoneDataBase message|
+
+	    name := window document forms entryForm nameField contents.
+	    name withoutSeparators isEmpty ifTrue:[^ self].
+
+	    phone := window document forms entryForm phoneField contents.
+	    phone withoutSeparators isEmpty ifTrue:[^ self].
+
+	    homeDir := OperatingSystem getHomeDirectory.
+	    phoneDataBase := homeDir asFilename construct:'.phone.db'.
+
+	    db := PersistencyManager file:phoneDataBase pathName.
+	    (db includesKey:name) ifTrue:[
+		window view bind:#badName to:name.
+		window view bind:#number to:(db at:name).
+		window view showDocument:'alreadyExists.html'.
+		^ self.
+	    ].
+	    db at:name put:phone.
+	    db release.
+
+	    message := 'Entry for ' , name , ' added to dataBase'.
+	    window view showInfo:message.
+	! !
+
+  </SCRIPT>
+</HEAD>
+
+
+<BODY>
+  <H1>Add Phone number</H1>
+
+  <FORM NAME=entryForm onsubmit="addToDB">
+    <TABLE>
+     <TR>
+       <TH> Name:   <TD>  <INPUT SIZE=40 NAME="nameField">
+     <TR>
+     <TR>
+       <TH> Phone:  <TD>  <INPUT SIZE=40 NAME="phoneField">
+    </TABLE>
+
+    <INPUT TYPE="button" VALUE="add ..." onclick="addToDB">.
+  </FORM>
+</BODY>
+
+<HR>
+  <A HREF="TOP.html">back to main menu</A>
+</HTML>
+
+

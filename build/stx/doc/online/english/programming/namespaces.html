@@ -1,0 +1,216 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Namespaces & Private Classes</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="sourcemanager_hg.html"> <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">       <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="opengl.html">  <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Namespaces & Private Classes</H1>
+
+<H2>Contents</H2>
+
+<UL>
+  <LI><A HREF="#INTRO" NAME="I_INTRO">Introduction & motivation</A>
+  <LI><A HREF="#USING" NAME="I_USING">Using namespaces</A>
+  <LI><A HREF="#PROGRAMMING" NAME="I_PROGRAMMING">Programming considerations</A>
+  <LI><A HREF="#PRIVATECLASSES" NAME="I_PRIVATECLASSES">Private classes</A>
+  <LI><A HREF="#EXTENSIONS" NAME="I_EXTENSIONS">ST/X extensions</A>
+  <LI><A HREF="#HINTS" NAME="I_HINTS">Hints</A>
+</UL>
+
+
+<A NAME="INTRO" HREF="#I_INTRO"><H2>Introduction & motivation</A></H2>
+
+<CITE>ST/X</CITE> provides multiple namespaces and private classes
+to allow better structuring of big projects and to avoid name
+conflicts. These conflicts also often occur, when alien classes
+are loaded (filedIn) into the system.
+<BR>
+A namespace logically represents a dictionary referring to classes;
+<VAR>Smalltalk</VAR> itself plays the role of a default namespace.
+(although, the actual implementation is a bit different, due to the
+ way global variables are handled in statically compiled code).
+<BR>
+When a class is compiled, references to other classes are resolved first
+in the classes own namespace, then in the default namespace (<VAR>Smalltalk</VAR>).
+<P>
+The <CITE>ST/X</CITE> implementation of namespaces and private classes
+does not completely hide those classes - if required, access is still possible
+from the outside (and sometimes very useful); however, this access is not
+possible by accident - an explicit language construct is required to
+access those hidden classes.
+<BR>
+Explicit access to a class from a particular namespace is possible either
+by using a namespace prefix (which is an ST/X language extension), or
+by accessing the namespace via <CODE>"at:"</CODE> messages
+(which can be made portable, by adding an implemenation for this message
+to the other smalltalk dialect).
+<P>
+A namespace-classes sourcecode is backward compatible with systems which do
+not know about namespaces - i.e. it is possible to fileOut a class from <CITE>ST/X</CITE>
+which is located in some namespace, and load it into <CITE>VisualWorks</CITE>, for
+example. However, the namespace information is lost in the target system - the class
+will end up as a global class in <CITE>VW</CITE>.
+<BR>
+This is possible, since the namespace information is contained within comments,
+which are ignored by other systems.
+<P>
+Notice, that the above is not completely true:
+<BR>
+if an explicit namespace prefix is used, other systems may not be able to load the class.
+<BR>
+Therefore, if backward portability is required, do not use explicit references to
+classes in other namespaces (use <CODE>#at:</CODE> accesses, which can be simulated
+in the other system using poolDictionaries, globals or classVariables).
+
+
+
+<A NAME="USING" HREF="#I_USING"><H2>Using namespaces</A></H2>
+
+The <CITE>ST/X</CITE> browser has been modified to know about namespaces
+and has an additional namespace field, to allow setting a filter on
+which namespace-classes are to be shown.
+<BR>
+The default setting is <VAR>"* all *"</VAR> which turns off any filtering
+and shows all classes. In this case, class names are prefixed with their
+namespace in the class selection view, unless the class is global (i.e. in the
+<VAR>Smalltalk</VAR> namespace).
+<BR>
+Thus, in the browser, classes can be added to or modified in any namespace.
+<P>
+A different mechanism is used when classes are loaded from external files
+(i.e. filedIn); in this case, the current project provides a default namespace
+into which new classes are installed (of course, by default, the default namespace
+is <VAR>Smalltalk</VAR> - thus loaded classes are global by default).
+<BR>
+To load a bunch of classes into a separate namespace, create a new project
+(i.e. open a projectView), activate it and set its default namespace (in the
+project views popupMenu).
+Then fileIn the classes.
+
+
+
+<A NAME="PROGRAMMING" HREF="#I_PROGRAMMING"><H2>Programming considerations</A></H2>
+
+Globals are resolved at compilation time - that means, that programmatic
+changes in a namespace do not automatically affect code which was already compiled.
+<BR>
+However, the browser recompiles all methods which refer to a global,
+when a new class is added or removed from a namespace
+(since the variable-name may now refer to another global or namespace
+variable ...)
+<P>
+Thus, if your program adds classes to a namespace, make certain that relevant
+methods are recompiled
+<BR>
+(i.e. use <CODE>"Metaclass&nbsp;recompileMethodsAccessingGlobal:aGlobalKey"</CODE>).
+<BR>
+We repeat: this is only required if globals are added by the program
+<BR>- the browser does this automatically for you.
+<P>
+
+
+<A NAME="PRIVATECLASSES" HREF="#I_PRIVATECLASSES"><H2>Private classes</A></H2>
+
+These are much like classes within a namespace - actually, the same mechanisms
+are used, and a class (the owning class) plays the role of a namespace for
+its private classes.
+<BR>
+Although possible, we do not recommend a deep nesting of private classes:
+experience shows, that it complicates things and leads to unreadable and
+hard to maintain code.
+<P>
+Like with regular namespaces, access from outside is not strictly
+impossible - if prefixed with the owners class name, private classes
+can be accessed.
+<BR>
+However, we do not recommend this - if there is a need to access a private
+class from the outside, make it public, or place it in a true namespace.
+
+
+<A NAME="EXTENSIONS" HREF="#I_EXTENSIONS"><H2>ST/X extensions</A></H2>
+
+<UL>
+<LI>Creation of a namespace:
+<BR>
+<CODE><PRE>
+    Namespace name:'<VAR>nameOfNameSpace'</VAR>
+</PRE></CODE>
+<P>
+
+<LI>Fileout format namespace information (at the top of the source file):
+<BR>
+<CODE><PRE>
+    "{ NameSpace: <VAR>nameOfNameSpace</VAR> }"
+</PRE></CODE>
+notice, that this is a comment to other smalltalk systems.
+<P>
+
+<LI>Namespace prefix (explicit reference to a class in another namespace):
+<BR>
+<CODE><PRE>
+    <VAR>nameSpace</VAR>::<VAR>className</VAR>
+</PRE></CODE>
+(this is an <CITE>ST/X</CITE> extension,
+which is NOT compatible with other smalltalk
+systems).
+<P>
+For compatibility, the ST/X parser also recognizes the VW5i nameSpace
+syntax (using a period '.' as separator), if the corresponding
+flag is turned on in the launcher's settings-compilation-dialog.
+<P>
+
+<LI>backward syntax compatible access (can be used in other systems as well):
+<BR>
+<CODE><PRE>
+    <VAR>nameSpace</VAR> at:#<VAR>className</VAR>
+</PRE></CODE>
+
+
+<LI>definition of a private class:
+<BR>
+<CODE><PRE>
+    <VAR>superClass</VAR> subclass:#<VAR>className</VAR>
+	instanceVariableNames:'...'
+	classVariableNames:'...'
+	poolDictionaries:''
+	privateIn:<VAR>owningClass</VAR>
+</PRE></CODE>
+
+as a special case, a class may define a private class as a subclass
+of itself (see the <CODE>WindowEvent</CODE> class hierarchy for a concrete example).
+
+
+</UL>
+
+
+<A NAME="HINTS" HREF="#I_HINTS"><H2>Hints</A></H2>
+
+We do not recommend nesting namespaces; first it can make the code
+rather unreadable, second, it is not supported very much by the
+browser (i.e. the filter is not hierarchical), and finally: it
+has not used much in the past and is therefore not tested in depth.
+<P>
+We recommend a flat hierarchy, using a single namespace per
+application.
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 1997 eXept Software AG, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.15 $ $Date: 2016-07-11 09:24:05 $
+</BODY>
+</HTML>

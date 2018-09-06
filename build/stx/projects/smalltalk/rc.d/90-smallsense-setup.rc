@@ -1,0 +1,10 @@
+(Smalltalk at:#stx_goodies_smallsense) notNil ifTrue:[
+    (Smalltalk at:#stx_goodies_smallsense) swizzle.
+
+    UserPreferences default
+    	smallSenseEnabled: true;
+    	smallSenseBackgroundLintEnabled: true;
+    	smallSenseBackgroundTypingEnabled: true;
+    	smallSenseNewDialogsEnabled: true;
+    	smallSenseCompletionEnabled: true.
+].

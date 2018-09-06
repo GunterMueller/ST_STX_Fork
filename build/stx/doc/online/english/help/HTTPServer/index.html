@@ -1,0 +1,325 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Help - HTTPServer</Title>
+</HEAD>
+
+<BODY>
+<H2><A NAME="INDEX">HTTPServer Main Help Index</A></H2>
+
+<UL>
+<LI><A HREF="serverSettings.html">Server Configuration</A>
+<LI><A HREF="serverAuthSettings.html">Authorization Settings</A>
+<LI><A HREF="serverLoggingSettings.html">Log Settings</A>
+<LI><A HREF="pluggableServiceSettings.html">Pluggable Service Settings</A>
+<LI><A HREF="soapSettings.html">SOAP Service Settings</A>
+<LI><A HREF="standaloneApplication.html">Standalone WebServer (non-GUI) Setup</A>
+<P>
+<LI><A HREF="#usefulConfiguration">A Useful Configuration to Play With</A>
+  <UL>
+  <LI><A HREF="#create">Creating & Starting a Server</A>
+  <LI><A HREF="#fileService">Adding a File Service</A>
+  <LI><A HREF="#cgiService">Adding a CGI Scripting Service</A>
+  <LI><A HREF="#sttService">Adding an STT-Template Pages Service</A>
+  <LI><A HREF="#swikiService">Adding a WIKI Service</A>
+  <LI><A HREF="#programmedService">Programmed Services</A>
+  <LI><A HREF="#homepageService">Home Page Service</A>
+
+  </UL>
+</UL>
+
+<H2><A NAME="usefulConfiguration">A Useful Configuration to Play With</A></H2>
+
+The following describes a configuration which is useful to start playing
+with (to learn more about and demonstrate the functionality of the framework):
+<P>
+Please perform the following actions:
+<OL>
+<LI><A NAME="create">To create a new server</A>:
+<UL>
+<LI> Open a <VAR>System-Settings</VAR> dialog in the Launcher.
+<P>
+<LI> Navigate to the <VAR>Communication</VAR>-<B>HTTPserver</B> page.
+<P>
+<LI> Enter the portNumber - we recommend
+     <B>8081</B> as this port is typically not already used
+     by another webServer.
+<P>
+<LI> Press the <B>"Create new Server"</B>-button.
+</UL>
+<P>
+Now, a new item appears in the tree which represents that new server.
+It has not yet been started, but is ready to be configured.
+You can either start the server right now (even though it will not have
+any service to offer yet) or start it after the services have been
+configured.
+<BR>
+When adding services, there is no need to stop and restart the server;
+services can be added both to a stopped and to an already running server.
+<P>
+<B>Notice:</B>
+<BR>
+For your convenience, the setting-dialog will configure a number of example services
+<B>iff</B> the servers port is "8080".
+To avoid this (and to follow this configuration example exactly)
+either use a port different from 8080, or remove the automatically configured
+services (in the services dialog).
+
+
+<P>
+<LI>To start the new server:
+
+<UL>
+<LI> Select your new servers item in the left tree ("HTTPServer Port 8081").
+<P>
+<LI> Press the <B>"Start"</B>-button near the bottom of the dialogs right pane.
+</UL>
+Now, the server is running, and avaiting incoming requests.
+
+<P>
+<LI>Open a webBrowser:
+<P>
+You can now open your favourite webBrowser (either locally or from a remote machine)
+<BR>and navigate to <CODE><B>"http://&lt;yourHostName&gt;:8081/"</B></CODE>.
+<BR>Replace "&lt;yourHostName&gt;" with the name of your machine (or "localhost" if you
+started the webBrowser on the same machine) and replace the "8081" with whatever port you
+used in the aforementioned port setting.
+<P>
+Unless you have already configured some service(s) in the webServer,
+the webBrowser will now show an error-message (such as: "No Service for Home" or simlar).
+<BR>
+This is normal behavior at this time, because no service has been configured yet.
+
+
+<P>
+<LI><A NAME="fileService">Adding a File Access Service:</A>
+<P>
+The most basic service is a FileService, which returns regular files
+from some place in your fileSystem.
+<BR>
+To add such a service, perform these steps:
+<UL>
+<LI> Select the "Services" item in the left pane.
+<P>
+<LI> Select "HTTPFileService" in the upper list-pane.
+<P>
+<LI> Click on the "Add Service" button - the service appears in the bottom list-pane.
+<BR>
+For now, stay with the default settings for the linkName and other fields (these will be described later).
+<P>
+<LI> Click on the "Apply" button at the bottom.
+</UL>
+
+Now, a new item appears in the tree under the services item, which represents that new file service.
+Select this item and proceed to configure:
+
+<UL>
+<LI> Select the new item for fileService in the left pane ("FileService [/files]").
+<P>
+<LI> Select "HTTPFileService" in the upper list-pane.
+<P>
+<LI> Enter a root directory.
+This directory should contain the HTML-files which are to be answered by the
+server for all incoming requests whose local URL-path starts with "/files".
+<BR>
+You can also use the "browse"-button to navigate to the directory.
+<BR>
+As an example directory, which contains a few simple example files,
+enter <CODE><B>"../../goodies/webServer/data/sampleServerDir/simpleSamples/"</B></CODE>.
+
+<P>
+<LI> Enter a default fileName.
+This file is answered, if an empty fileName
+was asked for (i.e. a request for the "/files" link).
+<BR>
+As an example default-file,
+use <CODE><B>"index.html"</B></CODE>, which is found in the above sample directory.
+
+<P>
+<LI> Click on the "Apply" button at the bottom.
+</UL>
+
+Now, you should be able to access these files via your webBrowser;
+try navigating to the <CODE>"/files"</CODE> location
+(i.e. go to <CODE><B>"http://&lt;yourHostName&gt;:8081/files"</B></CODE>);
+this should present the default file.
+<P>
+You can add multiple file services, each with its own linkName and each with
+its own directory and optional default files.
+<BR>
+Especially, this allows you to embed already existing home pages into your
+browsers pages.
+
+
+<P>
+<LI><A NAME="cgiService">Adding a CGI scripting service:</A>
+<P>
+The CGI-service allows for external scripts or executable programs
+to be used for dynamic page generation.
+<BR>
+Scripts are often used for counters, dynamic database access etc.
+<BR>
+A CGI-Service has the same configuration parameters as a regular file-service.
+<BR>
+When handling a request, the service looks if the requested file is
+executable and, executes it as a program (or script).
+The programs standard-output is collected and returned to the webBrowser.
+<BR>
+If the file is not executable, it is assumed to be a regular text-file and
+returned in the same way a regular fileService would.
+
+<BR>
+To add a demo-CGIservice, perform these steps:
+<UL>
+<LI> Add an "HTTPCGIService" service in the "Services" section of the settings dialog.
+<P>
+<LI> Goto the new services' setup dialog and
+enter <CODE><B>"../../goodies/webServer/data/sampleServerDir/cgi-bin/</B></CODE>.
+as directory.
+<P>
+<LI> Click on the "Apply" button at the bottom to start the service.
+</UL>
+
+Now, you should be able to retrieve CGI-script-generated webPages
+via your webBrowser;
+try navigating to the <CODE>"/files"</CODE> location
+(i.e. go to <CODE><B>"http://&lt;yourHostName&gt;:8081/cgi-bin/README"</B></CODE>)
+for more info.
+<P>
+CGI support is mostly provided to allow for existing
+webPages to be embedded seamlessly.
+
+
+<P>
+<LI><A NAME="sttService">Adding pages with embedded Smalltalk code (STT pages):</A>
+<P>
+
+The STT-service can process template pages with embedded Smalltalk code
+(this very similar to php).
+<P>
+Some example pages for this are provided in the
+<CODE><B>"../../goodies/webServer/data/comancheSTT/"</B></CODE> directory.
+<P>
+For demonstration, create a "CommancheSTTService" and visit it
+via the <CODE><B>"http://&lt;yourHostName&gt;:8081/stt"</B></CODE> link,
+which gives more information and provides links to more examples.
+<P>
+STT provides a very powerful framework, in which html-pages can be created
+even by non-programmers and enhanced either by embedding Smalltalk code
+right into them, or by calling appropriate functions in the Smalltalk
+system from those pages.
+<BR>
+STT pages have access to the full power of the underlying Smalltalk system,
+and are in real use in some of our own projects (with success).
+
+<P>
+<LI><A NAME="swikiService">Adding WIKI pages:</A>
+<P>
+
+A WIKI consists of webPages which can be modified by other people.
+They function similar to whiteboards or public discussion boards.
+<P>
+There are numerous options in setting up a Smalltalk WIKI,
+and therefore, the Smalltalk WIKI provides its own setup pages,
+to administer access (read/write/upload etc.), users and passwords,
+and page layout.
+<P>
+The ST/X web framework as delivered already contains in its
+standard configuration
+the classes and (empty) swiki-pages to play with
+(this was ported from the popular Comanche-Smalltalk-WIKI).
+<P>
+For demonstration, create a "CommancheSwikiService" and visit one of
+the WIKI-books
+via any of the following links:
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;<CODE><B>"http://&lt;yourHostName&gt;:8081/ComancheSwiki/exept"</B></CODE>
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;<CODE><B>"http://&lt;yourHostName&gt;:8081/ComancheSwiki/refs"</B></CODE>
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;<CODE><B>"http://&lt;yourHostName&gt;:8081/ComancheSwiki/admin"</B></CODE>
+<P>
+The default user:password for the admin-pages is "admin:password".
+This should be changed if you make the swiki accessible to the public.
+<P>
+More information and additional links are found in the swiki and by googling
+for "comanche swiki".
+<P>
+
+
+<LI><A NAME="programmedService">Programmed Services</A>
+<P>
+
+Until now, all services were file-based; i.e. they either consisted of
+plain html files or consisted of files with embedded
+scripting code.
+<BR>
+The full power of the Smalltalk programming environment
+(browsers, inspectors, debuggers objects and classes etc.) can be exploited,
+if the service is implemented as a Smalltalk service-class.
+<P>
+Of course, there are unlimited possibilities of what can be done,
+therefore the following examples can only give a rough overview on
+the possibilities.
+
+<P>
+The simplest of the programmed services is the HelloWorldService,
+which (what woud you expect) simply answers with a hello world page.
+<P>
+To try it, add the <CODE><B>"Demos::HelloWorldService"</B></CODE> to your service list,
+and visit the
+<CODE><B>"http://&lt;yourHostName&gt;:8081/Hello"</B></CODE>-link.
+<P>
+This is the absolute simplest possible programmed webService, and can be used
+as a start to write your own (copy it in the browser, and add more fuctionality as
+required).
+<BR>
+The class you would want to look at is
+"<A HREF="onlyInSTX.html" ACTION="doit:UserPreferences browserClass openInClass:Demos::HelloWorldService" INFO="open a browser">Demos::HelloWorldService</A>".
+
+<P>
+For more sophisticated examples, try the other demo-services:
+&nbsp;&nbsp;&nbsp;&nbsp;<CODE><B>"Demos::WebDemoApp1"</B></CODE>
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;<CODE><B>"Demos::WebProcessList"</B></CODE>
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;<CODE><B>"Demos::WebScreenImage"</B></CODE>
+<BR>
+and, as a very nice example,
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;<CODE><B>"Demos::WebSlideShow"</B></CODE>
+<BR>
+which must be configured for a particular directory and presents
+a slideShow of the images found there (share your holiday-photos !).
+
+<P>
+<LI><A NAME="homepageService">The Home Page Service</A>
+<P>
+This is a convenient service, which collects the names and links
+of some other configured services, and presents them nicely formatted
+as an entry page.
+<BR>
+Configure the <CODE><B>"Demos::WebHomePageForSTX"</B></CODE> with <CODE><B>"/Home"</B></CODE> as linkName,
+and change the HTTPServers defaultRoot setting to <CODE><B>"/Home"</B></CODE>.
+<P>
+The <CODE>"Demos::WebHomePageForSTX"</CODE> is also very usable as a template
+to write your own home page service.
+
+</OL>
+
+Have fun
+
+
+
+<HR>
+<P>
+<P>
+Copyright &copy; 2003 eXept Software AG, all rights reserved
+<P>
+<P>
+
+<HR>
+Doc $Revision: 1.7 $ $Date: 2016-09-14 09:41:11 $
+
+</BODY>
+</HTML>

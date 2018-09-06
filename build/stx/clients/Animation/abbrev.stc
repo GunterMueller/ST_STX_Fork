@@ -1,0 +1,4 @@
+Demos::Animation Animation stx:clients/Animation 'demos-Animations' 0
+Demos::GlobeDemo GlobeDemo stx:clients/Animation 'demos-Animations' 0
+Demos::RoundGlobe RoundGlobe stx:clients/Animation 'demos-Animations' 0
+Demos::WalkingGirl WalkingGirl stx:clients/Animation 'demos-Animations' 0

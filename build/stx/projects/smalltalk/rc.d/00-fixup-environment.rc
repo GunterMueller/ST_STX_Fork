@@ -1,0 +1,25 @@
+Smalltalk isStandAloneApp ifFalse:[
+
+| userHome stxUserHome stxUserPackageDir |
+userHome := Filename homeDirectory.
+(userHome exists not or:[userHome isWritable not]) ifTrue:
+	[('User home directory does not exists or is not writable ('
+		,userHome name
+			,'). Exitting') errorPrintCR.
+	Smalltalk exit: 1].
+
+stxUserHome := userHome / '.smalltalk'.
+
+stxUserHome exists ifFalse:
+	[stxUserHome makeDirectory.
+	(stxUserHome / ('p_',OperatingSystem getLoginName,'.rc')) writeStream
+		nextPutAll:'"User-specific startup script"';
+		cr;
+		close].
+
+
+stxUserHome isDirectory ifFalse:
+	[(stxUserHome name,' is not directory. Exitting')
+		errorPrintCR.
+	Smalltalk exit: 1].
+]

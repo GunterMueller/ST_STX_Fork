@@ -1,0 +1,141 @@
+<HTML>
+<HEAD>
+<TITLE>Tutorial - Creating a GUI Application</TITLE>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="tut_5.html"> <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="tutorial.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="tut_6.html"> <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<P>
+Sorry - this document is unfinished.
+<P>
+
+
+<H1><A NAME="CREATING_AN_APPLICATION">Creating a GUI Application</A></H1>
+
+In the previous sections, we have learned how simple classes can
+be created - now lets create an application, which does something
+useful with the Person-class objects, we defined there.
+<P>
+
+In order to make the code simple and easy to understand,
+we will only create a very simple and easy to understand application:
+a little person browser application.
+
+<P>
+
+The resulting application should be able to read Person objects from
+a file, add new Persons to that database and finally save the persons
+back onto the file.
+
+<P>
+
+In Smalltalk/X, a framework exists for typicaly applications, which
+consists of the ApplicationModel, UIBuilder and ValueModel class hierarchies.
+<BR>
+In order to make use of this framework, we create our application class
+as a subclass of <CODE>ApplicationModel</CODE>.
+
+
+
+<H2><A NAME="CREATING_APP_CLASS">Creating a New Application Class</A></H2>
+<P>
+In the browser, select the <I>'New Application'</I> item from the
+class-list-menu,
+and accept the resulting class definition template:
+
+<CODE><PRE>
+    ApplicationModel subclass:#PersonBrowser
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Applications'
+</PRE></CODE>
+
+
+
+<H2><A NAME="CREATING_APP_FRAME">Generating the Initial Application Code</A></H2>
+
+Then, switch the browser to 'class'-protocol, and select the
+'generate initial application code' item from the
+method-category-list-menu.
+<BR>
+This generates the basic protocol, which is required by all GUI
+applications.
+<P>
+After that, you can already start your new application, either by
+evaluating:
+<CODE><PRE>
+    PersonBrowser open
+</PRE></CODE>
+in a workspace, or by double-clicking on the <CODE>PersonBrowser</CODE>
+class in the browser.
+<P>
+Of course, there is not more than an empty application window - for now.
+
+
+
+<H2><A NAME="CHANGING_APP_MENU">Modifying the Application's Menu</A></H2>
+
+As a next step, change the application's menu using the menuBuilder:
+<BR>select the 'menu specs' category in the browser's method-category-list,
+then double click on the <CODE>mainMenu</CODE> selector.
+<BR>This opens a menuBuilder.
+<BR>Remove the <I>'New'</I> and the <I>'Save'</I>
+items from the <I>'File'</I> menu.
+<BR>
+When finished, save-back the changed menu either by clicking on
+the menuBuilders 'Save' button, or by selecting the menuBuilders
+<I>'Save'</I> menu-item.
+<BR>
+Then close the menuBuilder.
+<P>
+You may want to validate and reopen your application by double clicking
+on the class again.
+<P>
+
+
+
+<H2><A NAME="CHANGING_APP_WINDOW">Modifying the Application's Window</A></H2>
+
+Now, you should change the layout and appearance of our application,
+to include a selection-list (to select a person) and a few inputFields
+(to display and modify a persons data).
+<BR>
+To do so, open a windowPainter on the application's <CODE>windowSpec</CODE>
+method (double click on the selector), and drag a selectionInListView
+(from the galleries lists-section) and a few labels plus inputFields (from the galleries
+'text'-section) into the drawing canvas.
+<BR>
+Arrange for the selectionList to occupy the top half of the window.
+<P>
+Now, your applications canvas should look like:
+<IMG SRC="GUI1.gif" ALT="[GUI1 screen snapshot]">
+
+<P>
+
+Text to be continued ...
+
+<HR>
+Continue in <A HREF="tut_6.html">"Recovering from a Crash"</A>.
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif" ALT="[stx-logo]">
+<BR>Copyright &copy; Claus Gittinger Development & Consulting
+<BR>Copyright &copy; eXept Software AG
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.2 $ $Date: 1999/03/22 16:05:47 $
+
+</BODY>
+</HTML>

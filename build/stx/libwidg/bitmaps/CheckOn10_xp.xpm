@@ -1,0 +1,19 @@
+/* XPM */
+static char *CheckOn10_xp_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"10 10 2 1",
+/* colors */
+"a c #21A121",
+"b c none",
+/* pixels */
+"bbbbbbbbbb",
+"bbbbbbbbbb",
+"bbbbbbbbab",
+"bbbbbbbaab",
+"bbabbbaaab",
+"bbaabaaabb",
+"bbaaaaabbb",
+"bbbaaabbbb",
+"bbbbabbbbb",
+"bbbbbbbbbb",
+};

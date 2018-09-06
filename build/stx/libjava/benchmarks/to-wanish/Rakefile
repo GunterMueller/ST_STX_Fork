@@ -1,0 +1,173 @@
+#require 'pry'
+
+require 'yaml'
+require 'rake/clean'
+
+CLEAN.include(['**/*.class','**/*.tmp','**/*.stx','**/*.libjava','**/*.chg'])
+JAVA_TEST_FILES = FileList['tests/**/*.java']
+JAVA_CLASS_FILES = []
+TESTS = FileList['tests/*']
+TESTS_DISABLED = [ "Threadring" , "Saxon" ]
+# Threadring - ?
+# SAXON        Segfaults due to a bug in JIT compiler. However, even bytecode
+#              is quite fast (10 slower than JVM, not bad! :-)
+        
+STX_TEMPLATE = File.open("stx_template").read
+LIBJAVA_TEMPLATE = File.open("libjava_template").read
+
+task :default => [:all]
+
+task :all => [:build, :run_tests]
+
+task :build do
+  TESTS.each do |test|
+    Dir.chdir test do |path|
+      test_name = test.gsub /^tests\//, ''
+      build_java_test test_name
+      build_stx_test test_name
+      build_libjava_test test_name
+    end
+  end
+end
+
+task :run_tests do
+  results = Hash.new
+  TESTS.each do |test|
+    disabled = false;
+    TESTS_DISABLED.each do | e |
+      if (test.include? e) 
+        disabled = true
+      end
+    end
+    if ! disabled
+      test_name = test.gsub /^tests\//, ''
+      puts "Running #{test_name}"      
+
+      java_time = measure(test, :jvm)
+      puts "#{java_time}"      
+
+      stx_time = measure(test, :stx)      
+      puts "#{stx_time}"      
+
+      libjava_time = measure(test, :libjava)      
+      puts "#{libjava_time}"      
+
+      results[test_name] = {:java => java_time, :stx => stx_time, :libjava => libjava_time}
+    end
+  end
+  results = Hash[results.sort]
+  File.delete("perf_results")
+  File.open("perf_results", "w") do |file| 
+    values = [[ "Test", "JVM", "STX", "LIBJAVA" ]]
+    results.each_pair do |key, value|
+      values << [ key, results[key][:java], results[key][:stx], results[key][:libjava] ]
+    end
+
+    max_lengths = values[0].map { |val| val.length }
+    values.each do |row|
+      row.each_with_index do |elem, index|
+        elem_size = elem.size
+        max_lengths[index] = elem_size if elem_size > max_lengths[index]
+      end
+    end
+    values.each do |val|
+      format = max_lengths.map { |length| "%#{length}s" }.join(" " * 3)
+      file.write(format % val)
+      file.write("\n")
+    end
+  end
+  p results
+end
+
+def build_java_test test_name
+  if not File.exists? "#{test_name}.class"
+    command = "javac #{classpath()} -d . ../../java/src/#{test_name}.java"
+    puts command
+    if ! system command
+        raise Exception.new("Failed to compile #{test_name}.java")
+    end
+  end
+end
+
+def build_stx_test test_name
+  full_test = STX_TEMPLATE
+  File.open("#{test_name}.stx", "w") { |file| file.write full_test }
+end
+
+def build_libjava_test test_name
+  if File.exists?("#{test_name}.libjava_test")
+    test_content = File.open("#{test_name}.libjava_test").read
+  else
+    test_content = "(JAVA #{test_name}) main: (Array with: (Java as_String: Smalltalk commandLineArguments last))."
+  end
+  full_test = LIBJAVA_TEMPLATE.gsub /"TEST_GOES_HERE"/, test_content
+  File.open("#{test_name}.libjava", "w") { |file| file.write full_test }
+end
+
+def test_params
+  entries = Dir.entries "."
+  if entries.include? "input"
+    "< input"
+  elsif entries.include? "params"
+    `cat params`.chop()
+  else 
+    "1000"
+  end
+end
+
+# Return a class path arguments to be passed to java/javac
+# (including '-cp') or an empty string
+def classpath()
+  if (File.exist? "classpath") 
+    f = File.open("classpath", "rb")                
+    cp = "-cp #{f.read()}"      
+    cp.gsub!("\n","")          
+    f.close()
+    return cp
+  else
+    return ''
+  end
+end
+
+
+# Runs a given bench on given platform and return the time. 
+# If bench fails (non-zero status value), raise an exception. 
+def measure(test,platform)
+   Dir.chdir test do |path|
+       test_name = test.gsub /^tests\//, ''
+       if (platform == :'jvm') 
+          if (File.exist? "#{test_name}.class")
+              command = "java #{classpath()} #{test_name} #{test_params()}" 
+          else 
+              return "N/A"
+          end            
+       elsif (platform == :'stx')
+          if (File.exist? "#{test_name}.st")  
+              command = "smalltalk -I --quick -f #{test_name}.stx #{test_params} 2>&1"
+          else 
+              return "N/A"
+          end
+       elsif (platform == :'libjava') 
+          if (File.exist? "#{test_name}.class")          
+              command = "smalltalk -I --quick -f #{test_name}.libjava #{test_params} 2>&1"
+          else 
+              return "N/A"
+          end
+
+       else 
+          raise Exception.new("Unssuported platform: #{platform}")          
+       end
+       
+       puts " running: #{command}"
+       output = `#{command}`
+       if ($? != 0) 
+           puts output
+           raise Exception.new("Command failed!")
+       end
+       execution_time = (output.scan /^EXECUTION TIME: \d*[\.\d]\d*$/).last()
+       execution_time = execution_time.gsub /^EXECUTION TIME: /, ''
+       return execution_time       
+    end     
+end
+
+

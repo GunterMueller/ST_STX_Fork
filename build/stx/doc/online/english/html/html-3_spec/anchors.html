@@ -1,0 +1,151 @@
+<title>Hypertext Links</title>
+<h1>Hypertext Links</h1>
+
+<B>Permitted Context:</B> %text<BR>
+<B>Content Model:</B> %text, but no nested anchors
+
+<p>The anchor &lt;A&gt; element is used to define the start
+and/or destination of a hypertext link. In previous versions of HTML it provided
+the only means for defining destination anchors within documents, but you
+can now use any ID attribute as a destination anchor so that
+links can now be made to divisions, paragraphs and most other elements.
+
+<p>Example:
+
+<pre>The &lt;A HREF="http://www.w3.org/"&gt;World Wide Web Organization&lt;/A&gt;
+provides information on Web related standards, mailing lists
+and freeware tools.</PRE>
+
+<p>The text between the start and end tag defines the label for the link.
+Selecting the link takes the reader to the document specified by the HREF
+attribute, in this case, the W3O home page. The label can include
+graphics defined with <a href="img.html">IMG</a> elements.
+
+<P>For <a href="figures.html">FIG</a> elements, the anchor element
+serves a dual role. Non-graphical user agents interpret it as a
+conventional text-based hypertext link, while graphical user agents
+interpret the anchor's SHAPE attribute as a graphical hotzone on the
+figure.
+
+<H3>Permitted Attributes</h3>
+
+<DL> <DT>ID <DD>An SGML identifier used as the target for hypertext
+links or for naming particular elements in associated style sheets.
+Identifiers are NAME tokens and must be unique within the scope of the
+current document. This attribute supercedes the "NAME" attribute, see
+below.
+
+<p>For example, the following paragraph is defined as an anchor named
+"potomac":
+
+<pre>&lt;P ID="potomac"&gt;The Potomac river flows into Boston harbour,
+and played an important role in opening up the hinterland
+to early settlers...</pre>
+
+<p>Elsewhere, you can define a link to this paragraph, as follows:
+
+<pre>&lt;A HREF="#potomac"&gt;Boston&lt;/A&gt; is a historic city and
+a thriving center of commerce and higher education.</pre>
+
+<p>The reader can select the link labelled "Boston" to see further
+information on the Boston area.
+
+<DT>LANG <DD>This is one of the ISO standard language abbreviations,
+e.g. "en.uk" for the variation of English spoken in the United Kingdom.
+It can be used by parsers to select language specific choices for
+quotation marks, ligatures and hypenation rules etc. The language
+attribute is composed from the two letter language code from ISO 639,
+optionally followed by a period and a two letter country code from ISO
+3166.
+
+<DT>CLASS <DD>This a space separated list of SGML NAME tokens and is
+used to subclass tag names. By convention, the class
+names are interpreted hierarchically, with the most general class on
+the left and the most specific on the right, where classes are
+separated by a period. The CLASS attribute is most commonly used to
+attach a different style to some element, but it is recommended that
+where practical class names should be picked on the basis of the
+element's semantics, as this will permit other uses, such as
+restricting search through documents by matching on element class
+names. The  conventions for choosing class names are outside the scope
+of this specification.
+
+<DT>HREF <DD>The HREF attribute implies that the anchor acts as the
+start of a hypertext link. The destination is designated by the value of
+the HREF attribute, which is expressed in the Universal Resource
+Identifier (URI) notation.
+
+<DT>MD <DD>Specifies a message digest or cryptographic checksum for the
+linked document designated by the HREF attribute. It is used when you
+want to be sure that a linked object is indeed the same one that the
+author intended, and hasn't been modified in any way. For instance,
+MD="md5:jV2OfH+nnXHU8bnkPAad/mSQlTDZ", which specifies an MD5 checksum
+encoded as a base64 character string. The MD attribute is generally
+allowed for all elements which support URI based links.
+
+<DT>NAME <DD>This attribute is used to define a named anchor for use as
+the destination of hypertext links. For example, the following defines an
+anchor than can be used as the destination of a jump into a description
+of the Boston area.
+
+<PRE>The &lt;A NAME="potomac"&gt;Potomac river&lt;/A&gt; flows into Boston
+harbour.</PRE>
+
+<P><B>Note:</B> the NAME attribute has been superceded by the ID
+attribute. User agents should include support for NAME to
+ensure backwards compatibility with legacy documents produced using
+previous versions of HTML.
+
+<DT><a name="shape">SHAPE</a><DD>This attribute is used within figures to
+define shaped hotzones for graphical hypertext links. Full details of how to use this
+feature will be given with the description of the figure element.
+The attribute value is a string taking one of the following forms:<BR><BR>
+
+<DL>
+<DT>"default"
+<DD>Used to define a default link for the figure background.
+<DT>"circle x, y, r"
+<DD>Where x and y define the center and r specifies the radius.
+<DT>"rect x, y, w, h"
+<DD>Where x, y define the upper left corner and w, h define the width
+and height respectively
+<DT>"polygon x1, y1, x2, y2, ..."
+<DD>Given n pairs of x, y coordinates, the polygon is closed by a line
+linking the n'th point to the first. Intersecting polygons use the non-zero
+winding number rule to determine if a point lies inside the polygon.
+</DL>
+
+<P>If a pointer event occurs in a region where two or more shapes
+overlap, the distance from the point to the center of gravity of each
+of the overlapping shapes is computed and the closest one chosen. This
+feature is useful when you want lots of closely spaced hotzones, for
+example over points on a map, as it allows you to use simple shapes
+without worrying about overlaps.
+
+<P><B>Note:</B> The x coordinate increases to the right, and the y
+coordinate increases downwards in the same way as IMG and image maps. If both
+numbers are integers, the coordinates are interpreted as pixel offsets
+from the upper left corner of the figure. Otherwise, the coordinates
+are interpreted as scaled values in the range 0.0 to 1.0 across the
+figure. Note the syntax is tolerant of repeated white space characters
+between tokens.
+
+<DT>TITLE <DD>This is informational only and describes the object
+specified with the HREF attribute. It can be used for object types that
+don't possess titles, such as graphics, plain text and Gopher menus.
+
+<DT>REL <DD>Used to describe the relationship of the linked object
+specified with the HREF attribute. The set of relationship names is not
+part of this specification, although "Path" and "Node" are reserved
+for future use with hypertext paths or guided tours. The REL attribute
+can be used to support search for links serving particular relationships.
+
+<DT>REV <DD>This defines a reverse relationship. A link from document A
+to document B with REV=<i>relation</i> expresses the same relationship
+as a link from B to A with REL=<i>relation</i>. REV=made is sometimes
+used to identify the document author, either the author's email address
+with a <i>mailto</i> URI, or a link to the author's home page. Tables
+of contents can use anchors with REV="ToC" to allow software to insert
+page numbers when printing hypertext documents. The plain text version
+of this specification was generated in this way!
+</DL> <!--NewPage-->

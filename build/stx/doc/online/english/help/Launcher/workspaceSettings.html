@@ -1,0 +1,65 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Help - Workspace Settings</Title>
+</HEAD>
+
+<BODY>
+
+<H1>Workspace Settings</H1>
+
+<H2><A NAME="INDEX">Help index</A></H2>
+
+<UL>
+  <LI><A HREF="#INTRODUCTION">Workspace Introduction</A>
+  <LI><A HREF="#TOPLEVELMODULEID">Top Level Module ID</A>
+  <LI><A HREF="#WORKSPACEDIRECTORY">Workspace Directory</A>
+</UL>
+<P>
+
+<H2><A NAME="INTRODUCTION" HREF="#INDEX">Workspace Introduction</A></H2>
+
+ST/X keeps some settings and temporary build files in a folder
+called "<i>the workspace</i>".
+It contains the changes file (holding all of the changes made to the system),
+any snapshot images and build directories, in which stand alone binary
+programs can be compiled/linked for final deployment.
+
+<P>
+
+<H2><A NAME="TOPLEVELMODULEID" HREF="#INDEX">Top Level Module ID</A></H2>
+For storage in a source repository,
+every class and extension method needs to be associated
+to a <i>package</i> (also sometimes called "<i>projects</i>").
+<P>
+PackageIDs consist of a moduleID and a folder path,
+separated by a colon. For example, "cg:demos/demo1" would designate
+a package with a module-identifier of "cg" and a folder of "demos/demo1".
+<P>
+ST/X allows for individual modules to be kept in individual source repositories.
+Thus, you can store and maintain your own files in a local repository,
+and at the same time use the official public Smalltalk/X (readonly-) repository
+to access the sources of the base system, which are in the "stx" module.
+<P>
+This field specifies the moduleID to use for any of your own classes.
+
+<P>
+
+<H2><A NAME="WORKSPACEDIRECTORY" HREF="#INDEX">Workspace Directory</A></H2>
+This field specifies the path of your workspace folder.
+
+<P>
+
+
+<HR>
+<P>
+<P>
+Copyright &copy;  Claus Gittinger Development & Consulting, all rights reserved
+<P>
+<P>
+
+<HR>
+Doc $Revision: 1.3 $ $Date: 2018-05-25 10:26:07 $
+
+</BODY>
+</HTML>

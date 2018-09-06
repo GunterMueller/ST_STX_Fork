@@ -1,0 +1,6096 @@
+<?xml version="1.0"?>
+
+<st-source>
+<time-stamp>From VisualWorks®, Release 5i.2 feb00.2 of February 29, 2000 on March 14, 2000 at 2:45:11 pm</time-stamp>
+
+
+<name-space>
+<name>XML</name>
+<environment>Smalltalk</environment>
+<private>false</private>
+<imports>
+			private Smalltalk.*
+			</imports>
+<category>XMLParsing</category>
+</name-space>
+
+<comment>
+<name-space-id>XML</name-space-id>
+<body>The XML NameSpace contains the VisualWorks XML Framework, including parsing and generation.  XMLParser is the parser.  XMLNodeBuilder is the generator.</body>
+</comment>
+
+
+<class>
+<name>Pattern</name>
+<environment>XML</environment>
+<super>Core.Object</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars>followSet </inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Patterns</category>
+</class>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<methods>
+<class-id>XML.Pattern class</class-id> <category>instance creation</category>
+
+<body>new
+
+	^super new initialize</body>
+</methods>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<comment>
+<class-id>XML.Pattern</class-id>
+<body>The element structure of an XML document may, for validation purposes, be constrained using element type and attribute-list declarations. An element type declaration constrains the element's content by constraining which element types can appear as children of the element.The constraint includes a content model, a simple grammar or pattern governing the allowed types of child elements and the order in which they are allowed to appear. These content models are represented by this XML.Pattern class and it's subclasses.
+
+Constraint rules or patterns may be complex (ComplexPattern and it's subclasses) or simple (ConcretePattern and it's subclasses).
+ 
+Subclasses must implement the following messages:
+	coercing
+		alternateHeads
+		pushDownFollowSet
+	testing
+		isSimple
+
+Instance Variables:
+	followSet	&lt;Collection&gt;  the follow set defines which other patterns may follow this one. By means of #alternateHeads and #pushDownFollowSet, we can reduce a ComplexPattern into a graph of ConcretePatterns, always starting with an InitialPattern and terminating in a TerminalPattern.
+</body>
+</comment>
+
+<methods>
+<class-id>XML.Pattern</class-id> <category>initialize</category>
+
+<body>initialize
+
+	followSet := OrderedCollection new: 2</body>
+</methods>
+
+<methods>
+<class-id>XML.Pattern</class-id> <category>coercing</category>
+
+<body>addFollow: aNode
+
+	followSet add: aNode</body>
+
+<body>addFollows: aList
+
+	followSet addAll: aList</body>
+
+<body>alternateHeads
+
+	^self subclassResponsibility</body>
+
+<body>followSet
+
+	^followSet</body>
+
+<body>normalize
+
+	| list done t r result |
+	list := OrderedCollection
+			with: (result := InitialPattern new addFollow: self)
+			with: self
+			with: TerminalPattern new.
+	self addFollow: list last.
+	done := OrderedCollection new.
+	[list isEmpty]
+		whileFalse:
+			[t := list removeFirst.
+			r := t pushDownFollowSet.
+			r == nil
+				ifTrue: [done add: t]
+				ifFalse: [list addAll: r]].
+	list := done.
+	done := OrderedCollection new.
+	[list isEmpty]
+		whileFalse:
+			[t := list removeFirst.
+			t normalizeFollowSet
+				ifTrue: [done add: t]
+				ifFalse: [list add: t]].
+	done do: [:p |
+		p isSimple ifFalse: [self error: 'Incomplete translation'].
+		p followSet do: [:p1 |
+			p1 isSimple ifFalse: [self error: 'Incomplete translation']]].
+	^result</body>
+
+<body>normalizeFollowSet
+
+	| changed oldFollow newFollow |
+	oldFollow := IdentitySet withAll: followSet.
+	newFollow := IdentitySet new.
+	oldFollow do: [:pat |
+		newFollow addAll: pat alternateHeads].
+	changed := newFollow size ~= oldFollow size or: [(newFollow - oldFollow) size &gt; 0].
+	followSet := newFollow asOrderedCollection.
+	^changed not</body>
+
+<body>pushDownFollowSet
+
+	^self subclassResponsibility</body>
+</methods>
+
+<methods>
+<class-id>XML.Pattern</class-id> <category>testing</category>
+
+<body>isSimple
+
+	^self subclassResponsibility</body>
+</methods>
+
+<methods>
+<class-id>XML.Pattern</class-id> <category>printing</category>
+
+<body>printOn: aStream
+
+	aStream nextPutAll: self description</body>
+</methods>
+
+
+<class>
+<name>DocumentType</name>
+<environment>XML</environment>
+<super>Core.Object</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars>attributeDefs elementDefs generalEntities parameterEntities notations </inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Parsing</category>
+</class>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<methods>
+<class-id>XML.DocumentType class</class-id> <category>instance creation</category>
+
+<body>new
+
+	^super new initialize</body>
+</methods>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<comment>
+<class-id>XML.DocumentType</class-id>
+<body>This class represents an XML document type definition or DTD. The document type declaration can point to an external subset containing markup declarations, or can contain the markup declarations directly in an internal subset, or can do both. The DTD for a document consists of both subsets taken together.
+
+Instance Variables:
+	attributeDefs	&lt;Dictionary&gt;
+	elementDefs	&lt;Dictionary&gt;
+	generalEntities	&lt;Dictionary&gt;
+	parameterEntities	&lt;Dictionary&gt;
+	notations	&lt;Dictionary&gt;
+</body>
+</comment>
+
+<methods>
+<class-id>XML.DocumentType</class-id> <category>initialize</category>
+
+<body>initialize
+
+	notations := Dictionary new.
+	elementDefs := Dictionary new.
+	attributeDefs := Dictionary new.
+	generalEntities := Dictionary new.
+	parameterEntities := Dictionary new.</body>
+</methods>
+
+<methods>
+<class-id>XML.DocumentType</class-id> <category>accessing</category>
+
+<body>attributeFor: key subKey: k2
+
+	| val |
+	(val := attributeDefs at: key asString ifAbsent: []) == nil
+		ifTrue: [XMLParser invalid: ('The attribute "&lt;1s&gt; &lt;2s&gt;" has not been defined'
+							expandMacrosWith: key asString
+							with: k2 asString)].
+	^val at: k2 asString
+		ifAbsent: [XMLParser invalid: ('The attribute "&lt;1s&gt; &lt;2s&gt;" has not been defined'
+							expandMacrosWith: key asString
+							with: k2 asString)]</body>
+
+<body>attributeFor: key subKey: k2 put: value
+
+	| dict |
+	dict := attributeDefs at: key asString ifAbsentPut: [Dictionary new].
+	(dict includesKey: k2 asString)
+		ifTrue: [^self warn: ('The attribute "&lt;1s&gt; &lt;2s&gt;" has been defined more than once'
+					expandMacrosWith: key asString
+					with: k2 asString)].
+	(value type isID and: [dict contains: [:attr | attr type isID]])
+		ifTrue: [^XMLParser invalid: ('The element &lt;1s&gt; has two attributes typed as ID' expandMacrosWith: key asString)].
+	dict at: k2 asString put: value</body>
+
+<body>attributesFor: key
+
+	^attributeDefs at: key asString ifAbsent: [Dictionary new]</body>
+
+<body>elementFor: key
+
+	| val |
+	(val := elementDefs at: key asString ifAbsent: []) == nil
+		ifTrue: [self warn: ('The element "&lt;1s&gt;" has not been defined'
+							expandMacrosWith: key asString)].
+	^val</body>
+
+<body>elementFor: key put: value
+
+	(elementDefs includesKey: key asString)
+		ifTrue: [^self warn: ('The element "&lt;1s&gt;" has been defined more than once'
+						expandMacrosWith: key asString)].
+	elementDefs at: key asString put: value</body>
+
+<body>generalEntityAt: key
+	"We do some tricks to make sure that, if the value
+	is predefined in the parser, we use the predefined
+	value. We could just store the predefined values
+	in with the general ones, but we don't want to show
+	warnings if the user (very correctly) defines them.
+	An enhancement would be to let the user use his own
+	values rather than the predefined ones, but we know
+	that the predefined ones will be correct--we don't know
+	that his will be."
+
+	| val |
+	val := PredefinedEntities at: key ifAbsent: [].
+	val == nil
+		ifTrue: [val := generalEntities at: key ifAbsent: []].
+	^val</body>
+
+<body>generalEntityAt: key put: value
+
+	(generalEntities includesKey: key)
+		ifTrue: [^self warn: ('The general entity "&lt;2s&gt;" has been defined more than once'
+						with: key)].
+	generalEntities at: key put: value</body>
+
+<body>notationAt: name
+
+	^notations at: name ifAbsent: [XMLParser invalid: 'Reference to an undeclared Notation']</body>
+
+<body>notationAt: name ifAbsent: aBlock
+
+	^notations at: name ifAbsent: aBlock</body>
+
+<body>notationAt: name put: notation
+
+	(notations includesKey: name)
+		ifTrue: [XMLParser invalid: 'Duplicate definitions for a Notation'].
+	notations at: name put: notation</body>
+
+<body>parameterEntityAt: key
+
+	^parameterEntities at: key ifAbsent: []</body>
+
+<body>parameterEntityAt: key put: value
+
+	(parameterEntities includesKey: key)
+		ifTrue: [^self warn: ('The parameter entity "&lt;2s&gt;" has been defined more than once'
+						with: key)].
+	parameterEntities at: key put: value</body>
+</methods>
+
+<methods>
+<class-id>XML.DocumentType</class-id> <category>private</category>
+
+<body>completeValidationAgainst: aParser
+
+	generalEntities keysAndValuesDo: [:eName :entity |
+		entity completeValidationAgainst: aParser].
+	attributeDefs keysAndValuesDo: [:eName :attribs |
+		attribs keysAndValuesDo: [:aName :attrib |
+			attrib completeValidationAgainst: aParser]]</body>
+
+<body>warn: aString
+
+	^InformationSignal new messageText: aString; raiseSignal</body>
+</methods>
+
+
+<class>
+<name>StreamWrapper</name>
+<environment>XML</environment>
+<super>Core.Link</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars>stream isInternal protocol name usedAsExternal entity cr lf </inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Parsing</category>
+</class>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<methods>
+<class-id>XML.StreamWrapper class</class-id> <category>instance creation</category>
+
+<body>emptyWithExtraSpace: space
+
+	^self stream: (space ifTrue: ['  '] ifFalse: ['']) readStream
+		protocol: 'internal'
+		name: nil
+		entity: nil</body>
+
+<body>stream: str protocol: key name: value entity: entity
+
+	^self new stream: str protocol: key name: value entity: entity</body>
+</methods>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<comment>
+<class-id>XML.StreamWrapper</class-id>
+<body>This class is used by the XMLParser to wrap both internal and external streams with proper encoding before handing them to the parser for processing
+
+Instance Variables:
+	stream			&lt;EncodedStream&gt;  stream being wrapped
+	isInternal		&lt;Boolean&gt;  true if the stream is internal and hencer doesn't need careful line-end treatment
+	protocol			&lt;String&gt;  name of stream type, 'internal' or 'file'
+	name			&lt;String | nil&gt;  the name of the stream, if it is named
+	usedAsExternal	&lt;Boolean&gt;  flag used to override protocol and say how stream is being used?
+	entity			&lt;Entity | nil&gt;  if wrapping on behalf of an Entity this is it?
+	cr				&lt;Character&gt;  cache of Character cr
+	lf				&lt;Character&gt;  cache of Character lf
+</body>
+</comment>
+
+<methods>
+<class-id>XML.StreamWrapper</class-id> <category>initialize</category>
+
+<body>stream: str protocol: key name: value entity: ent
+
+	stream := str.
+	isInternal := key = 'internal'.
+	protocol := key.
+	name := value.
+	entity := ent.
+	cr := Character cr.
+	lf := Character lf.</body>
+
+<body>usedAsExternal
+
+	^usedAsExternal</body>
+
+<body>usedAsExternal: aBoolean
+
+	usedAsExternal := aBoolean</body>
+</methods>
+
+<methods>
+<class-id>XML.StreamWrapper</class-id> <category>accessing</category>
+
+<body>characterSize: aCharacter
+
+	^(self stream respondsTo: #encoder)
+		ifTrue: [self stream encoder characterSize: aCharacter]
+		ifFalse: [1]</body>
+
+<body>checkEncoding
+
+	| encoding |
+	encoding := [stream encoding] on: Error do: [:ex | ex returnWith: #null].
+	encoding = #UTF_8
+		ifTrue:
+			[| c1 c2 pos |
+			pos := stream position.
+			stream setBinary: true.
+			c1 := stream next.
+			c2 := stream next.
+			stream setBinary: false.
+			(c2 notNil and: [c1 * c2 = 16rFD02])
+				ifTrue: [stream encoder: (UTF16StreamEncoder new
+									forByte1: c1 byte2: c2)]
+				ifFalse: [stream position: pos]]</body>
+
+<body>close
+
+	stream close</body>
+
+<body>contentsFor: aParser
+
+	| s |
+	s := (String new: 100) writeStream.
+	[self atEnd]
+		whileFalse: [s nextPut: (self nextFor: aParser)].
+	^s contents</body>
+
+<body>entity
+
+	^entity</body>
+
+<body>name
+	| streamName |
+	name ~~ nil ifTrue: [^name].
+	stream isExternalStream ifFalse: [^nil].
+	streamName := [stream name] on: Error do: [:ex| ex returnWith: nil].
+	streamName ~~ nil ifTrue: [streamName replaceAll: Filename separator with: $/].
+	^streamName</body>
+
+<body>protocol
+
+	^protocol</body>
+
+<body>stream
+
+	^stream</body>
+</methods>
+
+<methods>
+<class-id>XML.StreamWrapper</class-id> <category>streaming</category>
+
+<body>nextFor: aParser
+
+	| ch n |
+	ch := stream next.
+	isInternal
+		ifFalse:
+			[lf == nil ifTrue: [self halt].
+			ch == cr
+				ifTrue:
+					[stream peekFor: lf.
+					ch := aParser eol]
+				ifFalse: [ch == lf
+					ifTrue: [ch := aParser eol]]].
+	(ch isNil
+			or: [(n := ch asInteger) &lt; 16r110000   "IllegalCharacters size"
+			and: [(IllegalCharacters at: n+1) = 0]])
+		ifFalse: [aParser notPermitted: 'a character with Unicode value ', n printString].
+	^ch</body>
+
+<body>skip: n
+
+	stream skip: n</body>
+</methods>
+
+<methods>
+<class-id>XML.StreamWrapper</class-id> <category>testing</category>
+
+<body>atEnd
+
+	^stream atEnd</body>
+</methods>
+
+<methods>
+<class-id>XML.StreamWrapper</class-id> <category>declaration</category>
+
+<body>encodingDeclIn: aParser
+
+	| enc |
+	^stream peek = $e
+		ifTrue:
+			[| encoding |
+			self mustFind: 'encoding' errorOn: aParser.
+			self skipSpaceIn: aParser.
+			self mustFind: '=' errorOn: aParser.
+			self skipSpaceIn: aParser.
+			encoding := self quotedString.
+			aParser validateEncoding: encoding.
+			((stream respondsTo: #encoding)
+					and: [stream encoding asLowercase ~= (XMLParser mapEncoding: encoding) asLowercase])
+				ifTrue:
+					[enc := (StreamEncoder new:
+							(XMLParser mapEncoding: encoding) asSymbol)
+								initializeForFiles.
+					stream encoder: enc].
+			true]
+		ifFalse: [false]</body>
+
+<body>expected: string
+
+	XMLParser malformed: string, ' expected, but not found'</body>
+
+<body>mustFind: str errorOn: aParser
+
+	(self skipIf: str)
+		ifFalse: [aParser expected: str].</body>
+
+<body>quotedString
+
+	(stream peekFor: $")
+		ifTrue: [^(stream upTo: $") asString].
+	(stream peekFor: $')
+		ifTrue: [^(stream upTo: $') asString].
+	self expected: 'quoted string'</body>
+
+<body>sdDeclIn: aParser
+
+	^stream peek = $s
+		ifTrue:
+			[| word |
+			self mustFind: 'standalone' errorOn: aParser.
+			self skipSpaceIn: aParser.
+			self mustFind: '=' errorOn: aParser.
+			self skipSpaceIn: aParser.
+			word := self quotedString.
+			(#('yes' 'no') includes: word)
+				ifFalse: [aParser expected: 'yes or no'].
+			true]
+		ifFalse: [false]</body>
+
+<body>skipIf: str
+
+	| p |
+	p := stream position.
+	1 to: str size do: [:i |
+		(stream peekFor: (str at: i))
+			ifFalse:
+				[stream position: p.
+				^false]].
+	^true</body>
+
+<body>skipSpaceIn: aParser
+
+	| p space |
+	space := false.
+	[p := stream position.
+	#(9 10 13 32) includes: (self nextFor: aParser) asInteger]
+		whileTrue: [space := true].
+	stream position: p.
+	^space</body>
+
+<body>textDeclIn: aParser
+
+	self checkEncoding.
+	^(self skipIf: '&lt;?xml')
+		ifTrue:
+			[| hasSpace |
+			hasSpace := self skipSpaceIn: aParser.
+			hasSpace
+				ifTrue: [(self versionInfoIn: aParser) == nil
+					ifFalse: [hasSpace := self skipSpaceIn: aParser]].
+			hasSpace
+				ifTrue: [(self encodingDeclIn: aParser)
+					ifFalse: [self expected: 'encoding']]
+				ifFalse: [(self encodingDeclIn: aParser)
+					ifTrue: [self expected: 'white space']].
+			self skipSpaceIn: aParser.
+			self mustFind: '?&gt;' errorOn: aParser.
+			true]
+		ifFalse: [false]</body>
+
+<body>versionInfoIn: aParser
+
+	| version |
+	^stream peek = $v
+		ifTrue:
+			[self mustFind: 'version' errorOn: aParser.
+			self skipSpaceIn: aParser.
+			self mustFind: '=' errorOn: aParser.
+			self skipSpaceIn: aParser.
+			version := self quotedString.
+			version = '1.0' ifFalse: [self expected: 'version 1.0'].
+			version]
+		ifFalse: [nil]</body>
+
+<body>xmlDeclIn: aParser
+
+	self checkEncoding.
+	^(self skipIf: '&lt;?xml')
+		ifTrue:
+			[| hasSpace version |
+			(self skipSpaceIn: aParser)
+				ifTrue: [version := self versionInfoIn: aParser]
+				ifFalse: [version := nil].
+			version = nil ifTrue: [self expected: 'version'].
+			aParser documentNode xmlVersion: version.
+			hasSpace := self skipSpaceIn: aParser.
+			hasSpace
+				ifTrue: [(self encodingDeclIn: aParser)
+					ifTrue: [hasSpace := self skipSpaceIn: aParser]]
+				ifFalse: [(self encodingDeclIn: aParser)
+					ifTrue: [self expected: 'white space']].
+			hasSpace
+				ifTrue: [(self sdDeclIn: aParser)
+					ifTrue: [hasSpace := self skipSpaceIn: aParser]]
+				ifFalse: [(self sdDeclIn: aParser)
+					ifTrue: [self expected: 'white space']].
+			self mustFind: '?&gt;' errorOn: aParser.
+			true]
+		ifFalse: [false]</body>
+</methods>
+
+<methods>
+<class-id>XML.StreamWrapper</class-id> <category>private</category>
+
+<body>error: aStringOrMessage
+
+	^XMLSignal raiseErrorString: aStringOrMessage asString</body>
+</methods>
+
+
+<class>
+<name>NodeTag</name>
+<environment>XML</environment>
+<super>Core.Object</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars>namespace type qualifier </inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Parsing</category>
+</class>
+
+<comment>
+<class-id>XML.NodeTag</class-id>
+<body>In XML all elements or nodes are delimited by start and end tags (or empty-element tags) and instances of this class are used to represent the name which appears in those tags. The name is composed of a simple type name
+
+Instance Variables:
+	namespace	&lt;String&gt; URI of the (XML) namespace of the element or attribute
+	type	&lt;String&gt; Name of tag, used to indicate element type, within the chosen namespace
+	qualifier	&lt;String&gt; type qualifier of the original XML document. Two NodeTags are considered equivalent if their namespace and type are equal, even if the qualifiers are different. This is primarily used only if it is desired to store the XML Document as a serialized string again. Qualiofiers are used with xmlns and xmlns:foo attributes to discover the namespace of the NodeTag.
+</body>
+</comment>
+
+<methods>
+<class-id>XML.NodeTag</class-id> <category>initialize</category>
+
+<body>qualifier: q ns: ns type: typeStr
+
+	namespace := ns.
+	type := typeStr.
+	qualifier := q</body>
+</methods>
+
+<methods>
+<class-id>XML.NodeTag</class-id> <category>accessing</category>
+
+<body>expandedName
+
+	^namespace isEmpty
+		ifTrue: [type]
+		ifFalse: [namespace, '#', type]</body>
+
+<body>namespace
+
+	^namespace</body>
+
+<body>qualifier
+
+	^qualifier</body>
+
+<body>type
+
+	^type</body>
+</methods>
+
+<methods>
+<class-id>XML.NodeTag</class-id> <category>converting</category>
+
+<body>asString
+
+	^qualifier isEmpty
+		ifTrue: [type]
+		ifFalse: [qualifier, ':', type]</body>
+</methods>
+
+<methods>
+<class-id>XML.NodeTag</class-id> <category>testing</category>
+
+<body>isLike: aName
+
+	^aName isString
+		ifTrue: [namespace isEmpty and: [type = aName]]
+		ifFalse: [namespace = aName namespace and: [type = aName type]]</body>
+</methods>
+
+<methods>
+<class-id>XML.NodeTag</class-id> <category>printing</category>
+
+<body>printOn: aStream
+
+	aStream nextPutAll: '{', self asString, '}'</body>
+</methods>
+
+
+<class>
+<name>ConcretePattern</name>
+<environment>XML</environment>
+<super>XML.Pattern</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars></inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Patterns</category>
+</class>
+
+<comment>
+<class-id>XML.ConcretePattern</class-id>
+<body>This class is the superclass to what are considered 'simple' patterns or constraint rules in the element content declarations. These are pattern elements that cannot be decomposed into other pattern elements. As seen from the class hiererarchy, instances of simple patterns include AnyPattern, EmptyPattern, InitialPattern, NamePattern, PCDATAPattern and TerminalPattern.
+
+Subclasses must implement the following messages:
+	testing
+		matches:
+</body>
+</comment>
+
+<methods>
+<class-id>XML.ConcretePattern</class-id> <category>accessing</category>
+
+<body>followSetDescription
+
+	| s |
+	s := (String new: 32) writeStream.
+	s nextPut: $(.
+	followSet do: [:n | s nextPutAll: n tag]
+		separatedBy: [s space].
+	s nextPut: $).
+	^s contents</body>
+</methods>
+
+<methods>
+<class-id>XML.ConcretePattern</class-id> <category>testing</category>
+
+<body>canTerminate
+
+	^followSet contains: [:p | p isTerminator]</body>
+
+<body>couldBeText
+
+	^false</body>
+
+<body>isSimple
+
+	^true</body>
+
+<body>isTerminator
+
+	^false</body>
+
+<body>matches: aNode
+
+	self subclassResponsibility</body>
+</methods>
+
+<methods>
+<class-id>XML.ConcretePattern</class-id> <category>coercing</category>
+
+<body>alternateHeads
+
+	^Array with: self</body>
+
+<body>pushDownFollowSet
+
+	^nil</body>
+</methods>
+
+<methods>
+<class-id>XML.ConcretePattern</class-id> <category>validation</category>
+
+<body>validate: node
+
+	| couldBeText |
+	couldBeText := false.
+	self followSet do: [:i |
+		i couldBeText
+			ifTrue: [couldBeText := true].
+		(i matches: node)
+			ifTrue: [^i]].
+	couldBeText
+		ifFalse: [node isBlankText ifTrue: [^self]].
+	^nil</body>
+</methods>
+
+
+<class>
+<name>EmptyPattern</name>
+<environment>XML</environment>
+<super>XML.ConcretePattern</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars></inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Patterns</category>
+</class>
+
+<comment>
+<class-id>XML.EmptyPattern</class-id>
+<body>This class represents the EMPTY element content constraint in an element type declaration. According to the XML 1.0 specification the EMPTY element declaration indicates that the element has no content</body>
+</comment>
+
+<methods>
+<class-id>XML.EmptyPattern</class-id> <category>coercing</category>
+
+<body>alternateHeads
+
+	^followSet</body>
+</methods>
+
+<methods>
+<class-id>XML.EmptyPattern</class-id> <category>testing</category>
+
+<body>matches: aNode
+
+	^false</body>
+</methods>
+
+
+<class>
+<name>PCDATAPattern</name>
+<environment>XML</environment>
+<super>XML.ConcretePattern</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars></inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Patterns</category>
+</class>
+
+<comment>
+<class-id>XML.PCDATAPattern</class-id>
+<body>This class represents a content constraint or pattern in an element type declaration indicating that the element content includes parsed character data. This is typically used in mixed content type patterns and is signified by the presence of the string '#PCDATA' in the element content
+declaration.</body>
+</comment>
+
+<methods>
+<class-id>XML.PCDATAPattern</class-id> <category>accessing</category>
+
+<body>description
+
+	^'#PCDATA'</body>
+</methods>
+
+<methods>
+<class-id>XML.PCDATAPattern</class-id> <category>testing</category>
+
+<body>matches: aNode
+
+	^aNode isText</body>
+</methods>
+
+
+<class>
+<name>SAXDriver</name>
+<environment>XML</environment>
+<super>Core.Object</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars></inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>SAX</category>
+</class>
+
+<comment>
+<class-id>XML.SAXDriver</class-id>
+<body>This class includes supports for the Simple API for XML (SAX), an event-driven API for parsing XML documents.
+
+This class is not yet complete</body>
+</comment>
+
+<methods>
+<class-id>XML.SAXDriver</class-id> <category>document events</category>
+
+<body>document
+
+	^nil</body>
+
+<body>endDocument</body>
+
+<body>endDocumentFragment</body>
+
+<body>startDocument</body>
+
+<body>startDocumentFragment</body>
+</methods>
+
+<methods>
+<class-id>XML.SAXDriver</class-id> <category>elements</category>
+
+<body>endElement</body>
+
+<body>sourcePosition: pos inStream: str</body>
+
+<body>startElement: name atts: atts</body>
+</methods>
+
+<methods>
+<class-id>XML.SAXDriver</class-id> <category>characters</category>
+
+<body>characters: aString</body>
+
+<body>ignorableWhitespace: aString</body>
+</methods>
+
+<methods>
+<class-id>XML.SAXDriver</class-id> <category>other</category>
+
+<body>attribute: name value: value
+
+	^Attribute name: name value: value</body>
+
+<body>comment: data</body>
+
+<body>notation: name value: val
+
+	^Notation new name: name identifiers: val</body>
+
+<body>processingInstruction: target data: data</body>
+</methods>
+
+
+<class>
+<name>AttributeDef</name>
+<environment>XML</environment>
+<super>Core.Object</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars>name default type flags </inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Attributes</category>
+</class>
+
+<comment>
+<class-id>XML.AttributeDef</class-id>
+<body>XML documents may contain attribute-list declarations that are used to define the set of attributes pertaining to a given element type. These attribute-list declarations are also used to establish type constraints for the attributes and to provide default values for attributes. Attribute-list declarations contain attribute definitions and this class is used to instantiate these attribute definitions.
+
+An attribute definition specifies the name (name instance variable) of the attribute, the data type of the attribute (type instance variable) and an optional default value (default instance variable) for the attribute
+
+Instance Variables:
+	name	&lt;XML.NodeTag&gt; 		name of attribute
+	default	&lt;String | nil&gt;  				default value, if any
+	type	&lt;XML.AttributeType&gt;	type used for validation
+	flags	&lt;Integer&gt;				encoding for fixed, implied and required type attributes
+</body>
+</comment>
+
+<methods>
+<class-id>XML.AttributeDef</class-id> <category>accessing</category>
+
+<body>default
+
+	^default</body>
+
+<body>default: n
+
+	flags := 0.
+	default := nil.
+	n = #required
+		ifTrue: [flags := 1]
+		ifFalse: [n = #implied
+			ifTrue: [flags := 2]
+			ifFalse:
+				[n class == Association
+					ifFalse: [self error: 'Invalid default'].
+				n key ifTrue: [flags := 4].
+				default := n value]]</body>
+
+<body>hasDefault
+
+	^(self isImplied or: [self isRequired]) not</body>
+
+<body>isFixed
+
+	^(flags bitAnd: 4) = 4</body>
+
+<body>isImplied
+
+	^(flags bitAnd: 2) = 2</body>
+
+<body>isRequired
+
+	^(flags bitAnd: 1) = 1</body>
+
+<body>name
+
+	^name</body>
+
+<body>name: n
+
+	name := n</body>
+
+<body>tag
+
+	^name</body>
+
+<body>type
+
+	^type</body>
+
+<body>type: n
+
+	type := n</body>
+</methods>
+
+<methods>
+<class-id>XML.AttributeDef</class-id> <category>validating</category>
+
+<body>completeValidationAgainst: aParser
+
+	^self type completeValidationAgainst: aParser from: self</body>
+
+<body>selfValidateFor: aParser
+
+	type validateDefinition: self for: aParser</body>
+
+<body>validateValueOf: anAttribute for: aParser
+
+	type validateValueOf: anAttribute for: aParser.
+	(self isFixed not or: [anAttribute value = self default])
+		ifFalse: [aParser invalid: ('The attribute "&lt;1s&gt;" was declared FIXED, but the value used in the document ("&lt;2s&gt;") did not match the default ("&lt;3s&gt;")'
+						expandMacrosWith: anAttribute tag asString
+						with: anAttribute value
+						with: self default)].</body>
+</methods>
+
+<methods>
+<class-id>XML.AttributeDef</class-id> <category>private</category>
+
+<body>value
+
+	^self default</body>
+
+<body>value: str
+
+	default := str</body>
+</methods>
+
+
+<class>
+<name>XMLParser</name>
+<environment>XML</environment>
+<super>Core.Object</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars>sourceStack hereChar lastSource currentSource documentNode dtd unresolvedIDREFs builder validating ignore eol </inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Parsing</category>
+</class>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<methods>
+<class-id>XML.XMLParser class</class-id> <category>class initialization</category>
+
+<body>initialize
+	"XMLParser initialize"
+
+	XMLSignal := Error newSignal.
+	InvalidSignal := XMLSignal newSignal.
+	MalformedSignal := XMLSignal newSignal.
+	IllegalCharacters := LargeWordArray new: 16r110000.
+	((0 to: 16r1F) asSet - #(9 10 13))
+		do: [:i | IllegalCharacters at: i+1 put: 1].
+	16rD800 to: 16rDFFF
+		do: [:i | IllegalCharacters at: i+1 put: 1].
+	16rFFFE to: 16rFFFF
+		do: [:i | IllegalCharacters at: i+1 put: 1].
+	IllegalCharacters compress</body>
+</methods>
+
+<methods>
+<class-id>XML.XMLParser class</class-id> <category>instance creation</category>
+
+<body>on: aStream
+
+	^self new on: aStream</body>
+
+<body>processDocumentInFilename: aFilename 
+
+	^self processDocumentInFilename: aFilename beforeScanDo: [:parser | ]</body>
+
+<body>processDocumentInFilename: aFilename beforeScanDo: aBlock
+
+	| stream p |
+	stream := (aFilename asFilename withEncoding: #UTF_8) readStream.
+	stream lineEndTransparent.
+	p := self on: stream.
+	aBlock value: p.
+	^p scanDocument</body>
+
+<body>processDocumentString: aString
+
+	^self processDocumentString: aString beforeScanDo: [:parser | ]</body>
+
+<body>processDocumentString: aString beforeScanDo: aBlock
+
+	| p |
+	p := self on: aString readStream.
+	aBlock value: p.
+	^p scanDocument</body>
+</methods>
+
+<methods>
+<class-id>XML.XMLParser class</class-id> <category>utilities</category>
+
+<body>invalid: aString
+
+	InvalidSignal new
+		messageText: aString;
+		raiseSignal</body>
+
+<body>malformed: aString
+
+	MalformedSignal new
+		messageText: aString;
+		raiseSignal</body>
+
+<body>mapEncoding: anEncoding
+
+	| enc |
+	enc := anEncoding asLowercase.
+	enc = 'utf-8' ifTrue: [^'UTF_8'].
+	enc = 'utf-16' ifTrue: [^'UTF_16'].
+	enc = 'iso-8859-1' ifTrue: [^'ISO8859_1'].
+	^enc</body>
+
+<body>readFileContents: fn
+
+	| s p |
+	s := StreamWrapper
+			stream: (fn withEncoding: #UTF_8) readStream
+			protocol: 'file'
+			name: nil	
+			entity: nil.
+	p := self new.
+	p lineEndLF.
+	^[s checkEncoding.
+	  s contentsFor: p]
+		ensure: [s close]</body>
+</methods>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<comment>
+<class-id>XML.XMLParser</class-id>
+<body>This class represents the main XML processor in the system. This  XMLParser may be used as a validating or non-validating parser to scan and process an XML document and provide access to it's content and structure to a smalltalk application. This XMLParser tries to follow the guidelines laid out in the W3C XML Version 1.0 Recommendation, plus the XML Namespaces Recommendation.
+
+Instance Variables:
+	sourceStack	&lt;XML.StreamWrapper&gt;  stack of input streams that handles inclusion.
+	hereChar	&lt;Character&gt;  the current character being parsed
+	lastSource	&lt;XML.StreamWrapper&gt;  record of previous source used to check correct nesting
+	currentSource	&lt;XML.StreamWrapper&gt;  current input stream (the top of sourceStack)
+	documentNode	&lt;XML.Document&gt;  the document created by parsing
+	dtd	&lt;XML.DocumentType&gt;  the document type definition for the current document
+	unresolvedIDREFs	&lt;Collection&gt;  collection of IDREfs that have yet to be resolved; used for validation
+	builder	&lt;XML.NodeBuilder&gt;  node builder
+	validating	&lt;Boolean&gt;  if true then the parse validates the XML
+	ignore	&lt;Boolean&gt;  ?
+	eol	&lt;Character&gt;  the end-of-line character in the source stream
+</body>
+</comment>
+
+<methods>
+<class-id>XML.XMLParser</class-id> <category>initialize</category>
+
+<body>builder: anXMLNodeBuilder
+
+	builder := anXMLNodeBuilder</body>
+
+<body>lineEndLF
+
+	eol := Character lf</body>
+
+<body><B>on: inputStream
+
+	</B>[inputStream lineEndTransparent] on: Error do: [:ex | ].
+	validating == nil ifTrue: [validating := true].
+	sourceStack := self wrapStream: inputStream.
+	builder == nil
+		ifTrue: [builder := NodeBuilder new].
+	documentNode := Document new.
+	dtd := DocumentType new.
+	documentNode dtd: dtd.
+	unresolvedIDREFs := Set new.
+	ignore := false.
+	eol := Character cr</body>
+
+<body>wrapStream: aStream
+
+	^StreamWrapper
+		stream: aStream
+		protocol: (aStream isExternalStream
+						ifTrue: ['file']
+						ifFalse: ['internal'])
+		name: nil
+		entity: nil</body>
+</methods>
+
+<methods>
+<class-id>XML.XMLParser</class-id> <category>accessing</category>
+
+<body>dtd
+
+	^dtd</body>
+
+<body>eol
+
+	^eol</body>
+
+<body>sourceWrapper
+
+	^sourceStack "last"</body>
+
+<body>validate: aBoolean
+
+	validating := aBoolean</body>
+</methods>
+
+<methods>
+<class-id>XML.XMLParser</class-id> <category>testing</category>
+
+<body>hasExpanded: anEntity
+
+	| s |
+	s := sourceStack.
+	[s == nil] whileFalse:
+		[s entity == anEntity
+			ifTrue: [self malformed: ('The &lt;1s&gt; entity "&lt;2s&gt;" invokes itself recursively'
+						expandMacrosWith: anEntity entityType
+						with: anEntity name)].
+		s := s nextLink].
+	^false</body>
+
+<body>isValidating
+
+	^validating</body>
+
+<body>shouldTestWFCEntityDeclared
+
+	^self documentNode hasDTD not
+		or: [(self documentNode hasExternalDTD not
+			and: [self documentNode usesParameterEntities not])
+		or: [self documentNode isDeclaredStandalone]]</body>
+</methods>
+
+<methods>
+<class-id>XML.XMLParser</class-id> <category>api</category>
+
+<body>comment
+
+	| comment str1 |
+	str1 := currentSource.
+	^(self skipIf: '&lt;!--')
+		ifTrue:
+			[comment := self completeComment: str1.
+			(ignore or: [comment isDiscarded])
+				ifFalse: [self documentNode addNode: comment].
+			true]
+		ifFalse: [false]</body>
+
+<body>docTypeDecl
+
+	| nm id |
+	^(self skipIf: '&lt;!DOCTYPE')
+		ifTrue:
+			[self forceSpace.
+			self documentNode noteDTD.
+			nm := self getQualifiedName.
+			nm yourself.
+			self skipSpace.
+			(id := self externalID: #docType) notNil ifTrue: [self skipSpace].
+			self sourceWrapper usedAsExternal: false.
+			(self skipIf: '[')
+				ifTrue: [[self skipIf: ']']
+					whileFalse: [self dtdEntry]].
+			self sourceWrapper usedAsExternal: nil.
+			id == nil ifFalse: [self dtdFile: id].
+			self skipSpace.
+			self mustFind: '&gt;'.
+			self isValidating ifTrue: [dtd completeValidationAgainst: self].
+			true]
+		ifFalse: [false]</body>
+
+<body>latestURI
+
+	| s nm |
+	s := self fullSourceStack reverse detect: [:i | i protocol ~= 'internal'] ifNone: [nil].
+	^s == nil
+		ifTrue:
+			[nm := (Filename defaultDirectory construct: 'xxx') asString.
+			nm replaceAll: Filename separator with: $/.
+			'file' -&gt; nm]
+		ifFalse: [s protocol -&gt; s name]</body>
+
+<body>misc
+
+	^self atEnd not and: [self skipSpace or: [self comment or: [self pi]]]</body>
+
+<body>pi
+
+	| str1 pi |
+	str1 := currentSource.
+	^(self skipIf: '&lt;?')
+		ifTrue:
+			[pi := self completePI: str1.
+			ignore ifFalse: [self documentNode addNode: pi].
+			true]
+		ifFalse: [false]</body>
+
+<body>prolog
+
+	self sourceWrapper xmlDeclIn: self.        "This is optional."
+	self getNextChar.
+	[self misc] whileTrue.
+	self docTypeDecl
+		ifTrue: [[self misc] whileTrue].</body>
+
+<body>pushSource: aStreamWrapper
+
+	aStreamWrapper nextLink: sourceStack.
+	sourceStack := aStreamWrapper</body>
+
+<body>scanDocument
+
+	^[self prolog.
+	self documentNode addNode: self element.
+	[self misc] whileTrue.
+	self atEnd ifFalse: [self expected: 'comment or processing instruction'].
+	self documentNode updateIDs.
+	self checkUnresolvedIDREFs.
+	self documentNode]
+		ensure: [self closeAllFiles]</body>
+</methods>
+
+<methods>
+<class-id>XML.XMLParser</class-id> <category>DTD processing</category>
+
+<body>conditionalSect
+
+	| nm oldIgnore |
+	hereChar = $&lt; ifFalse: [^false].
+	self inInternalSubset ifTrue: [^false].
+	^(self skipIf: '&lt;![')
+		ifTrue:
+			[self skipSpaceInDTD.
+			nm := self getSimpleName.
+			(#('INCLUDE' 'IGNORE') includes: nm)
+				ifFalse: [self expected: 'INCLUDE or IGNORE'].
+			oldIgnore := ignore.
+			ignore := ignore or: [nm = 'IGNORE'].
+			self skipSpaceInDTD.
+			self mustFind: '['.
+			[self skipIf: ']]&gt;']
+				whileFalse: [self dtdEntry].
+			ignore := oldIgnore.
+			true]
+		ifFalse: [false]</body>
+
+<body>dtdEntry
+
+	((self PERef: #dtdEntry) or:
+			[self markUpDecl or:
+			[self conditionalSect or:
+			[self skipSpace]]])
+		ifFalse: [self expected: 'markup declaration or PE reference']</body>
+
+<body>dtdFile: newURI
+
+	| uri str |
+	self documentNode noteExternalDTD.
+	currentSource skip: -1.
+		"So we don't lose hereChar."
+	uri := URIResolver resolve: newURI last from: self latestURI.
+	self pushSource: (str := StreamWrapper
+						stream: (URIResolver openStreamOn: uri)
+						protocol: uri key
+						name: uri value
+						entity: nil).
+	str usedAsExternal: true.
+	str textDeclIn: self.
+	self getNextChar.
+	[self fullSourceStack includes: str]
+		whileTrue: [self dtdEntry].</body>
+
+<body>externalID: usage
+	"Usage may be #docType, #entity, or #notation.
+	DocType is treated specially, since PE references are not allowed.
+	Notation is treated specially since the system identifier of the
+		PUBLIC form is optional."
+
+	| lit2 lit1 forceSpace skipSpace |
+	forceSpace := [usage == #docType
+					ifTrue: [self forceSpace]
+					ifFalse: [self forceSpaceInDTD]].
+	skipSpace := [usage == #docType
+					ifTrue: [self skipSpace]
+					ifFalse: [self skipSpaceInDTD]].
+	^(self skipIf: 'SYSTEM')
+		ifTrue:
+			[forceSpace value.
+			lit2 := self systemLiteral.
+			Array with: lit2]
+		ifFalse: [(self skipIf: 'PUBLIC')
+			ifTrue:
+				[forceSpace value.
+				lit1 := self pubIdLiteral.
+				usage == #notation
+					ifTrue:
+						[(skipSpace value and:
+								[hereChar = $' or: [hereChar = $"]])
+							ifTrue: [lit2 := self systemLiteral]
+							ifFalse: [lit2 := nil]]
+					ifFalse:
+						[forceSpace value.
+						lit2 := self systemLiteral].
+				Array with: lit1 with: lit2]
+			ifFalse:
+				[nil]]</body>
+
+<body>inInternalSubset
+
+	self fullSourceStack reverseDo:
+		[:str |
+		str usedAsExternal == nil
+			ifFalse: [^str usedAsExternal not]].
+	self error: 'Not currently processing the DTD'</body>
+
+<body>markUpDecl
+
+	^self elementDecl
+		or: [self attListDecl
+		or: [self entityDecl
+		or: [self notationDecl
+		or: [self pi
+		or: [self comment]]]]]</body>
+
+<body>notationDecl
+
+	| nm id str |
+	str := currentSource.
+	^(self skipIf: '&lt;!NOTATION')
+		ifTrue:
+			[self forceSpaceInDTD.
+			nm := self getSimpleName.
+			self forceSpaceInDTD.
+			id := self externalID: #notation.
+			ignore ifFalse: [dtd notationAt: nm put: (builder notation: nm value: id)].
+			self skipSpaceInDTD.
+			self mustFind: '&gt;'.
+			str == lastSource
+				ifFalse: [self invalid: 'Improper nesting of declarations within a parameter entity'].
+			true]
+		ifFalse: [false]</body>
+
+<body>pubIdLiteral
+
+	| str |
+	str := self quotedString.
+	str do: [:ch |
+		((' -''()+,./:=?;!*#@$_%' includes: ch)
+				or: [ch asInteger = 10
+				or: [ch asInteger = 13
+				or: [ch &lt; 127
+				and: [ch isLetter or: [ch isDigit]]]]])
+			ifFalse: [self expected: 'valid public id character']].
+	^str</body>
+
+<body>systemLiteral
+
+	^self quotedString</body>
+</methods>
+
+<methods>
+<class-id>XML.XMLParser</class-id> <category>entity processing</category>
+
+<body>entityDecl
+
+	| nm def str |
+	str := currentSource.
+	^(self skipIf: '&lt;!ENTITY')
+		ifTrue:
+			[self forceSpace.
+			hereChar = $%
+				ifTrue:
+					[self getNextChar; forceSpaceInDTD.
+					nm := self getSimpleName.
+					self forceSpaceInDTD.
+					def := self peDef.
+					def name: nm.
+					ignore ifFalse: [self dtd parameterEntityAt: nm put: def]]
+				ifFalse:
+					[self skipSpaceInDTD.
+					nm := self getSimpleName.
+					self forceSpaceInDTD.
+					def := self entityDef.
+					def name: nm.
+					ignore ifFalse: [self dtd generalEntityAt: nm put: def]].
+			self skipSpaceInDTD.
+			self mustFind: '&gt;'.
+			str == lastSource
+				ifFalse: [self invalid: 'Improper nesting of declarations within a parameter entity'].
+			true]
+		ifFalse: [false]</body>
+
+<body>entityDef
+
+	| val ndata |
+	^(val := self entityValue) == nil
+		ifTrue: [(val := self externalID: #entity) == nil
+			ifTrue: [self expected: 'entity value or external id']
+			ifFalse:
+				[ndata := self nDataDecl.
+				GeneralEntity new
+					externalFrom: val;
+					ndata: ndata]]
+		ifFalse: [GeneralEntity new text: val]</body>
+
+<body>entityValue
+
+	| data aQuote s str1 |
+	aQuote := hereChar.
+	(aQuote = $' or: [aQuote = $"]) ifFalse: [^nil].
+	s := currentSource.
+	self getNextChar.
+	data := (String new: 32) writeStream.
+	OrderedCollection new.
+	[hereChar == nil
+		ifTrue: [self expected: (String with: aQuote)].
+	(hereChar = aQuote and: [s = currentSource])]
+		whileFalse:
+			[hereChar = $&amp;
+				ifTrue:
+					[str1 := currentSource.
+					(self skipIf: '&amp;#')
+						ifTrue: [self charEntity: data startedIn: str1]
+						ifFalse: [self getNextChar; generalEntity: data]]
+				ifFalse: [(self PERef: #data)
+					ifFalse:
+						[data nextPut: hereChar.
+						self getNextChar]]].
+	self getNextChar.
+	^data contents</body>
+
+<body>generalEntity: str
+
+	| nm |
+	nm := self getSimpleName.
+	hereChar = $;
+		ifFalse: [self expected: 'semicolon'].
+	str nextPut: $&amp;; nextPutAll: nm; nextPut: $;.
+	self getNextChar</body>
+
+<body>nDataDecl
+
+	^self skipSpaceInDTD
+		ifTrue: [(self skipIf: 'NDATA')
+			ifTrue:
+				[self forceSpaceInDTD.
+				self getSimpleName]
+			ifFalse: [nil]]
+		ifFalse: [nil]</body>
+
+<body>peDef
+
+	| val |
+	^(val := self entityValue) == nil
+		ifTrue: [(val := self externalID: #entity) == nil
+			ifTrue: [self expected: 'entity value or external id']
+			ifFalse:
+				[ParameterEntity new
+					externalFrom: val]]
+		ifFalse: [ParameterEntity new text: val]</body>
+
+<body>PERef: refType
+
+	| nm exp |
+	^(hereChar = $%)
+		ifTrue:
+			[self getNextChar.
+			(self inInternalSubset and: [refType ~= #dtdEntry])
+				ifTrue: [self notPermitted: 'Parameter entity reference in the internal DTD, inside a declaration'].
+			nm := self getSimpleName.
+			hereChar = $; ifFalse: [self expected: 'semicolon'].
+			exp := self dtd parameterEntityAt: nm.
+			exp == nil
+				ifTrue: [self warn: ('The parameter entity "&lt;1s&gt;" has not been defined'
+							expandMacrosWith: nm)].
+			exp == nil
+				ifTrue: [self isValidating
+					ifTrue:
+						[self invalid: 'Parameter entity used but not defined'.
+						self getNextChar]
+					ifFalse:
+						[self pushSource: (StreamWrapper
+								emptyWithExtraSpace: refType ~= #data).
+						self getNextChar]]
+				ifFalse:
+					[exp streamFor: self addSpaces: refType ~= #data].
+			(refType ~= #data and: [self sourceWrapper protocol ~= 'internal'])
+				ifTrue: [self sourceWrapper usedAsExternal: true].
+			true]
+		ifFalse: [false]</body>
+</methods>
+
+<methods>
+<class-id>XML.XMLParser</class-id> <category>element def processing</category>
+
+<body>completeChildren: str
+
+	| div items node |
+	items := OrderedCollection with: self cp.
+	self skipSpaceInDTD.
+	div := nil.
+	[self skipIf: ')']
+		whileFalse:
+			[div == nil ifTrue:
+				[(',|' includes: hereChar) ifFalse: [self expected: ', or |'].
+				div := hereChar].
+			div = hereChar ifFalse: [self expected: (String with: div)].
+			self getNextChar; skipSpaceInDTD.
+			items add: self cp.
+			self skipSpaceInDTD].
+	(self isValidating and: [lastSource ~~ str])
+		ifTrue: [self expected: 'proper nesting of parentheses within entities'].
+	div == nil ifTrue: [div := $,].
+	div = $,
+		ifTrue: [node := SequencePattern on: items]
+		ifFalse: [node := ChoicePattern on: items].
+	('*+?' includes: hereChar)
+		ifTrue:
+			[node := ModifiedPattern on: node type: hereChar.
+			self getNextChar].
+	^node</body>
+
+<body>completeMixedContent: str
+
+	"we already have the #PCDATA finished."
+	| names |
+	self skipSpaceInDTD.
+	names := OrderedCollection new.
+	[hereChar = $)]
+		whileFalse:
+			[self mustFind: '|'.
+			self skipSpaceInDTD.
+			names add: (NamePattern named: self getQualifiedName).
+			self skipSpaceInDTD].
+	(self isValidating and: [currentSource ~~ str])
+		ifTrue: [self expected: 'proper nesting of parentheses within entities'].
+	names size = 0
+		ifTrue: [self mustFind: ')']
+		ifFalse: [self mustFind: ')*'].
+	^MixedPattern on: names</body>
+
+<body>contentsSpec
+
+	| str |
+	^(self skipIf: 'ANY')
+		ifTrue: [AnyPattern new]
+		ifFalse: [(self skipIf: 'EMPTY')
+			ifTrue: [EmptyPattern new]
+			ifFalse:
+				[str := currentSource.
+				self mustFind: '('.
+				self skipSpaceInDTD.
+				(self skipIf: '#PCDATA')
+					ifTrue: [self completeMixedContent: str]
+					ifFalse: [self completeChildren: str]]]</body>
+
+<body>cp
+
+	| node str |
+	str := currentSource.
+	^(self skipIf: '(')
+		ifTrue: [self completeChildren: str]
+		ifFalse:
+			[node := NamePattern named: self getQualifiedName.
+			('*+?' includes: hereChar)
+				ifTrue:
+					[node := ModifiedPattern on: node type: hereChar.
+					self getNextChar].
+			node]</body>
+
+<body>elementDecl
+
+	| nm cSpec str |
+	str := currentSource.
+	^(self skipIf: '&lt;!ELEMENT')
+		ifTrue:
+			[self forceSpaceInDTD.
+			nm := self getQualifiedName.
+			self forceSpaceInDTD.
+			cSpec := self contentsSpec normalize.
+			ignore ifFalse: [self dtd elementFor: nm put: cSpec].
+			self skipSpaceInDTD.
+			self mustFind: '&gt;'.
+			str == lastSource
+				ifFalse: [self invalid: 'Improper nesting of declarations within a parameter entity'].
+			true]
+		ifFalse: [false]</body>
+</methods>
+
+<methods>
+<class-id>XML.XMLParser</class-id> <category>element processing</category>
+
+<body>charEntity: data startedIn: str1
+
+	| base digit n d |
+	hereChar = $x
+		ifTrue:
+			[base := 16.
+			digit := 'hex digit'.
+			self getNextChar]
+		ifFalse:
+			[base := 10.
+			digit := 'digit'].
+	n := 0.
+	[hereChar = $;]
+		whileFalse:
+			[d := hereChar digitValue.
+			(d &gt;= 0 and: [d &lt; base]) ifFalse: [self expected: digit].
+			n := n * base + d.
+			self getNextChar].
+	str1 = currentSource
+		ifFalse: [self expected: 'proper nesting of character entities inside other entities'].
+	(n &gt;= 16r110000   "IllegalCharacters size"
+			or: [(IllegalCharacters at: n+1) = 1])
+		ifTrue: [self notPermitted: 'a character with Unicode value ', n printString].
+	data nextPut: (Character value: n).
+	self getNextChar</body>
+
+<body>closeTag: tag return: elements
+
+	| nm |
+	nm := self getQualifiedName.
+	nm := builder correctTag: nm.
+	self skipSpace.
+	self mustFind: '&gt;'.
+	nm = tag
+		ifFalse: [self expected: 'close tag for ', tag asString].
+	^elements</body>
+
+<body>completeCDATA: str1
+
+	| str data |
+	data := (String new: 32) writeStream.
+	[str := self upToAll: ']&gt;'.
+	str last = $]]
+		whileFalse:
+			[data nextPutAll: str; nextPutAll: ']&gt;'].
+	lastSource = str1
+		ifFalse: [self expected: 'proper nesting of CDATA in entities'].
+	data nextPutAll: (str copyFrom: 1 to: str size-1).
+	^builder makeText: data contents</body>
+
+<body>completeComment: str1
+
+	| str data comment |
+	data := (String new: 32) writeStream.
+	[str := self upToAll: '-&gt;'.
+	str last = $-]
+		whileFalse:
+			[data nextPutAll: str; nextPutAll: '-&gt;'].
+	data nextPutAll: (str copyFrom: 1 to: str size-1).
+	comment := builder comment: data contents.
+	(comment text findString: '--' startingAt: 1) = 0
+		ifFalse: [self notPermitted: 'doubled hyphens in comments'].
+	(comment text size &gt; 0 and: [comment text last = $-])
+		ifTrue: [self notPermitted: 'a hyphen as the last character in a comment'].
+	lastSource = str1
+		ifFalse: [self expected: 'proper nesting of comments in entities'].
+	^comment</body>
+
+<body>completePI: str1
+
+	| nm pi |
+	nm := self getSimpleName.
+	nm = 'xml' ifTrue: [self notPermitted: '"xml" declaration, except at the beginning of the file'].
+	nm asLowercase = 'xml' ifTrue: [self notPermitted: '''xml'' as part of a name'].
+	self skipSpace
+		ifTrue:
+			[pi := self upToAll: '?&gt;']
+		ifFalse:
+			[pi := ''.
+			self mustFind: '?&gt;'].
+	lastSource = str1
+		ifFalse: [self expected: 'proper nesting of programming instructions in entities'].
+	^builder pi: nm text: pi</body>
+
+<body>element
+
+	| str1 startPosition |
+	str1 := currentSource.
+	startPosition := str1 stream position - (str1 characterSize: hereChar).
+	^self elementAtPosition: startPosition</body>
+
+<body>elementAtPosition: startPosition
+
+	| attributes nm str1 elements p tag |
+	str1 := currentSource.
+	self mustFind: '&lt;'.
+	nm := self getQualifiedName.
+	^builder pushTag: nm
+		whileDoing:
+			[attributes := self processAttributes.
+			self isValidating
+				ifTrue: [attributes := self validateAttributes: attributes for: builder currentTag].
+			(self skipIf: '/&gt;')
+				ifTrue: 
+					[str1 = lastSource ifFalse: [self expected: 'elements properly nested within entities'].
+					self isValidating
+						ifTrue:
+							[tag := builder currentTag.
+							p := self dtd elementFor: tag.
+							p == nil
+								ifTrue: [self notPermitted: ('Using a tag (&lt;1s&gt;) without declaring it' expandMacrosWith: tag asString)]
+								ifFalse: [p validateTag: tag content: #() for: self]].
+					builder postProcessElement: (builder
+						tag: builder currentTag
+						attributes: attributes
+						elements: nil
+						position: startPosition
+						stream: str1)]
+				ifFalse: [(self skipIf: '&gt;')
+					ifTrue: 
+						[str1 = lastSource ifFalse: [self expected: 'elements properly nested within entities'].
+						elements := self elementContent: builder currentTag openedIn: str1.
+						builder postProcessElement: (builder
+							tag: builder currentTag
+							attributes: attributes
+							elements: elements
+							position: startPosition
+							stream: str1)]
+					ifFalse: [self expected: 'end of start tag']]]</body>
+
+<body>elementContent: tag openedIn: str
+
+	| data elements str1 result p |
+	data := (String new: 32) writeStream.
+	elements := OrderedCollection new.
+	[hereChar == nil
+		ifTrue: [self expected: ('end tag for %&lt;&lt;1s&gt;&gt;' expandMacrosWith: tag)].
+	hereChar = $&lt;
+		ifTrue:
+			[data position = 0
+				ifFalse:
+					[data := data contents.
+"					(data findString: ']]&gt;' startingAt: 1) = 0
+						ifFalse: [self halt: 'including ]]&gt; in element content'].
+"					self with: elements add: (builder makeText: data).
+					data := (String new: 32) writeStream].
+			str1 := currentSource.
+			(self skipIf: '&lt;/')
+				ifTrue:
+					[result := self closeTag: tag return: elements asArray.
+					str == lastSource
+						ifFalse: [self expected: 'elements properly nested within entities'].
+					self isValidating
+						ifTrue:
+							[p := self dtd elementFor: tag.
+							p == nil
+								ifTrue: [self invalid: ('Using a tag (&lt;1s&gt;) without declaring it is not valid' expandMacrosWith: tag)]
+								ifFalse: [p validateTag: tag content: result for: self]].
+					^result]
+				ifFalse: [(self skipIf: '&lt;?')
+					ifTrue: [self with: elements add: (self completePI: str1)]
+					ifFalse: [(self skipIf: '&lt;![CDATA[')
+						ifTrue: [self with: elements add: (self completeCDATA: str1)]
+						ifFalse: [(self skipIf: '&lt;!--')
+							ifTrue: [self with: elements add: (self completeComment: str1)]
+							ifFalse: [self with: elements add: self element]]]]]
+		ifFalse: [hereChar = $&amp;
+			ifTrue:
+				[str1 := currentSource.
+				(self skipIf: '&amp;#')
+					ifTrue: [self charEntity: data startedIn: str1]
+					ifFalse: [self getNextChar; generalEntityInText: data canBeExternal: true]]
+			ifFalse:
+				[data nextPut: hereChar.
+				self getNextChar]]] repeat</body>
+
+<body>generalEntityInText: str canBeExternal: external
+
+	| exp nm str1 |
+	str1 := lastSource.
+	nm := self getSimpleName.
+	hereChar = $;
+		ifFalse: [self expected: 'semicolon'].
+	currentSource = str1
+		ifFalse: [self expected: 'proper nesting of entity references within other entity references'].
+	exp := self dtd generalEntityAt: nm.
+	exp == nil
+		ifTrue: [self warn: ('The general entity "&lt;1s&gt;" has not been defined'
+							expandMacrosWith: nm)].
+	exp == nil
+		ifTrue:
+			[self shouldTestWFCEntityDeclared
+				ifTrue: [self malformed: 'General entity used but not defined'].
+			str nextPut: $&amp;; nextPutAll: nm; nextPut: $;.
+			self getNextChar]
+		ifFalse:
+			[(external or: [exp isExternal not])
+				ifFalse: [self notPermitted: 'external entities in attribute values'].
+			exp isParsed
+				ifFalse: [self malformed: 'References to unparsed entities other than in an attribute of type ENTITY are not permitted'].
+			exp streamFor: self].</body>
+
+<body>isValidTag: aTag
+
+	^true</body>
+</methods>
+
+<methods>
+<class-id>XML.XMLParser</class-id> <category>attribute def processing</category>
+
+<body>attListDecl
+
+	| nm str1 attr |
+	str1 := currentSource.
+	^(self skipIf: '&lt;!ATTLIST')
+		ifTrue:
+			[self forceSpaceInDTD.
+			nm := self getQualifiedName.
+			[self skipSpaceInDTD.
+			self skipIf: '&gt;']
+				whileFalse:
+					[self skipSpaceInDTD.
+					attr := AttributeDef new name: self getQualifiedName.
+					self forceSpaceInDTD.
+					attr type: self attType.
+					self forceSpaceInDTD.
+					attr default: self defaultDecl.
+					self isValidating ifTrue: [attr selfValidateFor: self].
+					ignore ifFalse: [self dtd attributeFor: nm subKey: attr name put: attr]].
+			str1 == lastSource
+				ifFalse: [self invalid: 'Improper nesting of declarations within a parameter entity'].
+			true]
+		ifFalse: [false]</body>
+
+<body>attType
+
+	| nm all type |
+	^hereChar = $(
+		ifTrue: [self enumeration]
+		ifFalse:
+			[nm := self getSimpleName.
+			all := #('NOTATION' 'CDATA' 'ID'
+						'IDREF' 'IDREFS'
+						'ENTITY' 'ENTITIES'
+						'NMTOKEN' 'NMTOKENS').
+			(all includes: nm)
+				ifFalse: [self expected: 'one of ', all storeString].
+			type := #(#{NOTATION_AT} #{CDATA_AT} #{ID_AT}
+						#{IDREF_AT} #{IDREFS_AT}
+						#{ENTITY_AT} #{ENTITIES_AT}
+						#{NMTOKEN_AT} #{NMTOKENS_AT})
+					at: (all indexOf: nm).
+			nm = 'NOTATION'
+				ifTrue: [self completeNotationType]
+				ifFalse: [type value new]].</body>
+
+<body>completeNotationType
+
+	| nm |
+	self forceSpaceInDTD.
+	self mustFind: '('.
+	self skipSpaceInDTD.
+	nm := OrderedCollection with: self getSimpleName.
+	self skipSpaceInDTD.
+	[self skipIf: '|']
+		whileTrue:
+			[self skipSpaceInDTD.
+			nm add: self getSimpleName.
+			self skipSpaceInDTD].
+	self mustFind: ')'.
+	^NOTATION_AT typeNames: nm</body>
+
+<body>defaultDecl
+
+	| fixed default |
+	^(self skipIf: '#REQUIRED')
+		ifTrue: [#required]
+		ifFalse: [(self skipIf: '#IMPLIED')
+			ifTrue: [#implied]
+			ifFalse:
+				[fixed := self skipIf: '#FIXED'.
+				fixed ifTrue:
+					[self forceSpaceInDTD].
+				default := self attValue.
+				default == nil ifTrue: [self expected: 'quoted value for the attribute''s default'].
+				fixed -&gt; default]]</body>
+
+<body>enumeration
+
+	| nm |
+	self mustFind: '('.
+	self skipSpaceInDTD.
+	nm := OrderedCollection with: self nmToken.
+	self skipSpaceInDTD.
+	[self skipIf: '|']
+		whileTrue:
+			[self skipSpaceInDTD.
+			nm add: self nmToken.
+			self skipSpaceInDTD].
+	self mustFind: ')'.
+	^Enumeration_AT withAll: nm</body>
+</methods>
+
+<methods>
+<class-id>XML.XMLParser</class-id> <category>attribute processing</category>
+
+<body>attribute
+
+	| nm value |
+	nm := self getQualifiedName.
+	self skipSpace.
+	self mustFind: '='.
+	self skipSpace.
+	value := self attValue.
+	value == nil ifTrue: [self expected: 'quoted value for the attribute'].
+	^builder attribute: nm value: value</body>
+
+<body>attValue
+
+	| data aQuote s str1 |
+	aQuote := hereChar.
+	(aQuote = $' or: [aQuote = $"]) ifFalse: [^nil].
+	s := currentSource.
+	self getNextChar.
+	data := (String new: 32) writeStream.
+	OrderedCollection new.
+	[(hereChar = aQuote and: [s = currentSource])]
+		whileFalse:
+			[hereChar = $&lt;
+				ifTrue: [self malformed: '&lt; not permitted in attribute values; use &amp;lt;'].
+			hereChar = $&amp;
+				ifTrue:
+					[str1 := currentSource.
+					(self skipIf: '&amp;#')
+						ifTrue: [self charEntity: data startedIn: str1]
+						ifFalse: [self getNextChar; generalEntityInText: data canBeExternal: false]]
+				ifFalse:
+					[hereChar asInteger &lt; 16r20
+						ifTrue: [data space]
+						ifFalse: [data nextPut: hereChar].
+					self getNextChar]].
+	self getNextChar.
+	^data contents</body>
+
+<body>isValidName: aTag
+
+	aTag size = 0 ifTrue: [^false].
+	(self isValidNameStart: aTag first)
+		ifFalse: [^false].
+	2 to: aTag size do: [:i |
+		(self isValidNameChar: (aTag at: i))
+			ifFalse: [^false]].
+	^true</body>
+
+<body>isValidNmToken: aTag
+
+	aTag size = 0 ifTrue: [^false].
+	1 to: aTag size do: [:i |
+		(self isValidNameChar: (aTag at: i))
+			ifFalse: [^false]].
+	^true</body>
+
+<body>processAttributes
+
+	| attributes |
+	attributes := nil.
+	[self skipSpace.
+	self isValidNameStart: hereChar]
+		whileTrue:
+			[attributes == nil ifTrue: [attributes := OrderedCollection new].
+			attributes add: self attribute.
+			(attributes collect: [:i | i key]) asSet size = attributes size
+				ifFalse: [self notPermitted: 'two attributes with the same name']].
+	attributes := builder resolveNamespaces: attributes.
+	^attributes</body>
+
+<body>quotedString
+
+	| string |
+	hereChar = $"
+		ifTrue:
+			[string := self upTo: $".
+			self getNextChar.
+			^string].
+	hereChar = $'
+		ifTrue:
+			[string := self upTo: $'.
+			self getNextChar.
+			^string].
+	self expected: 'quoted string'</body>
+
+<body>validateAttributes: attributes for: tag
+
+	| attr attributeList keys |
+	attr := self dtd attributesFor: tag.
+	attributeList := attributes == nil ifTrue: [#()] ifFalse: [attributes].
+	keys := Set new.
+	attributeList do: [:i |
+		(keys includes: i key)
+			ifTrue: [self malformed: ('the attribute &lt;1s&gt; was used twice in this element''s tag'
+								expandMacrosWith: i key)]
+			ifFalse: [keys add: i key].
+		(attr includesKey: i key asString)
+			ifFalse: [self invalid: ('the attribute &lt;1s&gt; was not defined in the DTD'
+								expandMacrosWith: i key)]].
+	attr do: [:adef | | a |
+		a := attributeList detect: [:at | at key isLike: adef name] ifNone: [].
+		a == nil
+			ifTrue: [adef hasDefault
+				ifTrue: [attributeList := attributeList copyWith:
+							(builder attribute: adef name value: adef default)]
+				ifFalse: [adef isRequired
+					ifTrue: [self invalid: ('"&lt;1s&gt;" elements are required to have a "&lt;2s&gt;" attribute'
+									expandMacrosWith: tag asString
+									with: adef name asString)]]]
+			ifFalse: [adef validateValueOf: a for: self]].
+	^attributeList size = 0
+		ifTrue: [nil]
+		ifFalse: [attributeList]</body>
+</methods>
+
+<methods>
+<class-id>XML.XMLParser</class-id> <category>IDs</category>
+
+<body>checkUnresolvedIDREFs
+
+	(self isValidating and: [unresolvedIDREFs isEmpty not])
+		ifTrue: [self invalid: ('The IDREFs &lt;1p&gt; have not been resolved to IDs' expandMacrosWith: unresolvedIDREFs asSortedCollection asArray)]</body>
+
+<body>rememberIDREF: anID
+
+	self documentNode atID: anID ifAbsent: [unresolvedIDREFs add: anID]</body>
+
+<body>resolveIDREF: anID
+
+	unresolvedIDREFs remove: anID ifAbsent: []</body>
+</methods>
+
+<methods>
+<class-id>XML.XMLParser</class-id> <category>streaming</category>
+
+<body>atEnd
+
+	[sourceStack == nil ifTrue: [^true].
+	sourceStack atEnd]
+		whileTrue:
+			[sourceStack close.
+			sourceStack := sourceStack nextLink].
+	^false</body>
+
+<body>forceSpace
+
+	self skipSpace ifFalse: [self expected: 'white space'].</body>
+
+<body>forceSpaceInDTD
+
+	self skipSpaceInDTD ifFalse: [self expected: 'white space'].</body>
+
+<body>getNextChar
+
+	^hereChar := self nextChar</body>
+
+<body>mustFind: str
+
+	(self skipIf: str)
+		ifFalse: [self expected: '"', str, '"']</body>
+
+<body>nextChar
+
+	| ch |
+	self atEnd.
+	sourceStack == nil ifTrue: [^nil].
+	lastSource := currentSource.
+	currentSource := sourceStack.
+	ch := currentSource nextFor: self.
+	^ch</body>
+
+<body>skipIf: str
+
+	| p oc |
+	hereChar = str first ifFalse: [^false].
+	p := self sourceWrapper stream position.
+	oc := hereChar.
+	1 to: str size do: [:i |
+		hereChar = (str at: i)
+			ifFalse:
+				[self sourceWrapper stream position: p.
+				hereChar := oc.
+				^false].
+		lastSource := currentSource.
+		currentSource := self sourceWrapper.
+		hereChar := self sourceWrapper nextFor: self].
+	hereChar == nil
+		ifTrue: [self getNextChar].
+	^true</body>
+
+<body>skipSpace
+
+	| n |
+	n := 0.
+	[hereChar ~~ nil and: [#(9 10 13 32) includes: hereChar asInteger]] whileTrue:
+		[n := n+1.
+		self getNextChar].
+	^n &gt; 0</body>
+
+<body>skipSpaceInDTD
+
+	| space |
+	space := self skipSpace.
+	[self PERef: #dtd]
+		whileTrue: [space := self skipSpace | space].
+	^space</body>
+
+<body>upTo: aCharacter
+	"Answer a subcollection from position to the occurrence (if any, exclusive) of anObject.
+	 The stream is left positioned after anObject.
+	If anObject is not found answer everything."
+
+	| newStream element |
+	newStream := (String new: 64) writeStream.
+	[self atEnd]
+		whileFalse:
+			[element := self nextChar.
+			element = aCharacter
+				ifTrue: [^newStream contents].
+			newStream nextPut: element.].
+	self expected: (String with: aCharacter).
+	^newStream contents</body>
+
+<body>upToAll: target
+	" Answer a subcollection from the current position
+	up to the occurrence (if any, not inclusive) of target,
+	and leave the stream positioned before the occurrence.
+	If no occurrence is found, answer the entire remaining
+	stream contents, and leave the stream positioned at the end.
+	We are going to cheat here, and assume that the first
+	character in the target only occurs once in the target, so
+	that we don't have to backtrack."
+
+	| str i |
+	(target occurrencesOf: target first) = 1
+		ifFalse: [self error: 'The target collection is ambiguous.'].
+	self sourceWrapper skip: -1.
+	str := (String new: 32) writeStream.
+	[str nextPutAll: (self upTo: target first).
+	i := 2.
+	[i &lt;= target size and:
+			[self nextChar = (target at: i)]]
+		whileTrue:
+			[i := i+1].
+	i &lt;= target size]
+		whileTrue:
+			[str nextPutAll: (target copyFrom: 1 to: i-1).
+			self sourceWrapper skip: -1].
+	self getNextChar.
+	^str contents</body>
+</methods>
+
+<methods>
+<class-id>XML.XMLParser</class-id> <category>private</category>
+
+<body>closeAllFiles
+
+	self fullSourceStack do: [:str | str close]</body>
+
+<body>documentNode
+
+	^documentNode</body>
+
+<body>error: aStringOrMessage
+
+	^XMLSignal raiseErrorString: aStringOrMessage asString</body>
+
+<body>expected: string
+
+	self malformed: string, ' expected, but not found'</body>
+
+<body>fullSourceStack
+
+	| out s |
+	out := OrderedCollection new.
+	s := sourceStack.
+	[s == nil]
+		whileFalse:
+			[out addFirst: s.
+			s := s nextLink].
+	^out</body>
+
+<body>getQualifiedName
+
+	| nm |
+	nm := self getSimpleName.
+	^hereChar = $:
+		ifTrue:
+			[self getNextChar.
+			NodeTag new qualifier: nm ns: '' type: self getSimpleName]
+		ifFalse:
+			[NodeTag new qualifier: '' ns: '' type: nm]</body>
+
+<body>getSimpleName
+
+	| s |
+	(self isValidNameStart: hereChar) ifFalse: [^self expected: 'name'].
+	s := (String new: 16) writeStream.
+	s nextPut: hereChar.
+	[self getNextChar.
+	self isValidNameChar: hereChar] whileTrue: [s nextPut: hereChar].
+	^s contents</body>
+
+<body>invalid: aString
+
+	self class invalid: aString</body>
+
+<body>isValidNameChar: c
+
+	^c isLetter
+		or: [c isDigit
+		or: ['-_.' includes: c]]</body>
+
+<body>isValidNameStart: c
+
+	^c isLetter or: [c = $_]</body>
+
+<body>malformed: aString
+
+	self class malformed: aString</body>
+
+<body>nmToken
+
+	| s |
+	(self isValidNameChar: hereChar) ifFalse: [^self expected: 'NmToken'].
+	s := (String new: 16) writeStream.
+	s nextPut: hereChar.
+	[self getNextChar.
+	self isValidNameChar: hereChar] whileTrue: [s nextPut: hereChar].
+	^s contents</body>
+
+<body>notPermitted: string
+
+	self malformed: string, ' is not permitted'</body>
+
+<body>validateEncoding: encName
+
+	| c |
+	encName size = 0 ifTrue: [self expected: 'non-empty encoding name'].
+	c := encName first.
+	(c asInteger &lt; 128 and: [c isLetter])
+		ifFalse: [self malformed: ('The first letter of the encoding ("&lt;1s&gt;") must be an ASCII alphabetic letter'
+						expandMacrosWith: encName)].
+	2 to: encName size do: [:i |
+		c := encName at: i.
+		(c asInteger &lt; 128 and: [c isLetter or: [c isDigit or: ['._-' includes: c]]])
+			ifFalse: [self malformed: ('The first name of the encoding ("&lt;1s&gt;") must be ''.'', ''_'', ''-'', or an ASCII letter or digit'
+						expandMacrosWith: encName)]]</body>
+
+<body>warn: aString
+
+	InformationSignal new messageText: aString; raiseSignal</body>
+
+<body>with: list add: node
+
+	node isDiscarded
+		ifFalse: [list add: node]</body>
+</methods>
+
+
+<class>
+<name>XMLNodeBuilder</name>
+<environment>XML</environment>
+<super>Core.Object</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars>tagStack tags </inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Parsing</category>
+</class>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<methods>
+<class-id>XML.XMLNodeBuilder class</class-id> <category>instance creation</category>
+
+<body>new
+
+	^super new initialize</body>
+</methods>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<comment>
+<class-id>XML.XMLNodeBuilder</class-id>
+<body>This class along with it's subclass NodeBuilder is used by the XMLParser to distill an XML document into it's component elements. Since XML elements are tag delimited and nest
+properly within each other in a well-formed XML document, this class contains code to
+process the tags and build a dictionary of xml elements
+
+Instance Variables:
+	tagStack	&lt;OrderedCollection&gt; 
+	tags	&lt;Dictionary&gt;
+</body>
+</comment>
+
+<methods>
+<class-id>XML.XMLNodeBuilder</class-id> <category>initialize</category>
+
+<body>initialize
+
+	tagStack := OrderedCollection new.
+	tags := Dictionary new.</body>
+</methods>
+
+<methods>
+<class-id>XML.XMLNodeBuilder</class-id> <category>accessing</category>
+
+<body>currentTag
+
+	^tagStack last tag</body>
+
+<body>pushTag: tag whileDoing: aBlock
+
+	tagStack addLast: (ElementContext new tag: tag).
+	^aBlock ensure: [tagStack removeLast]</body>
+</methods>
+
+<methods>
+<class-id>XML.XMLNodeBuilder</class-id> <category>namespaces</category>
+
+<body>correctAttributeTag: attribute
+
+	| ns tag key qual type |
+	qual := attribute tag qualifier.
+	qual isEmpty
+		ifTrue: [^self].
+	type := attribute tag type.
+	ns := self findNamespace: qual.
+	key := Array with: qual with: ns with: type.
+	tag := tags at: key ifAbsentPut: [NodeTag new qualifier: qual ns: ns type: type].
+	attribute tag: tag</body>
+
+<body>correctTag: tag
+
+	| ns type key qualifier |
+	qualifier := tag qualifier.
+	type := tag type.
+	ns := self findNamespace: qualifier.
+	key := Array with: qualifier with: ns with: type.
+	^tags at: key ifAbsentPut: [NodeTag new qualifier: qualifier ns: ns type: type]</body>
+
+<body>findNamespace: ns
+
+	| nsURI |
+	ns = 'xml' ifTrue: [^XML_URI].
+	ns = 'xmlns' ifTrue: [^'&lt;!-- xml namespace --&gt;'].
+	tagStack size to: 1 by: -1 do: [:i |
+		nsURI := (tagStack at: i) findNamespace: ns.
+		nsURI = nil ifFalse: [^nsURI]].
+	^ns = ''
+		ifTrue: ['']
+		ifFalse: [XMLParser invalid: ('The namespace qualifier &lt;1s&gt; has not been bound to a namespace URI' expandMacrosWith: ns)]</body>
+
+<body>postProcessElement: anElement
+
+	tagStack last definesNamespaces
+		ifTrue: [anElement namespaces: tagStack last namespaces].
+	^anElement</body>
+
+<body>resolveNamespaces: attributes
+
+	| newAttributes |
+	attributes == nil
+		ifTrue: [newAttributes := #()]
+		ifFalse:
+			[newAttributes := OrderedCollection new: attributes size.
+			attributes do: [:attr |
+				newAttributes add: attr.
+				attr tag qualifier = 'xmlns'
+					ifTrue: [tagStack last defineNamespace: attr]
+					ifFalse: [(attr tag isLike: 'xmlns')
+						ifTrue: [tagStack last defineDefaultNamespace: attr]
+						ifFalse: []]].
+			newAttributes do: [:attr | self correctAttributeTag: attr]].
+	tagStack last tag: (self correctTag: tagStack last tag).
+	^newAttributes isEmpty
+		ifTrue: [nil]
+		ifFalse: [newAttributes asArray]</body>
+</methods>
+
+
+<class>
+<name>Node</name>
+<environment>XML</environment>
+<super>Core.Object</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars>parent flags </inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Nodes</category>
+</class>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<methods>
+<class-id>XML.Node class</class-id> <category>instance creation</category>
+
+<body>new
+
+	^super new initialize</body>
+</methods>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<comment>
+<class-id>XML.Node</class-id>
+<body>An XML.Node represents a logical component of an XML Document. Logically, the
+document is composed of declarations, elements, comments, character references, and 
+processing instructions, all of which are indicated in the document by explicit markup. 
+The various subclasses of XML.Node represent these various components.
+
+Subclasses must implement the following messages:
+	printing
+		printCanonicalOn:
+		printHTMLOn:
+		printNoIndentOn:endSpacing:spacing:
+
+Instance Variables:
+	parent	&lt;XML.Node | nil&gt; 
+	flags	&lt;SmallInteger&gt; 
+</body>
+</comment>
+
+<methods>
+<class-id>XML.Node</class-id> <category>initialize</category>
+
+<body>initialize
+
+	flags := 0.</body>
+</methods>
+
+<methods>
+<class-id>XML.Node</class-id> <category>accessing</category>
+
+<body>discard
+
+	self flags: (self flags bitOr: 1)</body>
+
+<body>document
+
+	^parent document</body>
+
+<body>expandedName
+
+	^''</body>
+
+<body>flags
+
+	^flags</body>
+
+<body>flags: flagBits
+
+	flags := flagBits</body>
+
+<body>parent
+
+	^parent</body>
+
+<body>parent: aNode
+
+	parent := aNode</body>
+
+<body>selectNodes: aBlock
+
+	^#()</body>
+
+<body>tag
+
+	^nil</body>
+</methods>
+
+<methods>
+<class-id>XML.Node</class-id> <category>printing</category>
+
+<body>canonicalPrintString
+
+	| s |
+	s := (String new: 1024) writeStream.
+	self printCanonicalOn: s.
+	^s contents</body>
+
+<body>noIndentPrintString
+
+	| s |
+	s := (String new: 1024) writeStream.
+	self printNoIndentOn: s.
+	^s contents</body>
+
+<body>printCanonical: text on: aStream
+	"Print myself on the stream in the form described by James
+	Clark's canonical XML."
+
+	| d |
+	d := Dictionary new.
+	d at: Character cr put: '&amp;#13;';
+		at: Character lf put: '&amp;#10;';
+		at: Character tab put: '&amp;#9;';
+		at: $&amp; put: '&amp;amp;';
+		at: $&lt; put: '&amp;lt;';
+		at: $&gt; put: '&amp;gt;';
+		at: $" put: '&amp;quot;'.
+	text do: [:c |
+		aStream nextPutAll: (d at: c ifAbsent: [String with: c])].</body>
+
+<body>printCanonicalOn: aStream
+	"Print myself on the stream in the form described by James
+	Clark's canonical XML."
+
+	self subclassResponsibility</body>
+
+<body>printHTMLOn: aStream
+	"Print myself on the stream in a form usual for HTML."
+
+	self subclassResponsibility</body>
+
+<body>printNoIndentOn: aStream
+	"Print myself on the stream with line breaks between adjacent
+	elements, but no indentation."
+
+	self printNoIndentOn: aStream
+		endSpacing: [:node :list | aStream cr]
+		spacing: [:node :list | aStream cr]</body>
+
+<body>printNoIndentOn: aStream endSpacing: endSpacingBlock spacing: spacingBlock
+	"Print myself on the stream with line breaks between adjacent
+	elements, but no indentation."
+
+	self subclassResponsibility</body>
+
+<body>printOn: aStream
+
+	self printOn: aStream depth: 0</body>
+
+<body>simpleDescription
+
+	^self printString</body>
+</methods>
+
+<methods>
+<class-id>XML.Node</class-id> <category>testing</category>
+
+<body>hasAncestor: aNode
+
+	| p |
+	p := self parent.
+	[p == nil] whileFalse:
+		[p == aNode ifTrue: [^true].
+		p := p parent].
+	^false</body>
+
+<body>hasSubNodes
+
+	^false</body>
+
+<body>isAttribute
+
+	^false</body>
+
+<body>isBlankText
+
+	^false</body>
+
+<body>isComment
+
+	^false</body>
+
+<body>isContent
+
+	^false</body>
+
+<body>isDiscarded
+
+	^(self flags bitAnd: 1) = 1</body>
+
+<body>isDocument
+
+	^false</body>
+
+<body>isElement
+
+	^false</body>
+
+<body>isLike: aNode
+
+	^self class == aNode class</body>
+
+<body>isProcessingInstruction
+
+	^false</body>
+
+<body>isText
+
+	^false</body>
+
+<body>precedes: aNode
+
+	| n1 n2 |
+	aNode document == self document
+		ifFalse: [self error: 'These nodes can''t be ordered. They are not in the same document.'].
+	aNode == self document
+		ifTrue: [^false].
+	self == self document
+		ifTrue: [^true].
+	n1 := self.
+	n2 := aNode.
+	(n2 hasAncestor: n1) ifTrue: [^true].
+	(n1 hasAncestor: n2) ifTrue: [^false].
+	[n1 parent == n2 parent] whileFalse:
+		[[n1 parent hasAncestor: n2 parent] whileTrue: [n1 := n1 parent].
+		[n2 parent hasAncestor: n1 parent] whileTrue: [n2 := n2 parent].
+		n1 parent == n2 parent
+			ifFalse: [n1 := n1 parent. n2 := n2 parent]].
+	^(n1 parent indexOf: n1) &lt; (n1 parent indexOf: n2)</body>
+
+<body>verifyContents
+
+	^true</body>
+</methods>
+
+<methods>
+<class-id>XML.Node</class-id> <category>enumerating</category>
+
+<body>nodesDo: aBlock
+
+	aBlock value: self</body>
+</methods>
+
+<methods>
+<class-id>XML.Node</class-id> <category>namespaces</category>
+
+<body>findNamespaceAt: qualifier
+
+	| ns node |
+	qualifier = 'xml' ifTrue: [^XML_URI].
+	ns := nil.
+	node := self.
+	[node isElement and: [ns == nil]]
+		whileTrue:
+			[ns := node namespaceAt: qualifier.
+			node := node parent].
+	^ns</body>
+
+<body>findQualifierAtNamespace: ns
+
+	| qual node |
+	qual := nil.
+	node := self.
+	[node isElement and: [qual == nil]]
+		whileTrue:
+			[qual := node qualifierAtNamespace: ns.
+			node := node parent].
+	^qual</body>
+
+<body>namespaceAt: qualifier
+
+	^nil</body>
+
+<body>qualifierAtNamespace: ns
+
+	^nil</body>
+</methods>
+
+
+<class>
+<name>Comment</name>
+<environment>XML</environment>
+<super>XML.Node</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars>text </inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Nodes</category>
+</class>
+
+<comment>
+<class-id>XML.Comment</class-id>
+<body>This class represents an XML comment. XML comments may appear anywhere in an XML document outside other markup or within the document type declaration at places allowed by grammar.
+
+ XML comments are delimited by the start-tag '&lt;!--' and the end-tag '--&gt;'. 
+
+According to the XML 1.0 specification, for compatibilty, double-hyphens (the string '--') must not occur within comments.
+
+Instance Variables:
+	text	&lt;String&gt;  contents of the comment element
+</body>
+</comment>
+
+<methods>
+<class-id>XML.Comment</class-id> <category>printing</category>
+
+<body>printCanonicalOn: aStream
+
+	^self</body>
+
+<body>printHTMLOn: aStream
+
+	self printOn: aStream</body>
+
+<body>printNoIndentOn: aStream endSpacing: endSpacingBlock spacing: spacingBlock
+
+	^self printOn: aStream</body>
+
+<body>printOn: aStream depth: indent
+
+	aStream nextPutAll: '&lt;!--', (text == nil ifTrue: [''] ifFalse: [text]), '--&gt;'</body>
+</methods>
+
+<methods>
+<class-id>XML.Comment</class-id> <category>accessing</category>
+
+<body>text
+
+	^text</body>
+
+<body>text: aText
+
+	text := aText</body>
+</methods>
+
+<methods>
+<class-id>XML.Comment</class-id> <category>testing</category>
+
+<body>isComment
+
+	^true</body>
+</methods>
+
+
+<class>
+<name>Notation</name>
+<environment>XML</environment>
+<super>XML.Node</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars>name publicID systemID </inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Nodes</category>
+</class>
+
+<comment>
+<class-id>XML.Notation</class-id>
+<body>This class represents an XML Notation declaration. Notations are XML nodes which identify by name the format of unparsed entities, the format of elements which bear a notation attribute or the application to which a processing instruction is addressed.
+
+Notations are delimited by the start-tag '&lt;!NOTATION' and end-tag '&gt;'
+
+The name instance variable provides a name or identifier for the notation, for use in entity and attribute specifications. The publicID instance variable provides an external identifier which allows the XML processor or the client application to locate a helper application capable of processing data in the given notation. The systemID variable allows the parser to optionally resolve the publicID into the system identifier, file name, or other information needed to allow the application to call a processor for data in the notation.
+
+
+Instance Variables:
+	name	&lt;XML.NodeTag&gt;
+	publicID	&lt;String | XML.URIResolver&gt;
+	systemID	&lt;String | XML.URIResolver&gt;
+</body>
+</comment>
+
+<methods>
+<class-id>XML.Notation</class-id> <category>initialize</category>
+
+<body>name: aName identifiers: anArray
+
+	name := aName.
+	anArray size = 1
+		ifTrue: [systemID := anArray at: 1]
+		ifFalse: [anArray size = 2
+			ifTrue:
+				[systemID := anArray at: 2.
+				publicID := anArray at: 1]
+			ifFalse: [self error: 'Invalid PUBLIC / SYSTEM identifiers']]</body>
+</methods>
+
+
+<class>
+<name>Element</name>
+<environment>XML</environment>
+<super>XML.Node</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars>tag attributes namespaces elements definition </inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Nodes</category>
+</class>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<methods>
+<class-id>XML.Element class</class-id> <category>instance creation</category>
+
+<body>tag: tag
+
+	^self new setTag: tag attributes: nil elements: nil</body>
+
+<body>tag: tag attributes: attributes elements: elements
+
+	^self new setTag: tag attributes: attributes elements: elements</body>
+
+<body>tag: tag elements: elements
+
+	^self new setTag: tag attributes: nil elements: elements</body>
+</methods>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<comment>
+<class-id>XML.Element</class-id>
+<body>XML document element boundaries are either delimited by start-tags and end-tags, or, for empty elements, by an empty-element tag. Each element has a type, identified by name, sometimes called its "generic identifier" (GI), and may have a set of attribute specifications. Each attribute specification has a name and a value.
+
+Instance Variables:
+	tag	&lt;String | NodeTag&gt;  the identifier for the element
+	attributes	&lt;Collection&gt;  the element's attributes
+	namespaces	&lt;Dictionary&gt;  a mapping of tag qualifiers to namespace URIs
+	elements	&lt;SequenceableCollection&gt;  child text, comments, PIs and elements
+	userData	&lt;Object&gt;  extra space for a client program to add annotations
+	definition	&lt;XML.Pattern&gt;  defines the type constraints for the content
+</body>
+</comment>
+
+<methods>
+<class-id>XML.Element</class-id> <category>initialize</category>
+
+<body>initialize
+
+	super initialize.
+	tag := 'undefined'.
+	attributes := #().</body>
+</methods>
+
+<methods>
+<class-id>XML.Element</class-id> <category>accessing</category>
+
+<body>anyElementNamed: elementName
+	"This will return the receiver if its name matches the requirement."
+
+	| list |
+	list := self anyElementsNamed: elementName.
+	list size &gt; 1 ifTrue: [self error: 'There is not a unique element with this tag'].
+	^list isEmpty ifFalse: [list first]</body>
+
+<body>anyElementsNamed: elementName
+	"This includes the receiver as one of the possibilities."
+
+	| list |
+	list := OrderedCollection new.
+	self nodesDo: [:e |
+		(e isElement and: [e tag isLike: elementName])
+			ifTrue: [list add: e]].
+	^list</body>
+
+<body>attributes
+
+	^attributes == nil
+		ifTrue: [#()]
+		ifFalse: [attributes]</body>
+
+<body>characterData
+
+	| str |
+	str := (String new: 128) writeStream.
+	self characterDataOnto: str.
+	^str contents</body>
+
+<body>characterDataOnto: str
+
+	self elements do: [:i |
+		i isContent ifTrue: [i characterDataOnto: str]].</body>
+
+<body>definition
+
+	^definition</body>
+
+<body>definition: aPattern
+
+	definition := aPattern</body>
+
+<body>description
+
+	^'an %&lt;&lt;1s&gt;&gt; element' expandMacrosWith: tag</body>
+
+<body>elementNamed: elementName
+
+	| list |
+	list := self elementsNamed: elementName.
+	list size = 1 ifFalse: [self error: 'There is not a unique element with this tag'].
+	^list first</body>
+
+<body>elements
+
+	^elements == nil
+		ifTrue: [#()]
+		ifFalse: [elements]</body>
+
+<body>elementsNamed: elementName
+
+	^self elements select: [:e | e isElement and: [e tag isLike: elementName]]</body>
+
+<body>expandedName
+
+	^tag expandedName</body>
+
+<body>indexOf: aChild
+
+	aChild parent == self ifFalse: [^nil].
+	^aChild isAttribute
+		ifTrue: [-1]
+		ifFalse: [elements indexOf: aChild ifAbsent: [nil]]</body>
+
+<body>namespaces: aDictionary
+
+	namespaces := aDictionary</body>
+
+<body>selectNodes: aBlock
+
+	^self attributes, self elements select: aBlock</body>
+
+<body>tag
+
+	^tag</body>
+
+<body>valueOfAttribute: attributeName ifAbsent: aBlock
+
+	^(self attributes
+		detect: [:a | a tag isLike: attributeName]
+		ifNone: [^aBlock value]) value</body>
+</methods>
+
+<methods>
+<class-id>XML.Element</class-id> <category>printing</category>
+
+<body>printCanonicalOn: aStream
+
+	| elem az |
+	aStream nextPut: $&lt;.
+	aStream nextPutAll: tag asString.
+	attributes == nil
+		ifFalse:
+			[az := attributes asSortedCollection: [:x :y | x key &lt; y key].
+			az do: [:at |
+				aStream space.
+				at printCanonicalOn: aStream]].
+	aStream nextPut: $&gt;.
+	elem := elements == nil
+		ifTrue: [#()]
+		ifFalse: [elements" reject: [:str | str isBlankText]"].
+	elem do: [:e |
+		e printCanonicalOn: aStream].
+	aStream nextPutAll: '&lt;/', tag asString, '&gt;'</body>
+
+<body>printHTMLOn: aStream
+
+	| elem az |
+	aStream nextPut: $&lt;.
+	aStream nextPutAll: tag asString.
+	attributes == nil
+		ifFalse:
+			[az := attributes asSortedCollection: [:x :y | x key &lt; y key].
+			az do: [:at |
+				aStream space.
+				at printOn: aStream]].
+	aStream nextPut: $&gt;.
+	elem := elements == nil
+		ifTrue: [#()]
+		ifFalse: [elements" reject: [:str | str isBlankText]"].
+	self isHTMLBlock ifTrue: [aStream cr].
+	elem do: [:e |
+		e printHTMLOn: aStream.
+		self isHTMLBlock ifTrue: [aStream cr]].
+	aStream nextPutAll: '&lt;/', tag asString, '&gt;'</body>
+
+<body>printNoIndentOn: aStream endSpacing: endSpacingBlock spacing: spacingBlock
+
+	| elem az |
+	aStream nextPut: $&lt;.
+	aStream nextPutAll: tag asString.
+	attributes == nil
+		ifFalse:
+			[az := attributes asSortedCollection: [:x :y | x key &lt; y key].
+			az do: [:at |
+				aStream space.
+				at printNoIndentOn: aStream endSpacing: endSpacingBlock spacing: spacingBlock]].
+	aStream nextPut: $&gt;.
+	elem := elements == nil
+		ifTrue: [#()]
+		ifFalse: [elements reject: [:e | e isBlankText]].
+	(elem contains: [:e | e isElement])
+		ifTrue:
+			[endSpacingBlock value: self value: elem.
+			elem do: [:e | e
+					printNoIndentOn: aStream
+					endSpacing: endSpacingBlock
+					spacing: spacingBlock]
+				separatedBy: [spacingBlock value: self value: elem].
+			endSpacingBlock value: self value: elem]
+		ifFalse: [elem do: [:e | e
+					printNoIndentOn: aStream
+					endSpacing: endSpacingBlock
+					spacing: spacingBlock]].
+	aStream nextPutAll: '&lt;/', tag asString, '&gt;'</body>
+
+<body>printOn: aStream depth: indent
+
+	| elem |
+	aStream nextPut: $&lt;.
+	aStream nextPutAll: tag asString.
+	attributes == nil
+		ifFalse: [1 to: attributes size do: 
+			[:i | | a |
+			a := attributes at: i.
+			aStream space.
+			a printOn: aStream]].
+	elements == nil
+		ifTrue: [aStream nextPutAll: '/&gt;']
+		ifFalse:
+			[aStream nextPut: $&gt;.
+			elem := elements reject: [:str | str isText and: [str isStripped]].
+			(elem size &lt;= 1 and: [(elem contains: [:n | n isText not]) not])
+				ifTrue: [elem do: [:e |
+							e printOn: aStream depth: indent+1]]
+				ifFalse:
+					[1 to: elem size do: [:i | | e |
+						e := elem at: i.
+						aStream crtab: indent+1.
+						e isString 
+							ifTrue: [aStream nextPutAll: e]
+							ifFalse: [e printOn: aStream depth: indent+1]].
+					aStream crtab: indent].
+			aStream nextPutAll: '&lt;/', tag asString, '&gt;']</body>
+
+<body>simpleDescription
+
+	^'&lt;', self tag asString, '&gt;'</body>
+</methods>
+
+<methods>
+<class-id>XML.Element</class-id> <category>namespaces</category>
+
+<body>namespaceAt: qualifier
+
+	^namespaces == nil
+		ifTrue: [nil]
+		ifFalse: [namespaces at: qualifier ifAbsent: [nil]]</body>
+
+<body>qualifierAtNamespace: ns
+
+	^namespaces == nil
+		ifTrue: [nil]
+		ifFalse:
+			[namespaces keysAndValuesDo: 
+				[:qualifier :namespace | namespace = ns ifTrue: [^qualifier]].
+			nil]</body>
+</methods>
+
+<methods>
+<class-id>XML.Element</class-id> <category>private</category>
+
+<body>attributes: a
+
+	attributes := a.
+	a == nil ifFalse: [a do: [:i | i parent: self]].</body>
+
+<body>condenseList
+
+	elements == nil
+		ifFalse: [elements size = 0
+			ifTrue: [elements := nil]
+			ifFalse: [elements := elements asArray]]</body>
+
+<body>condenseText
+
+	| elmts str tc |
+	elmts := (Array new: elements size) writeStream.
+	str := nil.
+	elements do: [:elm |
+		elm isText
+			ifTrue:
+				[str == nil ifTrue: [str := (String new: elm text size) writeStream].
+				tc := elm class.
+				str nextPutAll: elm text]
+			ifFalse:
+				[str == nil ifFalse: [elmts nextPut: (tc new text: str contents)].
+				str := nil.
+				elmts nextPut: elm]].
+	str == nil ifFalse: [elmts nextPut: (tc new text: str contents)].
+	elements := elmts contents.</body>
+
+<body>elements: e
+
+	elements := e.
+	self isEmpty
+		ifFalse:
+			[self condenseText.
+			elements do: [:elm | elm parent: self]]</body>
+
+<body>setTag: t attributes: a elements: e
+
+	tag := t isString
+			ifTrue: [NodeTag new qualifier: '' ns: '' type: t]
+			ifFalse: [t].
+	self attributes: a.
+	self elements: e</body>
+</methods>
+
+<methods>
+<class-id>XML.Element</class-id> <category>testing</category>
+
+<body>hasSubNodes
+
+	^elements size &gt; 0 or: [attributes size &gt; 0]</body>
+
+<body>isContent
+
+	^true</body>
+
+<body>isElement
+
+	^true</body>
+
+<body>isEmpty
+
+	^elements == nil</body>
+
+<body>isHTMLBlock
+
+	^#('p' 'html' 'head' 'body') includes: tag asLowercase</body>
+
+<body>isLike: aNode
+
+	^self class == aNode class
+		and: [self tag isLike: aNode tag]</body>
+
+<body>verifyContents
+
+	self isEmpty
+		ifFalse: [elements do: [:elm | elm verifyContents]]</body>
+</methods>
+
+<methods>
+<class-id>XML.Element</class-id> <category>enumerating</category>
+
+<body>nodesDo: aBlock
+
+	aBlock value: self.
+	1 to: self attributes size do: [:i |
+		(self attributes at: i) nodesDo: aBlock].
+	1 to: self elements size do: [:i |
+		(self elements at: i) nodesDo: aBlock]</body>
+</methods>
+
+<methods>
+<class-id>XML.Element</class-id> <category>modifying</category>
+
+<body>addNode: aNode
+
+	elements == nil
+		ifTrue: [elements := OrderedCollection new]
+		ifFalse: [elements class == Array
+			ifTrue: [elements := elements asOrderedCollection]].
+	elements add: aNode</body>
+</methods>
+
+
+<class>
+<name>Document</name>
+<environment>XML</environment>
+<super>XML.Node</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars>root nodes xmlVersion dtd ids </inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Nodes</category>
+</class>
+
+<comment>
+<class-id>XML.Document</class-id>
+<body>This class represents an XML document entity and serves as the root of the document entity tree. Each XML document has one entity (root) called the document entity, which serves as the starting point for the XML processor and may contain the whole document (nodes collection). 
+
+According to the XML 1.0 specification, XML documents may and should begin with an XML declaration which specifies the version of XML (xmlVersion instance variable) being used. 
+
+The XML document type declaration which must appear before the first element in a document contains or points to markup declarations that provide the grammar for this document. This grammar is known as document type definition (dtd instance variable). An XML document is valid if it has an associated document type declaration and if the document complies with the constraints expressed in it. If the document type declaration is not present, the document can be at most well formed.
+
+Instance Variables:
+	root	&lt;XML.Node&gt;  
+	nodes	&lt;Collection&gt;  
+	xmlVersion	&lt;String&gt;  
+		Version of the XML specification to which the document is conformant
+	dtd	&lt;XML.DocumentType&gt;
+		Associated document type definition 
+	ids	&lt;Dictionary&gt;  
+</body>
+</comment>
+
+<methods>
+<class-id>XML.Document</class-id> <category>initialize</category>
+
+<body>initialize
+
+	super initialize.
+	nodes := OrderedCollection new.
+	ids := Dictionary new.</body>
+</methods>
+
+<methods>
+<class-id>XML.Document</class-id> <category>accessing</category>
+
+<body>addNamespaceDefinitions
+
+	| d tag |
+	d := Dictionary new.
+	self nodesDo: [:aNode |
+		tag := aNode tag.
+		tag isNil
+			ifFalse:
+				[(d at: tag qualifier ifAbsent: [tag namespace]) = tag namespace
+					ifFalse: [self error: 'Using the same tag for multiple namespaces is not currently supported'].
+				d at: tag qualifier put: tag namespace]].
+	(d at: '' ifAbsent: ['']) = ''
+		ifTrue: [d removeKey: '' ifAbsent: []].
+	d removeKey: 'xml' ifAbsent: [].
+	d removeKey: 'xmlns' ifAbsent: [].
+	self root namespaces: d</body>
+
+<body>addNode: aNode
+
+	nodes add: aNode.
+	aNode parent: self.
+	aNode isElement
+		ifTrue: [root == nil
+			ifTrue: [root := aNode]
+			ifFalse: [self error: 'It is illegal to have more than one element node at the top level in a document']]</body>
+
+<body>document
+
+	^self</body>
+
+<body>dtd
+
+	^dtd</body>
+
+<body>dtd: aDTD
+
+	dtd := aDTD</body>
+
+<body>elements
+
+	^nodes</body>
+
+<body>root
+
+	^root</body>
+
+<body>selectNodes: aBlock
+
+	^nodes select: aBlock</body>
+
+<body>xmlVersion: aString
+
+	xmlVersion := aString</body>
+</methods>
+
+<methods>
+<class-id>XML.Document</class-id> <category>IDs</category>
+
+<body>atID: key ifAbsent: aBlock
+
+	^ids at: key ifAbsent: aBlock</body>
+
+<body>registerID: attribute from: aParser
+
+	(ids includesKey: attribute value)
+		ifTrue: [aParser invalid: ('The id "&lt;1s&gt;" was used more than once' expandMacrosWith: attribute value)].
+	ids at: attribute value put: attribute.
+	aParser resolveIDREF: attribute value</body>
+
+<body>updateIDs
+
+	| attr |
+	ids keys do: [:key |
+		attr := ids at: key.
+		(attr isAttribute and: [attr value = key])
+			ifFalse: [self error: 'Attempt to update the ID dictionary twice'].
+		ids at: key put: attr parent].</body>
+</methods>
+
+<methods>
+<class-id>XML.Document</class-id> <category>flags</category>
+
+<body>hasDTD
+
+	^(self flags bitAnd: 16r100) = 16r100</body>
+
+<body>hasExternalDTD
+
+	^(self flags bitAnd: 16r200) = 16r200</body>
+
+<body>noteDTD
+
+	self flags: (self flags bitOr: 16r100)</body>
+
+<body>noteExternalDTD
+
+	self flags: (self flags bitOr: 16r200)</body>
+
+<body>notePEReference
+
+	self flags: (self flags bitOr: 16r400)</body>
+
+<body>usesParameterEntities
+
+	^(self flags bitAnd: 16r400) = 16r400</body>
+</methods>
+
+<methods>
+<class-id>XML.Document</class-id> <category>testing</category>
+
+<body>hasSubNodes
+
+	^nodes size &gt; 0</body>
+
+<body>isContent
+
+	^true</body>
+
+<body>isDocument
+
+	^true</body>
+
+<body>verifyContents
+
+	root verifyContents</body>
+</methods>
+
+<methods>
+<class-id>XML.Document</class-id> <category>printing</category>
+
+<body>printCanonicalOn: aStream
+
+	nodes do: [:n | n printCanonicalOn: aStream]</body>
+
+<body>printHTMLOn: aStream
+
+	nodes do: [:n | n printHTMLOn: aStream]</body>
+
+<body>printNoIndentOn: aStream endSpacing: endSpacingBlock spacing: spacingBlock
+
+	nodes do: [:n | n printNoIndentOn: aStream endSpacing: endSpacingBlock spacing: spacingBlock]</body>
+
+<body>printOn: aStream
+
+	nodes do: [:n | n printOn: aStream. aStream cr]</body>
+</methods>
+
+<methods>
+<class-id>XML.Document</class-id> <category>enumerating</category>
+
+<body>nodesDo: aBlock
+
+	aBlock value: self.
+	1 to: self elements size do: [:i |
+		(self elements at: i) nodesDo: aBlock]</body>
+</methods>
+
+
+<class>
+<name>AnyPattern</name>
+<environment>XML</environment>
+<super>XML.ConcretePattern</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars></inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Patterns</category>
+</class>
+
+<comment>
+<class-id>XML.AnyPattern</class-id>
+<body>This class represents the ANY element content constraint in an element type declaration. According to the XML 1.0 specification the ANY pattern/rule is used to indicate to the validating
+parser that the element can contain any elements in any order, as long as it doesn't break any of the other rules of XML and the types of any child elements have been declared.</body>
+</comment>
+
+<methods>
+<class-id>XML.AnyPattern</class-id> <category>accessing</category>
+
+<body>description
+
+	^'ANY'</body>
+</methods>
+
+<methods>
+<class-id>XML.AnyPattern</class-id> <category>coercing</category>
+
+<body>alternateHeads
+
+	^followSet copyWith: self</body>
+
+<body>pushDownFollowSet
+
+	self addFollow: self.
+	^nil</body>
+</methods>
+
+<methods>
+<class-id>XML.AnyPattern</class-id> <category>testing</category>
+
+<body>couldBeText
+
+	^true</body>
+
+<body>matches: aNode
+
+	^true</body>
+</methods>
+
+
+<class>
+<name>SourceScannerNodeBuilder</name>
+<environment>XML</environment>
+<super>XML.XMLNodeBuilder</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars>selectors currentFile currentPosition positions changeBlock </inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Source Code</category>
+</class>
+
+<comment>
+<class-id>XML.SourceScannerNodeBuilder</class-id>
+<body>This subclass of XMLNodeBuilder is used by the VisualWorks ChangeScanner to scan a VisualWorks XML source file and distill it into first XML elements and then
+ into valid Smalltalk objects for display in the Change List tool.
+
+
+Instance Variables:
+	selectors	&lt;Dictionary&gt;  comment
+	currentFile	&lt;ReadStream&gt;  comment
+	currentPosition	&lt;Integer&gt;  comment
+	positions	&lt;Dictionary&gt;  comment
+	changeBlock	&lt;BlockClosure&gt;  comment
+</body>
+</comment>
+
+<methods>
+<class-id>XML.SourceScannerNodeBuilder</class-id> <category>initialize</category>
+
+<body>initialize
+
+	super initialize.
+	selectors := IdentityDictionary new.
+	positions := IdentityDictionary new.</body>
+</methods>
+
+<methods>
+<class-id>XML.SourceScannerNodeBuilder</class-id> <category>accessing</category>
+
+<body>currentFile
+
+	^currentFile</body>
+
+<body>forgetPosition: elm
+
+	positions removeKey: elm ifAbsent: []</body>
+
+<body>positionAt: elm
+
+	^positions at: elm</body>
+
+<body>positionAt: elm put: p
+
+	positions at: elm put: p</body>
+</methods>
+
+<methods>
+<class-id>XML.SourceScannerNodeBuilder</class-id> <category>building</category>
+
+<body>attribute: name value: value
+
+	^Attribute name: name value: value</body>
+
+<body>comment: aText
+
+	^Comment new text: aText; discard</body>
+
+<body>makeText: text
+
+	| txt |
+	txt := Text text: text.
+	(txt isBlankText and: [(tagStack contains: [:c | c tag type ~= 'body']) not])
+		ifTrue: [txt discard].
+	^txt</body>
+
+<body>notation: name value: val
+
+	^name</body>
+
+<body>scanFile: file do: aBlock
+
+	| parser |
+	changeBlock := aBlock.
+	parser := XMLParser new.
+	parser on: file.
+	parser validate: false.
+	parser builder: self.
+	parser prolog.
+	[file atEnd] whileFalse:
+		[parser element.
+		[parser misc] whileTrue].</body>
+
+<body>tag: tag attributes: attributes elements: elements position: p stream: stream
+
+	| elm |
+	elm := Element tag: tag attributes: attributes elements: elements.
+	(tagStack size = 1 or: [(tagStack at: tagStack size-1) tag type = 'st-source'])
+		ifTrue:
+			[currentFile := stream stream.
+			currentPosition := p.
+			self scan: elm.
+			elm discard].
+	tag type = 'body' ifTrue: [self positionAt: elm put: p].
+	^elm</body>
+</methods>
+
+<methods>
+<class-id>XML.SourceScannerNodeBuilder</class-id> <category>scanning</category>
+
+<body>scan: element
+
+	| name |
+	name := self selectorFor: element tag.
+	self perform: name with: element</body>
+
+<body>scan_class: anElement
+
+	| parameters superStringTheory classChange attr |
+	"N.B. Must create otherParameters in same order as keywords in class def."
+	parameters := OrderedCollection new.
+	superStringTheory := self getString: 'super' from: anElement default: ''.
+	parameters addLast:
+			#superclass:
+			-&gt; (superStringTheory = 'nil' ifFalse:
+					[(BindingReference pathString: (self getString: 'super' from: anElement default: '')) makeUnambiguous]).
+	parameters addLast:
+			#indexedType:
+			-&gt; (self getSymbol: 'indexed-type' from: anElement default: #none).
+	parameters addLast:
+			#private:
+			-&gt; (self getBoolean: 'private' from: anElement default: false).
+	parameters addLast:
+			#instanceVariableNames:
+			-&gt; (self getString: 'inst-vars' from: anElement default: '').
+	parameters addLast:
+			#classInstanceVariableNames:
+			-&gt; (self getString: 'class-inst-vars' from: anElement default: '').
+	parameters addLast:
+			#imports:
+			-&gt; (self getString: 'imports' from: anElement default: '').
+	parameters addLast:
+			#category:
+			-&gt; (self getString: 'category' from: anElement default: NameSpaceOrganizer defaultProtocol asString).
+	attr := self getAttributesList: 'attributes' from: anElement.
+	attr isEmpty ifFalse: [parameters addLast: #attributes: -&gt; attr].
+
+	classChange := ClassDefinitionChange new.
+	classChange objectType: #class.
+	classChange className: (self getString: 'name' from: anElement default: '').
+	classChange
+		nameSpaceName: (self getString: 'environment' from: anElement default: #Smalltalk) asQualifiedReference makeUnambiguous asString asSymbol
+		classType: #defineClass:
+		otherParameters: parameters.
+
+	self doChange: classChange</body>
+
+<body>scan_comment: anElement 
+	| class tp |
+	class := self
+				getGlobalIdAny: #('class-id' 'name-space-id' 'object-id')
+				from: anElement
+				do: [:type | tp := type].
+	self doChange: ((ClassCommentChange new)
+				className: class;
+				objectType: tp)</body>
+
+<body>scan_copyright: anElement
+
+	self doChange: (OtherChange new type: #copyright)</body>
+
+<body>scan_do_it: anElement
+
+	self doChange: OtherChange new</body>
+
+<body>scan_initialize: anElement 
+	| class tp |
+	class := self
+				getGlobalIdAny: #('class-id' 'name-space-id' 'object-id' 'variable-id')
+				from: anElement
+				do: [:type | tp := type].
+	self doChange: ((ClassOtherChange new)
+				className: class;
+				type: #initialize;
+				objectType: tp)</body>
+
+<body>scan_methods: anElement
+
+	| class protocol bodies classObject selector attributes savedCurrentPosition |
+	class := self getGlobalId: 'class-id' from: anElement.
+	classObject := (class includes: Character space)
+			ifTrue: [((class copyUpTo: Character space)
+					asQualifiedReference valueOrDo: []) class]
+			ifFalse: [class asQualifiedReference valueOrDo: []].
+	classObject isBehavior ifFalse: [classObject := Object].
+	protocol := self getSymbol: 'category' from: anElement default: ClassOrganizer defaultProtocol.
+	bodies := anElement elementsNamed: 'body'.
+	savedCurrentPosition := currentPosition.
+	bodies do: [:elm |
+		attributes := Dictionary new.
+		elm attributes do: [:attr |
+			attributes at: attr tag type asSymbol put: attr value].
+		selector := classObject parserClass new parseSelector: elm characterData.
+		currentPosition := self positionAt: elm.
+		self doChange: (MethodDefinitionChange new
+						className: class;
+						selector: selector;
+						category: protocol;
+						attributes: attributes;
+						yourself).
+		self forgetPosition: elm].
+	currentPosition := savedCurrentPosition</body>
+
+<body>scan_name_space: anElement
+
+	| name env private category imports parameters attr |
+	"N.B. Must create otherParameters in same order as keywords in class def."
+	name := self getSymbol: 'name' from: anElement.
+	env := self getGlobalId: 'environment' from: anElement.
+	env := env asQualifiedReference makeUnambiguous asString.
+	private := self getBoolean: 'private' from: anElement default: false.
+	imports := self getString: 'imports' from: anElement default: ''.
+	category := self getString: 'category' from: anElement default: NameSpaceOrganizer defaultProtocol asString.
+	(parameters := OrderedCollection new)
+		addLast: #private: -&gt; private;
+		addLast: #imports: -&gt; imports;
+		addLast: #category: -&gt; category.
+	attr := self getAttributesList: 'attributes' from: anElement.
+	attr isEmpty ifFalse: [parameters addLast: #attributes: -&gt; attr].
+	self doChange: ((ClassDefinitionChange new)
+		objectType: #nameSpace;
+		className: name;
+		nameSpaceName: env asSymbol classType: #defineNameSpace: otherParameters: parameters)</body>
+
+<body>scan_new_page: anElement</body>
+
+<body>scan_relocate: anElement
+
+	| class newParent tp |
+	class := self getGlobalIdAny: #('class-id' 'name-space-id' 'object-id' 'variable-id') from: anElement do: [:type | tp := type].
+	newParent := (self getGlobalId: 'environment' from: anElement).
+	self notYetImplemented</body>
+
+<body>scan_remove: anElement 
+	| class tp |
+	class := self
+				getGlobalIdAny: #('class-id' 'name-space-id' 'object-id' 'variable-id')
+				from: anElement
+				do: [:type | tp := type].
+	self doChange: ((ClassOtherChange new)
+				className: class;
+				type: #remove;
+				objectType: tp)</body>
+
+<body>scan_remove_selector: anElement
+
+	| class selector |
+	class := self getGlobalId: 'class-id' from: anElement.
+	selector := (anElement elementNamed: 'selector') elements first text.
+	self doChange: (MethodOtherChange new
+					className: class; selector: selector; type: #remove)</body>
+
+<body>scan_rename: anElement 
+	| class newName tp |
+	class := self
+				getGlobalIdAny: #('class-id' 'name-space-id' 'object-id' 'variable-id')
+				from: anElement
+				do: [:type | tp := type].
+	newName := self getSymbol: 'name' from: anElement.
+	self doChange: ((ClassRenameChange new)
+				className: newName;
+				oldClassName: class;
+				objectType: tp)</body>
+
+<body>scan_reorganize: anElement 
+	| class data tp |
+	class := self
+				getGlobalIdAny: #('class-id' 'name-space-id')
+				from: anElement
+				do: [:type | tp := type].
+	data := self
+				getString: 'organization'
+				from: anElement
+				default: [''].
+	self doChange: ((ClassOtherChange new)
+				className: class;
+				type: #reorganize;
+				objectType: tp;
+				otherData: data;
+				yourself)</body>
+
+<body>scan_reorganize_data: anElement 
+
+	| class data tp |
+	class := self
+				getGlobalIdAny: #('class-id' 'name-space-id')
+				from: anElement
+				do: [:type | tp := type].
+	data := self
+				getString: 'organization'
+				from: anElement
+				default: [''].
+	self doChange: ((ClassOtherChange new)
+				className: class;
+				type: #reorganize;
+				otherData: data;
+				objectType: tp;
+				yourself)</body>
+
+<body>scan_static: anElement
+
+	| name env private category constant initializer parameters attr |
+	"N.B. Must create otherParameters in same order as keywords in class def."
+	name := self getSymbol: 'name' from: anElement.
+	env := self getGlobalId: 'environment' from: anElement.
+	env := env asQualifiedReference makeUnambiguous asString.
+	private := self getBoolean: 'private' from: anElement default: false.
+	constant := self getBoolean: 'constant' from: anElement default: false.
+	category := self getString: 'category' from: anElement default: NameSpaceOrganizer defaultProtocol asString.
+	initializer := self getString: 'initializer' from: anElement default: nil.
+	(parameters := OrderedCollection new)
+		addLast: #private: -&gt; private;
+		addLast: #constant: -&gt; constant;
+		addLast: #category: -&gt; category;
+		addLast: #initializer: -&gt; initializer.
+	attr := self getAttributesList: 'attributes' from: anElement.
+	attr isEmpty ifFalse: [parameters addLast: #attributes: -&gt; attr].
+	self doChange: ((ClassDefinitionChange new)
+						objectType: #variable;
+						className: name;
+						nameSpaceName: env asSymbol classType: #defineStatic: otherParameters: parameters)</body>
+
+<body>scan_st_source: anElement
+	"Do nothing"
+
+	^self</body>
+
+<body>scan_time_stamp: anElement
+
+	self doChange: (OtherChange new type: #timeStamp)</body>
+</methods>
+
+<methods>
+<class-id>XML.SourceScannerNodeBuilder</class-id> <category>private</category>
+
+<body>doChange: aChange
+
+	aChange file == nil
+		ifTrue: [aChange file: currentFile position: currentPosition].
+	changeBlock value: aChange</body>
+
+<body>getAttributesList: tag from: element
+
+	| list newList |
+	list := element elementsNamed: tag.
+	newList := OrderedCollection new.
+	list do: [:node |
+		self listFrom: node to: newList].
+	^newList asArray</body>
+
+<body>getBoolean: tag from: element default: defaultValue
+
+	| list item |
+	list := element elementsNamed: tag.
+	item := list size = 1
+		ifTrue: [list first characterData]
+		ifFalse: [list size = 0
+			ifTrue: [defaultValue]
+			ifFalse: [self error: 'Could not find unique "', tag, '".']].
+	^item = 'true'
+		ifTrue: [true]
+		ifFalse: [item = 'false'
+			ifTrue: [false]
+			ifFalse: [self error: '"',item,'" is not a boolean value for "', tag, '".']]</body>
+
+<body>getGlobalId: tag from: element
+
+	| list item |
+	list := element elementsNamed: tag.
+	item := list size = 1
+		ifTrue: [list first characterData]
+		ifFalse: [self error: 'Could not find unique "', tag, '".'].
+	^item</body>
+
+<body>getGlobalIdAny: possibleTags from: element do: aBlock
+
+	| list item name |
+	list := OrderedCollection new.
+	possibleTags do: [:tag | list addAll: (element elementsNamed: tag)].
+	item := list size = 1
+		ifTrue: [list first characterData]
+		ifFalse: [self error: 'Could not find unique ', possibleTags printString, '.'].
+	name := #('name-space-id' 'class-id' 'object-id' 'variable-id') indexOf: list first tag type.
+	name := #(#nameSpace #class #object #variable) at: name.
+	aBlock value: name.
+	^item</body>
+
+<body>getString: tag from: element default: defaultValue
+
+	| list item |
+	list := element elementsNamed: tag.
+	item := list size = 1
+		ifTrue: [list first characterData]
+		ifFalse: [list size = 0
+			ifTrue: [defaultValue]
+			ifFalse: [self error: 'Could not find unique "', tag, '".']].
+	^item</body>
+
+<body>getSymbol: tag from: element
+
+	| list item |
+	list := element elementsNamed: tag.
+	item := list size = 1
+		ifTrue: [list first characterData]
+		ifFalse: [self error: 'Could not find unique "', tag, '".'].
+	^item asSymbol</body>
+
+<body>getSymbol: tag from: element default: defaultValue
+
+	| list item |
+	list := element elementsNamed: tag.
+	item := list size = 1
+		ifTrue: [list first characterData]
+		ifFalse: [list size = 0
+			ifTrue: [defaultValue]
+			ifFalse: [self error: 'Could not find unique "', tag, '".']].
+	^item asSymbol</body>
+
+<body>listFrom: node to: list
+	"Over time, we may want to accomodate more complex
+	annotations for a class."
+
+	| c |
+	node elements do: [:elm |
+		elm isText ifFalse: [
+			(elm elements isEmpty or: [elm elements contains: [:e | e isElement]])
+				ifTrue:
+					[c := elm elements select: [:i | i isElement].
+					list add: (Array with: elm tag type asSymbol with: (c collect: [:i | i characterData]))]
+				ifFalse: [list add: (Array with: elm tag type asSymbol with: elm characterData)]]]</body>
+
+<body>selectorFor: aTag
+
+	^selectors at: aTag ifAbsentPut:
+			[| t |
+			t := aTag type copy replaceAll: $: with: $_.
+			t replaceAll: $. with: $_.
+			t replaceAll: $- with: $_.
+			('scan_', t, ':') asSymbol]</body>
+</methods>
+
+
+<class>
+<name>NamePattern</name>
+<environment>XML</environment>
+<super>XML.ConcretePattern</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars>name </inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Patterns</category>
+</class>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<methods>
+<class-id>XML.NamePattern class</class-id> <category>instance creation</category>
+
+<body>named: aName
+
+	^self new named: aName</body>
+</methods>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<comment>
+<class-id>XML.NamePattern</class-id>
+<body>This class represents a content constraint in an element type declaration such that the declaration includes the names of the element types that may appear as children in the element's content
+
+Instance Variables:
+	name	&lt;XML.NodeTag&gt;</body>
+</comment>
+
+<methods>
+<class-id>XML.NamePattern</class-id> <category>initialize</category>
+
+<body>named: aName
+
+	name := aName</body>
+</methods>
+
+<methods>
+<class-id>XML.NamePattern</class-id> <category>accessing</category>
+
+<body>description
+
+	^name printString</body>
+
+<body>name
+
+	^name</body>
+</methods>
+
+<methods>
+<class-id>XML.NamePattern</class-id> <category>testing</category>
+
+<body>matches: aNode
+
+	^(aNode isElement and: [name isLike: aNode tag]) or: [aNode isText not]</body>
+</methods>
+
+
+<class>
+<name>URIResolver</name>
+<environment>XML</environment>
+<super>Core.Object</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars></inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Parsing</category>
+</class>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<methods>
+<class-id>XML.URIResolver class</class-id> <category>api</category>
+
+<body>openStreamOn: aURI
+
+	| protocol nm |
+	protocol := aURI key.
+	protocol = 'file'
+		ifTrue:
+			[nm := aURI value copy.
+			nm replaceAll: $/ with: Filename separator.
+			"Do some other massaging?"
+			^(nm asFilename withEncoding: #UTF_8) readStream lineEndTransparent].
+	self error: ('File access protocol "&lt;1s&gt;" is not supported'
+			expandMacrosWith: protocol)</body>
+
+<body>resolve: newName from: oldURI
+
+	| colonIndex sepIndex protocol nm head |
+	colonIndex := newName indexOf: $: ifAbsent: [newName size + 2].
+	sepIndex := newName indexOf: $/ ifAbsent: [newName size + 1].
+	colonIndex &lt; sepIndex
+		ifTrue:
+			[protocol := newName copyFrom: 1 to: colonIndex-1.
+			nm := newName copyFrom: colonIndex+1 to: newName size]
+		ifFalse:
+			[protocol := oldURI key.
+			nm := newName].
+	nm first = $/
+		ifFalse:
+			[head := oldURI value.
+			sepIndex := head findLast: [:c | c = $/].
+			sepIndex = 0
+				ifTrue: [head := '.']
+				ifFalse: [head := head copyFrom: 1 to: (head findLast: [:c | c = $/])-1].
+			head isEmpty ifTrue: [self halt: 'head is empty'].
+			nm := head, '/', nm].
+	^protocol -&gt; nm</body>
+</methods>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<comment>
+<class-id>XML.URIResolver</class-id>
+<body>This class provides a simple API for resolving the Uniform Resource Identifiers (URI) found in XML documents</body>
+</comment>
+
+
+<class>
+<name>NodeBuilder</name>
+<environment>XML</environment>
+<super>XML.XMLNodeBuilder</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars></inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Parsing</category>
+</class>
+
+<comment>
+<class-id>XML.NodeBuilder</class-id>
+<body>This class along with it's superclass XMLNodeBuilder is used by the XMLParser to distill an XML document into it's component elements. This NodeBuilder class in particular is used to create instances of the various XML elements that are included in the scanned-in XML document or document string.</body>
+</comment>
+
+<methods>
+<class-id>XML.NodeBuilder</class-id> <category>building</category>
+
+<body>attribute: name value: value
+
+	^Attribute name: name value: value</body>
+
+<body>comment: aText
+
+	^Comment new text: aText</body>
+
+<body>makeText: text
+
+	^Text text: text</body>
+
+<body>notation: name value: val
+
+	^Notation new name: name identifiers: val</body>
+
+<body>pi: nm text: text
+
+	^PI new name: nm text: text</body>
+
+<body>tag: tag attributes: attributes elements: elements position: p stream: stream
+
+	^Element tag: tag attributes: attributes elements: elements</body>
+</methods>
+
+
+<class>
+<name>ElementContext</name>
+<environment>XML</environment>
+<super>Core.Object</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars>tag namespaces </inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Parsing</category>
+</class>
+
+<comment>
+<class-id>XML.ElementContext</class-id>
+<body>This class includes some functionality to support XML namespaces. XML namespaces provide a simple method for qualifying element and attribute names used in XML documents  It stands as a proxy for an element when the element cannot yet be created, or when the element will never be created, but where information about the element must be recorded while processing its content.
+
+Instance Variables:
+	tag	&lt;XML.NodeTag&gt;
+	namespaces	&lt;Dictionary&gt;
+</body>
+</comment>
+
+<methods>
+<class-id>XML.ElementContext</class-id> <category>accessing</category>
+
+<body>namespaces
+
+	namespaces == nil ifTrue: [namespaces := Dictionary new].
+	^namespaces</body>
+
+<body>tag
+
+	^tag</body>
+
+<body>tag: aTag
+
+	tag := aTag isString
+			ifTrue: [NodeTag new qualifier: '' ns: '' type: aTag]
+			ifFalse: [aTag].</body>
+</methods>
+
+<methods>
+<class-id>XML.ElementContext</class-id> <category>namespaces</category>
+
+<body>defineDefaultNamespace: attribute
+
+	self namespaces at: '' put: attribute value</body>
+
+<body>defineNamespace: attribute
+
+	(#('xmlns' 'xml') includes: attribute tag type)
+		ifTrue: [self error: ('It is illegal to redefine the qualifier "&lt;1s&gt;".' expandMacrosWith: attribute tag type)].
+	attribute value isEmpty ifTrue: [XMLParser invalid: 'It is not permitted to have an empty URI as a namespace name'].
+	self namespaces at: attribute tag type put: attribute value</body>
+
+<body>findNamespace: ns
+
+	^namespaces isNil
+		ifTrue: [nil]
+		ifFalse: [namespaces at: ns ifAbsent: [nil]]</body>
+</methods>
+
+<methods>
+<class-id>XML.ElementContext</class-id> <category>testing</category>
+
+<body>definesNamespaces
+
+	^namespaces notNil and: [namespaces isEmpty not]</body>
+</methods>
+
+
+<class>
+<name>DOM_SAXDriver</name>
+<environment>XML</environment>
+<super>XML.SAXDriver</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars>stack document </inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>SAX</category>
+</class>
+
+<comment>
+<class-id>XML.DOM_SAXDriver</class-id>
+<body>This class represents a specialized type of SAX (Simple API for XML) processor that follows the 'object model' for processing XML documents to build a Document Object Model (DOM) tree from the processed XML document.
+
+Note: This class implementation is not yet complete
+
+Instance Variables:
+	stack	&lt;OrderedCollection&gt;
+	document	&lt;XML.Document&gt;
+</body>
+</comment>
+
+<methods>
+<class-id>XML.DOM_SAXDriver</class-id> <category>document events</category>
+
+<body>document
+
+	^document</body>
+
+<body>endDocument
+
+	document := stack removeLast.
+	document isDocument ifFalse: [self error: 'End of Document not expected'].
+	stack isEmpty ifFalse: [self error: 'End of Document not expected'].</body>
+
+<body>endDocumentFragment
+
+	document := stack removeLast.
+	document isDocument ifFalse: [self error: 'End of Document not expected'].
+	stack isEmpty ifFalse: [self error: 'End of Document not expected'].</body>
+
+<body>startDocument
+
+	stack := OrderedCollection with: Document new</body>
+
+<body>startDocumentFragment
+
+	stack := OrderedCollection with: Document new</body>
+</methods>
+
+<methods>
+<class-id>XML.DOM_SAXDriver</class-id> <category>elements</category>
+
+<body>endElement
+
+	stack size = 0 ifTrue: [^self].
+	stack removeLast condenseList</body>
+
+<body>startElement: name atts: atts
+
+	| elm |
+	stack size = 0 ifTrue: [^self].
+	elm := self createElement: name attributes: atts.
+	stack last addNode: elm.
+	stack addLast: elm</body>
+</methods>
+
+<methods>
+<class-id>XML.DOM_SAXDriver</class-id> <category>characters</category>
+
+<body>characters: aString
+
+	stack last addNode: (Text text: aString)</body>
+</methods>
+
+<methods>
+<class-id>XML.DOM_SAXDriver</class-id> <category>other</category>
+
+<body>comment: data
+
+	stack last addNode: (Comment new text: data)</body>
+
+<body>processingInstruction: target data: data
+
+	stack last addNode: (PI new name: target text: data)</body>
+</methods>
+
+<methods>
+<class-id>XML.DOM_SAXDriver</class-id> <category>private</category>
+
+<body>createElement: name attributes: attr
+
+	^Element tag: name attributes: attr elements: OrderedCollection new</body>
+</methods>
+
+
+<class>
+<name>InitialPattern</name>
+<environment>XML</environment>
+<super>XML.ConcretePattern</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars></inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Patterns</category>
+</class>
+
+<comment>
+<class-id>XML.InitialPattern</class-id>
+<body>Since an element's content declaration may include multiple constraint rules or patterns, instances of this class are used to indicate to the XML parser, the initial or first rule in the declaration. This does not match anything in the document, but its follow set provides a list of the things which can legally appear first in the content.
+</body>
+</comment>
+
+<methods>
+<class-id>XML.InitialPattern</class-id> <category>validation</category>
+
+<body>validateTag: tag content: content for: aParser
+
+	| n |
+	n := self.
+	content do: [:elm |
+		elm isContent
+			ifTrue:
+				[n := n validate: elm.
+				n == nil ifTrue: [aParser notPermitted: elm description, ' at this point in the "', tag, '" node']]].
+	n canTerminate
+		ifFalse: [aParser expected: 'one of ', n followSetDescription].
+	^self</body>
+</methods>
+
+
+<class>
+<name>AttributeType</name>
+<environment>XML</environment>
+<super>Core.Object</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars></inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Attributes</category>
+</class>
+
+<comment>
+<class-id>XML.AttributeType</class-id>
+<body>This class with its various subclasses represents the type of the XML attribute. According to the XML 1.0 specification, XML attribute types are of three kinds:a string type, a set of tokenized types, and enumerated types. The string type may take any literal string as a value, the tokenized types have varying lexical and semantic constraints and the enumerated type attibutes can take one of a list of values provided in the declaration.
+
+Subclasses of AttributeType represent these various types of XML attributes </body>
+</comment>
+
+<methods>
+<class-id>XML.AttributeType</class-id> <category>validating</category>
+
+<body>completeValidationAgainst: aParser from: anAttribute
+
+	^self</body>
+
+<body>simpleValidateValueOf: anAttribute for: aParser
+
+	| v |
+	v := anAttribute value copy.
+	v replaceAll: Character cr with: Character space.
+	v replaceAll: Character lf with: Character space.
+	v replaceAll: Character tab with: Character space.
+	anAttribute value: v</body>
+
+<body>validateDefinition: anAttributeDefinition for: aParser
+
+	anAttributeDefinition hasDefault
+		ifTrue: [self validateValueOf: anAttributeDefinition for: aParser]</body>
+
+<body>validateValueOf: anAttribute for: aParser
+	"We're going to do this the hard way for now."
+
+	| v v1 |
+	self simpleValidateValueOf: anAttribute for: aParser.
+	v := anAttribute value.
+	[v1 := v copyReplaceAll: '  ' with: ' '.
+	v1 = v] whileFalse: [v := v1].
+	(v size &gt; 1 and: [v first = Character space])
+		ifTrue: [v := v copyFrom: 2 to: v size].
+	(v size &gt; 1 and: [v last = Character space])
+		ifTrue: [v := v copyFrom: 1 to: v size-1].
+	anAttribute value: v</body>
+</methods>
+
+<methods>
+<class-id>XML.AttributeType</class-id> <category>testing</category>
+
+<body>isID
+
+	^false</body>
+</methods>
+
+
+<class>
+<name>IDREFS_AT</name>
+<environment>XML</environment>
+<super>XML.AttributeType</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars></inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Attributes</category>
+</class>
+
+<comment>
+<class-id>XML.IDREFS_AT</class-id>
+<body>This class represents the IDREFS attribute type. This is a tokenized type of attribute and for an XML document to be valid, each of the values of IDREFS type attributes must match each of the values of some ID attribute on some element in the XML document.</body>
+</comment>
+
+<methods>
+<class-id>XML.IDREFS_AT</class-id> <category>validating</category>
+
+<body>validateValueOf: anAttribute for: aParser
+
+	| v |
+	super validateValueOf: anAttribute for: aParser.
+	v := anAttribute value.
+	(v tokensBasedOn: Character space) do: [:nm |
+		(aParser isValidName: nm)
+			ifFalse: [aParser invalid: ('An IDREFS attribute (&lt;1s&gt;="&lt;2s&gt;") does not match the required syntax of a list of Names.'
+					expandMacrosWith: anAttribute tag asString
+					with: v)].
+		aParser rememberIDREF: nm]</body>
+</methods>
+
+
+<class>
+<name>NMTOKEN_AT</name>
+<environment>XML</environment>
+<super>XML.AttributeType</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars></inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Attributes</category>
+</class>
+
+<comment>
+<class-id>XML.NMTOKEN_AT</class-id>
+<body>This class represents the NMTOKEN attribute type. This is a tokenized type of attribute and for the purposes of validation, values of NMTOKEN type attributes must match a Nmtoken, which is any mixture of legal name characters as defined in the XML 1.0 specification. </body>
+</comment>
+
+<methods>
+<class-id>XML.NMTOKEN_AT</class-id> <category>validating</category>
+
+<body>validateValueOf: anAttribute for: aParser
+
+	| v |
+	super validateValueOf: anAttribute for: aParser.
+	v := anAttribute value.
+	(v includes: Character space)
+		ifTrue: [aParser notPermitted: 'white space in IDREF attributes'].
+	(aParser isValidNmToken: v)
+		ifFalse: [aParser invalid: ('An NMTOKEN attribute (&lt;1s&gt;="&lt;2s&gt;") does not match the required syntax of an NmToken.'
+					expandMacrosWith: anAttribute tag asString
+					with: v)]</body>
+</methods>
+
+
+<class>
+<name>NOTATION_AT</name>
+<environment>XML</environment>
+<super>XML.AttributeType</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars>typeNames </inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Attributes</category>
+</class>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<methods>
+<class-id>XML.NOTATION_AT class</class-id> <category>instance creation</category>
+
+<body>typeNames: list
+
+	^self new typeNames: list</body>
+</methods>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<comment>
+<class-id>XML.NOTATION_AT</class-id>
+<body>This class represents the NOTATION attribute type. A NOTATION attribute identifies a notation element, declared in the DTD with associated system and/or public identifiers, to be used in interpreting the element to which the attribute is attached.
+
+Instance Variables:
+	typeNames	&lt;SequenceableCollection&gt;
+</body>
+</comment>
+
+<methods>
+<class-id>XML.NOTATION_AT</class-id> <category>accessing</category>
+
+<body>typeNames
+
+	^typeNames</body>
+
+<body>typeNames: aList
+
+	typeNames := aList</body>
+</methods>
+
+<methods>
+<class-id>XML.NOTATION_AT</class-id> <category>validating</category>
+
+<body>completeValidationAgainst: aParser from: anAttributeDef
+
+	typeNames do: [:nm |
+		aParser notationAt: nm ifAbsent:
+			[aParser invalid: ('Undeclared Notation "&lt;1s&gt;" used by attribute type "&lt;2s&gt;"'
+							expandMacrosWith: nm
+							with: anAttributeDef tag asString)]]</body>
+
+<body>validateValueOf: anAttribute for: aParser
+
+	| v |
+	super validateValueOf: anAttribute for: aParser.
+	v := anAttribute value.
+	(typeNames includes: v)
+		ifFalse: [aParser invalid: ('A NOTATION attribute (&lt;1s&gt;="&lt;2s&gt;") should have had a value from &lt;3p&gt;.'
+					expandMacrosWith: anAttribute tag asString
+					with: v
+					with: typeNames asArray)].</body>
+</methods>
+
+
+<class>
+<name>ENTITIES_AT</name>
+<environment>XML</environment>
+<super>XML.AttributeType</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars></inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Attributes</category>
+</class>
+
+<comment>
+<class-id>XML.ENTITIES_AT</class-id>
+<body>This class represents the ENTITIES attribute type. This is a tokenized type of attribute that signifies to the XML parser that for the purposes of validating, the values of entities type attributes must match each of the names of unparsed entities declared in the document type definition.</body>
+</comment>
+
+<methods>
+<class-id>XML.ENTITIES_AT</class-id> <category>validating</category>
+
+<body>completeValidationAgainst: aParser from: anAttribute
+
+	^self validateValueOf: anAttribute for: aParser</body>
+
+<body>validateDefinition: anAttributeDefinition for: aParser
+
+	^self</body>
+
+<body>validateValueOf: anAttribute for: aParser
+
+	| v ent |
+	super validateValueOf: anAttribute for: aParser.
+	v := anAttribute value.
+	(v tokensBasedOn: Character space) do: [:nm |
+		(aParser isValidName: nm)
+			ifFalse: [aParser invalid: ('An ENTITIES attribute (&lt;1s&gt;="&lt;2s&gt;") does not match the required syntax of a list of Names.'
+					expandMacrosWith: anAttribute tag asString
+					with: v)].
+		ent := aParser dtd generalEntityAt: nm.
+		ent == nil
+			ifTrue: [aParser invalid: ('Undeclared unparsed entity "&lt;1s&gt;" used by attribute type "&lt;2s&gt;"'
+						expandMacrosWith: nm
+						with: anAttribute tag asString)]
+			ifFalse: [ent isParsed
+				ifTrue: [aParser invalid: ('The entity "&lt;1s&gt;" used by attribute type "&lt;2s&gt;" is a parsed entity and should be unparsed'
+							expandMacrosWith: nm
+							with: anAttribute tag asString)]
+				ifFalse: []]]</body>
+</methods>
+
+
+<class>
+<name>IDREF_AT</name>
+<environment>XML</environment>
+<super>XML.AttributeType</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars></inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Attributes</category>
+</class>
+
+<comment>
+<class-id>XML.IDREF_AT</class-id>
+<body>This class represents the IDREF attribute type. This is a tokenized type of attribute and for an XML document to be valid, values of IDREF type attributes must match the value of some ID attribute on some element in the XML document.
+
+ID and IDREF attributes together provide a simple inside-the-document linking mechanism with every IDREF attribute required to point to an ID attribute as stated above.</body>
+</comment>
+
+<methods>
+<class-id>XML.IDREF_AT</class-id> <category>validating</category>
+
+<body>validateValueOf: anAttribute for: aParser
+
+	| v |
+	super validateValueOf: anAttribute for: aParser.
+	v := anAttribute value.
+	(v includes: Character space)
+		ifTrue: [aParser notPermitted: 'white space in IDREF attributes'].
+	(aParser isValidName: v)
+		ifFalse: [aParser invalid: ('An IDREF attribute (&lt;1s&gt;="&lt;2s&gt;") does not match the required syntax of a Name.'
+					expandMacrosWith: anAttribute tag asString
+					with: v)].
+	aParser rememberIDREF: v</body>
+</methods>
+
+
+<class>
+<name>NMTOKENS_AT</name>
+<environment>XML</environment>
+<super>XML.AttributeType</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars></inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Attributes</category>
+</class>
+
+<comment>
+<class-id>XML.NMTOKENS_AT</class-id>
+<body>This class represents the NMTOKENS attribute type. This is a tokenized type of attribute and for the purposes of validation, values of each NMTOKENS type attributes must match each Nmtoken, which is any mixture of legal name characters as defined in the XML 1.0 specification. </body>
+</comment>
+
+<methods>
+<class-id>XML.NMTOKENS_AT</class-id> <category>validating</category>
+
+<body>validateValueOf: anAttribute for: aParser
+
+	| v |
+	super validateValueOf: anAttribute for: aParser.
+	v := anAttribute value.
+	(v tokensBasedOn: Character space) do: [:nm |
+		(aParser isValidNmToken: nm)
+			ifFalse: [aParser invalid: ('An NMTOKENS attribute (&lt;1s&gt;="&lt;2s&gt;") does not match the required syntax of a list of NmTokens.'
+					expandMacrosWith: anAttribute tag asString
+					with: v)]]</body>
+</methods>
+
+
+<class>
+<name>Text</name>
+<environment>XML</environment>
+<super>XML.Node</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars>text stripped </inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Nodes</category>
+</class>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<methods>
+<class-id>XML.Text class</class-id> <category>instance creation</category>
+
+<body>text: aString
+
+	^self new text: aString</body>
+</methods>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<comment>
+<class-id>XML.Text</class-id>
+<body>This class represents an XML textual object, i.e. a sequence of legal characters as defined in the XML 1.0 specification and may represent markup or character data.
+
+
+Instance Variables:
+	text	&lt;CharacterArray | nil&gt;
+	stripped	&lt;Boolean&gt; 
+</body>
+</comment>
+
+<methods>
+<class-id>XML.Text</class-id> <category>accessing</category>
+
+<body>characterData
+
+	^self text</body>
+
+<body>characterDataOnto: str
+
+	str nextPutAll: self text</body>
+
+<body>description
+
+	^'text'</body>
+
+<body>strip: aBoolean
+
+	stripped := aBoolean.</body>
+
+<body>text
+
+	^text</body>
+
+<body>text: aText
+
+	text := aText.
+	stripped == nil ifTrue: [stripped := false].</body>
+</methods>
+
+<methods>
+<class-id>XML.Text</class-id> <category>printing</category>
+
+<body>printCanonicalOn: aStream
+
+	text == nil ifTrue: [^self].
+	self isStripped
+		ifFalse: [self printCanonical: text on: aStream.]</body>
+
+<body>printHTMLOn: aStream
+
+	text == nil ifTrue: [^self].
+	self isStripped
+		ifFalse: [self printCanonical: text on: aStream.]</body>
+
+<body>printNoIndentOn: aStream endSpacing: endSpacingBlock spacing: spacingBlock
+
+	text == nil ifTrue: [^self].
+	self isStripped
+		ifFalse: [aStream nextPutAll: text]</body>
+
+<body>printOn: aStream depth: indent
+
+	aStream nextPutAll: (text == nil ifTrue: ['&amp;nil;'] ifFalse: [text])</body>
+</methods>
+
+<methods>
+<class-id>XML.Text</class-id> <category>testing</category>
+
+<body>isBlankText
+
+	^(text contains: [:i | i isSeparator not]) not</body>
+
+<body>isContent
+
+	^true</body>
+
+<body>isStripped
+
+	^stripped</body>
+
+<body>isText
+
+	^true</body>
+</methods>
+
+
+<class>
+<name>Entity</name>
+<environment>XML</environment>
+<super>XML.Node</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars>name text systemID publicID </inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Nodes</category>
+</class>
+
+<comment>
+<class-id>XML.Entity</class-id>
+<body>An XML document may consist of one or many storage units called entities. All XML entities have content and are idententified by name. 
+
+Entities may be either parsed or unparsed. This class and it's subclasses GeneralEntity and ParameterEntity represent parsed entities. These entities are invoked by name using entity references and their contents are held in the text instance variable
+
+Entities may also be internal or external. If the content of the entity is given in the declaration (within the document) itself then the entity is called an internal entity. If the entity is not internal to the document and is declared elsewhere it's called an external entity. 
+
+External entities have a system identifier (systemID instance variable) that is an URI which may be used to retrieve the entity. In addition to a system identifier, an external entity declaration may include a public identifier (publicID instance variable). The XMLParser may use the publicID to try to generate an alternative URI to retrive the entity's contents.
+
+Subclasses must implement the following messages:
+	accessing
+		entityType
+
+Instance Variables:
+	name	&lt;XML.NodeTag&gt;  
+				Identifies the entity in an entity referece
+	text	&lt;String&gt;
+				The entity's contents
+	systemID	&lt;String | XML.URIResolver&gt;
+				URI used to retrieve an external entity's contents
+	publicID	&lt;String | XML.URIResolver&gt;
+				name which (theoretically) could be looked up in a catalog to generate a URI. If catalogs are supported, this should be used in preference to the systemID.
+</body>
+</comment>
+
+<methods>
+<class-id>XML.Entity</class-id> <category>accessing</category>
+
+<body>entityType
+
+	^self subclassResponsibility</body>
+
+<body>externalFrom: anArray
+
+	anArray class == Array
+		ifFalse: [self error: 'External ID is expected to be an Array'].
+	anArray size = 1
+		ifTrue: [systemID := anArray at: 1]
+		ifFalse: [anArray size = 2
+			ifTrue:
+				[publicID := anArray at: 1.
+				systemID := anArray at: 2]
+			ifFalse:
+				[self error: 'External ID has too many or too few identifiers']]</body>
+
+<body>name
+
+	^name</body>
+
+<body>name: aName
+
+	name := aName</body>
+
+<body>streamFor: aParser
+
+	(aParser hasExpanded: self)
+		ifTrue: [aParser malformed: 'Can''t expand this entity; it is defined recursively'].
+	text == nil
+		ifTrue:
+			[| uri str |
+			uri := URIResolver resolve: systemID from: aParser latestURI.
+			aParser pushSource: (str := StreamWrapper
+								stream: (URIResolver openStreamOn: uri)
+								protocol: uri key
+								name: uri value
+								entity: self).
+			str textDeclIn: aParser.
+			aParser getNextChar]
+		ifFalse:
+			[aParser pushSource: (StreamWrapper
+								stream: text readStream
+								protocol: 'internal'
+								name: nil
+								entity: self).
+			aParser getNextChar].</body>
+
+<body>text: aString
+
+	text := aString</body>
+</methods>
+
+<methods>
+<class-id>XML.Entity</class-id> <category>testing</category>
+
+<body>isExternal
+
+	^publicID notNil or: [systemID notNil]</body>
+
+<body>isParsed
+
+	^true</body>
+</methods>
+
+<methods>
+<class-id>XML.Entity</class-id> <category>printing</category>
+
+<body>printOn: aStream
+
+	self basicPrintOn: aStream.
+	text == nil
+		ifTrue: [aStream nextPutAll: '(',systemID,')']
+		ifFalse: [aStream nextPutAll: '(',text,')']</body>
+</methods>
+
+
+<class>
+<name>GeneralEntity</name>
+<environment>XML</environment>
+<super>XML.Entity</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars>ndata </inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Nodes</category>
+</class>
+
+<comment>
+<class-id>XML.GeneralEntity</class-id>
+<body>This class represents a general entity which is a parsed entity for use within the XML document content.
+
+Instance Variables:
+	ndata	&lt;Notation&gt;
+</body>
+</comment>
+
+<methods>
+<class-id>XML.GeneralEntity</class-id> <category>accessing</category>
+
+<body>entityType
+
+	^'generic'</body>
+
+<body>ndata: aNotifierNameOrNil
+
+	ndata := aNotifierNameOrNil</body>
+</methods>
+
+<methods>
+<class-id>XML.GeneralEntity</class-id> <category>testing</category>
+
+<body>isParsed
+
+	^ndata == nil</body>
+</methods>
+
+<methods>
+<class-id>XML.GeneralEntity</class-id> <category>validation</category>
+
+<body>completeValidationAgainst: aParser
+
+	ndata isNil
+		ifFalse: [aParser dtd notationAt: ndata ifAbsent:
+				[aParser invalid: ('Unparsed entity "&lt;1s&gt;" uses an undeclared notation "&lt;2s&gt;"'
+						expandMacrosWith: name
+						with: ndata)]]</body>
+</methods>
+
+
+<class>
+<name>ParameterEntity</name>
+<environment>XML</environment>
+<super>XML.Entity</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars></inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Nodes</category>
+</class>
+
+<comment>
+<class-id>XML.ParameterEntity</class-id>
+<body>This class represents a parameter entity which is a parsed entity for use within the document type definition. </body>
+</comment>
+
+<methods>
+<class-id>XML.ParameterEntity</class-id> <category>accessing</category>
+
+<body>entityType
+
+	^'parameter'</body>
+
+<body>streamFor: aParser addSpaces: spaces
+
+	| myText |
+	(aParser hasExpanded: self)
+		ifTrue: [aParser malformed: 'Can''t expand this entity; it is defined recursively'].
+	text == nil
+		ifTrue:
+			[| uri str |
+			uri := URIResolver resolve: systemID from: aParser latestURI.
+			str := StreamWrapper
+						stream: (URIResolver openStreamOn: uri)
+						protocol: uri key
+						name: uri value
+						entity: self.
+			str textDeclIn: aParser.
+			text := str stream upToEnd.
+			str close].
+	myText := text.
+	spaces ifTrue: [myText := ' ', text, ' '].
+	aParser pushSource: (StreamWrapper
+						stream: myText readStream
+						protocol: 'internal'
+						name: nil
+						entity: self).
+	aParser getNextChar.</body>
+</methods>
+
+
+<class>
+<name>SourceNodeBuilder</name>
+<environment>XML</environment>
+<super>XML.XMLNodeBuilder</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars>selectors </inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Source Code</category>
+</class>
+
+<comment>
+<class-id>XML.SourceNodeBuilder</class-id>
+<body>This subclass of XMLNodeBuilder is used by the XML parser to distill a VisualWorks XML source document (stream) into first XML elements and then into valid Smalltalk objects
+
+Instance Variables:
+	selectors	&lt;Dictionary&gt;  map from tag name to accessing selector
+</body>
+</comment>
+
+<methods>
+<class-id>XML.SourceNodeBuilder</class-id> <category>initialize</category>
+
+<body>initialize
+
+	super initialize.
+	selectors := IdentityDictionary new</body>
+</methods>
+
+<methods>
+<class-id>XML.SourceNodeBuilder</class-id> <category>building</category>
+
+<body>attribute: name value: value
+
+	^Attribute name: name value: value</body>
+
+<body>comment: aText
+
+	^Comment new text: aText; discard</body>
+
+<body>makeText: text
+
+	| txt |
+	txt := Text text: text.
+	(txt isBlankText and: [(tagStack contains: [:c | c tag type ~= 'body']) not])
+		ifTrue: [txt discard].
+	^txt</body>
+
+<body>notation: name value: val
+
+	^name</body>
+
+<body>tag: tag attributes: attributes elements: elements position: p stream: stream
+
+	| elm |
+	elm := Element tag: tag attributes: attributes elements: elements.
+	(tagStack size = 1 or: [(tagStack at: tagStack size-1) tag type = 'st-source'])
+		ifTrue:
+			[self compile: elm.
+			elm discard].
+	^elm</body>
+</methods>
+
+<methods>
+<class-id>XML.SourceNodeBuilder</class-id> <category>compiling</category>
+
+<body>compile: element
+
+	| name |
+	name := self selectorFor: element tag.
+	self perform: name with: element</body>
+
+<body>compile_class: anElement
+
+	| name env superclass private indexed instVars classInstVars imports category annotations |
+	name := self getSymbol: 'name' from: anElement.
+	env := self getGlobalId: 'environment' from: anElement.
+	env == nil ifTrue: [env := #{Smalltalk}].
+	superclass := self getGlobalId: 'super' from: anElement.
+	private := self getBoolean: 'private' from: anElement default: 'false'.
+	indexed := self getSymbol: 'indexed-type' from: anElement default: 'none'.
+	instVars := self getString: 'inst-vars' from: anElement default: ''.
+	classInstVars := self getString: 'class-inst-vars' from: anElement default: ''.
+	imports := self getString: 'imports' from: anElement default: ''.
+	category := self getString: 'category' from: anElement default: 'As yet unclassified'.
+	annotations := self getDictionary: 'attributes' from: anElement.
+	env value defineClass: name
+		superclass: superclass
+		indexedType: indexed
+		private: private
+		instanceVariableNames: instVars
+		classInstanceVariableNames: classInstVars
+		imports: imports
+		category: category
+		attributes: annotations</body>
+
+<body>compile_comment: anElement
+
+	| class body |
+	class := self getGlobal: #('class-id' 'name-space-id' 'object-id') from: anElement.
+	body := anElement elementNamed: 'body'.
+	class comment: body characterData</body>
+
+<body>compile_do_it: anElement
+
+	Compiler evaluate: anElement characterData.</body>
+
+<body>compile_initialize: anElement
+
+	| class |
+	class := self getGlobal: #('class-id' 'name-space-id' 'object-id' 'variable-id') from: anElement.
+	class initialize</body>
+
+<body>compile_methods: anElement
+
+	| class protocol bodies |
+	class := self getGlobal: #('class-id') from: anElement.
+	protocol := self getSymbol: 'category' from: anElement default: ClassOrganizer defaultProtocol.
+	bodies := anElement elementsNamed: 'body'.
+	bodies do: [:elm | | attributes |
+		attributes := Dictionary new.
+		elm attributes do: [:attr |
+			attributes at: attr tag type asSymbol put: attr value].
+		class compile: elm characterData classified: protocol attributes: attributes].</body>
+
+<body>compile_name_space: anElement
+
+	| name env private category imports annotations |
+	name := self getSymbol: 'name' from: anElement.
+	env := self getGlobalId: 'environment' from: anElement.
+	private := self getBoolean: 'private' from: anElement default: 'false'.
+	imports := self getString: 'imports' from: anElement default: ''.
+	category := self getString: 'category' from: anElement default: NameSpaceOrganizer defaultProtocol.
+	annotations := self getDictionary: 'attributes' from: anElement.
+	env value defineNameSpace: name
+		private: private
+		imports: imports
+		category: category
+		attributes: annotations.</body>
+
+<body>compile_relocate: anElement
+
+	| class |
+	class := self getGlobal: #('class-id' 'name-space-id' 'object-id' 'variable-id') from: anElement.
+	class relocateTo: (self getGlobal: #('environment') from: anElement)</body>
+
+<body>compile_remove: anElement
+
+	| class |
+	class := self getGlobal: #('class-id' 'name-space-id' 'object-id' 'variable-id') from: anElement.
+	class removeFromSystem</body>
+
+<body>compile_remove_selector: anElement
+
+	| class selector |
+	class := self getGlobal: #('class-id') from: anElement.
+	selector := anElement elementNamed: 'selector'.
+	class removeSelector: selector characterData asSymbol</body>
+
+<body><B>compile_rename: anElement
+
+	</B>| class |
+	class := self getGlobal: #('class-id' 'name-space-id' 'object-id' 'variable-id') from: anElement.
+	class renameTo: (self getSymbol: 'name' from: anElement)</body>
+
+<body>compile_reorganize: anElement
+
+	| class |
+	class := self getGlobal: #('class-id' 'name-space-id') from: anElement.
+	class reorganizeFromString: (self getString: 'organization' from: anElement default: [''])</body>
+
+<body>compile_reorganize_data: anElement
+
+	| class |
+	class := self getGlobal: #('class-id' 'name-space-id') from: anElement.
+	class asNameSpace reorganizeFromString: (self getString: 'organization' from: anElement default: [''])</body>
+
+<body>compile_static: anElement
+
+	| name env private category constant initializer annotations |
+	name := self getSymbol: 'name' from: anElement.
+	env := self getGlobalId: 'environment' from: anElement.
+	env == nil ifTrue: [env := #{Smalltalk}].
+	private := self getBoolean: 'private' from: anElement default: 'false'.
+	constant := self getBoolean: 'constant' from: anElement default: 'false'.
+	category := self getString: 'category' from: anElement default: NameSpaceOrganizer defaultProtocol.
+	initializer := self getString: 'initializer' from: anElement default: nil.
+	annotations := self getDictionary: 'attributes' from: anElement.
+	env value defineStatic: name
+		private: private
+		constant: constant
+		category: category
+		initializer: initializer
+		attributes: annotations.</body>
+
+<body>compile_st_source: anElement
+	"Do nothing"
+
+	^self</body>
+
+<body>compile_time_stamp: anElement
+	"Do nothing"
+
+	^self</body>
+</methods>
+
+<methods>
+<class-id>XML.SourceNodeBuilder</class-id> <category>private</category>
+
+<body>dictionaryFrom: node to: dict
+	"Over time, we may want to accomodate more complex
+	annotations for a class."
+
+	| c |
+	node elements do: [:elm |
+		elm isText ifFalse: [
+			(elm elements isEmpty or: [elm elements contains: [:e | e isElement]])
+				ifTrue:
+					[c := elm elements select: [:i | i isElement].
+					dict at: elm tag type asSymbol put: (c collect: [:i | i characterData])]
+				ifFalse: [dict at: elm tag type asSymbol put: elm characterData]]]</body>
+
+<body>getBoolean: tag from: element default: defaultValue
+
+	| list item |
+	list := element elementsNamed: tag.
+	item := list size = 1
+		ifTrue: [list first characterData]
+		ifFalse: [list size = 0
+			ifTrue: [defaultValue]
+			ifFalse: [self error: 'Could not find unique "', tag, '".']].
+	^item = 'true'
+		ifTrue: [true]
+		ifFalse: [item = 'false'
+			ifTrue: [false]
+			ifFalse: [self error: '"',item,'" is not a boolean value for "', tag, '".']]</body>
+
+<body>getDictionary: tag from: element
+
+	| list dict |
+	list := element elementsNamed: tag.
+	dict := Dictionary new.
+	list do: [:node |
+		self dictionaryFrom: node to: dict].
+	^dict</body>
+
+<body>getGlobal: possibleTags from: element
+
+	| list item data |
+	list := OrderedCollection new.
+	possibleTags do: [:tag | list addAll: (element elementsNamed: tag)].
+	list size = 1
+		ifTrue: [item := list first]
+		ifFalse: [self error: 'Could not find unique ', possibleTags printString, '.'].
+	data := item characterData.
+	^((item tag isLike: 'class-id') and: ['* class' match: data ignoreCase: false])
+		ifTrue:
+			[item := data copyFrom: 1 to: data size-6.
+			item asQualifiedReference value class]
+		ifFalse: [(item tag isLike: 'variable-id')
+			ifTrue: [data asQualifiedReference]
+			ifFalse: [data asQualifiedReference value]]</body>
+
+<body>getGlobalId: tag from: element
+
+	| list item |
+	list := element elementsNamed: tag.
+	item := list size = 1
+		ifTrue: [list first characterData]
+		ifFalse: [self error: 'Could not find unique "', tag, '".'].
+	^item isEmpty
+		ifTrue: [nil]
+		ifFalse: [item asQualifiedReference]</body>
+
+<body>getString: tag from: element default: defaultValue
+
+	| list item |
+	list := element elementsNamed: tag.
+	item := list size = 1
+		ifTrue: [list first characterData]
+		ifFalse: [list size = 0
+			ifTrue: [defaultValue]
+			ifFalse: [self error: 'Could not find unique "', tag, '".']].
+	^item</body>
+
+<body>getSymbol: tag from: element
+
+	| list item |
+	list := element elementsNamed: tag.
+	item := list size = 1
+		ifTrue: [list first characterData]
+		ifFalse: [self error: 'Could not find unique "', tag, '".'].
+	^item asSymbol</body>
+
+<body>getSymbol: tag from: element default: defaultValue
+
+	| list item |
+	list := element elementsNamed: tag.
+	item := list size = 1
+		ifTrue: [list first characterData]
+		ifFalse: [list size = 0
+			ifTrue: [defaultValue]
+			ifFalse: [self error: 'Could not find unique "', tag, '".']].
+	^item asSymbol</body>
+
+<body>selectorFor: aTag
+
+	^selectors at: aTag ifAbsentPut:
+			[| t |
+			t := aTag type copy replaceAll: $: with: $_.
+			t replaceAll: $. with: $_.
+			t replaceAll: $- with: $_.
+			('compile_', t, ':') asSymbol]</body>
+</methods>
+
+
+<class>
+<name>Enumeration_AT</name>
+<environment>XML</environment>
+<super>XML.AttributeType</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars>values </inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Attributes</category>
+</class>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<methods>
+<class-id>XML.Enumeration_AT class</class-id> <category>instance creation</category>
+
+<body>withAll: list
+
+	^self new values: list</body>
+</methods>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<comment>
+<class-id>XML.Enumeration_AT</class-id>
+<body>This class represents the Enumeration attribute type. Enumerated attributes can take one of a list of values provided in the declaration.
+
+Instance Variables:
+	values	&lt;Collection&gt;
+</body>
+</comment>
+
+<methods>
+<class-id>XML.Enumeration_AT</class-id> <category>accessing</category>
+
+<body>values: aList
+
+	values := aList</body>
+</methods>
+
+<methods>
+<class-id>XML.Enumeration_AT</class-id> <category>validating</category>
+
+<body>validateValueOf: anAttribute for: aParser
+
+	| v |
+	super validateValueOf: anAttribute for: aParser.
+	v := anAttribute value.
+	(values includes: v)
+		ifFalse: [aParser invalid: ('An attribute (&lt;1s&gt;="&lt;2s&gt;") should have had a value from &lt;3p&gt;.'
+					expandMacrosWith: anAttribute tag asString
+					with: v
+					with: values asArray)]</body>
+</methods>
+
+
+<class>
+<name>ID_AT</name>
+<environment>XML</environment>
+<super>XML.AttributeType</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars></inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Attributes</category>
+</class>
+
+<comment>
+<class-id>XML.ID_AT</class-id>
+<body>This class represents the ID attribute type. This is also a tokenized type of attribute and values of ID type attributes must match legal names as defined in the XML 1.0 specification. 
+
+For an XML document to be valid, ID values must uniquely identify the elements which bear them; i.e. A name must not appear more than once in an XML document as a value of this type. Also for validity purposes, an ID attribute must have a declared default of #IMPLIED or #REQUIRED in the DTD.
+
+ID and IDREF attributes together provide a simple inside-the-document linking mechanism with every IDREF attribute required to point to an ID attribute.</body>
+</comment>
+
+<methods>
+<class-id>XML.ID_AT</class-id> <category>validating</category>
+
+<body>validateDefinition: anAttributeDefinition for: aParser
+
+	anAttributeDefinition hasDefault
+		ifTrue: [XMLParser invalid: 'ID attributes must be either #REQUIRED or #IMPLIED']</body>
+
+<body>validateValueOf: anAttribute for: aParser
+
+	| v |
+	super validateValueOf: anAttribute for: aParser.
+	v := anAttribute value.
+	(v includes: Character space)
+		ifTrue: [aParser notPermitted: 'white space in ID attributes'].
+	(aParser isValidName: v)
+		ifFalse: [aParser invalid: ('An ID attribute (&lt;1s&gt;="&lt;2s&gt;") does not match the required syntax of a Name.'
+					expandMacrosWith: anAttribute tag asString
+					with: v)].
+	aParser documentNode registerID: anAttribute from: aParser</body>
+</methods>
+
+<methods>
+<class-id>XML.ID_AT</class-id> <category>testing</category>
+
+<body>isID
+
+	^true</body>
+</methods>
+
+
+<class>
+<name>ENTITY_AT</name>
+<environment>XML</environment>
+<super>XML.AttributeType</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars></inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Attributes</category>
+</class>
+
+<comment>
+<class-id>XML.ENTITY_AT</class-id>
+<body>This class represents the ENTITY attribute type. This is a tokenized type of attribute that signifies to the XML parser that for the purposes of validating, the values of entity type attributes must match the name of an unparsed entity declared in the document type definition.</body>
+</comment>
+
+<methods>
+<class-id>XML.ENTITY_AT</class-id> <category>validating</category>
+
+<body>completeValidationAgainst: aParser from: anAttribute
+
+	^self validateValueOf: anAttribute for: aParser</body>
+
+<body>validateDefinition: anAttributeDefinition for: aParser
+
+	^self</body>
+
+<body>validateValueOf: anAttribute for: aParser
+
+	| v ent |
+	super validateValueOf: anAttribute for: aParser.
+	v := anAttribute value.
+	(v includes: Character space)
+		ifTrue: [aParser notPermitted: 'white space in ENTITY attributes'].
+	(aParser isValidName: v)
+		ifFalse: [aParser invalid: ('An ENTITY attribute (&lt;1s&gt;="&lt;2s&gt;") does not match the required syntax of a Name.'
+					expandMacrosWith: anAttribute tag asString
+					with: v)].
+	ent := aParser dtd generalEntityAt: v.
+	ent == nil
+		ifTrue: [aParser invalid: ('Undeclared unparsed entity "&lt;1s&gt;" used by attribute type "&lt;2s&gt;"'
+						expandMacrosWith: v
+						with: anAttribute tag asString)]
+		ifFalse: [ent isParsed
+			ifTrue: [aParser invalid: ('The entity "&lt;1s&gt;" used by attribute type "&lt;2s&gt;" is a parsed entity and should be unparsed'
+							expandMacrosWith: v
+							with: anAttribute tag asString)]
+			ifFalse: []]</body>
+</methods>
+
+
+<class>
+<name>Attribute</name>
+<environment>XML</environment>
+<super>XML.Node</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars>name value </inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Nodes</category>
+</class>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<methods>
+<class-id>XML.Attribute class</class-id> <category>instance creation</category>
+
+<body>name: nm value: val
+
+	^self new name: nm value: val</body>
+</methods>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<comment>
+<class-id>XML.Attribute</class-id>
+<body>XML elements may have name-value pairs called attributes associated with them. This class instantiates an XML attribute.
+
+Instance Variables:
+	name	&lt;XML.Node | XML.NodeTag&gt;	tag name
+	value	&lt;Object&gt;					tag value
+</body>
+</comment>
+
+<methods>
+<class-id>XML.Attribute</class-id> <category>initialize</category>
+
+<body>name: nm value: val
+
+	name := nm isString
+			ifTrue: [NodeTag new qualifier: '' ns: '' type: nm]
+			ifFalse: [nm].
+	value := val</body>
+
+<body>tag: aTag
+
+	name := aTag</body>
+</methods>
+
+<methods>
+<class-id>XML.Attribute</class-id> <category>accessing</category>
+
+<body>characterData
+
+	^self value</body>
+
+<body>expandedName
+
+	^name expandedName</body>
+
+<body>key
+
+	^name</body>
+
+<body>tag
+
+	^name</body>
+
+<body>value
+
+	^value</body>
+
+<body>value: aValue
+
+	value := aValue</body>
+</methods>
+
+<methods>
+<class-id>XML.Attribute</class-id> <category>printing</category>
+
+<body>printCanonicalOn: aStream
+
+	aStream nextPutAll: self tag asString, '="'.
+	self printCanonical: value on: aStream.
+	aStream nextPutAll: '"'.</body>
+
+<body>printNoIndentOn: aStream endSpacing: endSpacingBlock spacing: spacingBlock
+
+	aStream nextPutAll: self tag asString, '="'.
+	self printCanonical: value on: aStream.
+	aStream nextPutAll: '"'.</body>
+
+<body>printOn: aStream
+
+	self printCanonicalOn: aStream</body>
+
+<body>simpleDescription
+
+	^'@', self key</body>
+</methods>
+
+<methods>
+<class-id>XML.Attribute</class-id> <category>testing</category>
+
+<body>isAttribute
+
+	^true</body>
+
+<body>isLike: aNode
+
+	^self class == aNode class
+		and: [self tag isLike: aNode tag]</body>
+</methods>
+
+
+<class>
+<name>ComplexPattern</name>
+<environment>XML</environment>
+<super>XML.Pattern</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars></inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Patterns</category>
+</class>
+
+<comment>
+<class-id>XML.ComplexPattern</class-id>
+<body>This class is the superclass to patterns that are modifications or compilations of other patterns. As seen from the class hiererarchy, instances of complex patterns include ChoicePattern, MixedPattern, ModifiedPattern and SequencePattern.</body>
+</comment>
+
+<methods>
+<class-id>XML.ComplexPattern</class-id> <category>testing</category>
+
+<body>isSimple
+
+	^false</body>
+</methods>
+
+
+<class>
+<name>ChoicePattern</name>
+<environment>XML</environment>
+<super>XML.ComplexPattern</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars>items </inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Patterns</category>
+</class>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<methods>
+<class-id>XML.ChoicePattern class</class-id> <category>instance creation</category>
+
+<body>on: aList
+
+	^self new on: aList</body>
+</methods>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<comment>
+<class-id>XML.ChoicePattern</class-id>
+<body>This class represents the 'choice' element content constraint in an element type declaration. According to the XML 1.0 specification, the 'choice' pattern/rule signifies that any content particle in a choice list (declared in the DTD) may appear in the element content at the location where the choice list appears in the grammar
+
+Instance Variables:
+	items	&lt;XML.Pattern&gt; Collection of content particles
+</body>
+</comment>
+
+<methods>
+<class-id>XML.ChoicePattern</class-id> <category>initialize</category>
+
+<body>on: aList
+
+	items := aList</body>
+</methods>
+
+<methods>
+<class-id>XML.ChoicePattern</class-id> <category>coercing</category>
+
+<body>alternateHeads
+
+	^items</body>
+
+<body>pushDownFollowSet
+
+	items do: [:i | i addFollows: followSet].
+	^items</body>
+</methods>
+
+
+<class>
+<name>PI</name>
+<environment>XML</environment>
+<super>XML.Node</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars>name text </inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Nodes</category>
+</class>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<methods>
+<class-id>XML.PI class</class-id> <category>instance creation</category>
+
+<body>name: nm text: aString
+
+	^self new name: nm text: aString</body>
+</methods>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<comment>
+<class-id>XML.PI</class-id>
+<body>This class represents the XML Processing Instruction element. Processing instructions allow XML documents to contain instructions for applications. The 'name' instance variable represents the target of this processing instruction and is used to identify the application to which this processing instruction is directed.
+
+ XML processing instructions are delimited by the start-tag '&lt;?' and the end-tag '?&gt;'. 
+
+According to the XML 1.0 specification, the target names "XML", "xml" and so on are reserved for standardization
+
+
+Instance Variables:
+	name	&lt;XML.NodeTag&gt;	the target of this processing instruction, used to identify the application to which this processing instruction is directed.
+	text		&lt;String&gt;			the processing instructions themselves</body>
+</comment>
+
+<methods>
+<class-id>XML.PI</class-id> <category>initialize</category>
+
+<body>name: nm text: aString
+
+	name := nm.
+	text := aString</body>
+</methods>
+
+<methods>
+<class-id>XML.PI</class-id> <category>accessing</category>
+
+<body>name
+
+	^name</body>
+
+<body>text
+	^text</body>
+</methods>
+
+<methods>
+<class-id>XML.PI</class-id> <category>printing</category>
+
+<body>printCanonicalOn: aStream
+
+	aStream nextPutAll: '&lt;?', name, ' ', text, '?&gt;'</body>
+
+<body>printHTMLOn: aStream
+
+	aStream nextPutAll: '&lt;?', name, ' ', text, '?&gt;'</body>
+
+<body>printNoIndentOn: aStream endSpacing: endSpacingBlock spacing: spacingBlock
+
+	aStream nextPutAll: '&lt;?', name, ' ', text, '?&gt;'</body>
+
+<body>printOn: aStream depth: indent
+
+	aStream nextPutAll: '&lt;?', name, ' ', text, '?&gt;'</body>
+</methods>
+
+<methods>
+<class-id>XML.PI</class-id> <category>testing</category>
+
+<body>isLike: aNode
+
+	^self class == aNode class
+		and: [self name isLike: aNode name]</body>
+
+<body>isProcessingInstruction
+
+	^true</body>
+</methods>
+
+
+<class>
+<name>CDATA_AT</name>
+<environment>XML</environment>
+<super>XML.AttributeType</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars></inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Attributes</category>
+</class>
+
+<comment>
+<class-id>XML.CDATA_AT</class-id>
+<body>This class represents the CDATA attribute type. A CDATA attribute is used to identify the data type of attributes which allow arbitrary text in their value.
+</body>
+</comment>
+
+<methods>
+<class-id>XML.CDATA_AT</class-id> <category>validating</category>
+
+<body>validateValueOf: anAttribute for: aParser
+
+	self simpleValidateValueOf: anAttribute for: aParser.</body>
+</methods>
+
+
+<class>
+<name>MixedPattern</name>
+<environment>XML</environment>
+<super>XML.ComplexPattern</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars>items </inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Patterns</category>
+</class>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<methods>
+<class-id>XML.MixedPattern class</class-id> <category>instance creation</category>
+
+<body>on: aList
+
+	1 to: aList size do: [:i |
+		i+1 to: aList size do: [:j |
+			((aList at: i) name asString = (aList at: j) name asString)
+				ifTrue: [XMLParser invalid: 'Duplicate element names in a mixed content specification.']]].
+	^self new on: (aList size = 0 ifTrue: [#()] ifFalse: [aList])</body>
+</methods>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<comment>
+<class-id>XML.MixedPattern</class-id>
+<body>This class represents the 'mixed' element content constraint in an element type declaration. An element type has mixed content when elements of that type may contain both other child elements and character data (text) as specified in the element content declaration.
+
+Note: For mixed content type elements, one can't control the order in which the child elements, mixed in among the text, appear.
+
+Instance Variables:
+	items	&lt;SequenceableCollection&gt;  comment
+</body>
+</comment>
+
+<methods>
+<class-id>XML.MixedPattern</class-id> <category>initialize</category>
+
+<body>on: aList
+
+	items := (Array with: PCDATAPattern new), aList</body>
+</methods>
+
+<methods>
+<class-id>XML.MixedPattern</class-id> <category>coercing</category>
+
+<body>alternateHeads
+
+	^items, followSet</body>
+
+<body>pushDownFollowSet
+
+	items do: [:i | i addFollow: self; addFollows: followSet].
+	^items</body>
+</methods>
+
+<methods>
+<class-id>XML.MixedPattern</class-id> <category>testing</category>
+
+<body>couldBeText
+
+	^true</body>
+</methods>
+
+
+<class>
+<name>ModifiedPattern</name>
+<environment>XML</environment>
+<super>XML.ComplexPattern</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars>node modification </inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Patterns</category>
+</class>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<methods>
+<class-id>XML.ModifiedPattern class</class-id> <category>instance creation</category>
+
+<body>on: aNode type: t
+
+	^self new on: aNode type: t</body>
+</methods>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<comment>
+<class-id>XML.ModifiedPattern</class-id>
+<body>XML element content declarations can have certain optional characters following an element
+name or pattern. These characters govern whether the element or the content particle may occur
+one or more (+), zero or more (*), or zero or one (?) times in the element content. This class
+represents these patterns or rules
+
+Instance Variables:
+	node	&lt;XML.Pattern&gt;
+	modification	&lt;Character&gt; Optional character denoting content element occurances
+</body>
+</comment>
+
+<methods>
+<class-id>XML.ModifiedPattern</class-id> <category>initialize</category>
+
+<body>on: aNode type: t
+
+	node := aNode.
+	modification := t.</body>
+</methods>
+
+<methods>
+<class-id>XML.ModifiedPattern</class-id> <category>coercing</category>
+
+<body>alternateHeads
+
+	^(modification = $* or: [modification = $?])
+		ifTrue: [followSet copyWith: node]
+		ifFalse: [Array with: node]</body>
+
+<body>pushDownFollowSet
+
+	(modification = $+ or: [modification = $*])
+		ifTrue: [node addFollow: self].
+	node addFollows: followSet.
+	^Array with: node</body>
+</methods>
+
+
+<class>
+<name>SequencePattern</name>
+<environment>XML</environment>
+<super>XML.ComplexPattern</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars>items </inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Patterns</category>
+</class>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<methods>
+<class-id>XML.SequencePattern class</class-id> <category>instance creation</category>
+
+<body>on: aList
+
+	^self new on: aList</body>
+</methods>
+
+<!-- -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   -->
+
+
+<comment>
+<class-id>XML.SequencePattern</class-id>
+<body>This class represents the 'sequence' element content constraint in an element type declaration. According to the XML 1.0 specification, the 'sequence' pattern/rule signifies that content particles occuring in a sequence list (declared in the DTD) must each appear in the element content in the order given in the list.
+
+Instance Variables:
+	items	&lt;SequenceableCollection&gt; Collection of content particles
+</body>
+</comment>
+
+<methods>
+<class-id>XML.SequencePattern</class-id> <category>initialize</category>
+
+<body>on: aList
+
+	items := aList</body>
+</methods>
+
+<methods>
+<class-id>XML.SequencePattern</class-id> <category>coercing</category>
+
+<body>alternateHeads
+
+	^Array with: items first</body>
+
+<body>pushDownFollowSet
+
+	1 to: items size-1 do: [:i |
+		(items at: i) addFollow: (items at: i+1)].
+	items last addFollows: followSet.
+	^items</body>
+</methods>
+
+
+<class>
+<name>TerminalPattern</name>
+<environment>XML</environment>
+<super>XML.ConcretePattern</super>
+<private>false</private>
+<indexed-type>none</indexed-type>
+<inst-vars></inst-vars>
+<class-inst-vars></class-inst-vars>
+<imports></imports>
+<category>Patterns</category>
+</class>
+
+<comment>
+<class-id>XML.TerminalPattern</class-id>
+<body>If a TerminalPattern appears in the follow set of any other pattern, it means that the other pattern is permitted to appear as the last piece of content in the element described by the pattern.
+</body>
+</comment>
+
+<methods>
+<class-id>XML.TerminalPattern</class-id> <category>accessing</category>
+
+<body>description
+
+	^'&lt;close tag&gt;'</body>
+</methods>
+
+<methods>
+<class-id>XML.TerminalPattern</class-id> <category>testing</category>
+
+<body>isTerminator
+
+	^true</body>
+
+<body>matches: aNode
+
+	^false</body>
+</methods>
+
+
+<initialize>
+<class-id>XML.XMLParser</class-id>
+</initialize>
+
+
+</st-source>

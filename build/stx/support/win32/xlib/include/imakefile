@@ -1,0 +1,40 @@
+XCOMM $XConsortium: Imakefile,v 1.86 94/11/21 18:19:48 kaleb Exp $
+#define IHaveSubdirs
+#define PassCDebugFlags /**/
+
+SUBDIRS = bitmaps extensions fonts
+
+HEADERS = DECkeysym.h \
+	Sunkeysym.h \
+	X.h \
+	XWDFile.h \
+	Xatom.h \
+	Xfuncproto.h \
+	Xfuncs.h \
+	Xmd.h \
+	Xos.h \
+	Xosdefs.h \
+	Xproto.h \
+	Xprotostr.h \
+	Xthreads.h \
+	Xw32defs.h \
+	ap_keysym.h \
+	keysym.h \
+	keysymdef.h 
+
+all::
+
+BuildIncludes($(HEADERS),.,.)
+
+InstallMultipleFlags($(HEADERS),$(INCDIR),$(INSTINCFLAGS))
+MakeSubdirs($(SUBDIRS))
+
+InstallLinkKitNonExecFile(X.h,$(LINKKITDIR)/include)
+InstallLinkKitNonExecFile(Xmd.h,$(LINKKITDIR)/include)
+InstallLinkKitNonExecFile(Xos.h,$(LINKKITDIR)/include)
+InstallLinkKitNonExecFile(Xproto.h,$(LINKKITDIR)/include)
+InstallLinkKitNonExecFile(Xprotostr.h,$(LINKKITDIR)/include)
+
+depend::
+
+clean::

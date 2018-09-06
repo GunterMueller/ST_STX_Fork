@@ -1,0 +1,125 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - SVN Sourcecode & Revision Management</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="sourcemanager_cvs.html"> <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">       <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="sourcemanager_hg.html">  <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>SVN Sourcecode & Revision Management</H1>
+
+<H2>Contents</H2>
+
+<UL>
+  <LI><A HREF="#INTRO" NAME="I_INTRO">Introduction</A>
+  <LI><A HREF="#SETUP" NAME="I_SETUP">Setting up the SVN Repository</A>
+  <LI><A HREF="#SOURCE_ACCESS" NAME="I_SOURCE_ACCESS">Automatic Source Access via the Revision Management</A>
+  <LI><A HREF="#MODULES_N_PACKAGES" NAME="I_MODULES_N_PACKAGES">Modules and Packages</A>
+  <LI><A HREF="#USING" NAME="I_USING">Using the Revision Management - Day-to-Day Usage</A>
+  <LI><A HREF="#CARE" NAME="I_CARE">Special Care & Feeding</A>
+<!--  <LI><A HREF="#PRODUCTION" NAME="I_PRODUCTION">Production</A>  -->
+  <LI><A HREF="#TROUBLE_GUIDE" NAME="I_TROUBLE_GUIDE">Trouble Guide</A>
+  <LI><A HREF="#READING" NAME="I_READING">Further Reading</A>
+</UL>
+
+
+<A NAME="INTRO" HREF="#I_INTRO"><H2>Introduction</A></H2>
+
+<CITE>ST/X</CITE> includes interface classes
+and browser support which allow smalltalk classes to be managed by
+the <A HREF="man:svn">SVN</A> (<VAR>Subversion</VAR>)
+sourcecode management system.
+
+<P>
+Access to the source containers is not limited or specific to <CITE>ST/X</CITE>;
+all repository manipulations are also possible by shell commands - it is therefore
+possible (and easy) to add automatic extraction and building via shell commands scripts.
+
+
+<A NAME="SETUP" HREF="#I_SETUP"><H2>Setting up the SVN Repository</A></H2>
+
+Unless your system alread has the SVN package
+installed and operating (most linux systems will have),
+you have to get an SVN distribution from some place, possibly compile it,
+and install all of its commands to be found along your PATH.
+<BR>
+For Unix/Linux, we recommend placing the executables into <CODE>"/usr/local/bin"</CODE>;
+for windows the installation typically asks for a directory where the binaries are to
+be installed. Remember this, as you may need this path later unless the binaries
+are included in the standard PATH.
+
+<P>
+IF you are unfamiliar with SVN, please take a look at the SVN documentation
+and manual pages - not all required maintenance activities
+are supported on the smalltalk level.
+<BR>
+Also, please do not trust on every detail described below;
+by the time you read this, new SVN versions may behave slighlty different.
+<P>
+
+<P>
+As a next step, you should create a repository, which will hold your
+source tree. This has to be done only once, and is therefore not supported
+by a fancy <CITE>ST/X</CITE> user interface.
+<P>
+... more to be documented here ...
+<P>
+
+After that, SVN is ready to be used with <CITE>ST/X</CITE>.
+
+
+
+
+
+<A NAME="SOURCE_ACCESS" HREF="#I_SOURCE_ACCESS"><H2>Automatic Source Access via the Revision Management</A></H2>
+
+Basically, the same rules and caching mechanisms are used as with the CVS source code manager.
+Please refer to <A HREF="sourcemanager_cvs.html#SOURCE_ACCESS">CVS Sourcecode Manager</A> for details.
+
+<A NAME="MODULES_N_PACKAGES" HREF="#I_MODULES_N_PACKAGESG"><H2>Modules and Packages</A></H2>
+
+The SVN manager stores classes in subdirectories according to the ST/X package
+hierarchy.
+Please refer to <A HREF="sourcemanager_cvs.html#MODULES_N_PACKAGES">CVS Sourcecode Manager</A> for details.
+
+
+
+
+<A NAME="USING" HREF="#I_USING"><H2>Using the Revision Management - Day-to-Day Usage</A></H2>
+
+-- to be written --
+
+
+<A NAME="CARE" HREF="#I_CARE"><H2>Special Care & Feeding</A></H2>
+
+-- to be written --
+
+<A NAME="TROUBLE_GUIDE" HREF="#I_TROUBLE_GUIDEL"><H2>Trouble guide</A></H2>
+
+-- to be written --
+
+
+<A NAME="READING" HREF="#I_READING"><H2>Further Reading</A></H2>
+
+-- to be written --
+
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 2012 eXept Software AG, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.4 $ $Date: 2016-07-11 09:24:05 $
+</BODY>
+</HTML>

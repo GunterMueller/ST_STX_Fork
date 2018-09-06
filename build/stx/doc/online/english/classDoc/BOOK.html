@@ -1,0 +1,588 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Class Documentation - Book</Title>
+</HEAD>
+
+<BODY>
+
+<H1>Smalltalk/X Class Documentation - Book printing</H1>
+
+This document represents the complete Smalltalk/X Class Documentation as a book.
+<BR>
+It is only useful with the Smalltalk HTML Document viewer.
+<P>
+If you use a regular HTML browser, the print button below
+is non functioning, and you should switch to
+<A NOPRINT HREF="TOP.html">TOP.html</A> and print individual pages.
+
+<HR>
+
+<!-- To print your own (subset) of the class documentation:
+  --
+  -- enter a fileBrowser.
+  --
+  -- Copy this file to some private "myBOOK.html"
+  -- edit "myBOOK.html"  (-> get contents)
+  --   replace/add the classNames to be documented in/to the list below
+  --   accept
+  -- open a viewer on "myBook.html" (double click)
+  -- print it.
+  -->
+
+<P>
+
+<FORM ACTION="../misc/onlyInSTX.html" 
+      METHOD="DOIT | :tempDirName |
+	Processor activeProcess withUserBackgroundPriorityDo:[
+	    |book dirName hereDir|
+
+	    [
+		dirName := tempDirName , '/tmp_classDoc'.
+
+		OperatingSystem recursiveCreateDirectory:dirName.
+
+		book := '/tmp/BOOK.html' asFilename writeStream.
+
+		' could have inserted smalltalk allClasses here -
+		  but then, you get docs of all junk classes ...
+		  ... better limit ourself to what is really interesting
+		  (still roughly 2000 pages).' .
+
+		#(
+		    AboutBox
+		    AbsoluteTime
+		    AbstractSourceCodeManager
+		    AbstractTime
+		    ActionWaitBox
+		    ActiveHelp
+		    ActiveHelpView
+		    ActorStream
+		    AlignmentOrigin
+		    AnimatedLabel
+		    ApplicationController
+		    ApplicationModel
+		    ArithmeticValue
+		    Array
+		    ArrayedCollection
+		    Arrow
+		    ArrowButton
+		    ArrowedSpline
+		    AspectAdaptor
+		    Association
+		    Autoload
+
+		    BIG5EncodedString
+		    Bag
+		    Behavior
+		    BinaryIOManager
+		    BinaryInputManager
+		    BinaryNode
+		    BinaryObjectStorage
+		    BinaryOutputManager
+		    BinaryTree
+		    Bindings
+		    BitBlt
+		    BlitImageReader
+		    Block
+		    BlockContext
+		    BlockNode
+		    BlockValue
+		    Boolean
+		    BooleanArray
+		    BorderedWrapper
+		    BufferedValueHolder
+		    Button
+		    ButtonController
+		    ByteArray
+
+		    CStructure
+		    CVSSourceCodeManager
+		    CacheDictionary
+		    CachedImage
+		    Chain
+		    ChainLink
+		    Change
+		    ChangeSet
+		    Character
+		    CharacterArray
+		    CheapBlock
+		    CheckBox
+		    CheckBoxSpec
+		    CheckToggle
+		    Circle
+		    Class
+		    ClassCategoryReader
+		    ClassDescription
+		    ClassOrganizer
+		    ClickMenuView
+		    CodeUtility
+		    CodeView
+		    Collection
+		    CollectionBuilder
+		    Color
+		    ColorValue
+		    ColoredListEntry
+		    Colormap
+		    ComboBoxView
+		    ComboListView
+		    ComboView
+		    CompiledCode
+		    Complex
+		    CompressedOrderedCollection
+		    Context
+		    Controller
+		    ControllerWithMenu
+		    ConvertedValue
+		    Cursor
+		    Curve
+
+		    DBFile
+		    Date
+		    Delay
+		    Depth16Image
+		    Depth1Image
+		    Depth24Image
+		    Depth2Image
+		    Depth4Image
+		    Depth8Image
+		    DeviceGraphicsContext
+		    DeviceWorkstation
+		    DialogBox
+		    Dictionary
+		    DictionaryWithDefault
+		    Diff3TextView
+		    DiffTextView
+		    DirectoryStream
+		    DisplayMedium
+		    DisplayObject
+		    DisplayRootView
+		    DisplaySurface
+		    DoubleArray
+
+		    EditField
+		    EditTextView
+		    EllipticalArc
+		    EnterBox
+		    EnterBox2
+		    EnterFieldGroup
+		    EpsonFX1PrinterStream
+		    EventListener
+		    Exception
+		    ExecutableFunction
+		    ExternalAddress
+		    ExternalBytes
+		    ExternalFunction
+		    ExternalStream
+
+		    FTPClient
+		    FaceReader
+		    False
+		    FileDirectory
+		    FileSaveBox
+		    FileSelectionBox
+		    FileSelectionList
+		    FileStream
+		    Filename
+		    FilenameEditField
+		    FilenameEnterBox
+		    FillingWrapper
+		    FilteringLineStream
+		    FilteringStream
+		    Fixed
+		    Float
+		    FloatArray
+		    FloatContainer
+		    Font
+		    FontDescription
+		    FontPanel
+		    Form
+		    Fraction
+		    FramedBox
+		    Future
+
+		    GBEncodedString
+		    GIFReader
+		    GLPoint3D
+		    GLXView
+		    GLXWorkstation
+		    Geometric
+		    GeometricWrapper
+		    GraphicsAttributes
+		    GraphicsContext
+		    GraphicsMedium
+
+		    HPLjetIIPrinterStream
+		    HTMLDocumentView
+		    HTMLFilterStream
+		    HTMLWriteStream
+		    HTTPInterface
+		    HVScrollableView
+		    HandleRegistry
+		    HandlerCollection
+		    HierarchyNode
+		    HistoryLine
+		    HistoryManager
+		    HorizontalMiniScroller
+		    HorizontalPanelView
+		    HorizontalPanelViewSpec
+		    HorizontalScale
+		    HorizontalScrollBar
+		    HorizontalScroller
+		    HorizontalSlider
+		    HorizontalSteppingSlider
+
+		    IPSocketAddress
+		    Icon
+		    IdentityDictionary
+		    IdentityDictionaryWithDefault
+		    IdentitySet
+		    Image
+		    ImageEditView
+		    ImageReader
+		    ImageSelectionBox
+		    ImageView
+		    ImmutableArray
+		    IndexedTable
+		    Infinity
+		    InfoBox
+		    InputFieldSpec
+		    InputView
+		    Integer
+		    InterestConverter
+		    InterruptLatencyMonitor
+		    Interval
+		    Iterator
+
+		    JISEncodedString
+		    JPEGReader
+
+		    KeyboardForwarder
+		    KeyboardMap
+		    KeyedSet
+
+		    Label
+		    LabelAndIcon
+		    LabelledEnterField
+		    LargeInteger
+		    Layout
+		    LayoutFrame
+		    LayoutOrigin
+		    LayoutWrapper
+		    Lazy
+		    LazyMethod
+		    LimitedPrecisionReal
+		    LineSegment
+		    Link
+		    LinkedList
+		    ListEntry
+		    ListSelectionBox
+		    ListView
+		    ListViewController
+		    LockedFileStream
+		    LookupKey
+
+		    Magnitude
+		    MappedCollection
+		    MenuButton
+		    MenuEditor
+		    MenuView
+		    Message
+		    MessageChannel
+		    MessageSend
+		    MessageTally
+		    MessageTracer
+		    Metaclass
+		    Method
+		    MethodDictionary
+		    MiniScroller
+		    ModalBox
+		    Model
+		    Monitor
+		    MotionButton
+		    MultiColListEntry
+		    MultiDimensionalArray
+		    MultiSelectionInList
+
+		    NonPositionableExternalStream
+		    Number
+		    NumberSet
+
+		    OSProcessStatus
+		    Object
+		    ObjectFileLoader
+		    ObjectMemory
+		    ObjectView
+		    ObsoleteObject
+		    OperatingSystem
+		    OptionBox
+		    OrdDictTableSpecification
+		    OrderedCollection
+		    OrderedDictionary
+
+		    PBMReader
+		    PCXReader
+		    PSGraphicsContext
+		    PSMedium
+		    PanelView
+		    ParagraphSpecification
+		    Parser
+		    PeekableStream
+		    Pen
+		    PersistencyManager
+		    PipeStream
+		    Plug
+		    PluggableAdaptor
+		    Point
+		    Point3D
+		    Polygon
+		    PopUpList
+		    PopUpListController
+		    PopUpMenu
+		    PopUpView
+		    PositionableStream
+		    PostscriptPrinterStream
+		    PrintConverter
+		    PrinterStream
+		    Process
+		    ProcessMonitor
+		    ProcessorScheduler
+		    ProgressIndicator
+		    Project
+		    ProjectView
+		    Promise
+		    ProtocolAdaptor
+		    PseudoView
+		    PullDownList
+		    PullDownMenu
+
+		    QuerySignal
+		    Queue
+
+		    RDoItServer
+		    RadioButton
+		    RadioButtonController
+		    RadioButtonGroup
+		    Random
+		    ReadStream
+		    ReadWriteStream
+		    Rectangle
+		    RecursionLock
+		    Registry
+		    ResourcePack
+		    Ruler
+		    Run
+		    RunArray
+
+		    ST80FormReader
+		    SambaStatusMonitor
+		    Scale
+		    Scanner
+		    ScrollBar
+		    ScrollableView
+		    Scroller
+		    SelTableColumnSpecification
+		    SelectionInHierarchy
+		    SelectionInHierarchyView
+		    SelectionInList
+		    SelectionInListView
+		    Semaphore
+		    SemaphoreSet
+		    Separator
+		    SequenceableCollection
+		    SequenceableCollectionSorter
+		    Set
+		    ShadowView
+		    SharedQueue
+		    ShortFloat
+		    Signal
+		    SignalSet
+		    SimpleStatusMonitor
+		    SimpleView
+		    Slider
+		    SliderBox
+		    SmallInteger
+		    Smalltalk
+		    Socket
+		    SocketAddress
+		    SortedCollection
+		    SparseArray
+		    Spline
+		    StandardSystemController
+		    StandardSystemView
+		    SteppingSlider
+		    Stream
+		    String
+		    StringCollection
+		    StrokingWrapper
+		    Structure
+		    SunRasterReader
+		    Symbol
+		    SyncedMultiColumnTextView
+		    SynchronousWindowSensor
+
+		    TIFFReader
+		    TabSpecRuler
+		    TableColumnSpecification
+		    TableColumnView
+		    TableRowHandle
+		    TableSpecification
+		    TableView
+		    TabulatorSpecification
+		    TargaReader
+		    Text
+		    TextBox
+		    TextCollector
+		    TextRuler
+		    TextStream
+		    TextView
+		    ThreeColumnTextView
+		    Time
+		    Toggle
+		    ToggleController
+		    TokenizedStream
+		    TopView
+		    TranslatingWrapper
+		    TriggerValue
+		    True
+		    TwoByteString
+		    TwoColumnTextView
+		    TwoDimensionalArray
+
+		    UDSocketAddress
+		    UIBuilder
+		    UIGalleryView
+		    UIPainter
+		    UISpecification
+		    UndefinedObject
+		    UninterpretedBytes
+		    UnitConverter
+		    UnixProcess
+		    UserMonitor
+
+		    ValueHolder
+		    ValueLink
+		    ValueModel
+		    Variable
+		    VariableHorizontalPanel
+		    VariableHorizontalPanelController
+		    VariablePanel
+		    VariablePanelController
+		    VariableString
+		    VariableVerticalPanel
+		    VariableVerticalPanelController
+		    VerticalPanelView
+		    VerticalRuler
+		    View
+		    ViewScroller
+		    ViewStyle
+
+		    WarningBox
+		    WeakArray
+		    WeakIdentityDictionary
+		    WeakIdentitySet
+		    WeakValueDictionary
+		    WindowBuilder
+		    WindowGroup
+		    WindowSensor
+		    WindowingTransformation
+		    WindowsIconReader
+		    WordArray
+		    Workspace
+		    Workstation
+		    WriteStream
+
+		    XBMReader
+		    XPMReader
+		    XWDReader
+		    XWorkstation
+
+		    YesNoBox
+
+		)
+		do:[:className |
+		    |fn s cls|
+
+		    cls := Smalltalk at:className.
+		    cls notNil ifTrue:[
+			Transcript showCR:'generating html file for: ' , className , ' ...'.
+			fn := className , '.html'.
+
+			s := (dirName , '/' , fn) asFilename writeStream.
+			s notNil ifTrue:[
+			    s nextPutAll:(HTMLDocGenerator htmlDocOf:cls).
+			    s cr.
+			    s close.
+
+			    book nextPutAll:'<A HREF=' , Character doubleQuote asString , 
+					    dirName , '/' , fn , Character doubleQuote asString ,
+					    '\>' , className , 
+					    '</A\>'.
+			    book cr.
+			] ifFalse:[
+			    Transcript showCR:'could not create ' , (dirName , '/' , fn).
+			]
+		    ] ifFalse:[
+			Transcript showCR:('no class: ' , className)
+		    ].
+		].
+		book close.
+
+		'must create a pictures-subdirectory there,
+		 and copy all the ball-pics into it ...'.
+
+		OperatingSystem createDirectory:(dirName , '/pictures').
+		hereDir := self currentURL asFilename directoryName.
+		OperatingSystem executeCommand:('cp ' , hereDir , '/pictures/*ball.* ' , dirName , '/pictures').
+
+		Transcript showCR:'start printing ...'.
+		HTMLDocumentPrinter printBookURL:(self currentURL).
+		Transcript showCR:'done with printing.'
+	    ] valueNowOrOnUnwindDo:[
+		Transcript showCR:'cleanup temporary files ...'.
+		OperatingSystem recursiveRemoveDirectory:dirName.
+		Transcript showCR:'done with cleanup.'.
+	    ]    
+	]
+      ">             
+
+To print the whole documentation, make certain, that your
+printer has enough paper loaded (roughly 2000 pages), press: 
+<INPUT TYPE="submit" VALUE="print"> and go for a coffee break. 
+<P>
+
+<B>This action will use up a lot of disk space temporarily.
+You may want to specify a directory, 
+<BR>where these files are created:</B> 
+<INPUT SIZE=20 NAME="tempDirName" VALUE="/usr/tmp">
+
+<P>
+
+</FORM>
+
+
+<P>
+
+Start of Book
+<HR>
+
+
+<UL>
+<LI><A HREF="BOOK_cover.html">Coverpage</A>
+<P>
+<LI><A ISBOOK HREF="/tmp/BOOK.html">Full class documentation (generated)</A>
+<BR>
+Notice, that the demo classes, many goodies and tool classes are not
+printed here. Switch to the individual pages to print those.
+</UL>
+
+<HR>
+
+End of Book.
+<P>
+You can also print individual pages of this book (recommended):
+<UL>
+    <LI><A NOPRINT HREF="TOP.html">Individual pages ...</A>
+</UL>
+</BODY>
+</HTML>

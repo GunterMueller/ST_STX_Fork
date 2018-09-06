@@ -1,0 +1,8 @@
+XCOMM $XConsortium: Imakefile,v 1.3 94/02/09 15:50:05 matt Exp $
+#define IHaveSubdirs
+#define PassCDebugFlags CDEBUGFLAGS="$(CDEBUGFLAGS)"
+
+SUBDIRS = cf imake makedepend util
+
+MakeSubdirs($(SUBDIRS))
+DependSubdirs($(SUBDIRS))

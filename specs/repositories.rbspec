@@ -1,0 +1,47 @@
+# This file defines a set of repositories to fetch source code from.
+#
+
+begin
+  #
+  # All packages that are not (yet) forked are taken from
+  # eXept's public CVS repository
+  #
+  repository :'exept:public' do
+    type :cvs
+    canonical ":pserver:cvs@cvs.smalltalk-x.de:/cvs/stx"
+  end
+
+  #
+  # Auto-configure jv-branch:public and jv-branch:private
+  # repositories based on the URL of rakefiles.
+  #  
+  origin_forest_url = HG::Repository.new(BUILD_DIR / '..').paths['default'].slice(0.. - 'stx-goodies-builder-rake'.size - 2)
+  cloned_from_bitbucket = origin_forest_url =~ /bitbucket.org/
+  cloned_from_swing     = (origin_forest_url =~ /swing\.fit\.cvut\.cz/) || (origin_forest_url =~ /192\.168\.12\.1/)
+
+  repository :'jv-branch:public' do
+    type :hg
+    separator '-'
+    canonical "https://bitbucket.org/janvrany"
+    if (not cloned_from_bitbucket) and (not cloned_from_swing)
+      upstream  "ssh://hg@swing.fit.cvut.cz//var/local/hg"
+    end
+    staging   origin_forest_url
+  end
+
+  # Only core developer and/or Jenkins have access to
+  # stx:stc and stx:librun...
+  if (core_developer? or jenkins?)
+    repository :'jv-branch:private' do
+      type :hg
+      separator '-'
+      if ((not cloned_from_bitbucket) and (not cloned_from_swing))
+        canonical origin_forest_url
+      else
+        canonical "ssh://192.168.12.2//hg"
+      end
+    end
+  end
+rescue Exception
+  info "Building from source archive"
+end

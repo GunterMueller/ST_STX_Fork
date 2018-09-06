@@ -1,0 +1,232 @@
+# Makefile for Independent JPEG Group's software
+
+# This makefile is suitable for Borland C on MS-DOS or OS/2.
+# It works with Borland C++ for DOS, revision 3.0 or later,
+# and has been tested with Borland C++ for OS/2, revision 2.0.
+# Thanks to Tom Wright and Ge' Weijers (original DOS) and
+# Ken Porter (OS/2) for this file.
+
+TOP=..\..
+!INCLUDE $(TOP)\rules\stdHeader_bc
+
+# Read installation instructions before saying "make" !!
+
+OBJDIR=objmingw\\
+
+
+# The name of your C compiler:
+CC= gcc
+
+INCL=
+
+CFLAGS= -g -DWIN32 $(INCL)
+
+# Link-time cc options:
+LDFLAGS=
+
+# Put here the object file name for the correct system-dependent memory
+# manager file.
+# For DOS, we recommend jmemdos.c and jmemdosa.asm.
+# For OS/2, we recommend jmemnobs.c (flat memory!)
+# SYSDEPMEMLIB must list the same files with "+" signs for the librarian.
+SYSDEPMEM= $(OBJDIR)jmemnobs.obj
+SYSDEPMEMLIB= +$(OBJDIR)jmemnobs.obj
+
+# End of configurable options.
+
+
+# source files: JPEG library proper
+LIBSOURCES= jcapimin.c jcapistd.c jccoefct.c jccolor.c jcdctmgr.c jchuff.c \
+	jcinit.c jcmainct.c jcmarker.c jcmaster.c jcomapi.c jcparam.c \
+	jcphuff.c jcprepct.c jcsample.c jctrans.c jdapimin.c jdapistd.c \
+	jdatadst.c jdatasrc.c jdcoefct.c jdcolor.c jddctmgr.c jdhuff.c \
+	jdinput.c jdmainct.c jdmarker.c jdmaster.c jdmerge.c jdphuff.c \
+	jdpostct.c jdsample.c jdtrans.c jerror.c jfdctflt.c jfdctfst.c \
+	jfdctint.c jidctflt.c jidctfst.c jidctint.c jidctred.c jquant1.c \
+	jquant2.c jutils.c jmemmgr.c
+# memmgr back ends: compile only one of these into a working library
+SYSDEPSOURCES= jmemansi.c jmemname.c jmemnobs.c jmemdos.c jmemmac.c
+# source files: cjpeg/djpeg/jpegtran applications, also rdjpgcom/wrjpgcom
+APPSOURCES= cjpeg.c djpeg.c jpegtran.c cdjpeg.c rdcolmap.c rdswitch.c \
+	rdjpgcom.c wrjpgcom.c rdppm.c wrppm.c rdgif.c wrgif.c rdtarga.c \
+	wrtarga.c rdbmp.c wrbmp.c rdrle.c wrrle.c
+SOURCES= $(LIBSOURCES) $(SYSDEPSOURCES) $(APPSOURCES)
+
+# library object files common to compression and decompression
+COMOBJECTS= $(OBJDIR)jcomapi.obj $(OBJDIR)jutils.obj $(OBJDIR)jerror.obj $(OBJDIR)jmemmgr.obj $(SYSDEPMEM)
+# compression library object files
+CLIBOBJECTS= $(OBJDIR)jcapimin.obj $(OBJDIR)jcapistd.obj $(OBJDIR)jctrans.obj $(OBJDIR)jcparam.obj $(OBJDIR)jdatadst.obj \
+	$(OBJDIR)jcinit.obj $(OBJDIR)jcmaster.obj $(OBJDIR)jcmarker.obj $(OBJDIR)jcmainct.obj $(OBJDIR)jcprepct.obj \
+	$(OBJDIR)jccoefct.obj $(OBJDIR)jccolor.obj $(OBJDIR)jcsample.obj $(OBJDIR)jchuff.obj $(OBJDIR)jcphuff.obj \
+	$(OBJDIR)jcdctmgr.obj $(OBJDIR)jfdctfst.obj $(OBJDIR)jfdctflt.obj $(OBJDIR)jfdctint.obj
+# decompression library object files
+DLIBOBJECTS= $(OBJDIR)jdapimin.obj $(OBJDIR)jdapistd.obj $(OBJDIR)jdtrans.obj $(OBJDIR)jdatasrc.obj \
+	$(OBJDIR)jdmaster.obj $(OBJDIR)jdinput.obj $(OBJDIR)jdmarker.obj $(OBJDIR)jdhuff.obj $(OBJDIR)jdphuff.obj \
+	$(OBJDIR)jdmainct.obj $(OBJDIR)jdcoefct.obj $(OBJDIR)jdpostct.obj $(OBJDIR)jddctmgr.obj $(OBJDIR)jidctfst.obj \
+	$(OBJDIR)jidctflt.obj $(OBJDIR)jidctint.obj $(OBJDIR)jidctred.obj $(OBJDIR)jdsample.obj $(OBJDIR)jdcolor.obj \
+	$(OBJDIR)jquant1.obj $(OBJDIR)jquant2.obj $(OBJDIR)jdmerge.obj
+# These objectfiles are included in libjpeg.lib
+LIBOBJECTS= $(CLIBOBJECTS) $(DLIBOBJECTS) $(COMOBJECTS)
+# object files for sample applications (excluding library files)
+COBJECTS= $(OBJDIR)cjpeg.obj $(OBJDIR)rdppm.obj $(OBJDIR)rdgif.obj $(OBJDIR)rdtarga.obj $(OBJDIR)rdrle.obj $(OBJDIR)rdbmp.obj \
+	$(OBJDIR)rdswitch.obj $(OBJDIR)cdjpeg.obj
+DOBJECTS= $(OBJDIR)djpeg.obj $(OBJDIR)wrppm.obj $(OBJDIR)wrgif.obj $(OBJDIR)wrtarga.obj $(OBJDIR)wrrle.obj $(OBJDIR)wrbmp.obj \
+	$(OBJDIR)rdcolmap.obj $(OBJDIR)cdjpeg.obj
+TROBJECTS= $(OBJDIR)jpegtran.obj $(OBJDIR)rdswitch.obj $(OBJDIR)cdjpeg.obj
+
+
+default: $(OBJDIR)NUL $(OBJDIR)libjpeg.a
+
+$(OBJDIR)NUL:
+    md $(OBJDIR)
+
+# all: libjpeg.a cjpeg.exe djpeg.exe jpegtran.exe rdjpgcom.exe wrjpgcom.exe
+all: libjpeg.a
+
+full:: all
+
+$(OBJDIR)libjpeg.a: $(LIBOBJECTS)
+	- del libjpeg.a
+	ar r $(OBJDIR)libjpeg.a $(LIBOBJECTS)
+
+cjpeg.exe: $(COBJECTS) libjpeg.lib
+	$(CC) $(LDFLAGS) -ecjpeg.exe $(COBJECTS) libjpeg.lib
+
+djpeg.exe: $(DOBJECTS) libjpeg.lib
+	$(CC) $(LDFLAGS) -edjpeg.exe $(DOBJECTS) libjpeg.lib
+
+jpegtran.exe: $(TROBJECTS) libjpeg.lib
+	$(CC) $(LDFLAGS) -ejpegtran.exe $(TROBJECTS) libjpeg.lib
+
+rdjpgcom.exe: rdjpgcom.c
+	$(CC) $(CFLAGS) rdjpgcom.c
+
+# On DOS, wrjpgcom needs large model so it can malloc a 64K chunk
+wrjpgcom.exe: wrjpgcom.c
+	$(CC) $(CFLAGS) wrjpgcom.c
+
+# This "{}" syntax allows Borland Make to "batch" source files.
+# In this way, each run of the compiler can build many modules.
+#.c.obj:
+#       $(CC) $(CFLAGS) -c{ $<}
+
+.c.obj:
+	$(CC) -c $(CFLAGS) -o$(OBJDIR)$*.obj $<
+
+.asm.obj:
+	$(CC) -c $(ASFLAGS) $<
+
+jconfig.h: jconfig.bcc
+	copy jconfig.bcc jconfig.h
+
+clean:
+	- del *.obj
+	- del $(OBJDIR)\*.obj
+	- del libjpeg.lib
+	- del cjpeg.exe
+	- del djpeg.exe
+	- del jpegtran.exe
+	- del rdjpgcom.exe
+	- del wrjpgcom.exe
+	- del testout*.*
+
+clobber: clean
+	- del $(OBJDIR)*.lib
+
+test: cjpeg.exe djpeg.exe jpegtran.exe
+	- del testout*.*
+	djpeg -dct int -ppm -outfile testout.ppm  testorig.jpg
+	djpeg -dct int -gif -outfile testout.gif  testorig.jpg
+	cjpeg -dct int -outfile testout.jpg  testimg.ppm
+	djpeg -dct int -ppm -outfile testoutp.ppm testprog.jpg
+	cjpeg -dct int -progressive -opt -outfile testoutp.jpg testimg.ppm
+	jpegtran -outfile testoutt.jpg testprog.jpg
+!if $d(DOS)
+	fc /b testimg.ppm testout.ppm
+	fc /b testimg.gif testout.gif
+	fc /b testimg.jpg testout.jpg
+	fc /b testimg.ppm testoutp.ppm
+	fc /b testimgp.jpg testoutp.jpg
+	fc /b testorig.jpg testoutt.jpg
+!else
+	echo n > n.tmp
+	comp testimg.ppm testout.ppm < n.tmp
+	comp testimg.gif testout.gif < n.tmp
+	comp testimg.jpg testout.jpg < n.tmp
+	comp testimg.ppm testoutp.ppm < n.tmp
+	comp testimgp.jpg testoutp.jpg < n.tmp
+	comp testorig.jpg testoutt.jpg < n.tmp
+	del n.tmp
+!endif
+
+
+$(OBJDIR)jcapimin.obj: jcapimin.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
+$(OBJDIR)jcapistd.obj: jcapistd.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
+$(OBJDIR)jccoefct.obj: jccoefct.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
+$(OBJDIR)jccolor.obj: jccolor.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
+$(OBJDIR)jcdctmgr.obj: jcdctmgr.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jdct.h
+$(OBJDIR)jchuff.obj: jchuff.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jchuff.h
+$(OBJDIR)jcinit.obj: jcinit.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
+$(OBJDIR)jcmainct.obj: jcmainct.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
+$(OBJDIR)jcmarker.obj: jcmarker.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
+$(OBJDIR)jcmaster.obj: jcmaster.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
+$(OBJDIR)jcomapi.obj: jcomapi.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
+$(OBJDIR)jcparam.obj: jcparam.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
+$(OBJDIR)jcphuff.obj: jcphuff.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jchuff.h
+$(OBJDIR)jcprepct.obj: jcprepct.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
+$(OBJDIR)jcsample.obj: jcsample.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
+$(OBJDIR)jctrans.obj: jctrans.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
+$(OBJDIR)jdapimin.obj: jdapimin.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
+$(OBJDIR)jdapistd.obj: jdapistd.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
+$(OBJDIR)jdatadst.obj: jdatadst.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jerror.h
+$(OBJDIR)jdatasrc.obj: jdatasrc.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jerror.h
+$(OBJDIR)jdcoefct.obj: jdcoefct.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
+$(OBJDIR)jdcolor.obj: jdcolor.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
+$(OBJDIR)jddctmgr.obj: jddctmgr.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jdct.h
+$(OBJDIR)jdhuff.obj: jdhuff.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jdhuff.h
+$(OBJDIR)jdinput.obj: jdinput.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
+$(OBJDIR)jdmainct.obj: jdmainct.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
+$(OBJDIR)jdmarker.obj: jdmarker.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
+$(OBJDIR)jdmaster.obj: jdmaster.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
+$(OBJDIR)jdmerge.obj: jdmerge.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
+$(OBJDIR)jdphuff.obj: jdphuff.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jdhuff.h
+$(OBJDIR)jdpostct.obj: jdpostct.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
+$(OBJDIR)jdsample.obj: jdsample.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
+$(OBJDIR)jdtrans.obj: jdtrans.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
+$(OBJDIR)jerror.obj: jerror.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jversion.h jerror.h
+$(OBJDIR)jfdctflt.obj: jfdctflt.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jdct.h
+$(OBJDIR)jfdctfst.obj: jfdctfst.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jdct.h
+$(OBJDIR)jfdctint.obj: jfdctint.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jdct.h
+$(OBJDIR)jidctflt.obj: jidctflt.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jdct.h
+$(OBJDIR)jidctfst.obj: jidctfst.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jdct.h
+$(OBJDIR)jidctint.obj: jidctint.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jdct.h
+$(OBJDIR)jidctred.obj: jidctred.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jdct.h
+$(OBJDIR)jquant1.obj: jquant1.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
+$(OBJDIR)jquant2.obj: jquant2.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
+$(OBJDIR)jutils.obj: jutils.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h
+$(OBJDIR)jmemmgr.obj: jmemmgr.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jmemsys.h
+$(OBJDIR)jmemansi.obj: jmemansi.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jmemsys.h
+$(OBJDIR)jmemname.obj: jmemname.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jmemsys.h
+$(OBJDIR)jmemnobs.obj: jmemnobs.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jmemsys.h
+$(OBJDIR)jmemdos.obj: jmemdos.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jmemsys.h
+$(OBJDIR)jmemmac.obj: jmemmac.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h jerror.h jmemsys.h
+$(OBJDIR)cjpeg.obj: cjpeg.c cdjpeg.h jinclude.h jconfig.h jpeglib.h jmorecfg.h jerror.h cderror.h jversion.h
+$(OBJDIR)djpeg.obj: djpeg.c cdjpeg.h jinclude.h jconfig.h jpeglib.h jmorecfg.h jerror.h cderror.h jversion.h
+$(OBJDIR)jpegtran.obj: jpegtran.c cdjpeg.h jinclude.h jconfig.h jpeglib.h jmorecfg.h jerror.h cderror.h jversion.h
+$(OBJDIR)cdjpeg.obj: cdjpeg.c cdjpeg.h jinclude.h jconfig.h jpeglib.h jmorecfg.h jerror.h cderror.h
+$(OBJDIR)rdcolmap.obj: rdcolmap.c cdjpeg.h jinclude.h jconfig.h jpeglib.h jmorecfg.h jerror.h cderror.h
+$(OBJDIR)rdswitch.obj: rdswitch.c cdjpeg.h jinclude.h jconfig.h jpeglib.h jmorecfg.h jerror.h cderror.h
+$(OBJDIR)rdjpgcom.obj: rdjpgcom.c jinclude.h jconfig.h
+$(OBJDIR)wrjpgcom.obj: wrjpgcom.c jinclude.h jconfig.h
+$(OBJDIR)rdppm.obj: rdppm.c cdjpeg.h jinclude.h jconfig.h jpeglib.h jmorecfg.h jerror.h cderror.h
+$(OBJDIR)wrppm.obj: wrppm.c cdjpeg.h jinclude.h jconfig.h jpeglib.h jmorecfg.h jerror.h cderror.h
+$(OBJDIR)rdgif.obj: rdgif.c cdjpeg.h jinclude.h jconfig.h jpeglib.h jmorecfg.h jerror.h cderror.h
+$(OBJDIR)wrgif.obj: wrgif.c cdjpeg.h jinclude.h jconfig.h jpeglib.h jmorecfg.h jerror.h cderror.h
+$(OBJDIR)rdtarga.obj: rdtarga.c cdjpeg.h jinclude.h jconfig.h jpeglib.h jmorecfg.h jerror.h cderror.h
+$(OBJDIR)wrtarga.obj: wrtarga.c cdjpeg.h jinclude.h jconfig.h jpeglib.h jmorecfg.h jerror.h cderror.h
+$(OBJDIR)rdbmp.obj: rdbmp.c cdjpeg.h jinclude.h jconfig.h jpeglib.h jmorecfg.h jerror.h cderror.h
+$(OBJDIR)wrbmp.obj: wrbmp.c cdjpeg.h jinclude.h jconfig.h jpeglib.h jmorecfg.h jerror.h cderror.h
+$(OBJDIR)rdrle.obj: rdrle.c cdjpeg.h jinclude.h jconfig.h jpeglib.h jmorecfg.h jerror.h cderror.h
+$(OBJDIR)wrrle.obj: wrrle.c cdjpeg.h jinclude.h jconfig.h jpeglib.h jmorecfg.h jerror.h cderror.h
+$(OBJDIR)jmemdosa.obj: jmemdosa.asm
+	tasm /mx jmemdosa.asm

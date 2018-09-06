@@ -1,0 +1,19 @@
+; View defaultStyle:#motifBigFont 
+;
+; silicon graphics style with large fonts
+;
+; $Header: /cvs/stx/stx/libview/styles/motifBigFont.style,v 1.3 1996-03-06 11:47:48 cg Exp $
+
+#include 'motif.style'
+
+comment  'motif look alike\with larger text font' 
+
+#if (Language == #german) or:[Language == #de]
+comment  'Wie `motif'', mit größerem Zeichensatz für Texte'
+#endif
+#if (Language == #french) or:[Language == #fr]
+comment  'Comme `motif'', avec des charactères plus grand'
+#endif
+
+
+textFont Font family:'courier' size:14

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project name="stx.libjava.experiments" default="compile" basedir=".">
+    <import file="build.auto.xml"/>
+    <!-- Put custom build code here, this file is never overwritten by Smalltalk/X -->    
+</project>

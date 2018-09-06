@@ -1,0 +1,286 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Code Editor</Title>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="TOP.html" INFO="Back to the tools documentation" >            <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+
+<H1>Code Editor</H1>
+
+<H2><A NAME="INDEX">Index</A></H2>
+<UL>
+<LI><A HREF="#GENERAL">General Introduction</A></LI>
+<LI><A HREF="#MENU">Menu Functions</A></LI>
+<LI><A HREF="#SHORTKEYS">Shortkey Commands</A></LI>
+<LI><A HREF="#SYNTAXCOLORING">Syntax Coloring</A></LI>
+<LI><A HREF="#CODECOMPLETION">Code Completion</A></LI>
+<LI><A HREF="#ABBREVIATIONS">Snippet Insertion (Abbreviations)</A></LI>
+<LI><A HREF="#CUSTOMIZATION">Customization</A></LI>
+  <UL>
+  <LI><A HREF="#CUSTOMIZATION_CURSOR">Cursor Behavior at Line End</A></LI>
+  <LI><A HREF="#CUSTOMIZATION_TABS">Tabulator Positions</A></LI>
+  </UL>
+</UL>
+
+
+
+<H2><A HREF="#INDEX" NAME="GENERAL">General Introduction</A></H2>
+
+Notice that some aspects of the editor can be customized. Especially the keyboard
+shortcuts are defined in a file called "keyboard.rc" which is loaded at startup time.
+If you don't like the default keyboard settings as described below,
+feel free to place your own "keyboard.rc" file into your ST/X startup directory.
+
+<H2><A HREF="#INDEX" NAME="MENU">Menu Functions</A></H2>
+
+Most menu functions operate on the current text selection.
+The menu is hierarchical, with less frequently used operations
+to be found in submenus named "<i>More</i>" or "<i>Other</i>".
+
+
+<H2><A HREF="#INDEX" NAME="SHORTKEYS">Shortkey Commands</A></H2>
+
+Shortkey commands are initialted by keeping either "<i>Ctrl</i>" and/or "<i>Cmd</i>"
+(also named "<i>Alt</i>" or "<i>Meta</i>" on some keyboards).
+On the Mac, using the XWindow version of ST/X,
+the "Apple-Cmd" key is reserved for Window manager operations,
+and not usable in ST/X, unless you have installed a custom keybord modifier map.
+Here, the "<i>Alt</i>" key located next to the Cmd key is used (which may be annoying at times).
+<P>
+Shortkey commands are also described in the introductionary text,
+<A href="../getstart/TOP.html#EDITING">"Editing Text"</A>,
+so the following is only a reminder about the most common functions.
+<P>
+Shortkey commands are roughly grouped into
+<ul>
+<li>Cursor Movement Keys
+<li>Selection Keys
+<li>Operation Keys
+</ul>
+
+<H3><A HREF="#INDEX" NAME="CURSORMOVEMENT">Cursor Movement Keys</A></H2>
+
+These are usually CTRL-key combinations.
+<UL>
+
+<LI><b>CTRL-e</b> / <b>End</b>: <i>Move to End</i><BR>Moves the text cursor to the end of the line.
+If your keyboard has a key named "End", that has the same function.
+<P>
+
+<LI><b>Pos1</b>: <i>Move to Begin</i><BR>Moves the text cursor to the beginning of the line.
+<P>
+
+<LI><b>CTRL-w</b>: <i>Next Word</i><BR>Moves the text cursor to the beginning of the next word.
+What exactly makes a "word" may depend on the contents, and the editor's setting.
+For example, whether the "underline" character is treated like part of an
+alphanumeric word, or not can be controlled by a toggle in the Launcher's settings dialog.
+<P>
+
+<LI><b>CTRL-W</b> (= CTRL-SHIFT-w): <i>End of Word</i><BR>Moves the text cursor to the end of the current or next word.
+If the cursor is currently within a word, it is moved to the end of it.
+If the cursor is already at the end of a word, it is moved to the end of the next word.
+<P>
+
+<LI><b>CTRL-g</b>: <i>Goto Line</i><BR>Opens a dialog asking for a line number.
+Positions the cursor into that line.
+
+</UL>
+
+<H3><A HREF="#INDEX" NAME="SELECTION">Selection Keys</A></H2>
+
+These are usually ALT-key combinations.
+<UL>
+<LI><b>ALT-w</b>: <i>Select Word</i><BR>If there is currently no selection,
+the word under the cursor is selected. If there is already a word selected,
+the next word is selected.
+<P>
+
+<LI><b>ALT-l</b>: <i>Select Line</i><BR>If there is currently no selection,
+the whole cursor line selected. Otherwise, the selection is expanded to include the
+next line. Pressing Alt-l multiple times, allows for quick selection of a block of
+lines.
+<P>
+
+<LI><b>ALT-f</b>: <i>Forward Search</i><BR>If there is a selection,
+search forward for the next occurence of that string.
+Typically this is used to search for words in the text.
+If there is no selection, previously searched string is searched again.
+See also ALT-s which opens a search box.
+<P>
+
+<LI><b>ALT-b</b>: <i>Backward Search</i><BR>If there is a selection,
+search backward for the previous occurence of that string.
+Typically used to search for words in the text.
+If there is no selection, previously searched string is searched again.
+See also ALT-s which opens a search box.
+<P>
+
+<LI><b>ALT-s</b>: <i>Search</i><BR>Opens a search dialog box, to enter a string
+and possibly change the search behavior.
+
+
+</UL>
+
+<H3><A HREF="#INDEX" NAME="OPERATION">Operation Keys</A></H2>
+
+<UL>
+
+<LI><b>CTRL-z</b>: <i>Undo</i><BR>
+Undo the last edit change. An arbitrary number of operations
+can be undone, back to the original contents.
+<P>
+
+<LI><b>CTRL-y</b>: <i>Redo</i><BR>
+Oops, if you undid one too many.
+<P>
+
+<LI><b>F3 / F4</b>: <i>Comment / Uncomment</i><BR>
+Comment / uncomment the selected text.
+If there is no selection, the current cursor line is affected.
+On some machines, these functions are found on F4/F5,
+because F3 is used by the window system.
+<P>
+
+<LI><b>F9 / F10</b>: <i>Indent / Undent by Tab</i><BR>
+Indent / undent the selected line(s) or the cursor line by the
+tab space setting (see user preferences).
+By default, Smalltalk/X uses multiples of 4 tab columns.
+<P>
+
+<LI><b>F11 / F12</b>: <i>Indent / Undent by 1</i><BR>
+As above, but inserts/removes a single space.
+<P>
+
+<LI><b>F8</b>: <i>Again</i><BR>
+Repeat the previous cut or replace operation.
+Thus to replace some text at multiple places in the document,
+select the word, type the replacement, then press <i>Again</i>.
+Repeat <i>Again</i> until the end of the document is reached,
+or select the <i>"Again For All"</i> menu function.
+<P>
+
+<LI><b>CTRL-s</b>: <i>Save/Accept</i><BR>
+Accept modifications / save contents. The details of this operation depend on
+the context in which the editor operates: in a system browser, changed code is compiled
+and installed. In a file browser, the changed contents is saved in the edited file.
+In an inspectors right panel, a changed value is stored in the inspected object.
+<P>
+
+<LI><b>ALT-a</b>: <i>Save/Accept</i><BR>
+An alternative key combination. This is recognized for backward compatibility.
+to keep old fashioned ST/X users happy.
+</UL>
+
+
+<H2><A HREF="#INDEX" NAME="SYNTAXCOLORING">Syntax Coloring</A></H2>
+
+The code view performs syntax coloring as you type.
+A number of different coloring styles are availabe
+and can be customized via the Launcher's settings dialog.
+
+
+<H2><A HREF="#INDEX" NAME="CODECOMPLETION">Code Completion</A></H2>
+
+If enabled in the Launcher's settings dialog,
+the editor offers code completions, either on the fly, "as you type",
+or initiated by a key ("<KBD>Tab</KBD>" or "<KBD>Ctrl</KBD>").
+<P>
+When "as you type" completion is enabled, a floating window
+presents plausible completions. This list is updated as you
+type more or delete characters by backspacing.
+The window is closed by pressing "<i>Esc</i>".
+<P>
+To select a completion, first navigate the list using the
+"<KBD>CursorUp</KBD>" or "<KBD>CursorDown</KBD>" key, then press "<KBD>Return</KBD>".
+<BR>
+Some users find it irritating that the cursor- and return keys are intercepted
+this way. Those may check the "Shift/Control to Navigate in Completion" checkbox in the Launcher's
+settings. If set, reguler key presses are handled as usual and
+to navigate the completion list, press "<KBD>Shift</KBD>" (or "<KBD>Ctrl</KBD>")-"<KBD>CursorKey</KBD>"
+and "<KBD>Shift</KBD>-<KBD>Return</KBD>".
+<P>
+The setting also includes check boxes named
+"Tab" or "Ctrl"-completion.
+If checked, the completion list appears when that key is pressed.
+
+
+
+
+<H2><A HREF="#INDEX" NAME="ABBREVIATIONS">Snippet Insertion (Abbreviations)</A></H2>
+
+Snippets are little code fragments which appear often
+in source code.
+A predefined (but customizable) list of abbreviations is
+defined in the Workspace class.
+The snippet to be inserted is determined by the character(s)
+before the cursor.
+<P>
+If a code completion list is presented, any applyable
+snippet is also appended to this list (and can thus be easily
+selected via CursorUp-Return.
+
+
+<H2><A HREF="#INDEX" NAME="CUSTOMIZATION">Customization</A></H2>
+
+The behavior can be adjusted via the Launcher's
+"<i>System</i>"-"<i>Settings</i>"-"<i>Tools</i>"-"<i>Editor</i>" dialog.
+
+<H3><A HREF="#INDEX" NAME="CUSTOMIZATION_CURSOR">Cursor Behavior at Line End</A></H3>
+
+The Cursor behavior of the editor can be configured to one of two modes:
+<UL>
+<LI>Rand-editor Mode (*)
+<LI>vi/emacs/st80-editor Mode
+</UL>
+In "Rand-editor" mode, the window behaves like a piece of paper,
+where the text-cursor can be positioned wherever you like,
+simply by clicking there.
+If required, spaces are inserted.
+<P>
+In "vi-editor" mode, the cursor can only positioned to a place after an actual character.
+If you click to the right of the last character in a line, the cursor will be placed
+right after the last character in that line.
+If you click below the last line, it will be positioned at the end of the text.
+<P>
+
+Non-programmers usually find the "Rand-editor" behavior more natural,
+whereas most programmers are used to the "unnatural" vi/emacs behavior.
+<P>
+
+You can change this setting in the Launcher's settings dialog, under
+"<I>Tools</I>" - "<I>Editor</I>" - "<I>ST80 cursor behavior at end of line</I>".
+
+<P>
+(*) the "Rand-editor, known as e" was a much advanced wysiwyg editor for glass-tube displays.
+<br>It was quite popular in the 80's. (<A HREF="http://www.rand.org/pubs/notes/2006/N2239-1.pdf">http://www.rand.org/pubs/notes/2006/N2239-1.pdf</A>)
+
+<H3><A HREF="#INDEX" NAME="CUSTOMIZATION_TABS">Tabulator Positions</A></H3>
+
+By default, ST/X uses tabs of 4 (i.e. at positions 1, 5, 9, ...) for indentation,
+which gives a good compromise between line-length and readability
+(tabs of 8 typically lead to very long lines, which make the code harder to
+read as you might have to scroll horizontally).
+
+<P>
+Notice, that the tab setting only affect the cursor behavior in the editor.
+Externally (i.e. in the file), tabs are always assumed to be in multiples of 8.
+When reading a file, leading tabs are converted, and vice versa, when writing
+files, leading spaces are converted to tabs in multiples of 8.
+
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif" ALT="[stx logo]">
+Copyright &copy; 1995-2013 Claus Gittinger Development & Consulting, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.10 $ $Date: 2017-11-25 13:48:24 $
+
+</BODY>
+</HTML>

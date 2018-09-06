@@ -1,0 +1,30 @@
+; View defaultStyle:#'fun_sofia' 
+;
+; children will love it ... but you wont work with this one.
+; fun style for my little daughter, sofia ...
+; like motif, but with different view background
+;
+; $Header: /cvs/stx/stx/libview/styles/oldStyles/fun_sofia.style,v 1.7 2000-08-16 14:27:26 ca Exp $
+
+
+#include 'motif.style'
+
+comment  'Fun style. Like motif with funny viewbackground.\\Not usable, but my doughter loves it ;-)'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Wie ''motif'', aber mit lustigem Hintergrund.\Nicht schön aber meine Tochter liebt ihn ...'
+#endif
+
+shadowColor                 Color black
+lightColor                  Color lightGrey
+
+viewBackground                     (Smalltalk imageFromFileNamed:'gifImages/garfield.gif' inPackage:'stx:goodies') magnifyBy:0.2 
+menuBackground                     =viewBackground
+selection.backgroundColor           =viewBackground
+selection.hilightBackgroundColor    =viewBackground
+selection.hilightForegroundColor    Color white
+menu.backgroundColor                =viewBackground
+
+scroller.viewBackground             =viewBackground
+button.activeBackgroundColor        =viewBackground
+button.activeForegroundColor        Color white

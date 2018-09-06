@@ -1,0 +1,88 @@
+<HEAD>
+<TITLE>Using the New System Browser - Code Coverage Analysis</TITLE>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="codeGeneration.html">  <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">    <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="lint.html"> <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+
+<H2><A NAME="CODE_COVERAGE" HREF="TOP.html#I_CODE_COVERAGE">Code Coverage Analysis</A></H2>
+
+The browser allows for code to be instrumented such that method entry and
+the execution of individual statements is recorded and is
+later colorized (typically, after a test run of an sunit test).
+
+<H3><A NAME="CODE_COVERAGE_PREPARATION" HREF="TOP.html#I_CODE_COVERAGE_PREPARATION">Preparing for Coverage Measurement</A></H2>
+To prepare code for instrumentation, recompile it first with instrumentation
+via the category's, package's, classes' or the method's debug menu:
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../pictures/NewSystemBrowser_coverage1.png" ALT="[stx logo]">
+<P>
+Then, enable coverage display in the browser's view menu:
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../pictures/NewSystemBrowser_coverage2.png" ALT="[stx logo]">
+<P>
+Now, all code should be shown in red color, which indicates
+that it was never executed:
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../pictures/NewSystemBrowser_coverage3.png" ALT="[stx logo]">
+
+<H3><A NAME="CODE_COVERAGE_RUNNING" HREF="TOP.html#I_CODE_COVERAGE_RUNNING">Executing the Instrumented Code</A></H2>
+
+Finally, execute the code (typically by running an sunit testsuite, or going through your application).
+The browser will then display code which was executed in green, code which was not in red color.
+Classes and methods which are partially covered are shown in orange:
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../pictures/NewSystemBrowser_coverage4.png" ALT="[stx logo]">
+<BR>
+(notice that the if-expressions have been executed, whereas the conditional code in the blocks
+has not - obviously, all conditions came out as false in that test run)
+
+<H3><A NAME="CODE_COVERAGE_RERUNNING" HREF="TOP.html#I_CODE_COVERAGE_RERUNNING">Rerunning the Instrumented Code</A></H2>
+You can clear (i.e. reset) the coverage data,
+either on a per class-category or per-class basis
+("<VAR>Class/Category</VAR>" -> "<VAR>Debug</VAR>" -> "<VAR>Clear Coverage Information</VAR>")
+or system wide ("<VAR>Debug</VAR>" -> "<VAR>Clear all Coverage Information</VAR>").
+<br>For your convenience, there is also a corresponding menu item found in the Launcher's "<VAR>Class</VAR>" -> "<VAR>Debug</VAR>" menu.
+<P>
+After a clear operation, all instrumented code is again in its original state (i.e. never reached),
+and shown in red.
+
+<H3><A NAME="CODE_COVERAGE_UNINSTRUMENTING" HREF="TOP.html#I_CODE_COVERAGE_UNINSTRUMENTING">Removing the Instrumentation</A></H2>
+To "uninstrument" code, recompile categories, classes or methods via the
+"<VAR>Class/Category/Method</VAR>" -> "<VAR>Debug</VAR>" -> "<VAR>Recompile without Instrumentation</VAR>" menu-function.
+Notice that the instrumentation does introduce some overhead during execution (remembering the caller
+and the type of receiver). Therefore it does make sense to uninstrument your code for faster execution.
+
+<H3><A NAME="CODE_COVERAGE_INSTRUMENTATION_CONTEXTS" HREF="TOP.html#I_CODE_COVERAGE_INSTRUMENTATION_CONTEXTS">Instrumentation Contexts</A></H2>
+All of the above were measuring a method's execution regardless of
+who called it. This is called "<VAR>global instrumentation</VAR>".
+In some cases this is not the measurement you want: for example, if you want
+to measure the execution of UI or collection classes.
+<p>These may get called by many other parts of the system as well,
+and you may or may not be interested in those calls.
+Actually, most of the time you'd be only interested,
+if the code gets called directly or indirectly by your test case, not by any other activity in the system.
+<P>
+For this, you can execute your instrumented code in a local instrumentation context,
+either programatically, or via the sunit test runner (which always sets up its own local context).
+Contexts are process-specific and are stored in a thread-local variable of the process
+during the run. They are also inherited, which means that any forked child process
+inherits the parent's instrumentation context.
+
+
+
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif" ALT="[stx logo]">
+Copyright &copy; 2012-2016 eXept Software AG, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+<HR>
+Doc $Revision: 1.6 $ $Date: 2016-11-02 11:55:35 $
+
+</BODY>
+</HTML>

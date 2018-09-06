@@ -1,0 +1,5 @@
+abbrev.stc              packages/stx/goodies/regex
+*.st                    packages/stx/goodies/regex/source       
+*.so                    packages/stx/goodies/regex
+*.dll                   bin
+

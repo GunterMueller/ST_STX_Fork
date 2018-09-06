@@ -1,0 +1,26 @@
+Examples on how to create, link, load and call C-functions
+contained in an external shared library.
+
+Type make (bmake / vcmake / mingwmake) here to generate 4 files:
+
+	stx_doc_coding_cModules.dll
+		a dll containing Smalltalk code,
+		which loads and calls the C libraries
+
+	demoCLib1.dll
+		a dll containing C code,
+
+	demoCLib2.dll
+		a dll containing C code and initializer functions,
+
+	demoCLib3.dll
+		a dll containing C code and initializer functions,
+
+Then, in Smalltalk load the smalltalk class library with:
+	Smalltalk loadPackage:'stx:doc/coding/cModules'
+
+and open a browser on the CModuleDemo class.
+	CodingExamples::CModuleDemo class browse
+
+There. try the three examples: demo1, demo2 and demo3
+Each will load the corresponding C-library, call a function and then unload the dll.

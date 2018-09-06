@@ -1,0 +1,13 @@
+"*
+ * Encoding: iso8859-1
+ *
+ * $Header: /cvs/stx/stx/projects/smalltalk/d_xfree.rc,v 1.8 2004/11/10 12:06:31 stefan Exp $
+ *
+ * MIMEType: application/x-smalltalk-source
+ *
+ * ST/X startup configuration file:
+ * display configuration - XDeep32 (a free XServer for Windows)
+ *"
+!
+View defaultStyle:#mswindowsXP.
+Screen current supportsDeepIcons:true.

@@ -1,0 +1,320 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Help - Keyboard Settings</Title>
+</HEAD>
+
+<BODY>
+
+<H1>Keyboard Settings</H1>
+
+<H2><A NAME="INDEX">Help index</A></H2>
+
+<UL>
+<LI><A HREF="#KEYBOARD_OPERATION">Keyboard processing</A>
+<LI><A HREF="#KEYMAP_DEFINITION">KeyboardMap setup</A>
+<LI><A HREF="#KEYBOARD_MACROS">Keyboard macros</A>
+<LI><A HREF="#COMPOSE_KEY">Composing national characters</A>
+<LI><A HREF="#MORE_INFO">Further reading</A>
+</UL>
+
+<HR>
+
+<H2><A NAME="KEYBOARD_OPERATION" HREF="#INDEX">Keyboard processing</A></H2>
+
+In <CITE>Smalltalk/X</CITE>, all keys are translated via a table called
+the <CITE>keyboardMap</CITE>.
+<BR>
+This table maps raw physical keys and modifier keys
+(i.e. <KBD>"<B>Ctrl</B>"</KBD>, <KBD>"<B>Alt</B>"</KBD> or <KBD>"<B>Meta</B>"</KBD>)
+to logical keys (such as <CODE>#Copy</CODE>, <CODE>#Cut</CODE> or <CODE>#EndOfText</CODE>).
+<P>
+Within <CITE>Smalltalk/X</CITE>, only logical keys are used.
+
+<P>
+
+
+<H2><A NAME="KEYMAP_DEFINITION" HREF="#INDEX">KeyboardMap setup</A></H2>
+
+The keyboardMap is set up in the startup files:
+<UL>
+<LI><CODE>keyboard.rc</CODE>
+<BR>
+Sets up all common mappings
+<BR>
+(for example: a mapping of <KBD>"<B>Ctrl-a</B>"</KBD> to <CODE>#BeginOfLine</CODE> is created there)
+<P>
+
+<LI><CODE>d_vendor.rc</CODE> or <CODE>d_displayName.rc</CODE>
+<BR>
+Might add display-dependent mappings
+<BR>
+(for example: a mapping for the <KBD>"<B>Copy</B>"</KBD> key found on sun workstations is created there)
+<P>
+
+<LI><CODE>private.rc</CODE>
+<BR>
+Place your personal preferences there
+<P>
+</UL>
+
+The current keyboardMap is displayed in the launcher's keyboardSetting dialog.
+Read
+<A HREF="../../custom/TOP.html#KEYBOARD"><VAR>``Keyboard mappings''</VAR></A>.
+in <VAR>``Configuration & Customization''</VAR>:
+for more information.
+
+<P>
+
+
+<H2><A NAME="KEYBOARD_MACROS" HREF="#INDEX">Keyboard macros</A></H2>
+
+In addition to builtin keyboard functions like <CODE>#Copy</CODE> or <CODE>#Paste</CODE>),
+additional user defined macros may be assigned to keys.
+Common macros such as <CODE>#CommentSelection</CODE> are defined in <CODE>keyboardMacros.rc"</CODE>;
+you may add your private macros
+and keyboard settings to your <CODE>private.rc"</CODE> file.
+<P>
+Read
+<A HREF="../../custom/TOP.html#KEYMACROS"><VAR>``Keyboard macros''</VAR></A>.
+in <VAR>``Configuration & Customization''</VAR>
+for more information.
+
+
+
+
+
+
+
+<H2><A NAME="COMPOSE_KEY" HREF="#INDEX">Composing national characters</A></H2>
+
+Notice: on modern systems, the following is obsolete, as it is already done by
+your operating system.
+<P>
+
+National characters which are not present on your keyboard can be
+entered via a <CITE>Compose key sequence</CITE>:
+<BR>
+Press the <KBD>"<B>Compose</B>"</KBD> key followed by the two keys which graphically
+form the desired national key.
+For example, the german "&auml;" (<CITE>Umlaut-a</CITE>) is entered as:
+<PRE>
+	<KBD><B>Compose</B></KBD> <KBD><B>a</B></KBD> <KBD><B>"</B></KBD>
+</PRE>
+
+If your keyboard has no <KBD>"<B>Compose</B>"</KBD> key,
+it may be remapped (using the keyboard map) to some other unused key.
+<BR>
+The default setup remaps the right control key (<KBD>"<B>Control_R</B>"</KBD>).
+
+<P>
+If your keyboard has those characters but you don't get them with typing,
+consult the displays manual (i.e. xmodmap manual pages).
+
+<P>
+
+Here is a list of available compose key sequences:
+
+<UL>
+<LI>standard characters (which may not be present on a national keyboard):
+<PRE><CODE>
+    Compose + +     for <B>#</B>  (number-sign)
+    Compose A A     for <B>@</B>  (at-sign)
+
+    Compose - (     for <B>{</B>  (left brace)
+    Compose - )     for <B>}</B>  (right brace)
+</CODE></PRE>
+
+<LI>special characters:
+
+<PRE><CODE>
+    Compose | c     for <B>¢</B>  (cent-sign)
+    Compose | S     for <B>$</B>  (dollar-sign)
+    Compose = L     for <B>£</B>  (pound-sign)
+    Compose = Y     for <B>¥</B>  (Yen-sign)
+
+    Compose ! s     for <B>§</B>  (section-sign)
+    Compose ! p     for <B>¶</B>  (paragraph-sign)
+
+    Compose O C     for <B>©</B>  (copyright-sign)
+    Compose O R     for <B>®</B>  (registered-sign)
+
+    Compose &lt; &lt;     for <B>«</B>  (french-&lt;&lt;-quotes)
+    Compose &gt; &gt;     for <B>»</B>  (french-&gt;&gt;-quotes)
+
+    Compose / u     for <B>µ</B>  (greek mu)
+
+    Compose ^ 0     for <B>°</B>  (degree or superscript-zero)
+    Compose ^ 1     for <B>¹</B>  (superscript-one)
+    Compose ^ 2     for <B>²</B>  (superscript-two)
+    Compose ^ 3     for <B>³</B>  (superscript-three)
+
+    Compose ^ .     for <B>·</B>  (dot, centered period)
+
+    Compose 1 2     for <B>½</B>  (1/2)
+    Compose 1 4     for <B>¼</B>  (1/4)
+    Compose 3 4     for <B>¾</B>  (3/4)
+
+    Compose + -     for <B>±</B>  (plus-minus)
+    Compose ? ?     for <B>¿</B>  (inverted ?)
+    Compose - :     for <B>÷</B>  (divide)
+</CODE></PRE>
+
+<LI>diacriticals characters - grave:
+
+<PRE><CODE>
+    Compose A `     for <B>À</B>  (A-grave)
+    Compose a `     for <B>à</B>  (a-grave)
+    Compose E `     for <B>È</B>  (E-grave)
+    Compose e `     for <B>è</B>  (e-grave)
+    Compose I `     for <B>Ì</B>  (I-grave)
+    Compose i `     for <B>ì</B>  (i-grave)
+    Compose O `     for <B>Ò</B>  (O-grave)
+    Compose o `     for <B>ò</B>  (o-grave)
+    Compose U `     for <B>Ù</B>  (U-grave)
+    Compose u `     for <B>ù</B>  (u-grave)
+</CODE></PRE>
+
+<LI>diacriticals characters - acute:
+
+<PRE><CODE>
+    Compose A '     for <B>Á</B>  (A-acute)
+    Compose a '     for <B>á</B>  (a-acute)
+
+    ... like above for all vocals ...
+</CODE></PRE>
+
+<LI>diacriticals characters - circumflex:
+
+<PRE><CODE>
+    Compose A ^     for <B>Â</B>  (A-circumflex)
+    Compose a ^     for <B>â</B>  (a-circumflex)
+
+    ... like above for all vocals ...
+</CODE></PRE>
+
+<LI>diacriticals characters - tilde:
+
+<PRE><CODE>
+    Compose A ~     for <B>Ã</B>  (A-tilde)
+    Compose a ~     for <B>ã</B>  (a-tilde)
+    Compose O ~     for <B>Õ</B>  (O-tilde)
+    Compose o ~     for <B>õ</B>  (o-tilde)
+    Compose N ~     for <B>Ñ</B>  (N-tilde)
+    Compose n ~     for <B>ñ</B>  (n-tilde)
+</CODE></PRE>
+
+<LI>diacriticals characters - ring:
+
+<PRE><CODE>
+    Compose A *     for <B>Å</B>  (A-ring)
+    Compose a *     for <B>å</B>  (a-ring)
+</CODE></PRE>
+
+<LI>diacriticals characters - cedille:
+
+<PRE><CODE>
+    Compose C ,     for <B>Ç</B>  (C-cedille)
+    Compose c ,     for <B>ç</B>  (c-cedille)
+</CODE></PRE>
+
+<LI>diacriticals characters - dieresis:
+
+<PRE><CODE>
+    Compose A "     for <B>Ä</B>  (A-dieresis)
+    Compose a "     for <B>ä</B>  (a-dieresis)
+    Compose E "     for <B>Ë</B>  (E-dieresis)
+    Compose e "     for <B>ë</B>  (e-dieresis)
+    Compose I "     for <B>Ï</B>  (I-dieresis)
+    Compose i "     for <B>ï</B>  (i-dieresis)
+    Compose O "     for <B>Ö</B>  (O-dieresis)
+    Compose o "     for <B>ö</B>  (o-dieresis)
+    Compose U "     for <B>Ü</B>  (U-dieresis)
+    Compose u "     for <B>ü</B>  (u-dieresis)
+    Compose y "     for <B>ÿ</B>  (y-dieresis)
+</CODE></PRE>
+
+<LI>diacriticals characters - slashed:
+
+<PRE><CODE>
+    Compose O /     for <B>Ø</B>  (O-slash)
+    Compose o /     for <B>ø</B>  (o-slash)
+</CODE></PRE>
+
+<LI>diacriticals characters - single dot:
+
+<PRE><CODE>
+    Compose C .     for <B>&#266;</B>  (C-dot)
+    Compose c .     for <B>&#267;</B>  (c-dot)
+
+    ... and so on for other consonants ...
+</CODE></PRE>
+
+<LI>diacriticals characters - macron:
+
+<PRE><CODE>
+    Compose A -     for <B>&#256;</B>  (A-macron)
+    Compose a -     for <B>&#257;</B>  (a-macron)
+
+    ... and so on for other consonants ...
+</CODE></PRE>
+
+<LI>diacriticals characters - breve:
+
+<PRE><CODE>
+    Compose A u     for <B>&#258;</B>  (A-breve)
+    Compose a u     for <B>&#259;</B>  (a-breve)
+
+    ... and so on for other consonants ...
+</CODE></PRE>
+
+
+<LI>diacriticals characters - caron:
+
+<PRE><CODE>
+    Compose A v     for <B>&#461;</B>  (A-caron)
+    Compose a v     for <B>&#462;</B>  (a-caron)
+
+    ... and so on for other consonants ...
+</CODE></PRE>
+
+
+<LI>ligatures:
+<PRE><CODE>
+    Compose s s     for <B>&szlig;</B>  (german sz)
+    Compose A E     for <B>&AElig;</B>  (AE-ligature)
+    Compose a e     for <B>&aelig;</B>  (ae-ligature)
+    Compose O E     for <B>&OElig;</B>  (OE-ligature)
+    Compose o e     for <B>&oelig;</B>  (oe-ligature)
+    Compose I J     for <B>&LJlig;</B>  (IJ-ligature)
+    Compose i j     for <B>&ljlig;</B>  (ij-ligature)
+</CODE></PRE>
+
+</UL>
+
+
+<H2><A NAME="MORE_INFO" HREF="#INDEX">Further reading</A></H2>
+
+For more information, read
+<A HREF="../../custom/TOP.html"><VAR>"Configuration & Customization"</VAR></A>.
+
+
+
+
+<P>
+<P>
+
+
+
+<HR>
+<P>
+<P>
+Copyright &copy; Claus Gittinger Development & Consulting, all rights reserved
+<P>
+<P>
+
+<HR>
+Doc $Revision: 1.14 $ $Date: 2013-08-02 16:47:15 $
+
+</BODY>
+</HTML>

@@ -1,0 +1,29 @@
+/* XPM */
+static char *small_file_telnet_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"20 19 3 1",
+/* colors */
+"  c none",
+"a c white",
+"b c black",
+/* pixels */
+" bbbbbbbbbbbbbbbbbb ",
+" baaaaaaaaaaaaaaaabb",
+" babbbbabbbabbaaaabb",
+" babbbbabbbabbaaaabb",
+" baabbaabbaabbaaaabb",
+" baabbaabbbabbaaaabb",
+" baabbaabbbabbaaaabb",
+" baabbaabbaabbaaaabb",
+" baabbaabbbabbbbaabb",
+" baabbaabbbabbbbaabb",
+" baaaaaaaaaaaaaaaabb",
+" bbbbbbbbbbbbbbbbbbb",
+"  bbbbbbbbbbbbbbbbbb",
+"                    ",
+"                 b  ",
+" bbbbbbbbbbbbbbbbbb ",
+"bbbbbbbbbbbbbbbbbbbb",
+" bbbbbbbbbbbbbbbbbb ",
+"                 b  ",
+};

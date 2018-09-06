@@ -1,0 +1,34 @@
+This directory contains the original refactoryBrowsers code
+separated into:
+    parser
+	- scanner, parser and formatter classes 
+
+    changes
+	- Change classes
+
+    refactorings
+        
+    browser
+	- the actual browser (i.e. GUI)
+
+    lint
+	- smallLint and friends
+
+Changes and refactorings are already used by some other parts
+of the system (NewSystemBrowser).
+
+The refactoringBrowser itself is not maintained, although most
+of it runs fine.
+
+    However, some known bugs are:
+       whenever another tab is added to the RB's notbook view,
+       it seems to loose some dependencies and does no longer update
+       the codeView ...
+
+    Category (SystemOrganizer) handling is simulated very slow 
+
+Most of the refactoringBrowsers functionality is also found in
+the NewSystemBrowser (actually more).
+
+Be reminded:
+	this is provided as a goody - no warranty, no maintenance, no nothing.

@@ -1,0 +1,23 @@
+; View defaultStyle:#mswindows2 
+;
+; like mswindows, but with green scroller-background
+; and some green'ish grey default background
+; (seen in an MS-dos magazine)
+; DOES NOT WORK YET 
+; (the name mswindows is still hardcoded in some places ...)
+;
+;
+; $Header: /cvs/stx/stx/libview/styles/mswindows2.style,v 1.6 1998-08-29 15:16:41 cg Exp $
+
+viewGrey                  Color white
+
+#include 'mswindows.common'
+
+comment  'MS windows look alike (not complete);\\with different text background'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Angelehnt an MS Windows (nicht vollständig)\mit geändertem Hintergrund für Texte'
+#endif
+
+text.viewBackgroundColor     Color red:50 green:68 blue:57 
+text.backgroundColor         Color red:50 green:68 blue:57 

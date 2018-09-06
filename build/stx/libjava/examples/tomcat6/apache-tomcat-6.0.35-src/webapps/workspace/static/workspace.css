@@ -1,0 +1,13 @@
+span.template {
+    border-left: 5px solid lightgray;
+    padding-left: 1em;
+    margin-left: 0px;
+}
+
+span.template:hover {
+    background-color: #EEEEEE;
+}
+
+div.template {
+    margin-bottom: 5px;
+}

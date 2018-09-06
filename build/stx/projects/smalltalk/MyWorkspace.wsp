@@ -1,0 +1,34 @@
+"/*********************************************************************
+"/****                                                             ****
+"/**** this is an example for a MyWorkspace.wsp file's contents    ****
+"/****                                                             ****
+"/**** change as required and save as MyWorkspace.wsp              ****
+"/****                                                             ****
+"/*********************************************************************
+
+"/
+"/ useful expressions:
+"/
+Object enableBreakPoint:#cg.
+Object disableBreakPoint:#cg.
+
+"/
+"/ loading precompiled packages:
+"/
+Smalltalk loadPackage:'stx:goodies/magritte'.
+Smalltalk loadPackage:'stx:goodies/magritte/tests'.
+Smalltalk loadPackage:'stx:goodies/webServer'.
+Smalltalk loadPackage:'stx:goodies/communication'.
+Smalltalk loadPackage:'stx:goodies/net'.
+Smalltalk loadPackage:'stx:goodies/xml/yaxo'.
+Smalltalk loadPackage:'stx:goodies/soap'.
+
+Smalltalk loadPackage:'cvut:fel/smallruby'.
+
+Smalltalk loadPackage:'cg:private' asAutoloaded:true.
+
+"/
+"/ loading individual class files:
+"/
+Smalltalk fileInClass:'Foo' package:'cg:private'.
+Foo open.

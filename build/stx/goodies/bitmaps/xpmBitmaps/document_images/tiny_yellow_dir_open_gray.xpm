@@ -1,0 +1,27 @@
+/* XPM */
+static char *tiny_yellow_dir_open_gray_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 4 1",
+/* colors */
+"a c black",
+"b c yellow",
+"c c #B2B2B2",
+"d c none",
+/* pixels */
+"dddddddddddddddd",
+"dddddddddddddddd",
+"dddddddddddddddd",
+"ddaaaadddddddddd",
+"dacacaaddddddddd",
+"acacacaaaaaaaadd",
+"aacacacacacacadd",
+"acaaaaaaaaaaaaaa",
+"acaabababababaaa",
+"aaababababababad",
+"aababababababaad",
+"ababababababaadd",
+"aaaaaaaaaaaaaadd",
+"dddddddddddddddd",
+"dddddddddddddddd",
+"dddddddddddddddd",
+};

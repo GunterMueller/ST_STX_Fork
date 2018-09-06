@@ -1,0 +1,4 @@
+#define ScrollUp_width 8
+#define ScrollUp_height 8
+static unsigned char ScrollUp_bits[] = {
+   0x00, 0x18, 0x18, 0x3c, 0x3c, 0x7e, 0x7e, 0x00};

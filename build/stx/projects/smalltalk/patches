@@ -1,0 +1,68 @@
+"/
+"/ $Header$
+"/
+"/ This file is processed very early at initial startup (before any rc script)
+"/ - not when resuming an image.
+"/
+
+"/
+"/ set the package for changes done below
+"/
+Project notNil ifTrue:[
+    |p|
+
+    p := Project new.
+    p package:#'patches'.
+    Project current:p.
+].
+!
+
+"/ read patches from two patch-directories, called 'stxPatches' and 'userPatches'.
+"/ (in the future, patch-sets will be delivered for that directory in the future)
+"/ This is not yet done, but we are prepared here for this ...
+"/
+"/ Patches from that directory are read in alphabetic order;
+"/ patches will be named them p_nnnn.st, where nnnn is a sequence-nr.
+
+"/ Smalltalk splashInfo:'patches [info]: installing patches...'.
+
+#(
+    'stxPatches'
+    'userPatches'
+) do:[:patchDirName |
+    |patchDirOrNil patchDir|
+
+    patchDirOrNil := Smalltalk getSystemFileName:patchDirName.
+    patchDirOrNil notNil ifTrue:[
+	patchDir := patchDirOrNil asFilename.
+	(patchDir exists and:[patchDir isDirectory and:[patchDir isReadable]]) ifTrue:[
+	    patchDir directoryContents sort do:[:f |
+		|file fn|
+
+		fn := (file := patchDir construct:f) name.
+		"JV@2012-08-15: File in only if file is not a directory. Otherwise system
+		 crashes during startup, if one of the patch directories contains another directory
+		 (such as CVS)"
+		(file isDirectory not and:[file isReadable]) ifTrue:[
+		    ( #('xxx' 'bak' 'sav') includes:file suffix asLowercase) ifTrue:[
+			Smalltalk splashInfo:('patches [info]: skipping file "',fn,'" (wrong suffix)').
+		    ] ifFalse:[
+			Smalltalk splashInfo:('patches [info]: reading patch "',fn,'"...').
+			AbortOperationRequest handle:[:ex |
+			    Smalltalk splashInfo:('patches [info]: aborted patch "',f,'" (',ex description,')').
+			] do:[
+			    Smalltalk fileIn:fn.
+			].
+		    ].
+		]
+	    ]
+	]
+    ].
+].
+!
+
+"/
+"/ the following patches where added by the changesBrowsers 'make change a patch'
+"/ function ...
+"/
+!

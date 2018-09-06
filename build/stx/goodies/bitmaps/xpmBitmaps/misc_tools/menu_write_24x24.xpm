@@ -1,0 +1,36 @@
+/* XPM */
+static char *menu_write_24x24_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"24 24 5 1",
+/* colors */
+"a c black",
+"b c yellow",
+"c c #808000",
+"d c white",
+"e c none",
+/* pixels */
+"eeeeeeeeeeeeeeeeeeeeeeee",
+"eeeeeeeeeeeeeeeeeeeeeeee",
+"eeeeeeeeeeeeeeeeeeeeeeee",
+"eeeeeeeeeeeeeeeeeeeaaeee",
+"eeeeeeeeeeeeeeeeeeadbaee",
+"eeeeeeeeeeeeeeeeeadbcaee",
+"eeeeeeeeeeeeeeeeadbccaee",
+"eeeeeeeeeeeeeeeadbcacaee",
+"eeeeeeeeeeeeeeadbcacaeee",
+"eeeeeeeeeeeeeadbcacaeeee",
+"eeeeeeeeeeeeadbcacaeeeee",
+"eeeeeeeeeeeadbcaaaeeeeee",
+"eeeeeeeeeeadbcaeaeeeeeee",
+"eeeeeeeeeadbcaeeeeeeeeee",
+"eeeeeeeeadbcaeeeeeeeeeee",
+"eeeeeeeadbcaeeeeeeeeeeee",
+"eeeeeeadbcaeeeeeeeeeeeee",
+"eeeeeadbcaeeeeeeeeeeeeee",
+"eeeeeabcaeeeeeeeeeeeeeee",
+"eeeeacaaeeeeeeeeeeeeeeee",
+"eeeeaaeeeeeeeeeeeeeeeeee",
+"eeeaeeeeeeeeeeeeeeeeeeee",
+"eeeeeeeeeeeeeeeeeeeeeeee",
+"eeeeeeeeeeeeeeeeeeeeeeee",
+};

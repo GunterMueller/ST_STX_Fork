@@ -1,0 +1,27 @@
+
+!IF "$(STATIC_MESA)" == "1"
+!ERROR lib.$(LIBBASE) : This file require STATIC_MESA be set to 0.
+!ENDIF
+
+LIBCOMMENTS=Requires Glide 2.x Runtime for 3Dfx Voodoo Graphics, Voodoo Rush, or Voodoo2.
+
+!INCLUDE .\rules\lib.mesagl.core
+
+USE_CRTDLL=1
+
+SRCALT2 = .\$(MESAROOT)\src\FX
+SRCALT3 = .\$(MESAROOT)\src\OSmesa
+
+DEFFILE = res\fxmesagl32.def
+RCFILE  = res\fxmesagl32.rc
+
+CPPOPTS = $(CPPOPTS) /DFX /DFX_SILENT /DBUILD_GL32
+
+SRCFILES = $(MESA_CORE)\
+	fxwgl.c fxapi.c fxdd.c fxddtex.c fxvsetup.c fxsetup.c fxtexman.c\
+	fxrender.c fxpoints.c fxlines.c fxtris.c fxquads.c fxspan.c\
+	OSmesa.c
+
+DLLLIBS = glide2x.lib
+DLLBASE = OpenGL32
+OBJDIR_R = $(MESAROOT)\lib\FX

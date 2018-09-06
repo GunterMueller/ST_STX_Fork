@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project name="stx.libjava.tools" default="compile" basedir=".">
+    <import file="build.auto.xml"/>
+    <!-- Put custom build code here, this file is never overwritten by Smalltalk/X --> 
+
+    <!-- This is basically a hack since stx:libjava/tests is not 
+    	 a declared prerequisite of stx:libjava/tools. This is 
+    	 consequence of not having tests separated in its own 
+    	 Smalltalk/X package 
+    -->    	 
+    <path id="test.classpath">
+        <path refid="build.classpath"/>
+        <pathelement path="${build.bin.dir}"/>
+        <pathelement path="${build.bin-tests.dir}"/>
+        <pathelement path="${TOP}/libjava/tests/java/bin"/>
+    </path>    
+</project>

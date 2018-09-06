@@ -1,0 +1,13 @@
+; View defaultStyle:#mswindows95MiniScroller
+;
+; $Header: /cvs/stx/stx/libview/styles/mswindows95MiniScroller.style,v 1.2 2014-11-26 19:13:52 cg Exp $
+
+#include 'mswindows95.style'
+
+comment  'like win95, with miniScrollers'
+
+#if (Language == #german) or:[Language == #de]
+comment  'wie Win95, mit MiniScroller'
+#endif
+
+scrollBar.neverMini                      false

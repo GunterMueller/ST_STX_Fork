@@ -1,0 +1,58 @@
+syntax: glob
+*.chg
+*~
+*.orig
+*.o
+*.obj
+*.c
+*.so
+*.sc
+*Init.c
+*.H
+*.STH
+*/makefile
+*/docs/output/*
+*/docs/*.xml.profiled
+
+objbc/*
+objvc/*
+objmingw/*
+*.res
+*-Test.xml
+*.base
+*.orig
+*.local
+*.other
+makefile
+
+# Compilation artifacts
+stx.exe
+stx.com
+stx
+buildDate.h
+modulList.*
+
+# Maintained by rakefiles for now (unless fully automatic
+# dependency extractor is implemented)
+modules.stx
+
+resources/stx
+packages/*
+packages/*
+modules/*
+lib*.dll
+lib*.so
+lib*.debug
+librun.dll
+librun.so
+symbols.stc
+
+st.chg
+
+# Support libraries used on Windows
+libgcc_s_dw2-1.dll
+X11.dll
+Xext.dll
+
+# Logs from Windows Launcher
+smalltalk*.log

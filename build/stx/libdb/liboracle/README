@@ -1,0 +1,6 @@
+Interface to an oracle database (Oracle 8 and Oracle 9)
+using the OCI C-interface library.
+
+In order to compile,
+the shell variable ORACLE_HOME must be set correctly,
+to find rdbms/demo/oci.h there.

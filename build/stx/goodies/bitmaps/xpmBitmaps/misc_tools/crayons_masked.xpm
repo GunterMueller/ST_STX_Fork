@@ -1,0 +1,46 @@
+/* XPM */
+static char *crayons[] = {
+/* width height ncolors chars_per_pixel */
+"32 32 6 1",
+/* colors */
+"` c black",
+"a c #2020FF",
+"b c red",
+"c c white",
+"d c green",
+"  c none",
+/* pixels */
+"        `       `       `       ",
+"       ```     ```     ```      ",
+"       ``b     ``d     ``a      ",
+"      ```b`   ```d`   ```a`     ",
+"      ``bbb   ``ddd   ``aaa     ",
+"     ```bbb` ```ddd` ```aaa`    ",
+"     ``````` ``````` ```````    ",
+"     ``bbbbb ``ddddd ``aaaaa    ",
+"     ``````` ``````` ```````    ",
+"     ``bbbbb ``ddddd ``aaaaa    ",
+"     ``bbbbb ``ddddd ``aaaaa    ",
+"     ```bbbb ```dddd ```aaaa    ",
+"     ````bbb ````ddd ````aaa    ",
+"     ````bbb ````ddd ````aaa    ",
+"     `````bb `````dd `````aa    ",
+"     `````bb `````dd `````aa    ",
+"     `````bb `````dd `````aa    ",
+"     `````bb `````dd `````aa    ",
+"     `````bb `````dd `````aa    ",
+"     `````bb `````dd `````aa    ",
+"     `````bb `````dd `````aa    ",
+"     `````bb `````dd `````aa    ",
+"     `````bb `````dd `````aa    ",
+"     `````bb `````dd `````aa    ",
+"     ````bbb ````ddd ````aaa    ",
+"     ````bbb ````ddd ````aaa    ",
+"     ```bbbb ```dddd ```aaaa    ",
+"     ``bbbbb ``ddddd ``aaaaa    ",
+"     ``bbbbb ``ddddd ``aaaaa    ",
+"     ``````` ``````` ```````    ",
+"     ``bbbbb ``ddddd ``aaaaa    ",
+"     ``````` ``````` ```````    "
+};
+

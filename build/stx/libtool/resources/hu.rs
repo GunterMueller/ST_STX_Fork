@@ -1,0 +1,41 @@
+#encoding utf-8
+
+; $Header: /cvs/stx/stx/libtool/resources/hu.rs,v 1.3 2008/11/28 16:41:56 cg Exp $
+;
+; Launcher: Hungarian
+;
+
+;'Afrikaans'
+'Chinese'                       'Kínai'
+'Chinese, Simplified'           'Kínai (egyszerűsített)'
+'Chinese, Traditional'          'Kínai (hagyományos)'
+'Chinese (simplified)'          'Kínai (egyszerűsített)'
+'Chinese (traditional)'         'Kínai (hagyományos)'
+'Croatian'                      'Horvát'
+;'Czech'
+'Danish'                        'Dán'
+'Dutch'                         'Holland'
+'English'                       'Angol'
+'English (US)'                  'Angol (US)'
+'English (UK)'                  'Angol (UK)'
+'Esperanto'                     'Eszperantó'
+'French'                        'Francia'
+'Finnish'                       'Finn'
+'German'                        'Német'
+'Greek'                         'Görög'
+'Hungarian'                     'Magyar'
+'Italian'                       'Olasz'
+'Japanese'                      'Japán'
+'Korean'                        'Koreai'
+;'Latin'
+'Norwegian'                     'Norvég'
+'Portuguese'                    'Portugál'
+'Portuguese (Brazilian)'        'Portugál (BR)'
+'Polish'                        'Lengyel'
+'Romanian'                      'Román'
+'Russian'                       'Orosz'
+'Slovak'                        'Szlovák'
+'Slovenian'                     'Szlovén'
+'Spanish'                       'Spanyol'
+;'Swedish'
+'Turkish'                       'Török'

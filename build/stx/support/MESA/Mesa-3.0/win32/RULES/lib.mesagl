@@ -1,0 +1,7 @@
+
+!INCLUDE .\rules\lib.mesagl.core
+
+SRCALT2=.\$(MESAROOT)\src\OSmesa
+SRCALT3=.\$(MESAROOT)\src\Windows
+
+SRCFILES = $(MESA_CORE) OSmesa.c Wmesa.c

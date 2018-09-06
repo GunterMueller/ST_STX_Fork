@@ -1,0 +1,62 @@
+<html><head><title>Refactoring: 
+Replace Static Variable with Parameter</title></head><body>
+<H1>
+Replace Static Variable with Parameter</H1>
+<P><B> Refactoring contributed by 
+	<A href="mailto:vittek@www.xref.sk">
+Marian Vittek </A></B></P>
+<P><I><CENTER>
+A function depending on a static variable needs to be reused in more general context.
+</CENTER></I></P>
+<P><B><CENTER>
+Add a new parameter to the function and replace all references of the static variable within the
+function by this new parameter.
+</CENTER></B></P>
+
+<PRE>
+<PRE>
+void printValues() {
+	for (int i = 0; i &lt; people.length; i++) {
+		System.out.println(people[i].name+" has salary "+people[i].salary);
+	}
+}
+
+public static void main(String args[]) {
+	...
+	printValues();
+}
+</PRE>
+</PRE><P><CENTER><IMG SRC="arrow.gif"/></CENTER></P>
+<PRE>
+
+void printValues(PrintStream outfile) {
+	for (int i = 0; i &lt; people.length; i++) {
+		outfile.println(people[i].name+" has salary "+people[i].salary);
+	}
+}
+
+public static void main(String args[]) {
+	...
+	printValues(System.out);
+}
+
+</PRE>
+<h2>Motivation</h2>
+<P>
+The original function is using a static variable, but you wish either to reuse the function in new
+project (not containing the static variable) or reuse the function in the same project but in more
+general context.</P>
+
+<h2>Mechanics</h2><UL>
+<LI>If the function calls other functions using the static variable in question, then use this
+refactoring on all those invoked functions first.</LI>
+<LI>Use <A href="addParameter.html">
+
+
+
+Add Parameter</A> to add a new argument to the function</LI>
+<LI>Add the static variable as actual argument to all callers of this function in.</LI>
+<LI>Replace all references to the static variable within the function by the new argument</LI>
+</UL>
+
+<P /><P /><P><CENTER><A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A></CENTER></P></body></html>

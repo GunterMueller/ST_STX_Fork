@@ -1,0 +1,930 @@
+<HTML>
+
+<HEAD>
+<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<TITLE>Smalltalk/X Demos & Goodies</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="../TOP.html" INFO="Back to documentation's main page" > <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+
+<P>
+
+This text is not finished - expect more to be documented
+here in the future.
+<P>
+
+<H1><A NAME="INTRO">Demos and coding examples</A></H1>
+
+Many demos and coding examples are found in the
+directories
+<A HREF="coding/"><CODE>"doc/coding"</CODE></A>
+and
+<A HREF="clients/Demos/"><CODE>"clients/Demos"</CODE></A>.
+<P>
+The demos are provided for you to get some starting point for your
+own applications.
+
+<P>
+Some of these files are to be filed in, others
+(especially in <CODE>"doc/coding"</CODE>) only contain
+code fragments, and are to be evaluated using
+<VAR>doIt</VAR>.
+<BR>
+Have a look at those files with the fileBrowser.
+
+<P>
+Another source of information and examples is the
+<A HREF="goodies/"><CODE>"goodies"</CODE></A>
+subdirectory. Ported goodies and classes from public domain
+or freeware archives (mainly the <CITE>Manchester Smalltalk Archive</CITE>)
+are stored there.
+<P>
+Finally, many classes provide an <CITE>"examples"</CITE> method in
+their <CITE>"documentation"</CITE> category. This usually consists of code pieces which
+are to be evaluated with <CITE>doIt</CITE>.
+
+<P>
+<A NAME="CODINGEXAMPLES"></A>
+Among others, interesting in <CODE>"doc/coding"</CODE> are:
+<UL>
+<LI><CODE>Array-literalStore</CODE>
+<BR>
+demonstrates that storing into array literals is BAD BAD BAD
+<BR>
+and that <CITE>ST/X's</CITE> compiler can be configured to help
+detecting these bad stored.
+<P>
+
+<LI><CODE>BOSS-examples</CODE>
+<BR>
+some code fragments to demonstrate binary store
+and load of objects
+<P>
+
+<LI><CODE>BOSS-errors</CODE>
+<BR>
+code fragments to demonstrate possible errors
+when using binary store (i.e. loading obsolete instances).
+Also, mechanisms to detect and correct these situations are described
+by example.
+<P>
+
+<LI><CODE>BOSS-special</CODE>
+<BR>
+demonstrates how instance variables can be ommitted from
+a binary store (i.e. only storing parts of an object).
+<P>
+
+<LI><CODE>Block-examples</CODE>
+<BR>
+demonstrates, that blocks have true local state
+(i.e. are closures, and can be recursive)
+<P>
+
+<LI><CODE>Block-unwind</CODE>
+<BR>
+shows how <CODE>valueOnUnwind:</CODE> and <CODE>valueNowOrOnUnwind:</CODE>
+are used
+<P>
+
+<LI><CODE>Class-anonymous</CODE>
+<BR>
+demonstrates how classes (a Behavior or light weight class)
+can be created on-the-fly.
+Of course, they can have instances which understand messages.
+<P>
+
+<LI><CODE>Class-dynamic</CODE>
+<BR>
+simple demonstration of dynamically changing the
+class of an object.
+<BR>
+(this is more of theoretical interest)
+<P>
+
+<LI><CODE>Class-multipleInheritance</CODE>
+<BR>
+a very simple demo implementation of multiple inheritance
+<BR>
+(experimental - you should not use or depend on MI in Smalltalk)
+<P>
+
+
+<LI><CODE>Class-subclassing</CODE>
+<BR>
+various possibilities to define a subclass
+<BR>
+(also demonstrates that variableSubclasses can have named instance variables)
+<P>
+
+
+<LI><CODE>Context-advanced</CODE>
+<BR>
+some special tricks possible with contexts
+(some of these tricks already found their way into
+the standard classes; see the implementation of <CODE>while*</CODE> in
+the Block class).
+Also includes demonstrations of unwinding and
+unwindProtect-actions (<CODE>valueOnUnwindDo:</CODE>)
+<P>
+
+
+<LI><CODE>File-IO.st</CODE>
+<BR>
+code fragments to show simple I/O with text & binary files
+<P>
+
+
+<LI><CODE>FileIn-errors</CODE>
+<BR>
+demonstrates how errors during fileIn are handled
+(i.e. use of abort, debug & continue)
+<P>
+
+
+<LI><CODE>Font-BitmapFont</CODE>
+<BR>
+how to create your own bitmap fonts
+<BR>
+(is someone willing to write & publish a TrueType font class ?)
+<P>
+
+
+<LI><CODE>MVC-xxx</CODE>
+<BR>
+various examples of using widgets
+with a model
+<P>
+
+
+
+<LI><CODE>Model-Simple1</CODE>
+<BR>
+shows how models can be used (i.e. kind of
+MVC; however, in <CITE>ST/X</CITE> the view and controller
+functionality is combined in the view for many widgets).
+This example shows how buttons can use models.
+<P>
+
+
+<LI><CODE>Model-Simple2</CODE>
+<BR>
+a selectionInListView with a model
+<P>
+
+
+<LI><CODE>Model-Simple3</CODE>
+<BR>
+buttons and a popUpList with a model
+<P>
+
+
+<LI><CODE>Model-Label.st</CODE>
+<BR>
+a label and a model
+<P>
+
+
+<LI><CODE>Process-examples</CODE>
+<BR>
+simple process examples showing <CODE>fork</CODE>, <CODE>newProcess</CODE> etc.
+<P>
+
+
+<LI><CODE>Process-delay</CODE>
+<BR>
+shows use of <CODE>Delay</CODE> and process forking
+<P>
+
+
+<LI><CODE>Process-diningTable</CODE>
+<BR>
+the standard philosopher example using Semaphores
+<BR>
+Requires <CODE>Process-philosopher</CODE> to be loeaded also.
+<BR>
+(load both, start with: "(DiningTable new:5) dinner")
+<P>
+
+
+<LI><CODE>Process-philosopher2</CODE>
+<BR>
+example on how to prevent the (possible) deadlock in Philosopher
+<P>
+
+
+<LI><CODE>Process-sharedQueue</CODE>
+<BR>
+shows use of processes and shared queues
+<P>
+
+
+<LI><CODE>Registry-example</CODE>
+<BR>
+shows use of a registry to track object reclamation by
+the garbage collector (i.e. finalization).
+<P>
+
+
+<LI><CODE>Signal-handling</CODE>
+<BR>
+examples on how <CODE>Signal</CODE>, <CODE>Exception</CODE>
+and <CODE>SignalSet</CODE>
+are used (study this file carefully - its nice)
+<P>
+
+
+<LI><CODE>Signal-floatSignals</CODE>
+<BR>
+floating point errors and handling
+<P>
+
+
+<LI><CODE>Signal-stackoverflow</CODE>
+<BR>
+examples on how stack overflow can be handled
+<P>
+
+
+<LI><CODE>Socket-connection</CODE>
+<BR>
+use of Sockets (code fragments)
+<P>
+
+
+<LI><CODE>Socket-objectcopy</CODE>
+<BR>
+how objects can be sent via a socket connection using
+binaryStore (code fragments)
+<P>
+
+
+<LI><CODE>Special-hereSend</CODE>
+<BR>
+local sends - an <CITE>ST/X</CITE> special feature
+<P>
+
+
+<LI><CODE>View-ButtonDemo*</CODE>
+<BR>
+using Buttons (tutorial examples)
+<P>
+
+
+<LI><CODE>View-Example*</CODE>
+<BR>
+various views, views-in-views etc.
+with growing complexity (tutorial examples).
+(start with example1x, example2, and so on)
+<P>
+
+
+<LI><CODE>View-Frame*</CODE>
+<BR>
+more views showing use of frames (tutorial examples)
+<P>
+
+
+<LI><CODE>View-HelloWorld</CODE>
+<BR>
+hello world in Smalltalk
+(no language without its hello-world program ... :-)
+This example creates a new View subclass, i.e. it
+does not use existing widgets, but defines a
+new 'hello-world' widget.
+<P>
+
+
+<LI><CODE>View-HelloWorld2</CODE>
+<BR>
+same, but using the existing Label widget.
+<P>
+
+
+<LI><CODE>View-16bit-strings</CODE>
+<BR>
+example, how 16bit strings are drawn in a view
+<P>
+
+
+<LI><CODE>View-16bit-labels</CODE>
+<BR>
+demonstrates that labels can handle 16bit strings.
+<P>
+
+<LI><CODE>View-16bit-buttons</CODE>
+<BR>
+and buttons too
+<P>
+
+
+<LI><CODE>View-Panel*</CODE>
+<BR>
+more views showing use of panels
+(variableVertical & variableHorizontal)
+<P>
+
+
+<LI><CODE>View-drawing-arc*</CODE>
+<BR>
+shows how various arcs (different lineWidths, colors etc.) are drawn
+<P>
+
+<LI><CODE>View-drawing-filledarc*</CODE>
+<BR>
+shows how various filled arcs (different colors etc.) are drawn
+<P>
+
+
+<LI><CODE>View-PopUpMenu-simple</CODE>
+<BR>
+how to define a very simple popup-menu
+<P>
+
+<LI><CODE>View-PopUpMenu-check</CODE>
+<BR>
+how to define a popup-menu with check-marks
+<P>
+
+<LI><CODE>View-PopUpMenu-submenus</CODE>
+<BR>
+how to define a more complex popup-menu (with submenus)
+<P>
+
+
+<LI><CODE>View-Slider-example*</CODE>
+<BR>
+various horizontal sliders (different sizes, with/without numeric value)
+<P>
+
+
+<LI><CODE>View-border-round</CODE>
+<BR>
+a round-bordered view
+<P>
+
+
+<LI><CODE>View-border-funny</CODE>
+<BR>
+a very funny shaped view - transparent, using an image
+as border (you never saw this before in Smalltalk !)
+<P>
+
+
+<LI><CODE>View-transformations*</CODE>
+<BR>
+various demos for how transformations can be used
+when drawing (metric units, scaling etc.)
+<P>
+
+
+<LI><CODE>libfoo_example</CODE>
+<BR>
+source for the example in the
+online documentation 'How to compile ...'
+
+</UL>
+<P>
+
+<P>
+<A NAME="SIMPLEEXAMPLES"></A>
+Utilities found in <CODE>"clients/Demos"</CODE> are:
+<UL>
+
+<LI><CODE>ClassTreeGraphView.st</CODE>
+<BR>
+shows a graphical representation of the class tree.
+Uses & requires TreeGraphView.
+<P>
+
+<LI><CODE>WindowTreeView.st</CODE>
+<BR>
+shows the hierarchy of Smalltalk views
+another use of TreeGraphView
+</UL>
+
+<P>
+View demos  found in <CODE>"clients/Demos"</CODE>:
+<UL>
+
+<LI><CODE>BDemo1.st</CODE>
+<BR>
+       shows the use of buttons
+				and labels
+
+<P>
+
+<LI><CODE>BDemo2.st</CODE>
+<BR>
+       also, but nicer button size
+
+<P>
+
+<LI><CODE>BDemo3.st</CODE>
+<BR>
+       puts 2 buttons with action
+				in a panel for better geometry.
+
+<P>
+
+<LI><CODE>CalcView.st</CODE>
+<BR>
+     a simple calculator
+
+<P>
+
+<LI><CODE>Calendar.st</CODE>
+<BR>
+a simple calendar program
+(mimics example in o'Reillys motif book)
+
+<P>
+
+<LI><CODE>CommanderDemo.st</CODE>
+<BR>
+draws geometric designs using
+Commander and Pen.
+<BR>
+(autoloads Commander & Pen classes)
+
+<P>
+
+<LI><CODE>ColorDraw.st</CODE>
+<BR>
+a simple Paint demo
+<BR>
+(inspired by example in o'Reillys
+motif book and written as a
+challenge of how simple it is in Smalltalk)
+
+<P>
+
+<LI><CODE>ColorDraw2.st</CODE>
+<BR>
+a subclass of the above - adds brushes
+of varying line-widths.
+<BR>
+(requires <CODE>ColorDraw.st</CODE> to be filed in first)
+
+<P>
+
+<LI><CODE>ColorDraw3.st</CODE>
+<BR>
+a subclass of the above; adds scrollbars
+and redraw features.
+<BR>
+(requires both of the above and <CODE>FormDrawView.st</CODE>
+to be filed in)
+
+<P>
+
+<LI><CODE>ColorScales.st</CODE>
+<BR>
+shows color handling - on b&amp;w displays and
+low color resolution displays (VGA), this
+demonstrates how colors are automatically dithered.
+
+<P>
+
+<LI><CODE>DirTreeV.st</CODE>
+<BR>
+graphical display of a directory tree.
+(a demo of how to use the ObjectView class)
+
+
+<P>
+
+<LI><CODE>FormDrawView.st</CODE>
+<BR>
+helper for ColorDrawDemo3; provides a saved canvas area.
+
+<P>
+
+<LI><CODE>Fractal.st</CODE>
+<BR>
+draws fractal mountains.
+A free goody, slightly modified for <CITE>ST/X</CITE>.
+<BR>
+(<CODE>"Fractal example1"</CODE> to <CODE>"Fractal example4"</CODE>
+ draw into the root window,
+while
+<CODE>"Fractal example5"</CODE> creates its own window)
+
+<P>
+
+<LI><CODE>GreyScaleDemo.st</CODE>
+<BR>
+like ColorScales, but only shows grey values.
+
+<P>
+
+<LI><CODE>HelloView.st</CODE>
+<BR>
+one of the smallest Hello-world programs around.
+
+<P>
+
+<LI><CODE>PenDemo.st</CODE>
+<BR>
+draws geometric designs using a Pen.
+<BR>
+(autoloads Pen class) Also a good example for
+PanelView, which makes the button-layout
+(try resizing the view), and both Button and Toggle
+usage (see label-change in the nib-toggle).
+
+<P>
+
+<LI><CODE>SliderDemo.st</CODE>
+<BR>
+shows use of Sliders and color handling
+
+<P>
+
+<LI><CODE>SliderDemo2.st</CODE>
+<BR>
+a subclass of the above with colored sliders
+(needs above to be filed-in first)
+
+<P>
+
+<LI><CODE>TreeView.st</CODE>
+<BR>
+shows use of ObjectView; an abstract Tree Viewer.
+
+<P>
+
+<LI><CODE>ClassTreeView</CODE>
+<BR>
+displays a graphical view of the whole class
+hierarchy; allows some limited interaction
+by selections and a pop-up menu.
+
+<P>
+
+<LI><CODE>TreeGraphView.st</CODE>
+<BR>
+even better: adds connecting lines. Is also
+abstract
+
+<P>
+
+<LI>Example1 to Example11 help in a step-by-step introduction to view
+programming. They provide examples of increased complexity, starting
+with a very simple (useless) view, ending in a simple editor application.
+
+
+<P>
+<UL>
+
+<LI><CODE>Example1.st</CODE>
+<BR>
+     simple view with a subview
+
+<P>
+
+<LI><CODE>Example2.st</CODE>
+<BR>
+     simple view with two subviews; shows how sizes
+				can be computed.
+
+<P>
+
+<LI><CODE>Example3.st</CODE>
+<BR>
+     simple view with two subviews; subview sizes are
+				specified relative to superviews size.
+
+<P>
+
+<LI><CODE>Example4.st</CODE>
+<BR>
+     simple view with two subviews; the relative size
+				ratios can be changed (VariableVerticalPanel)
+
+<P>
+
+<LI><CODE>Example5.st</CODE>
+<BR>
+     same, but one of the views shows read-only text
+
+<P>
+
+<LI><CODE>Example6.st</CODE>
+<BR>
+     same, but TextView is scrollable
+
+<P>
+
+<LI><CODE>Example7.st</CODE>
+<BR>
+     same, but TextView shows contents of a file
+
+<P>
+
+<LI><CODE>Example8.st</CODE>
+<BR>
+     a simple view showing the use of PullDownMenu,
+				Notifiers and Confirmers
+
+<P>
+
+<LI><CODE>Example9.st</CODE>
+<BR>
+     a setup for a scrollable view, with a PullDownMenu
+
+<P>
+
+<LI><CODE>Example10.st</CODE>
+<BR>
+    an editable textview, with scrollbar and useful
+				functions in the PullDownMenu.
+
+<P>
+
+<LI><CODE>Example11.st</CODE>
+<BR>
+    same, but all message texts have been internationalized
+				by using resources.
+</UL>
+<P>
+
+<LI>Frame1 to Frame6 show examples of frame views:
+
+<P>
+<UL>
+<LI><CODE>Frame1.st</CODE>
+<BR>
+       a simple frame
+
+<P>
+
+<LI><CODE>Frame2.st</CODE>
+<BR>
+       also simple, but uses different font
+
+<P>
+
+<LI><CODE>Frame3.st</CODE>
+<BR>
+       a frame around a TextView
+
+<P>
+
+<LI><CODE>Frame4.st</CODE>
+<BR>
+       more complex, two Lists in frames, which are themselfes
+				in a Horizontal panel.
+
+<P>
+
+<LI><CODE>Frame5.st</CODE>
+<BR>
+       two frames, one houses a list which provides a selection
+				possibility, the other houses a TextView reacting on
+				selections in the list. All of this in a variable panel.
+
+<P>
+
+<LI><CODE>Frame6.st</CODE>
+<BR>
+       same setup, different function. This shows files and
+				their contents
+</UL>
+<P>
+
+<LI>PathDemo1 to PathDemo8 demonstrate the use of the Path subclasses:
+	(they will autoload some Path stuff)
+<P>
+<UL>
+<LI><CODE>PathDemo1.st</CODE>
+<BR>
+    shows different instances of class Line.
+				(varying capStyles, varying lineStyles and colors)
+
+<P>
+
+<LI><CODE>PathDemo2.st</CODE>
+<BR>
+    shows LinearFit usage (varying line styles)
+
+<P>
+
+<LI><CODE>PathDemo3.st</CODE>
+<BR>
+    shows Spline usage  (varying line styles)
+
+<P>
+
+<LI><CODE>PathDemo4.st</CODE>
+<BR>
+    shows Arc and Circle usage
+
+<P>
+
+<LI><CODE>PathDemo5.st</CODE>
+<BR>
+    shows Curve usage
+
+<P>
+
+<LI><CODE>PathDemo6.st</CODE>
+<BR>
+    shows Arrows (varying directions, varying styles)
+
+<P>
+
+<LI><CODE>PathDemo7.st</CODE>
+<BR>
+    shows splines, press LeftButton for points, last point
+				with RightButton.
+
+<P>
+
+<LI><CODE>PathDemo8.st</CODE>
+<BR>
+    shows Ellipse usage
+</UL>
+<P>
+
+<LI>ViewDemo1 to ... will follow
+
+<P>
+
+<LI><CODE>ViewDemo1.st</CODE>
+<BR>
+shows how to define a view-background pattern
+(needs 'goodies/Form-Patterns.chg to be loaded)
+
+</UL>
+
+<A NAME="THREEDEXAMPLES"></A>
+<P>
+3D graphic demos found in <CODE>"clients/GLDemos"</CODE>:
+<UL>
+
+<LI><CODE>Demo1.st</CODE>
+<BR>
+shows how to setup a GL view, a viewing transformation
+and draws a simple rectangle.
+<P>
+
+<LI><CODE>Demo2.st</CODE>
+<BR>
+shows how to setup a GL view, a viewing transformation
+and draws a simple figure. Starts a background process
+to animate a rotating rectangle. (rotates around z axis)
+<P>
+
+<LI><CODE>Demo3.st</CODE>
+<BR>
+like Demo2, but rotating around y axis
+<P>
+
+<LI><CODE>Demo4.st</CODE>
+<BR>
+like Demo3, but sets up double buffering for smoother display
+<P>
+
+<LI><CODE>Demo5.st</CODE>
+<BR>
+like Demo4, including double buffering. All rotations combined.
+<P>
+
+<LI><CODE>Demo6.st</CODE>
+<BR>
+draws axes, handles mouse input to change the eye position.
+<P>
+
+<LI><CODE>GLObjectDemo.st</CODE>
+<BR>
+Abstract class providing a framework for animated (rotating) objects.
+<P>
+
+<LI><CODE>GLCubeDemo.st</CODE>, <CODE>GLTetraDemo.st</CODE>,
+<BR><CODE>GLWireCubeDemo.st</CODE>, <CODE>GLWireSphereDemo.st</CODE>
+<BR>and <CODE>GLPlanetDemo.st</CODE>
+<BR>
+Concrete subclasses animating various 3D objects.
+<P>
+
+<LI><CODE>GLOctaHedronDemo.st</CODE>
+<BR>
+A rotating octaHedron with color interpolation between edges.
+Requires a true GL implementation
+(i.e. does not work on VOGL-based systems)
+<P>
+
+<LI><CODE>GLSphereDemo1.st</CODE> and <CODE>GLSphereDemo2.st</CODE>
+<BR>
+A light source rotating around a sphere. Requires a true GL implementation
+(i.e. does not work on VOGL-based systems)
+<P>
+
+<LI><CODE>GLCubeDemo2.st</CODE>
+<BR>
+A cube and a light source.
+Requires a true GL implementation
+(i.e. does not work on VOGL-based systems)
+<P>
+
+<LI><CODE>GLBrickCubeDemo.st</CODE>
+<BR>
+A textured cube.
+Requires a true GL implementation
+(i.e. does not work on VOGL-based systems)
+<P>
+
+<LI><CODE>GLXYGraph.st</CODE>
+<BR>
+Draws a graph of a function(x,y).
+Includes a panel to control rotation and translation.
+(a nice demo, combining ST/X widgets and GL drawing. Also
+shows how partner views are setup)
+<P>
+
+<LI><CODE>RubicsCubeView.st</CODE>
+<BR>
+Draws and interacts with a rubics cube.
+<BR>
+This example especially demonstrates how to pick & select objects
+in 3D space (using the backBuffer & pixelRead facilities).
+<P>
+
+
+</UL>
+<A NAME="GOODIES"></A>
+
+<P>
+Misc goodies are found in <CODE><A HREF="goodies/">"goodies"</A></CODE>:
+
+<UL>
+
+<LI>Collections-*
+<BR>
+Various PD and Freeware collection classes and addons.
+<P>
+
+<LI><A HREF="goodies/distributions/">distributions</a>
+<BR>
+Classes for random number generation with various
+distributions (normal-, bernoulli, exponential etc.)
+<BR>
+This is an adaption of the corresponding classes from a PD
+package.
+<P>
+
+<LI><A HREF="goodies/persistency/" NAME="PERSISTENCY">persistency</A>
+<BR>
+Classes to access DBM / NDBM / DB-1.6 index-sequential database files.
+These classes provide a dictionary-like interface to those databases,
+allowing the storage and retrieval of either unstructured strings, or
+of arbitrary objects.
+<P>
+
+
+<LI><A HREF="goodies/rdoit/" NAME="RDOIT">rdoit</A>
+<BR>
+A mechanism to execute Smalltalk expressions via shell commands.
+On the Smalltalk side, a Smalltalk-thread reads incoming requests
+from a unix-domain socket, executes them and sends the results printString
+back through the socket. On the Unix side, a little C program connects
+to that socket and sends its command line argument as request through the
+socket, printing the returned string.
+<BR>
+Thus, you can now open browsers, applications etc. via shell scripts
+(or windowManagers popup funtions, or makefiles) by:
+<CODE><PRE>
+    rdoit "Transcript showCR:'hello there'"
+</PRE></CODE>
+See the <A HREF="goodies/rdoit/README"><CODE>"README"</CODE></A> file there.
+<P>
+
+
+<LI><A HREF="goodies/tgen/" NAME="TGEN">tgen</A>
+<BR>
+A compiler construction kit. This is the PD TGen package, with slight
+modifications for ST/X.
+
+
+
+
+</UL>
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif" ALT="[stx-logo]">
+Copyright &copy; 1996 Claus Gittinger Development & Consulting, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<P>
+<HR>
+Doc $Header: /cvs/stx/stx/doc/online/english/demos/TOP.html,v 1.30 2016-11-04 00:18:59 cg Exp $
+
+</BODY>
+</HTML>

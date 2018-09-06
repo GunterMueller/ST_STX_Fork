@@ -1,0 +1,409 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Basic classes - Number classes</Title>
+</HEAD>
+
+<BODY CODECOLOR=#00007F>
+
+<A NOPRINT HREF="streams.html">     <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html#I_NUMERIC">         <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="process.html">     <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Number classes</H1>
+<P>
+The number hierarchy provides a common protocol for many numeric types.
+Smalltalk automatically converts between internal representations and
+provides unlimited precision integer arithmetic.
+<P>
+The most useful numeric classes are:
+<UL>
+<LI> <A HREF="#NUMBER" NAME="I_NUMBER">Number</A> - general Numbers
+<LI> <A HREF="#INTEGER" NAME="I_INTEGER">Integer</A> - integer Numbers
+<LI> <A HREF="#FRACTION" NAME="I_FRACTION">Fraction</A>- (arbitrary precision) rational numbers
+<LI> <A HREF="#FIXEDPOINT" NAME="I_FIXEDPOINT">FixedPoint</A>- decimal numbers
+<LI> <A HREF="#FLOAT" NAME="I_FLOAT">Float</A> - floating point (limited precision rational) numbers
+<LI> <A HREF="#OTHERS" NAME="I_OTHERS">Others</A>
+</UL>
+Use the systemBrowser to have a more detailed look into the implementation.
+
+
+
+<H2><A HREF="#I_NUMBER" NAME="NUMBER">Number</A></H2>
+
+Number is the abstract superclass of all number-like objects.
+It provides methods which are independent of the actual
+numeric representation.
+<P>
+Smalltalk's numeric classes make good use of polymorphism in the language:
+instances of all numeric classes may be used interchangable in most
+operations (for some, such as bit operations, it does not make sense).
+<BR>
+Also, results of arithmetic (and other) operations are converted as
+appropriate.
+<BR>
+For example, executing:
+<CODE><PRE>
+	1 / 3
+</PRE></CODE>
+(send the message <VAR>'divide by 3'</VAR> to the integer <VAR>'1'</VAR>)
+will return a fractional result, represented by an instance of <CODE>Fraction</CODE>.
+<P>
+Protocol common to all numbers is:
+<UL>
+<LI>arithmetic:
+<CODE><PRE>
+    <VAR>result</VAR> := <VAR>number1</VAR> + <VAR>number2</VAR>
+    <VAR>result</VAR> := <VAR>number1</VAR> - <VAR>number2</VAR>
+    <VAR>result</VAR> := <VAR>number1</VAR> * <VAR>number2</VAR>
+    <VAR>result</VAR> := <VAR>number1</VAR> / <VAR>number2</VAR>
+    <VAR>result</VAR> := <VAR>number1</VAR> // <VAR>number2</VAR> <VAR>(truncate result)</VAR>
+    <VAR>result</VAR> := <VAR>number1</VAR> \ <VAR>number2</VAR> <VAR>(remainder)</VAR>
+    <VAR>result</VAR> := <VAR>number1</VAR> \\ <VAR>number2</VAR> <VAR>(integer remainder)</VAR>
+    <VAR>result</VAR> := <VAR>number</VAR> negated
+    <VAR>result</VAR> := <VAR>number</VAR> abs
+    <VAR>result</VAR> := <VAR>number</VAR> sign
+</PRE></CODE>
+
+<LI>misc:
+<CODE><PRE>
+    <VAR>result</VAR> := <VAR>number</VAR> sqrt <VAR>(square root)</VAR>
+    <VAR>result</VAR> := <VAR>number</VAR> cbrt <VAR>(cubic root)</VAR>
+    <VAR>result</VAR> := <VAR>number</VAR> truncated <VAR>(truncate towards zero)</VAR>
+    <VAR>result</VAR> := <VAR>number</VAR> floor     <VAR>(truncate towards negative infinity)</VAR>
+    <VAR>result</VAR> := <VAR>number</VAR> ceiling  <VAR>(truncate towards positive infinity)</VAR>
+    <VAR>result</VAR> := <VAR>number</VAR> rounded <VAR>(round to nearest integer)</VAR>
+    <VAR>result</VAR> := <VAR>number</VAR> roundTo:<VAR>number2</VAR> <VAR>(round to nearest multiple of number2)</VAR>
+    <VAR>result</VAR> := <VAR>number</VAR> factorial
+    <VAR>result</VAR> := <VAR>integer1</VAR> gcd:<VAR>integer2</VAR> <VAR>(greatest common divisor)</VAR>
+    <VAR>result</VAR> := <VAR>integer1</VAR> lcm:<VAR>integer2</VAR> <VAR>(least common multiple)</VAR>
+    <VAR>result</VAR> := <VAR>number1</VAR> min:<VAR>number2</VAR>  <VAR>(minimum of two numbers)</VAR>
+    <VAR>result</VAR> := <VAR>number1</VAR> max:<VAR>number2</VAR>
+</PRE></CODE>
+
+<LI>testing:
+<CODE><PRE>
+    <VAR>boolResult</VAR> := <VAR>number</VAR> negative
+    <VAR>boolResult</VAR> := <VAR>number</VAR> even
+    <VAR>boolResult</VAR> := <VAR>number</VAR> odd
+    <VAR>boolResult</VAR> := <VAR>number1</VAR> = <VAR>number2</VAR> <VAR>(same value)</VAR>
+    <VAR>boolResult</VAR> := <VAR>number1</VAR> ~= <VAR>number2</VAR> <VAR>(not same value)</VAR>
+    <VAR>boolResult</VAR> := <VAR>number1</VAR> > <VAR>number2</VAR> <VAR>(also: >=, &lt; and &lt;=)</VAR>
+    <VAR>boolResult</VAR> := <VAR>aNumber</VAR> between:<VAR>lowBounds</VAR> and:<VAR>highBounds</VAR>
+</PRE></CODE>
+
+<LI>trigonometric & math functions:
+<CODE><PRE>
+    <VAR>result</VAR> := <VAR>number</VAR> sin
+    <VAR>result</VAR> := <VAR>number</VAR> cos
+    <VAR>result</VAR> := <VAR>number</VAR> arcSin (<VAR>many other trigonometric operations</VAR>)
+    <VAR>result</VAR> := <VAR>number</VAR> exp
+    <VAR>result</VAR> := <VAR>number</VAR> ln
+    <VAR>result</VAR> := <VAR>number</VAR> raisedTo: <VAR>number2</VAR>
+</PRE></CODE>
+
+<LI>bit operations (integers only):
+<CODE><PRE>
+    <VAR>result</VAR> := <VAR>integer1</VAR> bitAnd: <VAR>integer2</VAR>
+    <VAR>result</VAR> := <VAR>integer1</VAR> bitOr: <VAR>integer2</VAR>
+    <VAR>result</VAR> := <VAR>integer1</VAR> bitShift: <VAR>count</VAR>
+    <VAR>result</VAR> := <VAR>integer1</VAR> bitXor: <VAR>integer2</VAR>
+    <VAR>result</VAR> := <VAR>integer1</VAR> lowBit
+</PRE></CODE>
+
+<LI><A NAME="NUMBER_CONVERTING">converting:</A>
+<CODE><PRE>
+    <VAR>aNumber</VAR> := Number readFrom:<VAR>aStringOrStream</VAR> onError:<VAR>replacementValue</VAR>
+    <VAR>aNumber</VAR> := Number readFrom:<VAR>aStringOrStream</VAR>
+    <VAR>anInteger</VAR> := Integer readFrom:<VAR>aStringOrStream</VAR>
+
+    <VAR>aString</VAR> := <VAR>aNumber</VAR> printString
+    <VAR>aString</VAR> := <VAR>anInteger</VAR> printStringRadix:<VAR>radixInteger</VAR>
+
+    <VAR>aFloat</VAR>  := <VAR>aNumber</VAR> asFloat
+    <VAR>anInteger</VAR> := <VAR>aNumber</VAR> asInteger
+    <VAR>aFraction</VAR> := <VAR>aNumber</VAR> asFraction
+    <VAR>aFixedPoint</VAR> := <VAR>aNumber</VAR> asFixedPoint:<VAR>numDecimals</VAR>
+</PRE></CODE>
+</UL>
+
+THe above is only an excerpt of the whole protocol
+- use the browser to see more.
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in the
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of Number" ACTION="html:HTMLDocGenerator htmlDocOf:Number backRef:'numeric.html'">
+"<CODE>Number</CODE> class documentation</A>".
+
+
+
+<H2><A HREF="#I_INTEGER" NAME="INTEGER">Integer</A></H2>
+
+Integer is the abstract superclass of all integral number objects.
+There are no instances of <CODE>Integer</CODE> itself, but instead
+of one of its subclasses, <CODE>SmallInteger</CODE>
+or <CODE>LargeInteger</CODE>.
+<UL>
+<LI><CODE>SmallInteger</CODE> represents integers which fit into one
+machine word.
+<P>
+Storage of smallIntegers is very space efficient: in contrast to all
+other objects, smallIntegers are technically not represented by a pointer
+to the object, but instead the value is encoded in the pointer itself.
+Since one bit is required to
+distinguish smallIntegers from object references,
+one bit is lost for the storage of the integers value.
+Therefore, the smallInteger range is typically the
+32bit range (on a 32bit machine), limiting the possible values to -2^30 to 2^30-1 <A HREF="#FN1" NAME="I_FN1">(*)</A>.
+<P>
+<LI><CODE>LargeInteger</CODE> represents integers which are out
+of the valid smallInteger range. They can represent arbitrary values
+(i.e. beside memory limitations, the valid range of largeIntegers is not
+limited).
+</UL>
+Conversion between smallIntegers and largeIntegers is transparent;
+if some value cannot be represented as smallInteger, the system automatically
+creates a largeInteger object for it.
+<P>
+In addition to the above listed generic protocol for all numbers,
+integers respond to a number of additional messages for bitwise access,
+factorial and fibonacci computations, hex digit extraction etc.
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of Integer" ACTION="html:HTMLDocGenerator htmlDocOf:Integer backRef:'numeric.html'">
+"<CODE>Integer's</CODE> class documentation</A>", in
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of SmallInteger" ACTION="html:HTMLDocGenerator htmlDocOf:SmallInteger backRef:'numeric.html'">
+"<CODE>SmallInteger's</CODE> class documentation</A>" and in
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of LargeInteger" ACTION="html:HTMLDocGenerator htmlDocOf:LargeInteger backRef:'numeric.html'">
+"<CODE>LargeInteger's</CODE> class documentation</A>".
+
+
+
+<H2><A HREF="#I_FRACTION" NAME="FRACTION">Fraction</A></H2>
+
+Fractions are rational numbers, typically resulting from
+a division of two integers which does not give an integral result.
+In contrast to floatingPoint arithmetic, fractional arithmetic is
+exact. Therefore:
+<CODE><PRE>
+    (1 / 3) * 3 = 1
+</PRE></CODE>
+while the corresponding float operation:
+<CODE><PRE>
+    (1 / 33) asFloat * 33
+</PRE></CODE>
+may return 0.999999... on some systems due to rounding errors.
+<P>
+Fractional results from arithmetic operations are automatically reduced; therefore,
+<CODE><PRE>
+    (1 / 3) * (1 / 3) * 3
+</PRE></CODE>
+gives a result of <CODE>1/3</CODE> (not 3/9).
+<P>
+Beside memory limitations, the precision of fractional numbers is unlimited.
+A fractional resulting from an arithmetic operation is always reduced
+by finding the greatest common divisor of the numerator and denominator.
+Therefore, you will never get a fractional result like "(2 / 6)".
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in the
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of Fraction" ACTION="html:HTMLDocGenerator htmlDocOf:Fraction backRef:'numeric.html'">
+"<CODE>Fraction</CODE> class documentation</A>".
+
+
+
+<H2><A HREF="#I_FIXEDPOINT" NAME="FIXEDPOINT">FixedPoint</A> - Decimal Numbers</H2>
+
+FixedPoint numbers are fractions with a denominator being a power of 10 (i.e. 10, 100, 1000 etc.).
+Like with fractions, fixedPoint arithmetic is exact.
+In addition, fixedPoint numbers have an instance-specific precision specified, which defines
+how many post-decimal-point digits are shown in the printed representation.
+When printed, the output is rounded to that number of post-decimal-point digits
+(however, internally the exact value is kept and used for arithmetic).
+
+<P>
+FixedPoint numbers are the right choice if you have to deal with money and other entities where rounding errors are to be avoided.
+<P>
+As a special form of fraction, fixedpoint numbers respond to the usual arithmetic protocol.
+Any other number can be converted to a fixedpoint via:
+
+<UL>
+<LI><A NAME="FIXEDPOINT_CONVERTING">converting:</A>
+<CODE><PRE>
+    <VAR>aFixedPoint</VAR> := <VAR>aNumber</VAR> asFixedPoint:<VAR>numDecimals</VAR>
+</PRE></CODE>
+</UL>
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in the
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of FixedPoint" ACTION="html:HTMLDocGenerator htmlDocOf:FixedPoint backRef:'numeric.html'">
+"<CODE>FixedPoint</CODE> class documentation</A>".
+
+
+<H2><A HREF="#I_FLOAT" NAME="FLOAT">Float</A></H2>
+
+Floats are limited precision real numbers. The representation depends
+on the underlying machine's and the C-compiler's <CODE>double</CODE> implementation.
+<BR>
+On most modern systems, the IEEC representation is used
+(but be careful on OpenVMS and IBM mainframe systems...).
+<P>
+Typically, floats are represented in 64bits and the precision of the mantissa is 53bits
+(i.e. some 15 decimal digits)
+- but you should not depend on this being true on all hardware architectures.
+Consult your CPU and/or C-compiler's documentation of your actual system for more information.
+<BR>
+Two companion classes called <CODE>ShortFloat</CODE> and <CODE>LongFloat</CODE>
+are also available, which correspond to the C-compiler's <CODE>float</CODE>
+and <CODE>long double</CODE> implementations.
+Typically <CODE>ShortFloat</CODE> uses a 32 bit representation (i.e. roughly 6 decimal digits),
+while <CODE>LongFloat</CODE> uses an 80bit or 128 bit representation (i.e. roughly 19 digits).
+<BR>
+Be aware, that not all C-compilers support the <CODE>long double</CODE> type;
+on those systems, <CODE>LongFloats</CODE> are mapped to regular doubles with 64 bits.
+<P>
+Due to historic reasons, the existing Smalltalk systems used different
+precision and/or names for their float number classes:
+<UL>
+<LI>the original <CITE>ST-80</CITE> provided a single <CODE>Float</CODE> class,
+which represented 32bit float numbers (IEEE single precision).
+<LI>
+ObjectWorks added a <CODE>Double</CODE> class, providing a 64bit representation (IEEE double precision).
+<LI>
+in contrast, <CITE>ST/V's<CITE> and <CODE>VisualAge</CODE> provide 64bits
+in their <CODE>Float</CODE> class (IEEE double precision).
+</UL>
+For portability, <CITE>ST/X's</CITE> "<CODE>Float</CODE>" class uses double (64bit) precision,
+and <CITE>ST/X</CITE> defines "<CODE>Double</CODE>" as an alias for it.
+Thus both "<CODE>Double</CODE>" and "<CODE>Float</CODE>" refer to the same 64bit floating point class.
+If you explicitly want only 32bit of precision, you have to use instances of "<CODE>ShortFloat</CODE>".
+<P>
+Since having more precision does usually no harm to the program,
+this choice should ease porting of Smalltalk code from any system.
+However, be aware of the fact that a float in <CITE>ST/X</CITE> takes up
+more memory than a float in <CITE>ST-80</CITE> (which should not be a problem, these days).
+
+Late news:
+<BR>
+Abiously, the ANSI standardization team also recgnized those difficulties and
+defined aliases for those 3 classes: "<CODE>FloatE</CODE>", "<CODE>FloatD</CODE>" and "<CODE>FloatQ</CODE>" are alieases to
+the single precision, double precision and long precision float classes respectively.
+<P>
+Thus, if you have to ensure a particular precision, either refer to one those classes
+explicitly, or convert your numbers using one of: "<CODE>asFloatE</CODE>", "<CODE>asFloatD</CODE>" or "<CODE>asFloatQ</CODE>".
+
+<P>
+A warning:
+<br>
+many beginners (and as real world examples show) also some non-beginners seem to forget that
+floating point numbers are only approximations to a real number, and suffer from errors due to non-representability and from rounding.
+<UL>
+<LI>non-representability
+<br>because floating point numbers are represented as a sum of powers-of-two,
+many numbers lead to endless repeating binary digit sequences. For example, the number "1/10"
+(i.e. 0.1) cannot be represented as a sum of powers of two (b1*1/2) + b2*1/4 + b3*1/8) +....
+<br>
+Thus, there will always be an error in the last bit and the actual value of the corresponding
+float will be some "0.09999999..x".
+<p>
+The printing functions will "compensate" for this, by rounding on the last digit and "faking" an
+exact value most of the time.
+<p>
+However, when such a number is used in a computation,
+these last-bit errors may accumulate to an
+error larger than one least-significant bit, and will then no longer be "faked" away by the print function.
+<br>
+Try adding up 0.1 one hundred times (i.e. "<code>(Array new:100 withAll:0.1) sum</code>"),
+which results in "9.99999999999998..."
+<p>
+<LI>precision-errors
+when adding two numbers, bits of the smaller number will be lost, if their quotient
+is larger than the precision number of bits.
+Consider adding 1e15 (i.e. 1000000000000000.0) plus 1.0, resulting in 1000000000000001.0.
+this still fits the 64bit (which have 53 bits of precision in the mantissa)
+and is therefore still representable as double float.
+<br>try: "1e15 + 1 - 1e15", which results in 1.0"
+<P>
+Now try the same with 1e16;
+you'll find that: "1e16 + 1 - 1e16", results in 0.0, which is definitely incorrect.
+The reason is that 1e16 requires ld(1e16) (=53.15) bits of precision,
+which is right above the number of bits we have in a double's mantissa.
+</UL>
+These errors are not due to impementation reasons; they are inherent in the way
+floating point numbers are represented, and exist in all languages and all machines.
+The error may be made arbitraryly small, by increasing the precision, but will never disappear completely.
+<P>
+For these reasons:
+<br><b>Never use floats when exact results are needed - especially when computing monetary values! </b>
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of Float" ACTION="html:HTMLDocGenerator htmlDocOf:Float backRef:'numeric.html'">
+"<CODE>Float's</CODE> class documentation</A>"
+,
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of ShortFloat" ACTION="html:HTMLDocGenerator htmlDocOf:ShortFloat backRef:'numeric.html'">
+"<CODE>ShortFloat's</CODE> class documentation</A>".
+and in
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of LongFloat" ACTION="html:HTMLDocGenerator htmlDocOf:LongFloat backRef:'numeric.html'">
+"<CODE>LongFloat's</CODE> class documentation</A>".
+<P>
+you may also take a look at the experimental
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of QDouble" ACTION="html:HTMLDocGenerator htmlDocOf:QDouble backRef:'numeric.html'">
+"<CODE>QDouble</CODE></A>".
+class, which provides roughly four times the precision, but being much slower in computations.
+<p>
+All of these classes inherit from
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of LimitedPrecisionReal" ACTION="html:HTMLDocGenerator htmlDocOf:LimitedPrecisionReal backRef:'numeric.html'">
+"<CODE>LimitedPrecisionReal</CODE></A>".
+
+
+<H2><A HREF="#I_OTHERS" NAME="OTHERS">Others</A></H2>
+
+There are a number of other Numeric classes, for example to implement
+infinity or complex numbers.
+Use a systemBrowser on the Number-class hierarchy to find out more.
+<P>
+
+You can also extent the Number hierarchy, by adding new classes which
+implement a certain minimum protocol (they should know how to perform
+some of the basic arithmetic operations, and how to be converted into
+other representations).
+<BR>
+As an example and guideline on how this is done, have a look at the implementation of the
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of Complex" ACTION="html:HTMLDocGenerator htmlDocOf:Complex backRef:'numeric.html'">
+<CODE>Complex</CODE> number class</A>.
+
+
+<P>
+Notes:
+<BLOCKQUOTE>
+<A HREF="#I_FN1" NAME="FN1">(*)</A>
+<BR>
+One bit is lost for implementation reasons.
+Therefore, the number of bits in a smallInteger is
+the machine's native integer size minus one; usually 31
+(63 on a 64bit architecture like the DEC-alpha or x86_64).
+<BR>
+(
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+for details, see <A HREF="../../programming/primitive.html#OBJECT_REPRESENTATION">object representation</A>)
+</BLOCKQUOTE>
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif">
+Copyright © 1996 Claus Gittinger Development & Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.33 $ $Date: 2017-06-22 14:53:04 $
+<BODY>
+</HTML>

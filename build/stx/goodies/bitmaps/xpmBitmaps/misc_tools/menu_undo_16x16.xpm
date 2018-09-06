@@ -1,0 +1,26 @@
+/* XPM */
+static char *menu_undo_16x16_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 3 1",
+/* colors */
+"a c black",
+"b c #000080",
+"c c none",
+/* pixels */
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"ccccccccbbbbcccc",
+"ccbcccbbccccbccc",
+"ccbbcbcccccccbcc",
+"ccbbbccccccccbcc",
+"ccbbbbcccccccbcc",
+"ccbbbbbcccccbccc",
+"ccccccccccccbccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+};

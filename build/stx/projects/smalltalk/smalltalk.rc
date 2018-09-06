@@ -1,0 +1,743 @@
+"/ Encoding: iso8859-1
+"/
+"/ $Header$
+"/
+"/ MIMEType: application/x-smalltalk-source
+"/
+"/ ST/X startup configuration & command file:
+"/
+"/ startup configuration for smalltalk
+"/
+"/ - everything in here are plain smalltalk expressions;
+"/ - statements with in a group are separated by a period.
+"/ - Each group of statements has to be delimited by an exclamation
+"/   character.
+"/ - avoid exclas in comments (or double them)
+"/ - nested comments are not allowed - take care.
+"/
+"/ remember: this is fileOut-format
+"/
+"/ comments can be either:
+"/ - standard smalltalk comments (i.e. from dquote to dquote)
+"/ - ST/X end of line comments (i.e. dquote followed by /)
+"/
+"/    "this is a comment"
+"/    "/ another comment
+"/
+"/***************************************************************
+"/ PLEASE: only add things here, if they are of general interrest
+"/         and NEITHER site specific NOT display specific.
+"/
+"/ site specific things are to be added to "h_<hostname>.rc"
+"/ display specifics to "d_<displayName>.rc"
+"/ and private user stuff in "private.rc"
+"/***************************************************************
+|cpu enableJIT|
+
+"/
+"/ the JIT translator is (was) known to work with the following
+"/ architectures:
+"/  ix86        (linux, win32, unixware)
+"/  sgi-mips    (irix)      [no longer supported]
+"/  alpha       (osf)       [no longer supported]
+"/  sparc       (solaris)   [only tested with v7 & v8 & v9 cpus]
+"/  rs6k        (aix)       [not very well tested]
+"/  mc68k                   [no longer supported]
+"/  mc88k                   [no longer supported]
+"/  pa-risk                 [no longer supported]
+"/
+enableJIT := false.
+
+cpu := OperatingSystem getCPUType.
+(#(
+  'i386'
+  'sparc'
+"/  'mips'
+"/  'alpha'
+) includes:cpu) ifTrue:[
+    enableJIT := true.
+
+    cpu = 'sparc' ifTrue:[
+	"/ for now, disable if we detect running on a sparcV10;
+	"/ Reason:
+	"/   we do not have v10 machines here at exept ,
+	"/   and therefore have no way of checking if it runs on v10.
+	"/  I don't want ST/X to crash on your side in that case ...
+	"/  ... better run a bit slower than not running at all.
+	"/ Please let us know if it runs and we will remove the code below
+	"/ (which you should do as well).
+
+	((OperatingSystem getSystemInfo at:#instructionSets) includesString:'sparcv10') ifTrue:[
+	    'smalltalk.rc [warning]: disable JIT for sparcV10 - not yet validated' infoPrintCR.
+	    enableJIT := false
+	]
+    ]
+].
+
+enableJIT ifTrue:[
+    "/ 'smalltalk.rc [info]: turn on JIT...' infoPrintCR.
+    ObjectMemory justInTimeCompilation:true.
+].
+
+"/ OperatingSystem disableSignal:14.
+
+ObjectMemory infoPrinting:false.
+"/ Smalltalk loadBinaries:true.
+"/ Compiler allowUnderscoreInIdentifier:true.
+"/ Compiler warnUnderscoreInIdentifier:false.
+"/ Compiler warnSTXSpecials:false.
+!
+
+"/
+"/ allow definition of the systemPath from an environment variable
+"/ for example, to only try files in a users home and /usr/local/lib/smalltalk,
+"/ add the following in your shell-profile:
+"/      export STX_SYSTEMPATH=$HOME:/usr/local/lib/smalltalk
+"/ notice, that shell variable names are NOT expanded again in STX_SYSTEMPATH
+"/ Make certain that all relevant files are found along your path - you may see
+"/ funny viewStyles, colors and stupid strings if wrong.
+"/
+
+|path pathOfSTXExecutable pathOfCurrentDir|
+
+"/ 'systemPath before: ' infoPrint. Smalltalk systemPath infoPrintCR.
+"/ 'exec: ' infoPrint. OperatingSystem nameOfSTXExecutable infoPrintCR.
+"/ 'execPath: ' infoPrint. OperatingSystem pathOfSTXExecutable infoPrintCR.
+
+pathOfSTXExecutable := OperatingSystem pathOfSTXExecutable.
+pathOfSTXExecutable notNil ifTrue:[
+    pathOfSTXExecutable := pathOfSTXExecutable asFilename directory.
+].
+pathOfCurrentDir := Filename currentDirectory asAbsoluteFilename.
+
+(path := OperatingSystem getEnvironment:'STX_SYSTEMPATH') notNil ifTrue:[
+    Smalltalk systemPath:(path asCollectionOfSubstringsSeparatedBy:$:)
+] ifFalse:[
+    "/ look for gnu-smalltalk class files along my PATH.
+    "/ if found, remove that directory from the PATH to avoid
+    "/ autoloading wrong classes.
+    (path := Smalltalk getSystemFileName:'initialize.st') notNil ifTrue:[
+	path := path asFilename directoryName.
+	('smalltalk.rc [info]: found gnu-smalltalk sources in ' , path , '; removed from systemPath.') infoPrintCR.
+	Smalltalk systemPath:(Smalltalk systemPath remove:path; yourself).
+    ].
+    pathOfSTXExecutable notNil ifTrue:[
+	(Smalltalk systemPath includes:pathOfSTXExecutable name) ifFalse:[
+	    Smalltalk systemPath addFirst:pathOfSTXExecutable name.
+	]
+    ].
+    (Smalltalk systemPath includes:pathOfCurrentDir name) ifFalse:[
+	Smalltalk systemPath addFirst:pathOfCurrentDir name.
+    ].
+
+    "/ the current directory should always be first...
+    (Smalltalk systemPath includes:'.') ifTrue:[
+	Smalltalk systemPath remove:'.'.
+    ].
+    (Smalltalk systemPath includes:Filename currentDirectory pathName) ifTrue:[
+	Smalltalk systemPath remove:Filename currentDirectory pathName.
+    ].
+    Smalltalk systemPath addFirst:Filename currentDirectory pathName.
+].
+
+"/ 'systemPath: ' errorPrint. Smalltalk systemPath errorPrintCR.
+
+Smalltalk flushPathCaches.
+
+SmalltalkStartup main: Smalltalk commandLineArguments ? #().
+
+!
+
+"/ look fore one ore more --loadPackage arguments
+"/ load the packages
+|args idx|
+
+args := Smalltalk commandLineArguments ? #().
+[
+    idx := args indexOf:'-L'.
+    idx == 0 ifTrue:[
+	idx := args indexOf:'--loadPackage'.
+    ].
+    idx ~~ 0
+] whileTrue:[
+    Smalltalk loadPackage:(args at:idx+1).
+    args removeAtIndex:idx+1; removeAtIndex:idx.
+].
+!
+
+|args buildClasses openDisplay prevCatchSetting|
+
+args := Smalltalk commandLineArguments ? #().
+
+buildClasses := false.
+((args size > 0) and:[args last = '--buildClasses']) ifTrue:[
+    'binary' asFilename isDirectory ifFalse:[
+	'smalltalk.rc [warning]: no binary directory for classes.' errorPrintCR.
+	Smalltalk exit.
+    ].
+    buildClasses := true.
+].
+
+
+"/ check for display-classes being required and compiled into the system;
+"/ if not, load the display classes.
+"/
+openDisplay := false.
+(Smalltalk isHeadless or:[args includes:'--noDisplay']) ifFalse:[
+    (Smalltalk at:#DeviceWorkstation) isNil ifTrue:[
+	 "no view classes compiled into the system.
+	  Minimum smalltalk does only contain libbasic, libcomp and librun.
+	  FileIn view stuff"
+
+	 'smalltalk.rc [info]: installing required class libraries...' infoPrintCR.
+	 (Smalltalk isClassLibraryLoaded:'libbasic2') ifFalse:[
+	      Smalltalk loadPackage:'stx:libbasic2'.
+	 ].
+	 Smalltalk loadPackage:'stx:libview'.
+	 Smalltalk fileInClassLibrary:'XWorkstation' inPackage:'stx:libview'.
+	 OperatingSystem isMSWINDOWSlike ifTrue:[
+	     Smalltalk fileInClassLibrary:'WinWorkstation' inPackage:'stx:libview'.
+	 ].
+    ].
+    openDisplay := true.
+].
+
+
+"/ Install patches, once everything has been loaded.
+"/ System methods may be overwritten by patches.
+
+prevCatchSetting := Class catchMethodRedefinitions:false.
+(Smalltalk secureFileIn:(Smalltalk commandName asFilename withSuffix:'pch')) ifFalse:[
+    Smalltalk isStandAloneApp ifFalse:[
+	(Smalltalk secureFileIn:'patches') ifFalse:[
+	    'smalltalk.rc [warning]: error while filing in ''patches'' - some patches have not been loaded!!' errorPrintCR.
+	].
+    ].
+].
+Class catchMethodRedefinitions:prevCatchSetting.
+
+openDisplay ifTrue:[
+    "/ open the graphical display
+    [
+	'smalltalk.rc [info]: opening display...' infoPrintCR.
+	Screen openDefaultDisplay:nil.
+    ] on:Screen deviceOpenErrorSignal do:[:ex|
+	('smalltalk.rc [info]: failed to open display: ', ex description) infoPrintCR.
+	Smalltalk beHeadless: true.
+    ].
+].
+
+"/
+"/ this makes X-errors be handled immediately (so you see,
+"/ where it occured) but slows down the system soooo muuuucccchhh ..
+"/ if commented out, errors will be reported asynchronously.
+"/ (I enable this, when things go bad during startup)
+"/
+"/ Display unBuffered.
+
+
+"/
+"/ lazy loading
+"/ (faster fileIn) - this is EXPERIMENTAL.
+"/
+"/ - if turned on, an autoload operation will only create methodStubs
+"/   (uncompiled) which trap when called the first time.
+"/   The bytecode compiler will compile them when first executen.
+"/
+"/ - if turned off, an autoload will load & compile the whole class,
+"/   which makes autoloading slower, but avoids the initial delays
+"/
+"/ This is much like just-in-time compilation, but on a higher level.
+"/ If there are any problems with lazy methods, disable the following
+"/ and let me (info@exept.de) know what happened.
+"/
+Autoload compileLazy:true.
+
+"/
+"/ read the abbrev.stc file, extract class names
+"/ and install all nonExisting classes as autoloaded
+"/
+Class withoutUpdatingChangesDo:[
+    |needToReactivate|
+
+    HistoryManager notNil ifTrue:[
+	needToReactivate := HistoryManager isActive.
+	HistoryManager deactivate.
+    ] ifFalse:[
+	needToReactivate := false
+    ].
+
+"/    ((Smalltalk commandLineArguments includes:'--quick')
+"/    or:[ (Smalltalk isPlugin)
+"/    or:[ (Smalltalk commandLineArguments includes:'--faststart')
+"/    or:[ (Smalltalk commandLineArguments includes:'--fastStart')
+"/    ]]]) ifFalse:
+    (Smalltalk commandLineArguments includes:'--autoload')
+    ifTrue:
+    [
+	'smalltalk.rc [info]: installing autoloaded classes...' infoPrintCR.
+	Smalltalk installAutoloadedClasses.
+    ].
+    needToReactivate ifTrue:[HistoryManager activate].
+].
+
+buildClasses ifTrue:[
+    "/
+    "/ load all lazy classes
+    "/
+    Autoload subclasses do:[:aClass |
+	Autoload autoloadFailedSignal handle:[:ex |
+	    'smalltalk.rc [warning]: autoload failed' errorPrintCR.
+	    ex return.
+	] do:[
+	    'smalltalk.rc [info]: loading ' infoPrint. aClass name infoPrint. '...' infoPrintCR.
+	    aClass autoload.
+	]
+    ].
+
+    "/
+    "/ binary save all classes
+    "/
+    Autoload loadedClasses do:[:cls |
+	'smalltalk.rc [info]: saving binary of ' infoPrint. cls name infoPrint. '...' infoPrintCR.
+	cls binaryFileOut.
+	OperatingSystem executeCommand:'mv *.cls binary'.
+    ].
+    Smalltalk exit
+].
+!
+
+"/
+"/ Memory settings. NOTE that all these settings may be overwritten by
+"/                  settings.stx which stores the Launcher's settings.
+
+"/
+"/ this starts the incremental GC earlier
+"/ (default is 500000)
+"/ the number given is the number of bytes which have to be allocated
+"/ since the last GC, to start the incremental GC running.
+"/ (see ObjectMemory>>documentation)
+"/ Claus: I moved this to the private.rc file
+"/
+"/ ObjectMemory incrementalGCLimit:100000.
+
+"/
+"/ this starts the incremental GC when freeSpace drops below a limit
+"/ (default is nil - i.e. dont look at freeSpace)
+"/ (see ObjectMemory>>documentation)
+"/ Claus: I moved this to the private.rc file
+"/
+"/ ObjectMemory freeSpaceGCLimit:300000.
+
+"/ experimental: try to always keep some bytes in the pocket
+"/ this changes the memory policy, to start the background collector whenever
+"/ freespace drops below 250k or 500k have been allocated since the last GC.
+"/ AND to allocate more memory, if (after the collect) less than 1Mb is free.
+"/ Doing so makes the system behave better if lots of memory is required
+"/ for short periods of time, since it prepares itself for that situation
+"/ during idle time. (I often walk around in the fileBrowser, loading big
+"/ files like XWorkstation.st or SystemBrowser.st ....)
+
+ObjectMemory freeSpaceGCAmount:(1024*1024).
+ObjectMemory freeSpaceGCLimit:(4*1024*1024).
+"/ ObjectMemory incrementalGCLimit:(4*1024*1024).
+ObjectMemory oldSpaceIncrement:(4*1024*1024).
+ObjectMemory oldSpaceCompressLimit:0.   "/ temporary kludge
+ObjectMemory startBackgroundCollectorAt:5.
+ObjectMemory startBackgroundFinalizationAt:5.
+
+"/ this limits the amount of memory which is allocated for oldSpace
+"/ (for example to prevent ST/X from taking memory from other processes)
+"/ The absolute maximum is a builtIn constant and OS specific.
+
+"/ ObjectMemory maxOldSpace:1024*1024*128.
+"/ ObjectMemory maxOldSpace:1024*1024*512.
+
+ExternalBytes sizeofPointer == 8 ifTrue:[
+    "/ limit to 8GB to prevent a runaway program from thrashing the system
+    "/ if you really need more, change that line
+    ObjectMemory maxOldSpace:8*1024*1024*1024.
+    "/ ObjectMemory maxOldSpace:40*1024*1024*1024.
+].
+
+"/ experimental: configure the memory manager to quickly increase
+"/ its oldSpace, as long as it stays below 256Mb
+"/ (i.e. do not enter a blocking mark&sweep or compress,
+"/ but go straight ahead increasing the oldSpace).
+"/ Above that, behave as usual, i.e. try a GC first,
+"/ then increase the oldSpace size if that did not help.
+"/ If you have a machine with lots of (real) memory, you may want to
+"/ increase the number.
+"/
+ObjectMemory fastMoreOldSpaceLimit:256*1024*1024.
+ObjectMemory fastMoreOldSpaceAllocation:true.
+
+"/ this changes the size of the eden generation, where objects
+"/ are initially allocated. Making it bigger may increase pause
+"/ times a bit, if many objects survive, but reduces the overall overhead
+"/ For server type applications (request-response-loops such as in webServers),
+"/ it is a good idea to make it big enough to handle a request-cycles temporary
+"/ data
+
+"/ ObjectMemory newSpaceSize:(2*1024*1024).
+"/ ObjectMemory newSpaceSize:(8*1024*1024).
+
+"/ server settings; possibly longer worst case pause times,
+"/ but less overhead overall.
+"/ Use this for webservers, protocol servers etc, where blocking times
+"/ above 30ms are acceptable (also works for interactive programming)
+
+ObjectMemory newSpaceSize:(16*1024*1024).
+ObjectMemory incrementalGCLimit:(64*1024*1024).
+
+"/
+"/ run the background collector at a dynamic priority - it will
+"/ now always get a chance to make some progress ...
+"/
+Smalltalk addStartBlock:[
+    "/ 'smalltalk.rc [info]: start timeSlicing...' infoPrintCR.
+    Processor startTimeSlicing.
+    Processor supportDynamicPriorities:true.
+    ObjectMemory backgroundCollectProcess priorityRange:(4 to:9).
+    ObjectMemory backgroundFinalizationProcess priorityRange:(4 to:9).
+].
+!
+
+"/ another experimental (and a secret for now, since I don't want
+"/ you to play with those ;-)
+"/ For now, this is experimental. Once the best numbers
+"/ have been found, I'll hardwire them and document it ...
+
+|tenureParams|
+
+ObjectMemory newSpaceSize > (500*1024) ifTrue:[
+    tenureParams := #(nil nil nil nil -16 -4 -2 -2 0 0 16 nil) copy.
+] ifFalse:[
+"/         min max cpy /32 /16 /8 /4 /2 /4 /8 /16 /32 "
+    "/
+    "/ slow tenure - keeps objects longer in newSpace,
+    "/  producing more scavenge overhead, but releasing IGC somewhat
+    "/
+"/  tenureParams := #(nil nil nil -100 -8 -4 -1  1  2 4 8 16 nil) copy.
+"/  tenureParams := #(nil nil nil nil -16 -4  0  0  0 4 16 nil) copy.
+
+    "/
+    "/ fast tenure - moves objects earlier into oldSpace,
+    "/ releasing newSpace collector; however, the oldSpace IGC
+    "/ may have more work to do.
+    "/
+    tenureParams := #(nil nil nil nil -20 -8 -3 -1 -1 1 16 nil) copy.
+].
+ObjectMemory tenureParameters:tenureParams.
+!
+
+"/
+"/ this defines stuff relating to the host we are running on
+"/
+"/ 'smalltalk.rc [info]: reading ''host.rc''...' infoPrintCR.
+Smalltalk fileIn:'host.rc'.
+
+"/
+"/ this handles all variant display stuff
+"/ (i.e. things which might change, when DISPLAY is set different)
+"/ Notice, that the display may be different from the host we run on;
+"/ Host specific things are configured in host.rc.
+"/
+Display notNil ifTrue:[
+    "/ 'smalltalk.rc [info]: reading ''display.rc''...' infoPrintCR.
+    Smalltalk fileIn:'display.rc'.
+].
+
+!
+
+|cls|
+"/
+"/ some ST80 name aliases
+"/ (actually, much more is needed - this is just a start ...)
+"/
+(cls := Smalltalk at:#StandardSystemView) notNil ifTrue:[
+    Smalltalk at:#ScheduledWindow put:cls
+].
+(cls := Smalltalk at:#Socket) notNil ifTrue:[
+    Smalltalk at:#UnixSocketAccessor put:cls.
+    Smalltalk at:#SocketAccessor put:cls.
+    Smalltalk at:#SocketAccessorByAddress put:cls.
+].
+Smalltalk at:#BlockClosure put:Block.
+Smalltalk at:#CompiledMethod put:Method.
+(cls := Smalltalk at:#DialogBox) notNil ifTrue:[
+    Smalltalk at:#Dialog     put:cls.
+    Smalltalk at:#DialogView put:cls.
+    Smalltalk at:#FillInTheBlank put:cls.
+].
+Smalltalk at:#ByteString put:String.
+Smalltalk at:#ByteSymbol put:Symbol.
+Smalltalk at:#ByteEncodedString put:String.
+Smalltalk at:#Console put:Stderr.
+Smalltalk at:#HandlerList put:HandlerCollection.
+Smalltalk at:#SignalCollection put:SignalSet.
+(cls := Smalltalk at:#ProgressIndicatorSpec) notNil ifTrue:[
+    Smalltalk at:#ProgressWidgetSpec put:cls.
+].
+(cls := Smalltalk at:#ProgressIndicator) notNil ifTrue:[
+    Smalltalk at:#ProgressWidgetView put:cls.
+].
+
+"/ FileDirectory notNil ifTrue:[
+"/     Smalltalk at:#Disk put:(Filename rootDirectory)
+"/ ].
+
+Screen notNil ifTrue:[
+    Smalltalk at:#Window put:Screen.
+    Smalltalk at:#Sensor put:Screen default.
+].
+
+"/
+"/ ST/X has (currently) no Double, but Float is what ST-80's Double is ...
+"/
+Smalltalk at:#Double put:Float.
+
+Smalltalk at:#Browser put:SystemBrowser.
+
+"/
+"/ some ANSI name aliases
+"/
+(Smalltalk includesKey:#DateAndTime) ifFalse:[
+    Smalltalk at:#DateAndTime put:Timestamp.
+].
+(Smalltalk includesKey:#Duration) ifFalse:[
+    Smalltalk at:#Duration put:TimeDuration.
+].
+
+!
+|file|
+
+"/
+"/ read private (per user) stuff
+"/
+(Smalltalk commandLine includes:'-F') ifTrue:[
+    |idx file|
+
+    idx := Smalltalk commandLine indexOf:'-F'.
+    file := Smalltalk commandLine at:idx + 1.
+] ifFalse:[
+    file := 'private.rc'.
+].
+('smalltalk.rc [info]: reading ''' , file , '''...') infoPrintCR.
+Smalltalk fileIn:file.
+
+!
+
+"JV@2012-05-03: Search system path for rc.d directories, collect all *.rc files
+and then file them in a lexical order"
+
+| rcDFiles |
+
+rcDFiles := SortedCollection sortBlock:[:a :b|a baseName < b baseName].
+
+Smalltalk realSystemPath ? #() do:[:syspath|
+    | rcD |
+
+    rcD := syspath asFilename / 'rc.d'.
+    rcD exists ifTrue:[
+	rcD directoryContentsAsFilenames do:[:each|
+	    each suffix = 'rc' ifTrue:[
+	        | eachAbs |
+
+	        eachAbs := each asAbsoluteFilename.
+	        (rcDFiles includes: eachAbs) ifFalse:[
+	    	    rcDFiles add: eachAbs.
+	    	]
+	    ]
+	].
+    ].
+].
+
+rcDFiles do:[:each|
+    'smalltalk.rc [info]: reading ' infoPrint.
+    each baseName infoPrint.
+    '...' infoPrint.
+    ( AbortOperationRequest , TerminateProcessRequest , Parser parseErrorSignal ) handle:[:ex |
+	'FAILED: ' errorPrint.
+	ex description errorPrintCR.
+	ex return.
+    ] do:[
+	each fileIn.
+	'OK' infoPrintCR.
+    ].
+].
+
+!
+
+Screen notNil ifTrue:[
+    "/
+    "/ read saved configuration settings (if any)
+    "/
+    | idx |
+
+    idx := Smalltalk commandLineArguments indexOf: '--no-preferences'.
+    idx ~~ 0 ifTrue:[
+	Smalltalk commandLineArguments removeAtIndex: idx.
+    ] ifFalse:[
+	( AbortOperationRequest , TerminateProcessRequest , Parser parseErrorSignal ) handle:[:ex |
+	    'READ FAILED: ' errorPrint.
+	    ex description errorPrintCR.
+	    ex return.
+	    1 halt.
+	] do:[	
+	    | settings continue |
+	    
+
+	    idx := Smalltalk commandLineArguments indexOf: '--preferences'.
+	    idx ~~ 0 ifTrue:[
+		| file |
+
+		Smalltalk commandLineArguments size <= idx ifTrue:[
+		    '' errorPrintCR.
+		    'smalltalk.rc [error]: --preferences requires an argument, none given' errorPrintCR.
+		    Smalltalk exit: 1.
+		].
+		file := (Smalltalk commandLineArguments at: idx + 1) asFilename.
+		file exists ifFalse:[
+		    '' errorPrintCR.
+		    ('smalltalk.rc [error]: preference file ''', file pathName,''' does not exist') errorPrintCR.
+		    Smalltalk exit: 1.
+		].
+		file isDirectory ifTrue:[
+		    '' errorPrintCR.
+		    ('smalltalk.rc [error]: preference file ''', file pathName,''' is not a regular file') errorPrintCR.
+		    Smalltalk exit: 1.
+		].
+		file isReadable ifFalse:[
+		    '' errorPrintCR.
+		    ('smalltalk.rc [error]: preference file ''', file pathName,''' is not a readable (check permissions)') errorPrintCR.
+		    Smalltalk exit: 1.
+		].		
+		Smalltalk commandLineArguments removeAtIndex: idx + 1.
+		Smalltalk commandLineArguments removeAtIndex: idx.
+		settings := UserPreferences loadSettingsFrom: file.
+	    ] ifFalse:[
+	    	settings := UserPreferences loadSettings.
+	    ].
+	    UserPreferences setCurrent: settings.	    
+	].
+    ].
+].
+!
+
+"/
+"/ just a quick check, if this ST/X installation seems to
+"/ be halfway complete (it happened to some people, that
+"/ their source/resource directories were not installed)
+"/ - better to warn early ...
+"/
+|anyWrong missing|
+Smalltalk isStandAloneApp ifFalse:[
+    anyWrong := false.
+    missing := ''.
+
+"/
+"/ no longer needed - if we have the package,
+"/ we also have the resources ...
+"/
+"/    (Smalltalk getResourceFileName:'SystemBrowser.rs' forClass:SystemBrowser) isNil ifTrue:[
+"/        '***********************************************************************' errorPrintCR.
+"/        '***** ATTENTION: please check installation of your >>resource<< files' errorPrintCR.
+"/        '***** I will not be able to give non-english messages' errorPrintCR.
+"/        anyWrong := true.
+"/        missing := '''resources'' '.
+"/    ].
+
+"/
+"/ no longer needed - if we have the package,
+"/ we also have the styles ...
+"/
+"/    (Smalltalk getResourceFileName:'normal.style' forClass:View) isNil ifTrue:[
+"/        '***********************************************************************' errorPrintCR.
+"/        '***** ATTENTION: please check installation of your >>style<< files' errorPrintCR.
+"/        '***** I will use a plain b&w viewStyle as a fallBack' errorPrintCR.
+"/        anyWrong := true.
+"/        missing := missing , '''resources'' '.
+"/    ].
+
+    (Smalltalk getPackageFileName:'stx/libbasic/source/Object.st') isNil and:[
+	(Smalltalk getPackageFileName:'stx/libbasic/Object.st') isNil and:[
+	(Smalltalk getSystemFileName:'source/Object.st') isNil and:[
+	(Smalltalk getSystemFileName:'source/source.zip') isNil and:[
+	(Smalltalk getSystemFileName:'source/libbasic.zip') isNil and:[
+	(Smalltalk getSourceFileName:'libbasic/Object.st') isNil and:[
+	    "/
+	    "/ there may still be a SourceCodeManager ...
+	    "/
+	    (Smalltalk at:#SourceCodeManager) isNil ifTrue:[
+		'***********************************************************************' errorPrintCR.
+		'***** ATTENTION: please check installation of your >>source<< files' errorPrintCR.
+		'***** ' errorPrintCR.
+		'***** the browser/debugger may not be able to show sourcecode.' errorPrintCR.
+		'***** Also, autoloading may fail if sourceFiles are missing.' errorPrintCR.
+		anyWrong := true.
+		missing := missing , '''source'' '.
+    ]]]]]]].
+
+"/
+"/ no longer needed - if we have the package,
+"/ we also have the bitmaps ...
+"/
+"/    (Smalltalk bitmapFromFileNamed:'SmalltalkX.xbm' inPackage:'stx:libtool') isNil ifTrue:[
+"/        '***********************************************************************' errorPrintCR.
+"/        '***** ATTENTION: please check installation of your >>bitmap<< files' errorPrintCR.
+"/        anyWrong := true.
+"/        missing := missing , '''bitmaps'' '.
+"/    ].
+
+    anyWrong ifTrue:[
+	'*****' errorPrintCR.
+	'***** directory(s) named: ' errorPrint. missing errorPrint. 'incomplete/not existing' errorPrintCR.
+	'***** I could not find the missing directory along your path,' errorPrintCR.
+	'***** which is:' errorPrintCR.
+	Smalltalk systemPath do:[:dir |
+	    ('*****        ' , dir storeString) errorPrintCR.
+	].
+
+	'*****' errorPrintCR.
+	'***** Try: "make source bitmaps resources styles"' errorPrintCR.
+	'*****  or: "make symlinks" to fix this.' errorPrintCR.
+	'***********************************************************************' errorPrintCR.
+    ]
+]
+!
+
+"/
+"/ set the package to some useful default
+"/
+Project notNil ifTrue:[
+    Project setDefaultProject.
+    "/ Project current package:#'private'.
+].
+
+"/
+"/ if error occurs, and debugger has problems coming up,
+"/ uncomment the following ...
+"/
+"/ Debugger := MiniDebugger.
+
+
+"/
+"/ load initial packages
+"/
+UserPreferences current autoloadedPackages notEmpty ifTrue:[
+  (Smalltalk commandLineArguments includesAny:#('--noAutoload' '--noautoload')) ifTrue:[
+    'smalltalk.rc [info]: autoloaded packages suppressed.' infoPrintCR.
+  ] ifFalse:[
+    'smalltalk.rc [info]: loading autoloaded packages...' infoPrintCR.
+    (UserPreferences current autoloadedPackages) do:[:eachPackage |
+	Smalltalk showSplashMessage:('Autoloading ',eachPackage,'...').
+	Error handle:[:ex |
+	    ('smalltalk.rc [error]: error while autoloading package: ',eachPackage) errorPrintCR.
+	] do:[
+	    Smalltalk loadPackage:eachPackage.
+	]
+    ].
+    Smalltalk showSplashMessage:('done.').
+  ]
+].

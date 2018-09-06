@@ -1,0 +1,283 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+   <META NAME="Author" CONTENT="Thomas Zwick, eXept software AG, Germany">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.04 [en] (X11; I; Linux 2.0.30 i586) [Netscape]">
+   <TITLE>The SubCanvas Component</TITLE>
+</HEAD>
+<BODY>
+<A HREF="SubSpecification.html" NOPRINT><IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="The SubSpecification Wigdet" NOSAVE HEIGHT=30 WIDTH=30></A>
+<A HREF="TOP.html#TABLEOFTHEWIDGETS" NOPRINT><IMG SRC="../../../icons/DocsUpArrow.gif" ALT="Table of the Widgets" NOSAVE HEIGHT=30 WIDTH=30></A>
+<A HREF="Slider.html" NOPRINT><IMG SRC="../../../icons/DocsRightArrow.gif" ALT="The SubCanvas Wigdet" NOSAVE HEIGHT=30 WIDTH=30></A>
+<BR>&nbsp;
+<HR ALIGN=LEFT WIDTH="100%">
+<H1>
+<FONT SIZE=+4>The SubCanvas Component</FONT></H1>
+<IMG SRC="../../../pictures/GUIPainterWidgetArbitrary.gif" ALT="[A View of an empty Arbitrary Widget]" NOSAVE HEIGHT=24 WIDTH=207>
+<P>View Class: <TT>View</TT>
+<BR>Spec Class: <TT>SubCanvasSpec</TT>
+
+<P>The<B> SubCanvas Component</B> allows inclusion of another
+(sub) application with all of its components.
+<BR>
+It also allows for another UI-specification to be embedded,
+operating on the main-applicationModel.
+<H3>
+
+<HR ALIGN=LEFT WIDTH="100%"></H3>
+
+<H3>
+The <I>Basics</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>ID</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Unique symbolic name (ID) of the box.&nbsp;</B>&nbsp;
+<BR>This ID can be used by the application to access the widget
+via <TT>"builder>>componentAt:ID"</TT>.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Major Key</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Class which provides the window spec to be included.</B>
+<BR>If left unspecified, the application's class itself is used
+<BR>(or the spec is fetched from the Spec-value-holder as described below).
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Minor Key</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Message selector sent to the above class, to
+provide the window spec.</B>
+<BR>If no Spec-value-holder (see below) is defined, the included
+<BR>application is a static one - i.e. the spec is retrieved via major/minor
+<BR>key and built into the main application. This is done at initialization
+<BR>time.
+<BR>If a Spec-value-holder is defined, it is supposed to provide an interface spec
+<BR>and a new subApplication is built into the main application, whenever the
+<BR>valueHolders spec-value changes.
+<BR>This allows for highly dynamic interfaces to be built.
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Client Key</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Message selector sent to the application,
+<BR>to provide the application instance of the subCanvas;
+<BR></B>i.e. the applicationModel of the subCanvas (which may be the
+application itself, but need not be).
+<BR>If no Application-value-holder (see below) is defined, the used
+<BR>applicationModel is a static one - i.e. it is retrieved via the client
+<BR>key at initialization time and remains unchanged (even if the subcanvas spec
+is dynamically changed).
+<BR>If an Application-value-holder (see below) is defined, the applicationModel
+<BR>used in the subCanvas can also be changed dynamically
+<BR>(usually together with a changed spacification).
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Create<BR>New Application</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE>Only enabled, if a majorKey is provided,
+<BR>which names a class, AND no clientKey has been specified,
+<BR>AND no clientHolder has been specified.
+<BR><B>If on, a new instance of the majorKey class is created;
+<BR>if off, the main application is used as application of the subCanvas.</B>&nbsp;
+<P>
+<BR>If either clientKey or clientHolder is defined,
+<BR>the application instance is provided either once during construction
+<BR>via the clientKey, or dynamically via the clientHolder.
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Create<BR>New Builder</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE>Only enabled, if above flag is set.
+<BR><B>If on, the created application instance gets its own UIBuilder;
+<BR>if off, the main applications builder is used to build the interface.
+<P>
+<BR>This has a subtle effect on the aspect-valueHolders: if the subApp uses
+<BR>the main builder, it will share the aspects with the main application.
+<P>
+<BR>This should be set, if you embed multiple subApplications, which use the
+<BR>same aspect names, and you don't want them to be shared.
+</TR>
+
+</TABLE>
+
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Vertical Scroll Bar</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the widget
+provides vertical scrolling capabilities.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Vertical Mini Scroll Bar</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the widget
+uses a small vertical scroll bar.</B>&nbsp;
+<BR>This attributes can only be set, if the attribute <I>Vertical Scroll
+Bar </I>is turned on.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Horizontal Scroll Bar</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the widget
+provides horizontal scrolling capabilities.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Horizontal Mini Scroll Bar</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the widget
+uses a small horizontal scroll bar.</B>&nbsp;
+<BR>This attributes can only be set, if the attribute <I>Horizontal Scroll
+Bar</I> is turned on.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Auto Hide</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Controls autoHiding of scrollbars</B>.
+<BR>If on, scrollbars hide themself, if the contents is smaller than
+the scrolled view.
+<BR>If off, scrollBars never hide themSelf.
+<BR>If set to default, the autoHide feature is controlled by the viewStyle
+<BR>and scrollbars behave "natural" for the operating system.
+<BR>(true for windows, false for most unix-styles).
+</TD>
+
+</TABLE>
+
+
+&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Details</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Border</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the width of the border.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Level</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the width of the 3D-border.</B>&nbsp;
+<BR>Positive values provide a raising,&nbsp;
+<BR>negative values provide a lowering of the widget.</TD>
+</TR>
+
+<TR NOSAVE>
+<TD><B>Initially Disabled</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the widget is initially disabled.</B></TD>
+</TR>
+
+<TR NOSAVE>
+<TD><B>Initially Invisible</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the widget is initially invisible.</B></TD>
+</TR>
+
+</TABLE>
+
+&nbsp;
+<BR>&nbsp;
+<H3>The <I>Channels</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Visible</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding providing
+a boolean visiblity flag.</B>&nbsp;
+<BR>This allows for the subSpecs visibility to be controlled dynamically.
+<BR>If a constant boolean or block is provided by the aspect,
+<BR>the visibility is determined once, when the subSpec is built.
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Application<BR>(ClientChannel)</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding providing
+the application instance.</B>&nbsp;
+<BR>This allows a valueHolder to hold the subCanvases application instance
+<BR>(i.e. the applicationModel).
+<BR>If not specified, the application is:
+<BR>- provided by clientKey (if defined)
+<BR>- created new (if majorKey names a class,
+<BR>&nbsp;&nbsp;no clientKey is defined, and the createNewApp toggle is on
+<BR>- the main application (otherwise)
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Spec</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding providing
+the window spec.</B>&nbsp;
+<BR>This allows a valueHolder to provide the window specification for the
+<BR>subCanvas and will arrange for the subCanvas to rebuild its widgets whenever
+<BR>the specification in the valueHolder changes.
+</TR>
+
+</TABLE>
+
+<H4>Callbacks:</H4>
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Interface Selector</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>A message selector sent to the application
+when the subApplication has been opened.</B>
+<BR>Allows for hookup actions to be performed in the master application.
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Interface Argument</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>An optional argument passed with above message.
+</TR>
+
+</TABLE>
+
+<H3>The <I>SubChannels</I> Section:</H3>
+
+This section allows for a subApplications aspects to be
+"linked" to master applications aspects, allowing for subSpecs to
+be "plugged" into the masterApplication without a need to programatically
+define its aspects.
+<BR>
+For this, the class providing the windowSpec of the subSpecification
+(i.e. the class as specified by the majorKey) must implement a method
+named <TT>#subCanvasAspectHolders</TT>, which returns a collection
+of aspect selector-symbols, which are assumed to be exported by the
+subCanvas.
+<P>
+Each of the subCanvases exported aspects can be linked to a masterApplications
+aspect, and a master-app callBack can be defined, which is invoked, when
+the subAspect changes.
+
+
+<P>&nbsp;
+<H3>The <I>Help</I> Section:</H3>
+
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="HelpTool.html">Using the Help Tool</A>"
+<BR>&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Layout</I> Section:</H3>
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="LayoutTool.html">The Layout of the Widgets</A>"
+<BR>&nbsp;
+<BR>&nbsp;
+
+<P>
+<HR>
+
+<P><IMG SRC="../../../icons/stx.gif" ALT="[stx-logo]" NOSAVE NOPRINT HEIGHT=48 WIDTH=47 ALIGN=CENTER>
+<BR><TT>Copyright &copy; 1998 eXept Software AG, all rights reserved</TT>
+<BR>
+<HR>
+</BODY>
+</HTML>

@@ -1,0 +1,15 @@
+<![CDATA[<grammar
+    xmlns="http://relaxng.org/ns/structure/1.0" 
+    xmlns:b="http://www.volny.cz/janfrog/xmlsuite/binding"
+    datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <start>
+    <element name="person" b:class="Person">
+      <element name="pet">
+	<choice>
+	  <element name="dog" b:iv="pet" b:class="Dog"><empty /></element>
+	  <element name="cat" b:iv="pet" b:class="Cat"><empty /></element>	
+	</choice>
+      </element>
+    </element>
+  </start>
+</grammar>]]>

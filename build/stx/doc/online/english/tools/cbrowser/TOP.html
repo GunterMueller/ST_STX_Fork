@@ -1,0 +1,533 @@
+<HEAD>
+<TITLE>Using the Changes Browser</TITLE>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="../debugger/TOP.html">   <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="../TOP.html" INFO="Back to the tool documentation page">            <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="../htmlViewer/TOP.html"> <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Using the Changes Browser</H1>
+
+<H2><A NAME="INDEX">Index</A></H2>
+
+<UL>
+<LI><A NAME="I_INTRO" HREF="#INTRO">Introduction; ChangeSet vs. ChangeFile</A>
+<LI><A NAME="I_CHANGELIST" HREF="#CHANGELIST">Change List Menu Functions</A>
+<LI><A NAME="I_MAINMENU" HREF="#MAINMENU">Main Menu Functions</A>
+<LI><A NAME="I_NEW_CHANGEBROWSER" HREF="#NEW_CHANGEBROWSER">The New ChangeSetBrowser</A>
+<LI><A NAME="I_RECOVERING" HREF="#RECOVERING">Recovering after a Crash</A>
+<LI><A NAME="I_KEEPINGSMALL" HREF="#KEEPINGSMALL">Keeping the Change File Small</A>
+<LI><A NAME="I_ANOTHERCHANGEFILE" HREF="#ANOTHERCHANGEFILE">Writing to Another Change File</A>
+<LI><A NAME="I_CAUTION" HREF="#CAUTION">Caution</A>
+<LI><A NAME="I_NOTICE" HREF="#NOTICE">Notice</A>
+</UL>
+
+<H2><A HREF="#I_INTRO" NAME="INTRO">Introduction; ChangeSet vs. ChangeFile</A></H2>
+
+
+<CITE>Smalltalk/X</CITE> keeps track of all your changes made to either
+the class hierarchy or to individual methods <B>both</B> in memory, in the so called <I>ChangeSet</I>
+<B>and</B> in a <I>ChangeFile</I> called <CODE>'st.chg'</CODE>
+ <A HREF="#FN1" NAME="BACK_FN1">(*)</A>.
+Notice that the file used be called <CODE>'changes'</CODE>
+in older ST/X versions
+and that its name can be changed in the settings dialog.
+<P>
+For each change, one record
+is appended both to the <I>ChangeSet</I> and to the <I>ChangeFile</I> <A HREF="#FN2" NAME="BACK_FN2">(**)</A>.
+<P>
+
+The "<I>ChangeSet</I>" is a collection kept in memory, and grows over time.
+However, it is compressed, whenever a class is checked into the source repository (CVS, SVN, etc.).
+It can also be manually cleared, via the <A HREF="../newbrowser/menu.html#CLASS_MENU.SPECIAL_CLEANUP_CHANGESET">SystemBrowser's <I>special-cleanup-changeSet</I>
+function</A> in its class menu,
+or by opening a <I>ChangeSetBrowser</I>.
+<BR>
+As the change set is kept in memory, it is lost in case of a crash (in contrast to the change file, which is persistent).
+<P>
+The change-file is never cleared automatically, and therefore is even available
+for repair and undo in case of a crash, power failure or when <CITE>ST/X</CITE> is exited without
+an image being written. It also grows, unless modified via the ChangesBrowser.
+The file contains readable ascii text, called "<I>chunks</I>". A chunk is a single change as done by
+the programmer in a special format (delimited by exclamation marks).
+Do not manipulate the change file manually (for example in a text editor), unless you know exactly what you are doing.
+<P>
+
+
+A <B>ChangeBrowser</B> allows inspection and manipulation of the <I>"Change-file"</I>
+(which is on your disk and contains individual change-chunks as text).
+<BR>
+A <B>ChangeSetBrowser</B> allows inspection and manipulation of a <I>"ChangeSet"</I>
+(which is an in-memory list of change-objects).
+<P>
+Both consist of 2 subviews; which are:
+<UL>
+<LI>change list view
+<LI>contents (and diff-) view
+</UL>
+
+  The change list view (top panel) displays a list of changes in chronological order.
+<BR>
+If the "<I>automatic compare</I>" option has been enabled in the change browser's settings,
+change-entries are marked with one of the following characters in the first column:
+<BR>
+<DL>
+<DT>+
+<DD>The change <B>adds</B> a method. I.e. the changeFile contains code for a method
+which is not present in your current running image.
+
+<DT>-
+<DD>The change <B>removes</B> a method. I.e. the changeFile contains an entry to
+remove a method which is still present in your running image.
+
+<DT>=
+<DD>The change has no effect, as the method's code in the changeFile is the same as
+the code of the one present in your image.
+
+<DT>~
+<DD>The change has no effect semantically; this means that although the method's code
+in the changeFile is different from the methods code in your image,
+the statements and effect are the same. Typically, this means that the code has only been
+reformatted, and/or comments have been changed.
+
+<DT>?
+<DD>The effect of the change cannot be determined, as the affected class is not loaded/present
+in your running image.
+</DL>
+<BR>
+To see a change, select (i.e. click on) the corresponding line in the
+changelist. The change will be displayed in the contents view.
+A double click on a changeList-item brings up a class browser on the current (in-image)
+version of the corresponding method, if it exists.
+
+<P>
+  Don't be afraid using the change browser; the change file (resp. changeSet) remains
+  unmodified, unless you execute the <I>"Writeback Change File"</I> menu function.
+<P>
+The text shown in the contents view is readonly -
+changes cannot be changed.
+<P>
+  The <KBD>accept</KBD> function of the contents view has been redefined to
+  perform an "<I>Apply Change</I>" operation (see below).
+<P>
+A change browser can be started either from the Launcher
+(it is found both in its toolbar and the <I>"Tools"</I> submenu),
+or by evaluating
+(in a <A HREF="../misc/TOP.html#WORKSPACE">workspace</A>):
+
+<A TYPE="example">
+<CODE><PRE>
+    ChangesBrowser open
+</PRE></CODE>
+</A>
+  The use of the changes browser is not limited to the <CODE>'st.chg'</CODE> file;
+  any file which contains expressiones in changefile format can be manipulated
+  (technically, any Smalltalk source file has this format).
+<BR>
+  For example, a browser on a backup changeFile <CODE>'st.bak'</CODE> file is opened with:
+<A TYPE="example">
+<CODE><PRE>
+    ChangesBrowser openOn:'st.bak'
+</PRE></CODE>
+</A>
+ and, because Smalltalk's regular fileOut (i.e. source-file) format also consists
+ of chunks, it can be even opened on a classes source:
+<A TYPE="example">
+<CODE><PRE>
+    ChangesBrowser openOn:'../../libbasic/Object.st'
+</PRE></CODE>
+</A>
+ which is useful to import, compare or investigate other/public-domain Smalltalk code.
+<P>
+In addition to reapplying or undoing previous changes to the system,
+integration/merge of other people's changes into your current
+environment can also be done this way -
+by opening a changeBrowser on the other person's changeFile
+and applying changes as required.
+<BR>
+Since this is a common task, the <A HREF="../fbrowser/TOP.html">FileBrowser</A> provides
+a menu-item for opening a change browser on the selected file in its tools menu.
+<P>
+
+A change set browser on the current (in-memory) change set can be opened by:
+<A TYPE="example">
+<CODE><PRE>
+    ChangeSetBrowser openOn:(ChangeSet current)
+</PRE></CODE>
+</A>
+or via the Launcher's <I>"Classes" - "Recent changes"</I> menu item.
+
+
+<H2><A HREF="#I_CHANGELIST" NAME="CHANGELIST">Change List Menu Functions</A></H2>
+
+  The top part of the changes browser is called <VAR>changelist view</VAR> and
+  offers the following functions in its popup menu:
+<BR>
+(notice: new versions of the changeBrowser also provide these functions in the main window menu).
+
+<UL>
+<LI><VAR>Apply</VAR>
+<BR>
+apply the currently selected change(s) (i.e. redo it)
+<BR>
+The <VAR>accept</VAR> key (usually <KBD>CMD-a</KBD> or <KBD>CTRL-s</KBD>) in the codeview
+performs this funtion too.
+<P>
+
+<LI><VAR>Apply to End</VAR>
+<BR>
+apply all changes from the currently selected one up to the end.
+<P>
+
+<LI><VAR>Apply for Class to End</VAR>
+<BR>
+apply all changes from the currently selected one up to the end
+which affect the same class as the currently selected changes class.
+<P>
+
+<LI><VAR>Apply All</VAR>
+<BR>
+apply all changes from the very first to the very last in the list
+<P>
+
+
+<LI><VAR>Delete</VAR>
+<BR>
+delete the currently selected change(s)
+from the list (the deletion becomes effective
+when the change-list is written back to the
+changes file - see below)
+<BR>
+Pressing the <KBD>Delete</KBD> key in the changeList view has the same effect.
+<P>
+
+<LI><VAR>Delete to End</VAR>
+<BR>
+delete all changes from the currently selected one up to the end.
+<P>
+
+<LI><VAR>Delete for Class to End</VAR>
+<BR>
+delete all changes which affect the same classas the currently selected change, up to
+the end.
+<P>
+
+<LI><VAR>Delete all for Class</VAR>
+<BR>
+delete all changes (from the beginning to the end)
+which affect the same class(es) as the currently selected changes class(es).
+<BR>
+(useful after a class-fileOut or checkIn - but see below)
+<P>
+
+<LI><VAR>Delete all for Class & its private Classes</VAR>
+<BR>
+delete all changes (from the beginning to the end)
+which affect the same class(es) as the currently selected changes class(es),
+or one of its/their private classes.
+<BR>
+(useful after a class-fileOut or checkIn, because private classes are checked into
+the owning classes container)
+<P>
+
+<LI><VAR>Compress</VAR>
+<BR>
+compress the change list.
+This function removes multiple changes for a method leaving the last one.
+<P>
+
+<LI><VAR>Compress for class</VAR>
+<BR>
+compress the change list, but only changes which affect the class
+of the currently selected change.
+This function removes multiple changes for a method leaving the last one.
+<P>
+
+<LI><VAR>Compare and Compress</VAR>
+<BR>
+compress the change list by removing all method changes which are
+already applied - i.e. which have the same source as the currently
+installed method.
+<P>
+
+<LI><VAR>Compare with current Version</VAR>
+<BR>
+compare a method's code in a change with
+the current and output a message on the
+Transcript. If there are any differences,
+open up a view showing differences.
+<P>
+
+<LI><VAR>Browse Class</VAR>
+<BR>
+opens a browser on the class of the current change.
+A doubleClick on an entry in the changeList performs the same.
+<P>
+
+<LI><VAR>Make change a patch</VAR>
+<BR>
+append the change to the end of the
+<CODE>'patches'</CODE> file, making the change be
+automatically applied on the next startup.
+<P>
+
+<LI><VAR>FileOut & Delete all for Class</VAR>
+<BR>
+saves the class of the selected change (as in the system - NOT as in the
+changefile) and removes all changes for that class from the changeList.
+<P>
+
+<LI><VAR>CheckIn & Delete all for Class</VAR>
+<BR>
+checks the class of the selected change (as in the system - NOT as in the
+changefile) into the sourceCode repository
+and removes all changes for that class from the changeList.
+<P>
+
+<LI><VAR>Save in...</VAR>
+<BR>
+append the current changes text to a file.
+<BR>
+A DialogBox will ask you for the file's name.
+<BR>
+This function is useful to <VAR>'move'</VAR> changes from
+another change file into yours, or to create a filtered change file
+to be delivered to others.
+
+<P>
+<LI><VAR>Save to End in...</VAR>
+<BR>
+append all changes from the currently selected one to the
+last change to a file.
+<BR>
+A DialogBox will ask you for the file's name.
+<BR>
+This function is useful to <VAR>'move'</VAR> changes from
+another change file into yours, or to create a filtered change file
+to be delivered to others.
+
+<P>
+<LI><VAR>Save for Class to End in...</VAR>
+<BR>
+append all changes from the currently selected one to the
+last change which affect the same class as the currently selected change
+to a file.
+<BR>
+A DialogBox will ask you for the file's name.
+
+<P>
+<LI><VAR>Save all for Class in...</VAR>
+<BR>
+append all changes from the very first one to the
+last change which affect the same class as the currently selected change
+to a file.
+<BR>
+A DialogBox will ask you for the files name.
+
+<P>
+<LI><VAR>Writeback changefile</VAR>
+<BR>
+writeback the change list (as currently shown in the changesBrowser)
+to the changes file.
+<BR>
+None of the above operations actually modify the changes file -
+all operations are performed on an internal (in-memory) copy.
+Any delete/compress operations
+performed in the changesBrowser do
+NOT affect the changes-file, UNLESS this writeback-operation is performed.
+<P>
+Be careful, to never writeBack a changeFile after deletions of changes
+which you may need later and which cannot be recovered (i.e. you did not
+fileOut the class).
+<BR>
+The writeBack operation keeps a save copy of the previous changes-file contents
+(as "changes.sav") which can be used in case of disaster. However, only the
+last version is kept - older changefile versions are lost, unless you copied
+that file before the writeBack.
+<P>
+Also be careful, with new changes which might have been done to the system
+in a class browser or the debugger, WHILE a changesbrowser has been open.
+When doing a writeback-changes, these new changes might be lost.
+
+
+<P>
+<LI><VAR>Update</VAR>
+<BR>
+reread the changes file
+(useful as an undo or if new changes have been made in the meanwhile)
+
+</UL>
+
+Pressing the Control (CTRL-) Key while right clicking brings up a search menu.
+
+<H2><A HREF="#I_MAINMENU" NAME="MAINMENU">Main Menu Functions</A></H2>
+
+The main menu contains the same items as the popup-menu of the change list,
+plus a few additional menu entries:
+
+<H3><A HREF="#I_MAIN_FILEMENU" NAME="MAIN_FILEMENU">File Menu Functions</A></H2>
+<UL>
+<LI><VAR>Cleanup</VAR><br>Removes all changes for methods which are up-to-date
+(i.e. the last change is equal to the current in-image version,
+and the in-image version is not in the current change-set.
+In other words: the last version is the current compiled version.)
+</UL>
+
+<H3><A HREF="#I_MAIN_CHANGEMENU" NAME="MAIN_CHANGEMENU">Change Menu Functions</A></H2>
+--- to be documented ---
+
+<H3><A HREF="#I_MAIN_SEARCHMENU" NAME="MAIN_SEARCHMENU">Search Menu Functions</A></H2>
+--- to be documented ---
+
+<H3><A HREF="#I_MAIN_BROWSEMENU" NAME="MAIN_BROWSEMENU">Browse Menu Functions</A></H2>
+--- to be documented ---
+
+<H3><A HREF="#I_MAIN_SETTINGSMENU" NAME="MAIN_SETTINGSMENU">Settings Menu Functions</A></H2>
+--- to be documented ---
+
+
+<BR>
+<H2><A HREF="#I_NEW_CHANGEBROWSER" NAME="NEW_CHANGEBROWSER">The New ChangeSetBrowser</A></H2>
+
+The new ChangeSetBrowser2 adds multiple browser like view modes and
+icons which indicate the change's effect when applied.
+
+
+<H2><A HREF="#I_RECOVERING" NAME="RECOVERING">Recovering after a Crash</A></H2>
+
+  After a crash of <CITE>Smalltalk/X</CITE> (or the machine), you should use a changes browser to
+  reapply all changes made. Usually, you would look for the last
+  "snapshot"-entry in the change list and apply all changes after that
+  one up to the end.
+<BR>
+  If the crash was caused by one of those changes
+  (for example, you redefined a system method), the best approach is
+  to manually apply individual changes upto, but excluding the 'bad'-one..
+<BR>
+  If the crash was caused by a system breakdown or power failure
+  (or because you forgot to leave <CITE>ST/X</CITE> before shutting down the window system or machine),
+  you can simply execute the <VAR>``Apply Changes to End''</VAR> function.
+
+
+
+
+<H2><A HREF="#I_KEEPINGSMALL" NAME="KEEPINGSMALL">Keeping the Change File Small</A></H2>
+
+  Since the change file grows over time (while programming),
+  and having a big change file slows down the changes browser startup,
+  old changes should be removed from time to time (say: "every month or so").
+<BR>
+  To do this, file out your classes completely or (better!)  check them into a source repository
+  and then remove all changes for
+  that class, using the "<I>Delete all for Class</I>" menu function.
+<P>
+  Also a regular compress (which removes all old changes for a
+  method, just leaving the newest one) helps to keep the change file
+  smaller.
+
+
+
+<H2><A HREF="#I_ANOTHERCHANGEFILE" NAME="ANOTHERCHANGEFILE">Writing to Another Change File</A></H2>
+
+The Launcher's <VAR>``Settings - Source & Debugger''</VAR>-menu item opens a dialog
+for changging the name of the change file.
+<BR>
+Change this if either two or more people are working in the same directory (to avoid one
+user to overwriting the other's change file) or to separate changes on a per project
+or per image basis (the name of the change file is saved with the image,
+so you only have to change this setting once per image).
+
+
+
+<H2><A HREF="#I_CAUTION" NAME="CAUTION">Caution</A></H2>
+
+The current implementation of the changes browser does <STRONG>NOT</STRONG>
+automatically update its view when new changes are made.
+Therefore, be careful when a changes browser is left open,
+while changes are made in another browser, and you execute the
+<VAR>Writeback Changes</VAR> function afterwards.
+Those new changes made in the meanwhile will then <STRONG>NOT</STRONG>
+be stored in the newly written changes file.
+<P>
+The changes browser will display "(outdated)" in the window title,
+whenever it detects that new changes have been written to the changefile,
+and the displayed list is not in-sync with it.
+<P>
+If in doubt, perform the "<VAR>Update</VAR>" function.
+<P>
+To prevent confusion,
+do not leave a change browser open after repair work and continue working in a browser.
+
+
+<H2><A HREF="#I_NOTICE" NAME="NOTICE">Notice</A></H2>
+
+The functionality provided by the current changes browser is probably far
+from being complete and more functions are required - especially
+when working in a group on a big project.
+<BR>
+If you add any enhancements or extra features, please return them to eXept
+for inclusion into the next release(s).
+
+<P>
+<H3>Notes:</H3>
+<P>
+<DL>
+<DT><A HREF="#BACK_FN1" NAME="FN1">(*)</A><DD>
+If your program wants to create/modify a class or method <b>without</b>
+the change being recorded, execute the modifying code inside
+a
+<CODE><NOBR>withoutUpdatingChangesDo:</NOBR></CODE>
+block.
+<BR>
+I.e. to create a new class which is not recorded, write:
+<CODE><PRE>
+    Class
+	withoutUpdatingChangesDo:[
+	    Object
+		subclass:#Foo
+		instanceVariableNames:'i1 i2'
+		classVariableNames:''
+		poolDictionaries:''
+		category:'temporary - not recorded in the changeSet/File'.
+	]
+</PRE></CODE>
+Use this in code generators or test cases,
+when classes or methods are to be created by the program "on-the-fly".
+The above code is thread-safe; i.e. other processes (especially browsers)
+would still record their changes
+<P>
+
+<DT><A HREF="#BACK_FN2" NAME="FN2">(**)</A><DD>
+By default, the system only adds changed class and method definitions.
+Expressions evaluated by the <CODE>"doit"</CODE> function
+are NOT appened (to keep the changefile from growing too fast).
+<BR>
+If you want <VAR>doits</VAR> to be remembered too, execute:
+<A TYPE="example">
+<CODE><PRE>
+    Smalltalk logDoits:true
+</PRE></CODE>
+</A>
+in a <A HREF="../misc/TOP.html#WORKSPACE">workspace</A>
+or add it to your startup file
+(<CODE>'smalltalk.rc'</CODE> or <CODE>'private.rc'</CODE>),
+or use the Launcher's <VAR>``Settings'' - ``Source & Debugger''</VAR> dialog.
+</DL>
+
+
+
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif" ALT="[stx-logo]>
+Copyright &copy; 1995 Claus Gittinger Development & Consulting, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.37 $ $Date: 2018-04-25 09:57:19 $
+</BODY>
+</HTML>

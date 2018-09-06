@@ -1,0 +1,111 @@
+"/
+"/ $Header: /cvs/stx/stx/goodies/xml/vw/loadAll,v 1.13 2006-09-15 16:57:32 stefan Exp $
+"/
+"/ loadAll-file to fileIn code for: stx:goodies/xml/vw
+"/
+"/ Automatically generated from project definition.
+"/ DO NOT MODIFY THIS fILE;
+"/ modify the .prj file instead, and regenerate this file
+"/ with the ProjectBrowser tool.
+"/
+
+"/
+"/ Prerequisites:
+"/
+"/ Smalltalk loadPackage:'module:directory'.
+"/ Smalltalk loadPackage:'....'.
+!
+
+"{ package:'stx:goodies/xml/vw' }"!
+
+|files|
+
+'loading package stx:goodies/xml/vw ...' infoPrintCR.
+
+files := #(
+  'XMLSignal.st'
+  'MalformedSignal.st'
+  'InvalidSignal.st'
+  'Pattern.st'
+  'ConcretePattern.st'
+  'AnyPattern.st'
+  'ComplexPattern.st'
+  'ModifiedPattern.st'
+  'MixedPattern.st'
+  'AttributeType.st'
+  'Node.st'
+  'AnyPattern.st'
+  'ChoicePattern.st'
+  'SequencePattern.st'
+  'Attribute.st'
+  'ENTITY_AT.st'
+  'ID_AT.st'
+  'Enumeration_AT.st'
+  'XMLNodeBuilder.st'
+  'Entity.st'
+  'GeneralEntity.st'
+  'ParameterEntity.st'
+  'Text.st'
+  'NMTOKENS_AT.st'
+  'IDREF_AT.st'
+  'ENTITIES_AT.st'
+  'NOTATION_AT.st'
+  'NMTOKEN_AT.st'
+  'IDREFS_AT.st'
+  'CDATA_AT.st'
+  'SAXDriver.st'
+  'ElementContext.st'
+  'NodeBuilder.st'
+  'DiscardingNodeBuilder.st'
+  'URIResolver.st'
+  'NamePattern.st'
+  'SourceScannerNodeBuilder.st'
+  'Document.st'
+  'DocumentFragment.st'
+  'Element.st'
+  'Notation.st'
+  'Comment.st'
+  'PI.st'
+  'SourceNodeBuilder.st'
+  'XMLParser.st'
+  'XMLParserStX.st'
+  'AttributeDef.st'
+  'PCDATAPattern.st'
+  'EmptyPattern.st'
+  'InitialPattern.st'
+  'NodeTag.st'
+  'StreamWrapper.st'
+  'DocumentType.st'
+  'TerminalPattern.st'
+  'ChoicePattern.st'
+  'DOM_SAXDriver.st'
+  'SAXBuilder.st'
+  'SAXLocator.st'
+).
+
+"/ see if there is a classLibrary
+(Smalltalk fileInClassLibrary:'libstx_goodies_xml_vw') ifTrue:[
+    |handle loaded|
+
+    handle := ObjectFileLoader loadedObjectHandles
+		    detect:[:h | h package = 'stx:goodies/xml/vw'] ifNone:nil.
+    handle ifNotNil:[
+	loaded := Set new:(handle classes size).
+	handle classes do:[:c| c isMeta ifFalse:[loaded add:c classFilename]].
+	files := files asOrderedCollection \ loaded.
+    ].
+].
+
+"/ load files which are not in the classLibrary (all if there is none)
+files size > 0 ifTrue:[
+  files do:[:f |
+    '.' infoPrint.
+    f asFilename exists ifTrue:[
+	Smalltalk fileIn:f.
+    ] ifFalse:[
+	Smalltalk fileIn:('source/' , f)
+    ]
+  ].
+  ' ' infoPrintCR.
+].
+'done (stx:goodies/xml/vw).' infoPrintCR.

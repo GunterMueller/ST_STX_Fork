@@ -1,0 +1,37 @@
+//
+// DO NOT EDIT
+// automagically generated from the projectDefinition: stx_goodies_builder_reports.
+//
+VS_VERSION_INFO VERSIONINFO
+  FILEVERSION     6,2,1,8
+  PRODUCTVERSION  6,2,5,0
+#if (__BORLANDC__)
+  FILEFLAGSMASK   VS_FF_DEBUG | VS_FF_PRERELEASE
+  FILEFLAGS       VS_FF_PRERELEASE | VS_FF_SPECIALBUILD
+  FILEOS          VOS_NT_WINDOWS32
+  FILETYPE        VFT_DLL
+  FILESUBTYPE     VS_USER_DEFINED
+#endif
+
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904E4"
+    BEGIN
+      VALUE "CompanyName", "SWING Research Group & eXept Software AG\0"
+      VALUE "FileDescription", "Report Runner for Jenkins CI Server (LIB)\0"
+      VALUE "FileVersion", "6.2.1.8\0"
+      VALUE "InternalName", "stx:goodies/builder/reports\0"
+      VALUE "LegalCopyright", "Copyright Jan Vrany 2011\nCopyright eXept Software AG 2011\0"
+      VALUE "ProductName", "ReportRunner\0"
+      VALUE "ProductVersion", "6.2.5.0\0"
+      VALUE "ProductDate", "Thu, 12 Mar 2015 21:25:28 GMT\0"
+    END
+
+  END
+
+  BLOCK "VarFileInfo"
+  BEGIN                               //  Language   |    Translation
+    VALUE "Translation", 0x409, 0x4E4 // U.S. English, Windows Multilingual
+  END
+END

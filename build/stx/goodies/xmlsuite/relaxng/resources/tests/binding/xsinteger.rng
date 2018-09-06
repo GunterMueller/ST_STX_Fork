@@ -1,0 +1,9 @@
+<element
+    xmlns="http://relaxng.org/ns/structure/1.0"
+    xmlns:b="http://www.volny.cz/janfrog/xmlsuite/binding"
+    datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
+    name="object" b:class="RNG::BindingTests::TestClass">
+    	<element name="int" b:iv="instvar">
+		<data type="integer" />
+	</element>
+</element>

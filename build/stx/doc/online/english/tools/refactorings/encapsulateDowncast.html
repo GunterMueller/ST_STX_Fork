@@ -1,0 +1,37 @@
+<html><head><title>Refactoring: 
+
+
+
+Encapsulate Downcast</title></head><body>
+
+
+<H1>
+
+
+
+Encapsulate Downcast</H1>
+<P><I><CENTER>
+
+A method returns an object that needs to be downcasted
+by its callers.</CENTER></I></P>
+<P><B><CENTER>
+
+Move the downcast to within the method.</CENTER></B></P>
+
+<PRE>
+Object lastReading() {
+	return readings.lastElement();
+}
+</PRE><P><CENTER><IMG SRC="arrow.gif"/></CENTER></P>
+<PRE>
+Reading lastReading() {
+	return (Reading) readings.lastElement();
+}
+</PRE>
+
+
+<P>For more information see page 
+	<font color="#FF0000">308</font>
+	of <I>Refactoring</I></P>
+
+<P /><P /><P><CENTER><A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A></CENTER></P></body></html>

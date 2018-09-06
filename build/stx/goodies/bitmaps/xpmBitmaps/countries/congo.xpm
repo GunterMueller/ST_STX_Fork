@@ -1,0 +1,30 @@
+/* XPM */
+static char *congo_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 20 3 1",
+/* colors */
+"a c red",
+"b c #2e8b57",
+"c c yellow",
+/* pixels */
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaccaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaabaaaabaaaaaaaaaaaaaaaaaaaaaaa",
+"aaabaaaabaaaaaaaaaaaaaaaaaaaaaaa",
+"aaabaaaabaaaaaaaaaaaaaaaaaaaaaaa",
+"aaabbaabbaaaaaaaaaaaaaaaaaaaaaaa",
+"aaabbccbbaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+};

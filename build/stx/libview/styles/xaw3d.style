@@ -1,0 +1,35 @@
+; View defaultStyle:#xaw3d 
+;
+; another example for a tiny modification - 
+; motif look-alike xaw3d style
+;
+; $Header: /cvs/stx/stx/libview/styles/xaw3d.style,v 1.4 1997-11-03 16:43:15 cg Exp $
+
+#include 'motif.style'
+
+comment  '`xaw3d'' lookalike style'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Wie `xaw3d'''
+#endif
+#if (Language == #french) or:[Language == #fr]
+comment  'Comme `xaw3d'''
+#endif
+
+checkToggle.bitmapFile           nil
+checkToggle.style                #fatcross
+checkToggle.activeLevel          -1
+checkToggle.passiveLevel         -1
+checkToggle.borderWidth          0
+checkToggle.activeBackgroundColor Color white
+checkToggle.backgroundColor       Color white
+checkToggle.foregroundColor       Color black
+checkToggle.activeForegroundColor Color black
+
+button.activeForegroundColor     Color white
+button.activeBackgroundColor     Color black
+
+scroller.ghostFrameColor         nil
+#scroller.ghostColor              Color grey:25 
+#scroller.ghostLevel              -1
+scroller.thumbActiveLevel        -2

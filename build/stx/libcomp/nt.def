@@ -1,0 +1,11 @@
+LIBRARY         libcomp
+DESCRIPTION     'Smalltalk/X Compiler classes'
+VERSION         3.5
+CODE            EXECUTE READ 
+DATA            READ WRITE
+SECTIONS
+    INITCODE    READ EXECUTE 
+    INITDATA    READ WRITE
+    RODATA      READ SHARED
+EXPORTS 
+    _libcomp_Init

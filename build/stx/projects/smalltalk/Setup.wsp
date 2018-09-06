@@ -1,0 +1,53 @@
+Things you may want to change/adjust.
+=====================================
+
+All settings can be changed via dialogs found in the Launchers "System-Settings" menu.
+These dialogs also provide individual help (via the help button). Many initial setting
+values are read from startup files ending in ".rc". You can edit those to adapt to your
+personal preferences.
+
+Look & Feel:
+    ST/X supports multple viewStyles, which more or less mimic
+    existing Window Systems (Windows, Motif, Irix etc.).
+    The viewStyle can be changed via the Launchers
+	"System - Settings - ViewStyle"
+    Dialog.
+    Currently, the prettiest style is the 'mswindowsxp' style - even for non XP systems.
+
+Keyboard & Shurtcuts:
+    The default keyboard mapping is described in the Keyboard.wsp workspace.
+    If you dont like it, have a look (and edit) the 'keyboard.rc' file.
+
+Language:
+    For lack of resources and language competence, only German, English and Spanish
+    are fully supported. A lot of Chinese and some rudimentary French, Italian etc. are present,
+    but definitely not complete.
+    Notice, that the existing translations are only provided to give a hint
+    on how it is done and to give editors something to start with.
+    All language strings are found in the
+	"lib*/resources/*.rs"
+    files; there you will find per-package translations for individual languages.
+
+    If you add or fix anything there, we would be very happy,
+    if you'd send us your changes - we will incorporate them into the next release.
+    Make sure that your chosen font is able to display those characters
+    (especially if you edit Greek, Russian or a far-east language translations).
+
+    Sorry: ST/X does not (yet) support right-to-left text display
+    (i.e. Hebrew and Arabic). Be patient - maybe someone pays us to do it in the future.
+
+Misc settings:
+    Tabulators can be changed to be either multiples of 4 or 8;
+    See the Launchers "System-Settings-Tools-Editing" dialog.
+    Keyboard focus behavior and some performance related
+    drawing options are adjusted in "System-Settings-Misc".
+
+Tools:
+    For the File- and SystemBrowser, new versions are provided, which
+    offer much more functionality. The old versions are still around, as there are still
+    a few functions which are not yet available in the new tools.
+    You can switch back to make the old tools the default via the
+    "System-Settings-Tools" Dialog.
+
+---------------------------------------------------------------------------------------------------------
+This Documents Version: $Revision$

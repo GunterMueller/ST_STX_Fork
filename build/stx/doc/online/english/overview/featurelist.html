@@ -1,0 +1,649 @@
+<HTML>
+
+<HEAD>
+<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<TITLE>Smalltalk/X Architecture specific features</Title>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="../TOP.html" INFO="Back to documentation's main page" > <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+
+<H1>Architecture specific Features, Limitations & Notes</H1>
+
+<H2><A NAME="INDEX">Index</A></H2>
+
+<UL>
+<LI><A HREF="#FEATURES">Featurelist</A>
+<LI><A HREF="#DISPLAYS">Supported display types</A>
+<LI><A HREF="#DISPLAYNOTES">Display specific notes</A>
+ <UL>
+ <LI><A HREF="#DISPLAY_MONOCHROME">Monochrome and 16-color displays</A>
+ <LI><A HREF="#DISPLAY_EXCEED">Exceed (Windows X-server)</A>
+ </UL>
+<LI><A HREF="#ARCHNOTES">Architecture specific notes</A>
+ <UL>
+ <LI><A HREF="#ARCH_VMS">OpenVMS</A>
+ <LI><A HREF="#ARCH_WINDOWS">Windows-95 / Windows-NT</A>
+ <LI><A HREF="#ARCH_OSX">Mac OSX</A>
+ </UL>
+</UL>
+
+
+<H2><A HREF="#INDEX" NAME="FEATURES">Featurelist</A></H2>
+
+Due to the different capabilities of the underlying operating
+system, <CITE>Smalltalk/X</CITE> implementations may provide different additional
+features depending on the type of hardware/system you use.
+<P>
+The following table lists missing features per architecture;
+<BR>
+the OS release numbers listed in the first column are for the machines
+<CITE>ST/X</CITE> has been tested on.
+
+<PRE><CODE>
+--------------+-----------+------------+-------------+-------------+----------+----------+----------+
+machine       | shared    | dynamic    | just-in-time| incremental | fast     | 3D GL    | 3D OpenGL|
+	      | libraries | loading    | compilation | compilation | oldSpace | graphics | graphics |
+	      |           | of code    | of bytecode | with STC    | realloc  |          |          |
+	      |           | libraries  | to machine  | to machine  | (mmap)   |          |          |
+	      |           |            | code        | code        |          |          |          |
+==============+===========+============+=============+=============+==========+==========+==========+
+	      |           |            |             |             |          |          |          |
+LINUX-386-AOUT|          LINUX-a.out is no longer actively supported                                |
+(1.1.59)      |          contact eXept if you must have one                                         |
+(1.2.6)       |           |            |             |             |          |          |          |
+--------------+-----------+------------+-------------+-------------+----------+----------+----------+
+	      |           |            |             |             |          |          |          |
+LINUX-386-ELF |    yes    |    yes     |    yes      |   yes       |   yes    | limited  |  yes     |
+	      |           |            |             |             |          | (VGL)    |          |
+	      |           |            |             |             |          |          |          |
+--------------+-----------+------------+-------------+-------------+----------+----------+----------+
+FreeBSD       |    yes    |    yes     |    yes      |   yes       |   yes    | limited  | limited  |
+(vsn 4.5)     |           |            |             |             |          | (VGL)    | (MESA)   |
+	      |           |            |             |             |          |          |          |
+--------------+-----------+------------+-------------+-------------+----------+----------+----------+
+	      |           |            |             |             |          |          |          |
+LINUX-alpha   |          LINUX-alpha is no longer actively supported                                |
+ELF           |          contact eXept if you must have one                                         |
+	      |           |            |             |             |          |          |          |
+--------------+-----------+------------+-------------+-------------+----------+----------+----------+
+	      |           |            |             |             |          |          |          |
+SGI-IRIX      |    yes    |    yes     |    yes      |   yes       |   yes    |   yes    |   yes    |
+5.2, 5.3      |           |            |             |             |          |          |          |
+	      |          SGI-IRIX is no longer actively supported                                   |
+	      |          contact eXept if you must have one                                         |
+	      |           |            |             |             |          |          |          |
+--------------+-----------+------------+-------------+-------------+----------+----------+----------+
+	      |           |            |             |             |          |          |          |
+UNIXWARE      |    yes    |    yes     |    yes      |   yes       |   yes    | limited  | limited  |
+SYSV5.2       |           |            |             |             |          | (VGL)    | (MESA)   |
+SYSV5.4       |           |            |             |             |          |          |          |
+	      |          UNIXWARE is no longer actively supported                                   |
+	      |          contact eXept if you must have one                                         |
+	      |           |            |             |             |          |          |          |
+--------------+-----------+------------+-------------+-------------+----------+----------+----------+
+	      |           |            |             |             |          |          |          |
+HPUX10.x      |    no     |    no      |     no      |    no       |   yes    | limited  | limited  |
+	      |           |            |             |             |          | (VGL)    | (MESA)   |
+	      |          HPUX10.x is no longer actively supported                                   |
+	      |          contact eXept if you must have one                                         |
+	      |           |            |             |             |          |          |          |
+--------------+-----------+------------+-------------+-------------+----------+----------+----------+
+	      |           |            |             |             |          |          |          |
+HPUX11.x      |    no     |    no      |     no      |    no       |   yes    | limited  | limited  |
+	      |          HPUX11.x is no longer actively supported                                   |
+	      |          contact eXept if you must have one                                         |
+	      |           |            |             |             |          | (VGL)    | (MESA)   |
+	      |           |            |             |             |          |          |          |
+--------------+-----------+------------+-------------+-------------+----------+----------+----------+
+	      |           |            |             |             |          |          |          |
+AIX           |          AIX is no longer actively supported                                        |
+3.2.5         |          contact eXept if you must have one                                         |
+	      |           |            |             |             |          |          |          |
+--------------+-----------+------------+-------------+-------------+----------+----------+----------+
+	      |           |            |             |             |          |          |          |
+ULTRIX        |          ULTRIX is no longer actively supported                                     |
+(mips)        |          contact eXept for more information                                         |
+4.3 / 4.4     |           |            |             |             |          |          |          |
+--------------+-----------+------------+-------------+-------------+----------+----------+----------+
+	      |           |            |             |             |          |          |          |
+REAL/IX       |    no     |    no      |    ???      |    no       |   no     | limited  |    no    |
+(88k)         |           |            |             |             |          | (VGL)    |          |
+ULTRIX        |          REAL/IX is no longer actively supported                                    |
+	      |          contact eXept for more information                                         |
+	      |           |            |             |             |          |          |          |
+--------------+-----------+------------+-------------+-------------+----------+----------+----------+
+	      |           |            |             |             |          |          |          |
+SUNOS 4.x     |          pre-Solaris versions are no longer supported                    |          |
+non solaris   |          contact eXept for more information                              |          |
+sparc         |           |            |             |             |          |          |          |
+--------------+-----------+------------+-------------+-------------+----------+----------+----------+
+	      |           |            |             |             |          |          |          |
+SUNOS 5.x     |    yes    |    yes     |    yes      |    yes      |   yes    | limited  | limited  |
+solaris       |           |            |             |             |          | (VGL)    | (MESA)   |
+sparc         |           |            |             |             |          |          |          |
+--------------+-----------+------------+-------------+-------------+----------+----------+----------+
+	      |           |            |             |             |          |          |          |
+i386 SOLARIS  |          i386 SOLARIS versions are no longer actively supported          |          |
+	      |          contact eXept for more information                              |          |
+	      |           |            |             |             |          |          |          |
+--------------+-----------+------------+-------------+-------------+----------+----------+----------+
+	      |           |            |             |             |          |          |          |
+NeXT NS2      |          NeXTStep rel.2.x is no longer actively supported                           |
+(68k)         |          contact eXept for more information                                         |
+	      |           |            |             |             |          |          |          |
+--------------+-----------+------------+-------------+-------------+----------+----------+----------+
+	      |           |            |             |             |          |          |          |
+NeXT NS3      |          NeXTStep rel.3.x is no longer actively supported                           |
+(68k)         |          contact eXept for more information                                         |
+	      |           |            |             |             |          |          |          |
+--------------+-----------+------------+-------------+-------------+----------+----------+----------+
+	      |           |            |             |             |          |          |          |
+dec osf/1     |          dec osf/1 is no longer actively supported                                  |
+(alpha)       |          contact eXept for more information                                         |
+	      |           |            |             |             |          |          |          |
+--------------+-----------+------------+-------------+-------------+----------+----------+----------+
+	      |           |            |             |             |          |          |          |
+dec alpha VMS |          VMS is no longer actively supported                                        |
+(openVMS 6.x) |          contact eXept for more information                                         |
+(openVMS 7.x) |           |            |             |             |          |          |          |
+--------------+-----------+------------+-------------+-------------+----------+----------+----------+
+	      |           |            |             |             |          |          |          |
+Windows       |    yes    |    yes     |    yes      |    yes      |   yes    |          |   yes    |
+95/98/ME      |           |            |             |             |          |          |          |
+	      |          Windows 95/98/ME are no longer actively supported                          |
+	      |          contact eXept for more information                                         |
+	      |           |            |             |             |          |          |          |
+--------------+-----------+------------+-------------+-------------+----------+----------+----------+
+	      |           |            |             |             |          |          |          |
+Windows       |    yes    |    yes     |    yes      |    yes      |   yes    |          |   yes    |
+NT/2K/XP(x86) |           |            |             |             |          |          |          |
+Vista, Win7,  |           |            |             |             |          |          |          |
+Win8, Win10   |           |            |             |             |          |          |          |
+32 and 64bit  |           |            |             |             |          |          |          |
+--------------+-----------+------------+-------------+-------------+----------+----------+----------+
+	      |           |            |             |             |          |          |          |
+Mac-OSX       |    yes    |    yes     |    yes      |    yes      |   yes    |  limited |   yes    |
+10.8          |           |            |             |             |          |   (VGL)  |          |
+64bit         |           |            |             |             |          |          |          |
+--------------+-----------+------------+-------------+-------------+----------+----------+----------+
+</CODE></PRE>
+Agenda:
+<BR>
+<DL>
+<DT>1) shared libraries (DLLs)
+<DD>shared library support depends on the system to support
+reentrant position independent code; most systems using ELF support this.
+<BR>
+With shared libraries, all classes code is shared by all running
+Smalltalk applications. Without shared libraries, code is only shared between
+processes which execute the same program. (i.e. the same executable).
+<BR>
+The standard Smalltalk executable is shared in any case, since UNIX automatically
+shares the memory when multiple programs execute the same program text.
+<P>
+
+<DT>2) dynamic loading of machine code
+<DD>if supported, compiled classes and/or classlibraries (so called packages)
+can be loaded into the executable without a need to leave the environment.
+<BR>
+On systems which do not support this, you have to leave Smalltalk,
+build a new executable (i.e. relink Smalltalk) and restart in that new
+environment.
+<P>
+
+<DT>3) incremental compilation to machine code
+<DD>if supported, primitive code can be entered and accepted in the browser
+and are immediately available for execution.
+<BR>
+If not supported, primitive code can be entered, but the system
+creates a non executable stub method, which traps into the debugger
+if ever executed. For real compilation, the method has to be compiled using
+the stc batch compiler and the system relinked and restarted as described above.
+<P>
+
+<DT>4) 3D GL graphics support
+<DD>on most systems, a subset of the GL functionality is implemented
+by use of the VGL graphics library which implements a GL subset.
+This subset does not support light sources, z-buffering, textures.
+On SGI machines, an interface to the full set of GL graphics is provided.
+<BR>
+OpenGL support is either implemented by a vendor-provided openGL library
+(SGI and Windows systems) or via the MESA graphics package, which is
+reasonably compatible to openGL.
+<P>
+
+<DT>5) Xt widget support
+<DD>on most systems, wrapper classes and helpers to include Xt widgets
+are provided. Xt support is not maintained and provided "as-is".
+<P>
+
+<DT>... - to be validated
+<DD>currently being developed/verified/tested.
+The feature is not officially released for that architecture.
+<P>
+
+<DT>*yes - provided "as-is"
+<DD>this feature works partially, but NeXTStep may have trouble unloading
+dynamically loaded code.
+The feature is not officially released/maintained for that architecture.
+<P>
+<DT>??? - to be validated
+<DD>currently being developed/verified/tested.
+The feature is not officially released for that architecture.
+
+</DL>
+
+<H2><A HREF="#INDEX" NAME="DISPLAYS">Supported display types</A></H2>
+
+The following table lists display type & depth combinations and possible limitations;
+If you encounter problems on your hardware configuration, please let us know.
+<P>
+<PRE><CODE>
+-----------+--------------------------------------------------------------+
+	   |           Display depth (i.e. bits/pixel)                    |
+-----------+--------+--------+--------+--------+--------+--------+--------+
+	   |        |        |        |        |        |        |        |
+	   | 1      | 2      | 4      | 8      | 15     | 16     | 24     |
+	   | (mono) |        |        |        |        |        |        |
+	   |        |        |        |        |        |        |        |
+-----------+--------+--------+--------+--------+--------+--------+--------+
+tested on: | SUN    | NeXT   |  Linux | XFree  | XFree  | XFree  | XFree  |
+	   |        |        |  XFree | HP     |        |        | Ultrix |
+	   |        |        |        | SGI    |        |        |        |
+	   |        |        |        | Ultrix |        |        |        |
+	   |        |        |        | AIX    |        |        |        |
+===========+========+========+========+========+========+========+========+
+visual     |        |        |        |        |        |        |        |
+===========+========+========+========+========+========+========+========+
+	   |        |        |        |        |////////|////////|////////|
+StaticGray |  ok    |  ok    |   u    |  ok    |////////|////////|////////|
+	   |        |        |        |        |////////|////////|////////|
+-----------+--------+--------+--------+--------+--------+--------+--------+
+	   |////////|////////|        |        |////////|////////|////////|
+GrayScale  |////////|////////|  (1)   |  (1)   |////////|////////|////////|
+	   |////////|////////|        |        |////////|////////|////////|
+-----------+--------+--------+--------+--------+--------+--------+--------+
+	   |////////|////////|        |        |////////|////////|////////|
+PseudoColor|////////|////////|   ok   |   ok   |////////|////////|////////|
+	   |////////|////////|        |        |////////|////////|////////|
+-----------+--------+--------+--------+--------+--------+--------+--------+
+	   |////////|////////|        |        |        |        |        |
+TrueColor  |////////|////////|   u    |   ok   |   ok   |   ok   |  ok    |
+	   |////////|////////|        |        |        |        |        |
+-----------+--------+--------+--------+--------+--------+--------+--------+
+	   |////////|////////|////////|////////|////////|////////|        |
+DirectColor|////////|////////|////////|////////|////////|////////|   u    |
+	   |////////|////////|////////|////////|////////|////////|        |
+-----------+--------+--------+--------+--------+--------+--------+--------+
+</CODE></PRE>
+Agenda:
+<PRE>
+ok ....... tested
+u  ....... untested
+// ....... non-existing or useless configuration
+(1) ...... you should use a StaticGray mode instead
+</PRE>
+
+With 8-bit Pseudocolor displays, image display may lead to ugly output, due to
+running out of available colors while showing images. You may get better results
+by using a fix color palette (for example: a 6x6x4 palette).
+<P>
+<IMG SRC="../../icons/win95.gif">
+<IMG SRC="../../icons/winNT.gif">
+<BR>
+As of version 3.4.x, the windows platforms are only usable with
+16bit or 24bit TrueColor display modes.
+8bit display mode will be added later.
+<BR>
+We do not plan to support 4bit or monochrome displays in the future.
+
+
+<H2><A HREF="#INDEX" NAME="DISPLAYNOTES">Display specific notes</A></H2>
+
+The following section describes display specific information.
+
+
+<H3><A HREF="#INDEX" NAME="DISPLAY_MONOCHROME">Monochrome and 16-color displays</A></H3>
+
+Although still present in the code and configuration files,
+monochrome and 16color (old EGA) displays are no longer officially
+supported. We will continue to test <CITE>ST/X</CITE> against such systems,
+but will not guarantee that all such systems work reasonable.
+
+
+
+<H3><A HREF="#INDEX" NAME="DISPLAY_EXCEED">Exceed</A></H3>
+
+<H4>Keyboard</H4>
+
+The Exceed X-Server (on a Windows-95/NT box),
+catches <KBD>"<B>ALT</B>"</KBD>-key combinations and does not deliver events for
+them to the X-client. Therefore, all shortkey-commands mapped to
+<KBD>"<B>CMD-x</B>"</KBD> (which is the left <KBD>"<B>ALT</B>"</KBD>-key) do not work in the base configuration.
+<BR>
+(can Exceed be reconfigured ?)
+<P>
+As a fix, an exceed specific configuration file (<CODE>"d_exceed.rc"</CODE>)
+is provided, which maps those functions to corresponding CTRL-key
+combinations.
+<BR>
+The interrupt key (normally <KBD>"<B>CTRL-c</B>"</KBD>) is remapped to the
+<KBD>"<B>PAUSE</B>"</KBD> key.
+<P>
+Thus, under exceed, the shortKeys are:
+<PRE>
+  <KBD>CTRL-c</KBD>    <VAR>copy</VAR>
+  <KBD>CTRL-x</KBD>    <VAR>cut</VAR>
+  <KBD>CTRL-v</KBD>    <VAR>paste</VAR>
+
+  <KBD>CTRL-a</KBD>    <VAR>accept</VAR>
+
+  <KBD>CTRL-d</KBD>    <VAR>doIt</VAR>
+  <KBD>CTRL-p</KBD>    <VAR>printInt</VAR>
+  <KBD>CTRL-i</KBD>    <VAR>inspectIt</VAR>
+
+  <KBD>CTRL-s</KBD>    <VAR>search</VAR>
+  <KBD>CTRL-f</KBD>    <VAR>search again forward</VAR>
+  <KBD>CTRL-b</KBD>    <VAR>search again backward</VAR>
+
+  <KBD>CTRL-g</KBD>    <VAR>goto line</VAR>
+
+  <KBD>CTRL-f</KBD>   <VAR>page forward</VAR>
+  <KBD>CTRL-b</KBD>   <VAR>page backward</VAR>
+  <KBD>CTRL-d</KBD>   <VAR>half page forward</VAR>
+  <KBD>CTRL-u</KBD>   <VAR>half page backward</VAR>
+
+  <KBD>PAUSE</KBD>   <VAR>interrupt window process & open debugger</VAR>
+  <KBD>CTRL-y</KBD>   <VAR>interrupt window process & abort operation</VAR>
+</PRE>
+Some shortKeys are lost with this setup, though.
+<BR>
+You may like to edit your own <CODE>"d_exceed.rc"</CODE>
+if you don't like this setup.
+
+<H4>Window redraw while resizing or moving</H4>
+
+Under Exceed, views do not get informed while being moved
+or resized - until the move or resize operation is finished.
+<BR>
+Therefore, no redrawing will take place.
+<BR>
+This is an Exceed limitation - not an ST/X bug.
+
+
+
+<H2><A HREF="#INDEX" NAME="ARCHNOTES">Architecture specific notes</A></H2>
+
+The following section describes architecture specific information.
+
+<H3><A HREF="#INDEX" NAME="ARCH_64">64bit Support</A></H3>
+
+64bit versions are available for the X86_64 and the Digital Alpha CPUs.
+These will store integers of up to 63 bits in a single pointer,
+thus possibly showing slightly better Integer arithmetic performance.
+<P>
+Of course, the main advantage is the much bigger object memory space
+available.
+
+
+<H3><A HREF="#INDEX" NAME="ARCH_ALPHA">Digital Alpha CPU</A></H3>
+
+On the alpha, <CITE>ST/X</CITE> uses 64bit object pointers and 63 bit integers;
+this results in somewhat added memory overhead, due to a larger average object
+size (since all pointers are twice as long) and somewhat more CPU overhead,
+since in many cases twice the
+amount of data has to be moved as compared to 32 bit systems.
+<BR>
+Also, the code size (both static and JIT-generated) may be larger,
+since constant pointers may now require a 3-instruction load sequence
+<BR>
+(although the JIT translator tries hard to generate its code into the lower 32bit space,
+ to avoid this).
+<P>
+On the other hand, some integer arithmetic is faster, since many operations
+are now possible without leaving the SmallInteger range (which is now 63bit).
+
+<H3><A HREF="#INDEX" NAME="ARCH_X86_64">X86_64 CPU</A></H3>
+Both 32bit and 64bit versions are available.
+The 64bit version requires more memory and may be slightly slower than
+the 32bit version (for reasons described above).
+
+
+
+<H3><A HREF="#INDEX" NAME="ARCH_VMS">OpenVMS</A></H3>
+
+<H4><A NAME="ARCH_VMS_RMS">RMS Filetypes</A></H3>
+
+By default, all files as created by <CITE>ST/X</CITE> will have sequential-streamLF record format.
+<BR>
+The <CODE>FileStream</CODE> class provides an additional entry (#openWithMode:attributes:),
+which allows the record
+format to be specified as described in the RTL-Documentation of the <CODE>"creat"</CODE>
+call.
+To access existing non-stream files,
+you may want to create a subclass of <CODE>FileStream</CODE> and redefine the instance
+creation method(s) to specify appropriate attributes.
+<BR>
+However, be aware that such a class will not work as expected on other systems.
+<P>
+
+<H4><A NAME="ARCH_VMS_SEEK">Positioning of non stream files</A></H3>
+
+Positioning within a file is not possible on an arbitrary byte boundary with some
+record formats. For example, a file with a variable-record-format may only be positioned
+to the beginning, the end or to a record boundary.
+<BR>
+For those formats, <CITE>ST/X</CITE> positions the stream by re-reading all of the file from the
+beginning - which may be slow for big files.
+<BR>
+Make certain, that your <CITE>ST/X</CITE> sourcefiles are converted from this format
+to streamCR format; otherwise, a performance penalty is to be payed when the browser
+accesses those and seeks to a methods source position.
+
+
+<H3>
+<IMG SRC="../../icons/win95.gif">
+<IMG SRC="../../icons/winNT.gif">
+<BR>
+<A HREF="#INDEX" NAME="ARCH_WINDOWS">Windows-95 / Windows-NT</A></H3>
+
+Windows-95, Windows-98 and Windows-XP are no longer supported.
+Please contact exept, if you need ST/X on any of them.
+
+<H4><A NAME="ARCH_WINDOWS_INTERRUPTS">Interrupting a runaway primitive</A></H4>
+
+Since both Windows-NT and Windows-95 have no concept of an interrupting
+signal, there exists no satisfying mechanism to interrupt runaway
+primitive code (i.e. endless loops).
+<BR>
+Although, <CITE>Smalltalk/X</CITE> allows such code to be halted and inspected
+in the debugger AND it is possible to resume or terminate such a
+halted process, it is NOT possible to abort or terminate
+such a process in a <B>clean</B> way (i.e. with unwind blocks evaluated).
+<BR>
+The reason is that the CTRL-C break is executed by a different
+OS-thread on Windows systems, and there is no provision provided
+to "push an interrupt context" onto a suspended threads context
+from another thread.
+<P>
+The result is that the stopped process can only be resumed or hard
+terminated - it will NOT perform its
+unwind or cleanup actions, when terminated; and it is not possible to
+unwind its stack and make it resume somewhere higher in the method
+calling hierarchy.
+<BR>
+Notice, that the above only applies to endless looping primitive code -
+both primitive standard File-I/O operations and looping Smalltalk code can be
+interrupted as usual.
+
+
+<H4><A NAME="ARCH_WINDOWS_STACK">Dynamic stack grow</A></H4>
+
+Since the Win32 version of <CITE>Smalltalk/X</CITE> maps each of
+its processes onto a native thread,
+and Windows-95 performs some obscure (undocumented and braindamaged)
+stack validations in most API calls, all stack must be preallocated
+and the Spaghetti-Stack mechanism as used with the Unix versions
+cannot be used.
+<BR>
+The effect is that a process cannot resize its stack in a stackOverflow
+exception handler.
+
+
+<H4><A NAME="ARCH_WINDOWS_APICALLS">Blocking API calls</A></H4>
+
+All API calls are (supposed to be) non blocking.
+Other Smalltalk threads continue to execute.
+To ensure that, blocking API calls are
+executed by a separate thread,
+and the Smalltalk thread waits for it to complete.
+For this, all API- and external library calls
+have to be wrapped into a macro, which implements the interaction with
+the API-call thread.
+<P>
+Please send us a bug report if we forgot to wrap an API call
+correctly and made it blocking.
+<P>
+If you encounter problems with a blocking API call, and ST/X does no
+longer respond, press CTRL-C twice in the ST/X-console window,
+which should bring you into the miniDebugger, where a C-continue
+command should resume execution (although, the thread which did the blocking
+call will be halted).
+
+
+<H4><A NAME="ARCH_WINDOWS_DISPLAY">Display configuration</A></H4>
+
+The Windows graphics interface (currently) always
+uses 24bit colors and ignores any color palette.
+<P>
+Notice: The folowing is no longer a problem these days.
+<p>
+This works in all
+display modes (i.e. also in 16- and 256-color modes), but may
+lead to ugly color dithering when certain colors are drawn
+in 16 color or 256 color modes.
+<BR>
+For best results, please use either a 16bit hiColor or a 24bit trueColor
+display mode with <CITE>Smalltalk/X</CITE>.
+<BR>
+The windows view-style itself uses the colors as configured
+in the Preference Panel - therefore, this mode should also
+look reasonable in 16- and 256 color modes.
+<P>
+
+<H4><A NAME="ARCH_WINDOWS_REDRAW_BUGS">Redraw bugs</A></H4>
+
+When moving non-STX windows over an ST?X view, garbage (blank) areas are
+sometimes left, which are not correctly redrawn. This does not happen,
+if other ST/X views are moved (probably some thread-locking error ?)
+
+
+<H4><A NAME="ARCH_WINDOWS_XDISPLAY">X-Display under Win32</A></H4>
+
+The Windows version allows for both a local windows display and
+a remote X11-display to be used.
+To use an X11-display, start <CODE>"stx"</CODE> with the environment
+variable <CODE>"DISPLAY"</CODE> being set to your X displays name,
+i.e., in a command window, execute:
+<CODE><PRE>
+    SET DISPLAY=myDisplay:0
+    stx
+</PRE></CODE>
+<BR>
+<CITE>Smalltalk/X</CITE> will use the local display if that shell variable is either not
+set, or a connection to that display cannot be established.
+<P>
+It is even possible to run <CITE>Smalltalk/X</CITE> in multihead configurations,
+where both a local native display and multiple remote X displays
+are handled concurrently.
+<BR>
+(read the documentation in the DeviceWorkstation class on how to
+ setup multiple display operation)
+
+
+<H4><A NAME="ARCH_WINDOWS_BADIMPL">Partial implemented (buggy) features</A></H4>
+<UL>
+<LI>the terminal view does not work perfectly
+<BR>(especially cursor positioning)
+<LI>the shell-terminal-view ('command.com-view) does not work under Win-NT
+<BR>(funny: it works under Win95 - seems to be one of the rare situations, where Win95
+behaves nicer than Win-NT ;-)
+</UL>
+
+
+
+<H4><A NAME="ARCH_WINDOWS_DRAWING">Limited drawing capabilities of Windows-95</A></H4>
+
+Windows-95 does not support all drawing styles (or style combinations):
+this includes:
+<UL>
+<LI>masked drawing / filling with big patterns
+<BR>
+Only patterns of size 8@8 are supported under Windows-95
+<P>
+<LI>non-Solid wide-lines
+<BR>
+Non-Solid lineStyles are only supported with thin lines (i.e. lineWidth==1)
+<P>
+<LI>non-solid lines with mask
+<BR>
+Masks are only supported with solid lines under Windows-95
+</UL>
+<P>
+We do not plan to add workaround code, since we expect
+those bugs to be fixed in upcoming windows releases.
+<BR>
+(You should probably use Windows-NT, anyway - or use a real OS ;-)
+
+
+<H3>
+<IMG SRC="../../icons/macos.xpm">
+<BR>
+<A HREF="#INDEX" NAME="ARCH_OSX">Mac-OSX</A></H3>
+
+
+<H4><A NAME="ARCH_WINDOWS_INTERRUPTS">X Display Only</A></H4>
+
+There is currently no support for native Carbon or Cocoa display services.
+<CITE>ST/X</CITE> uses the X window system (XQuartz) for display.
+This must be installed before running <CITE>ST/X</CITE>.
+<P>
+Some limitations result from this:
+<UL>
+<LI>Inconvenient default keyboard mapping
+<BR>this affects mostly the CMD-key handling and some CTRL-key compinations,
+which are used by the Mac desktop for diferent functions.
+<CITE>ST/X</CITE> uses the left ALT key as a CMD-key replacement.
+You may change the xmodmap keyboard mappings to fix this.
+<P>
+
+<LI>No access to the screen bitmap
+<BR>Screen readout functions and screen drawing is not implemented properly
+in the Apple X-Server implementation.
+This means that icon dragging from an
+<CITE>ST/X</CITE> window over the desktop is not drawn (invisible).
+<P>
+
+<LI>No top-level menu
+<BR>The application menu is not supported, and the XQuartz menu
+is always shown for any ST/X window.
+</UL>
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif" ALT="[stx-logo]">
+<BR>
+Copyright &copy; 1996-2016 Claus Gittinger Development & Consulting
+<BR>
+Copyright &copy; 1999-2016 eXept Software AG
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.59 $ $Date: 2016-11-11 23:36:31 $
+
+<BODY>
+</HTML>

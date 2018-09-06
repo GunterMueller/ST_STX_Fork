@@ -1,0 +1,36 @@
+<HEAD>
+<TITLE>Using the File Browser - Hints and Tricks</TITLE>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="commandView.html"> <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[next]"></A>
+<A NOPRINT HREF="TOP.html">         <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+
+<H2><A NAME="HINTS" HREF="TOP.html#I_TRICKS">Hints and Tricks</A></H2>
+
+<H3><A NAME="FILEINTONAMESPACE" HREF="TOP.html#I_TRICKS.FILEINTONAMESPACE">FileIn into a Namespace</A></H3>
+
+Especially, when loading alien code, you may want to avoid that existing
+classes are overwritten or redefined.
+To avoid this, alien code can be loaded into a namespace - even if
+the code files do not include any namespace information
+(for example, when loading ST-80 or Squeak code).
+<P>
+To do this, perform the following steps:
+<UL>
+  <LI>create a new namespace in a browser
+  <LI>open a new project (from the launcher's <I>project</I> menu.
+      <BR> and make it active (i.e. click on the project view).
+  <LI>in the projects popup menu, select <I>default namespace</I> and
+      then (in the dialog) select the newly created namespace.
+      <BR>(the default namespace should be shown in the launcher's info bar)
+  <LI>open a fileBrowser.
+  <LI>fileIn the classFile(s)
+</UL>
+
+<HR>
+Doc $Revision: 1.4 $ $Date: 2013-08-02 16:47:16 $
+
+</BODY>
+</HTML>
+

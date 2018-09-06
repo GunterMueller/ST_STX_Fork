@@ -1,0 +1,14 @@
+<html><head><title>Refactoring: Replace Conditional with Visitor
+</title></head><body>
+<H1>Replace Conditional with Visitor
+</H1>
+<P><B> Refactoring contributed by 
+	 <I><A href="mailto:Ivan.Mitrovic@S1.com">Ivan Mitrovic</A></I>
+</B></P>
+<P><I><CENTER>
+You have an "aggressive" Conditional that chooses different behaviour depending on the type of an object and repeats itself in a large number throughout the code.</CENTER></I></P>
+<P><B><CENTER>Create concrete instance of Visitable object for each data type in Conditional. Create concrete instance of Visitor that encapsulates logic of each Conditional. Visit Visitable by Visitor.
+</CENTER></B></P>
+<A HREF="replaceConditionalWithVisitor.pdf"><P>More Information</P></A>
+
+<P /><P /><P><CENTER><A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A></CENTER></P></body></html>

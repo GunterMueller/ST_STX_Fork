@@ -1,0 +1,13 @@
+# $Header: /cvs/stx/stx/rules/Make.proto,v 1.2 1999-09-09 11:30:35 cg Exp $
+#
+
+#--------- no need to modify anything below -------
+
+TOP=..
+SUBDIRS=
+
+RCSSOURCES=Make.proto.* *.ed.script *.awk* extractSym *.sh \
+	   stdHeader stdRules stmkmf stripSource.ed
+
+rightstr:
+	$(CC) -o rightstr rightstr.c

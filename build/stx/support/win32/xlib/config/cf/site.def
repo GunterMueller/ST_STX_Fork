@@ -1,0 +1,49 @@
+XCOMM site: XConsortium X11R6 fix-12 CD-ROM July 1995
+
+/***************************************************************************
+ *                                                                         *
+ *			   SITE-SPECIFIC DEFINITIONS                       *
+ *                                                                         *
+ * This file contains two halves, one included before the vendor-specific  *
+ * configuration file (.cf file), and one included after the .cf file.     *
+ * The before-half should be protected by #ifdef BeforeVendorCF, and the   *
+ * after-half should be protected by #ifdef AfterVendorCF.                 *
+ *                                                                         *
+ * The before-half should only set things that the .cf file depends on.    *
+ * For the .cf files shipped in this release, the main variables in this   *
+ * category are HasGcc, HasGcc2, and HasCplusplus 			   *
+ *                                                                         *
+ * The after-half should contain all other definitions.  For example,      *
+ * place your ProjectRoot definition here.                                 *
+ *                                                                         *
+ * OS Major and Minor version numbers should be changed directly in the    *
+ * .cf file, not overridden in site.def.                                   *
+ *                                                                         *
+ ***************************************************************************/
+
+
+#ifdef BeforeVendorCF
+
+#define BuildPexExt	NO
+#define	BuildXKB	NO
+#define BuildLBX	YES
+
+#ifdef RsArchitecture		/* our machine still doesn't have */
+#define HasPosixThreads	NO
+#endif
+
+#endif /* BeforeVendorCF */
+
+#ifdef AfterVendorCF
+
+#define ProjectRoot	/usr/X11R6
+
+#define InstallXdmConfig	YES
+#define InstallFSConfig		YES
+
+#if BuildFontServer
+#undef BuildFonts
+#define BuildFonts	YES
+#endif
+
+#endif /* AfterVendorCF */

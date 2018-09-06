@@ -1,0 +1,26 @@
+<whitespace>         :       \s+;
+
+#[39]    
+<ExprWhitespace>     :  <whitespace> ;
+
+<Digit>              :  [0-9];
+
+
+
+
+#!!!
+<Letter>             : [a-zA-Z] ;
+
+
+#[30] 
+<Number>             :  <Digit>+ (\. <Digit>*)? ;
+
+#[29]    
+<Literal>            :    \" [^\"]* \"   
+                        | \' [^\']* \' ;
+
+
+<NCNameChar>        :    <Letter> | <Digit> | "." | "-" | "_" ;
+
+<NCName>             :     <Letter> (<NCNameChar>)* 
+                               | "_"  (<NCNameChar>)* ;    

@@ -1,0 +1,69 @@
+# -*- shell-script -*-
+[Meta]
+ShortName: vdb.do
+SoftwareVersion: 8.0.99.0
+DisplayName: Visual / VM Debugger
+RootName: Visual / VM Debugger
+Summary: Visual / VM Debugger
+Maintainer: Jan Vrany
+Packager: Jan Vrany
+PackageVersion: 1
+CPUArchitectures: x86
+AutopackageTarget: 1.0
+Type: Application
+License: Commercial
+
+[Description]
+Visual / VM Debugger
+
+[BuildPrepare]
+# If you're using autotools, the default should be enough.
+# prepareBuild will set up apbuild and run configure for you. If you
+# need to pass arguments to configure, just add them to prepareBuild:
+# prepareBuild --enable-foo --disable-bar
+#prepareBuild
+
+[BuildUnprepare]
+# If you're using prepareBuild above, there is no need to change this!
+#unprepareBuild
+
+[Globals]
+# Variables declared in this section will be available in all other sections
+export APKG_BUILD_SKIP_CONFIGURE=1
+export APKG_BUILD_SKIP_MAKE=1
+export MYPREFIX=/opt/vdb.do
+
+[Prepare]
+#recommend '@autopackage.org/autopackage-gtk' 1
+
+[Imports]
+import <<EOF
+$source_dir/vdb.do
+
+EOF
+
+for i in $source_dir/*.so
+do
+    echo $source_dir/$(readlink $i)
+done | import
+
+[Install]
+if [ "$PREFIX" != "/usr" ]
+then
+    export MYPREFIX=$PREFIX
+fi
+
+find . -type d \( -name CVS -or -name 'not_*' \) -print | xargs rm -rf
+mkdir -p $MYPREFIX
+copyFiles Visual / VM Debugger *.rc resources        $MYPREFIX/bin
+
+
+#installExe Visual / VM Debugger
+#installLib *.so
+
+
+[Uninstall]
+# Leaving this at the default is safe unless you use custom commands in
+# "Install" to create files. All autopackage API functions
+# that installs files are logged.
+uninstallFromLog

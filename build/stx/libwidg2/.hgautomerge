@@ -1,0 +1,24 @@
+[automerge]
+# Automatically merge pulled changes from specified mercurial branch (if exists) 
+# to specified mercurial branch (if exists). The syntax is 
+# 
+# automerge = <from-branch>:<to branch>. 
+#
+# The example below will merge changed from branch `default` to branch `jv`. 
+# If merge fails, issue a warning but proceed. Optional. 
+#
+# automerge = default:jv
+automerge = default:jv
+#
+# If defined and if merge succeeds (there are no unresolved conflicts), 
+# check the merged working copy using given command. The command is executed
+# with CWD set to repository root. `#{dir}` in the command string will be 
+# expanded to actuall repository path. 
+# Following commands are built-in: 
+# 
+# * internal:make - run `make`
+#
+# A command line option --check overrides this setting. See `hg-automerge --help`.
+# 
+# checkcmd = internal:make
+checkcmd = internal:make

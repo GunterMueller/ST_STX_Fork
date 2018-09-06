@@ -1,0 +1,20 @@
+#!stx --script
+"/
+"/ on any system:
+"/      "stx --script script1.stx
+"/ or:
+"/      "stx --f script.stx"
+"/ or:
+"/      "stx script1.stx"
+"/
+"/ on Unix:
+"/      make this file executable,
+"/      ensure that stx is in your path,
+"/      then type ./script1.stx
+"/
+"/ will just print some numbers
+"/
+1 to:10 do:[:i |
+   ('the factorial of %1 is %2'
+	bindWith:i with:i factorial) printCR
+].

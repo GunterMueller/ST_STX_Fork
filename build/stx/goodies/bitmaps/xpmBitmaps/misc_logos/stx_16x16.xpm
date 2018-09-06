@@ -1,0 +1,25 @@
+/* XPM */
+static char *stx_16x16_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 2 1",
+/* colors */
+"a c #191919",
+"b c #00C480",
+/* pixels */
+"aaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaa",
+"aaaaabbaaaaaaaaa",
+"aaaaabbaaaaaabaa",
+"aaaaabbaaaaabaaa",
+"aaaaaabbaaabaaaa",
+"aaaaaaabaabaaaaa",
+"aaaaaaabbbaaaaaa",
+"aaaaaaaabaaaaaaa",
+"aaaaaaabbbaaaaaa",
+"aaaaaabaabaaaaaa",
+"aaaabbaaaabaaaaa",
+"aaabbaaaaaabaaaa",
+"aabbaaaaaaabaaaa",
+"aaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaa",
+};

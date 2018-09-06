@@ -1,0 +1,290 @@
+# $Header: /cvs/stx/stx/goodies/demos/jh/math/fractalApplication/Make.proto,v 1.1 2012-10-02 11:42:45 cg Exp $
+#
+# automagically generated from the projectDefinition: stx_goodies_demos_jh_math_fractalApplication.
+#
+# -------------- no need to change anything below ----------
+#
+# This makefile generates some standalone demo applications
+#
+#    make
+#       generates fractalApplication
+#
+
+TOP=../../../../..
+INCLUDE_TOP=$(TOP)/..
+
+PACKAGE=stx:goodies/demos/jh/math/fractalApplication
+SUBDIRS=
+SUPPRESS_LOCAL_ABBREVS="yes"
+NOAUTOLOAD=1
+NOSUBAUTOLOAD=1
+
+LOCALINCLUDES=-I$(INCLUDE_TOP)/stx/libbasic  -I$(INCLUDE_TOP)/stx/libview -I$(INCLUDE_TOP)/stx/libui -I$(INCLUDE_TOP)/stx/libview2 -I$(INCLUDE_TOP)/stx/libwidg -I$(INCLUDE_TOP)/stx/libbasic2 -I$(INCLUDE_TOP)/stx/libwidg2 -I$(INCLUDE_TOP)/stx/libbasic -I$(INCLUDE_TOP)/stx/libcomp -I$(INCLUDE_TOP)/stx/libhtml
+LOCALDEFINES=
+GLOBALDEFINES=
+MAIN_DEFINES=-DIGNORE_IMAGE -DNO_DISPLAY
+
+RCSSOURCES=Make.proto *.st
+LINKSOURCES=Make.proto *.st
+
+DELIVERBINARIES=
+
+target: ALL
+
+all::   prereq exe
+
+LIBNAME=libstx_goodies_demos_jh_math_fractalApplication
+STCLOCALOPT='-package=$(PACKAGE)' -I. -headerDir=. $(LOCALINCLUDES) $(STCLOCALOPTIMIZATIONS) $(STCWARNINGS) $(LOCALDEFINES) -headerDir=.  -varPrefix=$(LIBNAME)
+
+
+# ********** OPTIONAL: MODIFY the next line ***
+# additional C-libraries that should be pre-linked with the class-objects
+LD_OBJ_LIBS=
+LOCAL_SHARED_LIBS=
+
+
+# ********** OPTIONAL: MODIFY the next line ***
+# additional C targets or libraries should be added below
+LOCAL_EXTRA_TARGETS=
+
+OBJS= $(COMMON_OBJS) $(UNIX_OBJS)
+
+
+
+
+
+LIBLIST = $(REQUIRED_LIBS)
+
+# required libs:
+#
+
+REQUIRED_LIBS= libstx_libbasic \
+ libstx_libbasic2 \
+ libstx_libcomp \
+ libstx_libview \
+ libstx_libview2 \
+ libstx_libui \
+ libstx_libwidg \
+ libstx_libwidg2 \
+ libstx_libhtml \
+
+
+REQUIRED_LIBOBJS= ../../../../../libbasic/libstx_libbasic$(O_EXT) \
+ ../../../../../libbasic2/libstx_libbasic2$(O_EXT) \
+ ../../../../../libcomp/libstx_libcomp$(O_EXT) \
+ ../../../../../libview/libstx_libview$(O_EXT) \
+ ../../../../../libview2/libstx_libview2$(O_EXT) \
+ ../../../../../libui/libstx_libui$(O_EXT) \
+ ../../../../../libwidg/libstx_libwidg$(O_EXT) \
+ ../../../../../libwidg2/libstx_libwidg2$(O_EXT) \
+ ../../../../../libhtml/libstx_libhtml$(O_EXT) \
+
+
+REQUIRED_LINK_LIBOBJS= libstx_libbasic$(O_EXT) \
+ libstx_libbasic2$(O_EXT) \
+ libstx_libcomp$(O_EXT) \
+ libstx_libview$(O_EXT) \
+ libstx_libview2$(O_EXT) \
+ libstx_libui$(O_EXT) \
+ libstx_libwidg$(O_EXT) \
+ libstx_libwidg2$(O_EXT) \
+ libstx_libhtml$(O_EXT) \
+
+
+REQUIRED_SUPPORT_DIRS=RESOURCEFILES
+
+exe:    fractalApplication $(REQUIRED_SUPPORT_DIRS)
+
+fractalApplication: $(APP_DIRS_TO_MAKE) $(APP_LIBOBJS) $(OBJS)
+	$(MAKE) GUI_APPLICATION \
+		    TARGET=fractalApplication \
+		    APPLICATION_CLASSES="$(COMMON_CLASSES) $(UNIX_CLASSES)" \
+		    APPLICATION_OBJS="$(OBJS)" \
+		    APPLICATION_LIBLIST="$(REQUIRED_LIBS)" \
+		    APPLICATION_LIBOBJS="$(REQUIRED_LIBOBJS)" \
+		    APPLICATION_LINK_LIBOBJS="$(REQUIRED_LINK_LIBOBJS)" \
+		    STARTUP_CLASS="<name of class here>" \
+		    STARTUP_SELECTOR="start" \
+		    MAIN_DEFINES="-DIGNORE_IMAGE -DNO_DISPLAY"
+
+# build all prerequisite packages for this package
+prereq:
+	cd ../../../../../libbasic && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES)"
+	cd ../../../../../libbasic2 && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES)"
+	cd ../../../../../libcomp && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES)"
+	cd ../../../../../libview && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES)"
+	cd ../../../../../libview2 && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES)"
+	cd ../../../../../libui && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES)"
+	cd ../../../../../libwidg && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES)"
+	cd ../../../../../libwidg2 && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES)"
+	cd ../../../../../libhtml && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES)"
+	cd ../../../../../librun && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES)"
+
+
+
+setup:
+	@if test -d autoPackage; then \
+	    makepackage; \
+	else \
+	    echo "Error: make setup not yet available in linux/unix"; \
+	    exit 1; \
+	fi
+
+SOURCEFILES: fractalApplication_SOURCES \
+	stx_SOURCES
+
+
+
+
+RESOURCEFILES: fractalApplication_RESOURCES fractalApplication_BITMAPS  \
+	stx_RESOURCES stx_STYLES stx_BITMAPS
+
+
+fractalApplication_RESOURCES: 
+	mkdir -p resources/stx/goodies/demos/jh/math/fractalApplication
+	-cp ../resources/*.rs ../resources/*.style resources/stx/goodies/demos/jh/math/fractalApplication/..
+
+fractalApplication_BITMAPS: 
+	mkdir -p resources/stx/goodies/demos/jh/math/fractalApplication/bitmaps
+	-cp *.ico *.gif *.png resources/stx/goodies/demos/jh/math/fractalApplication/bitmaps
+
+
+
+stx_RESOURCES: \
+	keyboard.rc \
+	keyboardMacros.rc \
+	display.rc \
+	libbasic_RESOURCES \
+	libview_RESOURCES \
+	libtool_RESOURCES  \
+	libtool2_RESOURCES
+
+keyboard.rc: $(TOP)/projects/smalltalk/keyboard.rc
+	cp $(TOP)/projects/smalltalk/keyboard.rc .
+
+keyboardMacros.rc: $(TOP)/projects/smalltalk/keyboardMacros.rc
+	cp $(TOP)/projects/smalltalk/keyboardMacros.rc .
+
+display.rc: $(TOP)/projects/smalltalk/display.rc
+	cp $(TOP)/projects/smalltalk/display.rc .
+
+stx_STYLES: 
+	mkdir -p resources/stx/libview
+	mkdir -p resources/stx/libview/styles
+	cp $(TOP)/libview/styles/*.common resources/stx/libview/styles
+	cp $(TOP)/libview/styles/*.style resources/stx/libview/styles
+
+stx_BITMAPS: \
+	libwidg_BITMAPS
+
+libwidg_BITMAPS: 
+	mkdir -p resources/stx/libwidg/bitmaps
+	-cp $(TOP)/libwidg/bitmaps/*.* resources/stx/libwidg/bitmaps
+
+libbasic_RESOURCES: 
+	mkdir -p resources/stx/libbasic
+	-cp $(TOP)/libbasic/resources/*.* resources/stx/libbasic
+
+libtool_RESOURCES: 
+	mkdir -p resources/stx/libtool
+	-cp $(TOP)/libtool/resources/*.* resources/stx/libtool
+
+libtool2_RESOURCES: 
+	mkdir -p resources/stx/libtool2
+	-cp $(TOP)/libtool2/resources/*.* resources/stx/libtool2
+
+libview_RESOURCES: 
+	mkdir -p resources/stx/libview
+	-cp $(TOP)/libview/resources/*.* resources/stx/libview
+
+libview2_RESOURCES: 
+	mkdir -p resources/stx/libview2
+	-cp $(TOP)/libview2/resources/*.* resources/stx/libview2
+
+bitmaps:
+	mkdir -p bitmaps
+
+doc:
+	mkdir -p doc
+
+
+
+libstx_libbasic.so: ../../../../../libbasic/libstx_libbasic.so
+	cp ../../../../../libbasic/libstx_libbasic.so .
+
+../../../../../libbasic/libstx_libbasic.so:
+	cd ../../../../../libbasic && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "
+
+libstx_libbasic2.so: ../../../../../libbasic2/libstx_libbasic2.so
+	cp ../../../../../libbasic2/libstx_libbasic2.so .
+
+../../../../../libbasic2/libstx_libbasic2.so:
+	cd ../../../../../libbasic2 && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "
+
+libstx_libcomp.so: ../../../../../libcomp/libstx_libcomp.so
+	cp ../../../../../libcomp/libstx_libcomp.so .
+
+../../../../../libcomp/libstx_libcomp.so:
+	cd ../../../../../libcomp && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "
+
+libstx_libview.so: ../../../../../libview/libstx_libview.so
+	cp ../../../../../libview/libstx_libview.so .
+
+../../../../../libview/libstx_libview.so:
+	cd ../../../../../libview && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "
+
+libstx_libview2.so: ../../../../../libview2/libstx_libview2.so
+	cp ../../../../../libview2/libstx_libview2.so .
+
+../../../../../libview2/libstx_libview2.so:
+	cd ../../../../../libview2 && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "
+
+libstx_libui.so: ../../../../../libui/libstx_libui.so
+	cp ../../../../../libui/libstx_libui.so .
+
+../../../../../libui/libstx_libui.so:
+	cd ../../../../../libui && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "
+
+libstx_libwidg.so: ../../../../../libwidg/libstx_libwidg.so
+	cp ../../../../../libwidg/libstx_libwidg.so .
+
+../../../../../libwidg/libstx_libwidg.so:
+	cd ../../../../../libwidg && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "
+
+libstx_libwidg2.so: ../../../../../libwidg2/libstx_libwidg2.so
+	cp ../../../../../libwidg2/libstx_libwidg2.so .
+
+../../../../../libwidg2/libstx_libwidg2.so:
+	cd ../../../../../libwidg2 && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "
+
+libstx_libhtml.so: ../../../../../libhtml/libstx_libhtml.so
+	cp ../../../../../libhtml/libstx_libhtml.so .
+
+../../../../../libhtml/libstx_libhtml.so:
+	cd ../../../../../libhtml && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "
+
+
+
+
+
+
+
+
+
+
+clean::
+	-rm -f *.so fractalApplication.$(O)
+
+clobber:: clean
+	-rm -f fractalApplication *.img *.sav
+
+# BEGINMAKEDEPEND --- do not remove this line; make depend needs it
+$(OUTDIR)FractalApplication.$(O) FractalApplication.$(H): FractalApplication.st $(INCLUDE_TOP)/stx/libview2/ApplicationModel.$(H) $(INCLUDE_TOP)/stx/libview2/Model.$(H) $(INCLUDE_TOP)/stx/libbasic/Object.$(H) $(STCHDR)
+$(OUTDIR)FractalView.$(O) FractalView.$(H): FractalView.st $(INCLUDE_TOP)/stx/libview/View.$(H) $(INCLUDE_TOP)/stx/libview/SimpleView.$(H) $(INCLUDE_TOP)/stx/libview/DisplaySurface.$(H) $(INCLUDE_TOP)/stx/libview/GraphicsMedium.$(H) $(INCLUDE_TOP)/stx/libview/DeviceGraphicsContext.$(H) $(INCLUDE_TOP)/stx/libview/GraphicsContext.$(H) $(INCLUDE_TOP)/stx/libbasic/Object.$(H) $(STCHDR)
+$(OUTDIR)MandelbrotSet.$(O) MandelbrotSet.$(H): MandelbrotSet.st $(INCLUDE_TOP)/stx/libbasic/Object.$(H) $(STCHDR)
+$(OUTDIR)Demos__SuperFormula.$(O) Demos__SuperFormula.$(H): Demos__SuperFormula.st $(INCLUDE_TOP)/stx/libbasic/Object.$(H) $(STCHDR)
+$(OUTDIR)Demos__SuperFormulaApplication.$(O) Demos__SuperFormulaApplication.$(H): Demos__SuperFormulaApplication.st $(INCLUDE_TOP)/stx/libview2/ApplicationModel.$(H) $(INCLUDE_TOP)/stx/libview2/Model.$(H) $(INCLUDE_TOP)/stx/libbasic/Object.$(H) $(STCHDR)
+$(OUTDIR)stx_goodies_demos_jh_math_fractalApplication.$(O) stx_goodies_demos_jh_math_fractalApplication.$(H): stx_goodies_demos_jh_math_fractalApplication.st $(INCLUDE_TOP)/stx/libbasic/ApplicationDefinition.$(H) $(INCLUDE_TOP)/stx/libbasic/ProjectDefinition.$(H) $(INCLUDE_TOP)/stx/libbasic/Object.$(H) $(STCHDR)
+$(OUTDIR)JuliaSet.$(O) JuliaSet.$(H): JuliaSet.st $(INCLUDE_TOP)/stx/goodies/demos/jh/math/fractalApplication/MandelbrotSet.$(H) $(INCLUDE_TOP)/stx/libbasic/Object.$(H) $(STCHDR)
+
+# ENDMAKEDEPEND --- do not remove this line

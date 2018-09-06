@@ -1,0 +1,43 @@
+This directory contains additional medium level view support classes. 
+Mostly, these are things related to Models, Images and ST-80 compatibility.
+
+They are compiled by stc into the library 'libview2'.
+These classes are required for the development system and most high level
+widget classes.
+Small programs may be built without this library, if no models are used.
+
+Depending on the configuration and capabilities of your Operating-
+System, the resulting classlibrary is either:
+
+	libview2.a      - an archive
+
+	libview2.obj    - a prelinked object library
+
+	libview2.so     - a shared object
+
+the library includes init code (libview2_Init) for all of its components.
+
+
+Things you can do here:
+
+    make                compile all classes, producing libview
+
+    make objs           compile all required object files
+
+    make install        compile all and install in DESTLIBDIR
+
+    make qinstall       only install - assumes binaries are up-to-date 
+
+    make check          syntax check only over all .st files
+
+    make <file>.o       compile <file>.st to object-file
+
+    make <file>.c       compile <file>.st to c intermediate
+
+
+To install them as autoloaded (in the running image):
+
+    make mf
+    make updAbbrev
+    rdoit "Smalltalk installAutoloadClasses"
+

@@ -1,0 +1,159 @@
+# Makefile for zlib -- Microsoft (Visual) C
+#
+# Authors:
+#   Cosmin Truta, 11-Mar-2003
+#   Christian Spieler, 19-Mar-2003
+#
+# Last updated:
+#   Cosmin Truta, 27-Aug-2003
+#
+# Usage:
+#   nmake -f win32/Makefile.msc            (standard build)
+#   nmake -f win32/Makefile.msc LOC=-DFOO  (nonstandard build)
+#   nmake -f win32/Makefile.msc LOC=-DASMV OBJA=match.obj  (use ASM code)
+
+USEVC=1
+!undef USEBC
+
+!include ..\..\rules\stdHeader_bc
+
+# VSINSTALLDIR="C:\Program Files\Microsoft Visual Studio 9.0"
+# VCINSTALLDIR=$(VSINSTALLDIR)\VC
+# VCBINDIR=$(VCINSTALLDIR)\bin\\
+# VCLIBDIR=$(VCINSTALLDIR)\lib\\
+# SYS_INCL=/I$(VCINSTALLDIR)\include /I$(SDK)\Include /I..\librun
+
+BINDIR=
+BINDIR=$(VCBINDIR)
+
+# optional build flags
+LOC =
+
+OUTDIR=objvc\\
+
+# variables
+STATICLIB = $(OUTDIR)zlib.lib
+SHAREDLIB = $(OUTDIR)zlib1.dll
+IMPLIB    = zdll.lib
+
+CC = "$(BINDIR)cl"
+AS = "$(BINDIR)ml"
+LD = "$(BINDIR)link"
+AR = "$(BINDIR)lib"
+RC = "$(BINDIR)rc"
+CFLAGS  = -nologo -MT -O2 $(LOC)
+ASFLAGS = -coff
+LDFLAGS = -nologo -release
+ARFLAGS = -nologo
+RCFLAGS = /dWIN32 /r
+
+OBJS = $(OUTDIR)adler32.obj $(OUTDIR)compress.obj $(OUTDIR)crc32.obj $(OUTDIR)deflate.obj $(OUTDIR)gzio.obj $(OUTDIR)infback.obj \
+       $(OUTDIR)inffast.obj $(OUTDIR)inflate.obj $(OUTDIR)inftrees.obj $(OUTDIR)trees.obj $(OUTDIR)uncompr.obj $(OUTDIR)zutil.obj
+OBJA =
+
+
+# targets
+#all: $(STATICLIB) $(SHAREDLIB) $(IMPLIB) \
+#     example.exe minigzip.exe example_d.exe minigzip_d.exe
+
+all: cleanup $(OUTDIR)NUL $(STATICLIB)
+
+full:: all
+
+cleanup:
+	-del *.obj
+
+$(OUTDIR)NUL:
+	md $(OUTDIR)
+
+$(STATICLIB): $(OUTDIR)NUL $(OBJS) $(OBJA)
+	echo $(AR) $(ARFLAGS) -out:$@ $(OBJS) $(OBJA)
+	$(AR) $(ARFLAGS) -out:$@ $(OBJS) $(OBJA)
+
+$(IMPLIB): $(SHAREDLIB)
+
+$(SHAREDLIB): win32/zlib.def $(OBJS) $(OBJA) zlib1.res
+	$(LD) $(LDFLAGS) -def:win32/zlib.def -dll -implib:$(IMPLIB) \
+	  -out:$@ $(OBJS) $(OBJA) zlib1.res
+
+example.exe: example.obj $(STATICLIB)
+	$(LD) $(LDFLAGS) example.obj $(STATICLIB)
+
+minigzip.exe: minigzip.obj $(STATICLIB)
+	$(LD) $(LDFLAGS) minigzip.obj $(STATICLIB)
+
+example_d.exe: example.obj $(IMPLIB)
+	$(LD) $(LDFLAGS) -out:$@ example.obj $(IMPLIB)
+
+minigzip_d.exe: minigzip.obj $(IMPLIB)
+	$(LD) $(LDFLAGS) -out:$@ minigzip.obj $(IMPLIB)
+
+.c.obj:
+	$(CC) -c $(CFLAGS) $(SYS_INCL) $<
+	copy *.obj $(OUTDIR)
+	del *.obj
+
+.asm.obj:
+	$(AS) -c $(ASFLAGS) $<
+
+$(OUTDIR)adler32.obj: adler32.c zlib.h zconf.h
+
+$(OUTDIR)compress.obj: compress.c zlib.h zconf.h
+
+$(OUTDIR)crc32.obj: crc32.c zlib.h zconf.h crc32.h
+
+$(OUTDIR)deflate.obj: deflate.c deflate.h zutil.h zlib.h zconf.h
+
+$(OUTDIR)gzio.obj: gzio.c zutil.h zlib.h zconf.h
+
+$(OUTDIR)infback.obj: infback.c zutil.h zlib.h zconf.h inftrees.h inflate.h \
+	     inffast.h inffixed.h
+
+$(OUTDIR)inffast.obj: inffast.c zutil.h zlib.h zconf.h inftrees.h inflate.h \
+	     inffast.h
+
+$(OUTDIR)inflate.obj: inflate.c zutil.h zlib.h zconf.h inftrees.h inflate.h \
+	     inffast.h inffixed.h
+
+$(OUTDIR)inftrees.obj: inftrees.c zutil.h zlib.h zconf.h inftrees.h
+
+$(OUTDIR)trees.obj: trees.c zutil.h zlib.h zconf.h deflate.h trees.h
+
+$(OUTDIR)uncompr.obj: uncompr.c zlib.h zconf.h
+
+$(OUTDIR)zutil.obj: zutil.c zutil.h zlib.h zconf.h
+
+example.obj: example.c zlib.h zconf.h
+
+minigzip.obj: minigzip.c zlib.h zconf.h
+
+zlib1.res: win32/zlib1.rc
+	$(RC) $(RCFLAGS) /fo$@ win32/zlib1.rc
+
+
+# testing
+test: example.exe minigzip.exe
+	example
+	echo hello world | minigzip | minigzip -d
+
+testdll: example_d.exe minigzip_d.exe
+	example_d
+	echo hello world | minigzip_d | minigzip_d -d
+
+
+# cleanup
+clean:
+	-del $(OUTDIR)*.$(O) $(STATICLIB) $(SHAREDLIB) $(IMPLIB)
+	-del $(IMPLIB)
+	-del *.obj
+	-del *.res
+	-del *.exp
+	-del *.exe
+	-del foo.gz
+
+clobber: clean
+	-rmdir /s /q objbc
+	-rmdir /s /q objvc
+	-rmdir /s /q objlcc
+	-rmdir /s /q objtcc
+	-rmdir /s /q objmingw

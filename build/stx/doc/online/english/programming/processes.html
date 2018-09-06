@@ -1,0 +1,1803 @@
+<html>
+
+<head>
+<title>Smalltalk/X Programmers guide - Processes</title>
+</head>
+
+<body>
+
+<a NOPRINT HREF="exceptions.html">     <img SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></a>
+<a NOPRINT HREF="TOP.html">   <img SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></a>
+<a NOPRINT HREF="timing.html">   <img SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></a>
+
+<h1>Working with Processes</h1>
+
+<h2>Contents</h2>
+<ul>
+ <li><a HREF="#INTRO" NAME="I_INTRO">Introduction</a>
+ <li><a HREF="#CREATING" NAME="I_CREATING">Creating & Atarting New Processes</a>
+ <li><a HREF="#SHARED" NAME="I_SHARED">Shared Access to Objects, Locking & Aynchronization</a>
+ <ul>
+   <li><a HREF="#SEMAPHORES" NAME="I_SEMAPHORES">Semaphores: The Low Level Mechanism</a>
+   <li><a HREF="#RECURSIONLOCK" NAME="I_RECURSIONLOCK">RecursionLock: Recursive Entrance into Critical Regions</a>
+   <li><a HREF="#MONITORS" NAME="I_MONITORS">Monitors: Non Block-nested Critical Regions</a>
+   <li><a HREF="#SHAREDQUEUE" NAME="I_SHAREDQUEUE">SharedQueue: Synchronizing Dataflow between Concurrent Processes</a>
+   <li><a HREF="#SYNCHRONIZED" NAME="I_SYNCHRONIZED">Synchronized: Syntactic Sugar for Critical Regions</a>
+   <li><a HREF="#EXAMPLES" NAME="I_EXAMPLES">Examples</a>
+ </ul>
+ <li><a HREF="#PRIOS" NAME="I_PRIOS">Process Priorities & Scheduling</a>
+ <li><a HREF="#ROUNDROBIN" NAME="I_ROUNDROBIN">Round-Robin Scheduling (Timeslicing)</a>
+ <li><a HREF="#DYNAMICPRIOS" NAME="I_DYNAMICPRIOS">Dynamic Process Priorities</a>
+ <li><a HREF="#STACKS" NAME="I_STACKS">Process Stacks</a>
+ <li><a HREF="#THREADLOCALS" NAME="I_THREADLOCALS">Processvariables - Thread Local Storage</a>
+ <li><a HREF="#VIEWSNPROCS" NAME="I_VIEWSNPROCS">Views and Processes</a>
+ <li><a HREF="#VIEWSNPRIOS" NAME="I_VIEWSNPRIOS">Views and Priorities</a>
+ <li><a HREF="#BGPROCS" NAME="I_BGPROCS">Background Processes</a>
+ <li><a HREF="#SUGGPRIOS" NAME="I_SUGGPRIOS">Suggested Priorities & Hints</a>
+ <li><a HREF="#BLOCKING" NAME="I_BLOCKING">Blocking Interrupts</a>
+ <li><a HREF="#INTERRS" NAME="I_INTERRS">Interrupting a Process</a>
+ <li><a HREF="#TIMEOUTS" NAME="I_TIMEOUTS">Timeouts</a>
+ <li><a HREF="#TERMINATION" NAME="I_TERMINATION">Terminating a Process</a>
+ <li><a HREF="#RUNAWAY" NAME="I_RUNAWAY">Interrupting a Runaway Process</a>
+ <li><a HREF="#RESTART" NAME="I_RESTART">Processes and SnapShotImage Restart</a>
+ <li><a HREF="#HOWSCHED" NAME="I_HOWSCHED">How the Scheduler Gets Control</a>
+</ul>
+
+<h2><a HREF="#I_INTRO" NAME="INTRO">Introduction</a></h2>
+
+  <cite>Smalltalk/X</cite> provides facilities for lightweight processes (also called
+  threads). These are implemented within Smalltalk itself i.e. the
+  implementation does not depend on any particular operating system
+  support.
+<br>
+  Doing so has some advantages:
+<ul>
+<li>it runs on every system
+<p>
+<li> all process management & scheduling is fully under
+	   your control. That means, that the scheduling algorithms
+	   could be changed for special needs.
+<p>
+<li> You can have a look at the implementation and learn more
+   about process handling and scheduling.
+</ul>
+<p>
+  If the system is running on UNIX and you are already familiar
+with UNIX processes, you should keep in mind that:
+<blockquote>
+    Lightweight processes should not be confused with Unix's processes.
+    Unix processes have separate address-spaces, meaning that once
+    created, such a process can no longer access and/or modify objects
+    from the parent process.
+    With Unix processes, communication must be done via explicit interprocess
+    mechanisms, such as shared memory, sockets, pipes or files.
+    Also, once forked, files or resources opened by a Unix subprocess are not
+    automatically visible and/or accessible from the parent process. (This is
+    also true for other child processes).
+<p>
+    In contrast, Smalltalk processes all run in one address space, therefore
+    communication is possible via objects. They share open files, windows
+    and other operating system resources.
+
+</blockquote>
+
+On some systems, which do support native threads, Smalltalk processes
+are mapped to native threads.
+However, <cite>ST/X</cite> currently enforces and makes certain,
+that only one of them executes at any time.
+<br>
+This limitation avoids expensive synchronization in the memory management
+code and avoids single CPU systems
+from suffering any performance penalties from synchronization
+code which is not needed in the single CPU situation.
+<br>
+This may change, when multi core systems become more common than single cpu
+systems - however, time will show how much overhead is introduced due to this.
+<br>
+Notice, that using inline C-code, it is even today possible, to execute some
+piece of C-code concurrently on in another thread (which may make sense for
+heavy mathematical, 3D computational or asynchronous communication code).
+However, no object memory activity may take place in this concurrent code.
+
+
+
+
+<h2><a HREF="#I_CREATING" NAME="CREATING">Creating & Starting new Processes</a></h2>
+
+Processes are created by sending the message <code>#newProcess</code> to
+a block. This returns a new process object, which is NOT yet scheduled
+for execution (i.e. it does not start execution).
+To schedule the new process for execution, send it a <code>#resume</code> message.
+<p>
+The separation of creation from starting was done to allow for the new
+process to be manipulated (if required) before the process has a chance to
+run. For example, its stackSize limit, priority or name can be changed.
+If that is not required, (which is the case with most processes), a combined
+message named <code>#fork</code> can be used, which creates and schedules the
+process for execution.
+<p>
+Each process has accociated with it a process priority, which controls
+execution in case more than one process is ready to run at the same time.
+By default, the new process has the same processes priority as
+its creating processes (the parent process) priority.
+To fork a process with a different priority,
+use the <code>#forkAt:</code> message,
+which expects the new processes priority as argument.
+Read the section below on priorities and scheduling behavior.
+<p>
+
+Examples
+(You may want to <a HREF="../misc/onlyInSTX.html" type="doit" action="ProcessMonitorV2 open" info="Click to open a ProcessMonitor">start a ProcessMonitor</a> to
+see the processes in the system, before executing the examples below):
+<p>
+Forking a process:
+<br>
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<a type="example"><code><pre>
+    |newProcess|
+
+    newProcess := [
+		    Delay waitForSeconds:3.
+		    Transcript showCR:'hello there.'
+		  ] fork.
+</pre></code></a>
+</td></tr></table>
+
+<p>Forking a process at low priority:
+<br>
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<a type="example"><code><pre>
+    |newProcess|
+
+    newProcess := [
+		    Delay waitForSeconds:3.
+		    Transcript showCR:'hello there.'
+		  ] forkAt:1.
+</pre></code></a>
+</td></tr></table>
+<p>
+Creating, setting its name and resuming a process:
+<br>
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<a type="example"><code><pre>
+    |newProcess|
+
+    newProcess := [
+		    Delay waitForSeconds:3.
+		    Transcript showCR:'hello there.'
+		  ] newProcess.
+
+    newProcess name:'my process'.
+    newProcess resume
+</pre></code></a>
+</td></tr></table>
+
+The <code>#name:</code> message in the last example sets a processes
+name - this has no semantic meaning,
+but helps in finding your processes in the ProcessMonitor.
+
+
+
+
+<h2><a HREF="#I_SHARED" NAME="SHARED">Shared Access to Objects, Locking & Synchronization</a></h2>
+
+When multiple processes are executing, special attention has to be payed
+when objects are accessed by more than one of them.
+<br>
+  As usual, some danger is involved in modifying shared state;
+  this is especially true, since in general, no interlocks have been built into
+  the normal classes.
+<br>
+  For example, concurrent add/removal to an
+  instance of OrderedCollection can lead to invalid contents
+  (since its internal information may become corrupted).
+<br><dl><dt>For the curious:<dd>
+    Instances of <code>OrderedCollection</code> hold some internal indices to keep track of
+    first and last elements inside its container array.
+If a process
+    switch occurs during update of these values, the stored value could
+    become invalid.
+</dl>
+
+  However, to support multiple process synchronization, there are some
+  classes available, which do handle concurrent access.
+  Of special interest are:
+<ul>
+    <li><code>SharedQueue</code>     - provides a safe implementation of a queue
+    <li><code>SharedCollection</code> - provides a safety wrapper for any other collection
+
+    <li><code>Semaphore</code>       - for synchronization and mutual exclusion
+    <li><code>Delay</code>           - for timing
+    <li><code>RecursionLock</code>   - mutual exclusion between processes
+    <li><code>Monitor</code>         - for non-block critical regions
+</ul>
+
+<h3><a HREF="#I_SEMAPHORES" NAME="SEMAPHORES">Semaphores: The Low Level Mechanism</a></h3>
+
+To fix the above problem, some synchronization method is required.
+The low level mechanism for this are <code><b>Semaphores</b></code>
+- especially semaphores for mutual exclusive access. Semaphores for mutual
+exclusions can be acquired and held while some piece of code - the so called "<I>critical region</I>" - is to be executed.
+Only one process can hold on a given exclusive semaphore at any time.
+If a process wants to acquire the semaphore which is held by another process at
+that time, the acquiring process is set to sleep until the owning process
+releases the semaphore.
+
+<P>
+The following code-fragment creates such a semaphore, and wraps the read/write access code into
+so called critical regions:
+<p>
+Setup:
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    |sema sharedCollection|
+
+    ...
+    sema := Semaphore forMutualExclusion.
+    sharedCollection := OrderedCollection new.
+    ...
+</pre></code>
+</td></tr></table>
+
+Writer:
+
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    ...
+    sema critical:[
+	sharedCollection addLast:something
+    ].
+    ...
+</pre></code>
+</td></tr></table>
+
+Reader:
+
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    ...
+    sema critical:[
+	something := sharedCollection removeFirst
+    ].
+    ...
+</pre></code>
+</td></tr></table>
+
+The <code>"Semaphore forMutualExclusion"</code> expression creates a
+semaphore, which provides safe execution of critical regions.
+<br>
+Critical regions are executed by the <code>#critical:</code> message,
+which executes the argument block while asserting, that only one process
+is ever within a region controlled by the semaphore.
+<br>
+If any process tries to enter a critical region which has already been
+entered, it is suspended until the region is left by the other process.
+<br>
+
+
+<h3><a HREF="#I_RECURSIONLOCK" NAME="RECURSIONLOCK">RecursionLock: Recursive Entrance into Critical Regions</a></h3>
+
+Often, a process may enter another critical region, while
+already being within a critical region.
+If the new region is controlled by the same sempahore as the previously entered
+one, this results in a deadlock situation.
+Such a situation arises quite often, when a class reuses code
+by sending self messages to other methods which themself protect the state
+by the semaphore.
+For example,
+<A type="example"><CODE><PRE>
+    doSomeComplexOperation
+	accessLock critical:[
+	    ...
+	    update some state
+	    ...
+	    self someOtherOperation
+	    ...
+	    update more state
+	    ...
+	].
+</PRE></CODE></A>
+and:
+<A type="example"><CODE><PRE>
+    someOtherOperation
+	accessLock critical:[
+	    ...
+	    update some state
+	    ...
+	].
+</PRE></CODE></A>
+With a "normal" semaphore, execution of doSomeComplexOperation leads to a
+deadlock situation, when the already acquired semaphore is tried to be acquired again.
+
+<br>
+To prevent this, a special semaphore called <code><b>RecursionLock</b></code> should
+be used; this behaves like a regular semaphore except that it allows
+the owning process (but only the owner) to reenter a critical region.
+To use a recursion lock, change the above code from <CODE><PRE>
+    Semaphore forMutualExclusion</PRE></CODE>
+into <CODE><PRE>
+    RecursionLock new</PRE></CODE> or <CODE><PRE>
+    RecursionLock forMutualExclusion</PRE></CODE>.
+<p>
+If a process terminates, while being within a critical region,
+that semaphore/recursionLock is automatically released - there is no need for
+the programmer to care for this (the <CODE>critical</CODE> method ensures thus).
+<p>
+
+<h3><a HREF="#I_MONITORS" NAME="MONITORS">Monitors: Non Block-nested Critical Regions</a></h3>
+
+The above <code>#critical:</code> messages expects a block to be passed;
+if your critical region cannot be placed into a block
+but is to be left in a different method/class from where it was entered,
+you can alternatively use a <code><b>Monitor</b></code> object.
+<br>
+Monitors provides separate <code>#enter</code> and <code>#exit</code>
+methods - so the critical region can be left anywhere else from where it was
+entered.
+<br>
+However, be <b>very</b> careful to always correctly leave those monitors, since
+they do not provide any automatic cleanup in case of non-normal termination.
+<p>
+Using a monitor, the above example is written as:
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    |monitor|
+
+    ...
+    monitor := Monitor new.
+    ...
+    monitor enter.
+    ... critical code, protected by monitor ...
+    monitor exit.
+    ...
+</pre></code>
+</td></tr></table>
+<br>
+
+
+<h3><a HREF="#I_SHAREDQUEUE" NAME="SHAREDQUEUE">Synchronizing Dataflow between Concurrent Processes: SharedQueue</a></h3>
+
+Simple reader/writer/filter applications are best implemented using <code><b>SharedQueues</b></code>,
+(which are basically implemented much like above code).
+<br>
+Thus, using a shared queue, the above becomes:
+
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    |queue|
+
+    ...
+    queue := SharedQueue new.
+    ...
+</pre></code>
+</td></tr></table>
+
+writer:
+
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    ...
+    queue nextPut:something.
+    ...
+</pre></code>
+</td></tr></table>
+
+reader:
+
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    ...
+    something := queue next
+    ...
+</pre></code>
+</td></tr></table>
+
+<h3><a HREF="#I_SYNCHRONIZED" NAME="SYNCHRONIZED">Synchronized: Syntactic Sugar for Critical Regions</a></h3>
+
+The Java language provides a special language element for synchronization: the "<code>synchronized</code>" keyword.
+<br>
+In <cite>ST/X</cite>, a corresponding method is found in the object class, which allows for a critical region
+semaphore to be automatically associated with any object.
+<br>
+This can be considered as syntactic sugar, as it does not add any new functinality.
+<p>
+Using the synchronized message, the above shared access code becomes:
+<br>
+writer:
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    ...
+    sharedCollection synchronized:[
+	sharedCollection addLast:something
+    ].
+    ...
+</pre></code>
+</td></tr></table>
+
+reader:
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    ...
+    sharedCollection synchronized:[
+	something := sharedCollection removeFirst
+    ].
+    ...
+</pre></code>
+</td></tr></table>
+
+As any object understands the synchronized:-message,
+regions can be made critical w.r.t. the instance (as in the above example),
+or the class (by coding: "Collection synchronized:"), which corresponds to the
+synchronized-class attribute of Java.
+<br>
+(even method-level synchronization is possible, by using the method (class compiledMethodAt:#selector)
+as receiver. However, method level locks are in most cases not useful as they do not provide enough
+protection. Also, they are dangerous, as they are ineffective if more critical methods are added and/or
+a subclass adds methods).
+
+
+
+<p>
+<h3>Why are not all Smalltalk container classes always protected by critical regions ?</h3>
+<p>
+The Smalltalk classes could be rewritten to add interlocks at every possible
+access in those containers (actually, many other classes such as the complete
+<code>View</code> hierarchy must be rewritten too).
+  This has not been done, mainly for performance reasons. The typical case
+  is that most objects are not used concurrently - thus the overhead involved
+  by locking would hurt the normal case and only simplify some special cases.
+
+<h3><a HREF="#I_EXAMPLES" NAME="EXAMPLES">Examples</a></h3>
+
+Two processes, NOT synchronized (results in corrupted output):
+<br>
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<a type="example"><code><pre>
+    |p1 p2|
+
+    p1 := [
+	    10 timesRepeat:[
+		Transcript show:'here'.
+		Delay waitForSeconds:0.1.
+		Transcript show:' is'.
+		Delay waitForSeconds:0.1.
+		Transcript showCR:' process1'.
+	    ]
+	  ] fork.
+
+    p2 := [
+	    10 timesRepeat:[
+		Transcript show:'here'.
+		Delay waitForSeconds:0.1.
+		Transcript show:' is'.
+		Delay waitForSeconds:0.1.
+		Transcript showCR:' process2'.
+	    ]
+	  ] fork.
+</pre></code></a>
+</td></tr></table>
+
+<p>
+synchronized by a critical region:
+<br>
+
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<a type="example"><code><pre>
+    |p1 p2 sema|
+
+    sema := Semaphore forMutualExclusion.
+
+    p1 := [
+	    10 timesRepeat:[
+		sema critical:[
+		    Transcript show:'here'.
+		    Delay waitForSeconds:0.1.
+		    Transcript show:' is'.
+		    Transcript showCR:' process1'.
+		].
+		Delay waitForSeconds:0.1.
+	    ]
+	  ] fork.
+
+    p2 := [
+	    10 timesRepeat:[
+		sema critical:[
+		    Transcript show:'here'.
+		    Delay waitForSeconds:0.1.
+		    Transcript show:' is'.
+		    Transcript showCR:' process2'.
+		].
+		Delay waitForSeconds:0.1.
+	    ]
+	  ] fork.
+</pre></code></a>
+</td></tr></table>
+
+<p>
+synchronized using the synchronized (syntactic sugar) method:
+<br>
+
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<a type="example"><code><pre>
+    |p1 p2|
+
+    p1 := [
+	    10 timesRepeat:[
+		Transcript synchronized:[
+		    Transcript show:'here'.
+		    Delay waitForSeconds:0.1.
+		    Transcript show:' is'.
+		    Transcript showCR:' process1'.
+		].
+		Delay waitForSeconds:0.1.
+	    ]
+	  ] fork.
+
+    p2 := [
+	    10 timesRepeat:[
+		Transcript synchronized:[
+		    Transcript show:'here'.
+		    Delay waitForSeconds:0.1.
+		    Transcript show:' is'.
+		    Transcript showCR:' process2'.
+		].
+		Delay waitForSeconds:0.1.
+	    ]
+	  ] fork.
+</pre></code></a>
+</td></tr></table>
+
+<p>
+synchronized by a Monitor:
+<br>
+
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<a type="example"><code><pre>
+    |p1 p2 mon|
+
+    mon := Monitor new.
+
+    p1 := [
+	    10 timesRepeat:[
+		mon enter.
+		Transcript show:'here'.
+		Delay waitForSeconds:0.1.
+		Transcript show:' is'.
+		Transcript showCR:' process1'.
+		mon exit.
+		Delay waitForSeconds:0.1.
+	    ]
+	  ] fork.
+
+    p2 := [
+	    10 timesRepeat:[
+		mon enter.
+		Transcript show:'here'.
+		Delay waitForSeconds:0.1.
+		Transcript show:' is'.
+		Transcript showCR:' process2'.
+		mon exit.
+		Delay waitForSeconds:0.1.
+	    ]
+	  ] fork.
+</pre></code></a>
+</td></tr></table>
+
+
+
+
+<h2><a HREF="#I_PRIOS" NAME="PRIOS">Process Priorities & Scheduling</a></h2>
+
+    Each process has associated with it a priority (usually some
+    small number between 1 and 30).
+    Whenever more than one process is runnable, the scheduler selects
+    the highest priority process for execution and passes control to it
+    (this process is called the <var>"active process</var>).
+<br>
+    The active process continues execution until either:
+
+<ul>
+<li>      it terminates
+<br>
+	    termination can be explicit by sending <code>#terminate</code>,
+	    to the process, or implicit, when the processes code block
+	    (the block which was the receiver of <code>#newProcess</code> or <code>#fork</code>)
+	    leaves (i.e. falls through the last statement).
+<p>
+
+<li>      it suspends itself
+<br>
+	    this can be done by an explicit <code>#suspend</code>,
+	    or indirectly by waiting for some semaphore to be signalled
+	    or by going into a sleep for some time (see Delay class).
+	    The process remains suspended, until it receives a <code>#resume</code>
+	    message.
+<br>
+	    If it waits for a timer or a semaphore, the expiring timer
+	    or the triggering semaphore will send this <code>#resume</code>
+	    message to the waiting process(es). If it waits for I/O, the runtime system's
+	    I/O handling code will trigger the semaphore signalling.
+
+<p>
+
+<li>      it gives up control temporarily
+<br>
+	    if the active process receives a <code>#yield</code> message,
+	    it gives up control and passes it to the next runnable process
+	    with the same priority, if there is any.
+<br>
+	    If there is no other runnable process with this priority,
+	    the <code>#yield</code> message does nothing.
+<br>
+	    A <code>#yield</code> message can be send by a process itself,
+	    or by another (higher priority) process.
+
+<p>
+
+<li>      a higher priority process becomes runnable
+<br>
+	    in this case, the scheduler suspends the active process
+	    and transfers control to the higher priority process.
+<br>
+	    A higher priority process could also become runnable by
+	    some external event (timer or I/O arrival), which triggers
+	    the semaphore on which it was waiting.
+</ul>
+
+    If two or more processes with the same priority are runnable,
+    NO automatic rescheduling is done by the runtim system (but read on).
+    To pass control to other processes within this group, the running
+    process must give up control explicitly;
+    either by yielding,
+    or by suspending itself when waiting on some semaphore.
+<p>
+    This is called "<var>preemtive scheduling WITHOUT round robin</var>".
+<br>
+    Notice, that <cite>ST/X</cite> itself is mostly thread-safe, the windowing
+    system, shared collections such as dependencies and process lists are
+    protected by critical regions.
+    However applications and your programs may not be so.
+<p>
+    Therefore, automatic round robin is initially disabled by default,
+    but later enabled controlled by a settings option.
+    The startup file as delivered now has this setting enabled.
+    If your application is not prepared for it, it should be disabled there.
+
+<h2><a HREF="#I_ROUNDROBIN" NAME="ROUNDROBIN">Round-Robin Scheduling (Timeslicing)</a></h2>
+
+    For round-robin scheduling, the <cite>ST/X</cite> processor scheduler class
+    contains the required mechanisms to timeslice processes.
+<br>This implementation is relatively simple and straight forward:
+<blockquote>
+      it creates a new high-priority process, whose execution is controlled
+      by the timer. Since it's running at very high priority,
+      this process will always get the CPU for execution, whenever it's
+      timer tick expires.
+<br>
+      When returning from the timer-wait, that process
+      forces a yield of the running process to allow for other processes
+      within that priority group to execute (for the next timeslice period).
+</blockquote>
+    The launcher's <var>settings-misc</var> menu includes an item
+    called <var>"Preemtive Scheduling"</var> which enables/disables
+    round-robin mechanism.
+<br>
+Timeslicing can also be started by evaluating:
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<a TYPE="example"><code><pre>
+    Processor startTimeSlicing
+</pre></code></a>
+</td></tr></table>
+
+and stopped via:
+
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<a TYPE="example"><code><pre>
+    Processor stopTimeSlicing
+</pre></code></a>
+</td></tr></table>
+
+<p>
+    Notice, that there is NO warranty concerning the actual usability
+    of this feature; for above (synchronization) reasons,
+    some applications could behave strange when the timeslicer is running.
+    Especially those ported from other Smalltalk dialects, which do not offer
+    timeslicing may not include appropriate locking mechanisms, as they might
+    have been never designed to be thread safe. For example, many assume that
+    a window redraw operation is executed uninterrupted, which is no longer true,
+    when time slicing is enabled.
+
+<p>
+To see the effect of timeslicing, open a <code>ProcessMonitor</code> from the
+<code>Launcher's</code> <var>utility</var> menu and start some processes which do some long time computation.
+For example, you can evaluate (in a workspace):
+
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<a TYPE="example"><code><pre>
+    [
+      100 timesRepeat:[3000 factorial]
+    ] forkAt:4
+</pre></code></a>
+</td></tr></table>
+
+some 3 or 4 times and watch the processes in the monitor.
+<br>
+Without time slicing, only one of these processes will make any progress;
+the others will wait and all of them be executed in sequence.
+<br>
+With time slicing on, you will notice that all of them seem to run
+(only one of them is actually active at any particular time).
+
+
+
+<h2><a HREF="#I_DYNAMICPRIOS" NAME="DYNAMICPRIOS">Dynamic Process Priorities</a></h2>
+
+Once preemtive scheduling (timeslicing) is enabled,
+the processorScheduler may be further configured, to do dynamic
+priority adjustments.
+<br>
+With this scheme, a process which used up the CPU for some time,
+will get its priority automatically lowered, while other runnable processes
+which did not get a chance to run will get their dynamic priority raised.
+<p>
+Dynamic priority handling requires the timeSlicing mechanism
+to be active, and the dynamic flag be set:
+<br>
+i.e., to start this mechanism, evaluate:
+
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<a TYPE="example"><code><pre>
+    Processor startTimeSlicing.
+    Processor supportDynamicPriorities:true.
+</pre></code></a>
+</td></tr></table>
+
+There is also an entry in the launcher's <I>misc-settings</I> dialog,
+to enable/disable dynamic process priorities.
+<p>
+For security (and application compatibility), this is not done for all
+processes. Instead, only processes which return an interval from the
+<code>#priorityRange</code> message are affected by this.
+<br>
+The returned interval is supposed to specify the minimum and maximum dynamic
+priority of the process.
+<br>
+By default, all created processes have a nil priority range, therefore not
+being subject of dynamic scheduling.
+<p>
+Dynamic priorities are most useful for background actions, where you want to
+make sure that they do not normally interfere with the user interface too much,
+mut are guaranteed to make progress, even when other processes do heavy cpu centric processing.
+Typically, background communication protocols, print jobs or other house-keeping
+tasks benefit from a dynamic process priority.
+
+<p>
+The following example, creates three very busy computing processes.
+Two of them start with very low priority,
+but with dynamic priorities.
+The third process will run at a fixed priority.
+
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<a TYPE="example">
+<code><pre>
+    |p1 p2 p3|
+
+    p1 := [
+      30 timesRepeat:[
+	5 timesRepeat:[
+	    3000 factorial
+	].
+	Transcript showCR:'p1 made some progress'.
+      ].
+      Transcript showCR:'p1 finished'.
+    ] forkAt:1.
+    p1 priorityRange:(1 to:7).
+
+    p2 := [
+      30 timesRepeat:[
+	5 timesRepeat:[
+	    3000 factorial
+	].
+	Transcript showCR:'p2 made some progress'.
+      ].
+      Transcript showCR:'p2 finished'.
+    ] forkAt:4.
+    p2 priorityRange:(4 to:9).
+
+    p3 := [
+      30 timesRepeat:[
+	5 timesRepeat:[
+	    3000 factorial
+	].
+	Transcript showCR:'p3 made some progress'.
+      ].
+      Transcript showCR:'p3 finished'.
+    ] forkAt:6.
+</pre></code></a>
+</td></tr></table>
+
+The first process will never get a priority above any GUI processes,
+therefore it will never disturb any views.
+<br>
+The second will eventueally suspend even GUI processes,
+in case it does not get a chance to run for a while.
+<br>
+The third process will run at a fixed priority of 6.
+<br>
+Both the first and the second process will eventually suspend the third
+process, since their dynamic priority will raise above 6.
+<br>
+(try the example, while evaluating some time consuming operation in
+ a workspace - at fixed priority 8. In that case, only p2 will make any
+ progress.).
+
+
+<h2><a HREF="#I_STACKS" NAME="STACKS">Process Stacks</a></h2>
+
+Each Smalltalk process has its own automatically growing stack. There is no need
+for the smalltalk programmer to preallocate or otherwise predefine the stack size (1).
+For security (and to make your life easier in case of a runaway process),
+the stack size is limited by a <B>soft limit</B>,
+which can be set for any process, at any time by evaluating:
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    aProcess setMaximumStackSize:limit
+</code></pre>
+</td></tr></table>
+When the stack size hits this limit, a Smalltalk signal is raised,
+which can be cought and handled by the Smalltalk exception mechanism.
+It is even possible to change the limit within the
+exception handler and continue execution of the process with more stack
+(see examples in <code>"doc/coding"</code>).
+<p>
+The default stack limit is set to a reasonably number
+(typically 1Mb).
+If your application contains highly recursive code, this default can be
+changed with:
+
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    Process defaultMaximumStackSize:limit
+</pre></code>
+</td></tr></table>
+
+<dl>
+<dt>Warning:<dd>
+Runaway processes are cought later (i.e. stack overruns are detected later)
+if this limit is set to a higher value.
+Therefore, we do not recommend changing the default - if there is a need,
+better change an individual processes limit.
+
+<dt>(1)<dd>
+This is only true for the Unix/Linux variant of ST/X. Because native threads are used under
+windows AND windows validates the stack for correctness in every API call
+(against whatever win32 "thinks to be correct"),
+no API-calls are possible with a non-contigious stack.
+The spaghetti-stack scheme, which implements the dynamic growing
+stack, makes the stack non-contigious.
+Therefore, under win32, the spaghetti-stack scheme is not used, and
+all stacks are preallocated to be contigious.
+<br>Under win32, the maximumStackSize setting is also the initial and final stack size; in other words,
+all threads start with that size of stack, which cannot be expanded later.
+The maximum-setting must have been changed BEFORE a thread is created. Thus, to get a process
+with more stack, you have to change the limit, fork the new thread and then change it back.
+</dl>
+
+<h2><a HREF="#I_THREADLOCALS" NAME="THREADLOCALS">Processvariables - Thread Local Storage</a></h2>
+
+The current process object contains a mechanism to define thread-local variables.
+These are created by:<CODE><PRE>
+    Processor currentProcess environmentAt:#name put:someValue
+</PRE></CODE>
+and the value fetched via:<CODE><PRE>
+    Processor currentProcess environmentAt:#name
+</PRE></CODE>
+The "environmentAt:" will raise an error if the variable was undefined.
+As an alternative, use "threadVariableValueOf:", which returns nil for undefined variables.
+<P>
+If you need a variable to be only valid during the execution of some code,
+use<CODE><PRE>
+    Processor currentProcess
+	withThreadVariable:#name boundTo:someValue
+	do:[
+	    ...
+	    (Processor currentProcess threadVariableValueOf:#name)
+	    ...
+	]
+</PRE></CODE>
+The last one being recommended, as it makes sure that the variable gets removed (released)
+when no longer needed.
+
+
+<h2><a HREF="#I_VIEWSNPROCS" NAME="VIEWSNPROCS">Views and Processes</a></h2>
+
+    In <cite>Smalltalk/X</cite>, typically one process is created for each topview.
+    This topview and all of its subviews are grouped together in a so called
+    <var>WindowGroup</var>.
+<br>
+    To get a picture of it, first start a ProcessMonitor
+    then open a new workspace.
+<br>
+    -> You will see some info about the workspaces process in the process monitors
+    list.
+<p>
+Now, in the workspace evaluate:
+
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    Processor activeProcess suspend
+</pre></code>
+</td></tr></table>
+
+The workspace will no longer respond to keyboard or any other events.
+(select the corresponding entry in the processMonitor, and use the
+<var>debug</var> function from its popup-menu, to see what the workspace is
+currently doing)
+<p>
+    You can continue execution of the workspaces process with the processMonitos
+    <var>resume</var>-function (or in the debugger, by pressing the <var>continue</var> button).
+<p>
+    All events (keyboard, mouse etc.) are read by a separate process (called
+    the <var>event dispatcher</var>), which reads the event from the operating system,
+    puts it into a per-windowgroup event-queue, and notifies the view process
+    about the arrival of the event (which is sitting on a semaphore, waiting for this
+    arrival).
+<br>
+    For multiScreen operation, one event dispatcher process is executing
+    for each display connection.
+<p>
+    Modal boxes create a new windowgroup, and enter a new dispatch loop on this.
+    Thus, the original view's eventqueue (although still being filled with
+    arriving events) is not handled while the modalbox is active
+<a HREF="#FN1" NAME="BACK_FN1">(*)</a>.
+<p>
+    The following pictures should make this interaction clear:
+<p>
+    event dispatcher:
+<p>
+<code>
+<pre>
+       +->-+
+       ^   |
+       |   V
+       |   waits for any input (from keyboard & mouse)
+       |   from device
+       |   |
+       |   V
+       |   ask the view for its windowGroup
+       |   and put event into windowgroup's queue
+       |   (actually: the group's windowSensor's queue)
+       |   |
+       |   V
+       |   wakeup windowgroups semaphore            >*****
+       |   |                                             *
+       +-&lt;-+                                             *
+							 * Wakeup !
+							 *
+each window-group process:                               *
+							 *
+       +->-+                                             *
+       ^   |                                             *
+       |   V                                             *
+       |   wait for event arrival (on my semaphore)  &lt;****
+       |   |
+       |   V
+       |   send the event to the corrsponding controller or view
+       |   |               |
+       +-&lt;-+               |
+			Controller/View &#187; keyPress:...
+		    or: Controller/View &#187; expose...
+		    etc.
+</pre>
+</code>
+
+
+
+
+     modal boxes (and popup-menus) start an extra event loop:
+<code>
+<pre>
+       +->-+
+       ^   |
+       |   V
+       |   wait for event arrival (on my semaphore)
+       |   |
+       |   V
+       |   send the event to the corrsponding view
+       |   |   ^       |
+       +-&lt;-+   |       |
+	       |       V
+	       |    ModalBox open
+	       |    create a new windowgroup (for box)
+	       |       |
+	       |       V
+	       |       +->-+
+	       |       ^   |
+	       |       |   V
+	       |       |   wait for event arrival (boxes group)
+	       |       |   |
+	       |       |   V
+	       |       |   send the event to the corresponding handler
+	       |       |   |               |
+	       +--- done ? |               |
+		       +-&lt;-+               |
+					keyPress:...
+</pre>
+</code>
+
+
+<h2><a HREF="#I_VIEWSNPRIOS" NAME="VIEWSNPRIOS">Views and Priorities</a></h2>
+
+    Initially, all view-processes are created at the same priority
+    (called <var>UserSchedulingPriority</var>, which is typically 8).
+    This means, that a running user process will block all other view
+    processes (except, if it does a <var>yield</var> from time to time,
+    or if timeSlicing is enabled).
+<p>
+    Try evaluating (in a workspace, with timeSlicing disabled) ...
+
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    [true] whileTrue:[1000 factorial]
+</pre></code>
+</td></tr></table>
+
+    ... the system seems dead (read the next paragraphs, before doing this).
+<p>
+    Only processes with a higher priority will get control; since the event
+    dispatcher is running at <var>UserInterruptPriority</var> (which is typically 24),
+    it will still read events and put them into the view's event queues.
+However, all view processes run at 8 which is why they never get a chance to actually
+process the event.
+<p>
+    There are two events, which are handled by the event dispatcher itself:
+a keypress of <kbd>"<B>CTRL-C</B>"</kbd>(or <kbd>"<B>CTRL-.</B>"</kbd> depending on your setup)
+in a view will be recognized by the dispatcher,
+    and start a debugger on the corresponding view-process;
+a keypress of <kbd>"<B>CTRL-Y</B>"</kbd> in a view also stops its processing
+but does not start a debugger (this is called aborting).
+<br>
+Notice: in the current ST/X release,
+the keyboard mapping was changed to map CTRL-Y to "redo".
+Now, you have to press CTRL-. and then click on the "abort" button.
+<p>
+    Actually, in both cases, a signal is raised, which could in theory be cought by the
+     view process.
+<p>
+    Thus, to break out of the above execution,
+    press <kbd>"<B>CTRL-C</B>"</kbd>/<kbd>"<B>CTRL-.</B>"</kbd> in the workspace,
+    and get a debugger for its process.
+    In the debugger, press either <var>abort</var> (to abort the <var>doIt</var>-evaluation), or
+    <var>terminate</var> to kill the process
+    and shut down the workspace completely (closes the workspace).
+<p>
+
+    If you have long computations to be done, AND you don't like the above
+    behavior, you can of course perform this computation at a lower
+    priority. Try evaluating (in the above workspace):
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code type="example"><pre>
+    Processor activeProcess priority:4.
+    [true] whileTrue:[1000 factorial]
+</pre></code>
+</td></tr></table>
+<font size=-2>Notice that nowadays, 1000 factorial is computed so fast, that it hardly makes sense to run it in the background!</font>
+<P>
+    Now, the system is still responding to your input in other views,
+    since those run at a higher priority (8), therefore suspending the
+    workspace-process whenever they want to run.
+    You can also think of the the low-prio processing as being performed in the
+background - only running
+    when no higher prio process is runnable (which is the case whenever
+    all other views are inactively waiting for some input).
+<p>
+    Some views do exactly the same, when performing long operations.
+    For example, the fileBrowser lowers its priority while reading
+    directories (which can take a long time - especially when directories
+    are NFS-mounted). Therefore, you can still work with other views
+    (even other filebrowsers) while reading directories. Try it with
+    a large directory (such as <code>"/usr/bin"</code>).
+<p>
+    It is a good idea, to do the same in your programs, if operations take
+    longer than a few seconds - the user will be happy about it.
+    Use the FileBrowser's code as a guide.
+<p>
+    For your convenience, there is a short-cut method provided by <code>Process</code>,
+    which evaluates a block at a lower priority (and changes the priority
+    back to the old value when done with the evaluation).
+<br>
+    Thus, long evaluations should be done using a construct as:
+
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    Processor activeProcess withPriority:4 do:[
+	10 timesRepeat:[2000 factorial]
+    ]
+</pre></code>
+</td></tr></table>
+
+    You should avoid hardcoding priority numbers into your code, since these
+    may change (<cite>PPS</cite> users noticed
+ that <cite>Parcplaces</cite> new release 2 uses priorities between 1 and 100),
+<br>
+To avoid breaking your code in case this is changed in <cite>ST/X</cite>,
+the above is better written as:
+
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    Processor activeProcess
+	withPriority:(Processor userBackgroundPriority)
+	do:[
+	    10 timesRepeat:[2000 factorial]
+	]
+</pre></code>
+</td></tr></table>
+
+
+
+
+<h2><a HREF="#I_BGPROCS" NAME="BGPROCS">Background Processes</a></h2>
+
+    The above example did its computation in the workspace process,
+    thus the workspace did no longer respond to update- or any other
+    events.
+    To get around this behavior, you can also start a new process, to
+    do this computation. Try to evaluate:
+
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    [
+	10 timesRepeat:[
+	    2000 factorial
+	]
+    ] forkAt:4
+</pre></code>
+</td></tr></table>
+
+    in a workspace, and watch the process monitor.
+    You will notice, that the workspace is not blocked, but a separate
+    process has been created. Since it runs at a lower priority, all other
+    views continue to react as usual.
+<p>
+There is one possible problem with the above background process:
+<blockquote>
+<kbd>"<B>CTRL-C</B>"</kbd>
+or <kbd>"<B>CTRL-Y</B>"</kbd>
+pressed in the workspace will no longer affect the
+computation (because the computation is no longer under the control of
+the workspace).
+</blockquote>
+To stop/debug a runaway background process, you have to open a
+<a HREF="../tools/misc/TOP.html#PROCESSMONITOR">ProcessMonitor</a>,
+select the background process
+and apply the processMonitors <var>terminate</var>,
+<var>abort</var> or <var>debug</var> menu functions.
+<br>
+
+If you start background processes programmatically,
+you should keep references to the subprocesses in some variable,
+and allow termination via some menu or button function:
+
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    |myProcess|
+
+    ...
+    myProcess := [
+		    ... whatever ...
+		 ] forkAt:4.
+
+    ...
+    myProcess terminate
+</pre></code>
+</td></tr></table>
+
+Do not forget to terminate all of your subprocesses, when your application
+is finished (this is typically done in the applicationModel's
+<code>#closeRequest</code> or a view's <code>#destroy</code> method).
+<p>
+To allow easier identification of your subprocesses in the process monitor,
+you can assign a name to a process:
+
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    |myProcess|
+
+    ...
+    myProcess := [
+		    ... whatever ...
+		 ] forkAt:4.
+    myProces name:'my background process'.
+    ...
+    myProcess terminate
+</pre></code>
+</td></tr></table>
+
+This process name has no semantic meaning - its sole purpose is for the process monitor.
+
+
+
+
+<h2><a HREF="#I_SUGGPRIOS" NAME="SUGGPRIOS">Suggested Priorities & Hints</a></h2>
+
+    To keep the system responsive, use the following priorities in your
+    programs:
+<ul>
+<li>for normal views, do not change its default priority, <var>UserSchedulingPriority</var> (8)
+<p>
+<li>think twice about raising the priority to or above <var>UserInterruptPriority</var> (24).
+<br>
+Since this is the event dispatchers
+priority, no event handling (especially: no <kbd>"<B>CTRL-C</B>"</kbd> processing) takes
+place while running at prio >= 24. If your process has any bug
+(i.e. an endless loop) it may be very hard to stop it.
+(see below on how to do this).
+<p>
+In general, there is seldom any need to raise the priority above the default - except,
+for example, when handling input (requests) from a Socket which have to be served immediately,
+even if some user interaction is going on in the meantime
+(a Database server with a debugging window ?).
+<p>
+<li>use <var>UserBackgroundPriority</var> (6) when doing long computations,
+  which <B>are</B> presented to the user after a while.
+<br>
+  Typically, use this priority when reading directories, long files,
+  databases, interprocess-communication sockets etc.
+<br>
+  For example, the file browser lowers its priority to that value,
+  while reading directories or files.
+<p>
+<li>use <var>SystemBackgroundPriority</var> (4) when doing computations, which
+  <b>are not</b> visualized after a while; i.e. for things which can run
+  totally in the background.
+<br>
+  Also the animation demos run at this priority, to give foreground
+  views a chance to complete their operations, even if they lower
+  their priority (such as the fileBrowser).
+<p>
+<li>if time slicing is disabled: no matter what priority you run on, do a <var>yield</var> from time to time
+	  when doing long computations.
+<br>
+  This makes sense, even when running at lower priority,
+  to give other applications
+  a chance to make some progress (since they too may have lowered their
+  priority, this yield is needed to let them run too).
+<p>
+If you don't want to manually add yields all over your code, and are not
+satisfied with the behavior of your background processes, you should
+enable timeslicing as described above.
+However, you have to care for
+the integrity of any shared objects manually,
+and fix your code to deal with concurrent accesses (i.e. add critical regions, where required).
+<p>
+BTW: the Transcript in <cite>ST/X</cite>
+is threadsafe; you can use it from any processes, at any priority.
+</ul>
+
+
+<h2><a HREF="#I_BLOCKING" NAME="BLOCKING">Blocking interrupts</a></h2>
+
+    If you ever want to change things in <code>Delay</code>, <code>Semaphore</code> or <code>ProcessorScheduler</code>,
+    never forget the possibility of external-world interrupts (especially:
+    timer interrupts). These can in occur at any time, bringing the system
+    into the scheduler, which could switch to another process as a consequence
+    of the interrupt. This may even happen while running at high priority.
+<br>
+    Whenever you are modifying data which is related to process scheduling
+    itself
+    (i.e. counters in semaphores, process lists in the scheduler etc),
+    you should therefore block these interrupts for a while.
+<br>
+    This is done by:
+
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    OperatingSystem blockInterrupts
+    ...
+    modify the critical data
+    ...
+    OperatingSystem unblockInterrupts
+</pre></code>
+</td></tr></table>
+
+    Since the <code>#blockInterrupts</code> and <code>#unblockInterrupts</code>
+    implementation does not handle nested calls,
+    you should only unblock interrupts, if they have NOT been blocked in the first place.
+    To do so, <code>#blockInterrupts</code> returns the previous blocking
+    state - i.e. <code>true</code>, if they had been already blocked before.
+<br>
+    Thus, to be certain, always use:
+
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    |wasBlocked|
+
+    ...
+    wasBlocked := OperatingSystem blockInterrupts
+    ...
+    modify the critical data
+    ...
+    wasBlocked ifFalse:[OperatingSystem unblockInterrupts]
+</pre></code>
+</td></tr></table>
+
+if there is any chance for the code between the block/unblock to return
+(i.e. a block return or exception handling),
+you also have to add proper unwind actions:
+
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    |wasBlocked|
+
+    ...
+    wasBlocked := OperatingSystem blockInterrupts
+    [
+       ...
+       modify the critical data
+       ...
+    ] valueNowOrOnUnwindDo:[
+	wasBlocked ifFalse:[OperatingSystem unblockInterrupts]
+    ]
+</pre></code>
+</td></tr></table>
+
+that's a lot to remember; therefore,
+
+    for your convenience,
+    <code>Block</code> offers an "easy-to-use" interface (syntactic sugar) for the above operation:
+
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    [
+       ...
+       modify the critical data
+       ...
+    ] valueUninterruptably.
+</pre></code>
+</td></tr></table>
+
+    See the code in <code>Semaphore</code>, <code>Delay</code> and <code>ProcessorScheduler</code> for more examples.
+<p>
+    Notice, that no event processing, timer handling or process switching
+    is done when interrupts are blocked. Thus you should be <b>very</b> careful in
+    coding these critical regions. For example, an endless loop in such a
+    region will certainly lock up the Smalltalk system.
+    Also, do not spend too much time in such a region, any processing which takes
+    longer than (say) 50 milliseconds will have a noticeable impact on the user.
+<br>
+     Usually, it is almost always an indication of a bad design, if you have
+     to block interrupts for such a long time. In most situations, a critical
+     region or even a simple Semaphore should be sufficient.
+<p>
+    While interrupts are blocked, incoming interrupts will be registered by
+    the runtime system and processed (i.e. delivered) at unblock-time.
+    Therefore, be prepared to get the interrupt(s) right after (or even within) the unblock
+    call.
+<p>
+    Also, process switches will restore the blocking state back to how it was
+    when the process was last suspended. Thus, a <var>yield</var> within a blocked
+    interrupt section will usually reenable interrupts in the switched-to process.
+<p>
+    It is also possible to enable/disable individual interrupts.
+    See OperatingSystem's
+    <code>disableXXX</code> and <code>enableXXX</code> methods.
+
+
+<h2><a HREF="#I_INTERRS" NAME="INTERRS">Interrupting a Process</a></h2>
+
+    Beside the above external interrupts, you can also manually force a process
+    to be interrupted and evaluate something programmatically.
+    To do so, use:
+
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    ...
+    anotherProcess interruptWith:[ some action to be evaluated ]
+    ...
+</pre></code>
+</td></tr></table>
+
+    This forces <var>anotherProcess</var> to evaluate the block passed to <code>interruptWith:</code>.
+    If the process is suspended, it will be resumed for the evaluation.
+    The evaluation will be performed by the interrupted process,
+    on top of the running or suspended context
+    Thus a signal-raise, long return, restart or context walkback is possible
+    in the interrupt action block and will be executed on behalf of the interrupted
+    processes stack - not the caller's stack. Therefore, this is a method of
+    injecting a piece of code into any other process at any time.
+<p>
+    BTW: the event dispatcher's <kbd>"<B>CTRL-C</B>"</kbd> processing is implemented using exactly this
+    mechanism.
+<p>
+    Try:
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<a type="example"><code><pre>
+    |p|
+
+    p :=[
+	    [true] whileTrue:[
+		 1000 factorial
+	    ]
+	] forkAt:4.
+    "
+     to find it easier in the process monitor
+    "
+    p name:'my factorial process'.
+
+    "
+     make it globally known
+    "
+    Smalltalk at:#myProcess put:p.
+</pre></code></a>
+</td></tr></table>
+
+    then:
+
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<a type="example"><code><pre>
+    myProcess interruptWith:[Transcript showCR:'hello'].
+</pre></code></a>
+</td></tr></table>
+
+    or (see the output on the xterm-window, where <cite>ST/X</cite> has been started):
+
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<a type="example"><code><pre>
+    myProcess interruptWith:[thisContext fullPrintAll].
+</pre></code></a>
+</td></tr></table>
+
+    or:
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<a type="example"><code><pre>
+    "this brings the process into the debugger"
+    myProcess interruptWith:[Object errorSignal raise]
+</pre></code></a>
+</td></tr></table>
+
+    finally cleanup (terminate the process) with:
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<a type="example"><code><pre>
+    myProcess terminate.
+    Smalltalk removeKey:#myProcess.
+</pre></code></a>
+</td></tr></table>
+
+
+    As another example, we can catch some signal in the process,
+    as in:
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<a type="example"><code><pre>
+    |p|
+
+    p :=[
+	    Object errorSignal catch:[
+		 [true] whileTrue:[
+		     1000 factorial
+		]
+	     ].
+	     Transcript showCR:'process finished gracefully'.
+	     Smalltalk removeKey:#myProcess.
+	] forkAt:4.
+    "
+     to find it easier in the process monitor
+    "
+    p name:'my factorial process'.
+
+    "
+     make it globally known
+    "
+    Smalltalk at:#myProcess put:p.
+</pre></code></a>
+</td></tr></table>
+
+    then send it the signal with:
+
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<a type="example"><code><pre>
+    myProcess interruptWith:[Object errorSignal raise]
+</pre></code></a>
+</td></tr></table>
+
+The above was shown for demonstration purposes; since process termination
+is actually also done by raising an exception (<code>Process terminateSignal</code>),
+graceful termination is better done by:
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<a type="example">
+<code><pre>
+    |p|
+
+    p :=[
+	    Process terminateSignal catch:[
+		 [true] whileTrue:[
+		     1000 factorial
+		]
+	     ].
+	     Transcript showCR:'process finished gracefully'.
+	     Smalltalk removeKey:#myProcess.
+	] forkAt:4.
+    "
+     to find it easier in the process monitor
+    "
+    p name:'my factorial process'.
+
+    "
+     make it globally known
+    "
+    Smalltalk at:#myProcess put:p.
+</pre></code></a>
+</td></tr></table>
+
+    then terminate it with:
+
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<a type="example">
+<code><pre>
+    myProcess terminate
+</pre></code></a>
+</td></tr></table>
+
+
+
+
+<h2><a HREF="#I_TIMEOUTS" NAME="TIMEOUTS">Timeouts</a></h2>
+
+    Based on the above interrupt scheme, <code>ProcessorScheduler</code> offers methods to
+    schedule timeout-actions. These will interrupt the
+    execution of a process and force evaluation of a block after some time.
+<p>
+    this kind of timed blocks are installed (for the current process) with:
+
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    Processor addTimeBlock:aBlock afterSeconds:someTime
+</pre></code>
+</td></tr></table>
+
+    to interrupt other processes after some time, use:
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    Processor addTimeBlock:aBlock for:aProcess afterSeconds:someTime
+</pre></code>
+</td></tr></table>
+
+    there are alternative methods which expect millisecond arguments for short time delays.
+
+<p>
+    For example, the autorepeat feature of buttons is done using this
+    mechanism. Here a timed block is installed with:
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    Processor addTimeBlock:[self repeat] afterSeconds:0.1
+</pre></code>
+</td></tr></table>
+
+Also, animations can be implemented with this feature (by scheduling a block to draw the next
+picture in the view after some time delay).
+<p>
+    See <a HREF="timing.html">``working with timers & delays''</a> for more information.
+
+
+
+
+<h2><a HREF="#I_TERMINATION" NAME="TERMINATION">Terminating a Process</a></h2>
+
+Processes are terminated with the <code>#terminate</code> message.
+Technically, this does not really terminate the process,
+but instead raises a <var>TerminateProcessRequest</var> exception.
+Of course, this signal can be cought or otherwise handled by the process;
+especially to allow for the execution of cleanup actions,
+as shown in the above example
+(see the <code>Process &#187; startup</code> method in a browser).
+<p>
+This process termination is called <var>``soft termination''</var>,
+because the affected process still has a chance to gracefully perform any cleanup
+in unwind blocks or by providing a handler for the exception.
+<p>
+A <var>``hard termination''</var> (i.e. immediate death of the process without any cleanup)
+can be enforced by sending it <code>#terminateNoSignal</code>.
+Except for emergency situations (a buggy or looping termination handler),
+there should never be a need for this, because it mey leave semaphores or
+locks in a state which prevents further access to shared state.
+Often, you will have to care for those leftover locks in a
+<a HREF="../tools/misc/TOP.html#PROCESSMONITOR">ProcessMonitor</a>
+or <a HREF="../tools/misc/TOP.html#SEMAPHOREMONITOR">SemaphoreMonitor</a> afterwards.
+<p>
+So the most distinguishing aspect of <var>soft termination</var> is that all unwind blocks
+(see <code>Block &#187; valueOnUnwindDo:</code>) are executed - in contrast to a <var>hard terminate</var>,
+which immediately kills the process.
+(read: <a HREF="contexts.html#UNWINDING">``context unwinding''</a>)
+
+<h3>Process Groups</h3>
+
+A variant of the <code>#terminate</code> message is <code>#terminateGroup</code>.
+This terminates a process along with all of the subprocesses it created,
+unless the subprocess detached itself from its creator by becoming
+a process group leader. A process is made a group leader by sending
+it the <code>#beGroupLeader</code> message.
+<br>
+In <cite>ST/X</cite>, all GUI processes are process leaders by default.
+
+
+
+<h2><a HREF="#I_RUNAWAY" NAME="RUNAWAY">Interrupting a Runaway Process</a></h2>
+
+In case of emergency (for example, when a process with a priority
+higher than <var>UserInterruptPriority</var> loops endless),
+you can press
+<kbd>"<B>CTRL-C</B>"</kbd> in the xterm (or windows console) window,
+where <cite>Smalltalk/X</cite> was started.
+<P>
+(Notice: this may be impossible to do on the Windows operating system which does not
+attach a console to ".exe" programs. Therefore, for Windows, ST/X is
+deployed also as a ".com" application, which always opens a controlling console.
+During development, it is therefore prefereable to use the "stx.com" executable.)
+<P>
+The interrupt will ST/X in whatever it is doing (even the event dispatcher)
+and enter a <a HREF="../tools/debugger/TOP.html">debugger</a>.
+<p>
+If the scheduler was hit with this interrupt,
+all other process activities are stopped, which implies that other existing
+or new views will not be handled while in this debugger (i.e. the debuggers
+inspect functions will not work, since they open new inspector views).
+<br>
+If your runaway process was hit, the debugger behaves as if the <kbd>"<B>CTRL-C</B>"</kbd>
+was pressed in a view (however, it will run at the current priority, so you
+may want to lower it by evaluating:
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    Processor activeProcess priority:8
+</code></pre>
+</td></tr></table>
+
+<p>
+In this debugger, either terminate the current process (if you were lucky,
+and the interrupt occured while running in the runaway process)
+or try to terminate the bad process by evaluating some expression like:
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    Process allInstances do:[:p |
+	p priority > 24 ifTrue:[
+	    p id > 1 ifTrue:[      "/ do not kill the scheduler
+		p terminate
+	    ]
+	]
+    ]
+</code></pre>
+</td></tr></table>
+
+Your runaway process is of course easier to locate, if you gave it a
+distinct name before; in this case, use:
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    Process allInstances do:[:p |
+	p name = 'nameOfBadProcess'ifTrue:[
+	    p terminate
+	]
+    ]
+</code></pre>
+</td></tr></table>
+A somewhat less drastic fix is to send it an abortSignal:
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    Process allInstances do:[:p |
+	p name = 'nameOfBadProcess'ifTrue:[
+	    p interruptWith:[Object abortSignal raise]
+	]
+    ]
+</code></pre>
+</td></tr></table>
+Most processes provide a handler for this signal at some save place,
+where they are prepared to continue execution. Those without a handler
+will terminate.
+Therefore, a workspace or browser will return to its event loop,
+while other processes may terminate upon receipt of this signal.
+<p>
+In some situations, the system may bring you into a non graphical
+<a HREF="../tools/debugger/misc.html">MiniDebugger</a>
+(instead of the graphical DebugView).
+This happens, if the active process
+at interrupt time was a DebugView, or if any unexpected error occurs within the
+debuggers startup sequence.
+<br>
+The MiniDebugger too supports expression evaluation, abort and terminate functions,
+however, these have to be entered via the keyboard in the xterm window (where you
+pressed the <kbd>"<B>CTRL-C</B>"</kbd> before). Type <kbd>?</kbd> (question mark) at
+the MiniDebuggers prompt to get a list of available commands.
+<p>
+On some keyboards, the interrupt key is labeled different from <kbd>"<B>CTRL-C</B>"</kbd>.
+<br>
+The exact label depends on the <var>xmodmap</var> and <var>stty-settings</var>.
+Try <kbd>"<B>DEL</B>"</kbd> or <kbd>"<B>INTR</B>"</kbd>
+or have a look at the output of the <var>stty</var>
+unix command.
+
+<p>
+<dl><dt>Notes:<dd>
+<a NAME="FN1" HREF="#BACK_FN1">(*)</a>
+this is not fully correct: the modalbox's event loop peeks into the other
+windowgroup's eventQueue and handles redraw requests.
+Thus, the original group's views will still redraw themselves when exposed.
+<br>
+However, no input events (keyboard and/or mouse)
+are handled while a modalBox is active.
+</dl>
+
+
+
+<h2><a HREF="#I_RESTART" NAME="RESTART">Processes and SnapShotImage Restart</a></h2>
+
+When <cite>Smalltalk/X</cite> is restarted from a snapShotImage, by default, processes are NOT resumed or restarted.
+The reason is that due to the generated C-code (stc compilation), process stacks are not portable or
+restartable. Thus, all processes which were running at image save time are dead when  the image is restarted.
+<br>
+However, by specially marking a process as restartable with:
+<table width="100%" bgcolor="#eedddd"><tr><td>
+<code><pre>
+    p :=  [...] newProcess.
+    p restartable:true.
+    p resume
+</code></pre>
+</td></tr></table>
+
+at process creation time, the process will be restarted (from it beginning) when st/x is started from an image.
+
+
+<h2><a HREF="#I_HOWSCHED" NAME="HOWSCHED">How the Scheduler Gets Control</a></h2>
+
+The scheduling of all Smalltalk processes is done by another process,
+the so called scheduler process.
+This process happens to execute at the highest
+priority (in current systems: 31).
+<br>
+Whenever the scheduler passes control to another (user- or background)
+process, it makes certain that it will regain control (i.e. execute)
+whenever a scheduled timeout is due, or some I/O data arrives
+at some stream (to signal corresponding seaphores) or a window event arrives (mouse or keyboard actions).
+<br>
+Of particular interest is the display connection,
+which must be served whenever input arrives,
+to ensure that CTRL-C processing is performed (to stop runaway user processes).
+<br>
+Depending on the operating system, two mechanism are used:
+<ul>
+<li>enabling an I/O interrupt, or
+<li>polling in 20ms intervals
+</ul>
+The first technique leads to less idle CPU overhead, but happens to
+not work reliably on all systems.
+<br>
+The second can be used on all systems (especially, some
+older Unix versions had trouble in their X-display connection, when I/O interrupts
+were used).
+<p>
+To decide, which technique to use, the scheduler process asks the OperatingSystem,
+if it supports I/O interrupts (via OperatingSystem &#187; supportsIOInterrupts),
+and uses one of the above according to the returned value.
+<p>
+To date, (being conservative) this method is coded to return
+false for most systems (even for some, where I/O interrupts do work).
+You may want to give it a try and enable this feature by changing the
+code to return true.
+<br>
+If you are still able to CTRL-C-interrupt an endless loop in a workspace,
+and timeslicing/window redrawing happens to still work properly,
+you can keep the changed code and send a note to cg@exept.de or
+info@exept.de; please include the system type and OS release;
+we will then add #ifdef'd code to the supportsIOInterrupt method.
+
+<p>
+<p>
+<hr>
+<p>
+<img NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 1995 Claus Gittinger Development &amp; Consulting
+<p>
+<address>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</address>
+
+<hr>
+Doc $Revision: 1.36 $ $Date: 2016-11-05 17:38:36 $
+</body>
+</html>

@@ -1,0 +1,6 @@
+changeset:   360:0a4845a0c211
+parent:      357:6d1b45736520
+user:        Jan Vrany <jan.vrany@fit.cvut.cz>
+date:        Mon Dec 15 20:46:27 2014 +0000
+summary:     Update to catchup changes in libtool: refactoring to support multiple lint warnings at line
+

@@ -1,0 +1,192 @@
+<HEAD>
+<TITLE>Using the File Browser - Main Menu</TITLE>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="intro.html">    <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">     <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="pathField.html"> <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H2><A NAME="MENU" HREF="TOP.html#I_MENU">The Main Menu</A></H2>
+
+<H3><A NAME="MENU_FILE" HREF="TOP.html#I_MENU_FILE">File Submenu Functions</A></H3>
+
+<DL>
+<DT><A NAME="MENU.OPEN">Open</A>
+<DD>Open the selected file.
+<BR>If the selected file is a text file, its contents is read and
+shown in the contents view.
+<BR>If the file contains a bitmap image, an image editor is opened.
+<P>
+
+<DT><A NAME="MENU.FILEIN">FileIn</A>
+<DD>loads the selected file(s) into the system.
+The file must be either a Smalltalk source
+file, containing valid Smalltalk expressions
+in <A HREF="../../programming/fileoutFormat.html">fileOut-format</A> (chunk format),
+or a dll containing a compiled SmalltalkX class library.
+
+<DT><A NAME="MENU.NEW">New ...</A>
+<DD>Creates a new directory, empty plain file, symbolic- or
+hardLink (if supported by the OperatingSystem)
+<P>
+
+<DT><A NAME="MENU.REMOVE">Remove...</A>
+<DD>remove the currently selected file(s) and/or
+directory(s). A dialog will ask for confirmation.
+<P>
+
+<DT><A NAME="MENU.RENAME">Rename...</A>
+<DD>rename the selected file(s) or directory(s).
+A dialog will ask for the new name.
+<P>
+
+<DT><A NAME="MENU.SHOW_INFO">Properties</A>
+<DD>show file information of the selected file.
+This includes file type, owner, size and access rights.
+<P>
+
+<DT><A NAME="MENU.SPAWN">Spawn</A>
+<DD>starts another fileBrowser on the current directory,
+or in the selected directory.
+<P>
+
+
+<DT><A NAME="MENU.SPAWN">Exit</A>
+<DD>closes the fileBrowser.
+<P>
+
+</DL>
+
+<H3><A NAME="MENU_DIR" HREF="TOP.html#I_MENU_DIR">Directory Submenu Functions</A></H3>
+
+See the documentation on the <A HREF="pathField.html">Path Field Menu</A>
+
+<H3><A NAME="MENU_EDIT" HREF="TOP.html#I_MENU_EDIT">Edit Submenu Functions</A></H3>
+
+<DL>
+<DT><A NAME="MENU.GET">Get Contents</A>
+<DD>same as double click; shows the contents of the
+currently selected file in the contents view.
+<P>
+
+<DT><A NAME="MENU.INSERT">Insert Contents</A>
+<DD>inserts the contents of the
+currently selected file into the contents view at the current text cursor position.
+<P>
+
+<DT><A NAME="MENU.INSERT">Copy FileList</A>
+<DD>places a copy of the fileList into the cut & paste buffer.
+<BR>Useful, when editing Makefiles, and you need a list of
+all files in some directory.
+<P>
+
+</DL>
+
+<H3><A NAME="MENU_VIEW" HREF="TOP.html#I_MENU_VIEW">View Submenu Functions</A></H3>
+
+<DL>
+<DT><A NAME="MENU.LONGLIST">Detail</A>
+<DD>toggles the format in which files are shown in the file list from short to
+long and vice versa. The default is short. It takes a bit longer to read directories
+if long format is choosen.
+<P>
+
+<DT><A NAME="MENU.SHOWALL">Show Hidden Files</A>
+<DD>toggles display of files whose name begins with
+a period <CODE>"."</CODE>. By default, these are not shown in the list.
+<P>
+
+<DT><A NAME="MENU.SHOWALL">Sort By...</A>
+<DD>Changes the sorting criteria of the filenames in the fileList.
+<P>
+
+<DT><A NAME="MENU.ENCODING">Encoding...</A>
+<DD>opens a dialog to specify the file encoding to use.
+<BR>
+By default, the fileBrowser assumes ISO8859-1 encoding, and tries to
+figure out a files encoding (by heuristic rules) when a file is double
+clicked. This autoselect may fail sometimes, and a specific encoding
+must be enforced via this menu.
+<P>
+
+<DT><A NAME="MENU.UPDATE">Update</A>
+<DD>reread the directory and update the file list.
+<P>
+
+This function is normally not needed, since
+the fileBrowser checks for modifications
+of the
+current directory in regular intervals, updating
+the list automatically.
+However, a manual update may be needed in certain
+situations
+(for example, if the time/dates are out of sync
+between NFS hosts) or if you do not want to wait
+for the next automatic update.
+<P>
+
+</DL>
+
+
+<H3><A NAME="MENU_TOOLS" HREF="TOP.html#I_MENU_TOOLS">Tools Submenu Functions</A></H3>
+
+<DL>
+<DT><A NAME="MENU.EXECUTE">Unix Command... (DOS Command...)</A>
+<DD>allows execution of any unix command; a popup
+box allows input of the command.
+The output of the command is inserted in the contents view
+at the cursor position.
+<P>
+
+<DT><A NAME="MENU.CBROWSER">Changes Browser</A>
+<DD>Open a changesBrowser on the selected file
+(which should contain Smalltalk source code)
+<P>
+
+<DT><A NAME="MENU.EDITOR">Editor</A>
+<DD>Open a text editor on the selected file.
+<P>
+
+<DT><A NAME="MENU.HTMLREADER">HTML Reader</A>
+<DD>Open an HTML reader on the selected file.
+<P>
+
+<DT><A NAME="MENU.IMGINSPECT">Image Inspector</A>
+<DD>Open a bitmap image inspector on the selected file
+(which should contain a bitmap image in one of the supported
+formats: XBM, XPM, JPEG, GIF, TIFF etc. .
+<P>
+
+<DT><A NAME="MENU.IMGEDIT">Image Editor</A>
+<DD>Open a bitmap image editor on the selected file
+(which should contain a bitmap image in one of the supported
+formats: XBM, XPM, JPEG, GIF, TIFF etc. .
+<P>
+
+<DT><A NAME="MENU.ZIPTOOL">Zip Tool</A>
+<DD>Open a ZIP tool on the selected file
+(which should contain a zip compressed archive of files).
+<BR>This tool lists the zip-archives contents and allows extraction
+of individual files.
+<P>
+
+<DT><A NAME="MENU.FILEDIFF">File Difference View</A>
+<DD>Open a diff-text view.
+<BR>First, a dialog is opened, asking for two filenames - these
+are compared and the changes are shown highligted in a two-column
+diff view.
+<P>
+
+<DT><A NAME="MENU.TERMINAL">Shell Terminal</A>
+<DD>Open a shell-terminal view in the current directory.
+</DL>
+
+
+
+
+<HR>
+Doc $Revision: 1.6 $ $Date: 2016-09-14 09:41:13 $
+
+</BODY>
+</HTML>

@@ -1,0 +1,7 @@
+OSX utilities
+
+screenshot:
+    takes a screenshot and saves it as a png images file.
+    Used as a workaround, as the Quartz XServer has a bug in not being
+    able to read the screen.
+    (code may eventually be inlined into the XWorkstation class...)

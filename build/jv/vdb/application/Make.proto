@@ -1,0 +1,615 @@
+# $Header$
+#
+# automagically generated from the projectDefinition: jv_vdb_application.
+#
+# -------------- no need to change anything below ----------
+#
+# This makefile generates some standalone demo applications
+#
+#    make
+#       generates vdb.do
+#
+
+TOP=../../../stx
+INCLUDE_TOP=$(TOP)/..
+
+# set to a dummy file name (like FORCE=@@@FORCE-BUILD@@@) to force the build of prereq packages
+FORCE=
+.PHONY: $(FORCE)
+
+PACKAGE=jv:vdb/application
+SUBDIRS=
+SUPPRESS_LOCAL_ABBREVS="yes"
+NOAUTOLOAD=1
+NOSUBAUTOLOAD=1
+
+LOCALINCLUDES= -I$(INCLUDE_TOP)/jv/libgdbs -I$(INCLUDE_TOP)/jv/vdb -I$(INCLUDE_TOP)/stx/libbasic -I$(INCLUDE_TOP)/stx/libbasic2 -I$(INCLUDE_TOP)/stx/libtool
+LOCALDEFINES=
+GLOBALDEFINES=
+MAIN_DEFINES=-DIGNORE_IMAGE -DNO_DISPLAY
+
+RCSSOURCES=Make.proto *.st
+LINKSOURCES=Make.proto *.st
+
+DELIVERBINARIES=
+
+APPNAME=libjv_vdb_application
+LIBNAME=libjv_vdb_application
+STCLOCALOPT='-package=$(PACKAGE)' -I. -headerDir=. $(LOCALINCLUDES) $(STCLOCALOPTIMIZATIONS) $(STCWARNINGS) $(LOCALDEFINES) -headerDir=.  -varPrefix=$(LIBNAME)
+
+
+# ********** OPTIONAL: MODIFY the next line ***
+# additional C-libraries that should be pre-linked with the class-objects
+LD_OBJ_LIBS=
+LOCAL_SHARED_LIBS=
+
+
+# ********** OPTIONAL: MODIFY the next line ***
+# additional C targets or libraries should be added below
+LOCAL_EXTRA_TARGETS=
+
+OBJS= $(COMMON_OBJS) $(UNIX_OBJS)
+
+
+
+
+
+LIBLIST = $(REQUIRED_LIBS)
+
+# required libs:
+#
+
+REQUIRED_LIBS= libstx_libbasic \
+ libstx_goodies_announcements \
+ libstx_goodies_regex \
+ libstx_libbasic2 \
+ libstx_libcomp \
+ libstx_goodies_refactoryBrowser_parser \
+ libstx_libbasic3 \
+ libstx_libview \
+ libstx_libui \
+ libstx_libview2 \
+ libstx_goodies_sunit \
+ libstx_libwidg \
+ libstx_goodies_magritte \
+ libstx_libhtml \
+ libstx_libwidg2 \
+ libstx_libcompat \
+ libstx_libtool \
+ libstx_goodies_xml_vw \
+ libjv_libgdbs \
+ libstx_libtool2 \
+ libjv_vdb \
+
+
+REQUIRED_LIBOBJS= $(TOP)/libbasic/libstx_libbasic$(O_EXT) \
+ $(TOP)/goodies/announcements/libstx_goodies_announcements$(O_EXT) \
+ $(TOP)/goodies/regex/libstx_goodies_regex$(O_EXT) \
+ $(TOP)/libbasic2/libstx_libbasic2$(O_EXT) \
+ $(TOP)/libcomp/libstx_libcomp$(O_EXT) \
+ $(TOP)/goodies/refactoryBrowser/parser/libstx_goodies_refactoryBrowser_parser$(O_EXT) \
+ $(TOP)/libbasic3/libstx_libbasic3$(O_EXT) \
+ $(TOP)/libview/libstx_libview$(O_EXT) \
+ $(TOP)/libui/libstx_libui$(O_EXT) \
+ $(TOP)/libview2/libstx_libview2$(O_EXT) \
+ $(TOP)/goodies/sunit/libstx_goodies_sunit$(O_EXT) \
+ $(TOP)/libwidg/libstx_libwidg$(O_EXT) \
+ $(TOP)/goodies/magritte/libstx_goodies_magritte$(O_EXT) \
+ $(TOP)/libhtml/libstx_libhtml$(O_EXT) \
+ $(TOP)/libwidg2/libstx_libwidg2$(O_EXT) \
+ $(TOP)/libcompat/libstx_libcompat$(O_EXT) \
+ $(TOP)/libtool/libstx_libtool$(O_EXT) \
+ $(TOP)/goodies/xml/vw/libstx_goodies_xml_vw$(O_EXT) \
+ ../../libgdbs/libjv_libgdbs$(O_EXT) \
+ $(TOP)/libtool2/libstx_libtool2$(O_EXT) \
+ ..//libjv_vdb$(O_EXT) \
+
+
+REQUIRED_LINK_LIBOBJS= libstx_libbasic$(O_EXT) \
+ libstx_goodies_announcements$(O_EXT) \
+ libstx_goodies_regex$(O_EXT) \
+ libstx_libbasic2$(O_EXT) \
+ libstx_libcomp$(O_EXT) \
+ libstx_goodies_refactoryBrowser_parser$(O_EXT) \
+ libstx_libbasic3$(O_EXT) \
+ libstx_libview$(O_EXT) \
+ libstx_libui$(O_EXT) \
+ libstx_libview2$(O_EXT) \
+ libstx_goodies_sunit$(O_EXT) \
+ libstx_libwidg$(O_EXT) \
+ libstx_goodies_magritte$(O_EXT) \
+ libstx_libhtml$(O_EXT) \
+ libstx_libwidg2$(O_EXT) \
+ libstx_libcompat$(O_EXT) \
+ libstx_libtool$(O_EXT) \
+ libstx_goodies_xml_vw$(O_EXT) \
+ libjv_libgdbs$(O_EXT) \
+ libstx_libtool2$(O_EXT) \
+ libjv_vdb$(O_EXT) \
+
+
+REQUIRED_SUPPORT_DIRS=RESOURCEFILES
+
+SUBPROJECT_LIBS=
+
+
+target: ALL
+
+all::   prereq ALL_NP
+
+# like ALL, but not prereqs
+ALL_NP:: exe subProjects $(REQUIRED_SUPPORT_DIRS) $(SETUP_RULE)
+
+exe:    vdb.do registerApplication
+
+vdb.do: $(APP_DIRS_TO_MAKE) $(APP_LIBOBJS) $(REQUIRED_LIBOBJS) $(OBJS)
+	$(MAKE) link_vdb.do
+
+
+link_vdb.do:
+	$(MAKE) GUI_APPLICATION \
+		    TARGET=vdb.do \
+		    APPLICATION_CLASSES="$(COMMON_CLASSES) $(UNIX_CLASSES)" \
+		    APPLICATION_OBJS="$(OBJS)" \
+		    APPLICATION_LIBLIST="$(REQUIRED_LIBS)" \
+		    APPLICATION_LIBOBJS="$(REQUIRED_LIBOBJS)" \
+		    APPLICATION_LINK_LIBOBJS="$(REQUIRED_LINK_LIBOBJS)" \
+		    STARTUP_CLASS="VDBStartup" \
+		    STARTUP_SELECTOR="start" \
+		    MAIN_DEFINES="-DIGNORE_IMAGE -DNO_DISPLAY"
+
+# build all mandatory prerequisite packages (containing superclasses) for this package
+prereq:
+	$(MAKE) FORCE=@@@FORCE-BUILD@@@ makePrereq
+
+makePrereq: $(REQUIRED_LIBOBJS)
+
+subProjects:
+	$(MAKE) FORCE=@@@FORCE-BUILD@@@ makeSubProjects
+
+makeSubProjects: $(SUBPROJECT_LIBS)
+	@echo "sub-projects made"
+
+#
+# a self installable delivery
+#
+
+#
+# for linux, this uses autopackage
+# (SETUP_RULE is set to setup_linux)
+setup_linux:
+	@if test -d autopackage; then \
+	    if which autopackage; then \
+		makepackage; \
+	    else \
+		echo "Warning: autopackage not found, installer NOT created"; \
+	    fi \
+	else \
+	    echo "Error: missing autopackage directory"; \
+	    exit 1; \
+	fi
+        
+# backward compatible fallback
+setup::
+	@if test -d autopackage; then \
+	    if which autopackage; then \
+		makepackage; \
+	    else \
+		echo "Warning: autopackage not found, installer NOT created"; \
+	    fi \
+	else \
+	    echo "Error: make setup not yet available in this unix"; \
+	    exit 1; \
+	fi
+
+
+#
+# for mac, a dmg is generated
+# (SETUP_RULE is set to setup_macosx)
+#
+setup_macosx:   "Visual___VM_Debugger_dmg"
+	-rm "Visual___VM_Debugger.dmg"
+	hdiutil create -fs HFSX -layout SPUD "Visual___VM_Debugger.dmg" -srcfolder "Visual___VM_Debugger_dmg" -format UDZO -volname "Visual / VM Debugger" -quiet
+
+app: "Visual___VM_Debugger_dmg"
+
+"Visual___VM_Debugger_dmg": $(SUBPROJECT_LIBS) $(REQUIRED_SUPPORT_DIRS) 
+	@-rm -rf "Visual___VM_Debugger_dmg"
+	@-mkdir "Visual___VM_Debugger_dmg"
+	@-mkdir "Visual___VM_Debugger_dmg/Visual___VM_Debugger.app"
+	@-mkdir "Visual___VM_Debugger_dmg/Visual___VM_Debugger.app/Contents"
+	@-mkdir "Visual___VM_Debugger_dmg/Visual___VM_Debugger.app/Contents/MacOS"
+	cp "vdb.do" "Visual___VM_Debugger_dmg/Visual___VM_Debugger.app/Contents/MacOS/"
+	@-cp osx/Info.plist "Visual___VM_Debugger_dmg/Visual___VM_Debugger.app/Contents/"
+	@-mkdir "Visual___VM_Debugger_dmg/Visual___VM_Debugger.app/Contents/MacOS/."
+	-cp -r *.so "Visual___VM_Debugger_dmg/Visual___VM_Debugger.app/Contents/MacOS/."
+	-cp -r symbols.stc "Visual___VM_Debugger_dmg/Visual___VM_Debugger.app/Contents/MacOS/."
+	-cp -r *.stx "Visual___VM_Debugger_dmg/Visual___VM_Debugger.app/Contents/MacOS/."
+	-cp -r *.rc "Visual___VM_Debugger_dmg/Visual___VM_Debugger.app/Contents/MacOS/."
+	-cp -r resources "Visual___VM_Debugger_dmg/Visual___VM_Debugger.app/Contents/MacOS/."
+	@-rm "Visual___VM_Debugger_dmg/Visual___VM_Debugger.app/Contents/MacOS/"*WINrc.rc
+
+
+
+SOURCEFILES: vdb.do_SOURCES \
+	stx_SOURCES
+
+
+
+
+RESOURCEFILES: vdb.do_RESOURCES vdb.do_BITMAPS  \
+	stx_RESOURCES stx_STYLES stx_BITMAPS
+
+
+vdb.do_RESOURCES: 
+	mkdir -p resources/jv/vdb/application
+	-cp ../resources/*.rs ../resources/*.style resources/jv/vdb/application/..
+
+vdb.do_BITMAPS: 
+	mkdir -p resources/jv/vdb/application/bitmaps
+	-cp *.ico *.gif *.png resources/jv/vdb/application/bitmaps
+
+
+
+stx_RESOURCES: \
+	keyboard.rc \
+	keyboardMacros.rc \
+	display.rc \
+	libbasic_RESOURCES \
+	libview_RESOURCES \
+	libtool_RESOURCES  \
+	libtool2_RESOURCES
+
+keyboard.rc: $(TOP)/projects/smalltalk/keyboard.rc
+	cp $(TOP)/projects/smalltalk/keyboard.rc .
+
+keyboardMacros.rc: $(TOP)/projects/smalltalk/keyboardMacros.rc
+	cp $(TOP)/projects/smalltalk/keyboardMacros.rc .
+
+display.rc: $(TOP)/projects/smalltalk/display.rc
+	cp $(TOP)/projects/smalltalk/display.rc .
+
+stx_STYLES: 
+	mkdir -p resources/stx/libview
+	mkdir -p resources/stx/libview/styles
+	cp $(TOP)/libview/styles/*.common resources/stx/libview/styles
+	cp $(TOP)/libview/styles/*.style resources/stx/libview/styles
+
+stx_BITMAPS: \
+	libwidg_BITMAPS
+
+libwidg_BITMAPS: 
+	mkdir -p resources/stx/libwidg/bitmaps
+	-cp $(TOP)/libwidg/bitmaps/*.* resources/stx/libwidg/bitmaps
+
+libbasic_RESOURCES: 
+	mkdir -p resources/stx/libbasic
+	-cp $(TOP)/libbasic/resources/*.* resources/stx/libbasic
+
+libtool_RESOURCES: 
+	mkdir -p resources/stx/libtool
+	-cp $(TOP)/libtool/resources/*.* resources/stx/libtool
+
+libtool2_RESOURCES: 
+	mkdir -p resources/stx/libtool2
+	-cp $(TOP)/libtool2/resources/*.* resources/stx/libtool2
+
+libview_RESOURCES: 
+	mkdir -p resources/stx/libview
+	-cp $(TOP)/libview/resources/*.* resources/stx/libview
+
+libview2_RESOURCES: 
+	mkdir -p resources/stx/libview2
+	-cp $(TOP)/libview2/resources/*.* resources/stx/libview2
+
+bitmaps:
+	mkdir -p bitmaps
+
+doc:
+	mkdir -p doc
+
+
+
+libstx_libbasic.so: $(TOP)/libbasic/libstx_libbasic.so
+	ln -sf $(TOP)/libbasic/libstx_libbasic.so .
+
+$(TOP)/libbasic/libstx_libbasic.so: $(TOP)/libbasic/makefile $(FORCE)
+	@if [ -f "$(TOP)/libbasic/.NOSOURCE" ]; then \
+	    echo "skip make in $(TOP)/libbasic (no source)"; \
+	else \
+	    cd $(TOP)/libbasic && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "; \
+	fi
+
+$(TOP)/libbasic/makefile: $(TOP)/libbasic/Make.proto
+	$(TOP)/rules/stmkmf --cd $(TOP)/libbasic
+
+libstx_goodies_announcements.so: $(TOP)/goodies/announcements/libstx_goodies_announcements.so
+	ln -sf $(TOP)/goodies/announcements/libstx_goodies_announcements.so .
+
+$(TOP)/goodies/announcements/libstx_goodies_announcements.so: $(TOP)/goodies/announcements/makefile $(FORCE)
+	@if [ -f "$(TOP)/goodies/announcements/.NOSOURCE" ]; then \
+	    echo "skip make in $(TOP)/goodies/announcements (no source)"; \
+	else \
+	    cd $(TOP)/goodies/announcements && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "; \
+	fi
+
+$(TOP)/goodies/announcements/makefile: $(TOP)/goodies/announcements/Make.proto
+	$(TOP)/rules/stmkmf --cd $(TOP)/goodies/announcements
+
+libstx_goodies_regex.so: $(TOP)/goodies/regex/libstx_goodies_regex.so
+	ln -sf $(TOP)/goodies/regex/libstx_goodies_regex.so .
+
+$(TOP)/goodies/regex/libstx_goodies_regex.so: $(TOP)/goodies/regex/makefile $(FORCE)
+	@if [ -f "$(TOP)/goodies/regex/.NOSOURCE" ]; then \
+	    echo "skip make in $(TOP)/goodies/regex (no source)"; \
+	else \
+	    cd $(TOP)/goodies/regex && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "; \
+	fi
+
+$(TOP)/goodies/regex/makefile: $(TOP)/goodies/regex/Make.proto
+	$(TOP)/rules/stmkmf --cd $(TOP)/goodies/regex
+
+libstx_libbasic2.so: $(TOP)/libbasic2/libstx_libbasic2.so
+	ln -sf $(TOP)/libbasic2/libstx_libbasic2.so .
+
+$(TOP)/libbasic2/libstx_libbasic2.so: $(TOP)/libbasic2/makefile $(FORCE)
+	@if [ -f "$(TOP)/libbasic2/.NOSOURCE" ]; then \
+	    echo "skip make in $(TOP)/libbasic2 (no source)"; \
+	else \
+	    cd $(TOP)/libbasic2 && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "; \
+	fi
+
+$(TOP)/libbasic2/makefile: $(TOP)/libbasic2/Make.proto
+	$(TOP)/rules/stmkmf --cd $(TOP)/libbasic2
+
+libstx_libcomp.so: $(TOP)/libcomp/libstx_libcomp.so
+	ln -sf $(TOP)/libcomp/libstx_libcomp.so .
+
+$(TOP)/libcomp/libstx_libcomp.so: $(TOP)/libcomp/makefile $(FORCE)
+	@if [ -f "$(TOP)/libcomp/.NOSOURCE" ]; then \
+	    echo "skip make in $(TOP)/libcomp (no source)"; \
+	else \
+	    cd $(TOP)/libcomp && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "; \
+	fi
+
+$(TOP)/libcomp/makefile: $(TOP)/libcomp/Make.proto
+	$(TOP)/rules/stmkmf --cd $(TOP)/libcomp
+
+libstx_goodies_refactoryBrowser_parser.so: $(TOP)/goodies/refactoryBrowser/parser/libstx_goodies_refactoryBrowser_parser.so
+	ln -sf $(TOP)/goodies/refactoryBrowser/parser/libstx_goodies_refactoryBrowser_parser.so .
+
+$(TOP)/goodies/refactoryBrowser/parser/libstx_goodies_refactoryBrowser_parser.so: $(TOP)/goodies/refactoryBrowser/parser/makefile $(FORCE)
+	@if [ -f "$(TOP)/goodies/refactoryBrowser/parser/.NOSOURCE" ]; then \
+	    echo "skip make in $(TOP)/goodies/refactoryBrowser/parser (no source)"; \
+	else \
+	    cd $(TOP)/goodies/refactoryBrowser/parser && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "; \
+	fi
+
+$(TOP)/goodies/refactoryBrowser/parser/makefile: $(TOP)/goodies/refactoryBrowser/parser/Make.proto
+	$(TOP)/rules/stmkmf --cd $(TOP)/goodies/refactoryBrowser/parser
+
+libstx_libbasic3.so: $(TOP)/libbasic3/libstx_libbasic3.so
+	ln -sf $(TOP)/libbasic3/libstx_libbasic3.so .
+
+$(TOP)/libbasic3/libstx_libbasic3.so: $(TOP)/libbasic3/makefile $(FORCE)
+	@if [ -f "$(TOP)/libbasic3/.NOSOURCE" ]; then \
+	    echo "skip make in $(TOP)/libbasic3 (no source)"; \
+	else \
+	    cd $(TOP)/libbasic3 && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "; \
+	fi
+
+$(TOP)/libbasic3/makefile: $(TOP)/libbasic3/Make.proto
+	$(TOP)/rules/stmkmf --cd $(TOP)/libbasic3
+
+libstx_libview.so: $(TOP)/libview/libstx_libview.so
+	ln -sf $(TOP)/libview/libstx_libview.so .
+
+$(TOP)/libview/libstx_libview.so: $(TOP)/libview/makefile $(FORCE)
+	@if [ -f "$(TOP)/libview/.NOSOURCE" ]; then \
+	    echo "skip make in $(TOP)/libview (no source)"; \
+	else \
+	    cd $(TOP)/libview && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "; \
+	fi
+
+$(TOP)/libview/makefile: $(TOP)/libview/Make.proto
+	$(TOP)/rules/stmkmf --cd $(TOP)/libview
+
+libstx_libui.so: $(TOP)/libui/libstx_libui.so
+	ln -sf $(TOP)/libui/libstx_libui.so .
+
+$(TOP)/libui/libstx_libui.so: $(TOP)/libui/makefile $(FORCE)
+	@if [ -f "$(TOP)/libui/.NOSOURCE" ]; then \
+	    echo "skip make in $(TOP)/libui (no source)"; \
+	else \
+	    cd $(TOP)/libui && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "; \
+	fi
+
+$(TOP)/libui/makefile: $(TOP)/libui/Make.proto
+	$(TOP)/rules/stmkmf --cd $(TOP)/libui
+
+libstx_libview2.so: $(TOP)/libview2/libstx_libview2.so
+	ln -sf $(TOP)/libview2/libstx_libview2.so .
+
+$(TOP)/libview2/libstx_libview2.so: $(TOP)/libview2/makefile $(FORCE)
+	@if [ -f "$(TOP)/libview2/.NOSOURCE" ]; then \
+	    echo "skip make in $(TOP)/libview2 (no source)"; \
+	else \
+	    cd $(TOP)/libview2 && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "; \
+	fi
+
+$(TOP)/libview2/makefile: $(TOP)/libview2/Make.proto
+	$(TOP)/rules/stmkmf --cd $(TOP)/libview2
+
+libstx_goodies_sunit.so: $(TOP)/goodies/sunit/libstx_goodies_sunit.so
+	ln -sf $(TOP)/goodies/sunit/libstx_goodies_sunit.so .
+
+$(TOP)/goodies/sunit/libstx_goodies_sunit.so: $(TOP)/goodies/sunit/makefile $(FORCE)
+	@if [ -f "$(TOP)/goodies/sunit/.NOSOURCE" ]; then \
+	    echo "skip make in $(TOP)/goodies/sunit (no source)"; \
+	else \
+	    cd $(TOP)/goodies/sunit && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "; \
+	fi
+
+$(TOP)/goodies/sunit/makefile: $(TOP)/goodies/sunit/Make.proto
+	$(TOP)/rules/stmkmf --cd $(TOP)/goodies/sunit
+
+libstx_libwidg.so: $(TOP)/libwidg/libstx_libwidg.so
+	ln -sf $(TOP)/libwidg/libstx_libwidg.so .
+
+$(TOP)/libwidg/libstx_libwidg.so: $(TOP)/libwidg/makefile $(FORCE)
+	@if [ -f "$(TOP)/libwidg/.NOSOURCE" ]; then \
+	    echo "skip make in $(TOP)/libwidg (no source)"; \
+	else \
+	    cd $(TOP)/libwidg && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "; \
+	fi
+
+$(TOP)/libwidg/makefile: $(TOP)/libwidg/Make.proto
+	$(TOP)/rules/stmkmf --cd $(TOP)/libwidg
+
+libstx_goodies_magritte.so: $(TOP)/goodies/magritte/libstx_goodies_magritte.so
+	ln -sf $(TOP)/goodies/magritte/libstx_goodies_magritte.so .
+
+$(TOP)/goodies/magritte/libstx_goodies_magritte.so: $(TOP)/goodies/magritte/makefile $(FORCE)
+	@if [ -f "$(TOP)/goodies/magritte/.NOSOURCE" ]; then \
+	    echo "skip make in $(TOP)/goodies/magritte (no source)"; \
+	else \
+	    cd $(TOP)/goodies/magritte && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "; \
+	fi
+
+$(TOP)/goodies/magritte/makefile: $(TOP)/goodies/magritte/Make.proto
+	$(TOP)/rules/stmkmf --cd $(TOP)/goodies/magritte
+
+libstx_libhtml.so: $(TOP)/libhtml/libstx_libhtml.so
+	ln -sf $(TOP)/libhtml/libstx_libhtml.so .
+
+$(TOP)/libhtml/libstx_libhtml.so: $(TOP)/libhtml/makefile $(FORCE)
+	@if [ -f "$(TOP)/libhtml/.NOSOURCE" ]; then \
+	    echo "skip make in $(TOP)/libhtml (no source)"; \
+	else \
+	    cd $(TOP)/libhtml && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "; \
+	fi
+
+$(TOP)/libhtml/makefile: $(TOP)/libhtml/Make.proto
+	$(TOP)/rules/stmkmf --cd $(TOP)/libhtml
+
+libstx_libwidg2.so: $(TOP)/libwidg2/libstx_libwidg2.so
+	ln -sf $(TOP)/libwidg2/libstx_libwidg2.so .
+
+$(TOP)/libwidg2/libstx_libwidg2.so: $(TOP)/libwidg2/makefile $(FORCE)
+	@if [ -f "$(TOP)/libwidg2/.NOSOURCE" ]; then \
+	    echo "skip make in $(TOP)/libwidg2 (no source)"; \
+	else \
+	    cd $(TOP)/libwidg2 && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "; \
+	fi
+
+$(TOP)/libwidg2/makefile: $(TOP)/libwidg2/Make.proto
+	$(TOP)/rules/stmkmf --cd $(TOP)/libwidg2
+
+libstx_libcompat.so: $(TOP)/libcompat/libstx_libcompat.so
+	ln -sf $(TOP)/libcompat/libstx_libcompat.so .
+
+$(TOP)/libcompat/libstx_libcompat.so: $(TOP)/libcompat/makefile $(FORCE)
+	@if [ -f "$(TOP)/libcompat/.NOSOURCE" ]; then \
+	    echo "skip make in $(TOP)/libcompat (no source)"; \
+	else \
+	    cd $(TOP)/libcompat && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "; \
+	fi
+
+$(TOP)/libcompat/makefile: $(TOP)/libcompat/Make.proto
+	$(TOP)/rules/stmkmf --cd $(TOP)/libcompat
+
+libstx_libtool.so: $(TOP)/libtool/libstx_libtool.so
+	ln -sf $(TOP)/libtool/libstx_libtool.so .
+
+$(TOP)/libtool/libstx_libtool.so: $(TOP)/libtool/makefile $(FORCE)
+	@if [ -f "$(TOP)/libtool/.NOSOURCE" ]; then \
+	    echo "skip make in $(TOP)/libtool (no source)"; \
+	else \
+	    cd $(TOP)/libtool && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "; \
+	fi
+
+$(TOP)/libtool/makefile: $(TOP)/libtool/Make.proto
+	$(TOP)/rules/stmkmf --cd $(TOP)/libtool
+
+libstx_goodies_xml_vw.so: $(TOP)/goodies/xml/vw/libstx_goodies_xml_vw.so
+	ln -sf $(TOP)/goodies/xml/vw/libstx_goodies_xml_vw.so .
+
+$(TOP)/goodies/xml/vw/libstx_goodies_xml_vw.so: $(TOP)/goodies/xml/vw/makefile $(FORCE)
+	@if [ -f "$(TOP)/goodies/xml/vw/.NOSOURCE" ]; then \
+	    echo "skip make in $(TOP)/goodies/xml/vw (no source)"; \
+	else \
+	    cd $(TOP)/goodies/xml/vw && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "; \
+	fi
+
+$(TOP)/goodies/xml/vw/makefile: $(TOP)/goodies/xml/vw/Make.proto
+	$(TOP)/rules/stmkmf --cd $(TOP)/goodies/xml/vw
+
+libjv_libgdbs.so: ../../libgdbs/libjv_libgdbs.so
+	ln -sf ../../libgdbs/libjv_libgdbs.so .
+
+../../libgdbs/libjv_libgdbs.so: ../../libgdbs/makefile $(FORCE)
+	@if [ -f "../../libgdbs/.NOSOURCE" ]; then \
+	    echo "skip make in ../../libgdbs (no source)"; \
+	else \
+	    cd ../../libgdbs && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "; \
+	fi
+
+../../libgdbs/makefile: ../../libgdbs/Make.proto
+	$(TOP)/rules/stmkmf --cd ../../libgdbs
+
+libstx_libtool2.so: $(TOP)/libtool2/libstx_libtool2.so
+	ln -sf $(TOP)/libtool2/libstx_libtool2.so .
+
+$(TOP)/libtool2/libstx_libtool2.so: $(TOP)/libtool2/makefile $(FORCE)
+	@if [ -f "$(TOP)/libtool2/.NOSOURCE" ]; then \
+	    echo "skip make in $(TOP)/libtool2 (no source)"; \
+	else \
+	    cd $(TOP)/libtool2 && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "; \
+	fi
+
+$(TOP)/libtool2/makefile: $(TOP)/libtool2/Make.proto
+	$(TOP)/rules/stmkmf --cd $(TOP)/libtool2
+
+libjv_vdb.so: ..//libjv_vdb.so
+	ln -sf ..//libjv_vdb.so .
+
+..//libjv_vdb.so: ..//makefile $(FORCE)
+	@if [ -f "..//.NOSOURCE" ]; then \
+	    echo "skip make in ../ (no source)"; \
+	else \
+	    cd ../ && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "; \
+	fi
+
+..//makefile: ..//Make.proto
+	$(TOP)/rules/stmkmf --cd ../
+
+
+
+
+
+
+
+
+
+
+# Enforce recompilation of package definition class if Mercurial working
+# copy state changes. Together with --guessVersion it ensures that package
+# definition class always contains correct binary revision string.
+ifneq (**NOHG**, $(shell hg root 2> /dev/null || echo -n '**NOHG**'))
+jv_vdb_application.$(O): $(shell hg root)/.hg/dirstate
+endif
+
+
+
+
+clean::
+	-rm -f *.so vdb.do.$(O)
+
+clobber:: clean
+	-rm -f vdb.do *.img *.sav
+
+# BEGINMAKEDEPEND --- do not remove this line; make depend needs it
+$(OUTDIR)VDBStartup.$(O) VDBStartup.$(C) VDBStartup.$(H): VDBStartup.st $(INCLUDE_TOP)/stx/libbasic/Object.$(H) $(INCLUDE_TOP)/stx/libbasic/StandaloneStartup.$(H) $(STCHDR)
+$(OUTDIR)jv_vdb_application.$(O) jv_vdb_application.$(C) jv_vdb_application.$(H): jv_vdb_application.st $(INCLUDE_TOP)/stx/libbasic/ApplicationDefinition.$(H) $(INCLUDE_TOP)/stx/libbasic/Object.$(H) $(INCLUDE_TOP)/stx/libbasic/ProjectDefinition.$(H) $(STCHDR)
+
+# ENDMAKEDEPEND --- do not remove this line

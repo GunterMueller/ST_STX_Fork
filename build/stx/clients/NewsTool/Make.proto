@@ -1,0 +1,48 @@
+# $Header: /cvs/stx/stx/clients/NewsTool/Make.proto,v 1.9 2016-01-14 14:49:09 mawalch Exp $
+#
+# -------------- no need to change anything below ----------
+
+TOP=../..
+MODULE=stx
+MODULE_DIR=clients/NewsTool
+PACKAGE=$(MODULE):$(MODULE_DIR)
+SUBDIRS=
+RCSSOURCES=*.st Make.proto bitmaps/*.xbm resources/*.rs
+
+SYSLIBS    = -lX11
+
+STCOPT=$(CLIENT_STCOPT)
+OPT=-DSTATISTIC
+
+LIBNAME=NewsTool
+STARTUP_CLASS=NewsView
+STARTUP_SELECTOR="start"
+
+PROGS      = NewsTool
+
+all::       $(PROGS)
+
+OBJS =      \
+	    NewsView.o \
+	    NewsHndlr.o
+
+AUXOBJS= \
+	    ../MailTool/MailHndlr.o
+
+NewsTool:   main.o $(OBJS)
+		$(LD) $(LDFLAGS) -o NewsTool \
+			$(CRT0) main.o $(OBJS) $(AUXOBJS) \
+			$(ALLLIBS) $(MATHLIB) $(SYSLIBS) \
+			$(OTHERLIBS) $(CRTN)
+
+$(PROGS):   $(INCLUDE)/stc.h $(INCLUDE)/stcIntern.h libs $(MAIN)
+
+libs:       $(LIBS)
+
+objs::  $(OBJS)
+
+../MailTool/MailHndlr.o:
+		(cd ../MailTool; make MailHndlr.o)
+
+# BEGINMAKEDEPEND
+# ENDMAKEDEPEND

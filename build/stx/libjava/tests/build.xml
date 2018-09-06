@@ -1,0 +1,38 @@
+<project name="tests" default="build">
+
+<property name="libraries.stx.libjava" value="../java/libs"/>
+<property name="libraries.stx.libjava.libs" value="../libs/java/libs"/>
+
+<path id="libjava-tests.classpath">
+    <fileset dir="${libraries.stx.libjava}">
+        <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${libraries.stx.libjava.libs}">
+        <include name="**/*.jar"/>
+    </fileset>
+</path>
+
+  <target name="build">
+	<ant antfile="build.xml" target="build" inheritRefs="false" dir="java">
+	  <reference refid="libjava-tests.classpath" torefid="libjava-tests.classpath"/>
+	</ant>
+
+	<ant antfile="build.xml" target="build" inheritRefs="false" dir="mauve/java">
+
+	</ant>
+  </target>
+
+  <target name="clean">
+	<ant antfile="build.xml" target="clean" inheritRefs="false" dir="java">
+          <reference refid="libjava-tests.classpath" torefid="libjava-tests.classpath"/>
+        </ant>
+
+        <ant antfile="build.xml" target="clean" inheritRefs="false" dir="mauve/java">
+
+        </ant>
+
+  </target>
+
+
+
+</project>

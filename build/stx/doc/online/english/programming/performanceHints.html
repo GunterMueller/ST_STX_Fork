@@ -1,0 +1,1710 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - performance hints</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="differences.html">     <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html"> <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="howToWriteInefficientCode.html">      <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Hints on writing efficient smalltalk code</H1>
+
+<H2>Contents</H2>
+
+<UL>
+<LI><A NAME="I_INTRO" HREF="#INTRO">Introduction</A>
+<LI><A NAME="I_ALGORITHMS" HREF="#ALGORITHMS">Algorithms in general</A>
+<LI><A NAME="I_REUSE" HREF="#REUSE">Use existing methods</A>
+<LI><A NAME="I_FINDINGSPOTS" HREF="#FINDINGSPOTS">How to find performance eaters / using MessageTally</A>
+<LI><A NAME="I_COLLECTIONS" HREF="#COLLECTIONS">Use of collections</A>
+ <UL>
+ <LI><A NAME="I_C_CHOOSE" HREF="#C_CHOOSE">Choose an appropriate class</A>
+ <LI><A NAME="I_C_CONCAT" HREF="#C_CONCAT">Avoid excessive concatenation</A>
+ <LI><A NAME="I_C_PREALLOC" HREF="#C_PREALLOC">Preallocate collections</A>
+ <LI><A NAME="I_C_OCREMOVE" HREF="#C_OCREMOVE">Avoid removing inner elements from OrderedCollections</A>
+ <LI><A NAME="I_C_LINKEDLIST" HREF="#C_LINKEDLIST">Avoid LinkedLists</A>
+ <LI><A NAME="I_C_ARRAYS" HREF="#C_ARRAYS">Arrays</A>
+ <LI><A NAME="I_C_SETS_AND_DICTS" HREF="#C_SETS_AND_DICTS">Use Sets and Dictionaries</A>
+ <LI><A NAME="I_C_COMPARING" HREF="#C_COMPARING">Comparing collections</A>
+ <LI><A NAME="I_C_BULKDATA" HREF="#C_BULKDATA">Bulk byte valued data</A>
+ </UL>
+<LI><A NAME="I_NUMBERS" HREF="#NUMBERS">Use of number classes</A>
+ <UL>
+ <LI><A NAME="I_N_FRACTIONS" HREF="#N_FRACTIONS">Avoid fractions</A>
+ <LI><A NAME="I_N_FLOATS" HREF="#N_FLOATS">Floating point arithmetic</A>
+ <LI><A NAME="I_N_BULKDATA" HREF="#N_BULKDATA">Bulk numeric data</A>
+ </UL>
+<LI><A NAME="I_WEAKARRAYS" HREF="#WEAKARRAYS">Weakarrays produce additional GC overhead</A>
+<LI><A NAME="I_CODING" HREF="#CODING">Micro tuning</A>
+ <UL>
+ <LI><A NAME="I_ISKINDOF" HREF="#ISKINDOF">Using isKindOf: is bad style, and not even faster</A>
+ <LI><A NAME="I_INSTVARACCESS" HREF="#INSTVARACCESS">Instvar access vs. self sends</A>
+ <LI><A NAME="I_VARIABLES" HREF="#VARIABLES">Variable access</A>
+ <LI><A NAME="I_BLOCKS" HREF="#BLOCKS">Blocks</A>
+ <LI><A NAME="I_COMMONEXPR" HREF="#COMMONEXPR">Common subexpressions</A>
+ <LI><A NAME="I_LOGAND" HREF="#LOGAND">Use #and: instead of #&amp;</A>
+ <LI><A NAME="I_COMPARING" HREF="#COMPARING">Comparing integers and symbols</A>
+ <LI><A NAME="I_COMPARING2" HREF="#COMPARING2">Comparing to nil, true and false</A>
+ <LI><A NAME="I_TODOLOOP" HREF="#TODOLOOP">'to:do:' vs. '(to:) do:'</A>
+ </UL>
+<LI><A NAME="I_STXCODING" HREF="#STXCODING">Smalltalk/X specific micro tuning</A>
+ <UL>
+ <LI><A NAME="I_AVOIDBECOME" HREF="#AVOIDBECOME">Avoid #become:</A>
+ <LI><A NAME="I_TYPEHINTS" HREF="#TYPEHINTS">Type hints</A>
+ </UL>
+</UL>
+
+<h2><A NAME="INTRO" HREF="#I_INRO">Introduction</A></h2>
+
+This document summarizes information on how to write efficient smalltalk
+programs. It is definitely uncomplete and will be updated as time goes by.
+If you have any comments or more information to be added to this list,
+feel free to send a note to the author.
+Some more information which also deals with performance is found in
+<A HREF="classicBugs.html#EXAMPLES"><VAR>"Classic Smalltalk Bugs"</VAR></A>.
+<P>
+Experienced smalltalkers may skip this document.
+<P>
+This document does not deal with possible conflicts between
+performance and elegance/reusablibiliy.
+<BR>
+Be aware, that in some cases a compromise has to be made.
+Below, we try to quantify performance aspects only, to give you
+the background information required for coding decisions.
+
+
+
+<h2><A NAME="ALGORITHMS" HREF="#I_ALGORITHMS">Algorithms in general</A></h2>
+
+Most general programming concepts which affect a programs performance
+also apply to Smalltalk code; typical algorithmic errors or performance
+eaters will hurt a smalltalk program just like any other.
+<BR>
+Some general rules (which apply for any programming language):
+<UL>
+<LI>Watch out for square (or worse) runtime behavior in your algorithms;
+check if these can be replaced by other (linear) algorithms.
+<P>
+<LI>Replace searches by hashing or other lookup methods.
+Use dictionaries and sets, which do exactly this.
+<P>
+<LI>Cache precomputed results instead of evaluating things multiple times.
+<P>
+<LI>Have a look into the implementation of the classes you (re)use;
+<BR>
+some operations are expensive when applied to one type of object,
+while being cheap with others.
+<BR>
+Usually, a classes protocol alone does not tell you much about
+the cost of its operations (i.e. methods).
+</UL>
+
+<P>
+Before worrying about any specific (microscopic) performance tuning,
+always make certain that your general concept is correct and the best
+algorithms are used.
+For example,
+in most situations, a <CITE>bubbleSort</CITE> in assembler is slower than
+a <CITE>quickSort</CITE> written in a slow
+interpreted language, if the number of objects exceeds a certain limit.
+On the other hand, if only a few elements are to be sorted (say 5),
+even a naive sort algorithm will outperform a quickSort.
+<P>
+These algorithmic effects (and also choice of collection as seen below),
+usually have a much higher impact on performance than microscopic
+fine tuning.
+
+
+<h2><A NAME="REUSE" HREF="#I_REUSE">Use existing methods</A></h2>
+
+Before writing or rewriting any code, please have a look if a similar
+or fitting functionality is not already present in the system.
+<BR>
+Beginners tend to rewrite things which are already present
+somewhere; especially collection methods tend to be overlooked and
+functionality is reimplemented - often as suboptimal code.
+<BR>
+For example, if you have to fill an area of a collection,
+you may tend to write:
+<PRE><CODE>
+    index1 to:index2 do:[:idx |
+	someCollection at:idx put:someValue
+    ].
+</CODE></PRE>
+and ignore the fact, that a specialized method for doing this
+already exists.
+<BR>
+So, the above is better written as:
+<PRE><CODE>
+    someCollection from:index1 to:index2 put:someValue.
+</CODE></PRE>
+This not only saves code, but is also faster by roughly a factor
+of 4
+<BR>
+(since <CODE>#from:to:put:</CODE> is implemented as a highly
+optimized primitive method).
+<P>
+This applies mostly to collections and streams.
+
+
+
+<h2><A NAME="FINDINGSPOTS" HREF="#I_FINDINGSPOTS">How to find performance eaters / using MessageTally</A></h2>
+
+
+The general rule that 80% of a programs execution time are spent in
+20% of the code also applies to most smalltalk programs.
+<BR>
+Before starting to scan all of your code and tuning every method,
+you should first try to find the trouble spots and tune those.
+Get a list of methods in which most of the execution time is spent,
+and concentrate on the top items first.
+<P>
+To get this list, execute your program (or parts of it) under a messageTally.
+It will give you a list which summarizes the execution times sorted
+by method. Both the accumulated time (i.e. spent in a method and all
+all of its callees) and the leaf time (i.e. the time spent in a particular
+method alone) is reported.
+<BR>
+Since the data is acquired by probing the execution
+state of the program at regular time intervals, the information may not be exact
+and in some cases be completely wrong (for example, if the program executes
+in cycles which are in synch with the probe intervals).
+<BR>
+This is of course a general problem
+and always occurs when sampling with a (relatively) low frequency.
+<BR>
+Despite its shortcomings, the information is generally quite
+valueable to start with.
+<P>
+The default sampling occurs in 10ms ticks, but the <CODE>MessageTally</CODE>
+class offers an interface where the sampling interval can be specified as
+argument.
+For reasonable statistics, the program should at least execute for a second;
+the longer, the better.
+<P>
+For example, the output of:
+<PRE><CODE>
+    |data rnd|
+
+    data := Array new:10000.
+    rnd := Random new.
+    1 to:10000 do:[:i |
+	data at:i put:(rnd nextIntegerBetween:1 and:100000)
+    ].
+
+    MessageTally spyOn:[
+	10 timesRepeat:[data sort].
+    ]
+</CODE></PRE>
+is:
+<PRE>
+total execution time: 2189 ms (108 probes ; error >= 0.9%)
+
+MessageTally &#187; MessageTally execute (total 100.0%)
+ Array &#187; SequenceableCollection sort (total 100.0%)
+  Array &#187; SequenceableCollection quickSortFrom:to: (total 100.0%)(leaf 8.3%)
+   Array &#187; SequenceableCollection quickSortFrom:to: (total 91.7%)(leaf 9.3%)
+    Array &#187; SequenceableCollection quickSortFrom:to: (total 82.4%)(leaf 1.9%)
+     Array &#187; SequenceableCollection quickSortFrom:to: (total 80.6%)(leaf 0.9%)
+      Array &#187; SequenceableCollection quickSortFrom:to: (total 79.6%)(leaf 8.3%)
+       Array &#187; SequenceableCollection quickSortFrom:to: (total 71.3%)(leaf 8.3%)
+	Array &#187; SequenceableCollection quickSortFrom:to: (total 63.0%)(leaf 4.6%)
+	 Array &#187; SequenceableCollection quickSortFrom:to: (total 58.3%)(leaf 9.3%)
+	  Array &#187; SequenceableCollection quickSortFrom:to: (total 49.1%)(leaf 17.6%)
+	   Array &#187; SequenceableCollection quickSortFrom:to: (total 31.5%)(leaf 7.4%)
+	    Array &#187; SequenceableCollection quickSortFrom:to: (total 24.1%)(leaf 11.1%)
+	     Array &#187; SequenceableCollection quickSortFrom:to: (total 13.0%)(leaf 5.6%)
+	      Array &#187; SequenceableCollection quickSortFrom:to: (total 7.4%)(leaf 1.9%)
+	       Array &#187; SequenceableCollection quickSortFrom:to: (total 5.6%)(leaf 0.9%)
+		Array &#187; SequenceableCollection quickSortFrom:to: (total 4.6%)(leaf 1.9%)
+		 Array &#187; SequenceableCollection quickSortFrom:to: (total 2.8%)
+		  Array &#187; SequenceableCollection quickSortFrom:to: (total 2.8%)(leaf 0.9%)
+		   Array &#187; SequenceableCollection quickSortFrom:to: (total 1.9%)
+		    Array &#187; SequenceableCollection quickSortFrom:to: (total 1.9%)
+		     Array &#187; SequenceableCollection quickSortFrom:to: (total 1.9%)(leaf 0.9%)
+		      Array &#187; SequenceableCollection quickSortFrom:to: (total 0.9%)
+		       Array &#187; SequenceableCollection quickSortFrom:to: (total 0.9%)
+			Array &#187; SequenceableCollection quickSortFrom:to: (total 0.9%)(leaf 0.9%)
+
+leafs of calling tree:
+
+Array &#187; SequenceableCollection quickSortFrom:to: (total 100.0%)(leaf 100.0%)
+</PRE>
+Of course, this is what we expected; all time is spent in
+the quickSort method (which recursively recalls itself).
+<P>
+The execution time as reported is not the same when the program is executed
+without a messageTally; the messageTally itself introduces some overhead,
+slowing down the execution
+(during its execution, it builds a call tree which may become quite large).
+<BR>
+In most situations, this does not make a problem - the relative
+numbers as reported are independent of the absolute execution time.
+(exception: if you want to measure execution time of some program which
+ depends on real time.)
+<P>
+The number of probes as reported gives a hint on how exact the statistic
+data is. With more probes, the measured numbers become more exact.
+If the number of probes is too small, you should execute
+the program in a loop, or use a messageTally with a smaller probe tick-time.
+<BR>
+In the following, the execution time is too short for a reasonable measure:
+<PRE><CODE>
+    |data rnd|
+
+    data := Array new:2000.
+    rnd := Random new.
+    1 to:2000 do:[:i |
+	data at:i put:(rnd nextIntegerBetween:1 and:100000)
+    ].
+
+    MessageTally spyOn:[
+	data sort.
+    ]
+</CODE></PRE>
+because only a few probes occur.
+<BR>
+compare the above to:
+<PRE><CODE>
+    |data rnd|
+
+    data := Array new:2000.
+    rnd := Random new.
+    1 to:2000 do:[:i |
+	data at:i put:(rnd nextIntegerBetween:1 and:100000)
+    ].
+
+    MessageTally spyDetailedOn:[
+	data sort.
+    ]
+</CODE></PRE>
+this samples in 1ms intervals.
+<BR>
+Notice that not all operatingSystems support timer intervals this short;
+on some, the resolution may be no better than 20ms.
+<P>
+If you cannot run your code under a messageTally (for example, because
+it is an interrupt handler, or synchronized by the timer),
+try to find the executions times by placing parts of your code into
+a timing block,
+<BR>
+as in:
+<PRE><CODE>
+    ...
+    t1 := Time millisecondsToRun:[
+	... some code here ...
+    ].
+    ...
+    t2 := Time millisecondsToRun:[
+	... more code here ...
+    ].
+    ...
+    'time spent in first block: ' print. t1 printNL.
+    'time spent in first block: ' print. t2 printNL.
+</CODE></PRE>
+If it is not possible to print the results (because the printing
+itself disturbs the operation &amp; timing), keep the time values
+in some collection which is printed later, at uncritical times.
+
+
+<h2><A NAME="COLLECTIONS" HREF="#I_COLLECTIONS">Use of collections</A></h2>
+
+<h3><A NAME="C_CHOOSE" HREF="#I_C_CHOOSE">Choose an appropriate class</A></h3>
+
+Although it is very convenient to have a consistent protocol within the
+collection hierarchy, the cost of a particular operation is hidden
+somewhere in the implementation, and may not be obvious at first sight.
+
+<BR>
+For example, the time required to add an element to a collection varies
+with the type of collection involved (<CODE>"Array add:"</CODE>
+is much more expensive than <CODE>"anOrderedCollection add:"</CODE>).
+<BR>
+It may be hard to "see" this cost,
+when reading code which gets some collection as argument and operates on
+it.
+<P>
+Check out the use of collections and consider replacing them by
+others which offer better performance.
+There is no "<I>general perfect collection</I>" which satisfies all needs;
+performance depends heavily on the way a collection is used.
+<P>
+You should at least gather a rough idea of how collections are implemented
+internally, to get a feeling of which operations are to be considered
+"dangerous" with respect to performance. This may be somewhat in
+conflict to the general "<I>black box</I>" or "<I>need to know</I>"
+approach, but experience shows,
+that most mistakes are due to misuse instead of proper reuse.
+<BR>
+After all, thats what a browser and the full source
+code are provided for with the system.
+<P>
+One typical situation is when elements are searched for
+in a collection.
+Many collections search time grows linear with the number of
+elements (Array, OrderedCollection, LinkedList etc.).
+If the collection in question is large, replace arrays or orderedCollections
+by sortedCollections if the elements can be compared (log-n searchtime),
+or sets/dictionaries (almost constant searchtime).
+<P>
+Of course, there is the usual time/space tradeOf;
+hashed collections require some additional space (typically 20-30%),
+binary trees require 2 additional reference entries etc.
+
+<P>
+Be aware, that some collections are slower than others,
+when adding elements (SortedCollection vs. OrderedCollection),
+or that the time may depend on whether the elements come along
+in ascending order or in random order (SortedCollection).
+<BR>
+In some situations, it makes sense to build up
+a collection as an OrderedCollection, Set or Dictionary,
+and convert it as appropriate when all elements have been added,
+for shorter search times later.
+<P>
+If many elements are to be added to a SortedCollection,
+it may be preferable to first add them unsorted (i.e. build it as an
+OrderedCollection) and sort the elements once at the end;
+instead of letting the collection sort each new element individually.
+<BR>
+For example:
+<PRE><CODE>
+    |randomValues rnd s|
+
+    rnd := Random new.
+    randomValues := (1 to:10000) collect:[:i | rnd next].
+
+    s := SortedCollection new.
+    Time millisecondsToRun:[
+	randomValues do:[:v | s add:v]
+    ]
+</CODE></PRE>
+is about 4 times slower than:
+<PRE><CODE>
+    ...
+    Time millisecondsToRun:[
+	s := randomValues asSortedCollection
+    ]
+</CODE></PRE>
+or:
+<PRE><CODE>
+    ...
+    Time millisecondsToRun:[
+	s addAll:randomValues
+    ]
+</CODE></PRE>
+which uses the same algorithm internally.
+<P>
+In contrast, if we add elements in presorted order,
+as in:
+<PRE><CODE>
+    |presortedValues s|
+
+    presortedValues := (1 to:10000).
+
+    s := SortedCollection new.
+    Time millisecondsToRun:[
+	presortedValues do:[:v | s add:v]
+    ]
+</CODE></PRE>
+the difference drops to roughly a factor of 1.6
+(but adding them all at once is still faster)
+
+<P>
+Lets try, analyze and measure a concrete example with searching;
+the following (naive) code reads a file and
+builds up a list of unique words:
+<PRE><CODE>
+    |data stream line words|
+
+    data := OrderedCollection new.
+    stream := 'Makefile' asFilename readStream.
+    [stream atEnd] whileFalse:[
+	line := stream nextLine.
+	words := line asCollectionOfWords.
+	words do:[:word |
+	    (data includes:word) ifFalse:[
+		data add:word
+	    ]
+	]
+    ].
+    stream close
+</CODE></PRE>
+Executing this shows very poor performance, and you may ask yourself: why ?
+<P>
+At first, you may think that the splitting of lines into individual words
+produces too much overhead, or that temporary storage allocation and
+reclamation is the problem.
+Before starting to replace <CODE>#asCollectionOfWords</CODE> by an inline
+scanning loop, either think about what may happen, or use a messageTally,
+to see what really happens.
+
+
+<BR>
+<FORM ACTION="../misc/onlyInSTX.html"
+  METHOD="DOIT |
+	MessageTally spyOn:[
+	    |data stream line words|
+
+	    data := OrderedCollection new.
+	    stream := 'Makefile' asFilename readStream.
+	    [stream atEnd] whileFalse:[
+		line := stream nextLine.
+		words := line asCollectionOfWords.
+		words do:[:word |
+		    (data includes:word) ifFalse:[
+			data add:word
+		    ]
+		]
+	    ].
+	    stream close
+	]
+  ">
+
+Running it under a messageTally
+(press:<INPUT TYPE="submit" VALUE="doIt">)
+</FORM>
+tells us that the above spends most of its time searching for
+existing words in the collection
+<BR>
+(about 90% spent in "<CODE>OrderedCollection &#187; includes:</CODE>").
+
+<P>
+We used an unappropriate collection for this type of search, leading
+to a square runtime behavior.
+Such an algorithms execution time
+can grow quite rapidly, in our case (with roughly 2200 unique words
+out of a total of 8600 words),
+this accounts for millions of string compare operations.
+<P>
+Of course, we would like our algorithm to show an execution time
+which grows linear with the size of the input, (possibly) unaffected by the
+number of unique words.
+<BR>
+Replacing the OrderedCollection by a Set accomplishes this:
+<PRE><CODE>
+    |data stream line words|
+
+    data := Set new.
+    stream := 'Makefile' asFilename readStream.
+    [stream atEnd] whileFalse:[
+	line := stream nextLine.
+	words := line asCollectionOfWords.
+	words do:[:word |
+	    (data includes:word) ifFalse:[
+		data add:word
+	    ]
+	]
+    ].
+    stream close. data
+</CODE></PRE>
+and speeds up the program by some factor of 10.
+<BR>
+<FORM ACTION="../misc/onlyInSTX.html"
+  METHOD="DOIT |
+	MessageTally spyOn:[
+	    |data stream line words|
+
+	    data := Set new.
+	    stream := 'Makefile' asFilename readStream.
+	    [stream atEnd] whileFalse:[
+		line := stream nextLine.
+		words := line asCollectionOfWords.
+		words do:[:word |
+		    (data includes:word) ifFalse:[
+			data add:word
+		    ]
+		]
+	    ].
+	    stream close. data
+	]
+  ">
+
+(press:<INPUT TYPE="submit" VALUE="doIt"> to execute the above under a messageTally)
+</FORM>
+<P>
+<HR>
+<DL><DT>for the curious:<DD>
+a sets searchtime is constant,
+<STRONG>independent</STRONG> of the absolute number of elements
+(as long as it stays below
+ some huge number and the elements provide good hashKeys).
+<BR>
+Instead, it depends on the fill-grade of its underlying container and on
+the quality of the hashKey algorithm (avoiding hash collisions).
+</DL>
+<HR>
+<BR>
+
+
+<h3><A NAME="C_CONCAT" HREF="#I_C_CONCAT">Avoid excessive concatenation</A></h3>
+
+Avoid building up big collections by concatenation. This creates many
+intermediate objects which are to be reclaimed later
+and produce additional (avoidable) garbage collector overhead.
+<BR>
+For example:
+<PRE><CODE>
+    |list|
+
+    list := Array new.
+    1 to:10000 do:[:i |
+	list := list copyWith:i
+    ]
+</CODE></PRE>
+creates 9999 intermediate throwAway arrays of increasing size (0 to 9999).
+All those temporaries account for a rough total of 200Mb garbage,
+which produces quite a bit of overhead
+in creation, initialization (nilling) and reclamation.
+<BR>
+Considering this, it is quite fascinating to notice that all of this
+is still executed in a few seconds:
+<BR>
+if interpreted, the above executes in the order of
+18 seconds on a typical machine (about 8sec on a P5/166).
+If compiled to machine code, the time drops to about 11 seconds on
+the same machine.
+The reason for not being much faster is of course, that
+most time is spent in the garbage collector, anyway.
+<P>
+The same argument is true for the , (comma) message, which creates
+new collections.
+I.e.:
+<PRE><CODE>
+    |string|
+
+    string := ''.
+    1 to:10000 do:[:i |
+	string := string , (i printString)
+    ]
+</CODE></PRE>
+allocates huge amounts of temporary strings (which are immediately thrown away).
+<P>
+To avoid this, use a streams to collect the data:
+<PRE><CODE>
+    |stream string|
+
+    stream := WriteStream on:''.
+    1 to:10000 do:[:i |
+	stream nextPutAll:(i printString).
+    ].
+    string := stream contents.
+</CODE></PRE>
+this is much faster, because the stream uses a buffer, which is doubled in
+size when full, thus only performing log2(N) allocations, for a final string size of N.
+
+
+
+<h4><A NAME="C_PREALLOC" HREF="#I_C_PREALLOC">Preallocate collections</A></h4>
+
+
+If you know in advance, how big the collection is going to be,
+preallocate a big one, and store elements into it:
+<PRE><CODE>
+    |list|
+
+    list := Array new:10000.
+    1 to:10000 do:[:i |
+	list at:i put:i
+    ]
+</CODE></PRE>
+this takes only 90ms on the same machine (with interpreted code)
+and will boost to 4ms, if compiled to machine code.
+<BR>
+You may prefer to write the "smalltalkers" code:
+<PRE><CODE>
+    list := (1 to:10000) asArray
+</CODE></PRE>
+which does exactly the same as above (but is considered better coding style).
+<P>
+
+<h4><A NAME="C_CONVERT" HREF="#I_C_CONVERT">Convert after building</A></h4>
+
+If you do not know the final size in advance, either use a collection which
+is prepared to grow and convert it when done:
+<PRE><CODE>
+    |list temp|
+
+    temp := OrderedCollection new.
+    1 to:10000 do:[:i |
+	temp add:i
+    ].
+    list := temp asArray
+</CODE></PRE>
+or a writeStream, which is also tuned for growing its underlying collection:
+<PRE><CODE>
+    |list stream|
+
+    stream :=  WriteStream on:(Array new).
+    1 to:10000 do:[:i |
+	stream nextPut:i
+    ].
+    list := stream contents
+</CODE></PRE>
+on the same hardware, the last two versions both execute in about
+110ms if interpreted or about 35ms if compiled.
+<P>
+
+All of the above is also true for the <CODE>#','</CODE> (comma) concatenation message,
+which is often used with string objects.
+Especially when building strings, use of a writeStream is generally the better choice.
+
+
+
+
+<h3><A NAME="C_OCREMOVE" HREF="#I_C_OCREMOVE">Avoid removing inner elements from OrderedCollections</A></h3>
+
+OrderedCollections, which keeps their elements in a dense internal array
+typically show poor performance when the collection
+is large and elements are removed in the middle (i.e. not at either end).
+<P>
+The reason is that to remove an inner element, (all) followup elements
+in the underlying container have to be copied towards the removeIndex.
+<BR>
+In contrast, removing at either end is much cheaper, since only the startIndex
+or lastIndex instance variable has to be modified and no block copying
+is needed.
+<P>
+If you have to remove many elements from a huge orderedCollection,
+it may be faster (depending on the size), to create a new collection
+from scratch - even though this may involve some garbage collector overhead.
+<P>
+For example, to remove all odd elements from a 10000 element collection,
+the following code:
+<PRE><CODE>
+    coll removeAllSuchThat:[:el | el even].
+</CODE></PRE>
+takes around one second on a P5/133.
+<BR>
+If we do not trust <CODE>#removeAllSuchThat:</CODE>,
+and do things ourself as in:
+<PRE><CODE>
+    coll size to:1 by:-1 do:[:index |
+	(coll at:index) even ifTrue:[
+	    coll removeAtIndex:index
+	]
+    ]
+</CODE></PRE>
+things become a bit faster (around 530 ms).
+<BR>
+(Notice, that we do things reverse - both to not confuse our indices
+ when removing AND for a slight speed advantage, since less copying
+ is required.
+ This is also faster, since #removeAllSuchThat: returns a new
+ collection of removed items, which we do not need here.).
+<P>
+The fastest here is to create a fresh collection as in:
+<PRE><CODE>
+    coll := coll select:[:el | el odd].
+</CODE></PRE>
+executes in about 64 ms on the same machine.
+<P>
+
+The same is true for <CODE>SortedCollection</CODE>, which is based
+upon <CODE>OrderedCollection</CODE>.
+<P>
+Notice, that in <CITE>ST/X</CITE>,
+the <CODE>Set</CODE> and <CODE>Dictionary</CODE> classes use a special
+removal algorithm, to NOT suffer from the above problem.
+<BR>
+Other smalltalk systems may show poor performance with Sets and Dictionaries
+as well, due to excessive rehashing when elements are removed.
+
+
+
+
+
+
+<h3><A NAME="C_LINKEDLIST" HREF="#I_C_LINKEDLIST">Avoid LinkedLists</A></h3>
+
+Although many algorithm textBooks spend much time
+in describing them, linkedLists are among the slowest collections and
+should not be used.
+In practice, there are hardly any situations in which they perform better than
+orderedCollections, queues or fixed arrays.
+<BR>
+If you restrict yourself to adding/removing individual elements at either
+end, linkedLists may be sufficient
+(but please check; usually orderedCollections
+show a better performance and require less memory overhead; even
+for the above mentioned operations).
+<P>
+In any case, avoid indexed accesses on a linkedList.
+For protocol completeness, indexed access is provided by the <CODE>#at:</CODE>
+method, but is internally implemented by walking from the
+lists anchor up to the specified element.
+<BR>
+Some methods inherited by LinkedList walk over the receiver
+doing indexed accesses - these show square runtime behavior,
+when applied to linkedLists.
+<BR>
+The worst performance is encountered when walking over a linked list
+in reverse order - this is terribly slow.
+<BR>
+Of course, it would be easy to rewrite these methods, to avoid this behavior.
+However, this was not done, since LinkedLists are rarely used in practice.
+<BR>
+(if you insist on using linkedLists, and you need those methods, please
+ define a private subclass of LinkedList and add tuned implementations of
+ those algorithms to that class; top candidates are:
+ <CODE>#collect:</CODE>, <CODE>#select:</CODE> and all other methods which
+ are inherited by SequentialCollection and walk over the receivers element
+ using <CODE>#at:</CODE> to fetch elements.)
+<P>
+Also notice, that linkedLists require that their elements inherit from
+<CODE>Link</CODE>, or provide a similar protocol.
+<BR>
+Thus, linkedLists are limited in the elements type, while
+other collections work with any object.
+<P>
+Finally, linkedLists are dangerous in another area: its elements can only be on
+one linkedList at any time. If you add an element to another list, the original
+list will be corrupted if it was not removed from it before.
+<BR>
+This means, that we highly recommend using <CODE>ValueLink</CODE> elements,
+instead of placing your objects directly into a linkedList.
+<P>
+
+
+
+
+
+
+<h3><A NAME="C_ARRAYS" HREF="#I_C_ARRAYS">Arrays</A></h3>
+
+Fix Arrays show the best access performance, but cannot grow and
+are therefore harder to create, if the final size is not known in advance.
+<BR>
+If your program has to build up some collection which stays fixed
+in size afterwards (but its not known in advance, how big it is
+going to be), build it as an OrderedCollection and convert to an Array
+when done (if this slight speed advantage is really required).
+<BR>
+Alternatively, use a WriteStream and take its contents at the end.
+<P>
+In most smalltalk implementations, arrays cannot grow in size.
+(I.e. <CODE>"someArray add:anElement"</CODE> is not possible).
+In <CITE>ST/X</CITE>, arrays support growing for protocol completeness,
+but since this operation is a very slow one,
+a warning message is sent to the the terminal.
+<P>
+As an example,
+<PRE><CODE>
+    |a|
+
+    a := Array new.
+    1 to:100000 do:[:i |
+	a add:i
+    ]
+</CODE></PRE>
+may take forever, due to the very expensive resizing in <CODE>#add:</CODE>.
+<BR>
+(the corresponding code using an orderedCollection is more than 1000 times faster)
+<P>
+Notice: the real reason for <CODE>Array &#187; add:</CODE> being so slow is that the
+underlying basic mechanism (<CODE>#become:</CODE>) is slow in many
+smalltalk implementations. Read more on this below.
+
+
+<h3><A NAME="C_SETS_AND_DICTS" HREF="#I_C_SETS_AND_DICTS">Use Sets and Dictionaries</A></h3>
+
+Most beginners tend to ignore sets and dictionaries.
+Instead, they often use arrays and implement all kinds of loops and
+process them in the application's methods.
+(especially: long time C-users tend to do this ;-)
+<BR>
+In general, this will require more code and be slower than code using a
+dictionary (except for a very small number of elements or if a numeric
+index can be computed).
+<P>
+Sets are perfect for inclusion tests or to find unique values.
+Always consider using a set, if you have to search the collection using
+<CODE>#includes:</CODE>.
+<P>
+Bags are great for counting elements.
+<P>
+If your access keys are integers or symbols, use identitySets or
+identityDictionaries. These are slightly faster in most smalltalk implementations.
+<P>
+For sparse arrays, a dictionary will do (there is also a class found in the
+goody-directory which implements sparseArrays on top of a dictionary).
+
+
+<h3><A NAME="C_COMPARING" HREF="#I_C_COMPARING">Comparing collections</A></h3>
+
+Be careful when comparing collections using <CODE>#=</CODE>;
+the compare method will recursively walk down the receiver and
+the argument and compare elements (which may be other collections).
+<BR>
+Although being a useful and powerful operation,
+this may be quite slow for big collections (think of huge trees,
+or arrays of arrays etc).
+<P>
+If you have to compare collections (searching game trees, pattern matching etc.)
+you can avoid useless compares,
+by adding some hashKey or signature to your collections,
+and check these first for a fast trivial reject.
+Since sets and dictionaries limit the number of compares when searching for
+entries, there is not specific performance penalty when this kind of
+object is stored into them. However, make certain, that your elements
+provide a good hash value (some simply inherit the <CODE>#hash</CODE> method
+from <CODE>Object</CODE>, which is only good for hashing on identity).
+<P>
+If you have a collection of mixed type objects, and want to search for some
+specific element, think about this comparison cost.
+It may be better to use separate containers or somehow tag elements.
+<P>
+When redefining the hash method, do not make its algorithm too expensive.
+(Sets and dictionaries ask for the hashKey with every
+ <CODE>add:</CODE>, <CODE>remove:</CODE>, <CODE>includes:</CODE> etc.)
+<BR>
+You may have to compare the comparison time with the time it takes to
+generate the hash value, and make a "good" compromise.
+
+
+
+<h3><A NAME="C_BULKDATA" HREF="#I_C_BULKDATA">Bulk byte valued data</A></h3>
+
+The following applies to <CITE>ST/X</CITE> only:
+<P>
+If you need big byteArrays (for example, in image processing),
+you often have to allocate huge byteArrays, which are initialized with
+pixel data soon after allocation.
+<BR>
+In all smalltalk memory systems, a major fraction of an objects creation
+cost is the time required to initialize the new object (for normal objects,
+the entries are nilled; for byteArrays, they are set to zero).
+<P>
+Of course, for normal objects, the nilling is required (otherwise, you could
+get invalid object references), but for byteArrays, it is possible to create
+them and not caring for the initial values.
+<BR>
+This is done by:
+<PRE><CODE>
+    ...
+    data := ByteArray uninitializedNew:size
+    ...
+</CODE></PRE>
+which is similar to the regular <CODE>#basicNew:</CODE>, but does not
+set the elements to zero (instead, you will find random values in the byteArray).
+<BR>
+This is considerably faster;
+the overall cost to allocate and (automatically) reclaim a 1000 element
+byteArray is roughly 4 microseconds vs. 28 microseconds.
+<P>
+BTW: for huge truth-valued collections, it may make sense to define a
+BooleanArray as a variableByteSubclass, and redefine the <CODE>#at:</CODE>
+and <CODE>#at:put:</CODE> methods to return boolean values instead of
+numeric ones. This can save considerable memory (a factor of four of you
+store one boolean per byte, or a factor of 32 if you compress 8 booleans
+into one byte).
+<BR>
+You will find such a BooleanArray implementation in the goody directory.
+
+
+<h2><A NAME="NUMBERS" HREF="#I_NUMBERS">Use of number classes</A></h2>
+
+Like with collections, some numeric operations perform much slower,
+depending on which number representation is involved, and dramatic
+performance degration can be the result, if inappropriate types
+are involved or excessive conversions are performed.
+<BR>
+
+
+<h3><A NAME="N_FRACTIONS" HREF="#I_N_FRACTIONS">Avoid fractions</A></h3>
+
+Fractions keep the numerator and denominator internally.
+What makes them unperformant in some situations is that
+they always reduce themself when created as a result of a numeric
+operation.
+<BR>
+This reduction is done by computing the greatest common divisor of the numerator
+and denominator, which can take some time; especially, if any of them
+is a LargeInteger.
+<BR>
+It may be better to convert numbers to floats if this happens to be a problem.
+<P>
+Since in practice, fractions are relatively seldom used, no specific tuning
+has been done, to fix this. If there is a need, future releases may include
+a modified fraction class, which performs the above lazily
+(i.e. keeps the values unreduced as long as possible).
+<P>
+BTW: in <CITE>ST/X</CITE> and possibly other smalltalk implementations as well,
+the <CODE>LargeInteger</CODE> class is provided
+mainly for completeness; it has not been written or
+tuned with speed as a primary goal.
+
+
+<h3><A NAME="N_FLOATS" HREF="#I_N_FLOATS">Floating point arithmetic</A></h3>
+
+Floating point arithmetic creates new Float instances for every
+result. Therefore, the use of floating point numbers creates additional memory
+management overhead (this is also true for largeIntegers and fractions).
+<BR>
+For example,
+the execution time of the following is a consequence of memory management
+overhead; <STRONG>not</STRONG> of floating point arithmetic:
+<PRE><CODE>
+    |sum|
+
+    sum := 1.0.
+    1 to:1000000 do:[:i |
+	sum := sum + 1
+    ]
+</CODE></PRE>
+The above creates a million new floating point objects (which are, except for
+the last one, discarded and reclaimed by the garbage collector).
+All in all, the above creates and reclaimes about 20Mb of garbage.
+<P>
+The cost of allocating and collecting a float is in the order of 1-2 microseconds.
+<P>
+SmallIntegers do not suffer from this problem.
+
+
+
+<h3><A NAME="N_BULKDATA" HREF="#I_N_BULKDATA">Bulk numeric data</A></h3>
+
+If your applications requires big collections of floats,
+use instances of FloatArray or DoubleArray to keep them.
+<BR>
+They store the values directly (instead of a reference to the number object)
+and thereby reduce storage requirements and garbage collector overhead.
+<BR>
+A 1000000-element FloatArray requires roughly 4Mb of memory, while a
+regular 1mio-element Array requires roughtly 24Mb of memory, since each float
+is represented by an individual object.
+<P>
+FloatArray and DoubleArray may also be subclassed
+(even with additional named instance variables)
+for special requirements.
+<P>
+Typical applications are matrix or vector classes.
+<P>
+Add primitive code for heavy duty operations (like matrix inversions,
+matrix multiplication etc.).
+These primitives can be written in a way to avoid any temporary garbage,
+which is not possible if regular floats are used.
+
+
+
+<h2><A NAME="WEAKARRAYS" HREF="#I_WEAKARRAYS">Weakarrays produce additional GC overhead</A></h2>
+
+In the current (ST/X) implementation of the garbage collector,
+the processing of weakArrays creates additional overhead
+which is due to the scanning of all objects which contain weak pointers
+after every scavenge and sweep operation.
+<BR>
+Measurements show roughly some overhead of 3-5 microseconds per weak object
+(in other words: if an empty scavenge takes 500us without any weak object,
+ expect some 3-5ms scavenge time, if there are 1000 weak arrays in the systems).
+<P>
+Try to avoid creating many weakArrays. One reason for having many shadow objects
+created is the default dependency mechanism (i.e. non-Models). This creates
+a small weakArray for every object which has at least one dependent.
+<P>
+This is bad news, since using weakArrays for the dependency mechanism makes
+pretty much sense - it allows you to forget about releasing dependencies.
+(other systems use regular arrays for dependencies, and you have to manually
+release these in order to allow the garbage collector to free objects.
+Without a release, objects are kept from being freed by having a dependent.)
+<BR>
+In practice, weakArray overhead is less of a problem,
+since most dependencies are for models or objects derived from the Model class.
+These have a redefined dependency mechanism, which is not based on weakArrays.
+<P>
+Future implementations may be rewritten, to reduce or even avoid this
+additional overhead.
+
+
+
+<h2><A NAME="CODING" HREF="#I_CODING">Micro tuning</A></h2>
+
+Some of this section is meant for advanced smalltalk programmers.
+Beginners should not concentrate on all those details.
+<P>
+There are certain smalltalk specific aspects, which may be considered
+when tuning code. The following describes various microscopic
+effects. Do not expect as dramatic speedups as in the above examples.
+However, these microscopic effects may accumulate to a macroscopic effect,
+especially when present in loops which are executed many times.
+<P>
+Often, there is a conflict between the desire to write
+flexible, reusable and elegant code on one side, and the performance
+aspect on the other. We will not discuss this in the following, but instead
+simply list (and quantify) things.
+
+
+<h3><A NAME="ISKINDOF" HREF="#I_ISKINDOF">Using isKindOf: is bad style, and not even faster</A></h3>
+
+As described in various other documents, there are many reasons for banning
+the use of the <CODE>#isKindOf:</CODE> message.
+<BR>
+However, many (beginners) think that it
+makes sense from a performance aspect; this is <STRONG>not</STRONG> true.
+<P>
+The <CODE>#isKindOf:</CODE> method has to get the receivers class
+and follow that classes superclass chain
+way up to the top in the false case,
+and up to the checked class in the true case.
+<BR>
+In any case, this is one message send PLUS the message chain walk.
+For average superclass chains, <CODE>#isKindOf:</CODE>
+executes in the order of a microsecond (on my machine),
+but it can take longer for deeply nested class hierarchies.
+<P>
+It is always better to write a check method, which returns false in
+the default case and true for instances of your desired class.
+I.e., instead of writing
+	"<CODE>foo isKindOf:MyClass</CODE>"
+you should
+implement two methods:
+<BR>
+in Object:
+<PRE><CODE>
+    respondsToWhatINeed
+	^ false
+</CODE></PRE>
+or:
+<PRE><CODE>
+    isMyClass
+	^ false
+</CODE></PRE>
+and in your class:
+<PRE><CODE>
+     respondsToWhatINeed
+	^ true
+</CODE></PRE>
+or:
+<PRE><CODE>
+    isMyClass
+	^ true
+</CODE></PRE>
+and write "<CODE>foo respondsToWhatINeed</CODE>" or "<CODE>foo isMyClass</CODE>".
+<P>
+This will always execute in a time shorter or equal to the <CODE>#isKindOf:</CODE> time
+(a single messageSend is required,
+which takes some 300ns on the same machine)
+<STRONG>and</STRONG> is more flexible, since you may implement
+this check method in other classes, without a need to stay in a particular
+subclass hierarchy.
+<P>
+If looking into the <CODE>Object</CODE> classes protocol,
+you will already find a bunch of these check methods
+ - <CODE>#respondsToArithmetic</CODE>, <CODE>#isStream</CODE>, <CODE>#isString</CODE> and so on.
+<P>
+Measurements to prove the above (on SGI-Indy):
+<PRE><CODE>
+    'hello' isKindOf:Number     1120ns (has to walk up for a miss)
+    1 isKindOf:Number            785ns (has to walk up 2 classes for a hit)
+    1.0 isKindOf:Number          787ns (has to walk up 2 classes for a hit)
+    'hello' isNumber             305ns (immediate return false in Object)
+    1 isNumber                   305ns (immediate return true in Number)
+</CODE></PRE>
+<P>
+
+
+
+<h3><A NAME="INSTVARACCESS" HREF="#I_INSTVARACCESS">Instvar access vs. self sends</A></h3>
+
+From the programmers point of view, it is better to access instance variables
+within a method via self messages than accessing them directly.
+This gives more flexibility when
+a class may eventually be subclassed, and the access method be redefined to
+return a computed or modified value.
+<P>
+Performance wise, it is better to access instance variables directly.
+<P>
+The cost of an instance variable access is in the order of 20-70ns, while
+a message send returning an instance variable takes some 200-500ns.
+<BR>
+Example:
+<PRE><CODE>
+    Object subclass:MyClass
+    ...
+	instanceVariableNames:'foo bar'
+	...
+
+    !MyClass methodsFor:'accessing'!
+
+    foo
+	^ foo
+    !
+
+    ...
+
+    example
+	...
+	y := self foo.
+	...
+    !
+</CODE></PRE>
+is slightly slower than:
+<PRE><CODE>
+    ...
+    example
+	...
+	y := foo.
+	...
+    !
+    ...
+</CODE></PRE>
+but of course, less flexible.
+<P>
+Despite the fact, that direct access is faster,
+you should not ignore the maintenance and reusability issues.
+<BR>
+Quite a few methods had to be rewritten in the past, to use self sends
+instead of direct instVar accesses
+(to allow things to be redefined in added subclasses).
+<P>
+Care for this "optimization" only after all other tuning fails.
+Never "optimize" classes this way, which are intended as abstract or
+framework classes. Only consider it in places which are executed
+millions of times in a loop (better: move the self send out of the loop).
+
+
+<h3><A NAME="VARIABLES" HREF="#I_VARIABLES">Variable access</A></h3>
+
+In nested blocks, variables of the inner scopes are accessed faster than
+outer variables.
+<BR>
+For example,
+<PRE><CODE>
+    |tmp|
+
+    1000 timesRepeat:[
+	...
+	tmp := ....
+	...
+	]
+    ]
+</CODE></PRE>
+is slightly slower than:
+<PRE><CODE>
+    1000 timesRepeat:[
+	|tmp|
+
+	...
+	tmp := ....
+	...
+	]
+    ]
+</CODE></PRE>
+Also, local variable access is faster than globals, class variable or
+instance variable access.
+<BR>
+However, the performance difference is not a dramatic one, the difference
+is in the order of 20-70 nanoseconds per access (due to an added indirection
+in the memory access).
+<BR>
+Beside the slight speed advantage, block locals also remove the danger of
+side effects between temporary variables within a block. Use of them can
+be considered "good style"
+<P>
+This may not be true for some (older?)
+versions of <CITE>Smalltalk/V</CITE>, especially in systems
+where block locals are technically
+implemented as method locals and are shared between the method and its blocks.
+
+
+<h3><A NAME="BLOCKS" HREF="#I_BLOCKS">Blocks</A></h3>
+
+The creation of blocks may be an expensive operation.
+Especially, if the block
+references locals from its home context (so called "<VAR>full blocks</VAR>")
+AND survives its creating method context, additional CPU overhead is produced
+since a full context must be instantiated (blocks are really closures).
+<BR>
+ST/X performs context allocation lazily, in 3 steps:
+<UL>
+<LI>
+first only the memory for a context
+is allocated (uninitialized) on the machine stack,
+<LI>
+when accessed, this is filled with valid content (i.e. sender, receiver,
+selector etc. are filled in)
+<LI>
+finally, if a reference exists to the context when the method/block invocation
+returns,
+a true object is allocated (in objectmemory) and the content copied from
+the stack memory.
+</UL>
+Since most contexts are never referred to and even a smaller number of
+contexts survive the method/block invocation, this strategy avoids most object
+allocations.
+<P>
+Blocks which only reference globals, class variables,
+block arguments or inner block locals are created once at compilation
+time and reused for every invocation
+(so called "<VAR>cheap blocks</VAR>").
+These do not refer to the home context.
+<P>
+Currently, <CITE>ST/X</CITE> treats
+blocks which access read-only local variables (so called "<VAR>copying blocks</VAR>")
+just like full blocks. Later versions will handle these cases as well, and their
+cost will be somewhere in between cheap blocks and full blocks.
+<P>
+Try to avoid full blocks, if possible.
+<BR>
+For example:
+<PRE><CODE>
+    |i|
+
+    i := 1.
+    someArray do:[:element |
+	... do something with element and i ...
+	i := i + 1.
+    ]
+</CODE></PRE>
+creates a full block, since the outer variable <VAR>i</VAR> is accessed
+(and even modified) within the block.
+<BR>
+The alternative:
+<PRE><CODE>
+    someArray keysAndValuesDo:[:i :element |
+	... do something with element and i ...
+    ]
+</CODE></PRE>
+is shorter and faster in execution, since the compiler can
+create a cheap or copying block in many situations.
+<P>
+The following applies to full and copying blocks only.
+<P>
+All enumeration messages expect a block argument;
+if loops are nested, try to have the inner loop(s) be executed more often
+than the outer ones. For example:
+<PRE><CODE>
+    1 to:10 do:[:i |
+	1 to:1000 do:[:j |
+	    ...
+	]
+    ]
+</CODE></PRE>
+creates 10 garbage blocks (*), while:
+<PRE><CODE>
+    1 to:1000 do:[:j |
+	1 to:10 do:[:i |
+	    ...
+	]
+    ]
+</CODE></PRE>
+creates 1000 garbage blocks when executed (*).
+<P>
+Note: (*)
+<BR>
+Actually, in the above concrete example, this is not really true, since
+the <VAR>stc</VAR>-compiler inlines <CODE>to:do:</CODE> messages,
+iff its type analyzer can find out that the loop bounds are both integers.
+Inlined loops do not create any garbage blocks at all.
+<P>
+Block creation cost is in the microsecond order for full blocks.
+<P>
+Block invocation time is between 150 (R4000/P5) and 500ns (485/50).
+<P>
+The cost of instantiating surviving contexts (i.e. an accessible blocks home)
+is also in the microsecond order and also creates additional GC overhead.
+
+
+
+<h3><A NAME="COMMONEXPR" HREF="#I_COMMONEXPR">Common subexpressions</A></h3>
+
+In smalltalk, the compiler can generally <STRONG>not</STRONG> merge
+common subexpressions, as is done by other programming languages' compilers.
+The reason is that in general, the compiler does not know about the receiver
+of a message and therefore does not know what side effect is introduced
+by some expression (even if it did, it could not make use of that knowledge in many situations,
+since the receiver could be changed by some other thread or an interrupt
+handler). This may change in future systems, if Self-style
+dynamic recompilation is implemented.
+However, no available smalltalk system seems to perform these optimizations today.
+<BR>
+Consider the following code fragment:
+<PRE><CODE>
+    ...
+    i := 1.
+    [i &lt; aCollection size] whileTrue:[
+	...
+	do something with aCollection
+	...
+    ]
+</CODE></PRE>
+here, "<CODE>aCollection size</CODE>" is evaluated over and over,
+since the compiler cannot know (in general) if the collections size changes
+within the loop (actually, it does not even know about the meaning of the
+size message; it does not even know that <VAR>aCollection</VAR> is some kind of
+collection).
+<BR>
+For most collections, the size message is pretty cheap, but an additional
+message send (which is technically a function call) is performed for every
+loop invocation.
+<BR>
+If you know that the collections size is invariant, rewrite the above to:
+<PRE><CODE>
+    |sz|
+
+    ...
+    i := 1.
+    sz := aCollectin size.
+    [i &lt; sz] whileTrue:[
+	...
+	do something with aCollection
+	...
+    ]
+    ...
+</CODE></PRE>
+or (better):
+<PRE><CODE>
+    ...
+    1 to:aCollectin size do:[:i |
+	...
+	do something with aCollection
+	...
+    ]
+    ...
+</CODE></PRE>
+of course, all of the above can be considered "bad smalltalk style".
+A more general solution (if you don't modify the collection) is to write:
+<PRE><CODE>
+    ...
+    aCollection do:[:element |
+	...
+	do something with element
+	...
+    ]
+    ...
+</CODE></PRE>
+since it can operate on any type of collection, while the above examples
+only work with sequencable collections (those that use a numeric index).
+<P>
+
+The same is true for arithmetic expressions, indexed collection access etc.
+<BR>
+I.e. instead of:
+<PRE><CODE>
+    ...
+    ... aCollection at:index+1 ...
+    ...
+    ... aCollection at:index+1 ...
+    ...
+</CODE></PRE>
+use:
+<PRE><CODE>
+    |nextIndex|
+
+    ...
+    nextIndex := index + 1.
+    ...
+    ... aCollection at:nextIndex ...
+    ...
+    ... aCollection at:nextIndex ...
+    ...
+</CODE></PRE>
+or (if possible) reuse the element:
+<PRE><CODE>
+    |nextElement|
+
+    ...
+    ... (nextElement := aCollection at:index + 1) ...
+    ...
+    ... nextElement ...
+    ...
+</CODE></PRE>
+Remark:
+<BR>
+We could argue on the question if this kind of "manual common expression elimination"
+is "bad coding style" .... however, smalltalk was designed to offer so much freedom
+in what may be done in a method (and how threads interact), that the compiler really
+often has a hard time to optimize things AND keep the code correct for all those
+cases.
+
+
+
+
+<h3><A NAME="LOGAND" HREF="#I_LOGAND">Use and: ( or: ) instead of &amp; ( | )</A></h3>
+
+Many programmers tend to use "<CODE>&amp;</CODE>" (ampersand) for logical
+and, where they could (should) use "<CODE>and:</CODE>".
+<BR>
+Since "<CODE>&amp;</CODE>" always evaluates its right expression (even if the left
+already returned false), the evaluation of conditional expressions
+can usually be speeded up by using "<CODE>and:</CODE>" and
+arranging logical expressions in a way that the
+minimum number of evaluations is required.
+<BR>
+I.e., instead of:
+<PRE><CODE>
+    ...
+    condition1 &amp; condition2 ifTrue:[
+	...
+    ].
+    ...
+</CODE></PRE>
+(which evaluates both conditions in any case),
+it is better, to write:
+<PRE><CODE>
+	...
+    (condition1 and:[condition2]) ifTrue:[
+	...
+    ].
+    ...
+</CODE></PRE>
+which only evaluates <VAR>condition2</VAR> if the first returned true.
+<P>
+Of course, there are rare situations, where it is intented that the
+right expression is evaluated for its side effect and "<CODE>&amp;</CODE>" should
+be used.
+<P>
+The same is true for "<CODE>|</CODE>" vs. "<CODE>or:</CODE>".
+<P>
+Notice, that the above may not be true for systems which do not create
+inline code for those blocks, but all modern smalltalks do so (ST/X does).
+<P>
+Arrange the conditions that the condition can be computed
+with a minimum number of subexpression evaluations.
+I.e. (if the computation of the subconditions is expensive)
+instead of:
+<PRE><CODE>
+    ...
+    (mostlyFalse or:[mostlyTrue]) ifTrue:[
+	...
+    ].
+    ...
+</CODE></PRE>
+better write:
+<PRE><CODE>
+    ...
+    (mostlyTrue or:[mostlyFalse]) ifTrue:[
+	...
+    ].
+    ...
+</CODE></PRE>
+Of course, this is only possible, if the second subcondition does not
+depend on side effects which result from the first subconditions evaluation.
+
+
+<h3><A NAME="COMPARING" HREF="#I_COMPARING">Comparing integers and symbols</A></h3>
+
+Small integers and symbols can be compared
+using <CODE>#==</CODE> instead of <CODE>#=</CODE>.
+For <CODE>#=</CODE>, there is no speed difference if the two objects are identical, since
+the compiler produces inline code which checks for identity in any case.
+However, if the objects are not identical, a regular message send to the <CODE>#=</CODE>
+method is executed, which takes some 300-500ns.
+(in contrast to the inline compare, which is in the order of 20-50ns).
+<P>
+However, for integers, you must be certain that the values are in the SmallInteger
+range (i.e. -2^30 to +2^30-1).
+<BR>
+Otherwise, the compare will always fail, since the other number classes
+(especially: LargeInteger) never compare identical.
+<P>
+For symbols, <CODE>#==</CODE> is a pointer compare, while <CODE>#=</CODE>
+is effectively a string compare.
+<BR>
+On the other hand, be careful, to never compare strings using <CODE>#==</CODE>;
+this will usually return false.
+<P>
+This (performance) argument is in opposite to the coding style argument;
+you must be certain about the objects type (i.e. SmallInteger) for this
+"optimization" to be valid.
+<P>
+If comparing different objects to one constant object in a loop,
+use the constant object as receiver;
+<BR>
+i.e. instead of:
+<PRE><CODE>
+    |foo|
+
+    ...
+    collection do:[:element |
+	element = foo ifTrue:[
+	    ...
+	]
+    ].
+    ...
+</CODE></PRE>
+better write:
+<PRE><CODE>
+    |foo|
+
+    ...
+    collection do:[:element |
+	foo = element ifTrue:[
+	    ...
+	]
+    ].
+    ...
+</CODE></PRE>
+which it is (slightly) faster in most smalltalks.
+(the reason lies deeply burried in the message caching mechanism).
+
+
+
+<h3><A NAME="TODOLOOP" HREF="#I_TODOLOOP">'to:do:' vs. '(to:) do:'</A></h3>
+
+Be aware, that there is a slight difference between:
+<PRE><CODE>
+    (1 to:10) do:[:i |
+	...
+    ]
+</CODE></PRE>
+and:
+<PRE><CODE>
+    1 to:10 do:[:i |
+	...
+    ]
+</CODE></PRE>
+
+the first example creates a temporary interval object (via <CODE>#to:</CODE>) and
+then loops on this object (via <CODE>#do:</CODE>).
+<BR>
+The second directly sends <CODE>#to:do:</CODE> to an integer number.
+<P>
+Therefore, the second example requires only 1 message send, <STRONG>and</STRONG>
+does not create a new temporary object
+(and is therefore faster by a few microseconds).
+<P>
+The second version may also be compiled into faster code,
+iff the compiler can somehow find out (or gets a hint)
+that the the receiver and argument of the <CODE>#to:do:</CODE> message are
+integers. If this is the case, fast inline code is generated for the loop
+(in the above example, this is certainly true).
+
+
+
+<h3><A NAME="COMPARING2" HREF="#I_COMPARING2">Comparing to nil, true and false</A></h3>
+
+Comparing some object for being nil/nonNil is faster if done
+with <CODE>#isNil</CODE>, <CODE>#notNil</CODE>, <CODE>#==</CODE> or <CODE>#~~</CODE>
+instead of <CODE>#=</CODE> or <CODE>#~=</CODE>.
+<BR>
+The same applies to comparing to <CODE>false</CODE> or <CODE>true</CODE>,
+although these compares are mostly implicit, by messages like <CODE>#ifTrue:</CODE>
+or <CODE>#ifFalse:</CODE>.
+<P>
+I.e. instead of:
+<PRE><CODE>
+    something = nil ifTrue:[
+	...
+    ]
+</CODE></PRE>
+or (often found in old ST-80 code "<VAR>for performance</VAR>"):
+<PRE><CODE>
+    nil = something ifTrue:[
+	...
+    ]
+</CODE></PRE>
+better write:
+<PRE><CODE>
+    something isNil ifTrue:[
+	...
+    ]
+</CODE></PRE>
+or:
+<PRE><CODE>
+    something == nil ifTrue:[
+	...
+    ]
+</CODE></PRE>
+The above are equivalent, since no other object may (should) return true
+for a nil compare.
+Therefore replacing the value compare by an identity
+compare should always be legal.
+<BR>
+(however, since the compiler cannot not know about any wierd definitions,
+this optimization is not done automatically.)
+
+
+
+
+<h3><A NAME="STXCODING" HREF="#I_STXCODING">Smalltalk/X specific micro tuning</A></h3>
+
+The remaining sections describe various <CITE>Smalltalk/X</CITE>
+specific performance improvements.
+
+
+
+
+<h3><A NAME="AVOIDBECOME" HREF="#I_AVOIDBECOME">Avoid #become:</A></h3>
+
+<CITE>ST/X</CITE> represents objects by a direct pointer to the
+underlying data structure, in contrast to some other smalltalk implementations,
+which use an indirect reference through an ObjectTable.
+<BR>
+This implies, that <CITE>ST/X's</CITE> implementation of <CODE>#become:</CODE>
+has to search through all objects and replace all exchange all (pointer-)
+references. Although <CODE>#become:</CODE> has been optimized and can do
+quite fast in many cases (if the objects are of same size or if they
+are located in the newSpace), the worst case (different sizes and
+either in oldSpace) involves a search through all memory and  executes
+in the order of 100ms. In large applications and/or if paging is involved,
+it can take up to a second or more.
+<P>
+All collection classes in <CITE>ST/X</CITE> have been designed to avoid
+<CODE>#become:</CODE> in their grow operations - this is done by having
+the variable part of the collection in an array which is kept in an instance
+variable (instead of having it in the objects indexed part).
+<P>
+All direct pointer smalltalk implementations have this problem in common -
+so the above is also true for the Squak smalltalk system (among others).
+
+
+<h3><A NAME="TYPEHINTS" HREF="#I_TYPEHINTS">Type hints</A></h3>
+
+In <CITE>ST/X</CITE>, it is possible to give the compiler a hint
+of which type a variable is expected to be bound to at run time.
+This forces the compiler to create additional check code when this variable
+is bound to a value and ommit checks or message sends when it is referred to.
+<BR>
+Currently, type hints are ignored for anything but
+method and block local variables.
+Also, (currently) only SmallInteger and Float type hints are effective.
+For variables which are known to have a certain type,
+faster code is generated, since many message sends or checks can be
+done as fast inline code.
+<BR>
+(BTW: the compiler does some type analysis anyway, which makes the need for
+a type hint obsolete in many cases).
+<P>
+The following message sends are inline coded (and therefore much faster)
+if the receivers and/or arguments types are known to be integer:
+<UL>
+<LI>arithmetic operations:
+<CODE>#+</CODE>, <CODE>#-</CODE>, <CODE>#*</CODE>, <CODE>#//</CODE> and <CODE>#\\</CODE>
+<LI>comparison:
+all relational operators, <CODE>#between:and:</CODE>
+<LI>conversion:<CODE>#asInteger</CODE>, <CODE>#asFloat</CODE>, <CODE>#rounded</CODE> and <CODE>#truncated</CODE>
+<LI>misc math: <CODE>#abs</CODE>, <CODE>#negated</CODE>
+<LI>loop constructs: <CODE>#timesRepeat:</CODE>, <CODE>#to:do:</CODE> and <CODE>#to:by:do:</CODE>
+<LI>array and string access: <CODE>#at:</CODE> and <CODE>#at:put:</CODE>
+if the compiler "feels" that the receiver is propably an array or string
+</UL>
+In <CITE>Smalltalk/X</CITE>, type hints are placed in comments;
+therefore, these are backward compatible with other smalltalk language
+systems (these will simply ignore the hints).
+<P>
+You should use typehints only in well debugged, performance critical methods.
+<P>
+You will find methods which make good use of type hints in the Image class -
+especially where bulk pixel data is processed, type hints can speedup these
+operations by factors.
+
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif" alt="ST/X Logo">
+Copyright &copy; 1995 Claus Gittinger Development &amp; Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.27 $ $Date: 2016-11-05 17:38:36 $
+</BODY>
+</HTML>

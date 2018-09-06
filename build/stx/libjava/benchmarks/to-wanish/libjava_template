@@ -1,0 +1,44 @@
+Smalltalk packagePath add: ((Smalltalk commandLine at:1) asFilename asAbsoluteFilename directory directory directory directory asString).
+Smalltalk addStartBlock:[
+	Processor startTimeSlicing.
+	Processor supportDynamicPriorities:true.
+	ObjectMemory backgroundCollectProcess priorityRange:(4 to:9).
+	ObjectMemory backgroundFinalizationProcess priorityRange:(4 to:9).
+].
+
+Smalltalk addStartBlock: [
+        Object disableBreakPoint:#jv.
+        Object disableBreakPoint:#mh.
+        "16MB"
+        Process defaultMaximumStackSize: ((1024 * 1024 * 160) max: Process defaultMaximumStackSize).
+        
+        "Setup stx:libjava for performance"
+        JavaNativeMethod cacheNativeImplementation: true.
+        ObjectMemory justInTimeCompilation: true.
+        ObjectMemory javaNativeCodeOptimization:true.
+        ObjectMemory javaJustInTimeCompilation: true.        
+
+        Java flushAllJavaResources.
+        Java initialize.
+        JavaVM initializeVM.
+
+        Java addToClassPath: Filename currentDirectory.
+        Java addToClassPath: (Filename currentDirectory / '..' / '..' / '..' / 'libs' / 'libs') pathName , '/*.jar'
+].
+
+Smalltalk addStartBlock: [
+	| n cg duration inst |
+		n := Smalltalk commandLineArguments last asInteger.
+                cg := Smalltalk commandLineArguments at: 2.                
+                "TEST_GOES_HERE"                
+                ObjectMemory scavenge.
+                ObjectMemory tenure.
+                "TEST_GOES_HERE"
+		cg = 'CALLGRIND' ifTrue:[Stdout nextPutAll:'Press any key...'. Stdin next.].
+" ============== Final run ===================================================="	
+		"TEST_GOES_HERE"
+" ============================================================================="        
+                cg = 'CALLGRIND' ifTrue:[Stdout nextPutAll:'Press any key...'. Stdin next.].
+	JavaVM performance printCountersOn: Stdout.
+        Smalltalk exit: 0.
+].

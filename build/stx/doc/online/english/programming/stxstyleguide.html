@@ -1,0 +1,212 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - The ST/X Style Guide</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="viewintro.html"> <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">       <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="viewexample1.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>The ST/X Style Guide</H1>
+
+<H2>Contents</H2>
+<UL>
+ <LI><A HREF="#INTRO" NAME="I_INTRO">Introduction</A>
+ <LI><A HREF="#LOOK" NAME="I_LOOK">General Look</A>
+ <UL>
+   <LI><A HREF="#LOOK_LAYOUT" NAME="I_LOOK_LAYOUT">Layout</A>
+   <LI><A HREF="#LOOK_MESSAGES" NAME="I_LOOK_MESSAGES">Messages</A>
+   <LI><A HREF="#LOOK_COLORS" NAME="I_LOOK_COLORS">Colors</A>
+   <LI><A HREF="#LOOK_SOUND" NAME="I_LOOK_SOUND">Sound and Beeps</A>
+ </UL>
+
+ <LI><A HREF="#MENUS" NAME="I_MENUS">Window (PullDown-) Menus</A>
+ <UL>
+   <LI><A HREF="#MENUS_ITEMS" NAME="I_MENUS_ITEMS">Menu Items</A>
+   <LI><A HREF="#MENUS_LABELS" NAME="I_MENUS_LABELS">Menu Labels</A>
+ </UL>
+</UL>
+
+
+<H2><A HREF="#I_INTRO" NAME="INTRO">Introduction</A></H2>
+  One of the most annoying defects of many programming systems is inconsistency
+  in its user interface.
+<BR>
+  This document is meant to provide some rules which may help to avoid this
+  in the future of ST/X development.
+<P>
+  We are awareof the fact that this document is neither complete
+  (feedback welcome) and the current ST/X system itself does not yet
+  completely follow the rules as stated below - we are still working on it
+  and fix the GUI as we come along.
+
+
+<H2><A HREF="#I_LOOK" NAME="LOOK">General Look</A></H2>
+
+<H3><A HREF="#I_LOOK_LAYOUT" NAME="LOOK_LAYOUT">Layout</A></H3>
+
+If you ever plan to provide national variants of your program,
+or want to allow the user to add translations himself,
+leave enough space for longer texts in buttons, labels etc.
+<BR>
+I.e. always provide somewhat more space for your widgets.
+<BR>
+From our experience, national variants sometimes require more than twice
+the amount of real estate.
+
+
+<H3><A HREF="#I_LOOK_MESSAGES" NAME="LOOK_MESSAGES">Messages</A></H3>
+
+When creating longer texts from fragments, be prepared that sentences are
+have different structure in different languages;
+NEVER construct by concatenating individually translated strings.
+<BR>
+The following is an example for VERY BAD coding style:
+<CODE><PRE>
+    Dialog
+	information:(resources string:'Cannot read: ') , filename.
+</PRE></CODE>
+
+The reason for this to be so bad is that in many languages, the sentence must
+be written in another order; for example, in German, you would write:
+<CODE><PRE>
+    &lt;filename> kann nicht gelesen werden
+</PRE></CODE>
+
+This germanstring cannot be constructed from the above english template by simple
+text-translation.
+<P>
+Therefore, the above code should be written as:
+<CODE><PRE>
+    Dialog
+	information:(resources string:'Cannot read %1' with:filename).
+</PRE></CODE>
+and a translation for German could be given (in a resource file) as:
+<CODE><PRE>
+    'Cannot read %1'        '%1 kann nicht gelesen werden'
+</PRE></CODE>
+
+
+
+<H3><A HREF="#I_LOOK_COLORS" NAME="LOOK_COLORS">Colors</A></H3>
+
+Do not hard-code (i.e. program) any color information into applications.
+
+<DL>
+<DT>Widget Colors
+<DD>Use the default colors as provided by the widgets - do not override them programatically.
+<P>
+If you really want (or think you need) to add fancy colors, do so via the
+resource and/or styleSheet mechanism, which is user-configurable.
+<P>
+
+<DT>Alert Colors
+<DD>Think twice about using alarm colors (such as red) in your application.
+<BR>
+When overused, these loose their alarming effect and you loose the ability to inform the user about real
+trouble.
+
+</DL>
+
+<H3><A HREF="#I_LOOK_SOUND" NAME="LOOK_SOUND">Sound and Beeps</A></H3>
+
+Do not (over-)use sound effects or beeps.
+<P>
+Just think about an office full of terminals which constantly emit awful win2000 startup melodies -
+if at all, allow the user to turn these sounds off or let her configure individual acoustic alarms.
+
+
+
+
+
+<H2><A HREF="#I_MENUS" NAME="MENUS">Window (PullDown-) Menus</A></H2>
+
+<DL>
+<DT>Window Menu
+<DD>Every topView should have a window- (pullDown-) menu.
+</DL>
+
+<H3><A HREF="#I_MENUS_ITEMS" NAME="MENUS_ITEMS">Menu Items</A></H3>
+
+<DL>
+<DT>Exit Item
+<DD>The menu should have an exit item somewhere - preferably in the leftMost submenu, which
+is usually the <VAR>"file"</VAR> menu.
+<P>
+Although most windowing systems do provide a close function in their window decoration,
+some (especially older, puristic ones like twm) do not.
+<BR>
+Also, some window managers close function is actually a "kill" function, in that it kills the whole
+application (i.e. the whole smalltalk) instead of asking it to close that individual window.
+
+<P>
+By always providing an exit menu item, these problems can be avoided.
+<P>
+
+<DT>Help Menu
+<DD>The menu should have a <VAR>"help"</VAR> submenu.
+This submenu should have (at least) an item which leads to a general tool document - preferrably
+a hypertext document (html, pdf or similar).
+<P>
+
+<DT>Visible vs. Disabled
+<DD>All items should be visible.
+Items which are inappropriate for the tools state (for example: nothing selected) should be
+disabled instead. Disabled items are typically shown in a grey color.
+<P>
+The problem with invisible items is that a newcomer (and often even experts) will have a hard time
+to learn about the functionality which is offered by a tools menu, if the set of items changes
+with the state of the tool.
+<BR>
+New users typically try all menus to see which functions are provided by which menu and will have
+a longer learning curve, if some items are invisible.
+<P>
+
+</DL>
+
+<H3><A HREF="#I_MENUS_LABELS" NAME="MENUS_LABELS">Menu Labels</A></H3>
+
+Use the so called "headline capitalization" for english menu item labels - that is:
+<UL>
+<LI>capitalize the first word.
+<LI>capitalize all nouns, verbs, adjectives and adverbs.
+<LI>do not use punctuation (i.e. no period at the end).
+<LI>mark items which ask for more information by opening a dialog or confirmer,
+by a trailing "...".
+</UL>
+
+Notice that in many other languages, this kind of capitalization is
+NOT used and actually looks ugly.
+<BR>
+For example, in German, the normal sentence capitalization rules apply
+(i.e. capitalize the first word, then only capitalize nouns).
+
+
+
+<H3><A HREF="#I_MENUS_ITEMS" NAME="MENUS_ITEMS">Menu Items</A></H3>
+
+Do not make menus too big - if you need more than (say) 10 items, create submenus.
+<BR>
+Group items by function and keep the ordering of groups consistent among different
+applications.
+<BR>
+
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 2002 eXept Software AG / Claus Gittinger, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.6 $ $Date: 2016-07-11 09:24:05 $
+</BODY>
+</HTML>

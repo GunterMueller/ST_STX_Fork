@@ -1,0 +1,8 @@
+(Input new origin:61@113; name:'inp-1'; id:1; yourself)!
+(AndGate2 new origin:163@212; name:'and-1'; id:1; yourself)!
+(Input new origin:41@274; name:'inp-2'; id:2; yourself)!
+(Output new origin:359@212; name:'out-1'; id:1; yourself)!
+(Connection new fromNamedGate:'inp-2' pin:1 toNamedGate:'and-1' pin:2)!
+(Connection new fromNamedGate:'inp-1' pin:1 toNamedGate:'and-1' pin:1)!
+(Connection new fromNamedGate:'and-1' pin:1 toNamedGate:'out-1' pin:1)!
+!

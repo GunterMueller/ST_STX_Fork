@@ -1,0 +1,22 @@
+; View defaultStyle:#'motif_redButtons' 
+;
+; just an example - take motif-style as a base, change buttons to red
+;
+; $Header: /cvs/stx/stx/libview/styles/motif_redButtons.style,v 1.6 1997-11-02 19:49:06 cg Exp $
+
+
+#include 'motif.style'
+
+comment  'like `motif'' style\\with redish buttons'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Wie `motif'' aber mit roten Knöpfen'
+#endif
+
+buttonRed                     Color red:45 green:5 blue:5
+
+button.backgroundColor         =buttonRed lightened
+button.activeBackgroundColor   =buttonRed 
+button.shadowColor             =buttonRed darkened
+button.lightColor              =buttonRed lightened
+

@@ -1,0 +1,893 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Help - Code Search Patterns</Title>
+</HEAD>
+
+<BODY>
+
+<H1>Code Search Patterns</H1>
+
+<H2><A NAME="INDEX">Help Index</A></H2>
+
+<UL>
+<LI><A HREF="#INTRO">Introduction</A>
+<LI><A HREF="#ENHANCEMENTS">Enhancements to the Original RefactoryBrowser Search Patterns</A>
+<LI><A HREF="#METAVARIABLES">Meta Characters/Variables</A>
+  <UL>
+    <LI><A HREF="#META_VAR">Variable</A>
+    <LI><A HREF="#META_LIT">Literal</A> (<CODE>#</CODE>)
+    <LI><A HREF="#META_LIST">List</A> (<CODE>@</CODE>)
+    <LI><A HREF="#META_STAT">Statement</A> (<CODE>.</CODE>)
+    <LI><A HREF="#META_RECURSE">Recurse</A> (<CODE>`</CODE>)
+    <LI><A HREF="#META_BLOCK">Pattern Block</A> (<CODE>{</CODE>)
+    <UL>
+      <LI><A HREF="#META_BLOCK_VARIABLE_WITH_NAME">Variable with Matching Name</A>
+      <LI><A HREF="#META_BLOCK_EMPTY_ARRAY_LITERAL">Empty Array Literals</A>
+      <LI><A HREF="#META_BLOCK_EMPTY_STRING_LITERAL">Empty String Literals</A>
+      <LI><A HREF="#META_BLOCK_NON_BLOCKS">Non Blocks</A>
+      <LI><A HREF="#META_BLOCK_BLOCKS_WITH_SINGLE_ARG">Blocks with a Single Argument</A>
+    </UL>
+    <LI><A HREF="#META_STRING">Pattern String Literal</A> (<CODE>'</CODE>)
+  </UL>
+<LI><A HREF="#METHODFLAG">Method- vs. Expression Search</A>
+<LI><A HREF="#EXAMPLES">Examples</A>
+  <UL>
+    <LI><A NAME="I_EXAMPLE_SEARCH_VAR" HREF="#EXAMPLE_SEARCH_VAR">Search for a Variable</A>
+    <LI><A NAME="I_EXAMPLE_SEARCH_CONST" HREF="#EXAMPLE_SEARCH_CONST">Search for a Numeric Constant</A>
+    <LI><A NAME="I_EXAMPLE_SEARCH_CONST_IN_RANGE" HREF="#EXAMPLE_SEARCH_CONST_IN_RANGE">Search for a Numeric Constant within a Range</A>
+    <LI><A NAME="I_EXAMPLE_MESSAGE_WITH_ARG" HREF="#EXAMPLE_MESSAGE_WITH_ARG">Search a Message with Argument</A>
+    <LI><A NAME="I_EXAMPLE_MESSAGE_WITH_NIL_ARG" HREF="#EXAMPLE_MESSAGE_WITH_NIL_ARG">Search a Message with a nil Argument</A>
+    <LI><A NAME="I_EXAMPLE_MESSAGE_WITH_NONSYMBOL_ARG" HREF="#EXAMPLE_MESSAGE_WITH_NONSYMBOL_ARG">Search a Message with non-Symbol Argument</A>
+    <LI><A NAME="I_EXAMPLE_MESSAGE_TO_GLOBAL" HREF="#EXAMPLE_MESSAGE_TO_GLOBAL">Search a Message Sent to a Global</A>
+    <LI><A NAME="I_EXAMPLE_SEARCH_ANY_MESSAGE" HREF="#EXAMPLE_SEARCH_ANY_MESSAGE">Search for any Message Send</A>
+    <LI><A NAME="I_EXAMPLE_SEARCH_FOR_SUPER_SENDS" HREF="#EXAMPLE_SEARCH_FOR_SUPER_SENDS">Search for Super Sends</A>
+    <LI><A NAME="I_EXAMPLE_SEARCH_EXCEPTION_HANDLER" HREF="#EXAMPLE_SEARCH_EXCEPTION_HANDLER">Search for Exception Handlers</A>
+    <LI><A NAME="I_EXAMPLE_SEARCH_EMPTY_EXCEPTION_HANDLER" HREF="#EXAMPLE_SEARCH_EMPTY_EXCEPTION_HANDLER">Search for Empty Exception Handlers</A>
+    <LI><A NAME="I_EXAMPLE_SEARCH_BAD_CODE" HREF="#EXAMPLE_SEARCH_BAD_CODE">Search for Bad Code</A>
+    <LI><A NAME="I_EXAMPLE_SEARCH_DUPLICATE_STATEMENTS" HREF="#EXAMPLE_SEARCH_DUPLICATE_STATEMENTS">Search for Duplicate Statements</A>
+    <LI><A NAME="I_EXAMPLE_SEARCH_STATEMENT_SEQUENCE" HREF="#EXAMPLE_SEARCH_STATEMENT_SEQUENCE">Search for a Sequence of Statements</A>
+
+  </UL>
+</UL>
+
+<HR>
+
+<H2><A NAME="INTRO" HREF="#INDEX">Introduction</A></H2>
+
+The code searcher allows for much more complex and precise searches as compared to simple string
+or pattern searches.
+You can enter a Smalltalk code fragment with possible meta-patterns and
+search for matches on the code-tree level (i.e. Smalltalk-syntax aware searching).
+<P>
+For example, you can search for assignments of the value <CODE>1234</CODE> to a variable named
+<CODE>"myVar"</CODE>&nbsp;
+ with the following pattern:
+<CODE><PRE>
+    myVar := 1234
+</PRE></CODE>
+This will find the assignments even if the code is formatted with whitespace or comments in between or both.
+It will also ignore the above character sequence inside comments or string literals
+(i.e. it performs a real "code search", as opposed to a "string search"). The above pattern will even find
+assignments of a hex literal number (i.e. code like "myVar := 16r4D2").
+<P>
+
+Likewise, you can search for all creations of three-element Arrays, using a constant array size,
+with the pattern:
+<CODE><PRE>
+    Array new:3
+</PRE></CODE>
+
+or, you can search for a particular message being sent to the Transcript with:
+<CODE><PRE>
+    Transcript showCR:'oops'
+</PRE></CODE>
+Try using the codeSearcher on some of your own code
+(and place comments or whitespace into your code).
+Compare the results against the results of simple text search operations.
+
+
+<H2><A NAME="ENHANCEMENTS" HREF="#INDEX">Enhancements to the Original RefactoryBrowser Search Patterns</A></H2>
+
+Two enhancements/changes were added to the code pattern patcher, as  compared
+to the original RefactoryBrowser code:
+<UL>
+<LI><A HREF="#META_STRING">String literal match pattern</A>
+<LI><A HREF="#META_GLOBALVAR">Uppercase (global) variable match</A>
+</UL>
+These are described below.
+
+<H2><A NAME="METAVARIABLES" HREF="#INDEX">Meta Characters/Variables</A></H2>
+
+The above (simple) examples search for <B>exact</B> code matches.
+Although this may be useful in it self, we often need the search to be more flexible:
+we want to search for "<I>any message</I>" or "<I>any literal value</I>"
+or "<I>any something</I>".
+For example, we might want to search for all Array instance creations with a constant size,
+but want to allow for arbitrary constants
+(i.e. match "Array new: N", where N is any integer constant),
+or search for a particular message send with "<I>any expression</I>" as argument.
+<P>
+To allow for those to be specified in the search-code pattern,
+the search-syntax supports pattern variables (also called "<I>meta variables</I>").
+<P>
+
+Each metaPattern-variable must begin with a <code>`</code> (backquote) character.
+This character was choosen, because it does not occur in normal Smalltalk code.
+It is a bit hard to type on non-us keyboards, though.
+<BR>
+Immediately following the <code>`</code>-character, other characters can be entered to specify
+what type of node this metaPattern-variable should match.
+<br>
+After all the special character have been entered, you must then enter a valid variable name.
+(the matched code is actually bound to this name inside the searcher and can be
+later used to match other parts against the same pattern,
+or by the code-rewriter to replace it by some other code.)
+<BR>
+The special characters are listed in the following table:
+
+<DL>
+
+
+<DT><A NAME="META_VAR">&nbsp;<B>(Variable)</B></A>
+<DD>
+if no special character but an identifier follows the backquote,
+the metaVariable matches only variables and pseudo variables
+(such as <CODE>"self"</CODE>).
+<BR>For example:
+<BR>
+<CODE><PRE>
+    `foo
+</PRE></CODE>
+matches any variable.
+<BR>If the same variable name appears again in the match-pattern, a given code only matches if it also
+contains the same variable.
+<BR>For example:
+<CODE><PRE>
+    `foo := `foo + 1.
+</PRE></CODE>
+will match any increment operation of a variable such as <CODE>"a := a + 1"</CODE>,
+but will NOT match something like <CODE>"a := b + 1"</CODE>. The later is found by:
+<CODE><PRE>
+    `var1 := `var2 + 1.
+</PRE></CODE>
+
+<P>
+<H4><A NAME="META_GLOBALVAR">Uppercase (Global) Variables:</A></H4>
+If the meta variable is upper-case, only globals and class variables are matched; thus:
+<CODE><PRE>
+    `v
+</PRE></CODE>
+will match any (both locals and global) variables, whereas:
+<CODE><PRE>
+    `V
+</PRE></CODE>
+will match only globals and classvars.
+
+<P>
+<DT><A NAME="META_LIT"><CODE>#</CODE>&nbsp;<B>(Literal)</B></A>
+<DD>
+matches any literal object (constant)
+<P>
+For example:
+<BR>
+<CODE><PRE>
+    `#lit
+</PRE></CODE>
+matches any literal, such as: <CODE>#(...)</CODE>, <CODE>#[...]</CODE>, <CODE>#foo</CODE>, <CODE>'...'</CODE>, <CODE>1</CODE>,
+<CODE>nil</CODE>, <CODE>true</CODE> and <CODE>false</CODE> etc.
+<p>
+Notice that "#lit" (i.e. without the backquote)
+is not a meta pattern, and will match the exact symbol "#literal" only.
+See the section on <A HREF="#META_BLOCK">"Pattern Blocks"</A> below for how to search for literals of a particular kind
+(i.e. String or Symbol) or of particular value.
+
+<P>
+<DT><A NAME="META_LIST"><CODE>@</CODE>&nbsp;<B>(List - or "any number of")</B></A>
+<DD>
+
+When applied to a variable node,
+this will match a literal, variable, or a sequence of messages sent to a literal or variable
+<P>
+When applied to a keyword in a message, it will match a list of keyword messages
+(i.e., any message send)
+<P>
+When applied with a statement character (see below), it will match a list of statements
+<P>
+For example:
+<BR>
+<CODE><PRE>
+    | `@Temps |
+</PRE></CODE>
+matches a (possibly empty) list of temps
+<P>
+<CODE><PRE>
+    `@.Statements
+</PRE></CODE>
+matches a (possibly empty) list of statements
+<P>
+<CODE><PRE>
+    `@object
+</PRE></CODE>
+matches any message node, literal node or block node
+<P>
+<CODE><PRE>
+    foo `@message: `@args
+</PRE></CODE>
+matches any message sent to <CODE>foo</CODE>.
+<P>
+Notice, that this can also be used for a partial selector.
+Therefore:
+<A type="copyexample"><CODE><PRE>
+    `@receiver `@keyword: `@arg1
+</PRE></CODE></A>
+matches any message.
+<BR>
+In contrast,
+<A type="copyexample"><CODE><PRE>
+    `@receiver `keyword1: `@arg1 `keyword2: `@arg2
+</PRE></CODE></A>
+matches any 2-argument message,
+and
+<A type="copyexample"><CODE><PRE>
+    `@receiver at: `@arg1 `@keyword: `@arg2
+</PRE></CODE></A>
+matches any message with at least 2 arguments, which starts with <CODE>at:</CODE>.
+
+
+<P>
+<DT><A NAME="META_STAT"><CODE>.</CODE>&nbsp;<B>(Statement)</B></A>
+<DD>
+matches a statement in a sequence node
+<P>
+For example:
+<BR>
+<CODE><PRE>
+    `.Statement
+</PRE></CODE>
+matches a single statement
+<P>
+And:
+<CODE><PRE>
+`.@Statements
+</PRE></CODE>
+matches a (possibly empty) list of statements.
+
+
+
+<P>
+<DT><A NAME="META_RECURSE"><CODE>`</CODE>&nbsp;(backquote)&nbsp;<B>(Recurse Into)</B></A>
+<DD>
+Whenever a match is found, look inside this matched node for more matches.
+<BR>
+For example:
+<BR>
+<CODE><PRE>
+    `@object foo
+</PRE></CODE>
+matches a <CODE>foo</CODE> message sent to any expression on the outer level.
+However, the code <CODE>"self foo foo"</CODE> would match only once (the outer message send expression).
+<p>
+In contrast,
+<BR>
+<CODE><PRE>
+    ``@object foo
+</PRE></CODE>
+
+also matches <CODE>foo</CODE> sent to any object,
+plus for each match found, it will look for more matches in the <CODE>``@object</CODE> part.
+Thus, this will match twice for the <CODE>"self foo foo"</CODE> example.
+
+
+<P>
+<DT><A NAME="META_BLOCK"><CODE>{ .. }</CODE> &nbsp;<B>(Pattern Block)</B> </A>
+<DD>
+Allows for a Smalltalk block to be used as match condition on a node.
+The parseNode (a subinstance of <CODE>RBProgramNode</CODE>) is passed as argument to the block.
+Among others, useful query messages to it are:
+"<CODE>isVariable</CODE>", "<CODE>name</CODE>" (if it is a variable),
+"<CODE>isLiteral</CODE>", "<CODE>value</CODE>" (if it is a literal), "<CODE>isBlock</CODE>",
+"<CODE>isLiteralString</CODE>", "<CODE>isLiteralArray</CODE>".
+<P>
+<A NAME="META_BLOCK_VARIABLE_WITH_NAME">For example:</A>
+<A type="copyExample"><CODE><PRE>
+    `{:node | node isVariable and: ['RB*' match: node name]}
+</PRE></CODE></A>
+matches any variable whose name starts with 'RB'.
+<P>
+This allows for almost unlimited flexibility in the match:
+<A type="copyExample"><CODE><PRE>
+    `{:node | node isVariable and: ['co*' match: node name]} add: `@arg
+</PRE></CODE></A>
+matches any add expression sent to any variable which starts with 'co'.
+<P>
+<A NAME="META_BLOCK_EMPTY_ARRAY_LITERAL">To match empty array constants use:</A>
+<A type="copyExample"><CODE><PRE>
+    `{:node | node isLiteralArray and:[ node value size == 0 ]}
+</PRE></CODE></A>
+<P>
+<A NAME="META_BLOCK_EMPTY_STRING_LITERAL">To match empty string constants use:</A>
+<A type="copyExample"><CODE><PRE>
+    `{:node | node isLiteralString and:[ node value = '' ]}
+</PRE></CODE></A>
+<P>
+<A NAME="META_BLOCK_NON_BLOCKS">to match a non-block expression:</A>
+<A type="copyExample"><CODE><PRE>
+    `{:node | node isBlock not }
+</PRE></CODE></A>
+
+or <A NAME="META_BLOCK_BLOCKS_WITH_SINGLE_ARG">to match a block with 1 argument:</A>
+<A type="copyExample"><CODE><PRE>
+    `{:node | node isBlock and:[node numArgs == 1] }
+</PRE></CODE></A>
+however, this can also be acomplished with:
+<A type="copyExample"><CODE><PRE>
+    [:`arg | `expr ]
+</PRE></CODE></A>
+
+
+<P>
+The block may also be specified as a 2-argument block.
+In this case, the matching dictionary is passed as second argument, allowing the block to
+refer to previous match results.
+
+<A type="copyExample"><CODE><PRE>
+    `someVariable
+	at: `#someLiteral
+	put: `{:node :matchDict |
+		       node isLiteral
+		       and:[ node value isString
+		       and:[ node value = matchDict at:#someLiteral ]] }
+</PRE></CODE></A>
+
+<P>
+<DT><A NAME="META_STRING"><CODE>'...'</CODE>&nbsp;<B>(Pattern String Literal)</B></A>
+<DD>
+Matches a string literal, where the string's contents matches the
+<A HREF="..\..\programming\goody_regex.html#SYNTAX">regular expression</A>
+given in the pattern.
+<BR>
+For example:
+<A type="copyExample"><CODE><PRE>
+    `'.*'
+</PRE></CODE></A>
+matches any string literal, whereas
+<A type="copyExample"><CODE><PRE>
+    `'[aA]..'
+</PRE></CODE></A>
+matches any string literal of size 3, which begins with an "a".
+<P>
+String patterns are useful to delimit the search result; for example,
+the following searches for a string concatenation (","-message) to any string which starts
+with a space followed by the word 'and':
+<A type="copyExample"><CODE><PRE>
+    `@e  , `' and.*'
+</PRE></CODE></A>
+
+<P>
+If preceeded by the <I>Recurse Into</I> meta character ( ` ),
+the search recurses into Array literals.
+I.e. Array literals containing
+string elements are also searched for a matching string.
+<BR>
+For example:
+<A type="copyExample"><CODE><PRE>
+    `'Di.*'
+</PRE></CODE></A>
+matches any string literal which starts with the characters 'Di'.
+It would not match an array-literal containing such a string element, though.
+In contrast,
+<A type="copyExample"><CODE><PRE>
+    ``'Di.*'
+</PRE></CODE></A>
+also matches string elements of array literals.
+
+</DL>
+
+
+<!--
+
+<P>
+<TABLE BORDER="1">
+<TR>
+<TD WIDTH=200><center><b>Search for</b></center></TD>
+<TD WIDTH=200><center><b>Replace with</b></center></TD>
+<TD WIDTH=400><center><b>Explanation</b></center></TD>
+</TR>
+
+<TR>
+<TD VALIGN="TOP" WIDTH=200>
+<A type="copyExample"><CODE><PRE>
+| `@Temps |
+``@.Statements.
+``@Boolean ifTrue: [^false].
+^true
+</PRE></CODE></A>
+</TD>
+
+<TD VALIGN="TOP" WIDTH=200>
+<A type="copyExample"><CODE><PRE>
+| `@Temps |
+``@.Statements.
+^``@Boolean not
+</PRE></CODE></A>
+</TD>
+
+<TD VALIGN="TOP" WIDTH=200>
+Return the value of the boolean negated, instead of using a conditional to return the opposite value.
+</TD>
+</TR>
+
+<TR>
+
+<TD VALIGN="TOP" WIDTH=200>
+<A type="copyExample"><CODE><PRE>
+``@object not ifTrue: ``@block
+</PRE></CODE></A>
+</TD>
+
+<TD VALIGN="TOP" WIDTH=200><PRE><CODE>``@object ifFalse: ``@block</CODE></PRE>
+</TD>
+
+<TD VALIGN="TOP" WIDTH=400>Eliminate an unnecessary not message.
+</TD>
+
+</TR>
+
+<TR>
+<TD VALIGN="TOP" WIDTH=200>
+<A type="copyExample"><CODE><PRE>
+| `@Temps |
+``@.Statements1.
+``@Boolean
+     ifTrue:
+	[`@.TrueStatements.
+	`.Statement]
+     ifFalse:
+	[`@.FalseStatements.
+	`.Statement].
+``@.Statements2
+</PRE></CODE></A>
+</TD>
+
+<TD VALIGN="TOP" WIDTH=200>
+<A type="copyExample"><CODE><PRE>
+| `@Temps |
+``@.Statements1.
+``@Boolean
+     ifTrue: [`@.TrueStatements]
+     ifFalse: [`@.FalseStatements]
+`.Statement.
+``@.Statements2
+</PRE></CODE></A>
+
+</TD>
+
+<TD VALIGN="TOP" WIDTH=400>Move the same statement that ends both the true and false blocks outside the blocks.
+</TD>
+</TR>
+
+<TR>
+<TD VALIGN="TOP" WIDTH=200>
+<A type="copyExample"><CODE><PRE>
+`@methodName: `@methodArgs
+     | `@Temps |
+     `@Condition ifTrue:
+	[`.Stmt1.
+	`.Stmt2.
+	`@.Statements]
+</PRE></CODE></A>
+</TD>
+
+<TD VALIGN="TOP" WIDTH=200>
+<A type="copyExample"><CODE><PRE>
+`@methodName: `@methodArgs
+     | `@Temps |
+     `@Condition ifFalse: [^self].
+     `.Stmt1.
+     `.Stmt2.
+     `@.Statements
+</PRE></CODE></A>
+</TD>
+
+<TD VALIGN="TOP" WIDTH=400>
+Eliminate ifTrue: guard clauses.
+With this rule you'll need to check the &quot;Method&quot; check box.
+This signifies that we are matching the whole method, and not its parts.
+</TD>
+
+</TR>
+
+</TABLE>
+
+-->
+
+<H2><A NAME="METHODFLAG" HREF="#INDEX">Method- vs. Expression Search</A></H2>
+
+The searcher can either search inside a method's body for an expression or statement
+or include the method's message pattern (the selector definition) in the search.
+<BR>
+For example, to search for getter messages (which return a variable which is named
+the same as the method's name), use the following search pattern:
+<A type="copyExample"><CODE><PRE>
+    `sel
+	^ `sel
+</PRE></CODE></A>
+In the search dialog box, do not forget to set the "Method"-CheckBox;
+otherwise, the search will be for a matching expression, which will probably not be found.
+<P>
+Another, example is the following pattern, which searches for all 2-argument methods,
+which return their second argument:
+<A type="copyExample"><CODE><PRE>
+    `selPart1: `arg1  `selPart2: `arg2
+	^ `arg2
+</PRE></CODE></A>
+Consequently, the following pattern searches for methods which simply return the result of another
+self-send (typically, these are aliasing-methods for compatibility with other Smalltalk libraries):
+<A type="copyExample"><CODE><PRE>
+    `op: `arg
+	^ self `op2: `arg
+</PRE></CODE></A>
+An finally, the following pattern searches for methods which simply
+delegate to return the result of a super-send (such methods can actually be removed):
+<A type="copyExample"><CODE><PRE>
+    `op: `arg
+	^ super `op: `arg
+</PRE></CODE></A>
+<!---
+If the number of arguments is to be left unspecified, use the list-prefix (@), as in:
+<A type="copyExample"><CODE><PRE>
+    `@m: `args
+	^ `v isNil ifTrue:[ `v := initExpr ] ifFalse:[ `v ]
+</PRE></CODE></A>
+-->
+
+<H2><A NAME="EXAMPLES" HREF="#INDEX">Examples</A></H2>
+
+In most situations, your search will be very simple,
+such as a particular message send combination or a specific message
+being sent to a global.
+<p>
+For example, to search for senders of "<CODE>do:</CODE>" to a constructed interval,
+use a pattern like:
+<A type="copyExample"><CODE><PRE>
+    (`@e1 to: `@e2) do: `@block
+</PRE></CODE></A>
+The following examples demonstrate more specific searches.
+<P>
+
+
+<H4><A NAME="EXAMPLE_SEARCH_VAR" HREF="#I_EXAMPLE_SEARCH_VAR">Search for a Variable, Literals etc.:</A></H4>
+Simple variables: <CODE>`foo</CODE> - matches any variable or pseudo-variable.
+<BR>
+Simple literals: <CODE>`#foo</CODE> - matches any literal (incl. <CODE>nil</CODE>, <CODE>true</CODE> and <CODE>false</CODE>).
+<P>
+
+
+<H4><A NAME="EXAMPLE_SEARCH_CONST" HREF="#I_EXAMPLE_SEARCH_CONST">Search for a Numeric Constant:</A></H4>
+The code search utilitiy is much more precise than the classic text search,
+when searching for a particular numeric constant.
+For example, if you search for a numeric constant <CODE>16</CODE>, the code search
+will also detect constants like <CODE>"16r10"</CODE> or <CODE>"2r10000"</CODE> but not
+<CODE>"160"</CODE>.
+All of this is much harder (if not impossible) with a simple text search.
+<P>
+
+<H4><A NAME="EXAMPLE_SEARCH_CONST_IN_RANGE" HREF="#I_EXAMPLE_SEARCH_CONST_IN_RANGE">Search for a Numeric Constant within a Range:</A></H4>
+
+The following pattern-block will search for a numeric literal with a value between 1 and 5.
+
+<A type="copyExample"><CODE><PRE>
+    `{:node | node isLiteral
+	      and:[ node value isNumber
+	      and:[ node value between:1 and:5 ]] }
+</PRE></CODE></A>
+<P>
+
+
+<H4><A NAME="EXAMPLE_MESSAGE_WITH_ARG" HREF="#I_EXAMPLE_MESSAGE_WITH_ARG">Search for a Particular Message being Sent with a Particular Argument:</A></H4>
+
+Search for Array instance creations with a constant size of 3 (same as above):
+<A type="copyExample"><CODE><PRE>
+    Array new:3
+</PRE></CODE></A>
+
+Search for Array instance creations with a constant size larger than 100:
+<A type="copyExample"><CODE><PRE>
+    Array new:
+	`{:node | node isLiteral
+	      and:[ node value isNumber
+	      and:[ node value > 100 ]] }
+</PRE></CODE></A>
+
+Search for Array instance creations with any constant size:
+<A type="copyExample"><CODE><PRE>
+    Array new: `#n
+</PRE></CODE></A>
+
+Search for Array instance creations where a variable specifies the size:
+<A type="copyExample"><CODE><PRE>
+    Array new: `v
+</PRE></CODE></A>
+
+Search for all Array instance creations (any expression as size):
+<A type="copyExample"><CODE><PRE>
+    Array new: `@e
+</PRE></CODE></A>
+
+<P>
+
+<H4><A NAME="EXAMPLE_MESSAGE_WITH_NIL_ARG" HREF="#I_EXAMPLE_MESSAGE_WITH_NIL_ARG">Search a Message with a nil Argument:</A></H4>
+The following uses a pattern-block to search for a message sends with a particular argument value:
+<A type="copyExample"><CODE><PRE>
+    `@e add: `{:n | n isLiteral and:[ n value isNil] }
+</PRE></CODE></A>
+of course, this particular search can be written simpler as:
+<A type="copyExample"><CODE><PRE>
+    `@e add: nil
+</PRE></CODE></A>
+However, as already noted above, the pattern block allows for very fine tuned searches (particular integer argument range,
+string patterns in arguments, etc).
+
+<H4><A NAME="EXAMPLE_MESSAGE_WITH_NONSYMBOL_ARG" HREF="#I_EXAMPLE_MESSAGE_WITH_NONSYMBOL_ARG">Search a Message with non-Symbol Argument:</A></H4>
+
+The following uses a pattern-block to search for all "<code>breakPoint:</code>"-message sends with a non-symbol argument:
+
+<A type="copyExample"><CODE><PRE>
+    `@e breakPoint:
+	`{:n |
+	    n isLiteral not
+	    or:[n value isSymbol not ] }
+</PRE></CODE></A>
+<P>
+
+
+<H4><A NAME="EXAMPLE_MESSAGE_TO_GLOBAL" HREF="#I_EXAMPLE_MESSAGE_TO_GLOBAL">Search for a particular Message being Sent to a Global:</A></H4>
+Search for "<CODE>at:put:</CODE>" being sent to the Smalltalk-global,
+with a variable's value as argument,
+use
+<A type="copyExample"><CODE><PRE>
+    Smalltalk at:`key put:`val
+</PRE></CODE></A>
+
+the above does not match for literal values or expression values as argument(s).
+<BR>
+To match those, use
+<A type="copyExample"><CODE><PRE>
+    Smalltalk at:`@key put:`@val
+</PRE></CODE></A>
+
+to even look into the argument and look for sends there too,
+use:
+<A type="copyExample"><CODE><PRE>
+    Smalltalk at:``@key put:``@val
+</PRE></CODE></A>
+
+or if you want all sends to ANY global, replace the name by a global-var match pattern (upper case):
+<A type="copyExample"><CODE><PRE>
+    `V at:`@key put:`@val
+</PRE></CODE></A>
+<P>
+
+<H4><A NAME="EXAMPLE_SEARCH_ANY_MESSAGE" HREF="#I_EXAMPLE_SEARCH_ANY_MESSAGE">Search for any Message Send:</A></H4>
+To search for any message send:
+<A type="copyExample"><CODE><PRE>
+    ``@rec `@msg: ``@args
+</PRE></CODE></A>
+or, to search for any unary message, use:
+<A type="copyExample"><CODE><PRE>
+    ``@rec `msg
+</PRE></CODE></A>
+
+Notice the extra backquotes, which are required to recurse into already matched
+expressions (otherwise, "<CODE>rec foo foo</CODE>" would only be matched once, for the
+outer <CODE>foo</CODE>-message)
+<P>
+This pattern can be used to find repeated sends of the same message, as in:
+<A type="copyExample"><CODE><PRE>
+    `e sort: [:`a :`b | `a `sel &lt; `b `sel ]
+</PRE></CODE></A>
+which will match typical search operations.
+<P>
+
+<H4><A NAME="EXAMPLE_SEARCH_FOR_SUPER_SENDS" HREF="#I_EXAMPLE_SEARCH_FOR_SUPER_SENDS">Search for Super Sends:</A></H4>
+For arbitrary super sends, use:
+<A type="copyExample"><CODE><PRE>
+    super `@msg `@args
+</PRE></CODE></A>
+to search for unary messages, use
+<A type="copyExample"><CODE><PRE>
+    super `msg
+</PRE></CODE></A>
+<P>
+
+<H4><A NAME="EXAMPLE_SEARCH_EXCEPTION_HANDLER" HREF="#I_EXAMPLE_SEARCH_EXCEPTION_HANDLER">Search for Exception Handlers:</A></H4>
+<A type="copyExample"><CODE><PRE>
+    ``@rec on: ``@arg1 do: ``@arg2
+</PRE></CODE></A>
+and:
+<A type="copyExample"><CODE><PRE>
+    ``@rec handle: ``@arg1 do: ``@arg2
+</PRE></CODE></A>
+or, for a particular exception class:
+<A type="copyExample"><CODE><PRE>
+    StreamError handle: ``@arg1 do: ``@arg2
+</PRE></CODE></A>
+<P>
+
+
+<H4><A NAME="EXAMPLE_SEARCH_EMPTY_EXCEPTION_HANDLER" HREF="#I_EXAMPLE_SEARCH_EMPTY_EXCEPTION_HANDLER">Search for Empty Exception Handlers:</A></H4>
+<A type="copyExample"><CODE><PRE>
+    Error handle: [ :``@args | ] do: ``@blk
+</PRE></CODE></A>
+and:
+<A type="copyExample"><CODE><PRE>
+    ``@blk on: Error do: [ :``@args | ]
+</PRE></CODE></A>
+<P>
+
+
+<H4><A NAME="EXAMPLE_SEARCH_NONBLOCK_IFARG" HREF="#I_EXAMPLE_SEARCH_NONBLOCK_IFARG">Search for ifTrue:ifFalse with non-Block Argument:</A></H4>
+<A type="copyExample"><CODE><PRE>
+    `@e
+	ifTrue: `{:node | node isBlock not }
+	ifFalse: `{:node | node isBlock not }
+</PRE></CODE></A>
+<P>
+
+
+<H4><A NAME="EXAMPLE_SEARCH_BAD_CODE" HREF="#I_EXAMPLE_SEARCH_BAD_CODE">Search for Bad (Intention Revealing) Code:</A></H4>
+
+Some code constructs are hard to read or understand, due to being
+overly complicated or because it uses a construct in an unintended, wrong way.
+For example:
+
+<A type="copyExample"><CODE><PRE>
+    ``@object not ifTrue: ``@block
+</PRE></CODE></A>
+and:
+<A type="copyExample"><CODE><PRE>
+    ``@object not ifFalse: ``@block
+</PRE></CODE></A>
+are obviously easier written by negating the if-test message.
+<P>
+The following code-pieces check if some element is in a collection:
+<A type="copyExample"><CODE><PRE>
+    ( ``@expr1 detect:[:`v | ``@expr2 ] ifNone:nil ) notNil
+</PRE></CODE></A>
+
+<A type="copyExample"><CODE><PRE>
+    ( ``@expr1 detect:[:`v | ``@expr2 ] ifNone:[] ) notNil
+</PRE></CODE></A>
+and should be written as:
+<A type="copyExample"><CODE><PRE>
+    ( ``@expr1 contains:[:`v | ``@expr2 ] )
+</PRE></CODE></A>
+which is much easier to read and understand without having to decrypt what the original
+programmer's intentions were.
+<P>
+More unclean uses of the collection protocol are:
+<BR>
+<A type="copyExample"><CODE><PRE>
+    `@coll do:[:`el|
+	`@condition ifTrue:[
+	    ^ true
+	]
+    ]
+</PRE></CODE></A>
+which can be replaced by:
+<A type="copyExample"><CODE><PRE>
+    ( `@coll contains[:`el| `@condition ] ) ifTrue:[ ^ true ]
+</PRE></CODE></A>
+
+and this pattern searches for "beginners code", which can be replaced by
+a simpler and more descriptive <CODE>"detect:ifNone:"</CODE>-message:
+<A type="copyExample"><CODE><PRE>
+    `@coll do:[:`el|
+	`@condition ifTrue:[
+	    ^ `el
+	]
+    ]
+</PRE></CODE></A>
+More examples are:
+<A type="copyExample"><CODE><PRE>
+    (`@e1 contains:[:`v | `@e2 not])
+</PRE></CODE></A>
+and:
+<A type="copyExample"><CODE><PRE>
+    `@e1 do:[:`v| `@e2 ifFalse:[^ false] ].
+</PRE></CODE></A>
+
+might both be replaced by a <CODE>#conform:</CODE>-message.
+<P>
+Here are a few more patterns to search for:
+<A type="copyExample"><CODE><PRE>
+    `@e1 reject:[:`v1 | `@e2 not]
+</PRE></CODE></A>
+<A type="copyExample"><CODE><PRE>
+    `@e1 select:[:`v1 | `@e2 not]
+</PRE></CODE></A>
+<P>
+
+
+<H4><A NAME="EXAMPLE_SEARCH_DUPLICATE_STATEMENTS" HREF="#I_EXAMPLE_SEARCH_DUPLICATE_STATEMENTS">Search for Duplicate Statements:</A></H4>
+
+Remember that
+<CODE><PRE>
+    `.duplicate
+</PRE></CODE>
+matches any statement.
+<BR>
+Thus, the following:
+<CODE><PRE>
+    `.duplicate.
+    `.duplicate
+</PRE></CODE>
+should match two identical consecutive statements <B>that are the whole body
+of a sequence node</B>.
+However as soon as we get beyond a within-statement expression,
+we are matching sequence nodes.
+Matching two statements within a sequence node therefore requires
+<CODE><PRE>
+    `.@beforeStatements.
+    `.duplicate.
+    `.duplicate.
+    `.afterStatements
+</PRE></CODE>
+Because the <CODE>.</CODE> makes the tool build a sequence node,
+you must provide the "zero or more statements before and after"-code,
+unlike the expression case,
+where it could match an expression within a longer expression.
+<BR>
+If the sequence node has temporaries, the above will not match.
+You must use:
+<A type="copyexample"><CODE><PRE>
+    | `@temps |
+    `.@beforeStatements.
+    `.duplicate.
+    `.duplicate.
+    `.afterStatements
+</PRE></CODE></A>
+which will match two duplicate statements within any sequence of
+statements.
+<P>
+It can be tricky to match sequence nodes.
+Even Don (one of the original authors of the refactory code) admitted,
+that he usually took two or three goes to get his expression right.
+<P>
+One problem with the above is that the whole match is presented as search result;
+although you are usually only interrested in the duplicate statement(s).
+
+<H4><A NAME="EXAMPLE_SEARCH_STATEMENT_SEQUENCE" HREF="#I_EXAMPLE_SEARCH_STATEMENT_SEQUENCE">Search for a Sequence of Statements:</A></H4>
+Having read the previous chapter,
+it is now clear, that matching a sequence of statements
+requires a before- and after context.
+<P>
+For example, to match a statement sequence of
+an instance creation followed by a message
+sent to the just created object requires more than just the two
+statement matches.
+<P>
+The following pattern searches for the creation of an <CODE>OrderedCollection</CODE>
+followed by an <NOBR>"<CODE>add:</CODE>"</NOBR> message to this collection:
+<A type="copyexample"><CODE><PRE>
+    | `@temps |
+    `.@beforeStatements.
+    `v = OrderedCollection new.
+    `v add: `@expr.
+    `.afterStatements
+</PRE></CODE></A>
+
+
+<HR>
+<P>
+<P>
+Copyright &copy; eXept Software AG, all rights reserved
+<P>
+<P>
+
+<HR>
+Doc $Revision: 1.44 $ $Date: 2018-02-04 11:18:58 $
+
+</BODY>
+</HTML>

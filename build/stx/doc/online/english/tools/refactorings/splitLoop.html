@@ -1,0 +1,259 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Refactoring: 
+Split Loop</title>
+</head>
+<body>
+
+<H1>
+Split Loop</H1>
+
+<P>
+<B> Refactoring contributed by 
+	
+Martin Fowler </B>
+</P>
+
+<P>
+<I>
+<CENTER>
+You have a loop that is doing two things
+</CENTER>
+</I>
+</P>
+
+<P>
+<B>
+<CENTER>
+Duplicate the loop
+</CENTER>
+</B>
+</P>
+
+
+<PRE>
+
+<PRE>
+void printValues() {
+	double averageAge = 0;
+	double totalSalary = 0;
+	for (int i = 0; i &lt; people.length; i++) {
+			averageAge += people[i].age;
+			totalSalary += people[i].salary;
+	}
+	averageAge = averageAge / people.length;
+	System.out.println(averageAge);
+	System.out.println(totalSalary);
+}
+</PRE>
+
+</PRE>
+<P>
+<CENTER>
+<IMG SRC="arrow.gif"></CENTER>
+</P>
+
+<PRE>
+
+void printValues() {
+	double totalSalary = 0;
+	for (int i = 0; i &lt; people.length; i++) {
+			totalSalary += people[i].salary;
+	}
+
+	double averageAge = 0;
+	for (int i = 0; i &lt; people.length; i++) {
+			averageAge += people[i].age;
+	}
+	averageAge = averageAge / people.length;
+
+	System.out.println(averageAge);
+	System.out.println(totalSalary);
+}
+
+</PRE>
+
+<h2>Motivation</h2>
+
+<P>
+You often see loops that are doing two different things at once, because they can do that with one pass through a loop. Indeed most programmers would feel very uncomfortable with this refactoring as it forces you to execute the loop twice - which is double the work.
+</P>
+
+<P>
+But like so many optimizations, doing two different things in one loop is less clear than doing them separately. It also causes problems for further refactoring as it introduces temps that get in the way of further refactorings. So while refactoring, don't be afraid to get rid of the loop. When you optimize, if the loop is slow that will show up and it would be right to slam the loops back together <I> at that point</I>. You may be surprised at how often the loop isn't a bottleneck, or how the later refactorings open up another, more powerful, optimization.
+</P>
+
+
+<h2>Mechanics</h2>
+<UL>
+
+<LI>Copy the loop and remove the differing pieces from each loop</LI>
+
+<LI>Compile and test.</LI>
+
+<LI>Reorganize the lines to group the loop with related code from outside the loop</LI>
+
+<LI>Compile and test.</LI>
+
+<LI>Consider applying <A href="extractMethod.html">
+Extract Method</A> or <A href="replaceTempWithQuery.html">
+Replace Temp with Query</A> on each loop</LI>
+
+</UL>
+
+<h2>Example</h2>
+<UL>
+
+<P>
+Start with this code.</P>
+
+
+<PRE>
+	private Person [] people;
+
+	void printValues() {
+		double averageAge = 0;
+		double totalSalary = 0;
+		for (int i = 0; i &lt; people.length; i++) {
+				averageAge += people[i].age;
+				totalSalary += people[i].salary;
+		}
+		averageAge = averageAge / people.length;
+		System.out.println(averageAge);
+		System.out.println(totalSalary);
+	}
+</PRE>
+
+<P>
+The loop is calculating both the total salary and the average age. This is two separate tasks, which just happen to use the same data structure. So I'll split the loops for now, knowing I can optimize later.
+</P>
+
+<P>
+The first move is to copy the loop and remove from each leg one part of the calculation.
+</P>
+
+<PRE>
+	void printValues() {
+		double averageAge = 0;
+		double totalSalary = 0;
+		for (int i = 0; i &lt; people.length; i++) {
+				totalSalary += people[i].salary;
+		}
+		for (int i = 0; i &lt; people.length; i++) {
+				averageAge += people[i].age;
+		}
+		averageAge = averageAge / people.length;
+		System.out.println(averageAge);
+		System.out.println(totalSalary);
+	}
+</PRE>
+
+<P>
+I can now compile and test this.
+</P>
+
+<P>
+Then I can reorganize the text to group things together.
+</P>
+
+<PRE>
+
+	void printValues() {
+		double totalSalary = 0;
+		for (int i = 0; i &lt; people.length; i++) {
+				totalSalary += people[i].salary;
+		}
+
+		double averageAge = 0;
+		for (int i = 0; i &lt; people.length; i++) {
+				averageAge += people[i].age;
+		}
+		averageAge = averageAge / people.length;
+
+		System.out.println(averageAge);
+		System.out.println(totalSalary);
+	}
+
+
+</PRE>
+
+<P>One thing that has bothered me about this refactoring is that there's a lot of duplicate loop setup code - and duplication is the worst smell of all. On the whole, however, I don't feel that concerned about it. Fundamentally the duplication is due to the godawful way that Java does loops. Other modern languages with a foreach statement avoid the duplication completely.
+
+</P>
+
+
+<P>
+Officialy that's the end of the refactoring. But the important thing here is what it leads you to do. In this case I'm inclined to apply Replace Temp with Query to each loop.
+</P>
+
+<PRE>
+
+	void printValues() {
+		System.out.println(averageAge());
+		System.out.println(totalSalary());
+	}
+
+	private double averageAge() {
+		double result = 0;
+		for (int i = 0; i &lt; people.length; i++) {
+				result += people[i].age;
+		}
+		return result / people.length;
+	}
+
+	private double totalSalary() {
+		double result = 0;
+		for (int i = 0; i &lt; people.length; i++) {
+				result += people[i].salary;
+		}
+		return result;
+	}
+
+
+
+</PRE>
+
+</UL>
+
+
+<h2>Additional Comments</h2>
+
+<P>The split loop is an often used performance
+optimisation in data intensive applications. When you are accessing to
+separate arrays in the same loop you can get hit badly by the cache
+misses. That is, if the arrays are large enough you loose locality of
+reference and the cache fails to do the job. Put enough code here and
+every operation will not hit the cache and instead have to go back out
+to main memory. 
+
+</P>
+
+
+<P>By splitting loops up into small separate components that only act on
+one array you get significant performance increases. In rendering code
+I've seen up to an order of magnitude difference. This is particularly
+beneficial if it is primitive type based and less so if class reference
+or pointer based where you need an additional dereference off into a
+random memory location. This technique is also very similar to loop
+unravelling for performance gains (although something I doubt would ever
+appear in a refactoring/patterns/OO type book :)
+
+</P>
+
+<I><A href="mailto:justin@vlc.com.au">--Justin Couch</A></I>
+
+
+<P>Thanks to Bob Bowman for spotting and fixing an error.
+</P>
+
+
+<P></P>
+<P></P>
+<P>
+<CENTER>
+<A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A>
+</CENTER>
+</P>
+</body>
+</html>

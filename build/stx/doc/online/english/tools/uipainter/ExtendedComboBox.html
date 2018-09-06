@@ -1,0 +1,235 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+   <META NAME="Author" CONTENT="Claus Gittinger, eXept software AG, Germany">
+   <TITLE>The Extended Combo Box Widget</TITLE>
+</HEAD>
+<BODY>
+<A HREF="ComboBox.html" NOPRINT><IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="The Combo List Widget" NOSAVE HEIGHT=30 WIDTH=30></A><A HREF="TOP.html#TABLEOFTHEWIDGETS" NOPRINT><IMG SRC="../../../icons/DocsUpArrow.gif" ALT="Table of the Widgets" NOSAVE HEIGHT=30 WIDTH=30></A><A HREF="TabHeader.html" NOPRINT><IMG SRC="../../../icons/DocsRightArrow.gif" ALT="The Tab Header Wigdet" NOSAVE HEIGHT=30 WIDTH=30></A>
+<BR>&nbsp;
+<HR ALIGN=LEFT WIDTH="100%">
+<H1>
+<FONT SIZE=+4>The Extended Combo Box Widget</FONT></H1>
+<IMG SRC="../../../pictures/GUIPainterWidgetComboBox.gif" ALT="A View of a Combo Box Widget" NOSAVE HEIGHT=22 WIDTH=125>
+<P>View Class: <TT>ExtendedComboBoxView</TT>
+<BR>Spec Class: <TT>ExtendedComboBoxSpec</TT>
+
+<P>The <B>ExtendedComboBox Widget</B> is a generalized kind of ComboBox widget -
+in contrast to the ComboBox, which has a popUpList hardwired into itself,
+any other view may be used as pop up with the ExtendedComboBox.
+<BR>
+In fact, the view as popped up can itself be described by a windowSpec.
+<P>
+In addition, the ExtendedComboBox provides support to scroll the
+popped view - which is especially required if long menu lists are
+to be presented.
+<BR>&nbsp;
+<BR>&nbsp;
+<H3>
+
+<HR ALIGN=LEFT WIDTH="100%"></H3>
+
+<H3>
+The <I>Basics</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>ID</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Unique symbolic name (ID) of the combo
+box.&nbsp;</B>&nbsp;
+<BR>This ID can be used by the application to access the widget
+via <TT>"builder>>componentAt:#ID"</TT>.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Model</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for the selection
+(and list) of the combo box.</B>&nbsp;
+<BR>It should return a&nbsp;
+
+<P><TT>&nbsp;&nbsp;&nbsp; - String</TT> instance (only for static behavior)&nbsp;
+<BR><TT>&nbsp;&nbsp;&nbsp; - <A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance with a <TT>String</TT> instance&nbsp;
+<BR><TT>&nbsp;&nbsp;&nbsp; - SelectionInList</TT> instance with a <TT>Array</TT>
+instance (and optional with an initial selection index)&nbsp;
+
+<P>whereby <TT>String</TT> can also be replaced by a <TT>Text</TT> instance.&nbsp;
+
+<P>The last model also provides the combo box with a list. In this case,
+it is not necessary to define an extra aspect for the list.</TD>
+</TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Adjust Button Right</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>If on, the menu button is placed
+at the right side;
+<BR>if off, its placed at the left.
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Read Only</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>If on, the input field is read only.
+</TR>
+
+
+</TABLE>
+<BR>&nbsp;
+<BR>&nbsp;
+
+<H3>The <I>Details</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Font</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the font style of the combo box.</B>&nbsp;
+<BR>After selecting the check toggle the font style can be chosen by selecting
+one of the Family/Face/Style/Size buttons. If no font style is selected,
+the combo box takes its default font style from the style sheet.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>FG-Color</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the foreground color of the combo
+box.</B>&nbsp;
+<BR>After selecting the check toggle the foreground color can be chosen
+by selecting the desired colored button. If no color&nbsp; is selected,
+the combo box takes its default foreground color from the style sheet.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>BG-Color</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the background color of the combo
+box.</B>&nbsp;
+<BR>After selecting the check toggle the background color can be chosen
+by selecting the desired colored button. If no color&nbsp; is selected,
+the combo box takes its default background color from the style sheet.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Initially Disabled</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the combo box is initially
+disabled.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Initially Invisible</B></TD>
+
+<TD ALIGN=LEFT VALIGN=TOP BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that
+the combo box is initially invisible.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Can Tab</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the combo box can be
+reached by tabbing.</B></TD>
+</TR>
+</TABLE>
+&nbsp;
+<BR>&nbsp;For the attributes concerning the entry field load the document
+"<A HREF="EntryField.html">The Entry Field Widget</A>".
+<BR>&nbsp;
+<BR>&nbsp;
+
+
+<H3>The <I>Menu</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Widget</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding which
+provides the widget which is popped up.</TD>
+</TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Max. Height</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>The maximum height of the popup.
+Scrollbars will be added, if the widget is larger.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Use Preferred Width</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>If on, the widget is popped with its preferred
+width; if off, it is popped with the comboBoxes width.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Scroll Bars</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Controls if the pulled menu should have scrollbars
+and (if so) if those should be mini scrollers.
+</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Auto-Hide ScrollBars</B></TD>
+
+<TD ALIGN=LEFT VALIGN=TOP BGCOLOR="#FFFFFF" NOSAVE><B>If on, scrollbars are
+hidden if all of the pulled menus contents is visible.
+</B></TD>
+</TR>
+
+</TABLE>
+<BR>&nbsp;
+<BR>&nbsp;
+
+
+<H3>The <I>Channels</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Enable</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for en-/disabling
+the combo box.</B>&nbsp;
+<BR>It should return a&nbsp;
+
+<P>&nbsp;&nbsp;&nbsp; - <TT>Boolean</TT> instance** (only for static behavior)&nbsp;
+<BR>&nbsp;&nbsp;&nbsp; - <TT><A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance with a <TT>Boolean</TT> instance**&nbsp;
+
+<P>A value model is used to provide a dynamically changing of the ability
+of the combo box.</TD>
+</TR>
+</TABLE>
+<TT>*&nbsp; = ValueHolder, AspectAdaptor, BufferedValueHolder, RangeAdaptor,
+TriggerValue</TT>
+<BR><TT>** = true, false</TT>
+<BR>&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Help</I> Section:</H3>
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="HelpTool.html">Using the Help Tool</A>"
+<BR>&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Layout</I> Section:</H3>
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="LayoutTool.html">The Layout of the Widgets</A>"
+<BR>&nbsp;
+<BR>&nbsp;
+
+<P>
+<HR>
+
+<P><IMG SRC="../../../icons/stx.gif" ALT="[stx-logo]" NOSAVE NOPRINT HEIGHT=48 WIDTH=47 ALIGN=CENTER>
+<BR><TT>Copyright &copy; 1998 eXept Software AG, all rights reserved</TT>
+<BR>
+<HR>
+</BODY>
+</HTML>
+

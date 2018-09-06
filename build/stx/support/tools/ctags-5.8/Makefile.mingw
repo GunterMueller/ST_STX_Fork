@@ -1,0 +1,39 @@
+USEMINGW=1
+!undef USEBC
+!undef USEVC
+!undef USELCC
+!undef USETCC
+
+!include ..\..\..\rules\stdHeader_bc
+
+SOURCES = eiffel.c entry.c fortran.c get.c keyword.c main.c options.c \
+	parse.c read.c sort.c vstring.c \
+	routines.c args.c strlist.c lregex.c \
+	ant.c tex.c lisp.c yacc.c vhdl.c slang.c sml.c sql.c rexx.c \
+	ruby.c python.c pascal.c lua.c tcl.c vim.c sh.c scheme.c php.c \
+	ocaml.c perl.c matlab.c make.c html.c flex.c erlang.c c.c cobol.c beta.c \
+    awk.c asp.c asm.c jscript.c dosbatch.c basic.c verilog.c
+
+# OBJS = eiffel.$(O) entry.$(O) fortran.$(O) get.$(O) keyword.$(O) main.$(O) options.$(O) \
+#         parse.$(O) read.$(O) sort.$(O) vstring.$(O) \
+#         routines.$(O) args.$(O) strlist.$(O) lregex.$(O) \
+#         ant.$(O) tex.$(O) lisp.$(O) yacc.$(O) vhdl.$(O) slang.$(O) sml.$(O) sql.$(O) rexx.$(O) \
+#         ruby.$(O) python.$(O) pascal.$(O) lua.$(O) tcl.$(O) vim.$(O) sh.$(O) scheme.$(O) php.$(O) \
+#         ocaml.$(O) perl.$(O) matlab.$(O) make.$(O) html.$(O) flex.$(O) erlang.$(O) c.$(O) cobol.$(O) beta.$(O) \
+#     awk.$(O) asp.$(O) asm.$(O) jscript.$(O) dosbatch.$(O) basic.$(O) verilog.$(O)
+
+OPTIMIZE=-O2
+INC=-I$(MINGWBINDIR)\include
+CC=gcc
+CFLAGS  = -DWIN32 -D__MINGW__ $(INC)
+LFLAGS  = $(LIB) $(EXTRA)
+
+ctags.exe: $(SOURCES)
+	$(CC) -o ctags.exe $(CFLAGS) $(LFLAGS) $(OPTIMIZE) $(SOURCES)
+
+clean:
+	del *.exe
+	del *.obj
+	del tags
+
+clobber: clean

@@ -1,0 +1,8 @@
+[phases]
+publish = false
+
+[paths]
+canonical = https://bitbucket.org/janvrany/stx-goodies-regression
+staging = https://bitbucket.org/janvrany/stx-goodies-regression
+default = https://bitbucket.org/janvrany/stx-goodies-regression
+

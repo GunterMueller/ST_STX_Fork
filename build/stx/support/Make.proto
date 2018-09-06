@@ -1,0 +1,181 @@
+# $Header: /cvs/stx/stx/support/Make.proto,v 1.36 2018-03-28 16:43:45 cg Exp $
+#
+
+LOCALDEFS=$(SUPPORT_LOCALDEFS)
+
+#--------- no need to modify anything below -------
+
+TOP=..
+SUBDIRS=tools
+ALLSUBDIRS=VGL DLD MESA tools zlib bz2lib tools
+INSTALL_SUBDIRS=
+NOAUTOLOAD=1
+NOSUBAUTOLOAD=1
+SUPPRESS_LOCAL_ABBREVS="yes"
+
+RCSSOURCES=Make.proto
+LINKSOURCES=Make.proto
+
+DELIVERMISC=Makefile *.stc compface
+
+subMakefiles::
+	@-if [ -d $(ZLIB_DIR) ]; then \
+	    echo 'Making Makefile in zlib...'; \
+	    echo '=========================='; \
+	    cd $(ZLIB_DIR) && ./configure --cflags="$(CFLAGS)"; \
+	fi
+	@-if [ -d $(LIBJPEG_DIR) ]; then \
+	    echo 'Making Makefile in '$(LIBJPEG_DIR)'...'; \
+	    echo '=========================='; \
+	    cd $(LIBJPEG_DIR) && ./configure CC="$(LIBJPEG_CC)" OPT="$(LIBJPEG_OPT)" CFLAGS="$(LIBJPEG_OPT) $(CCCONFOPT)"; \
+	fi
+	@-if [ ! -r libjpeg ]; then  \
+	    $(LNS) $(LIBJPEG_DIR) libjpeg;  \
+	fi
+	-$(MAKE) pngMakefile
+
+pngMakefile:
+	@-if [ -d $(LIBPNG_DIR) ]; then \
+	    echo 'Making Makefile in '$(LIBPNG_DIR)'...'; \
+	    echo '=========================='; \
+	    cd $(LIBPNG_DIR) && ./configure CC="$(LIBPNG_CC)" OPT="$(LIBPNG_OPT)" CFLAGS="$(LIBPNG_OPT) $(CCCONFOPT)"; \
+	fi
+	@-if [ ! -r libpng ]; then  \
+	    $(LNS) $(LIBPNG_DIR) libpng;  \
+	fi
+
+clean::
+	@-$(MAKE) dld_clean pvm_clean jpeg_clean zlib_clean bz2lib_clean \
+		  png_clean
+
+clobber::
+	@-$(MAKE) dld_clobber pvm_clobber jpeg_clobber zlib_clobber bz2lib_clobber \
+		  png_clobber
+
+dld_clean:
+	@-if [ -d DLD/$(DLD_REL_DIR) ]; then \
+	    echo "cleaning DLD ..."; \
+	    cd DLD/$(DLD_REL_DIR) && rm -f .o; \
+	fi
+
+dld_clobber:
+	@-if [ -d DLD/$(DLD_REL_DIR) ]; then \
+	    echo "clobbering DLD ..."; \
+	    cd DLD/$(DLD_REL_DIR) && rm -f .o *.a; \
+	fi
+
+zlib_clean:
+	@-if [ -d $(ZLIB_DIR) ]; then \
+	    echo "cleaning zlib ..."; \
+	    cd $(ZLIB_DIR) && $(MAKE) clean; \
+	fi
+
+zlib_clobber: zlib_clean
+	@-if [ -d $(ZLIB_DIR) ]; then \
+	    echo "clobbering zlib ..."; \
+	    cd $(ZLIB_DIR) && $(MAKE) clobber; \
+	fi
+
+bz2lib_clean:
+	@-if [ -d $(BZ2LIB_DIR) ]; then \
+	    echo "cleaning bz2lib ..."; \
+	    cd $(BZ2LIB_DIR) && $(MAKE) clean; \
+	fi
+
+bz2lib_clobber: bz2lib_clean
+	@-if [ -d $(BZ2LIB_DIR) ]; then \
+	    echo "clobbering bz2lib ..."; \
+	    cd $(BZ2LIB_DIR) && $(MAKE) clobber; \
+	fi
+
+jpeg_clean:
+	@-if [ -d $(LIBJPEG_DIR) ]; then \
+	    echo "cleaning libjpeg ..."; \
+	    cd $(LIBJPEG_DIR) && $(MAKE) clean; \
+	fi
+
+jpeg_clobber: jpeg_clean
+	@-if [ -d $(LIBJPEG_DIR) ]; then \
+	    echo "clobbering libjpeg ..."; \
+	    cd $(LIBJPEG_DIR) && $(MAKE) clobber; \
+	fi
+
+png_clean:
+	@-if [ -d $(LIBPNG_DIR) ]; then \
+	    echo "cleaning libpng ..."; \
+	    cd $(LIBPNG_DIR) && $(MAKE) clean; \
+	fi
+
+png_clobber: png_clean
+	@-if [ -d $(LIBPNG_DIR) ]; then \
+	    echo "clobbering libpng ..."; \
+	    cd $(LIBPNG_DIR) && $(MAKE) clobber; \
+	fi
+
+pvm_clean:
+	@-if [ -d pvm3 ]; then \
+	    echo "cleaning pvm3 ..."; \
+	    $(MAKE) PVM_ARCH=`pvm3/lib/pvmgetarch` pvm_cleanArch; \
+	fi
+
+pvm_cleanArch:
+	@-if [ -d pvm3 ]; then \
+	    echo "cleaning pvm3 ..."; \
+	    cd pvm3 && PVM_ROOT=`pwd` $(MAKE) clean; \
+	fi
+
+pvm_clobber: pvm_clean
+	@-if [ -d pvm3 ]; then \
+	    echo "clobbering pvm3 ..."; \
+	    $(MAKE) PVM_ARCH=`pvm3/lib/pvmgetarch` pvm_clobberArch; \
+	fi
+
+pvm_clobberArch:
+	rm -f pvm3/lib/$(PVM_ARCH)/*
+	rm -f pvm3/bin/$(PVM_ARCH)/*
+
+all0:
+	echo "Making $(SUPPORT_EXTRA_TARGETS)..."
+	$(MAKE) all
+
+#
+# SUPPORT_EXTRA_TARGETS is set in a configuration file (actually: in a pack in PACKS)
+# to a (possibly empty) combination of: libvogl / libdld / libbfd / libmesa
+# (and maybe more in the future ... - thinking of libsnmp ...)
+#
+all::   $(SUPPORT_EXTRA_TARGETS)
+
+extra: $(SUPPORT_EXTRA_TARGETS)
+
+libvogl:
+	@echo "Making libvogl..."
+	@-if [ -d VGL ]; then \
+	    cd VGL && $(MAKE) CC=$(CC); \
+	fi
+
+libmesa:
+	@echo "Making libmesa..."
+	@-if [ -d MESA ]; then \
+	    cd MESA && $(MAKE) CC=$(CC); \
+	fi
+
+.PHONY: libpng
+
+libpng:
+	@echo "Making libpng..."
+	-cd $(LIBPNG_DIR) && $(MAKE) -f $(MAKEFILE_PNG) CC="$(CC)" CFLAGS="$(DLD_CFLAGS)"
+
+libdld:
+	@echo "Making libdld..."
+	-cd DLD/$(DLD_REL_DIR) && $(MAKE) -f $(MAKEFILE_DLD) CC="$(CC)" CFLAGS="$(DLD_CFLAGS)"
+
+libbfd:
+	@echo "Making libbfd..."
+	-cd DLD/$(BFD_REL_DIR) && $(MAKE) -f $(MAKEFILE_BFD)
+
+libpvm3:
+	@echo "Making libpvm3..."
+	$(MAKE) PVM_ARCH=`pvm3/lib/pvmgetarch` libpvm3_arch
+
+libpvm3_arch:
+	cd pvm3 && PVM_ROOT=`pwd` $(MAKE)

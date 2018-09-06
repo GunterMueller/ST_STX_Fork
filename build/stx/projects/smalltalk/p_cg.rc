@@ -1,0 +1,7 @@
+"/
+"/ An example for a very private rc file.
+"/ This is only read if userName = "cg"
+"/
+
+Workspace snippets
+    at:'st' put:'Smalltalk'.

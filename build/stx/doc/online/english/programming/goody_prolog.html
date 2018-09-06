@@ -1,0 +1,135 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Prolog Interpreter</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="goody_lisp.html">     <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="goody_neural.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Prolog Interpreter</H1>
+
+<H2>Overview</H2>
+
+These classes implement a simple Prolog interpreter.
+<BR>
+To avoid interference with the rest of the system,
+these classes have been installed under the <CODE>"Prolog"</CODE>
+namespace.
+
+<P>
+
+
+<H2>Documentation</H2>
+See the class documentation of
+<CODE>"Prolog::PrologInterpreter"</CODE>, and
+<BR>
+Use the source - Luke.
+
+<H2>Examples</H2>
+To open a prolog workspace:
+<CODE><PRE>
+    Prolog::PrologInterpreter open
+</PRE></CODE>
+Evaluate solutions (no user interaction):
+<CODE><PRE>
+    |string prolog result answerSet actionInvokedForResult|
+
+    answerSet := Set new.
+    actionInvokedForResult := [:answer | answerSet add:answer. true].
+
+    string := '
+	?- remove.        % remove all predicates in PrologDataBase.
+
+	likes(john,mary). % assert fact.
+	likes(john,wine). % assert fact.
+	likes(mary,wine). % assert fact.
+	likes(mary,john). % assert fact.
+
+	?- likes(X,Y).                   % question goal.
+	?- likes(john,X), likes(mary,X). % question goal.
+
+	'.
+
+    prolog := Prolog::PrologInterpreter new.
+    prolog textCollector: Transcript.
+    result := prolog 
+		refute:string action:actionInvokedForResult.
+
+    answerSet inspect
+</PRE></CODE>
+
+With user interation:
+<CODE><PRE>
+    |string prolog result actionInvokedForResult|
+
+    actionInvokedForResult := Prolog::PrologInterpreter exampleActionFor:prolog.
+
+    string := '
+	?- remove.        % remove all predicates in PrologDataBase.
+
+	likes(john,mary). % assert fact.
+	likes(john,wine). % assert fact.
+	likes(mary,wine). % assert fact.
+	likes(mary,john). % assert fact.
+
+	?- likes(X,Y).                   % question goal.
+	?- likes(john,X), likes(mary,X). % question goal.
+
+	'.
+
+    prolog := Prolog::PrologInterpreter new.
+    prolog textCollector: Transcript.
+    result := prolog 
+		refute:string action:actionInvokedForResult.
+</PRE></CODE>
+
+
+
+<H2>Licensing</H2>
+This addOn package is NOT to be considered part of the base ST/X system. 
+It is provided physically with the ST/X delivery, but only for your 
+convenience.
+<P>
+Legally, it is a freeware or public domain goody, as specified in
+the goodies copyright notice (see the goodies source).
+
+<H2>No Warranty</H2>
+This goody is provided AS-IS without any warranty whatsoever.
+
+
+
+<H2>Origin/Authors</H2>
+Ported from the MEI package as found in the smalltalk archives.
+<BR>
+Authors:
+<P>
+    Copyright (C) 1995-1997 AOKI Atsushi
+<BR>
+    Atsushi Aoki,
+<BR>
+    Software Research Associates, Inc.
+<BR>
+    1113 Spruce Street, Suite 502
+<BR>
+    Boulder, Colorado 80302 the U.S.A.
+
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.6 $
+</BODY>
+</HTML>

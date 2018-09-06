@@ -1,0 +1,30 @@
+<!ENTITY % modular.namespace "http://localhost/fake-modular" >
+<!ENTITY % modular.xmlns.decl " xmlns:modular CDATA 
+    #FIXED '%modular.namespace;' " >
+
+<!ENTITY % Modular.module "INCLUDE" >
+<![%Modular.module;[
+    <!ELEMENT modular:xxx (#PCDATA) >
+    <!ATTLIST modular:xxx %modular.xmlns.decl; >
+    <!ENTITY % block.mix " | modular:xxx " >
+]]>
+
+<!ENTITY % MATHML.module "INCLUDE" >
+<!ENTITY % MATHML.pref.prefixed "IGNORE" >
+<!-- this seems to be the part of the the "real" dtd that triggers the bug -->
+<![%MATHML.module;[
+<![%MATHML.pref.prefixed;[
+<!ENTITY % MATHML.pref.renderer.extra "">
+<!ENTITY % MATHML.pref.renderer
+    "css | mathplayer-dl | mathplayer | techexplorer-plugin | techexplorer">
+<!ENTITY % MATHML.pref.xmlns.attrib
+    "xmlns:%MATHML.pref.prefix; %URI.datatype; #FIXED '%MATHML.pref.xmlns;'
+     %MATHML.pref.prefix;:renderer
+     ( %MATHML.pref.renderer; %MATHML.pref.renderer.extra; ) #IMPLIED"
+>
+]]>
+]]>
+<!ENTITY % MATHML.pref.xmlns.attrib "" >
+
+<!ENTITY % fake-xhtml SYSTEM "fake-xhtml.dtd" >
+%fake-xhtml;

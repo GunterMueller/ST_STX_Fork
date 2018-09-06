@@ -1,0 +1,29 @@
+/* XPM */
+static char *SBrowser16x16_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 6 1",
+/* colors */
+"a c black",
+"b c green",
+"c c red",
+"d c #D4D4D4",
+"e c yellow",
+"f c none",
+/* pixels */
+"ffffffffffffffff",
+"fddddddddddfffff",
+"fdccccccccafffff",
+"fdccccccccafffff",
+"fdaaaaaaaaafffff",
+"ffafffffffffffff",
+"ffaffdddddddddaf",
+"ffaaaabbbbbbbbaf",
+"ffaffdbbbbbbbbaf",
+"ffaffdaaaaaaaaaf",
+"ffafffffffffffff",
+"ffaffdddddddddaf",
+"ffaaaaeeeeeeeeaf",
+"fffffdeeeeeeeeaf",
+"fffffdaaaaaaaaaf",
+"ffffffffffffffff",
+};

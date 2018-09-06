@@ -1,0 +1,13 @@
+Magritte::MADescriptionMorph Magritte__MADescriptionMorph stx:goodies/magritte/morph 'Magritte-Morph-Model' 0
+stx_goodies_magritte_morph stx_goodies_magritte_morph stx:goodies/magritte/morph '* Projects & Packages *' 2
+Magritte::MAContainerMorph Magritte__MAContainerMorph stx:goodies/magritte/morph 'Magritte-Morph-Model' 0
+Magritte::MAElementMorph Magritte__MAElementMorph stx:goodies/magritte/morph 'Magritte-Morph-Model' 0
+Magritte::MACheckboxMorph Magritte__MACheckboxMorph stx:goodies/magritte/morph 'Magritte-Morph-Model' 0
+Magritte::MAFileMorph Magritte__MAFileMorph stx:goodies/magritte/morph 'Magritte-Morph-Model' 0
+Magritte::MAListMorph Magritte__MAListMorph stx:goodies/magritte/morph 'Magritte-Morph-Model' 0
+Magritte::MAMemoMorph Magritte__MAMemoMorph stx:goodies/magritte/morph 'Magritte-Morph-Model' 0
+Magritte::MASilentContainerMorph Magritte__MASilentContainerMorph stx:goodies/magritte/morph 'Magritte-Morph-Model' 0
+Magritte::MAMultiSelectListMorph Magritte__MAMultiSelectListMorph stx:goodies/magritte/morph 'Magritte-Morph-Model' 0
+Magritte::MASingleSelectListMorph Magritte__MASingleSelectListMorph stx:goodies/magritte/morph 'Magritte-Morph-Model' 0
+Magritte::MATextMorph Magritte__MATextMorph stx:goodies/magritte/morph 'Magritte-Morph-Model' 0
+Magritte::MAPasswordMorph Magritte__MAPasswordMorph stx:goodies/magritte/morph 'Magritte-Morph-Model' 0

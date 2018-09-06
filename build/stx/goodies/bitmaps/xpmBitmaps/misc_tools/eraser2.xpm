@@ -1,0 +1,32 @@
+/* XPM */
+static char *eraser2_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 9 1",
+/* colors */
+"a c #F8FCF8",
+"b c black",
+"c c #807C80",
+"d c #E8D880",
+"e c #788078",
+"f c #C0BCC0",
+"g c #B8C0B8",
+"h c #B8BCB8",
+"i c none",
+/* pixels */
+"iiiiiiiiiiiiiiii",
+"iiiiiiiiiiiiiiii",
+"iiiiiiiiiiiiiiii",
+"iiiiiiiiebbbbeei",
+"iiiiiiibgahahhbi",
+"iiiiiibgafafacbi",
+"iiiiibhagahabcbi",
+"iiiibgahafabecei",
+"iiibfafafabeebii",
+"iibhahagabecbiii",
+"iebhfghfbcebiiii",
+"ibfghfhgbebiiiii",
+"ibgfhhghbbiiiiii",
+"icbbbbbbeiiiiiii",
+"iiiiiiiiiiiiiiii",
+"iiiiiiiiiiiiiiii",
+};

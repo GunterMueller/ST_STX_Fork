@@ -1,0 +1,167 @@
+#
+#  @(#)Makefile 1.4 95/01/18
+#
+#  ====================================================
+#  Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
+#
+#  Developed at SunSoft, a Sun Microsystems, Inc. business.
+#  Permission to use, copy, modify, and distribute this
+#  software is freely granted, provided that this notice
+#  is preserved.
+#  ====================================================
+#
+#
+
+#
+# There are two options in making libm at fdlibm compile time:
+#       _IEEE_LIBM      --- IEEE libm; smaller, and somewhat faster
+#       _MULTI_LIBM     --- Support multi-standard at runtime by
+#                           imposing wrapper functions defined in
+#                           fdlibm.h:
+#                               _IEEE_MODE      -- IEEE
+#                               _XOPEN_MODE     -- X/OPEN
+#                               _POSIX_MODE     -- POSIX/ANSI
+#                               _SVID3_MODE     -- SVID
+#
+# Here is how to set up CFLAGS to create the desired libm at
+# compile time:
+#
+#       CFLAGS = -D_IEEE_LIBM           ... IEEE libm (recommended)
+#       CFLAGS = -D_SVID3_MODE  ... Multi-standard supported
+#                                           libm with SVID as the
+#                                           default standard
+#       CFLAGS = -D_XOPEN_MODE  ... Multi-standard supported
+#                                           libm with XOPEN as the
+#                                           default standard
+#       CFLAGS = -D_POSIX_MODE  ... Multi-standard supported
+#                                           libm with POSIX as the
+#                                           default standard
+#       CFLAGS =                        ... Multi-standard supported
+#                                           libm with IEEE as the
+#                                           default standard
+#
+# NOTE: if scalb's second arguement is an int, then one must
+# define _SCALB_INT in CFLAGS. The default prototype of scalb
+# is double scalb(double, double)
+#
+USEVC=1
+
+!INCLUDE ..\..\..\rules\stdHeader_bc
+
+default: all
+
+!INCLUDE ..\..\..\rules\stdRules_bc
+
+OUTDIR=
+#
+#INCL=-I$(BCB)\include -IC:\Borland\BCC55\Include
+#
+#AR      = tlib
+#
+#CC      = bcc32
+
+#
+# Default IEEE libm
+#
+#CFLAGS  = -a -d -k- -O2 $(INCL)
+#
+#CHMOD   = chmod
+#
+#CP      = cp
+#
+INCFILES = fdlibm.h
+
+#LDFLAGS =
+#
+LIB     = libfdm.lib
+
+LIBS    =
+
+#RANLIB  = ranlib
+#
+#RM      = del
+
+
+
+src =   k_standard.c k_rem_pio2.c \
+	k_cos.c k_sin.c k_tan.c \
+	e_acos.c e_acosh.c e_asin.c e_atan2.c \
+	e_atanh.c e_cosh.c e_exp.c e_fmod.c \
+	e_gamma.c e_gamma_r.c e_hypot.c e_j0.c \
+	e_j1.c e_jn.c e_lgamma.c e_lgamma_r.c \
+	e_log.c e_log10.c e_pow.c e_rem_pio2.c e_remainder.c \
+	e_scalb.c e_sinh.c e_sqrt.c \
+	w_acos.c w_acosh.c w_asin.c w_atan2.c \
+	w_atanh.c w_cosh.c w_exp.c w_fmod.c \
+	w_gamma.c w_gamma_r.c w_hypot.c w_j0.c \
+	w_j1.c w_jn.c w_lgamma.c w_lgamma_r.c \
+	w_log.c w_log10.c w_pow.c w_remainder.c \
+	w_scalb.c w_sinh.c w_sqrt.c \
+	s_asinh.c s_atan.c s_cbrt.c s_ceil.c s_copysign.c \
+	s_cos.c s_erf.c s_expm1.c s_fabs.c s_finite.c s_floor.c \
+	s_frexp.c s_ilogb.c s_isnan.c s_ldexp.c s_lib_version.c \
+	s_log1p.c s_logb.c s_matherr.c s_modf.c s_nextafter.c \
+	s_rint.c s_scalbn.c s_signgam.c s_significand.c s_sin.c \
+	s_tan.c s_tanh.c
+
+obj =   $(OUTDIR)k_standard.$(O) $(OUTDIR)k_rem_pio2.$(O) \
+	$(OUTDIR)k_cos.$(O) $(OUTDIR)k_sin.$(O) $(OUTDIR)k_tan.$(O) \
+	$(OUTDIR)e_acos.$(O) $(OUTDIR)e_acosh.$(O) $(OUTDIR)e_asin.$(O) $(OUTDIR)e_atan2.$(O) \
+	$(OUTDIR)e_atanh.$(O) $(OUTDIR)e_cosh.$(O) $(OUTDIR)e_exp.$(O) $(OUTDIR)e_fmod.$(O) \
+	$(OUTDIR)e_gamma.$(O) $(OUTDIR)e_gamma_r.$(O) $(OUTDIR)e_hypot.$(O) $(OUTDIR)e_j0.$(O) \
+	$(OUTDIR)e_j1.$(O) $(OUTDIR)e_jn.$(O) $(OUTDIR)e_lgamma.$(O) $(OUTDIR)e_lgamma_r.$(O) \
+	$(OUTDIR)e_log.$(O) $(OUTDIR)e_log10.$(O) $(OUTDIR)e_pow.$(O) $(OUTDIR)e_rem_pio2.$(O) $(OUTDIR)e_remainder.$(O)  \
+	$(OUTDIR)e_scalb.$(O) $(OUTDIR)e_sinh.$(O) $(OUTDIR)e_sqrt.$(O) \
+	$(OUTDIR)w_acos.$(O) $(OUTDIR)w_acosh.$(O) $(OUTDIR)w_asin.$(O) $(OUTDIR)w_atan2.$(O) \
+	$(OUTDIR)w_atanh.$(O) $(OUTDIR)w_cosh.$(O) $(OUTDIR)w_exp.$(O) $(OUTDIR)w_fmod.$(O) \
+	$(OUTDIR)w_gamma.$(O) $(OUTDIR)w_gamma_r.$(O) $(OUTDIR)w_hypot.$(O) $(OUTDIR)w_j0.$(O) \
+	$(OUTDIR)w_j1.$(O) $(OUTDIR)w_jn.$(O) $(OUTDIR)w_lgamma.$(O) $(OUTDIR)w_lgamma_r.$(O) \
+	$(OUTDIR)w_log.$(O) $(OUTDIR)w_log10.$(O) $(OUTDIR)w_pow.$(O) $(OUTDIR)w_remainder.$(O) \
+	$(OUTDIR)w_scalb.$(O) $(OUTDIR)w_sinh.$(O) $(OUTDIR)w_sqrt.$(O) \
+	$(OUTDIR)s_asinh.$(O) $(OUTDIR)s_atan.$(O) $(OUTDIR)s_cbrt.$(O) $(OUTDIR)s_ceil.$(O) $(OUTDIR)s_copysign.$(O) \
+	$(OUTDIR)s_cos.$(O) $(OUTDIR)s_erf.$(O) $(OUTDIR)s_expm1.$(O) $(OUTDIR)s_fabs.$(O) $(OUTDIR)s_finite.$(O) $(OUTDIR)s_floor.$(O) \
+	$(OUTDIR)s_frexp.$(O) $(OUTDIR)s_ilogb.$(O) $(OUTDIR)s_isnan.$(O) $(OUTDIR)s_ldexp.$(O) $(OUTDIR)s_lib_version.$(O) \
+	$(OUTDIR)s_log1p.$(O) $(OUTDIR)s_logb.$(O) $(OUTDIR)s_matherr.$(O) $(OUTDIR)s_modf.$(O) $(OUTDIR)s_nextafter.$(O) \
+	$(OUTDIR)s_rint.$(O) $(OUTDIR)s_scalbn.$(O) $(OUTDIR)s_signgam.$(O) $(OUTDIR)s_significand.$(O) $(OUTDIR)s_sin.$(O) \
+	$(OUTDIR)s_tan.$(O) $(OUTDIR)s_tanh.$(O)
+
+obj_link = +k_standard.obj +k_rem_pio2.obj +k_cos.obj +k_sin.obj +k_tan.obj +e_acos.obj +e_acosh.obj +e_asin.obj +e_atan2.obj +e_atanh.obj +e_cosh.obj +e_exp.obj +e_fmod.obj +e_gamma.obj +e_gamma_r.obj +e_hypot.obj +e_j0.obj +e_j1.obj +e_jn.obj +e_lgamma.obj +e_lgamma_r.obj +e_log.obj +e_log10.obj +e_pow.obj +e_rem_pio2.obj +e_remainder.obj +e_scalb.obj +e_sinh.obj +e_sqrt.obj +w_acos.obj +w_acosh.obj +w_asin.obj +w_atan2.obj +w_atanh.obj +w_cosh.obj +w_exp.obj +w_fmod.obj +w_gamma.obj +w_gamma_r.obj +w_hypot.obj +w_j0.obj +w_j1.obj +w_jn.obj +w_lgamma.obj +w_lgamma_r.obj +w_log.obj +w_log10.obj +w_pow.obj +w_remainder.obj +w_scalb.obj +w_sinh.obj +w_sqrt.obj +s_asinh.obj +s_atan.obj +s_cbrt.obj +s_ceil.obj +s_copysign.obj +s_cos.obj +s_erf.obj +s_expm1.obj +s_fabs.obj +s_finite.obj +s_floor.obj  +s_frexp.obj +s_ilogb.obj +s_isnan.obj +s_ldexp.obj +s_lib_version.obj +s_log1p.obj +s_logb.obj +s_matherr.obj +s_modf.obj +s_nextafter.obj +s_rint.obj +s_scalbn.obj +s_signgam.obj +s_significand.obj +s_sin.obj +s_tan.obj +s_tanh.obj
+
+
+all: $(LIB)
+
+check:
+	@echo This package does not have a validation suite.
+
+clean::
+	-$(RM) *.obj $(LIB)
+
+distclean:      mostlyclean
+	-$(RM) $(LIB)
+	-$(RM) -r autom4te.cache/
+	-$(RM) config.cache config.log config.status Makefile
+
+install:        $(LIB) uninstall
+	$(CP) $(LIB) $(prefix)/lib/$(LIB)
+	$(CHMOD) 664 $(prefix)/lib/$(LIB)
+	$(RANLIB) $(prefix)/lib/$(LIB) || true
+
+$(LIB) : $(obj)
+	-del $(LIB)
+	lib /out:$(LIB) $(obj)
+
+maintainer-clean:       distclean
+	@echo "This command is intended for maintainers to use;"
+	@echo "it deletes files that may require special tools to rebuild."
+	-$(RM) configure
+
+mostlyclean:    clean
+	-$(RM) $(obj)
+
+source: $(src) README
+
+uninstall:
+	-$(RM) $(prefix)/lib/$(LIB)
+
+#.c.obj:
+#        $(CC) $(CFLAGS) -c{ $<}

@@ -1,0 +1,4 @@
+*.STH
+objbc
+*.res
+ntLibInit.c

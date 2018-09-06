@@ -1,0 +1,26 @@
+# $Header: /cvs/stx/stx/libdb/libodbc/applications/modules.stx,v 1.2 2007-02-08 16:11:57 stefan Exp $
+#
+# DO NOT EDIT 
+# automagically generated from the projectDefinition: stx_libdb_libodbc_applications.
+#
+# Warning: once you modify this file, do not rerun
+# stmkmp or projectDefinition-build again - otherwise, your changes are lost.
+#
+# This file is (currently) only used with win-95 / win-NT versions of STX.
+# It lists the dll's which are to be loaded at startup time.
+#
+# All classes loaded at startup time will be present as precompiled classes.
+# Others will be autoloaded.
+#
+libstx_libbasic
+libstx_libbasic2
+libstx_libcomp
+libstx_libdb
+libstx_libhtml
+libstx_libui
+libstx_libview
+libstx_libview2
+libstx_libwidg
+libstx_libwidg2
+
+

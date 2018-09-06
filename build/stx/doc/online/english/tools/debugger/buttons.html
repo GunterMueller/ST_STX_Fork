@@ -1,0 +1,301 @@
+<HEAD>
+<TITLE>Using the Debugger - Button Functions</TITLE>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="intro.html">       <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="prev"></A>
+<A NOPRINT HREF="TOP.html">         <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="up"></A>
+<A NOPRINT HREF="menu.html">     <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="next"></A>
+
+<H2><A NAME="BUTTONS" HREF="TOP.html#I_BUTTONS">Button Functions</A></H2>
+
+  The most common functions are available in a row of buttons (in newer versions of the
+  debugger: two rows of buttons).
+  They are also available in the menu:
+
+<P>
+
+<DL>
+
+
+<DT><A NAME="BUTTONS.CONTINUE" HREF="TOP.html#I_BUTTONS.CONTINUE">Continue</A>
+<DD>Continue execution
+<BR>
+    The process continues execution where it was stopped originally.
+    If the code has been changed in the debugger (i.e. "<i>accepted</i>"),
+    the old, original code is executed until the same message is sent again.
+    Only then would any changed code be executed.
+<P>
+
+
+<DT><A NAME="BUTTONS.ABORT" HREF="TOP.html#I_BUTTONS.ABORT">Abort</A>
+<DD>Abort the current activity (if possible)
+<BR>
+    This function raises the <CODE>AbortSignal</CODE>,
+    which is cought by most processes at some save place.
+<BR>
+    For example, workspaces catch this signal while
+    executing a <KBD>'doIt'</KBD> expression, thus "<i>abort</i>" will abort that execution and
+    return to the workspace's input handling.
+    If in a file browser while filing in (loading) code, the filein is aborted.
+    Finally if aborted in any window while the event dispatcher processes an event,
+    this event's processing is aborted, and the next event is handled (or waited for).
+<BR>
+    Thereforem pressing <KBD>'Abort'</KBD> will usually break out and return to a save place.
+<P>
+    Typically, this is equivalent to a resume of the corresponding handler context's sender.
+<P>
+    Most often, this is the recommended action to take,
+    in order to exit the debugger after an error has been encountered,
+    especially after code has been fixed in the debugger and resend is not possible due to
+    already changed state.
+<P>
+This is also the action taken by the debugger if its main window is closed.
+<P>
+
+
+<DT><A NAME="BUTTONS.TERMINATE" HREF="TOP.html#I_BUTTONS.TERMINATE">Terminate (Process)</A>
+<DD>Terminate the erroneous process.
+<BR>
+    This is a soft terminate, in that the process gets
+    a chance to perform its cleanup actions
+    (aka "unwind"; see <A HREF="../../programming/contexts.html#UNWINDING">``<VAR>stack unwinding and signal handling</VAR>''</A>).
+    If the process is controlling a view (i.e. a window group process),
+    all of its windows are closed.
+    Therefore, this should <b>only</b> be
+    used if the above "<I>Abort</I>" fails.
+    Because it usually terminates the underlying application,
+    you may loose changes done in that application
+    (for example, if it is a browser or text editor).
+<P>
+    Because this is considered to be a "dangerous operation", the corresponding button is shown in a red color.
+<P>
+    However, sometimes you need this if an error reappears over and over, for example if an error
+    is present in a window's event handling code and an abort leads immediately to another
+    error, to get out of such a never ending story.
+<BR>
+    This function is disabled in a modal debugger
+    (because this would terminate the event dispatcher or scheduler).
+<P>
+
+
+<DT><A NAME="BUTTONS.REPORTBYMAIL" HREF="TOP.html#I_BUTTONS.REPORTBYMAIL">Report By Mail</A>
+<DD>Send an email to exept.
+<BR>
+    If an error persists, and it is not an error which resulted from an invalid
+    configuration, from bad input or from one of your own changes,
+    you may want to (indeed, you should) press this button to send an email
+    notification to the <CITE>Smalltalk/X</CITE> maintenance group at eXept.
+<BR>
+    The dialog asks you to enter additional information or a friendly hello-message
+    to the mail's body text, and also to adjust any sender information.
+    When you click on the send button, an email providing stack-walkback info is
+    sent to eXept.
+<P>
+    Depending on the settings, this function may not be present as a button function.
+    In that case, you should look in the "<i>File</i>"-menu.
+    However, it will be disabled, if no SMPT mail-host has been configured in
+    the Launcher's "<i>Settings</i>"-"<i>Communication</i>"-"<i>Misc</i>" dialog.
+
+<P>
+<DT><A NAME="BUTTONS.NEXT" HREF="TOP.html#I_BUTTONS.NEXT">Next</A>
+<DD>Single step for next sourceline
+<BR>
+    Let the process continue execution, until the current
+    source line number changes in the selected context.
+    The implementation of single stepping is based on hooking into the message send
+    mechanism of the underlying runtime system.
+    Therefore, non-message sends (i.e. assignments and inlined if-constructs)
+    are skipped and cannot be single stepped.
+    Due to the implementation, single stepping may be
+    a bit slow, if many computations are done in the stepped method
+    (for each send, the process is interrupted and the debugger gets informed and checks
+    for the current send to determine whether it should be shown).
+    This slow stepping is only done within the stepped context -
+    any code called by it is not single stepped and runs a full speed.
+    Unless another halt or breakpoint is encountered, the debugger gets back control when
+    either the current line has changed or the context was returned from (either explicitly
+    or via an unwind or process termination).
+<BR>
+    This function is not available for inspecting debuggers.
+<P>
+
+<DT><A NAME="BUTTONS.STEP" HREF="TOP.html#I_BUTTONS.STEP">Step</A>
+<DD>Single step for send in this method
+<BR>
+    Let the process continue execution, until the next message send
+    is performed in the selected context.
+    Read the notes above for details on single stepping.
+<BR>
+    This function is not available for inspecting debuggers.
+<P>
+
+
+
+<DT><A NAME="BUTTONS.SEND" HREF="TOP.html#I_BUTTONS.SEND">Send</A>
+<DD>Single send
+<BR>
+    Let the process continue execution for one message
+    send - showing every message send.
+    In contrast to the above stepping functions, this will also single step
+    through every other method called (i.e. it is stepping into the called method).
+<BR>
+    This function is not available for inspecting debuggers.
+<P>
+
+
+<DT><A NAME="BUTTONS.RESEND" HREF="TOP.html#I_BUTTONS.RESEND">Resend</A>
+<DD>Resend the message
+<BR>
+Unwinds the stack and resends the message to the receiver of the selected context.
+<P>
+This is one of the most useful functions,
+and typically used after a code change in the debugger.
+Apply this after a change made to a method (for example, one which was halted
+or breakpointed) and the method did not change any state on which it depends.
+Resending is not useful for example,
+if the method did already read data from a file stream or changed some
+other object. Then the called method would likely see unexpected/wrong data and
+fail for other reasons. In this case, select a context higher up in the calling chain
+(for example, where the file was opened) and restart that context,
+or use the "<i>Abort</i>" button,
+and retry the changed code in a "fresh run".
+<P>
+<B>Notice:</B> due to some compiler optimizations, not every context may be restartable.
+The button is disabled if such a context is selected.
+<P>
+
+
+<DT><A NAME="BUTTONS.RETURN" HREF="TOP.html#I_BUTTONS.RETURN">Return</A>
+<DD>Return from this context
+<BR>
+    continue execution as if the selected context
+    returned - effectively "jumping out" and returning
+    from this context (i.e. simulate a <CODE>'^ nil'</CODE> from a
+    selected method context, or return nil from a block evaluation).
+<BR>
+    If there is a selection in the codeview, which
+    forms a valid expression, that value is used as return value.
+    Otherwise, nil is returned to its sender.
+<P>
+<B>Notice:</B> in the current ST/X implementation, this function cannot be
+performed on block contexts or on method contexts
+which have been compiled with certain compiler-optimizations enabled.
+The "<i>Return</i>"-button is disabled if such a context is selected.
+<P>
+The bad news is that most precompiled classes have been compiled with
+this stc compiler optimization. So in fact most contexts of the base system
+are non-returnable.  A workaround is to recompile the corresponding classes using
+the browser's "<i>Recompile all Methods</i>" menu item before you start to debug,
+to get "unoptimized" versions of those methods. Another workaround is to move up in
+the caller chain until you find any "returnable" context.
+<P>
+
+<DT><A NAME="BUTTONS.RESTART" HREF="TOP.html#I_BUTTONS.RESTART">Restart</A>
+<DD>Restart this context
+<BR>
+continue execution by restarting the selected context.
+(this is now more or less obsoleted by the "resend" button).
+<P>
+<B>Notice:</B> in the current ST/X implementation, this function cannot be
+performed on block contexts or on method contexts
+which have been compiled with certain compiler-optimizations enabled.
+The "<i>Restart</i>"-button is disabled if such a context is selected.
+<P>
+Read the notice above for workarounds.
+<P>
+</DL>
+
+
+<A NAME="BUTTONS.GOTO_XXX" HREF="TOP.html#I_BUTTONS.GOTO_XXX"></A>
+
+The following buttons are only shown/visible in certain situations.
+They are useful for quick navigation to a more interesting context.
+Usually this is the context, which is responsible for an error, as opposed to the one
+where the error was actually reported (raised).
+
+<DL>
+
+<DT><A NAME="BUTTONS.GOTO_DIALOG_OPENER" HREF="TOP.html#I_BUTTONS.GOTO_DIALOG_OPENER">Goto Dialog Opener</A>
+<DD>Find and select the code which opened the dialog
+<BR>
+This button is only shown if the process is stopped while a modal
+dialog is open. It searches the caller chain for the method which is opened the
+dialog and selects it.
+This is very useful to quickly navigate to your code
+after you interrupted it while inside an open dialog.
+Try it after pressing "<KBD>CMD-.</KBD>"
+while a search dialog is shown ("<KBD>CMD-s</KBD>").
+<P>
+
+<DT><A NAME="BUTTONS.GOTO_APPLICATION_METHOD" HREF="TOP.html#I_BUTTONS.GOTO_APPLICATION_METHOD">Goto Application Method</A>
+<DD>Find and select the application code which is responsible for the error
+<BR>
+This button is only shown if the process is stopped due to
+an error in an application.
+It searches the caller chain for the method which initialted the current activity
+and selects it.
+This is very useful to quickly navigate to your code
+after you hit an error in a lower level (called) method.
+For example, if a stream read error exception is raised deeply nested down in a stream class,
+this brings you quickly to the place in your own program were the
+file operation was issued in the first place (the actual file operation).
+<P>
+
+<DT><A NAME="BUTTONS.GOTO_RAISING_METHOD" HREF="TOP.html#I_BUTTONS.GOTO_RAISING_METHOD">Goto Raising Method</A>
+<DD>Find and select the code which was responsible for the exception
+<BR>
+This button is only shown if the process is stopped due to an unhandled
+exception (such as a "doesNotUnderstand").
+It searches the caller chain for the method which is responsible
+for the exception-raise and selects it.
+<P>
+Notice, that the debugger usually already tries to show the location of the error,
+if entered due to an unhandled exception.
+However, this button is useful to quickly navigate to the next raise-location
+for example, if interrupted while inside an exception handler which either
+raised another exception or which presented a warning dialog.
+<P>
+
+</DL>
+
+The following button is only shown/visible when the debugger has been entered due
+to a "<i>message not understood</i>" exception.
+
+<DL>
+
+<DT><A NAME="BUTTONS.DEFINE_METHOD" HREF="TOP.html#I_BUTTONS.DEFINE_METHOD">Define Method</A>
+<DD>Generates the missing method and resend the message
+<BR>
+This button is only shown if the process is stopped due to a message not understood exception.
+It creates (generates, compiles and installs) the missing method as a debugging stub method
+and resends the message so that the fresh method is entered.
+There, it will stop again due to a halt message.
+This is very useful to interactively and incrementally implement missing functionality
+of an application. Programmers usually develop missing functions by pressing this button,
+and let the program proceed into the just created method. There, the missing code
+can be written incrementally, by editing, accepting and resending, until the code works as
+desired.
+<P>
+
+</DL>
+
+
+<P>
+Continue in
+<A NOPRINT HREF="menu.html">"Menu Functions"</A>...
+
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif" ALT="[stx logo]">
+Copyright &copy; 1995 Claus Gittinger Development & Consulting, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+<HR>
+Doc $Revision: 1.20 $ $Date: 2017-11-30 23:54:16 $
+
+</BODY>
+</HTML>

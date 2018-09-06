@@ -1,0 +1,25 @@
+/* XPM */
+static char *LoadButton_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"24 14 4 1",
+/* colors */
+"a c black",
+"b c #C2C2C2",
+"c c #818181",
+"d c none",
+/* pixels */
+"dddddddddddddddddddddddd",
+"dddddddddddaaaaaaaaaaadd",
+"dddddddddddacaaaaaaabadd",
+"dddddadddddacabbbbbaaadd",
+"ddddaadddddacabbbbbacadd",
+"dddaaaaaaddacabbbbbacadd",
+"ddaaaaaaaddacabbbbbacadd",
+"ddaaaaaaaddaccaaaaaacadd",
+"dddaaaaaaddacccccccccadd",
+"ddddaadddddaccaaaaaacadd",
+"dddddadddddaccaaabbacadd",
+"dddddddddddaacaaabbacadd",
+"ddddddddddddaaaaaaaaaadd",
+"dddddddddddddddddddddddd",
+};

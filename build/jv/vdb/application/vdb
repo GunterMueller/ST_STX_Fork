@@ -1,0 +1,21 @@
+#!/bin/bash
+#
+# Startup script for Visual / VM Debugger
+#
+
+VDB_BINDIR=$(dirname $(realpath $0))
+
+if [ -f "$VDB_BINDIR/vdb.so" ]; then
+    # Standalone excutable
+    exec "$VDB_BINDIR/vdb.so" ${1+"$@"}
+elif [ -x "$VDB_BINDIR/../../../stx/projects/smalltalk/smalltalk" ]; then
+    # In build tree 
+    exec "$VDB_BINDIR/../../../stx/projects/smalltalk/smalltalk" \
+            --load jv:vdb/application --run VDBStartup ${1+"$@"}
+else
+    echo "erorr: could not find vdb.so"
+    exit 1
+fi
+
+
+

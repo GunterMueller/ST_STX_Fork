@@ -1,0 +1,1306 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Binary Object Storage</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="timing.html">     <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="appProgramming.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Binary Object Storage</H1>
+
+<H2>Contents</H2>
+<UL>
+ <LI><A HREF="#INTRO" NAME="I_INTRO">Introduction</A>
+ <LI><A HREF="#TEXTSTORE" NAME="I_TEXTSTORE">Non-Binary Store</A>
+ <LI><A HREF="#TEXTSTOREPROBLEMS" NAME="I_TEXTSTOREPROBLEMS">Problems with Non-Binary Store</A>
+ <LI><A HREF="#LITERALARRAYSTORE" NAME="I_LITERALARRAYSTORE">Storing a literalArrayEncoding</A>
+ <LI><A HREF="#JSONSTORE" NAME="I_JSONSTORE">Storing in JSON Format</A>
+ <LI><A HREF="#XMLSTORE" NAME="I_XMLSTORE">Storing in XML Format</A>
+ <LI><A HREF="#BINARYSTORE" NAME="I_BINARYSTORE">Using Binary Storage</A>
+ <LI><A HREF="#PERSSTORE" NAME="I_PERSSTORE">Storing Objects in a Simple Database</A>
+ <LI><A HREF="#HOWSTORE" NAME="I_HOWSTORE">Layout of Binary Data</A>
+ <LI><A HREF="#TRICKS" NAME="I_TRICKS">Tricks and Hints</A>
+ <LI><A HREF="#ERRORHANDLING" NAME="I_ERRORHANDLING">Error Handling</A>
+ <UL>
+   <LI><A HREF="#ERRORIGNORE" NAME="I_ERRORIGNORE">Ignoring Errors</A>
+   <LI><A HREF="#ERRORCORRECT" NAME="I_ERRORCORRECT">Correcting Errors</A>
+ </UL>
+ <LI><A HREF="#SKIPPING" NAME="I_SKIPPING">Skipping Instvars</A>
+ <LI><A HREF="#LIMITATIONS" NAME="I_LIMITATIONS">Limitations &amp; Bugs</A>
+</UL>
+
+
+<H2><A HREF="#I_INTRO" NAME="INTRO">Introduction</A></H2>
+  This document will teach you how to store and retrieve objects on/from an external medium.
+<P>
+Smalltalk offers various ways to store and retrieve objects to/from the external world.
+Beside the wellknown <CODE>#storeOn:</CODE> method, binary storage is supported by any object.
+<BR>
+Binary storage is both more dense (i.e. requires less space) and faster than
+textual storage in the normal case. In addition, the format used by the binary storage mechanism
+allows recursive and cyclic objects to be handled correctly,
+which is not possible with the ascii representation used by the normal <CODE>#storeOn:</CODE> mechanism.
+<P>
+The disadvantages are that (1) the binary storage format is proprietary to each Smalltalk
+dialect, and communication with other dialects is usually not possible "out-of-the-box".
+(2) the binary format "knows" the stored object format,
+and conversion may be needed, if stored objects are loaded after a class has changed its instance layout.
+
+<H2><A HREF="#I_TEXTSTORE" NAME="TEXTSTORE">Non-Binary Store</A></H2>
+
+Before we look at binary storage, lets first have a look at the ascii
+storage mechanism - this helps us understanding the differences and
+specialities of binary storage later.
+<P>
+In Smalltalk, all classes support the <CODE>#storeOn:</CODE> message, which
+asks the object to append a textual (i.e. ascii) representation of itself to
+a stream, from which a copy of this object can be reconstructed.
+
+This scheme works for simple objects, which do NOT contain self references or cycles.
+
+Also, this format is compatible among different Smalltalk implementations, <STRONG>if</STRONG>
+the layout of the instances is the same across them (i.e. the instance's class exists with
+the same instance layout on the target system).
+<BR>
+For example:
+<A TYPE="example">
+<CODE><PRE>
+    |myObject outStream|
+
+    myObject := Array with:'hello world'
+		      with:1.2345
+		      with:#(1 2 3 4 5)
+		      with:('one' -> #one).
+
+    outStream := 'data' asFilename writeStream.
+    myObject storeOn:outStream.
+    outStream close.
+</PRE></CODE>
+</A>
+stores the array (<VAR>myObject</VAR>) in the file named "<CODE>data</CODE>".
+<P>
+If you inspect this file, you will notice that it contains a single Smalltalk
+expression (in textual representation) which when evaluated recreates the original array.
+From this, the object can be reconstructed
+by asking the compiler to evaluate that expression:
+<A TYPE="example">
+<CODE><PRE>
+    |string|
+
+    string := 'data' asFilename readStream contents asString.
+
+    myObject := Compiler evaluate:string.
+    myObject inspect.
+</PRE></CODE>
+</A>
+
+the above has been wrapped into an easier to use method, which is understood
+by any class:
+<A TYPE="example">
+<CODE><PRE>
+    |string|
+
+    string := 'data' asFilename readStream contents asString.
+
+    myObject := Object readFromString:string.
+    myObject inspect.
+</PRE></CODE>
+</A>
+or, alternatively, reading directly from the stream:
+<A TYPE="example">
+<CODE><PRE>
+    |inStream|
+
+    inStream := 'data' asFilename readStream.
+
+    myObject := Object readFrom:inStream.
+    myObject inspect.
+</PRE></CODE>
+</A>
+Thus, any object can be stored by sending it <CODE>#storeOn:</CODE> and retrieved by sending
+<CODE>#readFrom:</CODE> to Object or a class.
+
+
+<H2><A HREF="#I_TEXTSTOREPROBLEMS" NAME="TEXTSTOREPROBLEMS">Problems with Non-Binary Store</A></H2>
+
+Although simple and straightforward, this mechanism has a few drawbacks:
+<UL>
+<LI>it does not preserve object identity
+<BR>
+If you store a root-object which has multiple references to one other child-object,
+the reconstructed root-object will instead contain references to multiple distinct child objects.
+(i.e. it will have multiple <VAR>copies</VAR> of the original child)
+<BR>
+For example:
+<A TYPE="example">
+<CODE><PRE>
+    |original retrieved hello inStream outStream|
+
+    hello := 'hello'.
+    original := Array with:hello
+		      with:hello.
+
+    outStream := 'data.txt' asFilename writeStream.
+    original storeOn:outStream.
+    outStream close.
+
+    inStream := 'data.txt' asFilename readStream.
+    retrieved := Object readFrom:inStream.
+    inStream close.
+
+    Transcript showCR:
+	(original at:1) == (original at:2).  "evaluates to true"
+    Transcript showCR:
+	(original at:1) = (original at:2).   "obviously evaluates to true"
+
+    Transcript showCR:
+	(retrieved at:1) == (retrieved at:2).  "evaluates to false"
+    Transcript showCR:
+	(retrieved at:1) = (retrieved at:2).   "evaluates to true"
+</PRE></CODE>
+</A>
+The above limitation makes that mechanism unusable when objects are to be stored which
+depend on identity (for example: IdentityDictionaries, IdentitySets and some others)
+<BR>
+Also, since each reference to the object is stored in its full form again,
+the resulting ascii representation may become quite large.
+
+<P>
+<LI>the textual representation can become quite large
+<BR>
+Since the printed representation typically requires more bytes than a compact
+binary one. This difference becomes extreme if multiple references to the
+same object are contained in the stored object.
+
+<P>
+<LI>retrieval is somewhat slow
+<BR>
+Since the expression has to be scanned and parsed from a string,
+then given to the evaluator to execute it.
+
+<P>
+<LI>it cannot handle self referencing, recursive or cyclic objects
+<P>
+For example:
+<A TYPE="example">
+<CODE><PRE>
+    |original retrieved hello inStream outStream|
+
+    original := Array new:3.
+    original at:1 put:'hello'.
+    original at:2 put:'world'.
+    original at:3 put:original.
+
+    outStream := 'data' asFilename writeStream.
+    original storeOn:outStream.
+    outStream close.
+
+    inStream := 'data' asFilename readStream.
+    retrieved := Object readFrom:inStream.
+    inStream close.
+
+    Inspector openOn:original title:'original'.
+    Inspector openOn:retrieved title:'retrieved'.
+</PRE></CODE>
+</A>
+The above is of course a non realistic example; however, objects like trees,
+doubly linked lists etc. are typical examples of self referencing objects.
+<P>
+You will notice a message on the Transcript, when the object is stored,
+and find the self reference being lost in the reconstructed object
+when inspecting it.
+<BR>
+(i.e. in <CITE>Smalltalk/X</CITE>, cycles are detected in the store method,
+and a warning is sent to the Transcript.
+Notice, that not all Smalltalk implementations allow the above expression
+to be evaluated - some will be cought by the endless-recursion trap and/or crash)
+<P>
+<LI>some systems limit the number of constant literals which may be present
+in a single expression (this may be a compiler limit, or even burried deep in
+the system's implementation). In <CITE>Smalltalk-80</CITE> or <CITE>Squeak</CITE>,
+this limit is 256;
+in <CITE>Smalltalk/X</CITE> is is greater or equal to (at least) 65536.
+<BR>
+This means for example, that an array containing more than 256 different
+string or symbol constants cannot be reconstructed by <CITE>ST-80</CITE> or <CITE>Squeak</CITE>
+(these limitations may be no longer present, in more modern releases of those systems).
+
+<P>
+<LI>maintenance problems when objects change (class layout changes)
+<BR>
+With using "<CODE>storeOn:</CODE>" as a programmer, you have two choices: either use the default implementation
+as inherited from "<CODE>Object</CODE>"), or redefine this method in your class.
+<BR>
+The default method creates a storeString which accesses instance variables
+by index. As a consequence, you will run into trouble when the instance
+variable layout is changed
+(i.e. the order of instance variables changes, an instance variable is removed,
+or new instance variables are added in between).
+<P>
+Therefore, you would have to redefine the "<CODE>storeOn:</CODE>" method, to create a
+storeString, which does not depend on the instance variable offsets.
+This can be done by generating a storeString, which invokes setter-methods,
+instead of the "instVarAtPut:" as generated by the default implementaton).
+<BR>
+This would allow future class versions to retrieve previously stored objects.
+But never forget to update the "<CODE>storeOn:</CODE>" method,
+whenever any new instance variables are added to or removed from the class
+(when an instvar is removed, leave empty "do-nothing" setters in the class;
+those might still get called when reading old objects).
+<P>
+In summary: there is a potential for future trouble.
+However, by generating a storeString consisting of setters only,
+you have total freedom in how the object may be represented in the future.
+</UL>
+
+
+<H2><A HREF="#I_LITERALARRAYSTORE" NAME="LITERALARRAYSTORE">Storing a literalArrayEncoding</A></H2>
+
+Some of the above problems are fixed, if you use a literalArrayEncoding for
+storage. This format is used internally to store and retrieve
+window-, menu and other specifications which are used as GUI resources.
+<BR>
+Actually, the literalArrayEncoding generates an array, which
+represents the original object - however, the array's storeString
+can be used as ascii text representation and is therefore human readable.
+<P>
+The literalArrayEncoding is also very useful to store objects and descriptions
+in the program itself
+- that's what the windowSpec methods are actually for - they simply return
+an array which describes the original (spec-) object.
+
+<P>
+This store format is independent of the object's instance variable order.
+When an object is later retrieved,
+the setter methods are invoked for the values that were present at store time.
+<BR>
+This means, that even future changed classes can provide a backward compatibility protocol.
+<P>
+Using a literalArrayEncoding, you can store your objects with:
+<CODE><PRE>
+    anObject literalArrayEncoding storeOn:aStream
+</PRE></CODE>
+(or, you may want to provide a storeLiteralOn method in your class(es), as:
+<CODE><PRE>
+    storeLiteralOn:aStream
+	self literalArrayEncoding storeOn:aStream
+</PRE></CODE>
+
+<P>
+Perfectionists may even use the already present pretty-printer from the
+GUI framework, to create a nice, indented storeFormat:
+<CODE><PRE>
+    storeLiteralPrettyOn:aStream
+	UISpecification
+	    prettyPrintSpecArray:self literalArrayEncoding
+	    on:aStream
+	    indent:0
+</PRE></CODE>
+and:
+<CODE><PRE>
+    storeLiteralPrettyOnFile:aFilename
+	|s|
+
+	s := aFilename asFilename writeStream.
+	self storeLiteralPrettyOn:s.
+	s close.
+</PRE></CODE>
+<P>
+Retrieval is by:
+<CODE><PRE>
+    fromLiteralFile:aFilename
+	|s arr|
+
+	s := aFilename asFilename readStream.
+	o := Array readFrom:s.
+	s close.
+	^ o decodeAsLiteralArray
+</PRE></CODE>
+<P>
+This format does solve some of the storeOn: problem, but still
+cannot handle recursive or self referencing object structures.
+Also, it does not preserve object identity.
+However, it may be suitable for many simple applications.
+<P>
+Sample code is found in the file: <A HREF="../../../coding/StoringObjectsAscii-example.st">'doc/coding/StoringObjectsAscii-example.st'</A>.
+It contains a class named "User" which stores and retrieves instances using literalArray encoding.
+File this in using the FileBrowser and explore it in the SystemBrowser.
+
+
+<H2><A HREF="#I_JSONSTORE" NAME="JSONSTORE">Storing in JSON Format</A></H2>
+
+The JSON format was originally designed
+to exchange simple, non-recursive data structures
+between a JavaScript program in a web browser and its server side
+pendant (originally a Java program).
+This format is now widely supported by many programming languages,
+and can be used both for data interchange and for persistence of simple
+data like settings or preferences.
+<P>
+The JSON support classes are provided in a separate package, so you may have to
+load it first with:<CODE><PRE>
+    Smalltalk loadPackage:'stx:goodies/json'
+</PRE></CODE>
+to write objects, use a JSONPrinter, to read, a JSONReader:<CODE><PRE>
+     |o1 s o2|
+
+     o1 := Dictionary withKeysAndValues:#('one' 1 'two' 2 'three' 3.0 'four' 'vier').
+     s := JSONReader toJSON:o1.
+     o2 := JSONReader fromJSON:s
+</PRE></CODE>
+for more information, refer to their class documentation and examples found there.
+Be aware that the set of supported objects which can be stored/retrieved is very limited:
+basically, they must be Numbers, Strings, Boleans, Arrays and Dictionaries thereof.
+<P>
+If required, convert the objects into some Dictionary format, and store/retrieve those.
+Data can only be stored by value - no references (and definitely no recursive references)
+can be stored or retrieved.
+
+
+<H2><A HREF="#I_XMLSTORE" NAME="XMLSTORE">Storing in XML Format</A></H2>
+
+XML, although not being a binary format, is able to store and retrieve arbitrary
+objects. This includes recursive references and also preserves object identity.
+XML has the advantage, that it can support for it exsists in almost every programming language
+or Smalltalk dialect. Making XML documents quite portable.
+However, there XML requires more work to be done by the programmer and is
+also relatively expensive in terms of memory and processing power.
+XML documents also tend to be less compact than the other formats described here.
+The use of XML is described in a <A HREF="xmlObjectStorage.html">separate document</A>.
+
+
+<H2><A HREF="#I_BINARYSTORE" NAME="BINARYSTORE">Using Binary Storage</A></H2>
+
+Binary storage solves the above problems, by storing objects in a compact
+encoded format,
+keeping track of object identities
+and by providing a migration mechanism for old stored objects to be converted to
+a object layout on the fly.
+<P>
+In contrast to the above described <CODE>#storeOn:</CODE> format,
+this format is not meant to be human readable.
+Also, since it uses all 8 bits of a byte, it may not be possible
+to send binary encoded objects directly via some ancient transport mechanisms
+(i.e. old electronic mail transports which only support 7bit ascii
+and not using <VAR>uuencode</VAR>). A limitation which is probably no longer present, these days.
+<P>
+Binary storage has the disadvantage that it is not compatible between
+different Smalltalk implementations. Although all Smalltalk dialects do support
+some form of binary object storage with similar functionality,
+no common encoding standard exists.
+<P>
+It is used in pretty much the same way as above, simply replace
+<CODE>#storeOn:</CODE> by <CODE>#storeBinaryOn:</CODE> and
+<CODE>#readFrom:</CODE> by <CODE>#readBinaryFrom:</CODE>:
+<A TYPE="example">
+<CODE><PRE>
+    |original retrieved hello inStream outStream|
+
+    hello := 'hello'.
+    original := Array with:hello
+		      with:hello.
+
+    outStream := 'data.bos' asFilename writeStream binary.
+    original storeBinaryOn:outStream.
+    outStream close.
+
+    inStream := 'data.bos' asFilename readStream binary.
+    retrieved := Object readBinaryFrom:inStream.
+    inStream close.
+
+    Transcript showCR:
+	(original at:1) == (original at:2).  "evaluates to true"
+
+    Transcript showCR:
+	(retrieved at:1) == (retrieved at:2).  "evaluates to true"
+</PRE></CODE>
+</A>
+The above can be used on any stream which supports reading/writing of bytes.
+(i.e. a WriteStream on a ByteArray, FileStreams, Sockets, Pipes etc.).
+<P>
+The binary storage mechanism handles cyclic or self referencing structures,
+preserving object identity.
+It does so by assigning unique object IDs
+(i.e. integers) to stored objects.
+It keeps track of previously assigned IDs,
+and writes the ID of previously encountered objects if an object
+is to be stored which was already stored before.
+
+In addition to preserving object identity, this also creates a more compact output,
+as each individual object's contents is only stored once.
+(The process of converting an arbitrary
+graph of objects into a flat sequence is also refered to as
+<VAR>flattening</VAR> or <VAR>marshalling</VAR>.)
+<P>
+At retrieval time, the reverse is done, keeping track of objectIDs as objects are
+restored and reconstructing the original references from the ID.
+<P>
+Example (storing the above self-referencing object):
+<A TYPE="example">
+<CODE><PRE>
+    |original retrieved hello inStream outStream|
+
+    original := Array new:3.
+    original at:1 put:'hello'.
+    original at:2 put:'world'.
+    original at:3 put:original.
+
+    outStream := 'data.bos' asFilename writeStream.
+    original storeBinaryOn:outStream.
+    outStream close.
+
+    inStream := 'data.bos' asFilename readStream.
+    retrieved := Object readBinaryFrom:inStream.
+    inStream close.
+
+    Inspector openOn:original title:'original'.
+    Inspector openOn:retrieved title:'retrieved'.
+</PRE></CODE>
+</A>
+looking into the retrieved object in the inspector, you will find that the
+original self reference was correctly reconstructed.
+
+
+
+<H2><A HREF="#I_PERSSTORE" NAME="PERSSTORE">Storing Objects in a Simple Database</A></H2>
+
+For simple object storage, <CITE>Smalltalk/X</CITE> provides a class,
+called <CODE>PersistencyManager</CODE>, which implements a dictionary-like
+protocol and allows storage and retrieval of objects by a key.
+<P>
+The low-level mechanism used by <CODE>PersistencyManager</CODE> is based upon
+the "<VAR>db-1.6</VAR>" berkeley database library which is a successor of
+the well known "<VAR>dbm/ndmb</VAR>" library.
+<P>
+Using <CODE>PersistencyManager</CODE>, objects can be stored with:
+<CODE><PRE>
+    ...
+
+    manager := PersistencyManager file:'&lt;somefileName>'.
+    ...
+    manager at:&lt;someKey> put:&lt;someObject>.
+    ...
+    manager close
+</PRE></CODE>
+and retrieved with:
+<CODE><PRE>
+    ...
+
+    manager := PersistencyManager file:'&lt;somefileName>'.
+    ...
+    &lt;someObject> := manager at:&lt;someKey>.
+    ...
+    manager close
+</PRE></CODE>
+The <CODE>#at:</CODE> / <CODE>#at:put:</CODE> interface is especially convenient,
+as you can test your application using in-memory dictionaries first,
+and switch to an external database later.
+Like with ordinary <CODE>Dictionaries</CODE>, <b>any</b> object is allowed as key.
+<P>
+Example (storing):
+<BR>
+(in a real-world application, you would create a PersonRecord class,
+and store its instances - instead of dictionaries).
+<A TYPE="example">
+<CODE><PRE>
+    |manager record|
+
+    manager := PersistencyManager file:'sampleData'.
+
+    record := IdentityDictionary new.
+    record at:#firstName put:'Joe'.
+    record at:#lastName put:'Sampleman'.
+    record at:#age put:35.
+    record at:#salary put:75000.
+    record at:#personalID put:123456.
+    manager at:(record at:#personalID) put:record.
+
+    record := IdentityDictionary new.
+    record at:#firstName put:'Boris'.
+    record at:#lastName put:'Jelzin'.
+    record at:#age put:99.
+    record at:#salary put:175000.
+    record at:#personalID put:34561.
+    manager at:(record at:#personalID) put:record.
+
+    record := IdentityDictionary new.
+    record at:#firstName put:'Tony'.
+    record at:#lastName put:'Friedman'.
+    record at:#age put:25.
+    record at:#salary put:35000.
+    record at:#personalID put:78905.
+    manager at:(record at:#personalID) put:record.
+
+    manager release.
+</PRE></CODE>
+</A>
+Example (retrieving):
+<A TYPE="example">
+<CODE><PRE>
+    |manager record|
+
+    manager := PersistencyManager file:'sampleData'.
+    record := manager at:78905.
+    manager release.
+
+    record inspect
+</PRE></CODE>
+</A>
+
+<DL><DT>Notes:<DD>
+<CODE>PersistencyManager</CODE> does not provide the functionality of
+a real database - it is just a goody thrown in, for simple applications.
+<BR>
+A particular limitation is that only a single key is supported -
+you have to manually add functionality on top of this basic mechanism
+(i.e. using multiple databases to provide mappings from different keys to
+the object's real key) to implement these.
+<P>
+Don't blame us for this - after all, this is a free goody.
+</DL>
+
+The following shows a quick and dirty hack to provide mulitple keys;
+here, we assume that the "key-to-personID" mappings are small enough to fit
+into memory (and therefore, we retrieve them entirely).
+The mappings are stored within the same database, under a special key.
+<P>
+First, build the "lastName to personID" mapping (ignoring duplicates, for simplicity):
+<A TYPE="example">
+<CODE><PRE>
+    |manager nameToIDMapping|
+
+    manager := PersistencyManager file:'sampleData'.
+
+    nameToIDMapping := Dictionary new.
+    manager do:[:record |
+	"/ ignore non-person objects
+	(record includesKey:#personalID) ifTrue:[
+	    nameToIDMapping
+		at:(record at:#lastName)
+		put:(record at:#personalID)
+	]
+    ].
+
+    "/ store the mapping under a special key
+
+    manager at:#nameToIDMapping put:nameToIDMapping.
+    manager release.
+</PRE></CODE>
+</A>
+
+retrieve the nameToIDMapping first, and use this to fetch records by name:
+<A TYPE="example">
+<CODE><PRE>
+    |manager nameToIDMapping record|
+
+    manager := PersistencyManager file:'sampleData'.
+    nameToIDMapping := manager at:#nameToIDMapping.
+
+    record := manager at:(nameToIDMapping at:'Friedman' ifAbsent:nil).
+
+    manager release.
+
+    record inspect
+</PRE></CODE>
+</A>
+
+
+<H2><A HREF="#I_HOWSTORE" NAME="HOWSTORE">Layout of Binary Data</A></H2>
+
+This section describes the logical structure of stored binary data.
+It may be useful for a deeper understanding of how binary object storage
+works and why errors (as described below) can occur.
+<BR>
+It may also be interesting, if you want to write a loader for binary data
+in another programming language (such as C/C++); however, to do this, you have to
+have a look into the source code - the information presented here is not detailed
+enough, and certainly not meant as a specification.
+<P>
+You may skip this section
+ - and use binary storage while ignoring these internals.
+
+<P>
+A binary object stream consists of a sequence of <VAR>typeID</VAR> bytes
+and <VAR>objectID</VAR> bytes.
+The <VAR>typeID</VAR> specifies how following bytes are to be interpreted.
+<BR>
+Basically, there are four major <VAR>typeIDs</VAR>:
+
+<UL>
+<LI><VAR>classDefinition</VAR>
+<BR>
+states that a classes definition follows.
+<P>
+
+<LI><VAR>objectDefinition</VAR>
+<BR>
+states that an object's definition follows.
+<P>
+
+<LI><VAR>specialObject</VAR>
+<BR>
+some objects are specially encoded,
+since no class structure is required for reconstruction.
+Examples are: small integers, nil, true, false etc.
+<P>
+
+<LI><VAR>objectReference</VAR>
+<BR>
+states that an object's reference follows. This id refers to an object which was
+already stored before.
+</UL>
+
+When writing, objects and their corresponding IDs are remembered.
+When an object is about to be stored again, only a reference via its ID is written.
+When retrieving, a table of "object-to-id" is maintained, to resolve such references.
+
+<P>
+As an example, the binary representation of:
+<CODE><PRE>
+    s := 'hello'.
+    Array
+       with:1
+       with:s
+       with:s.
+</PRE></CODE>
+looks like:
+<PRE><CODE>
+    <VAR>classDefinition</VAR>
+	ID: 1
+	name:      'String'
+	...
+
+    <VAR>objectDefinition</VAR>
+	ID: 2
+	classID:    1
+	contents:   'hello'
+
+    <VAR>classDefinition</VAR>
+	ID: 3
+	name:       'Array'
+	...
+
+    <VAR>objectDefinition</VAR>
+	ID: 4
+	classID:    3
+	contents:
+	    <VAR>specialObject(SmallInteger)</VAR>  1
+	    <VAR>objectReference</VAR>  ID: 2
+	    <VAR>objectReference</VAR>  ID: 2
+</CODE></PRE>
+(the above is a conceptional picture - the real encoding is somewhat different)
+<P>
+The interesting thing is that classes are stored by name, not by contents.
+This is done to limit the amount of stored data.
+<BLOCKQUOTE>
+If this was not done,
+and the classes structure be treated like any other object instead,
+a binary store would trace &amp; dump all classes along the object's superclass chain;
+thereby dumping class variables, metaclasses and in most cases traverse the full
+set of existing objects.
+ (Because it may encounter the list of global variables in
+ the <CODE>Smalltalk</CODE> object - from which almost every other object can
+ be reached.)
+<P>
+Obviously, this is not a behavior we want (it is cheaper to save a snapshot image to get this ;-).
+</BLOCKQUOTE>
+Since classes are stored by name, a corresponding class must be
+available at reconstruction time (see below on how the system behaves if that
+is not the case). To catch the case of changed class layouts, additional
+information (a so called <VAR>signature</VAR>) is written with the name in
+a <VAR>classDefinition</VAR> block. This signature is checked against the existing
+classes signature at reload time and an exception is raised if they do not
+match.
+<BR>
+The signature contains enough information to reconstruct
+a dummy container class for the restored object.
+However, <STRONG>no</STRONG> semantic information (i.e. methods) are stored.
+<P>
+<FORM ACTION="../misc/onlyInSTX.html"
+      METHOD="DOIT |
+	      SystemBrowser browseClassHierarchy:BinaryIOManager
+	     ">
+For a full description of <VAR>typeIDs</VAR>,
+read the class documentation of <CODE>BinaryOutputManager</CODE> and its subclasses.
+<BR>
+(Click here:
+    <INPUT TYPE="submit" VALUE="browse">
+to open a browser on those classes).
+</FORM>
+
+
+<H2><A HREF="#I_TRICKS" NAME="TRICKS">Tricks and Hints</A></H2>
+
+It should be clear, that some overhead is involved in managing object
+IDs during binaryStore/binaryLoad.
+The storage manager has to keep track of object &lt;-> ID associations during the
+store and again during the read. This is done in an identityDictionary which is
+constructed during the process.
+<P>
+Also, every <VAR>binaryStore</VAR> and <VAR>binaryRead</VAR>
+operation starts with a new, empty association table and saves
+class definitions again
+(assuming that the objects stored in individual <CODE>#storeBinaryOn:</CODE>
+operations are to be reconstructed using individual <CODE>#readBinaryFrom:</CODE> later).
+<P>
+Therefore, there is a big difference in the time/space requirements
+of the following two examples:
+<A TYPE="example">
+<CODE><PRE>
+    |array element outStream|
+
+    element := 1@1.
+    array := Array new:1000 withAll:element.
+
+    outStream := 'data1.bos' asFilename writeStream.
+    array storeBinaryOn:outStream.
+    outStream close.
+</PRE></CODE>
+</A>
+and:
+<A TYPE="example">
+<CODE><PRE>
+    |array element outStream|
+
+    element := 1@1.
+    array := Array new:1000 withAll:element.
+
+    outStream := 'data2.bos' asFilename writeStream.
+    array do:[:el |
+	el storeBinaryOn:outStream.
+    ].
+    outStream close.
+</PRE></CODE>
+</A>
+the first stores the definition of the Point class only once, reusing it
+for every stored point.
+The second stores this class definition once <STRONG>for each</STRONG> individual
+point.
+<BR>
+Looking at the size of the created file shows this. The first requires 1.9Kb,
+while the second requires 24.4Kb. Also, the times required to store/load the data
+are quite different: 130ms vs. 2800ms (stored via NFS to a disk on a remote machine.
+Your actual numbers will be different, but the ratio should be alike).
+<P>
+The second example has the advantage, that individual elements can be
+read from the file (if you remember the file positions).
+In contrast, the first examples' data can only be reconstructed as a whole array.
+<P>
+In some cases, you may want to avoid the above overhead,
+AND store data while reusing information about previously stored classes/objects.
+<BR>
+This makes sense, if:
+<UL>
+<LI>you know in advance that data is to be read in the same
+order as stored
+<LI>your objects are not contained in one single collection,
+but instead are extracted from different objects (parts of your application)
+during the store operation.
+<LI>you don't need to reconstruct individual objects (or you don't mind some
+aditional time required to read and skip over some objects when reading)
+</UL>
+If above preconditions are true, you can reuse the storage managers
+collected internal state and incrementally store objects.
+<BR>
+To do this, use a lower level interface to the storage manager:
+<BR>
+Storing:
+<A TYPE="example">
+<CODE><PRE>
+    |array element outStream manager|
+
+    element := 1@1.
+    array := Array new:1000 withAll:element.
+
+    manager := BinaryOutputManager new.
+    outStream := 'data3.bos' asFilename writeStream binary.
+    array do:[:el |
+	el storeBinaryOn:outStream manager:manager.
+    ].
+    outStream close.
+    manager release.
+</PRE></CODE>
+</A>
+loading:
+<A TYPE="example">
+<CODE><PRE>
+    |array element inStream manager|
+
+    array := Array new:1000.
+
+    inStream := 'data3.bos' asFilename readStream binary.
+    manager := BinaryInputManager on:inStream.
+    1 to:array size do:[:index |
+	array at:index put:(manager nextObject).
+    ].
+    inStream close.
+    array inspect
+</PRE></CODE>
+</A>
+As a concrete example, consider the case, where you have a tree of person
+objects, consisting of <VAR>firstName</VAR>, <VAR>lastName</VAR> and whatever,
+but you only want to binaryStore the <VAR>firstName</VAR> values of each node:
+<CODE><PRE>
+    |tree outStream manager|
+
+    ...
+
+    manager := BinaryOutputManager new
+    outStream := 'namedata.bos' asFilename writeStream binary.
+    tree inOrderDo:[:aNode |
+	|name|
+
+	name := aNode firstName.
+	name storeBinaryOn:outStream manager:manager.
+    ].
+    outStream close.
+    manager relase.
+</PRE></CODE>
+and reconstruct the tree with the names only:
+<CODE><PRE>
+    |tree name inStream manager|
+
+    ...
+    tree := NameTree new.
+    ...
+
+    inStream := 'namedata.bos' asFilename readStream binary.
+    manager := BinaryInputManager on:inStream
+
+    [inStream atEnd] whileFalse:[
+	name := manager nextObject.
+	tree insertNode:(PersonNode for:name).
+    ].
+    inStream close.
+    ...
+</PRE></CODE>
+using a little trick, it is also possible to extract individual objects
+from this dataStream;
+to do this, you have to read and skip all objects before the one to
+be reconstructed
+(to let the manager build up its id information table).
+<BR>
+The following example stores 1000 individual points:
+Storing:
+<A TYPE="example">
+<CODE><PRE>
+    |array element outStream manager|
+
+    array := ((1 to:1000) collect:[:i | i @ i]) asArray.
+
+    manager := BinaryOutputManager new.
+    outStream := 'data3.bos' asFilename writeStream binary.
+    array do:[:el |
+	el storeBinaryOn:outStream manager:manager.
+    ].
+    outStream close.
+    manager release.
+</PRE></CODE>
+</A>
+and reads the 400th point:
+<A TYPE="example">
+<CODE><PRE>
+    |element inStream manager|
+
+    inStream := 'data3.bos' asFilename readStream binary.
+    manager := BinaryInputManager on:inStream.
+
+    399 timesRepeat:[manager nextObject].
+    element := manager nextObject.
+
+    inStream close.
+    element inspect
+</PRE></CODE>
+</A>
+the inputmanager offers a (slightly faster) <CODE>skipObject</CODE>
+method for skipping:
+<A TYPE="example">
+<CODE><PRE>
+    |element inStream manager|
+
+    inStream := 'data3.bos' asFilename readStream binary.
+    manager := BinaryInputManager on:inStream.
+
+    399 timesRepeat:[manager skipObject].
+    element := manager nextObject.
+
+    inStream close.
+    element inspect
+</PRE></CODE>
+</A>
+Since all class and object definitions still have to to
+be processed, do not expect <CODE>skipObject</CODE>
+to be dramatically faster than <CODE>nextObject</CODE>.
+
+
+
+<H2><A HREF="#I_ERRORHANDLING" NAME="ERRORHANDLING">Error handling</A></H2>
+
+Binary storage is much more sensitive to changed instance layout (of classes) than
+textual storage. Consider the following case:
+<OL>
+<LI>an object is stored somewhere
+<LI>the object's class is changed to include one more instance variable
+<LI>you try to (binary-) load the original object
+</OL>
+Of course, at retrieval time, the now existing class is no longer valid for
+the object to be reconstructed.
+<BLOCKQUOTE>
+Notice:
+this is also true with textual storage for most classes, since the default
+<CODE>storeOn:</CODE> as defined in the <CODE>Object</CODE> class stores
+a description which reconstructs the object based on <CODE>instVarAt:put:</CODE>.
+Of course, this also reconstructs a wrong object if the relative offsets of
+instance variables have changed.
+(if you want to take precautions against this, reimplement the <CODE>storeOn:</CODE>
+method in your classes, to not create <VAR>instVarAt:put:</VAR> expressions, but
+write expressions sending instance variable access messages instead.)
+<P>
+To avoid this, some classes redefine <CODE>storeOn:</CODE> and create an expression
+based on an instance variables name.
+</BLOCKQUOTE>
+<P>
+<CITE>Smalltalk/X</CITE> offers an error handling mechanism to catch situations when an object is
+restored for which no valid class exists.
+As usual, the error is signalled using the exception mechanism,
+by raising some signal
+(see <A HREF="exceptions.html"><VAR>``Exception handling and signals''</VAR></a>).
+<P>
+It is possible to handle these signals and either:
+<UL>
+<LI>ignore the error
+<LI>correct the error
+</UL>
+
+
+<H3><A HREF="#I_ERRORIGNORE" NAME="ERRORIGNORE">Ignoring Errors</A></H2>
+
+All errors are signalled by one of the signals:
+<UL>
+<LI><CODE>BinaryIOManager binaryLoadErrorSignal</CODE>
+<BR>
+parent signal of all below. Also raised if a format error
+or I/O error occurs while loading an object.
+Use this, to handle
+any error related with binaryStorage in a single handler block.
+<P>
+
+<LI><CODE>BinaryIOManager invalidClassSignal</CODE>
+<BR>
+parent signal of all below.
+Use this, to handle
+any format and class error in a single handler block.
+<P>
+
+<LI><CODE>BinaryIOManager nonExistingClassSignal</CODE>
+<BR>
+raised if the loaded object's class no longer exists
+<P>
+
+<LI><CODE>BinaryIOManager changedInstLayoutSignal</CODE>
+<BR>
+raised if the classes instance variables have changed their
+position (but the size is correct).
+<P>
+
+<LI><CODE>BinaryIOManager changedInstSizeSignal</CODE>
+<BR>
+raised if the classes instance size has changed.
+<P>
+
+<LI><CODE>BinaryIOManager changedIndexedInstSignal</CODE>
+<BR>
+raised if the class has indexed instvars and the loaded object
+has not, or vice versa.
+
+</UL>
+By defining a handler for these
+(or for one of the parent signals),
+an error during the binary read operation will not bring you into the debugger.
+<BR>
+Instead, the exception handler can decide what to do:
+<BR>
+
+<UL>
+<LI><CODE>proceed</CODE> without a return value (i.e. with nil)
+<BR>
+if it proceeds, the binaryLoad is not aborted.
+Instead, a dummy class will be created for the restored object
+(as a subclass of <CODE>ObsoleteObject</CODE>)
+and the loaded object is made an instance of it.
+<P>
+Instances of <CODE>ObsoleteObject</CODE> (and therefore the retrieved object
+as well) will trap on all messages into a <VAR>messageNotUnderstood</VAR>
+exception.
+<P>
+This allows for your obsolete objects to be loaded (at least) and
+be manually fixed later, or by walking over all derived instances
+of <CODE>ObsoleteObject</CODE>
+and fixing things in an inspector, or by a converter procedure.
+<BR>
+In other words: the contents of those objects is available
+- without the semantic.
+<P>
+
+<LI><CODE>proceed</CODE> with a class as return value
+<BR>
+if it proceeds with a return value, the handlers return value
+will be taken as the loaded object's class (instead of <CODE>ObsoleteObject</CODE>).
+<BR>
+This is useful, if classes have been renamed and the programmer knows about
+this change, or the program can somehow find out what the new name is.
+<BR>
+(a database may keep track of rename operations somewhere and use
+this information in the exception handler.)
+<P>
+
+<LI><CODE>return:</CODE>, <CODE>abort</CODE> or <CODE>terminate</CODE>
+<BR>
+as usual, to abort the binaryLoad.
+<P>
+
+<LI><CODE>restart:</CODE>
+<BR>
+a handler could reconstruct some classes (for example, by loading them using <CODE>#fileIn:</CODE>)
+and restart the whole binary load operation.
+</UL>
+
+The handler gets the newly created subclass of
+<CODE>ObsoleteObject</CODE>as parameter;
+this allows for the handler to decide for every detected class individually,
+how things are to be handled. That class is named after the original classes
+name, and has all required meta information at hand; especially,
+instance size and names of instance variables may be of interest.
+<P>
+After a proceed, the handler will not be called again for the same class;
+any further retrieved objects of the same class will be silently made instances of the same
+class (either as obsolete, or whatever the handler returned in the first place).
+<P>
+Examples:
+<BR>
+Abort the binary load on any error:
+<CODE><PRE>
+    |inStream data|
+
+    ...
+    inStream := .... asFilename readStream binary.
+    ...
+    BinaryIOManager binaryIOError handle:[:ex |
+	"
+	 other error (such as corrupted file etc.)
+	"
+	Transcript showCR:'some other error occured in binary load'.
+	Transcript showCR:'abort the load ...'.
+	ex return.
+    ] do:[
+	BinaryIOManager invalidClassSignal handle:[:ex |
+	    |oldClass|
+
+	    oldClass := ex parameter.
+	    Transcript showCR:'cannot restore instance of ' , oldClass name.
+	    Transcript showCR:'reason: ' , ex signal notifierString.
+	    Transcript showCR:'abort the load ...'.
+	    ex return.
+	] do:[:
+	    data := Object readBinaryFrom:inStream.
+	]
+    ].
+    ...
+    s close.
+    ...
+</PRE></CODE>
+in the above, the binary read will be aborted, and nil be left in
+data.
+
+<P>
+Ignoring the error to return an obsoleteObject:
+<CODE><PRE>
+    |inStream data|
+
+    ...
+    inStream := .... asFilename readStream binary.
+    ...
+    BinaryIOManager binaryIOError handle:[:ex |
+	...
+    ] do:[
+	BinaryIOManager invalidClassSignal handle:[:ex |
+	    |oldClass|
+
+	    oldClass := ex parameter.
+	    Transcript showCR:'cannot restore instance of ' , oldClass name.
+	    Transcript showCR:'reason: ' , ex signal notifierString.
+	    Transcript showCR:'continue with obsolete object...'.
+	    ex proceed.
+	] do:[:
+	    data := Object readBinaryFrom:inStream.
+	]
+    ].
+    ...
+    s close.
+    ...
+</PRE></CODE>
+in the above, data may contain an instance of a subclass of <CODE>ObsoleteObject</CODE>.
+This object will not be usable, since it traps on most messages into a
+<VAR>messageNotUnderstood</VAR> exception.
+<BR>
+However, it will contain the original values, so manual or programatic
+conversion is possible.
+<BR>
+(a concrete application could provide some kind of <VAR>database conversion</VAR>
+ procedure to convert all obsoleteObjects into something useful.)
+
+<P>
+Return a replacement class and retrieve these objects as instances of that:
+<CODE><PRE>
+    |inStream data|
+
+    ...
+    inStream := .... asFilename readStream binary.
+    ...
+    BinaryIOManager binaryIOError handle:[:ex |
+	...
+    ] do:[
+	BinaryIOManager invalidClassSignal handle:[:ex |
+	    |oldClass|
+
+	    oldClass := ex parameter.
+	    Transcript showCR:'cannot restore instance of ' , oldClass name.
+	    Transcript showCR:'reason: ' , ex signal notifierString.
+	    Transcript showCR:'return as instance of another class ...'.
+	    ex proceedWith:ReplacementClass.
+	] do:[:
+	    data := Object readBinaryFrom:inStream.
+	]
+    ].
+    ...
+    s close.
+    ...
+</PRE></CODE>
+
+See example code in <CODE>"doc/coding/BOSS-errors"</CODE>.
+
+
+<H3><A HREF="#I_ERRORCORRECT" NAME="ERRORCORRECT">Correcting Errors</A></H2>
+
+It is possible to automatically convert obsolete objects
+to another format or to make them <VAR>become</VAR>
+an instance of another class while reading binary data.
+<P>
+To do so, the binaryLoader will raise the <CODE>requestConversion</CODE>
+exception, passing the existing class and the obsolete object as
+arguments to the exception handler.
+The handler should somehow try to convert the obsolete object
+and proceed with the new object as value.
+<P>
+This conversion signal is only raised by the binary loader if an
+exception handler is present;
+therefore, not handling (or ignoring) the conversionSignal results in
+obsoleteObjectes
+to be returned from the binary load (as described above).
+<P>
+Also, since any <VAR>invalidClass</VAR> exceptions are raised <STRONG>before</STRONG>
+any conversion is tried, these must be handled as described above.
+<BR>
+The reason is that during binaryStore/binaryRead, classes are written/encountered first,
+before any instances. Therefore, all class related exceptions will occur first;
+but only once per class, since classes (like any other object) are only stored once.
+
+
+<P>
+Conversion requests are signalled for <STRONG>each individual</STRONG>
+obsolete object being loaded (in contrast to the above invalidClass signals,
+which are only signalled once per class).
+<P>
+The existing (new) class can provide a conversion method
+(<CODE>#cloneFrom:</CODE>),
+which should create and return
+a new instance of itself based on some a template object.
+<BR>
+Here, the template object is the obsolete object as retrieved from the binary
+load.
+<BR>
+A default <CODE>#cloneFrom:</CODE> method is provided, which creates an
+object with all named and indexed instance variables preserved.
+However,
+for special needs, your class may redefine this method and do whatever is
+required for conversion (or even decide to return nil ...)
+<P>
+For more details,
+see example code in <CODE>"doc/coding/BOSS-errors"</CODE>
+
+
+<H3><A HREF="#I_SKIPPING" NAME="SKIPPING">Skipping Instvars</A></H2>
+
+For some objects, it does not make sense to store all of their instance
+variables; either because those are not needed or can be easily reconstructed,
+or will not be valid at reload time.
+<BR>
+For example, an object which has a reference to a
+process or view or any other object which may not be valid
+(or can be reconstructed) at load time,
+may want to skip these in the store operation,
+and reconstruct or leave them as nil when doing a binary read.
+<BR>
+To do this, the object must implement two methods to respond to
+<CODE>#representBinaryOn:</CODE> and <CODE>#readBinaryContentsFromData:manager:</CODE>.
+<P>
+<UL>
+<LI><CODE>#representBinaryOn:</CODE>
+<BR>
+is supposed to return an array consisting of the instance variables which
+are to be stored. It is free to return any objects (even things which are
+not contained in the instance variables) in this array.
+If this method returns nil, the storage manager will use the default
+representation, storing all of the instance variables (i.e. the object
+may decide dynamically, if it wants to skip or have everything stored).
+<BR>
+The returned array must include all values which are required for proper
+restoring (i.e. do not forget inherited variables and indexed instance variables,
+if any).
+<P>
+<LI><CODE>#readBinaryContentsFromData:manager:</CODE>
+is supposed to set the instance variables from an array (as previously returned
+by <CODE>#representBinaryOn:</CODE>).
+<BR>
+It is free to set instance variables to default values or recreated objects.
+For example, it could restart a process or reopen a view
+(which was previously skipped when stored).
+</UL>
+For an example, see the file <CODE>"doc/coding/BOSS-special"</CODE>
+
+
+
+<H3><A HREF="#I_LIMITATIONS" NAME="LIMITATIONS">Limitations &amp; Bugs</A></H2>
+
+Due to the implementation of <CITE>ST/X</CITE>, you cannot
+(currently, and maybe forwever)
+retrieve processes and contexts via binary storage
+(you cannot retrieve them via normal textual storage as well).
+<BR>
+If you application requires this, you have to store the state of the processes
+computation somehow different and recreate a new process when the object
+is retrieved.
+<P>
+Since views require a process for proper operation (the windowgroup process),
+this limitation results in the inability to store and retrieve views.
+
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 1995 Claus Gittinger Development &amp; Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.26 $ $Date: 2016-07-11 09:24:05 $
+</BODY>
+</HTML>

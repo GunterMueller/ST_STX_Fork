@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="addresses" pageWidth="850" pageHeight="1100" whenNoDataType="AllSectionsNoDetail" columnWidth="830" leftMargin="10" rightMargin="10" topMargin="0" bottomMargin="0">
+    <property name="ireport.zoom" value="1.0"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="0"/>
+    <parameter name="name" class="java.lang.String"/>
+    <parameter name="address" class="java.lang.String"/>
+    <parameter name="city" class="java.lang.String"/>
+    <parameter name="sender" class="java.lang.String"/>
+    <detail>
+        <band height="330">
+            <frame>
+                <reportElement x="369" y="136" width="257" height="133"/>
+                <box>
+                    <topPen lineWidth="0.0" lineStyle="Solid"/>
+                    <leftPen lineWidth="0.0" lineStyle="Solid"/>
+                    <bottomPen lineWidth="0.0"/>
+                    <rightPen lineWidth="0.0" lineStyle="Solid"/>
+                </box>
+                <textField isBlankWhenNull="true">
+                    <reportElement x="0" y="68" width="257" height="20"/>
+                    <textElement verticalAlignment="Middle">
+                        <font size="13" isBold="true" />
+                    </textElement>
+                    <textFieldExpression><![CDATA[($P{city})]]>
+                    </textFieldExpression>
+                </textField>
+                <textField isBlankWhenNull="true">
+                    <reportElement x="0" y="49" width="257" height="20"/>
+                    <textElement verticalAlignment="Middle">
+                        <font size="13" isBold="true" />
+                    </textElement>
+                    <textFieldExpression><![CDATA[($P{address})]]>
+                    </textFieldExpression>
+                </textField>
+                <textField isBlankWhenNull="true">
+                    <reportElement x="0" y="30" width="257" height="20"/>
+                    <textElement verticalAlignment="Middle" rotation="None">
+                        <font size="13" isBold="true" />
+                    </textElement>
+                    <textFieldExpression><![CDATA[$P{name}]]>
+                    </textFieldExpression>
+                </textField>
+            </frame>
+            <textField isBlankWhenNull="true">
+                <reportElement x="40" y="42" width="329" height="28" forecolor="#000066"/>
+                <textElement verticalAlignment="Middle" rotation="None">
+                    <font size="11" isBold="true" />
+                </textElement>
+                <textFieldExpression><![CDATA[$P{sender}]]>
+                </textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+</jasperReport>

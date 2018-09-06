@@ -1,0 +1,371 @@
+<HEAD>
+<TITLE>Using the Debugger - Menu Functions</TITLE>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="buttons.html">     <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="prev"></A>
+<A NOPRINT HREF="TOP.html">         <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="up"></A>
+<A NOPRINT HREF="wrappedMethods.html">        <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="next"></A>
+
+<H2><A NAME="MENU" HREF="TOP.html#I_MENU">Menu Functions</A></H2>
+
+<H3><A NAME="MAIN_MENU" HREF="TOP.html#I_MENU">Main Menu</A></H3>
+
+Most entries are self explaining, however, some special functions deserve a description:
+
+<H4>View Menu</H4>
+
+<DL>
+<DT><A NAME="MENU.SHOW_MORE" HREF="TOP.html#I_MENU.SHOW_MORE">Show More</A>
+<DD>by default, only the 50 bottom contexts of the
+    walk-back are shown. This function doubles the
+    number of shown contexts.
+
+    (Usually only relevant if the debugger was entered due
+    to a recursion error.)
+<P>
+
+<DT><A NAME="MENU.SHOW_FULL" HREF="TOP.html#I_MENU.SHOW_FULL">Show Full Walkback</A>
+<DD>Similar to the previous function, this function changes the number of shown contexts to 9999.
+<P>
+
+
+<DT><A NAME="MENU.SHOW_VERBOSE" HREF="TOP.html#I_MENU.SHOW_VERBOSE">Show Verbose/Dense Backtrace</A>
+<DD>toggles between full- and dense calling chain display.
+<BR>
+In full mode, the chain is shown as you would expect: every sender is listed,
+up to the processes startup.
+<BR>
+In dense mode, some (usually less interesting) contexts are hidden.
+For example: intermediate <CODE>#handle:do:</CODE> contexts, some of
+the processes startup contexts,
+and contexts related to the handling of <dfn>doIt</dfn> evaluations.
+<BR>
+Most programmers prefer the dense mode - you see more with less ;-)
+<P>
+The default mode for new debuggers can be changed in the Launcher's
+<VAR>"Source & Debugger"</VAR> settings menu.
+<P>
+
+<DT><A NAME="MENU.SHOW_HELPER" HREF="TOP.html#I_MENU.SHOW_HELPER">Show/Hide Contexts of Helper Code</A>
+<DD>toggles between full- and dense calling chain display.
+<BR>
+Simmilar to the previous flag, this controls if helper code of collection and exception classes
+is to be shown or not.
+<BR>
+Most programmers prefer the dense mode.
+<P>
+This is an experimental feature and the flag may be merged with the previous flag in future versions.
+<P>
+
+<DT><A NAME="MENU.AUTORAISE" HREF="TOP.html#I_MENU.AUTORAISE">Raise Debugger as Required</A>
+<DD>this toggle controls if the debugger should bring itself automatically to the front
+whenever it is entered. The default is true, but sometimes it is useful to keep it under some
+other window - especially if two or more debuggers are open at the same time,
+or to avoid the generation of additional expose (i.e. redraw) events for the
+debugged application, if the error to be debugged is raised inside a redraw function.
+<P>
+
+</DL>
+
+
+<H4>Process (Execution) Menu</H4>
+
+In addition to duplicates of the button functions described in the previous chapter,
+the following additional functions are found here:
+
+<DL>
+<DT>After 5 Seconds...
+<DD>Perform one of the previously described execution functions,
+but after some delay. This is sometimes useful when debugging code related to
+the current focus, event queue, popup menu or screen capture mechanisms,
+in order to arrange for some other view to be activated or manipulated
+before proceeding execution.
+<P>
+
+<DT><A NAME="MENU.SKIP" HREF="TOP.html#I_MENU.SKIP">Skip to Cursor Line</A>
+<DD>the debugged process is single stepped until the shown method
+    reaches or passes the sourceline in which the text cursor is located.
+<BR>
+    Notice, that the singleStep mechanism is built upon trapping message
+    sends - simple assignments or inlined conditionals and loop-entry-points are therefore not cought
+    by this mechanism and a skip to such a line may not be reached.
+<BR>
+    However, by setting the <VAR>"detailed single step"</VAR>
+    and <VAR>"full lineNumber info"</VAR>
+    flags in the compilerSetting menu, higher resolution single stepping is enabled.
+<BR>
+    You may want to turn those flags on, during development or debugging
+    (the execution speed is somewhat reduced, though).
+<BR>
+    Skipping is not supported in an inspecting debugger.
+<P>
+    As an alternative, place a statement-breakpoint on the desired code line,
+    and press the <NOBR>"<I>Continue</I>"</NOBR>-button.
+<P>
+
+
+<DT><A NAME="MENU.STEPOUT" HREF="TOP.html#I_MENU.STEPOUT">Skip Until Return (Step Out)</A>
+<DD>the debugged process is single stepped until the selected context
+    returns or is unwound (either due to an exception or by a returning block).
+<BR>
+    This is not supported by inspecting debuggers.
+<P>
+
+<DT><A NAME="MENU.SKIP_UNTIL_MESSAGE" HREF="TOP.html#I_MENU.SKIP_UNTIL_MESSAGE">Skip Until Message...</A>
+<DD>asks for the name of a message (a selector),
+    then the debugged process is single stepped until that message is sent.
+<BR>
+    This is not supported by inspecting debuggers.
+<P>
+
+</DL>
+
+
+<H4>Context (Stackframe) Menu</H4>
+
+<DL>
+
+<DT><A NAME="MENU.INSPECT_CONTEXT" HREF="TOP.html#I_MENU.INSPECT_CONTEXT">Inspect Context</A>
+<DD>opens an inspector on the selected context
+<BR>
+    (this may only be of interest to system developers)
+<P>
+
+<DT><A NAME="MENU.COPYWALKBACKTEXT" HREF="TOP.html#I_MENU.COPYWALKBACKTEXT">Copy Walkback Text</A>
+<DD>places a textual representation of the walkback information into the
+cut & paste buffer. This text may later be pasted into a workspace,
+a fileBrowser or a mailTool etc. and saved into a file or sent to
+a bug reporting facility.
+<BR>
+    (this may only be of interest to system developers)
+<P>
+
+<DT>Find...
+<DD>A number of search functions which walk along the calling chain, searching for
+particular patterns. If found, the matching context is selected.
+<P>
+
+<DT>Remember Context and Highlight Next Time
+<DD>Remembers the current walkback's frame objects, and highlights the one's which are
+still active when the debugger is entered the next time.
+This makes it very easy to identify contexts which loop or restart.
+I.e. it is very easy to see if a method has been called again,
+or is still active.
+
+<P>
+
+<DT>Forget Remembered Walkback
+<DD>Disables the above remember feature. Notice that you should eventually stop remembering,
+as these contexts may hold on references to many objects which are not garbage collected
+otherwise.
+
+<P>
+</DL>
+
+<H4>Receiver & Selector Menus</H4>
+
+<DL>
+<DT><A NAME="MENU.BROWSECLASS" HREF="TOP.html#I_MENU.BROWSECLASS">Browse Implemented Class</A>
+<DD>opens a browser on the class in which the selected context's method is implemented.
+<BR>
+A <VAR>double-click</VAR> on a line in the context walkBack list does the same.
+<P>
+
+
+<DT><A NAME="MENU.BROWSECLASS" HREF="TOP.html#I_MENU.BROWSERECEIVERCLASS">Browse Receiver Class</A>
+<DD>opens a browser on the receiver class of the selected context. This is a different class,
+if the executed method is inherited from a superclass.
+<P>
+
+<!--
+<DT><A NAME="MENU.BROWSECLASSHIER" HREF="TOP.html#I_MENU.BROWSECLASSHIER">Browse Class Hierarchy</A>
+<DD>opens a hierarchy browser on the class in which the selected context's method is implemented.
+<P>
+-->
+
+<!--
+<DT><A NAME="MENU.BROWSEFULLCLASS" HREF="TOP.html#I_MENU.BROWSEFULLCLASS">Browse Full Class Protocol</A>
+<DD>opens a full protocol browser on the class in which the selected context's method is implemented.
+<P>
+-->
+
+<DT><A NAME="MENU.IMPLEMENTORS" HREF="TOP.html#I_MENU.IMPLEMENTORS">Implementors</A>
+<DD>opens a browser on all implementors of the selected context's selector.
+<P>
+
+<DT><A NAME="MENU.IMPLEMENTORS" HREF="TOP.html#I_MENU.IMPLEMENTORS">Implementors of...</A>
+<DD>asks for a selector, then opens a browser on all implementors of that selector.
+<P>
+
+
+<DT><A NAME="MENU.SENDERS" HREF="TOP.html#I_MENU.SENDERS">Senders</A>
+<DD>opens a browser on all senders of the selected context's selector
+<P>
+
+<DT><A NAME="MENU.IMPLEMENTORS" HREF="TOP.html#I_MENU.IMPLEMENTORS">Senders of...</A>
+<DD>asks for a selector, then opens a browser on all senders of that selector.
+<P>
+</DL>
+
+
+<H4>Breakpoint Menu</H4>
+
+<DL>
+<DT><A NAME="MENU.REMOVE_BREAK" HREF="TOP.html#I_MENU.REMOVE_BREAK">Remove Breakpoint</A>
+<DD>this menu item is enabled if the selected
+    context has a break- or tracepoint set on its method.
+<BR>If activated, the break/trace is removed.
+<br>
+You can resume execution of the stopped method, by pressing the <VAR>"continue"</VAR>
+button.
+<P>
+
+
+<DT><A NAME="MENU.REMOVE_ALLBREAK" HREF="TOP.html#I_MENU.REMOVE_AllBREAK">Remove all Breakpoints</A>
+<DD>removes all break/trace points in the system
+<P>
+
+<DT>Ignore this Halt
+<DD>There are various additional conditions for selective ignoring of halts and method breakpoints.
+You need this, if you placed a breakpoint at some place which is called from other places
+in the system (for example: the redraw function of a scrollbar),
+and you want the breakpoint to be only hit when reached from inside your debugged application.
+<P>
+Sorry, selective ignoring is not supported for statement breakpoints by the time this document was written.
+<P>
+
+<DT><A NAME="MENU.INSERT_BREAK" HREF="TOP.html#I_MENU.INSERT_BREAK">Add a Breakpoint</A>
+<DD>adds a breakpoint to the method of the selected context. The debugger will be entered when
+that selected method is invoked the next time.
+<P>
+
+<DT><A NAME="MENU.IGNORE_BREAK" HREF="TOP.html#I_MENU.IGNORE_BREAK">Ignore this Breakpoint</A>
+<DD>this allows for the breakpoint to be ignored for some number of invokations,
+some time or forever (i.e. until reenabled). This is very useful for breakpoints inside a
+loop, where we are often only interested in the first or last iteration's breakpoint.
+<BR>
+An ignored breakpoint can be reactivated either via the debugger's menu,
+via the Launcher's menu, or from the
+<A HREF="../misc/TOP.HTML#BREAKPOINTLIST"><I>Breakpoint Browser</I></A>.
+<P>
+
+<DT><A NAME="MENU.DO_NOT_IGNORE_BREAK" HREF="TOP.html#I_MENU.DO_NOT_IGNORE_BREAK">Do not Ignore this Breakpoint</A>
+<DD>undoes the effect of the previous "Ignore this Breakpoint" function.
+The selected ignored breakpoint will be reactivated (i.e. the debugger will be entered upon the
+next invokation).
+<P>
+
+<DT><A NAME="MENU.ALLOW_HALT_IN_DEBUGGER" HREF="TOP.html#I_MENU.ALLOW_HALT_IN_DEBUGGER">Allow Halts in Debugger</A>
+<DD>normally, halts and breakpoints are ignored when hit while in the debugger itself.
+That means, for example, that a halt is ignored if reached via a "doIt" in the debugger's
+codeview or in an object's printString method, when shown in a subview of the debugger.
+<BR>
+This is a very useful behavior, as it protects you from recursive debugger invokations
+when halts are present in such code. However, sometimes you are interested in what is
+going on - either if you are debugging the debugger itself, or if you are coding in the debugger,
+and you want to test just written code.
+<P>
+</DL>
+
+
+
+
+<H3><A NAME="WALKBACK_MENU" HREF="TOP.html#I_MENU">Walkback Popup Menu</A></H3>
+
+The walkback (or context-) duplicates some of the most popular
+main menu functions.
+In addition, the following additional (less frequently used) functions
+are found only there:
+
+<DL>
+<DT><A NAME="MENU.QUICKTERMINATE" HREF="TOP.html#I_MENU.QUICKTERMINATE">Hard (Quick) Terminate </A>
+<DD>terminates the debugged process. Hard termination does not give the process
+    a chance to perform any unwind cleanup actions (in contrast to normal termination), but
+    instead immediately kills the process.
+<BR>
+    After that, leftover views may remain visible (but are not responding)
+    or cursors may not be restored correctly.
+<BR>
+    Only use this, if a process has problems terminating itself, or if an error
+    is reraised inside an unwind action. Always try a regular terminate before.
+<P>
+
+<DL>
+<DT><STRONG>Warning:</STRONG>
+<DD>
+Hard termination is provided as a <CITE>last weapon</CITE>
+(for programmers) in
+order to get rid of a process which refuses to
+terminate.
+<BR>
+A possible situation in which this may happen
+is with a badly coded process termination handler
+(i.e. a process which
+catches regular termination, fails to terminate, or insists
+on proceeding).
+<P>
+A hard terminated process has no chance to perform any cleanup actions;
+not even unwind blocks are evaluated.
+<BR>
+If you hard terminate a view's process,
+chances are high that inoperative windows are left on the display, cursors
+are not restored or semaphores stay blocked (all of this is normally cleaned up
+by unwind handlers, if properly terminated).
+<P>
+You can get rid of remaining views with the launcher's <CODE>"Destroy View"</CODE>
+utility function (which you may have to perform multiple times,
+to destroy all intermediate views up to the topview - try to click on an
+outer view, if possible).
+<P>
+Blocked semaphores can be released manually, by
+opening a debugger on a blocking process and evaluating <CODE>"self signal"</CODE>
+in a context where that semaphore is the receiver. The launcher also offers a
+<A HREF="../misc/TOP.html#SEMAPHOREMONITOR">Semaphore Monitor</A> view in its <I>System</I> menu, to find and possibly release
+such blocked semaphores.
+The same applies to any critical regions (RecursionLocks and critical blocks)
+which have been entered at termination time.
+<P>
+Also, memory leaks may be introduced as an external resource (such as external memory
+or OS resources) may not be properly released, if the hard terminate is performed
+while being inside the allocation, release or finalization
+code of such a resource.
+</DL>
+<P>
+
+<DT><A NAME="MENU.EXIT_ST" HREF="TOP.html#I_MENU.EXIT_ST">Exit Smalltalk</A>
+<DD>terminate Smalltalk <STRONG>without</STRONG> saving an image
+<BR>
+    This is useful if the system got corrupted very badly,
+    and you want to leave Smalltalk without saving an
+    image or doing any other file activity.
+<P>
+<DL>
+<DT><STRONG>Big Warning:</STRONG>
+<DD>
+There will be no confirmations, no cleanup or termination sequences
+- <CITE>ST/X</CITE> will simply exit immediately.
+
+<P>
+</DL>
+</DL>
+
+<P>
+Continue in
+<A NOPRINT HREF="wrappedMethods.html">"Wrapped and Breakpointed Methods"</A>...
+
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif" ALT="[stx logo]">
+Copyright &copy; 1995 Claus Gittinger Development & Consulting, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+<HR>
+Doc $Revision: 1.21 $ $Date: 2014-06-20 13:14:11 $
+
+</BODY>
+</HTML>

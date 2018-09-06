@@ -1,0 +1,13 @@
+XCOMM $XConsortium: Imakefile,v 1.5 95/01/23 15:46:52 kaleb Exp $
+
+    HEADERS = FS.h FSproto.h fsmasks.h
+
+all::
+    
+BuildIncludes($(HEADERS),fonts,..)
+InstallMultipleFlags($(HEADERS),$(INCDIR)/fonts,$(INSTINCFLAGS))
+
+InstallLinkKitNonExecFile(fontstruct.h,$(LINKKITDIR)/include)
+InstallLinkKitNonExecFile(font.h,$(LINKKITDIR)/include)
+InstallLinkKitNonExecFile(fsmasks.h,$(LINKKITDIR)/include)
+

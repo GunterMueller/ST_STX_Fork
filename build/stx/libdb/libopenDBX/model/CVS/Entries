@@ -1,0 +1,20 @@
+/.cvsignore/1.2/Wed Feb  5 23:33:37 2014//
+/DBXColumn.st/1.2/Mon Apr 15 13:32:32 2013//
+/DBXColumnCluster.st/1.2/Mon Apr 15 13:32:34 2013//
+/DBXColumnType.st/1.2/Mon Apr 15 13:32:43 2013//
+/DBXForeignKey.st/1.2/Mon Apr 15 13:32:31 2013//
+/DBXPrimaryKey.st/1.2/Mon Apr 15 13:32:35 2013//
+/DBXSchema.st/1.2/Mon Apr 15 13:32:36 2013//
+/DBXTable.st/1.2/Mon Apr 15 13:32:33 2013//
+/DBXUnique.st/1.2/Mon Apr 15 13:32:37 2013//
+/Make.proto/1.1/Mon Apr 15 13:32:49 2013//
+/Make.spec/1.1/Mon Apr 15 13:32:46 2013//
+/abbrev.stc/1.1/Mon Apr 15 13:32:58 2013//
+/bc.mak/1.1/Mon Apr 15 13:32:55 2013//
+/bmake.bat/1.1/Mon Apr 15 13:33:01 2013//
+/libInit.cc/1.1/Mon Apr 15 13:33:16 2013//
+/mingwmake.bat/1.1/Mon Apr 15 13:33:10 2013//
+/model.rc/1.1/Mon Apr 15 13:33:13 2013//
+/stx_libdb_libopenDBX_model.st/1.2/Mon Apr 15 13:33:17 2013//
+/vcmake.bat/1.1/Mon Apr 15 13:33:04 2013//
+D

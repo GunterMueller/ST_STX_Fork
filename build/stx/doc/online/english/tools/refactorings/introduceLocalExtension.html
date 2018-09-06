@@ -1,0 +1,145 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Refactoring: 
+
+
+
+Introduce Local Extension</title>
+</head>
+<body>
+
+
+
+
+
+<H1>
+
+
+
+Introduce Local Extension</H1>
+
+<P>
+<I>
+<CENTER>
+
+A server class you are using needs several additional methods, but you can't modify the class.</CENTER>
+</I>
+</P>
+
+<P>
+<B>
+<CENTER>
+
+Create a new class that contains these extra methods. Make this extension class a subclass or a wrapper of the original.</CENTER>
+</B>
+</P>
+
+
+<CENTER>
+<IMG SRC="introduceLocalExtension.gif"></CENTER> 
+
+
+
+<P>For more information see page 
+	<font color="#FF0000">164</font>
+	of <I>Refactoring</I>
+</P>
+
+<h2>Additional Comments</h2>
+
+<h3>Using Free Functions in C++</h3>
+
+<P>
+
+<I><A href="mailto:glew@cs.wisc.edu">--Andy Glew</A></I> writes:
+</P>
+
+<P>
+I comment on this in the light of the recent comp.lang.c++.moderated
+discussion of using object.method() or free functions,
+possibly friends, in a class interface. I.e. this comment is
+more C++ oriented than Java oriented.
+
+</P>
+
+
+<P>
+Briefly, if the original class used free functions for this sort
+of interface, the assymmetry introduced by wrapping a class's
+object.methods() would not exist.  In C++
+
+</P>
+
+
+<PRE>
+    class MfDateSub {
+        private: Date _original;
+        // wrapping the symmetric operator after(date1,date2)
+        public:  friend bool after (MfDateSub arg1, MfDateSub arg2) {
+            return after(arg1._original,arg2._original);
+        }
+        public:  friend bool after (MfDateSub arg1, Date arg2) {
+            return after(arg1._original,arg2);
+        }
+        public:  friend bool after (Date arg1, MfDateSub arg2) {
+            return after(arg1,arg2._original);
+        }
+   };
+
+</PRE>
+
+
+<P>
+Now all combinations work; the wrapping is more invisible to
+the user.
+</P>
+
+
+<P>
+Even better if the free function <code>after(date1,date2)</code> does not require
+friendship --- although the definition of the extensions gets spread
+into a few more places.
+</P>
+
+
+
+<P>
+Note that in the example above, however, an implicit
+conversion of a MfDateSub value to a Date would suffice.
+<PRE>
+    class MfDateSub {
+            operator Date() const { return _original }
+    }
+
+</PRE>
+although this approach cannot always work, e.g. when there
+is extra data to be compared in the extension.
+</P>
+
+
+
+<P>
+CONCLUSION: using free functions in an interface allows a greater
+degree of syntactic transparency when wrapping.
+</P>
+
+<h3>Return type for extra methods</h3>
+
+<P>
+
+<I><A href="mailto:dim@bigpond.net.au">--Dmitri Colebatch </A></I> wrote in to ask why when using the subclass I didn't return the subclass in the extra methods. So I have added the nextDay method to MfDate, but it returns a Date not an MfDate. I can't think of any good reason to return the superclass, so I agree with him and suggest returning MfDate instead. The same is true for the wrapper implementation as well. After all if the client is using the extra method, they are aware of the new class. This way they avoid having to futz with the returned object if they want to invoke other extension methods.
+:
+</P>
+
+
+
+<P></P>
+<P></P>
+<P>
+<CENTER>
+<A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A>
+</CENTER>
+</P>
+</body>
+</html>

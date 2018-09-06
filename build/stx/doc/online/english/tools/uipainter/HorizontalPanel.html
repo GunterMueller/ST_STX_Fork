@@ -1,0 +1,347 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+   <META NAME="Author" CONTENT="Thomas Zwick, eXept software AG, Germany">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.04 [en] (X11; I; Linux 2.0.30 i586) [Netscape]">
+   <TITLE>The Horizontal Panel Widget</TITLE>
+</HEAD>
+<BODY>
+<A HREF="FramedBox.html" NOPRINT><IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="The FramedBox Wigdet" NOSAVE HEIGHT=30 WIDTH=30></A>
+<A HREF="TOP.html#TABLEOFTHEWIDGETS" NOPRINT><IMG SRC="../../../icons/DocsUpArrow.gif" ALT="Table of the Widgets" NOSAVE HEIGHT=30 WIDTH=30></A>
+<A HREF="VerticalPanel.html" NOPRINT><IMG SRC="../../../icons/DocsRightArrow.gif" ALT="The Vertical Panel Wigdet" NOSAVE HEIGHT=30 WIDTH=30></A>
+<BR>&nbsp;
+<HR ALIGN=LEFT WIDTH="100%">
+
+<H1><FONT SIZE=+4>The Horizontal Panel Widget</FONT></H1>
+
+<IMG SRC="../../../pictures/GUIPainterWidgetHPanel.gif" ALT="[A View of a Horizontal Panel Widget]" NOSAVE HEIGHT=24 WIDTH=207>
+<P>View Class: <TT>HorizontalPanelView</TT>
+<BR>Spec Class: <TT>HorizontalPanelViewSpec</TT>
+
+<P>The<B> Horizontal Panel Widget</B> arranges other widgets horizontally.
+<BR>This is especially useful for button panels or
+multiple selection lists (as in a file- or class browser).
+<BR>You should always place buttons into a panel,
+to automatically handle varying button sizes
+(due to font size differences or national language string differences).
+
+<H3>See also:</H3>
+<A HREF="VariableVerticalPanel.html">VariableVerticalPanel</A>
+
+<HR ALIGN=LEFT WIDTH="100%">
+
+<H3><A NAME="BASICS">The <I>Basics</I> Section:</A></H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>ID</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Unique symbolic name (ID) of the box.&nbsp;</B>&nbsp;
+<BR>This ID can be used by the application to access the widget
+via <TT>"builder>>componentAt:#ID"</TT>.</TD>
+</TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Horizontal layout</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Specifies how components are arranged horizontally.
+</B><BR>See <A HREF="#HLAYOUT">below</A> for a list & description.
+</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Vertical layout</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Specifies how components are arranged vertically.
+</B><BR>See <A HREF="#VLAYOUT">below</A> for a list & description.
+</TD>
+</TR>
+
+</TABLE>
+
+<H3><A NAME="DETAILS">The <I>Details</I> Section:</A></H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>BG-Color</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the background color of the widget.</B>&nbsp;
+<BR>After selecting the check toggle the background color can be chosen
+by selecting the desired colored button. If no color&nbsp; is selected,
+the widget takes its default background color from the style sheet.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Border</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the width of the border.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Level</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the width of the 3D-border.</B>&nbsp;
+<BR>Positive values provide a raising,&nbsp;
+<BR>negative values provide a lowering of the widget.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Horizontal Space</B></TD>
+<TD ALIGN=LEFT VALIGN=TOP BGCOLOR="#FFFFFF" NOSAVE><B>Defines the horizontal space between components.
+</B><BR>(ignored with #spread layout)</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Vertical Space</B></TD>
+<TD ALIGN=LEFT VALIGN=TOP BGCOLOR="#FFFFFF" NOSAVE><B>Defines the vertical space between components.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Ignore invisible</B></TD>
+<TD ALIGN=LEFT VALIGN=TOP BGCOLOR="#FFFFFF" NOSAVE><B>If on, invisible components are
+ignored in the layout of components.
+<BR>If off, invisible components will reserve space.</B>
+<P>Useful to avoid visible rearrangement of components when some become visible/invisible.
+</TD>
+
+</TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Initially Invisible</B></TD>
+<TD ALIGN=LEFT VALIGN=TOP BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that
+the widget is initially invisible.</B></TD>
+</TR>
+</TABLE>
+
+<P>
+Below, the arrangements are described and an example for a panel
+with 3 button components is shown.
+<BR>
+Keep in mind that panels can be used with any type of component - not
+limited to Buttons (although, panels are most often used for buttons).
+<P>
+Tip:
+<BR>
+If you need some extra spacing between components,
+simply add an empty view with a fix extent.
+
+<P>
+<A NAME="HLAYOUT">Horizontal layout</A>:
+<UL>
+<LI><B>left</B> - left aligned arrangement.
+<BR>Each components preferred extent is used - i.e. components are not resized.
+<BR>Placements starts at the left of the panel (i.e. no left spacing)
+<BR>The spacing between components is controlled by the <I>Space</I> attribute
+(in the <I>Details</I> section). However, the spacing is reduced,
+if required to make all components fit the panel.
+<BR>
+<IMG SRC="../../../pictures/GUI_hpanel_left.gif" ALT="[A View of a left aligned hpanel]" NOSAVE>
+
+<P>
+
+<LI><B>leftSpace</B> - left aligned arrangement with initial space.
+<BR>Like above, but placement starts with an initial left spacing.
+<BR>
+<IMG SRC="../../../pictures/GUI_hpanel_leftSpace.gif" ALT="[A View of a leftSpace aligned hpanel]" NOSAVE>
+<P>
+
+<LI><B>fixLeft</B> - left aligned arrangement with fix space.
+<BR>Like #left, but spacing is not reduced (even if components do not fit the panel)
+<P>
+
+<LI><B>fixLeftSpace</B> - left aligned arrangement with initial and fix space.
+<BR>Like #leftSpace, but spacing is not reduced (even if components do not fit the panel)
+<P>
+
+<LI><B>right</B> - right aligned arrangement.
+<BR>Analogous to #left - however, components are placed right aligned.
+<BR>
+<IMG SRC="../../../pictures/GUI_hpanel_right.gif" ALT="[A View of a right aligned hpanel]" NOSAVE>
+<P>
+
+<LI><B>rightSpace</B> - right aligned arrangement.
+<BR>Like #right but placement starts with an initial right spacing.
+<BR>
+<IMG SRC="../../../pictures/GUI_hpanel_rightSpace.gif" ALT="[A View of a rightSpace aligned hpanel]" NOSAVE>
+<P>
+
+<LI><B>center</B> - centered arrangement.
+<BR>Components are centered within the panel.
+<BR>
+<IMG SRC="../../../pictures/GUI_hpanel_center.gif" ALT="[A View of a center aligned hpanel]" NOSAVE>
+<P>
+
+<LI><B>spread</B> - spread arrangement.
+<BR>Components are spread evenly within the panel. The first component
+is placed at the left, that last at the right of the panel.
+<BR>
+<IMG SRC="../../../pictures/GUI_hpanel_spread.gif" ALT="[A View of a spread aligned hpanel]" NOSAVE>
+<P>
+
+<LI><B>spreadSpace</B> - spread arrangement with spacing.
+<BR>Like #spread, but an additional spacing at the left and right
+of the panel is added.
+<BR>
+<IMG SRC="../../../pictures/GUI_hpanel_spreadSpace.gif" ALT="[A View of a spreadSpace aligned hpanel]" NOSAVE>
+<P>
+
+<LI><B>fit</B> - make components fit the panel.
+<BR>Unlike all of the above, this layout ignores the components
+own preferred extent - instead, all components are resized to fit the
+panel (the panels space is evenly divided).
+<BR>
+<IMG SRC="../../../pictures/GUI_hpanel_fit.gif" ALT="[A View of a fit aligned hpanel]" NOSAVE>
+<P>
+
+<LI><B>fitSpace</B> - make components fit the panel and add spacing around.
+<BR>Like #fit, but adds spacing to the left and right.
+<BR>
+<IMG SRC="../../../pictures/GUI_hpanel_fitSpace.gif" ALT="[A View of a fitSpace aligned hpanel]" NOSAVE>
+<P>
+
+<LI><B>leftFit</B> - arrange from left and make the last component fit the panel.
+<BR>This starts like #left for all but the last component,
+taking the preferred extent of each.
+The last component is resized to fill the panel.
+<BR>
+<IMG SRC="../../../pictures/GUI_hpanel_leftFit.gif" ALT="[A View of a leftFit aligned hpanel]" NOSAVE>
+<BR>This arrangement is especially useful, if the last component is an
+InputField or ComboBox.
+<P>
+
+<LI><B>leftSpaceFit</B> - arrange from left and make the last component fit the panel with spacing.
+<BR>Like #leftFit, but adds spacing around.
+<BR>
+<IMG SRC="../../../pictures/GUI_hpanel_leftSpaceFit.gif" ALT="[A View of a leftSpaceFit aligned hpanel]" NOSAVE>
+<BR>This arrangement is especially useful, if the last component is an
+InputField or ComboBox.
+<P>
+
+<LI><B>rightFit</B> - arrange from right and make the first component fit the panel.
+<BR>Much like #leftFit - however, the first component is resized to
+fill the panel.
+<BR>
+<IMG SRC="../../../pictures/GUI_hpanel_rightFit.gif" ALT="[A View of a rightFit aligned hpanel]" NOSAVE>
+<BR>This arrangement is especially useful, if the first component is an
+InputField or ComboBox.
+<P>
+
+<LI><B>rightSpaceFit</B> - arrange from right and make the first component fit the panel with spacing.
+<BR>Like #rightFit, but adds spacing around.
+<BR>
+<IMG SRC="../../../pictures/GUI_hpanel_rightSpaceFit.gif" ALT="[A View of a rightSpaceFit aligned hpanel]" NOSAVE>
+<BR>This arrangement is especially useful, if the first component is an
+InputField or ComboBox.
+<P>
+
+<LI><B>leftMax</B> - arrange from left and resize components to max.
+<BR>Like #left, but all components are resized to the size of the
+largest component.
+<BR>
+<IMG SRC="../../../pictures/GUI_hpanel_leftMax.gif" ALT="[A View of a leftMax aligned hpanel]" NOSAVE>
+<P>
+
+<LI><B>leftSpaceMax</B> - arrange from left and resize components to max with spacing.
+<BR>Like #leftMax, but adds spacing around.
+<BR>
+<IMG SRC="../../../pictures/GUI_hpanel_leftSpaceMax.gif" ALT="[A View of a leftSpaceMax aligned hpanel]" NOSAVE>
+<P>
+
+<LI><B>rightMax</B> - arrange from right and resize components to max.
+<BR>Like #right, but all components are resized to the size of the
+largest component.
+<BR>
+<IMG SRC="../../../pictures/GUI_hpanel_rightMax.gif" ALT="[A View of a rightMax aligned hpanel]" NOSAVE>
+<P>
+
+<LI><B>rightSpaceMax</B> - arrange from right and resize components to max with spacing.
+<BR>Like #rightMax, but adds spacing around.
+<BR>
+<IMG SRC="../../../pictures/GUI_hpanel_rightSpaceMax.gif" ALT="[A View of a rightSpaceMax aligned hpanel]" NOSAVE>
+<P>
+
+<LI><B>centerMax</B> - arrange centered and resize components to max.
+<BR>Like #center, but all components are resized to the size of the
+largest component.
+<BR>
+<IMG SRC="../../../pictures/GUI_hpanel_centerMax.gif" ALT="[A View of a centerMax aligned hpanel]" NOSAVE>
+<P>
+
+<LI><B>spreadMax</B> - spread and resize components to max.
+<BR>Like #spread, but all components are resized to the size of the
+largest component.
+<BR>
+<IMG SRC="../../../pictures/GUI_hpanel_spreadMax.gif" ALT="[A View of a spreadMax aligned hpanel]" NOSAVE>
+<P>
+
+<LI><B>spreadSpaceMax</B> - spread and resize components to max. and add spacing
+<BR>Like #spreadSpace, but all components are resized to the size of the
+largest component.
+<BR>
+<IMG SRC="../../../pictures/GUI_hpanel_spreadSpaceMax.gif" ALT="[A View of a spreadSpaceMax aligned hpanel]" NOSAVE>
+<P>
+</UL>
+
+<P>
+<A NAME="VLAYOUT">Vertical layout</A> (shown with #left-horizontal layout):
+<UL>
+<LI><B>top</B> - top align components.
+<BR>
+<IMG SRC="../../../pictures/GUI_hpanel_top.gif" ALT="[A View of a top aligned hpanel]" NOSAVE>
+<P>
+
+<LI><B>topSpace</B> - top align components with spacing.
+<BR>
+<IMG SRC="../../../pictures/GUI_hpanel_topSpace.gif" ALT="[A View of a topSpace aligned hpanel]" NOSAVE>
+<P>
+
+<LI><B>bottom</B> - bottom align components.
+<BR>
+<IMG SRC="../../../pictures/GUI_hpanel_bottom.gif" ALT="[A View of a bottom aligned hpanel]" NOSAVE>
+<P>
+
+<LI><B>bottomSpace</B> - bottom align components with spacing.
+<BR>
+<IMG SRC="../../../pictures/GUI_hpanel_bottomSpace.gif" ALT="[A View of a bottomSpace aligned hpanel]" NOSAVE>
+<P>
+
+<LI><B>center</B> - center components vertically.
+<BR>
+<IMG SRC="../../../pictures/GUI_hpanel_vcenter.gif" ALT="[A View of a center aligned hpanel]" NOSAVE>
+<P>
+
+<LI><B>fit</B> - fit components vertically.
+<BR>
+<IMG SRC="../../../pictures/GUI_hpanel_vfit.gif" ALT="[A View of a fit aligned hpanel]" NOSAVE>
+<P>
+
+<LI><B>fitSpace</B> - fit components vertically with spacing.
+<BR>
+<IMG SRC="../../../pictures/GUI_hpanel_vfitSpace.gif" ALT="[A View of a fitSpace aligned hpanel]" NOSAVE>
+<P>
+
+</UL>
+
+
+<H3><A NAME="HELP">The <I>Help</I> Section:</A></H3>
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="HelpTool.html">Using the Help Tool</A>"
+
+<H3><A NAME="LAYOUT">The <I>Layout</I> Section:</A></H3>
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="LayoutTool.html">The Layout of the Widgets</A>"
+
+<P>
+<HR>
+
+<P><IMG SRC="../../../icons/stx.gif" ALT="[stx-logo]" NOSAVE NOPRINT HEIGHT=48 WIDTH=47 ALIGN=CENTER>
+<TT>Copyright &copy; 1998 eXept Software AG, all rights reserved</TT>
+<BR>
+<HR>
+</BODY>
+</HTML>
+
+
+

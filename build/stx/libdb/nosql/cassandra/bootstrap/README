@@ -1,0 +1,35 @@
+thrift.st was downloaded from github (19-mar-2013):
+    https://raw.github.com/twitter/thrift/master/lib/st/thrift.st
+
+thrift.st as downloaded contains a syntax error (readString dublicated);
+this was fixed.
+
+cassandra.thrift from appache (also 19-mar-2013):
+    https://svn.apache.org/repos/asf/incubator/cassandra/trunk/interface/cassandra.thrift
+
+gen/cassandra.st was generated from thrift with:
+    thrift --gen st cassandra.thrift
+
+In a browser, fileIn thrift.st and cassandra.st.
+Move the cassandra classes to their package (stx/libdb/nosql/cassandra) and into a separate namespace (Cassandra).
+
+Move the thrift classes to their package (stx/goodies/communication/thrift).
+I left the thrift classes in their original namespace (Smalltalk) to avoid
+incompatibilities with generated thrift output (which generates Txxx as classnames).
+
+CVS-commit, and update in the directories to get a fileOut format which can be compiled with stc.
+(alternatively: fileout to get them classes as individual source files)
+
+
+
+Problems with generated cassandra code (thrift translator bugs):
+
+- generates "exception signal" instead of "self raiseException:exception"
+  signal in an accessor in VW and ST/X, but a raiser in Squeak.
+
+- generates Exceptions as subclass of Error instead of CassandraError
+  (cannot redefined why etc)
+
+- name mangling is for stupid Squeak limitation
+
+

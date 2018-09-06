@@ -1,0 +1,30 @@
+"/
+"/ base system
+"/
+Smalltalk fileIn:'loadClasses'.
+!
+
+Java initialize.
+JavaVM initialize.
+JavaVM initializeVM.
+!
+
+|p|
+
+(Java classForName:'netscape.applet.MozillaAppletContext') isNil ifTrue:[
+    (p := Smalltalk getResourceFileName:'java/ns30_unix.zip' forPackage:'stx:libjava') notNil
+    ifTrue:[
+	Java addToClassPath:p.
+    ] ifFalse:[
+	'../../libjava/java/java/ns30_unix.zip' asFilename exists ifTrue:[
+	    Java addToClassPath:'../../../cg/java/java/ns30_unix.zip'.
+	] ifFalse:[
+	    'C:\Programme\eXept\SmalltalkX\packages\stx\libjava\java\ns30_unix.zip' asFilename exists ifTrue:[
+		Java addToClassPath:'C:\Programme\eXept\SmalltalkX\packages\stx\libjava\java\ns30_unix.zip'.
+	     ]
+	]
+    ]
+].
+!
+
+

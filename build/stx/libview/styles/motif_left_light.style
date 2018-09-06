@@ -1,0 +1,20 @@
+; View defaultStyle:#'motif_left_light' 
+;
+; like motif_light, but with scrollbars at the left side
+; (I am used to it)
+;
+; $Header: /cvs/stx/stx/libview/styles/motif_left_light.style,v 1.5 1997-11-02 19:49:04 cg Exp $
+
+#include 'motif_light.style'
+
+comment  'like `motif'' style;\\brighter colors & scrollbars on the left'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Wie `motif''\Verschiebebalken aber auf der linken Seite\Hellerer Hintergrund.'
+#endif
+
+scrollBar.position     #left  
+
+
+
+

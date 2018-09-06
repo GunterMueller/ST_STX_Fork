@@ -1,0 +1,7 @@
+Here you'll find interfaces (and libraries) for non-SQL databases.
+These are usually superfast and usually do NOT provide an SQL or SQL like interface;
+typically, they are key-value oriented.
+
+tokyocabinet: a key/value only database, which is superfast
+
+kyotocabinet: a newer, improved version of tokyocabinet

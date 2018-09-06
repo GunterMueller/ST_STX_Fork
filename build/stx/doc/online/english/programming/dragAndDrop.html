@@ -1,0 +1,78 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers Guide - Drag and Drop</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="vmodels.html">   <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">       <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="pluginComponents.html">        <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Drag and Drop</H1>
+
+<H2>Contents</H2>
+<UL>
+ <LI><A HREF="#INTRO"           NAME="I_INTRO">Introduction</A>
+ <LI><A HREF="#INTERNAL"  NAME="I_INTERNAL">Internal (from ST/X Window to another ST/X Window)</A>
+ <LI><A HREF="#EXTERNAL_DROP"  NAME="I_EXTERNAL_DROP">External Drop (from some other application into ST/X)</A>
+ <LI><A HREF="#EXTERNAL_DRAG"  NAME="I_EXTERNAL_DRAG">External Drag (from ST/X to some other application)</A>
+</UL>
+
+
+<H2><A HREF="#I_INTRO" NAME="INTRO">Introduction</A></H2>
+Text to be added...
+
+
+<H2><A HREF="#I_INTERNAL" NAME="INTERNAL">Internal (from ST/X Window to another ST/X Window)</A></H2>
+
+Text to be added...
+
+<H2><A HREF="#I_EXTERNAL_DROP" NAME="EXTERNAL_DROP">External Drop (from some other application into ST/X)</A></H2>
+
+See implementors of <CODE>alienDrop:position:</CODE>.
+<BR>
+This method first asks the application via the <CODE>canDrop:in:at:</CODE> message;
+then, if true is answered, performs the drop via <CODE>drop:in:at:</CODE> message.
+<BR>
+In your application, you have to redefine <CODE>canDrop:in:at:</CODE> (or its simpler variant,
+<CODE>canDrop:in:</CODE>) to return true,
+and also redefine <CODE>drop:in:at:</CODE>
+(or its simpler variant, <CODE>drop:in:</CODE>) to do the actual drop.
+<P>
+The argument passed is either a dropContext object or a collection of dropObject.
+(this confusion results from some backward compatibility issues and will be removed in future
+version - for now, add a check on the arguments type).
+
+
+
+<P>
+If the application is not willing to handle the drop, there is still a chance
+that the widget itself knows how to do it (for example, an editor might know
+how to drop text, without a need for the application to know about details).
+<BR>
+Therefore, after asking the application, the widget tree is asked along the superview
+chain in a similar manner.
+
+
+<H2><A HREF="#I_EXTERNAL_DROP" NAME="EXTERNAL_DROP">External Drag (from ST/X to some other application)</A></H2>
+
+Text to be added...
+
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 2000 eXept Software AG, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.2 $ $Date: 2016-07-11 09:24:05 $
+</BODY>
+</HTML>

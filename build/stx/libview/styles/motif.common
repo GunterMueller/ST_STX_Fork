@@ -1,0 +1,305 @@
+;
+; common motif stuff (not a style, but included by all motif style variations)
+;
+;
+; $Header$
+
+;
+; this is to be included from the real style,
+; with (at least) viewGrey, shadowColor, lightColor and mediumColor
+; being predefined
+;
+
+is3D                            true
+name                            #motif
+ToolbarIconLibrary              ?(Smalltalk at:#VistaToolbarIconLibrary) ? (Smalltalk at:#XPToolbarIconLibrary) ? GenericToolbarIconLibrary
+
+fatFont                         ? Font family:'helvetica' face:'bold' style:'roman' size:12
+
+selectionFont                   ? =fatFont
+labelFont                       ? =fatFont
+menuFont                        ? =fatFont
+textFont                        ? Font family:'courier' size:12
+activeHelp.font                 ? (Font family:'helvetica' face:'roman' style:'bold' size:12)
+
+viewBackground                  =viewGrey
+borderWidth                     0
+
+
+focusColor                      Color black
+focus.explicitWithButtonPress   true
+; focusColor                      Color yellow
+
+scrollBar.position               #right
+scrollBar.buttonPositions        #around
+scrollBar.level                  -2
+scrollBar.elementSpacing         0
+scrollBar.disableButtons         true
+; scrollBar.hiding                 true
+
+#if Screen current isNil or:[Screen current hasGreyscales]
+scroller.thumbColor               =viewGrey
+scroller.viewBackground           =mediumColor
+#else
+; grey 50 is too heavy - isn't it ?
+; scroller.viewBackground          Color grey:50
+scroller.viewBackground           Color white
+scroller.thumbColor               Color white
+#endif
+scroller.thumbLevel               2
+scroller.thumbInset               0
+scrolled.viewLevel               -2
+
+scroller.ghostFrameColor         Color black
+scroller.middleButtonJump        true
+
+miniScroller.size                2.5       "/ millimeters
+
+slider.level                      -1
+
+variablePanel.trackingStyle       #solidLine
+variablePanel.handlePosition      #left
+
+framedBox.labelPosition           #topLeft
+
+label.foregroundColor             Color black
+
+button.activeLevel                -2
+button.passiveLevel               2
+button.returnButtonHasBorder      true
+
+button.activeBackgroundColor      =mediumColor
+button.activeForegroundColor      Color black
+button.disabledForegroundColor    =shadowColor
+
+#if Screen current notNil and:[Screen current hasGreyscales not]
+button.activeBackgroundColor      Color grey:80
+#endif
+
+arrowButton.style                 #motif
+arrowButton.activeLevel           0
+arrowButton.passiveLevel          0
+
+arrowButton.foregroundColor         =viewGrey
+arrowButton.backgroundColor         =mediumColor
+arrowButton.activeForegroundColor   =viewGrey
+arrowButton.activeBackgroundColor   =viewGrey
+arrowButton.disabledForegroundColor =viewGrey
+
+radioButton.style                   #motif
+
+editField.backgroundColor           =mediumColor
+
+menu.hilightLevel                   2
+menu.separatingLineInset            0
+menuBackgroundColor                 =viewGrey
+menu.viewBackgroundColor            =viewGrey
+menu.disabledForegroundColor        =shadowColor
+menu.extraMargin                    2
+menu.suppressSeparatingLinesInToolbar        true
+
+menu.buttonPassiveLevel        1
+menu.buttonActiveLevel         -1
+menu.buttonEnteredLevel        1
+
+pullDownMenu.keepMenu                 true
+pullDownMenu.menuLevel                2
+pullDownMenu.level                    1
+pullDownMenu.hilightLevel             2
+#if Screen current notNil and:[Screen current hasGreyscales not]
+pullDownMenu.hilightForegroundColor   Color white
+pullDownMenu.hilightBackgroundColor   Color black
+#endif
+pullDownMenu.autoselectFirst         true
+
+popup.level                          2
+popup.borderWidth                    1
+popup.hideOnRelease                  false
+; popup.shadow                       false      "/ false is the default, anyway
+
+#selection.multiSelectionModifier      #Control
+#selection.rightArrowLevel             -1
+selection.rightArrowLevel             2
+selection.lineSpacing                 4
+selection.foregroundColor             Color black
+selection.hilightBackgroundColor      Color black
+selection.hilightStyle                #motif
+selection.disabledForegroundColor     =shadowColor
+
+text.alternativeSelectionForegroundColor    Color black
+text.alternativeSelectionBackgroundColor    (Color redByte:150 "255" greenByte:255 blueByte:100 "204")
+
+#textCursorType                       #caret
+textCursor.type                       #ibeam
+textCursor.noFocusForegroundColor     Color grey
+
+activeHelp.backgroundColor            Color yellow lightened lightened lightened
+activeHelp.borderWidth                1
+
+ruler.foregroundColor            Color black
+ruler.backgroundColor            =viewGrey
+
+#if Screen current notNil and:[Screen current hasGrayscales not]
+html.anchorUnderline                true
+html.anchorForegroundColor          Color black
+html.backgroundColor                Color white
+html.activeAnchorForegroundColor    Color black
+html.activeAnchorBackgroundColor    =htmlBackgroundColor
+html.visitedAnchorForegroundColor   Color black
+html.exampleAnchorForegroundColor   Color black
+#endif
+
+dataSet.labelView.level             -1
+dataSet.labelView.verticalSpace     2
+
+;
+; this reverses the ok-cancel order in dialogs;
+; some may be used to ok being on the left ...
+;
+dialogBox.okAtLeft                 true
+
+infoBox.separator                  true
+infoBox.iconFile                   'bitmaps/Information_motif.xbm'
+warningBox.iconFile                'bitmaps/Warning_motif.xbm'
+requestBox.iconFile                'bitmaps/Request_motif.xbm'
+errorBox.iconFile                  'bitmaps/Error_motif.xbm'
+
+launcher.editorLevel        1
+infobar.level               1
+application.toolbarLevel    1
+
+#if Screen current isNil or:[Screen current hasGrayscales]
+arrowButton.upForm                 Image extent:11@12 \
+					depth:2      \
+					bits:#[4r0000 4r0100 4r0000 \
+					       4r0000 4r1120 4r0000 \
+					       4r0000 4r1120 4r0000 \
+					       4r0001 4r1322 4r0000 \
+					       4r0001 4r1322 4r0000 \
+					       4r0011 4r3332 4r2000 \
+					       4r0011 4r3332 4r2000 \
+					       4r0113 4r3333 4r2200 \
+					       4r0113 4r3333 4r2200 \
+					       4r1122 4r2222 4r2220 \
+					       4r1222 4r2222 4r2220 \
+					       4r0000 4r0000 4r0000] \
+					pad:8
+
+arrowButton.downForm               Image extent:11@12 \
+					depth:2      \
+					bits:#[ \
+					       4r0000 4r0000 4r0000 \
+					       4r1111 4r1111 4r1110 \
+					       4r1111 4r1111 4r1220 \
+					       4r0113 4r3333 4r2200 \
+					       4r0113 4r3333 4r2200 \
+					       4r0011 4r3332 4r2000 \
+					       4r0011 4r3332 4r2000 \
+					       4r0001 4r1322 4r0000 \
+					       4r0001 4r1322 4r0000 \
+					       4r0000 4r1220 4r0000 \
+					       4r0000 4r1220 4r0000 \
+					       4r0000 4r0200 4r0000 \
+					      ] \
+					pad:8
+
+arrowButton.leftForm               Image extent:12@11 \
+					depth:2      \
+					bits:#[ \
+					       4r0000 4r0000 4r0110 \
+					       4r0000 4r0001 4r1120 \
+					       4r0000 4r0111 4r1220 \
+					       4r0001 4r1113 4r3220 \
+					       4r0111 4r1333 4r3220 \
+					       4r1113 4r3333 4r3220 \
+					       4r0222 4r2333 4r3220 \
+					       4r0002 4r2223 4r3220 \
+					       4r0000 4r0222 4r2220 \
+					       4r0000 4r0002 4r2220 \
+					       4r0000 4r0000 4r0220 \
+					      ] \
+					pad:8
+
+arrowButton.rightForm              Image extent:12@11 \
+					depth:2      \
+					bits:#[ \
+					       4r0110 4r0000 4r0000 \
+					       4r0111 4r1000 4r0000 \
+					       4r0111 4r1110 4r0000 \
+					       4r0113 4r3111 4r1000 \
+					       4r0113 4r3331 4r1110 \
+					       4r0113 4r3333 4r3222 \
+					       4r0113 4r3332 4r2220 \
+					       4r0113 4r3222 4r2000 \
+					       4r0112 4r2220 4r0000 \
+					       4r0122 4r2000 4r0000 \
+					       4r0120 4r0000 4r0000 \
+					      ] \
+					pad:8
+#else
+arrowButton.upForm                 Image extent:11@12 \
+					depth:1      \
+					bits:#[2r00000000 2r00000000 \
+					       2r00000100 2r00000000 \
+					       2r00000100 2r00000000 \
+					       2r00001110 2r00000000 \
+					       2r00001110 2r00000000 \
+					       2r00011111 2r00000000 \
+					       2r00011111 2r00000000 \
+					       2r00111111 2r10000000 \
+					       2r00111111 2r10000000 \
+					       2r01111111 2r11000000 \
+					       2r00000000 2r00000000 \
+					       2r00000000 2r00000000] \
+					pad:8
+
+arrowButton.downForm               Image extent:11@12 \
+					depth:1      \
+					bits:#[2r00000000 2r00000000 \
+					       2r00000000 2r00000000 \
+					       2r01111111 2r11000000 \
+					       2r00111111 2r10000000 \
+					       2r00111111 2r10000000 \
+					       2r00011111 2r00000000 \
+					       2r00011111 2r00000000 \
+					       2r00001110 2r00000000 \
+					       2r00001110 2r00000000 \
+					       2r00000100 2r00000000 \
+					       2r00000100 2r00000000 \
+					       2r00000000 2r00000000] \
+					pad:8
+
+arrowButton.leftForm               Image extent:12@11 \
+					depth:1      \
+					bits:#[ \
+					       2r00000000 2r00000000 \
+					       2r00000000 2r01000000 \
+					       2r00000001 2r11000000 \
+					       2r00000111 2r11000000 \
+					       2r00011111 2r11000000 \
+					       2r01111111 2r11000000 \
+					       2r00011111 2r11000000 \
+					       2r00000111 2r11000000 \
+					       2r00000001 2r11000000 \
+					       2r00000000 2r11000000 \
+					       2r00000000 2r00000000 \
+					      ] \
+					pad:8
+
+arrowButton.rightForm              Image extent:12@11 \
+					depth:1      \
+					bits:#[ \
+					       2r00000000 2r00000000 \
+					       2r00100000 2r00000000 \
+					       2r00111000 2r00000000 \
+					       2r00111110 2r00000000 \
+					       2r00111111 2r10000000 \
+					       2r00111111 2r11100000 \
+					       2r00111111 2r10000000 \
+					       2r00111110 2r00000000 \
+					       2r00111000 2r00000000 \
+					       2r00100000 2r00000000 \
+					       2r00000000 2r00000000 \
+					      ] \
+					pad:8
+#endif

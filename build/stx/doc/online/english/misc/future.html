@@ -1,0 +1,81 @@
+<HTML>
+
+<HEAD>
+<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<TITLE>Smalltalk/X Online Documentation - Ongoing Work & Future</Title>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="../TOP.html"> <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+
+<H1>Dreams - things we would like to find time (and financing) to work on</H1>
+
+There are a bunch of ideas which are waiting to be implemented:
+<br>
+<UL>
+<LI>Redesigning the VM
+<br>using a more flexible (and language independent) object layout, to
+allow for easier integration of alien languages, to support the idea
+of a global (world-wide) Smalltalk image (without a need for ugly corba,
+to talk to other objects).
+<P>
+<LI>Redesigning the VM,
+<br>trying new memory management algorithms (train)
+<P>
+<LI>exposing the semantics of bytecodes
+<br>
+All of the bytecode compilation, interpretation and jitting should be
+done on the Smalltalk class level; in fact, all of the above should be
+user-modifyable code in Method (or subclasses).
+<br>
+This would enable everybody to tune the virtual machine to personal needs,
+and to use Smalltalk to explore new languages (at full speed).
+<br>
+Late note: we started the OpenVM project at CS6 - this will get rid of bytecodes alltogether.
+(bytecodes are not very object oriented and should be removed - much more reflection is
+possible if we go the lisp way...)
+</UL>
+
+<H1>Ongoing work - things we are working on</H1>
+
+<UL>
+
+<LI>Finishing the Smalltalk/Java integration
+<BR>
+The second part will allow recompilation (i.e. 'accepting') java
+methods within the Smalltalk browser.
+<P>
+
+
+<LI>Add dynamic customization to the JIT compiler
+<BR>
+This will boost the performance of JIT compiled code.
+<BR>
+However, a trade has to be made between recompilation speed
+and execution speed - to avoid spending a lot of time in
+the JIT compiler for methods which are seldom invoked.
+<P>
+
+
+<LI>image interchange between different platforms
+
+<P>
+<LI>different GC algorithms for special needs (plug-in GC modules, realtime support)
+
+<P>
+<LI>multiple oldSpaces
+
+<P>
+<LI>shared object spaces, attach/detach to shared spaces
+
+<P>
+<LI>support for continuations
+
+</UL>
+
+
+
+<HR>
+Doc $Revision: 1.13 $ $Date: 2016-09-14 09:41:12 $
+</BODY>
+</HTML>

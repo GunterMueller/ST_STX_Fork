@@ -1,0 +1,84 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Smartcard Interfacing Framework</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="crypt.html">     <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="pdfLibrary.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Smartcard Interfacing Framework</H1>
+
+<H2>Introduction</H2>
+
+This package consists of a set of Smalltalk classes which implement
+a framework for the development of smartcard applications.
+All of the card-terminal protocol and the card protocol are implemented
+as pluggable components, which allows for easy future extension.
+<P>
+Especially if used with the <A HREF="crypt.html">cryptographic support library</A>,
+security applications are easy to implement with Smalltalk/X.
+
+<H2>Supported Card Terminals</H2>
+To date, the following terminal/terminal protocols are supported:
+<UL>
+<LI>OROS/GemPlus compatible terminals (i.e. GemPlus GCR500, GCR410 etc.)
+</UL>
+
+<H2>Supported Card Protocols</H2>
+<UL>
+<LI>T0
+<LI>T1 (GemPlus only - under construction)
+</UL>
+
+<H2>Supported Cards</H2>
+<UL>
+<LI>ISO7816 Card
+<LI>GSM11.11 Card
+</UL>
+
+<H2>Documentation</H2>
+This document is available upon request.
+
+<H2>Example</H2>
+The following code-fragment reads a cards ICC-id from a
+card (assumes a GemPlus card reader being connected to
+the serial line):
+<CODE><PRE>
+    |cardTerminal card iccID|
+
+    cardTerminal := GemPlus_GCR500 atDevice:'/dev/cua1'.
+    cardTerminal waitForCardPresentInSlot:1.
+    card := cardTerminal getCardInSlot:1.
+
+    iccID := card getIccId.
+    Transcript showCR:'The ICC-id is: ' , iccID.
+
+    cardTerminal waitForCardRemovedInSlot:1.
+    cardTerminal close
+</PRE></CODE>
+
+<H2>Licensing</H2>
+This addOn package is licensed separately from the base ST/X system.
+<BR>
+Please contact eXept for further details, license information & pricing.
+<P>
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 1999 eXept Software AG
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.7 $
+</BODY>
+</HTML>

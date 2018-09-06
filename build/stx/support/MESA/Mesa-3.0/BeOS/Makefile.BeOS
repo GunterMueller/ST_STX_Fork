@@ -1,0 +1,139 @@
+# Makefile for book programs for BeOS contributed by Tinic Urou
+# (5uro@informatik.uni-hamburg.de)
+
+# Mesa 3-D graphics library
+# Version:  2.0
+# Copyright (C) 1995  Brian Paul  (brianp@ssec.wisc.edu)
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public
+# License along with this library; if not, write to the Free
+# Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+# $Id: Makefile.BeOS,v 1.1 1998-10-05 22:29:47 cg Exp $
+
+# Revision 1.0  1997/01/31  07:43:20 tinic urou
+# Initial revision
+#
+
+##### MACROS #####
+
+STDDIR = ./
+INCDIR = ../include
+
+GL_LIBS = -L../lib $(XLIBS)
+
+LIB_DEP = ../lib/$(GL_LIB)
+
+PROGS = alpha3D chess cone_ball material tea teapots texgen nurbs surface\
+		checker checker2 dof texturesurf sphere cone font model disk\
+		teaambient fog light spheremap wave logo
+
+##### RULES #####
+
+$(LIB_DEP):
+	$(MAKELIB) $(GL_LIB) -map $(GL_LIB).xMAP ../src/*.o ../src-glu/*.o ../src-tk/*.o ../src-aux/*.o
+	$(RANLIB) $(GL_LIB)
+	cp $(GL_LIB)* /boot/system/lib
+	mv $(GL_LIB)* ../lib
+	
+generic.o:
+	$(CC) -c -I$(INCDIR) $(CFLAGS) generic.cpp -o generic.o
+
+alpha3D: $(LIB_DEP) generic.o
+	$(CC) alpha3D.cpp generic.o $(CFLAGS) $< $(GL_LIBS) -o $@ -i- -I$(INCDIR) -I$(STDDIR)
+
+chess: $(LIB_DEP) generic.o
+	$(CC) chess.cpp generic.o $(CFLAGS) $< $(GL_LIBS) -o $@ -i- -I$(INCDIR) -I$(STDDIR)
+
+cone_ball: $(LIB_DEP) generic.o
+	$(CC) cone_ball.cpp generic.o $(CFLAGS) $< $(GL_LIBS) -o $@ -i- -I$(INCDIR) -I$(STDDIR)
+
+material: $(LIB_DEP) generic.o
+	$(CC) material.cpp generic.o $(CFLAGS) $< $(GL_LIBS) -o $@ -i- -I$(INCDIR) -I$(STDDIR)
+
+tea: $(LIB_DEP) generic.o
+	$(CC) tea.cpp generic.o $(CFLAGS) $< $(GL_LIBS) -o $@ -i- -I$(INCDIR) -I$(STDDIR)
+
+teapots: $(LIB_DEP) generic.o
+	$(CC) teapots.cpp generic.o $(CFLAGS) $< $(GL_LIBS) -o $@ -i- -I$(INCDIR) -I$(STDDIR)
+
+texgen: $(LIB_DEP) generic.o
+	$(CC) texgen.cpp generic.o $(CFLAGS) $< $(GL_LIBS) -o $@ -i- -I$(INCDIR) -I$(STDDIR)
+
+nurbs: $(LIB_DEP) generic.o
+	$(CC) nurbs.cpp generic.o $(CFLAGS) $< $(GL_LIBS) -o $@ -i- -I$(INCDIR) -I$(STDDIR)
+
+surface: $(LIB_DEP) generic.o
+	$(CC) surface.cpp generic.o $(CFLAGS) $< $(GL_LIBS) -o $@ -i- -I$(INCDIR) -I$(STDDIR)
+
+checker: $(LIB_DEP) generic.o
+	$(CC) checker.cpp generic.o $(CFLAGS) $< $(GL_LIBS) -o $@ -i- -I$(INCDIR) -I$(STDDIR)
+
+checker2: $(LIB_DEP) generic.o
+	$(CC) checker2.cpp generic.o $(CFLAGS) $< $(GL_LIBS) -o $@ -i- -I$(INCDIR) -I$(STDDIR)
+
+dof: $(LIB_DEP) generic.o
+	$(CC) dof.cpp generic.o $(CFLAGS) $< $(GL_LIBS) -o $@ -i- -I$(INCDIR) -I$(STDDIR)
+
+texturesurf: $(LIB_DEP) generic.o
+	$(CC) texturesurf.cpp generic.o $(CFLAGS) $< $(GL_LIBS) -o $@ -i- -I$(INCDIR) -I$(STDDIR)
+
+sphere: $(LIB_DEP) generic.o
+	$(CC) sphere.cpp generic.o $(CFLAGS) $< $(GL_LIBS) -o $@ -i- -I$(INCDIR) -I$(STDDIR)
+
+cone: $(LIB_DEP) generic.o
+	$(CC) cone.cpp generic.o $(CFLAGS) $< $(GL_LIBS) -o $@ -i- -I$(INCDIR) -I$(STDDIR)
+
+font: $(LIB_DEP) generic.o
+	$(CC) font.cpp generic.o $(CFLAGS) $< $(GL_LIBS) -o $@ -i- -I$(INCDIR) -I$(STDDIR)
+
+model: $(LIB_DEP) generic.o
+	$(CC) model.cpp generic.o $(CFLAGS) $< $(GL_LIBS) -o $@ -i- -I$(INCDIR) -I$(STDDIR)
+
+disk: $(LIB_DEP) generic.o
+	$(CC) disk.cpp generic.o $(CFLAGS) $< $(GL_LIBS) -o $@ -i- -I$(INCDIR) -I$(STDDIR)
+
+teaambient: $(LIB_DEP) generic.o
+	$(CC) teaambient.cpp generic.o $(CFLAGS) $< $(GL_LIBS) -o $@ -i- -I$(INCDIR) -I$(STDDIR)
+
+fog: $(LIB_DEP) generic.o
+	$(CC) fog.cpp generic.o $(CFLAGS) $< $(GL_LIBS) -o $@ -i- -I$(INCDIR) -I$(STDDIR)
+
+light: $(LIB_DEP) generic.o
+	$(CC) light.cpp generic.o $(CFLAGS) $< $(GL_LIBS) -o $@ -i- -I$(INCDIR) -I$(STDDIR)
+
+logo: $(LIB_DEP)
+	$(CC) logo.cpp $(CFLAGS) $< $(GL_LIBS) -o $@ -i- -I$(INCDIR) -I$(STDDIR)
+
+wave: $(LIB_DEP)
+	$(CC) wave.cpp $(CFLAGS) $< $(GL_LIBS) -o $@ -i- -I$(INCDIR) -I$(STDDIR)
+
+spheremap: $(LIB_DEP)
+	$(CC) spheremap.cpp $(CFLAGS) $< $(GL_LIBS) -o $@ -i- -I$(INCDIR) -I$(STDDIR)
+
+all: generic.o $(PROGS)
+
+##### TARGETS #####
+
+default:
+	@echo "Specify a target configuration"
+
+clean:
+	-rm *.o *~
+	-rm -f $(PROGS)
+
+realclean: clean
+
+targets: $(PROGS)
+
+include ../Make-config

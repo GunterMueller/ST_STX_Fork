@@ -1,0 +1,80 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - API for custom code generators and refactorings - installation</TITLE>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="refactoring_custom.html">   <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="refactoring_custom.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="refactoring_custom-getting-started.html">  <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>API for custom code generators and refactorings - installation</H1>
+
+<h2>Requirements</h2>
+
+<p>
+<b>1. Smalltalk/X</b><br>
+You need recent <a href="http://swing.fit.cvut.cz/projects/stx-goodies/wiki/SmalltalkX">Smalltalk/X jv-branch</a> downloaded and 
+installed on your computer. Package is not tested and maintained on official eXept
+Smalltalk/X distribution downloaded from <a href="http://www.exept.de">http://www.exept.de</a>.
+</p>
+
+<p>
+<b>2. Package source files</b><br>
+
+You need to download package from Bitbucket repository
+<a href="https://bitbucket.org/jnesveda/refactoring_custom">jnesveda/refactoring_custom</a>.
+You can download it via
+<a href="http://mercurial.selenic.com/">Mercurial</a>
+command "hg clone url/from/the/link/above" or by clicking on cloud icon in the
+left bar titled with "Downloads".
+</p>
+
+<h2>Installation</h2>
+
+<p>
+Add downloaded source files to folder named "jn/refactoring_custom" which needs
+to be located under your package path (easiest is to put it just in lib/smalltalkx/6.2.5/packages
+where 6.2.5 is STX version). Now run STX, open system browser and click on
+top menu items named "View -&gt; Package". You should see new package named
+jn/refactoring_custom. Right-click on it and select "Load".
+<pre class="code-snippet">
+"To see whats you package path write following line somewhere in STX
+(code editor,launcher text-box), select it, rigt-click and choose Inspect."
+Smalltalk packagePath.
+"This will add a folder as package path"
+Smalltalk packagePath add: 'C:\path\to\your\packages'.
+</pre>
+</p>
+
+<p>
+If everything went well then you can select some class in the system browser,
+right-click on it and now you should see 2 new menu items "Refactor - Custom",
+"Generate - Custom". However, many troubles can happen during package loading.
+Subpackage "patches" has to also properly loaded, but can happen that it wont
+load with described procedure. There are many other possibilities how to load
+classes. You can try one of these if regular way fails (you will see classes marked
+as unloaded or you wont see them):
+<ul>
+	<li>Load classes one-by-one by double clicking on them</li>
+	<li>Click on View -&gt; Category in the system browser, select category,
+	right-click on it and click on "Special -&gt; Load"</li>
+	<li>Open file browser, locate the source files, select them, right-click
+	on it and click on FileIn</li>
+	<li>Paste "Smalltalk loadPackage: 'jn:refactoring_custom'" somewhere (e.g. launcher dialog),
+	select it, right-click on it and click on "DoIt" in the menu</li>
+</ul>
+Finally you can run tests using test runner from launcher to see if everything
+works as expected. You can check the test results against the newest STX-JV branch version
+in <a href="https://swing.fit.cvut.cz/jenkins/job/custom_refactorings_reports/">Jenkins job</a>,
+but this will be most probably removed when this project will be outdated.
+</p>
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+
+</BODY>
+</HTML>

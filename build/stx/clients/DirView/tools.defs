@@ -1,0 +1,36 @@
+"
+sample .Tools.defs file 
+
+instead of inventing just another configuration language,
+definitions are given as Smalltalk expressions.
+
+this file is looked for in your home directory at:
+
+    ~/.Tools.defs 
+    and, if not found there in the current directory 
+
+Tool definitions:
+
+Each tool definition consists of 4 expressions:
+
+    'tool-name' 'iconFileName' argumentQuery action-block
+
+if argumentQuery is non-nil, the user is asked for a string which is passed
+to the action-block. The argumentQuery value will be the title of the asking box.
+Otherwise the actionblock is called without arg.
+"!
+
+'System Browser'    'SBrowser'   nil                                             [SystemBrowser start]                                   !
+'File Browser'      'FBrowser'   nil                                             [FileBrowser start]                                     !
+'Directory Browser' 'FBrowser'   nil                                             [DirectoryBrowser start]                                !
+'Workspace'         'Workspace'  nil                                             [Workspace start]                                       !
+'Mail Tool'         'Mail'       nil                                             [MailView start]                                        !
+'Bitmap editor'     'BitEditor'  'please enter filename and size (widthxheight)' [:arg | OperatingSystem executeCommand:'bitmap ',arg,' &']   !
+'Draw Tool'         'DrawTool'   nil                                             [DrawTool start]                                      !
+'Clock'             'Clock'      nil                                             [Clock start]                                           !
+'Round Clock'       'RClock'     nil                                             [RoundClock start]                                      !
+'XClock'            'Clock'      nil                                             [OperatingSystem executeCommand:'xclock &']             !
+'News'              'News'       nil                                             [NewsView start]                !
+'Tetris'            'Tetris'     nil                                             [Tetris start]                                          !
+'TicTacToe'         'TicTacToe'  nil                                             [TicTacToe start]                                          !
+'AddressBook'       'Addresses'  nil                                             [AddressBook start]                                          !

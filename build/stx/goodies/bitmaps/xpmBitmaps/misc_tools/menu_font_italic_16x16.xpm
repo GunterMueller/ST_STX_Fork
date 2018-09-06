@@ -1,0 +1,25 @@
+/* XPM */
+static char *menu_italicFont_16x16_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 2 1",
+/* colors */
+"a c black",
+"b c none",
+/* pixels */
+"bbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbb",
+"bbbbbbbbaaaaaabb",
+"bbbbbbbbbaaabbbb",
+"bbbbbbbbaaabbbbb",
+"bbbbbbbaaabbbbbb",
+"bbbbbbaaabbbbbbb",
+"bbbbbaaabbbbbbbb",
+"bbbbaaabbbbbbbbb",
+"bbbaaabbbbbbbbbb",
+"baaaaaabbbbbbbbb",
+"bbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbb",
+};

@@ -1,0 +1,11 @@
+LIBRARY         libodbc
+DESCRIPTION     'Smalltalk/X ODBC DB Interface'
+VERSION         1.0
+CODE            EXECUTE READ SHARED
+DATA            READ WRITE
+SECTIONS
+    INITCODE    READ EXECUTE SHARED
+    INITDATA    READ WRITE
+    RODATA      READ SHARED
+EXPORTS 
+    _libodbc_Init

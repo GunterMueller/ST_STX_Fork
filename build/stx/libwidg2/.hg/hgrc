@@ -1,0 +1,8 @@
+[phases]
+publish = false
+
+[paths]
+canonical = https://bitbucket.org/janvrany/stx-libwidg2
+staging = https://bitbucket.org/janvrany/stx-libwidg2
+default = https://bitbucket.org/janvrany/stx-libwidg2
+

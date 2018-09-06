@@ -1,0 +1,168 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Tools - Monticello Browser</Title>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="../TOP.html">            <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+
+
+<H1>Montcello Package Browser</H1>
+
+<H2><A NAME="INDEX">Index</A></H2>
+
+<UL>
+<LI> <A HREF="#INTRODUCTION">Introduction</A></LI>
+
+<LI> <A HREF="#OPENING">Opening the Monticello Browser</A></LI>
+
+<LI> <A HREF="#ADDING_REPOSITORIES">Adding a Repository</A></LI>
+
+<LI> <A HREF="#BROWSING_PACKAGE">Browsing a Package</A></LI>
+
+<LI> <A HREF="#LOADING_PACKAGE">Loading a Package</A></LI>
+
+<LI> <A HREF="#SAVING_PACKAGE">Saving a Package</A></LI>
+
+</UL>
+
+
+
+<H2><A HREF="#INDEX" NAME="INTRODUCTION">Introduction</A> </H2>
+
+This tool is an adaption of the <i>Squeak/Pharo Monticello</i> repository browser.
+Monticello is a framework and package format used in the Squeak/Pharo Smalltalk dialect.
+<P>
+Notice, that <i>ST/X</i> tradiationally uses a different packaging scheme, which is based on
+individual source files and package-meta-description being contained as class-methods in so called
+ProjectDefinition classes.
+These are regular Smalltalk source code files,
+which are compiled with the package-classes
+and usually bundled in a single DLL (a binary class library).
+<P>
+The main use of monticello is to aid in bringing Squeak code to Smalltalk/X and vice versa.
+Please read the hints and notes below regarding possible problems when importing and exporting code.
+
+<H2><A HREF="#INDEX" NAME="OPENING">Opening the Monticello Browser</A> </H2>
+
+You find the menu item for opening under the Launcher's
+"<i>Tools</i>" - "<i>Monticello Browser</i>" menu.
+<br>
+Alternatively, evaluate "<code><A type="example">MCRepositoryBrowser open</A></code>" in a workspace.
+
+<H2><A HREF="#INDEX" NAME="ADDING_REPOSITORIES">Adding a Repository</A> </H2>
+
+If you want to import a Monticello package file (".mcz" suffix),
+copy it to a common repository folder and add this directory
+via the "<I>Repository</I>" - "<I>Add Directory Repository</I>" menu item.
+
+Alternatively, connect to a public Squeak repository via either the
+"<I>Add Directory Repository (URL)</I>"
+or "<I>Add Directory Repository (Expression)</I>" menu functions.
+<P>You'll find such expressions in the squeaksource repository,
+under the "Registration" headline. For example in "http://www.squeaksource.com/@pAUgNekdCaXrMHvg/c4Orvnq3",
+you will find the expression:
+<code><pre>
+    MCHttpRepository
+	location: 'http://www.squeaksource.com/OpenCL'
+	user: ''
+	password: ''
+</pre></code>
+Copy and paste this expression into the input dialog after selecting the "<i>Repository</i>" - "<i>Add Repository (Expression)</i>" menu item.
+<P>
+When selected, a repository's packages are shown in the center list.
+<br>
+When a package is selected in the center list, the package's versions are
+shown in the right list.
+
+
+<H2><A HREF="#INDEX" NAME="BROWSING_PACKAGE">Browsing a Package</A> </H2>
+
+Selection of a package's version enables the "<I>Browse</I>" and "<I>Load</I>"
+buttons. If the package has already been ported and verified to be compatible with <i>ST/X</i>,
+you can directly load it.
+Otherwise, it is recommended to inspect its contents first: press the "<I>Browse</I>"
+button to get a change-list browser on the package's contents.
+<P>
+In the change-list, take a look for any overrides - these are methods which are already
+present in the image and would be overwritten when the package is loaded.
+The changeset browser highlights such conflicts with a red exclamation mark.
+<P>
+If any such are present, it is recommended to manually step through each entry
+in the browser and apply the change by pressing "<i>Accept</i>". Thus loading the package incrementally.
+Skip any conflicting definitions.
+A future version if the Monticello browser may make this a more convenient operation, if it turns out to be
+a common task.
+For now, as this needs to be done only once
+(when the Squeak package
+is loaded for the very first time) this little inconvenience should be acceptable.
+
+
+<H2><A HREF="#INDEX" NAME="LOADING_PACKAGE">Loading a Package</A> </H2>
+
+You can (and often should) load the package into a separate namespace to reduce the
+chances for class name conflicts.
+Also, be aware that the Monticello package naming scheme is
+different from <i>ST/X's</i> scheme:
+<ul>
+<li>Monticello uses the class category as package name,
+and marks extension methods in other classes via the method category (a '*' followed by the package name)
+<li>in contrst, <i>ST/X</i> uses a separate package attribute for both classes and individual methods, which is not required to be related to the category.
+</ul>
+Therefore, you may also set the ST/X package name, into which the code is to be loaded.
+Use the menu items "<i>Loading</i>" - "<i>Set Target Package</i>" / "<i>Set Target Namespace</i>"
+to specify those before loading/applying changes.
+<P>
+Getting the code initially loaded into <I>ST/X</I> is usually the
+biggest obstacle in your way.
+Once that has been acomplished,
+run the unit tests, check for incompatible message sends
+and fix the code. Then save it as Monticello package,
+or check it into your <I>ST/X</I> source code repository.
+
+
+<H2><A HREF="#INDEX" NAME="SAVING_PACKAGE">Saving a Package</A> </H2>
+
+Once you have the package loaded, it is a good idea to
+save it as a new version (possibly with an added "-stx" suffix in the
+Monticello package name). Usually you will save the package on a local
+folder repository - at least initially.
+It is a good idea to save even the first initial imported version
+as a reference against the original, even if that does not yet pass
+any unit test suite and is not executable.
+<P>
+Saving is not done from within the Monticello Browser, but
+in a System Browser instead.
+There, switch the "View"-mode to "Package",
+select the package to be saved,
+and execute the "<I>Monticello</I>"-"<I>Commit or Write mcz File</I>" menu item.
+This saves the selected package as a Monticello package - either in a public repository
+or locally in the file system (use the above directory repository for that).
+Generated mcz packages should load immediately into another <I>ST/X</I> system,
+but may require some porting effort, when importing into Squeak or another Smalltalk dialect.
+<P>
+When saving to a public (aka Squeak-) repository, make sure that you check the code for compatibility issues
+- the browser provides some special static code checks for this (although they may not
+cover all compatibility issues). Otherwise, make it clear to others, that this
+is an <I>ST/X</I>-only package, by appending an "-stx" suffix to the mcz file name.
+<P>
+Especially, make sure that the code is syntactically compatible with the target system.
+In particular, this means that End-of-Line comments and Namespaces should not be used
+in the code, if it is ever to be loaded into a non-<I>ST/X</I> Smalltalk.
+
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif" ALT="[stx logo]">
+Copyright &copy; 2013-2016 Claus Gittinger, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.10 $ $Date: 2016-11-03 12:22:41 $
+
+</BODY>
+</HTML>

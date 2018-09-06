@@ -1,0 +1,39 @@
+"
+	Izar application startup script
+	$Header: /opt/data/cvs/stx/goodies/xmlsuite/xquery/distutils/src/lib/xquery-workspace.rc,v 1.1 2007-02-11 22:58:59 vranyj1 Exp $
+	
+	This will bring up standalone XQueryWorkspace application.
+	(i.e. XQuery::WorkspaceApplication)
+"
+| wasSilent |
+
+Smalltalk packagePath infoPrintCR.
+
+
+Smalltalk standAloneApp: true.
+
+Smalltalk fileIn:'common.rc'.
+
+wasSilent := Smalltalk silentLoading:true.
+[Smalltalk 
+	loadPackage: 'cvut-fel:libutil';
+	loadPackage: 'stx:patches';
+	loadPackage: 'cvut-fel:libutilui';
+	loadPackage: 'stx:goodies/smaCC';
+	loadPackage: 'stx:goodies/xmlsuite';
+	loadPackage: 'stx:goodies/xmlsuite/xpath';
+	loadPackage: 'stx:goodies/xmlsuite/xquery';
+	loadPackage: 'stx:goodies/xmlsuite/relaxng';
+	loadPackage: 'stx:goodies/xmlsuite/xmlreaderimpl']
+ensure:
+     [Smalltalk silentLoading:wasSilent].
+     
+NoHandlerError emergencyHandler: 
+	NoHandlerError notifyingEmergencyHandlerForUserProcesses.
+
+Smalltalk addStartBlock:[	
+	'xquery-workspace.rc [info]: opening main window...' infoPrintCR.
+	Text new. "/ to avoid visible messages in minitalk - some Claus magick
+
+	XQuery::WorkspaceApplication open.
+].

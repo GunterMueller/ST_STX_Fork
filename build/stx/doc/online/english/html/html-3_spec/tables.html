@@ -1,0 +1,355 @@
+<title>Tables</title>
+<H1>Tables</H1>
+
+<B>Permitted Context:</B> %body.content, %flow, %block<BR>
+<B>Content Model:</B> Optional <a href="captions.html">CAPTION</a>, then
+one or more <a href="tablerows.html">table rows</a> (TR)
+
+<P>The HTML table model has been chosen for its simplicity and
+flexibility. By default the table is automatically sized according to
+the cell contents and the current window size. The COLSPEC attribute
+can be used when needed to exert control over column widths, either by
+setting explicit widths or by specifying relative widths. You can also
+specify the table width explicitly or as a fraction of the current
+margins (see WIDTH attribute).
+
+<P>Table start with an optional caption followed one or more rows. Each
+row is formed by one or more cells, which are differentiated into
+header and data cells. Cells can be merged across rows and columns, and
+include attributes assisting rendering to speech and braille, or for
+exporting table data into databases. The model provides little direct
+support for control over appearence, for example border styles and
+margins, as these can be handled via subclassing and associated style
+sheets.
+
+<P>Tables can contain a wide range of content, such as headers, lists,
+paragraphs, forms, figures, preformatted text and even nested tables.
+When the table is flush left or right, subsequent elements will be
+flowed around the table if there is sufficient room. This behaviour is
+disabled when the <i>noflow</i> attribute is given or the table align
+attribute is <i>center</i> (the default), or <i>justify</i>.
+
+<h3>Example</h3>
+
+<PRE>&lt;TABLE BORDER&gt;
+  &lt;CAPTION&gt;A test table with merged cells&lt;/CAPTION&gt;
+  &lt;TR&gt;&lt;TH ROWSPAN=2&gt;&lt;TH COLSPAN=2&gt;Average
+      &lt;TH ROWSPAN=2&gt;other&lt;BR&gt;category&lt;TH&gt;Misc
+  &lt;TR&gt;&lt;TH&gt;height&lt;TH&gt;weight
+  &lt;TR&gt;&lt;TH ALIGN=LEFT&gt;males&lt;TD&gt;1.9&lt;TD&gt;0.003
+  &lt;TR&gt;&lt;TH ALIGN=LEFT ROWSPAN=2&gt;females&lt;TD&gt;1.7&lt;TD&gt;0.002
+&lt;/TABLE&gt;</PRE>
+
+<P>This would be rendered something like:
+
+<pre>              A test table with merged cells
+    /--------------------------------------------------\
+    |          |      Average      |  other   |  Misc  |
+    |          |-------------------| category |--------|
+    |          |  height |  weight |          |        |
+    |-----------------------------------------|--------|
+    | males    |   1.9   |  0.003  |          |        |
+    |-----------------------------------------|--------|
+    | females  |   1.7   |  0.002  |          |        |
+    \--------------------------------------------------/
+</pre>
+
+<P>There are several points to note:
+
+<UL>
+<LI>By default, header cells are centered while data cells are flush
+left. This can be overriden by the ALIGN attribute for the cell; the
+COLSPEC attribute for the TABLE element; or the ALIGN attribute on the
+enclosing row's TR element (from the most specific to the least).
+<LI>Cells may be empty.
+<LI>Cells spanning rows contribute to the column count on each of the
+spanned rows, but only appear in the markup once (in the first row
+spanned).
+<LI>If the column count for the table is greater than the number of cells
+for a given row (after including cells for spanned rows), the missing
+cells are treated as occurring on the right handside of the table, and
+rendered as empty cells.
+<LI>The row count is determined by the TR elements - any rows implied by
+cells spanning rows beyond this should be ignored.
+<LI>The user agent should be able to recover from a missing &lt;TR&gt;
+tag prior to the first row as the TH and TC elements can only occur
+within the TR element.
+<LI>It is invalid to have cells overlap, see below for an example.
+In such cases, the rendering is implementation dependent.
+</UL>
+
+<P>An example of an invalid table:
+
+<pre>&lt;table border&gt;
+&lt;tr&gt;&lt;tdrowspan=2&gt;1&lt;td&gt;2&lt;td&gt;3&lt;td&gt;4&lt;td&gt;5
+&lt;tr&gt;&lt;td rowspan=2&gt;6
+&lt;tr&gt;&lt;td colspan=2&gt;7&lt;td&gt;8
+&lt;/table&gt;</pre>
+
+<p>which looks something like:
+
+<pre>    /-------------------\
+    | 1 | 2 | 3 | 4 | 5 |
+    |   |---------------|
+    |   | 6 |   |   |   |    The cells labelled 6 and 7 overlap!
+    |---|...|-----------|
+    | 7 :   | 8 |   |   |
+    \-------------------/</pre>
+<P>Borderless tables are useful for layout purposes as well as their
+traditional role for tabular data, for instance with fill-out forms:
+
+<pre>                  name: [John Smith        ]
+		card number: [4619 693523 20851 ]
+		    expires: [03] / [97]
+		  telephone: [212 873 2739      ]</pre>
+
+<P>This can be represented as a table with one row and two columns.
+The first column is right aligned, while the second is left aligned.
+This example could be marked up as:
+
+<pre>&lt;table&gt;
+  &lt;tr valign=baseline&gt;
+  &lt;td align=right&gt;
+    name:&lt;br&gt;
+    card number:&lt;br&gt;
+    expires:&lt;br&gt;
+    telephone:
+  &lt;td align=left&gt;
+    &lt;input name="name" size=18&gt;&lt;br&gt;
+    &lt;input name="cardnum" size=18&gt;&lt;br&gt;
+    &lt;input name="expires-month" size=2&gt; /
+    &lt;input name="expires-year" size=2&gt;&lt;br&gt;
+    &lt;input name="phone" size=18&gt;&lt;br&gt;
+&lt;/table&gt;
+</pre>
+
+<P>The use of such techniques is one of the motivations for using nested
+tables, where borderless tables are used to layout cell contents for an
+enclosing table
+
+<P><B>Hint:</B> You can achieve a similar effect to the above by using
+decimal alignment and using the DP attribute to set the alignment
+character to a convenient character, for example:
+
+<pre>&lt;table&gt;
+  &lt;tr align=decimal dp=":"&gt;
+  &lt;td&gt;
+    name: &lt;input name="name" size=18&gt;&lt;br&gt;
+    card number: &lt;input name="cardnum" size=18&gt;&lt;br&gt;
+    expires: &lt;input name="expires-month" size=2&gt; /
+    &lt;input name="expires-year" size=2&gt;&lt;br&gt;
+    telephone:&lt;input name="phone" size=18&gt;&lt;br&gt;
+&lt;/table&gt;
+</pre>
+
+<P>Each line in the table is then indented so that all the colons
+are positioned under one another.
+
+<h3>Table Sizing Algorithm</h3>
+
+<P>The default sizing algorithm requires two passes through the table
+data. In the first pass, word wrapping is disabled, and the user agent
+keeps track of the minimum and maximum width of each cell. The maximum
+width is given by the widest line. As word wrap has been disabled,
+paragraphs are treated as long lines unless broken by &lt;BR&gt;
+elements. The minimum width is given by the widest word or image etc.
+taking into account leading indents and list bullets etc. In other
+words, if you were to format the cell's content in a window of its own,
+determine the minimum width you could make the window before things
+begin to be clipped.
+
+<P>The minimum and maximum cell widths are then used to determine the
+corresponding minimum and maximum widths for the columns. These in turn,
+are used to find the minimum and maximum width for the table. Note that
+cells can contain nested tables, but this doesn't complicate the code
+significantly. The next step is to assign column widths according to the
+current window size (more accurately - the width between the left and
+right margins).
+
+<P>The table borders and intercell margins need to be included in the
+assignment step. There are three cases:
+
+<OL>
+<LI><B>The minimum table width is equal to or wider than the available
+space.</B> In this case, assign the minimum widths and allow the user to
+scroll horizontally. For conversion to braille, it will be necessary to
+replace the cells by references to notes containing their full content.
+By convention these appear before the table.
+
+<LI><B>The maximum table width fits within the available space.</B> In
+this case, set the columns to their maximum widths.
+
+<LI><B>The maximum width of the table is greater than the available
+space, but the minimum table width is smaller.</B> In this case, find
+the difference between the available space and the minimum table width,
+lets call it <i>W</i>. Lets also call <i>D</i> the difference between
+maximum and minimum width of the table.
+
+<P>For each column, let <i>d</i> be the the difference between maximum
+and minimum width of that column. Now set the column's width to the
+minimum width plus <i>d</i> times <i>W</i> over <i>D</i>. This makes
+columns with lots of text wider than columns with smaller amounts.
+</OL>
+
+<P>This assignment step is then repeated for nested tables. In this case,
+the width of the enclosing table's cell plays the role of the current
+window size in the above description. This process is repeated
+recursively for all nested tables.
+
+<P>If the COLSPEC attribute specifies the column widths explicitly, the
+user agent can attempt to use these values. If subsequently, one of the
+cells overflows its column width, the two pass mechanism may be invoked
+to redraw the table with more appropriate widths. If the attribute
+specifies relative widths, then the two pass model is always needed.
+
+<P>The column width assignment algorithm is then modified:
+
+<UL>
+<LI>Explicit widths from the COLSPEC attribute should be used when given,
+provided they are greater than the minimum column width, otherwise the
+latter should be used.
+<LI>For relative widths, the surplus space <i>W</i>, as defined above, is
+divided up between the columns appropriately, ensuring that each column
+is given at least its minimum width. If <i>W</i> is zero or negative,
+column widths should be increased over the minimum width to meet the
+relative width requirements.
+</UL>
+
+<P>If the table width is specified with the WIDTH attribute, the user
+agent attempts to set column widths to match. The WIDTH attribute should
+be disregarded if this results in columns having less than their minimum
+widths.
+
+<H3>Permitted Attributes</h3>
+
+<DL> <DT>ID <DD>An SGML identifier used as the target for hypertext
+links or for naming particular elements in associated style sheets.
+Identifiers are NAME tokens and must be unique within the scope of the
+current document.
+
+<DT>LANG <DD>This is one of the ISO standard language abbreviations,
+e.g. "en.uk" for the variation of English spoken in the United Kingdom.
+It can be used by parsers to select language specific choices for
+quotation marks, ligatures and hypenation rules etc. The language
+attribute is composed from the two letter language code from ISO 639,
+optionally followed by a period and a two letter country code from ISO
+3166.
+
+<DT>CLASS <DD>This a space separated list of SGML NAME tokens and is
+used to subclass tag names. By convention, the class names are
+interpreted hierarchically, with the most general class on the left
+and the most specific on the right, where classes are separated by a
+period. The CLASS attribute is most commonly used to attach a
+different style to some element, but it is recommended that where
+practical class names should be picked on the basis of the element's
+semantics, as this will permit other uses, such as restricting search
+through documents by matching on element class names. The  conventions
+for choosing class names are outside the scope of this specification.
+
+<DT>CLEAR <DD>When there is a figure or another table in the margin, you
+sometimes want to start another table below the figure rather than
+alongside it. The CLEAR attribute allows you to move down
+unconditionally:<BR><BR>
+
+<DL>
+<DT>clear=left<DD>move down until left margin is clear
+<DT>clear=right<DD>move down until right margin is clear
+<DT>clear=all<DD>move down until both margins are clear
+</DL>
+
+<P>Alternatively, you can decide to place the table alongside the
+figure just so long as there is enough room. The minimum width needed
+is specified as:<BR><BR>
+
+<DL>
+<DT>clear="40 en"<DD>move down until there is at least 40 en units free
+<DT>clear="100 pixels"<DD>move down until there is at least 100 pixels
+free
+</DL>
+
+<P>The style sheet (or browser defaults) may provide default minimum
+widths for each class of block-like elements.
+
+<DT>NOFLOW <DD>The presence of this attribute disables text flow around
+the table. It avoids the need to use the CLEAR or NEEDS attributes on
+the following element.
+
+<DT>ALIGN <DD>Specifies horizontal alignment of the table (<i>not</i>
+its contents):<BR><BR>
+
+<DL>
+<DT>BLEEDLEFT <DD>Flush left with the left (window) border.
+<DT>LEFT <DD>Flush left with the left text margin.
+<DT>CENTER <DD>The table is centered between the text margins and text
+flow around the table is disabled. This is the default setting for
+ALIGN.
+<DT>RIGHT <DD>Flush right with the right text margin.
+<DT>BLEEDRIGHT <DD>Flush right with the right (window) border
+<DT>JUSTIFY <DD>When applicable the table should be sized to fill the
+space between the left and right text margins. Text flow around the
+table is disabled for align=justify.
+</DL>
+
+<DT>UNITS <DD>Specifies the choice of units for the COLSPEC
+attribute:<BR><BR>
+
+<DL>
+<DT><tt>units=en</tt> <DD>Specifies en units (a typographical unit
+equalt to half the point size). This is the default setting and allows
+user agents to render the table a row at a time without waiting until
+all of the table's data has been received.
+<DT><tt>units=relative</tt> <DD>Used to set the relative width of
+columns. The user agent sums the values to determine the proportional
+width of each column.
+<DT><tt>units=pixels</tt> <DD>The least useful!
+</DL>
+
+<P>A design issue for user agents is how to handle cases where cell
+contents won't fit into the specified column widths. One approach is to
+clip the contents to the given column width, another is to resize the
+columns to fit the contents regardless of the COLSPEC attribute (its best
+to wait until all of the table's data has been processed before resizing).
+
+<DT>COLSPEC <DD>The colspec attribute is a list of column widths and
+alignment specifications. The columns are listed from left to right
+with a capital letter followed by a number, e.g. COLSPEC="L20 C8 L40".
+The letter is L for left, C for center, R for right alignment of cell
+contents. J is for justification, when feasible, otherwise this is
+treated in the same way as L for left alignment. D is for decimal
+alignment, see DP attribute.
+
+<P>Capital letters are required to avoid a particularly common error
+when a lower case L is confused with a one. Column entries are
+delimited by one or more space characters.
+
+<P>The number specifies the width in en's, pixels or as a fractional
+value of the table width, as according to the associated units
+attribute. This approach is more compact than used with most SGML table
+models and chosen to simplify hand entry. The width attribute allows
+you to specify the width of the table in pixels, em units or as a
+percentage of the space between the current left and right margins.
+
+<DT>DP <DD>This specifies the character to be used for the decimal
+point with the COLSPEC attribute, e.g. dp="." (the default) or dp=",".
+The default may be altered by the language context, as set by the LANG
+attribute on enclosing elements.
+
+<DT>WIDTH <DD>This specifies the width of the table according to the
+UNITS attribute. If units=relative, the width is taken as a percentage
+of the width between the current left and right margins. The user agent
+should disregard this attribute if it would result in columns having
+less than their minimum widths.
+
+<DT>BORDER <DD>This presence of this attribute instructs the user agent
+to render borders around tables. For instance: &lt;TABLE BORDER&gt;. The
+precise appearence, along with the size of margins around cells, can be
+controlled by associated style sheets, or via information in the STYLE
+element in the document head. Subclassing tables, rows and cells is
+particularly useful in this regard.
+
+<DT>NOWRAP <DD>The NOWRAP attribute is used when you don't want the
+browser to automatically wrap lines. You can then explicitly specify
+line breaks in paragrphs using the BR element.
+
+</DL>
+<!--NewPage-->

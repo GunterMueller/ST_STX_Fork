@@ -1,0 +1,6 @@
+MailHandler MailHndlr stx:clients/MailTool 'demos-MailTool' 0
+MailLetter MailLetter stx:clients/MailTool 'demos-MailTool' 0
+MailReplyTextView MailRTxtV stx:clients/MailTool 'demos-MailTool' 0
+MailView MailView stx:clients/MailTool 'demos-MailTool' 0
+POPMailHandler POPMailHandler stx:clients/MailTool 'demos-MailTool' 0
+SendMailTool SendMailTool stx:clients/MailTool 'Interface-Debugger' 0

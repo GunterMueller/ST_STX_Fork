@@ -1,0 +1,90 @@
+# -*- shell-script -*-
+[Meta]
+ShortName: stxFoxClone
+SoftwareVersion: 6.2.5.0
+DisplayName: ST/X FoxCalc Clone Demo
+RootName: @exept.de/expecco:$SOFTWAREVERSION
+Summary: ST/X FoxCalc Clone Demo
+Maintainer: eXept Software AG
+Packager: eXept Software AG
+PackageVersion: 1
+CPUArchitectures: x86
+AutopackageTarget: 1.0
+Type: Application
+License: Commercial
+
+[Description]
+ST/X FoxCalc Clone Demo
+
+[BuildPrepare]
+# If you're using autotools, the default should be enough.
+# prepareBuild will set up apbuild and run configure for you. If you
+# need to pass arguments to configure, just add them to prepareBuild:
+# prepareBuild --enable-foo --disable-bar
+#prepareBuild
+
+[BuildUnprepare]
+# If you're using prepareBuild above, there is no need to change this!
+#unprepareBuild
+
+[Globals]
+# Variables declared in this section will be available in all other sections
+export APKG_BUILD_SKIP_CONFIGURE=1
+export APKG_BUILD_SKIP_MAKE=1
+export MYPREFIX=/opt/stxFoxClone
+
+[Prepare]
+#recommend '@autopackage.org/autopackage-gtk' 1
+
+[Imports]
+import <<EOF
+$source_dir/stxFoxClone
+$source_dir/resources
+$source_dir/keyboard.rc
+$source_dir/keyboardMacros.rc
+$source_dir/display.rc
+$source_dir/host.rc
+$source_dir/../doc
+$source_dir/../testsuites/webedition
+$source_dir/../projects/libraries
+$source_dir/../reportGenerator/tools
+$source_dir/../../pdf/afm
+$source_dir/../plugin/selenium/libexept_expecco_plugin_selenium.so
+$source_dir/../externalTools
+EOF
+
+for i in $source_dir/*.so
+do
+    echo $source_dir/$(readlink $i)
+done | import
+
+[Install]
+if [ "$PREFIX" != "/usr" ]
+then
+    export MYPREFIX=$PREFIX
+fi
+
+find . -type d \( -name CVS -or -name 'not_*' \) -print | xargs rm -rf
+mkdir -p $MYPREFIX
+copyFiles expecco *.rc resources        $MYPREFIX/bin
+copyFiles *.so                          $MYPREFIX/lib
+copyFiles doc externalTools             $MYPREFIX/packages/exept/expecco
+copyFiles webedition/projects libraries $MYPREFIX/testsuites
+copyFiles tools                         $MYPREFIX/packages/exept/expecco/reportGenerator
+copyFiles afm                           $MYPREFIX/packages/exept/pdf
+copyFiles libexept_expecco_plugin_selenium.so   $MYPREFIX/plugin
+
+#installExe expecco
+#installLib *.so
+#installData resources
+#installData keyboard.rc
+#installData keyboardMacros.rc
+#installData host.rc
+#installData display.rc
+#installData doc
+
+[Uninstall]
+# Leaving this at the default is safe unless you use custom commands in
+# "Install" to create files. All autopackage API functions
+# that installs files are logged.
+uninstallFromLog

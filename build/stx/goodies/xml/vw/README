@@ -1,0 +1,17 @@
+This directory contains a port of the VisualWorks validating XML parser.
+
+Provided as is - no warranty.
+
+Notice:
+there are currently 3 XML parser frameworks available for ST/X:
+	indelv,
+	yaxo
+	vw
+
+The "indelv" parser is provided for historical reasons,
+and to maintain backward compatibility for users of this parser.
+Consider it as being deprecated.
+
+The yaxo parser is used by the spray soap package which has been ported from dolphin.
+
+New developed programs should use the vw parser.

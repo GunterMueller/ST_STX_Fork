@@ -1,0 +1,17 @@
+
+syntax: glob
+*Init.c   
+makefile
+*.so
+*.H
+*.o
+*.STH
+*.sc
+objbc
+objvc
+*.class
+java/libs/*.jar
+java/libs-src/*.jar
+*-Test.xml
+st.chg
+stx_libbasic3-config.h

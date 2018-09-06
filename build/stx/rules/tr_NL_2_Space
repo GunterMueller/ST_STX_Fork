@@ -1,0 +1,12 @@
+collected=""
+
+while true
+do
+    read line
+    if [ "$line" = "" ]
+    then
+	echo $collected
+	exit 0
+    fi
+    collected=$collected" "$line
+done

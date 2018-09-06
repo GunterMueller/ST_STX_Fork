@@ -1,0 +1,163 @@
+<html>
+<head>
+<title>Refactoring: Replace Recursion with Iteration</title>
+</head>
+<body>
+
+	<H1>Replace Recursion with Iteration</H1>
+
+	<P>
+<B> Refactoring contributed by 
+	<A href="mailto:Ivan.Mitrovic@S1.com">Ivan Mitrovic</A>
+	</B>
+</P>
+
+	<P>
+<I>
+<CENTER>You have code that uses Recursion and is hard to understand.</CENTER>
+</I>
+</P>
+	<P>
+<B>
+<CENTER>Replace Recursion with Iteration.</CENTER>
+</B>
+</P>
+		
+			<PRE>
+				
+public void countDown(int n) {
+	if(n == 0) return;
+
+	System.out.println(n + "...");
+	waitASecond();
+	countDown(n-1);
+}
+
+				
+			</PRE>
+		<P>
+<CENTER>
+<IMG SRC="arrow.gif"></CENTER>
+</P>
+
+		<P>After Refactoring:</P>
+
+		
+			<PRE>
+				
+public void countDown(int n) {
+	while(n &gt; 0) {
+		System.out.println(n + "...");
+		waitASecond ();
+		n -= 1;
+	}
+				
+			</PRE>
+		
+
+	<h2>Motivation</h2>
+		<P>
+The old recruiting practice says, "Never hire a developer who computes the factorial using Recursion". Recursion is often used without considering alternatives before using it. Though it is true that recursive solution is often more elegant and easier to spot than the iterative solution, one should take care not to abuse it. Complex Recursion that is hard to understand should probably be considered a "bad smell" in the code and a good candidate to be replaced with Iteration (usually in combination with some other Refactorings). Moreover, iterative solutions are usually more efficient than recursive solutions as they don't incur the overhead of the multiple method calls.
+		</P>
+
+		<P>
+We use Recursion when we have to perform a complex task that can be broken into the several subtasks. Recursion is implemented as a method that calls itself to solve subtasks. During the recursive call the values of the local fields of the method are placed on the method stack until the subtask performed by a recursive call is completed. Thus, whenever recursive method is called, local fields are put on the method stack and used again after the recursive call is completed. The general approach to Refactoring could probably be to implement the alternative Stack that "simulates" the method stack where the local fields could be placed (the java.util.Stack class is a good candidate for this job).
+		</P>
+
+		<P>
+Sometimes a recursive solution doesn't preserve any local fields during the recursive call, which makes Refactoring much easier. This is the case with, so called, tail recursions. Tail recursions are recursions where the recursive call is the last line in the method. Tail recursions are generally considered a bad practice and should be replaced with Iteration. This technique is well known to the people who work on compiler implementations. A good compiler usually perfomes this Refactoring on the fly (this is the earliest known example that machines adopted some XP practices :)
+		</P>
+	
+
+	<h2>Mechanics</h2>
+<UL>
+		<LI>
+Determine the base case of the Recursion. Base case, when reached, causes Recursion to end. Every Recursion must have a defined base case. In addition, each recursive call must make a progress towards the base case (otherwise recursive calls would be performed infinitely). In our example the base case is n == 0.
+		</LI>
+
+		<LI>
+Implement a loop that will iterate until the base case is reached.
+		</LI>
+
+		<LI>
+Make a progress towards the base case. Send the new arguments to the top of the loop instead to the recursive method.
+		</LI>
+		<P>
+The mechanics of some complicated Refactorings other than tail recursion Refactorings (for example, those that would use "home made" Stack to store the local fields of the method) are waiting to be defined. In the meantime, if you find yourself dealing with the particularly nasty recursion, don't forget that <A href="substituteAlgorithm.html">
+Substitute Algorithm</A> is a valid Refactoring and a secret weapon when it comes to situations like this.
+		</P>
+	</UL>
+
+	<h2>Example</h2>
+<UL>
+		<P>Sputnik launching countdown is a simple example of tail recursion:</P>
+
+			<PRE>
+				
+public class CountDown {
+	public void countDown(int n) {
+		if(n == 0) return;
+
+		System.out.println(n + "...");
+		waitASecond();
+		countDown(n-1);
+	}
+
+	public void waitASecond() {
+		try {
+			Thread.sleep(1000);
+		}
+		catch (InterruptedException ignore) {
+		}
+	}
+
+	public static void main(String[] args) {
+		CountDown c = new CountDown();
+		c.countDown(10);
+	}
+}
+				
+			</PRE>
+
+		<P>After Refactoring:</P>
+
+			<PRE>
+				
+public class CountDown {
+	public void countDown(int n) {
+		while(n &gt; 0) {
+			System.out.println(n + "...");
+			waitASecond ();
+			n -= 1;
+		}
+
+	}
+
+	public void waitASecond() {
+		try {
+			Thread.sleep(1000);
+		}
+		catch (InterruptedException ignore) {
+		}
+	}
+
+	public static void main(String[] args) {
+		CountDown c = new CountDown();
+		c.countDown(10);
+	}
+}
+				
+			</PRE>
+	</UL>
+
+<P>
+</P>
+<P>
+</P>
+<P>
+<CENTER>
+<A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A>
+</CENTER>
+</P>
+</body>
+</html>

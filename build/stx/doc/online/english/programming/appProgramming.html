@@ -1,0 +1,772 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Info for Application Programmers</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="binaryStore.html">     <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">             <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="sourcemanager.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Information for Application Programmers</H1>
+
+<H2>Contents</H2>
+<UL>
+ <LI><A HREF="#INTRO" NAME="I_INTRO">Introduction</A>
+ <LI><A HREF="#PORTABILITY" NAME="I_PORTABILITY">Portability Issues</A>
+ <UL>
+   <LI><A HREF="#PORTABILITY_FILENAMES" NAME="I_PORTABILITY_FILENAMES">Filenames</A>
+   <LI><A HREF="#PORTABILITY_OSCOMMANDS" NAME="I_PORTABILITY_OSCOMMANDS">OS Commands</A>
+ </UL>
+ <LI><A HREF="#NATIONAL" NAME="I_NATIONAL">Preparing for National Language Variants</A>
+ <UL>
+   <LI><A HREF="#NATIONAL_PR" NAME="I_NATIONAL_PR">Programmers Interface</A>
+   <LI><A HREF="#NATIONAL_RS" NAME="I_NATIONAL_RS">Resource File Format</A>
+   <LI><A HREF="#NATIONAL_NONSTRINGS" NAME="I_NATIONAL_NONSTRINGS">Resource Files are Useful for Other Things as Well</A>
+ </UL>
+ <LI><A HREF="#ACTIVEHELP" NAME="I_ACTIVEHELP">Providing Active Help Popups</A>
+ <LI><A HREF="#ACTIVITYNOTIFICATION" NAME="I_ACTIVITYNOTIFICATION">Providing User Feedback (Activity Notification)</A>
+ <UL>
+   <LI><A HREF="#ACTIVITY_SHOWING" NAME="I_ACTIVITY_SHOWING">Where to Show Feedback</A>
+   <LI><A HREF="#ACTIVITY_PASSING" NAME="I_ACTIVITY_PASSING">Passing Feedback Text Around</A>
+ </UL>
+ <LI><A HREF="#COMMANDLINE" NAME="I_COMMANDLINE">Accessing Command Line Arguments</A>
+ <LI><A HREF="#HINTS_N_TRICKS" NAME="I_HINTS_N_TRICKS">Hints &amp; Tricks</A>
+ <UL>
+   <LI><A HREF="#ASYNC_UPDATE" NAME="I_ASYNC_UPDATE">Asynchronous Update Processing</A>
+ </UL>
+</UL>
+
+
+<H2><A HREF="#I_INTRO" NAME="INTRO">Introduction</A></H2>
+
+This document summarizes hints for application programmers.
+It may not be complete and will be filled with more information as time
+goes by.
+
+
+<H2><A HREF="#I_PORTABILITY" NAME="PORTABILITY">Portability Issues</A></H2>
+
+The following chapter discusses portability issues to
+consider when your Smalltalk application is to
+be executed under different operating systems
+(i.e. any of UNIX, Windows or OpenVMS).
+
+
+<H3><A HREF="#I_PORTABILITY_FILENAMES" NAME="PORTABILITY_FILENAMES">Filenames</A></H2>
+
+Be careful to avoid using operating system specific file-
+or directory names. For example, do not assume that the
+directory separator in a pathName is '/' (as under Unix) or
+'\' (as under msdos). Do not even assume, that a simple
+separator-scheme is used (under OpenVMS, a completely different
+naming scheme is used).
+<P>
+For your application to be portable between operating systems,
+use instances of the <CODE>Filename</CODE> class, which
+hides such OS-specific knowledge and "knows" about these things.
+<BR>
+To access a file via a path name,
+use "<VAR>aFilename</VAR> <CODE>construct:</CODE><VAR>relativePath</VAR>"
+or "<VAR>aFilename</VAR> <CODE>/</CODE> <VAR>relativePath</VAR>" to append
+path components.
+
+For example, to open a file in some subdirectory,
+always use:
+<CODE><PRE>
+    ('dirName' asFilename construct:'fileName') readStream
+</PRE></CODE>
+or:
+<CODE><PRE>
+    ('dirName' asFilename / 'fileName') readStream
+</PRE></CODE>
+instead of:
+<CODE><PRE>
+    'dirName/fileName' readStream
+</PRE></CODE>
+or:
+<CODE><PRE>
+    'dirName\fileName' readStream
+</PRE></CODE>
+Although some automatic detection of the above situations
+is built into the system (which means that the above
+code might in fact work on some systems),
+the first version is guaranteed to work on all systems;
+even under openVMS, where the actual pathName would be "[.dirname]fileName".
+Of course, this is also true for whatever fancy operating system will be popular in the future.)
+<P>
+Always use filename-instances for file queries or file operations;
+do not directly invoke corresponding methods of the OperatingSystem
+class.
+
+For example, to delete a file, always use:
+<CODE><PRE>
+    someString asFilename delete
+</PRE></CODE>
+instead of:
+<CODE><PRE>
+    OperatingSystem deleteFile:someString
+</PRE></CODE>
+
+
+
+<H3><A HREF="#I_PORTABILITY_OSCOMMANDS" NAME="PORTABILITY_OSCOMMANDS">OS Commands</A></H2>
+
+Be careful when OS commands are used via
+<CODE>"OperatingSystem executeCommand:</CODE> or
+by reading from a pipeStream via
+<CODE>PipeStream readingFrom:</CODE>.
+<P>
+Although the particular command may be available on other
+systems, the command syntax may be different.
+<BR>
+UNIX programmers should not use any shell features,
+such as prefixing the command with a "cd ..." (chdir) or
+executing multiple commands separated by a semicolon.
+<P>
+If you have to use an external command, check for the
+type of operating system and provide alternative code
+(or at least a clean warning- or error message) if the
+system is not what you unexpected.
+<BR>
+To check for the type of OS, use any of the <CODE>isXXXlike</CODE>
+methods, as provided by the OperatingSystem class.
+<P>
+For example, to get a directory listing, you could use
+code like:
+<CODE><PRE>
+    OperatingSystem isUNIXlike ifTrue:[
+      cmd := 'ls -l'
+    ] ifFalse:[
+      OperatingSystem isMSDOSlike ifTrue:[
+	cmd := 'dir'
+      ] ifFalse:[
+	OperatingSystem isVMSlike ifTrue:[
+	  cmd := 'dir/full'
+	] ifFalse:[
+	  cmd := Dialog request:'Please enter OS command for ls'
+	]
+      ]
+    ].
+    s := PipeStream readingFrom:cmd
+</PRE></CODE>
+the above is of course a stupid example - that kind of
+information is easier (and portable)
+extracted by using protocol from the fileName class.
+<P>
+As a general rule, only use OS commands when absolutely
+required - if possible with reasonable effort, it is always
+better to write a corresponding piece of Smalltalk
+code.
+<P>
+If you cannot avoid the use external commands,
+remember the command's name and
+arguments in some (class-)variable
+and allow their configuration via some dialog
+(as was done for the C-compiler command inside ST/X,
+which is required to compile inline C-code in the browser).
+When done this way, a user can change the command in the private.rc startup file.
+
+
+<H2><A HREF="#I_NATIONAL" NAME="NATIONAL">Preparing for national language variants</A></H2>
+
+Although no programmer likes it, most applications are sooner or later
+to be provided in multiple language variants.
+<BR>
+<CITE>Smalltalk/X</CITE> offers mechanisms to make national language
+variants possible without requiring much initial effort by the programmer
+<STRONG>and</STRONG> allowing for additional languages to be added later
+(even by the end-user or distributor, without access to the source code).
+<P>
+For this, <CITE>ST/X</CITE> provides a semiautomatic resource management,
+which translates strings upon request. (actually, any value can be provided
+by this mechanism - it is not limited to strings).
+<P>
+This translation is done by a class called <CODE>ResourcePack</CODE>, which
+is a subclass of <CODE>Dictionary</CODE>; thereby providing keyed access
+messages. This class knows how to read resource files - especially, it
+knows how to deal with conditional expressions embedded in those files,
+and it keeps track of language changes, caching and buffering of commonly
+used translations.
+
+
+
+
+<H3><A HREF="#I_NATIONAL_PR" NAME="NATIONAL_PR">Programmers Interface</A></H2>
+
+An instance of <CODE>ResourcePack</CODE> can be created manually by:
+<CODE><PRE>
+    ResourcePack fromFile:<VAR>aFileName</VAR>
+</PRE></CODE>
+However, it is rarely required to do this, since all classes derived from
+<CODE>View</CODE> and <CODE>ApplicationModel</CODE> automatically read their
+respective resource file and provide a resourcePack for later use.
+<BR>
+All subclasses of the above provide a class instance variable named <CODE>ClassResources</CODE>
+(which is lazily initialized when the first instance is created),
+they offer a getter named <CODE>classResources</CODE>,
+and their instances have an instance variable named <CODE>resources</CODE>
+(which is initialized to the value of the class variable at instance creation
+time).
+<P>
+Thus, any method of those classes (especially: class methods)
+can fetch a strings translation by:
+<BR>
+<CODE><PRE>
+    ClassResources string:<VAR>someString</VAR>
+</PRE></CODE>
+while instance methods would use:
+<CODE><PRE>
+    resources string:<VAR>someString</VAR>
+</PRE></CODE>
+Finally, it is possible from code outside the class to translate a string using another class's
+resource with:
+<CODE><PRE>
+    someOtherClass classResources string:<VAR>someString</VAR>
+</PRE></CODE>
+
+If the resourcePack cannot find a translation for the argument,
+the argument is returned unchanged.
+<BR>
+This has the nice effect, that a programmer can provide her native language
+string as key, and not care for the resourceFiles being present at first.
+Translations can be added at any later time, simply by editing the corresponding
+resource file.
+<P>
+To summarize:
+<BR>
+To be prepared for later nationalization, instead of:
+<CODE><PRE>
+    Button label:'foo'
+</PRE></CODE>
+always write:
+<CODE><PRE>
+    Button label:(resources string:'foo')
+</CODE></PRE>
+Notice:
+<BR>
+Although understood by resourcePacks, do not use the <CODE>#at:</CODE>
+message. The reason is that using <CODE>#string:</CODE> makes it much easier
+to later find all resourcePack accesses with the browser's <VAR>senders</VAR>
+function. (Beside that, the effect is the same).
+
+
+<H3><A HREF="#I_NATIONAL_PR_PATTERN" NAME="NATIONAL_PR_PATTERN">Use Patterns in Resource Strings</A></H3>
+
+Often, you have to embed some variable string into the translations;
+for example, a warnbox to tell that some file is not present may want
+to embed the file's name.
+This is done by using a variant of the above,
+using a string with "%i" as placeholders (i being 1 .. 9).
+<BR>
+The above warnbox is created with:
+<CODE><PRE>
+    self
+	warn:(resources
+		string:'cannot find file %1'
+		  with:fileName)
+</PRE></CODE>
+
+Always use this construct, as the placement of the filename within
+the text may be different in other languages
+(i.e. a simple concatenation of the filename will not always do the job and lead to very ugly translations).
+<BR>
+For example, in German, the
+above message becomes:<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;<VAR>"kann die Datei %1 nicht &ouml;ffnen"</VAR>
+<BR>
+as you see, the file's name is in the middle of the sentence.
+If your program would be "(resource string:'Cannot find '),aFilename",
+there would be no way to make a reasonable German sentence from it.
+<P>
+The translated string may contain multiple placeholders;
+for example:
+<CODE><PRE>
+    self
+	warn:(resources
+		string:'cannot find file %1 in %2'
+		  with:fileName
+		  with:dirName)
+</PRE></CODE>
+
+Variants of the "<CODE>#string:with:</CODE>" message are provided for
+up to 4 placeholders.
+For more placeholders, use "<CODE>#string:withArgs:</CODE>", passing
+a collection of replacement strings.
+
+
+
+<H2><A HREF="#I_NATIONAL_RS" NAME="NATIONAL_RS">Resource File Format</A></H2>
+
+<H3><A HREF="#I_NATIONAL_RS_LOCATION" NAME="NATIONAL_RS_LOCATION">Resource File Location</A></H3>
+
+All resource files are to be found in the subdirectory named <CODE>"resources"</CODE>
+along the searchPath. This allows for private resource files to override
+the defaults, in case you don't like those translations.
+<P>
+Resourcefiles are named after the class, which uses those resources;
+thus, all resources for the <CODE>WarnBox</CODE> class are found in the
+file <CODE>"resources/WarnBox.rs"</CODE>.
+<BR>
+Since the <CODE>ResourcePack</CODE> class merges a files translations with
+the superclasses resources, common definitions do not have to be repeated.
+(however, you can if you want to override string translations in a subclass).
+
+<H3><A HREF="#I_NATIONAL_RS_ENCODING" NAME="NATIONAL_RS_ENCODING">Resource File Encoding</A></H3>
+
+Resourcefiles are pure ascii/iso8859 or utf8 text files
+- they can be edited with any text editor.
+<BR>
+However, be aware that the files as provided contain 8-bit national characters
+and some text editors (vi on some old systems) are not 8-bit clean, corrupting
+the file by stripping off the 8th bit
+(this was true in the early 90s
+- now, you can savely assume, that your editor is 8-bit aware).
+<P>
+Also be aware, that the resource files may come along in different character
+encodings. Some are ISO8859-x, but most are UTF8 encoded.
+A comment line near the beginning of the file will declare the encoding.
+<P>
+
+<CITE>ST/X's</CITE> fileBrowser is
+save w.r.t. 8-bit characters and character encodings.
+
+<H3><A HREF="#I_NATIONAL_RS_CONTENTS" NAME="NATIONAL_RS_CONTENTS">Resource File Contents</A></H3>
+
+Lines in the resource file are either comments, control constructs (conditions) or
+translations.
+<P>
+Empty lines and
+lines starting with <CODE>"#"</CODE> are ignored.
+<P>
+Conditional constructs are of the form:
+<CODE><PRE>
+    #if <VAR>someCondition</VAR>
+    ...
+    #endif
+</PRE></CODE>
+or:
+<CODE><PRE>
+    #if <VAR>someCondition</VAR>
+    ...
+    #else
+    ...
+    #endif
+</PRE></CODE>
+these conditions may be nested.
+<BR>
+The condition <VAR>someCondition</VAR> is a regular Smalltalk expression;
+Typically, the condition is based on the language setting, but theoretically,
+anything can be tested here.
+<P>
+Translations consist of two-word entries, the first word being the
+key (the string written down in the program), the second gives the translated
+string.
+<P>
+Example:
+<BR>
+The following example shows translations for multiple languages:
+<CODE><PRE>
+    # this is a comment
+    #
+    # lets start with german, assuming that the programm is written
+    # to use the english strings as keys ...
+    #
+
+    #if Language == #german
+
+    'foo'   'quatsch'
+    'no permission for %1'  'keine Leseberechtigung f&uuml;r Datei %1'
+    'cannot open file %1'   'die Datei %1 kann nicht ge&ouml;ffnet werden'
+    'error %1; reason: %2'  'wegen %2 ist ein %1 Fehler aufgetreten'
+
+    #endif
+
+    #if Language == #french
+
+    'foo'   'je ne sais pas q''est ce que c''est'
+
+    'no permission for %1'  'pas de permission pour ouvrir fiche %1'
+    ...
+
+    #endif
+
+    #if Language == #italian
+
+    ...
+
+    #endif
+</PRE></CODE>
+
+
+<H3><A HREF="#I_NATIONAL_NONSTRINGS" NAME="NATIONAL_NONSTRINGS">Resource Files are Useful for Other Things as Well</A></H2>
+
+As mentioned above: you can put other things into resource files as well;
+beside string translations.
+<BR>
+All that should possibly be enduser customizable can/should be placed into
+a resource file (except view style settings, which are to be placed into
+styleSheets, to keep the look of all views consistent).
+<BR>
+For example, to have a buttons foreground color be customizable,
+program the code as:
+<CODE><PRE>
+    ...
+    myButton foregroundColor:(resources at:'myButtonColor' default:Color black).
+    ...
+</PRE></CODE>
+and provide an (optional) entry in the resourcefile:
+<CODE><PRE>
+    ...
+    myButtonColor   Color red:50 green:50 blue:100
+    ...
+</PRE></CODE>
+other useful customizable things are (icon-)bitmaps, verbose levels,
+debugging options, default values etc.
+
+
+
+<H2><A HREF="#I_ACTIVEHELP" NAME="ACTIVEHELP">Providing Active Help Popups (Tooltips)</A></H2>
+
+As provided, <CITE>ST/X</CITE> provides a mechanism for automatic
+help popups (also called <VAR>active help</VAR>, to showup whenever
+a view is entered and no user activity occurred for some time.
+<BR>
+(since this may be annoying for the experienced user, this is disabled by
+default).
+<P>
+The programmer interface to this is very easy: either the view or the model
+(applicationModel) has to provide a method called: <CODE>helpTextFor:</CODE>
+which gets the component (button, label, subview) as argument.
+<BR>
+This method should return a short help string (obviously, this one should be
+translated via a resourcePack). If no such method is implemented, or the method
+returns nil, the helpManager displays nothing.
+<P>
+For example, the complete code to provide popup help in the FileBrowser
+is:
+<CODE><PRE>
+    helpTextFor:aComponent
+	aComponent == subView ifTrue:[
+	    ^ resources string:'HELP_SUBVIEW'
+	].
+	aComponent == fileListView ifTrue:[
+	    ^ resources string:'HELP_FILELIST'
+	].
+	aComponent == filterField ifTrue:[
+	    ^ resources string:'HELP_FILTER'
+	].
+	aComponent == labelView ifTrue:[
+	    ^ resources string:'HELP_PATHFIELD'
+	].
+	^ nil
+</PRE></CODE>
+
+be aware, that the popup help is (currently) provided as a mechanism
+for application programmers; <STRONG>less</STRONG> to provide useful help
+for the <CITE>ST/X</CITE> system itself. You will find that only a few
+components provide any help messages (launcher, changeBrowser and fileBrowser).
+
+
+<H2><A HREF="#I_ACTIVITYNOTIFICATION" NAME="ACTIVITYNOTIFICATION">Providing User Feedback (Activity Notification)</A></H2>
+
+When performing long time computations or file activity,
+it is useful to give the user some visual feedback on what is going on.
+
+<H3><A HREF="#I_ACTIVITY_SHOWING" NAME="ACTIVITY_SHOWING">Where to Show Feedback</A></H3>
+
+Typically, this feedback is to be shown either in the active views label (title)
+area or in some extra notification subview.
+<BR>
+Lets start with an example how to show this notification in the window label
+(or window title):
+<P>
+In the label:
+<A TYPE="example">
+<CODE><PRE>
+    |top savedLabel|
+
+    top := StandardSystemView new.
+    top extent:300 @ 300.
+    top openAndWait.
+
+    Delay waitForSeconds:1.
+
+    savedLabel := top label.
+    top label:'active ...'.
+    Delay waitForSeconds:5.
+    top label:savedLabel.
+</PRE></CODE>
+</A>
+you may have to make certain that
+the label is restored, in case the activity gets interrupted or aborted.
+(i.e. by protecting things with an unwind block):
+<A TYPE="example">
+<CODE><PRE>
+    |top savedLabel|
+
+    top := StandardSystemView new.
+    top extent:300 @ 300.
+    top openAndWait.
+
+    Delay waitForSeconds:1.
+
+    savedLabel := top label.
+    top label:'active ...'.
+    [
+	Delay waitForSeconds:5.
+    ] valueNowOrOnUnwindDo:[
+	top label:savedLabel.
+    ]
+</PRE></CODE>
+</A>
+
+Additionally, busy cursors are very helpful for feedBack:
+(the <CODE>#withCursor:do:</CODE> method already sets up appropriate unwind actions)
+<A TYPE="example">
+<CODE><PRE>
+    |top savedLabel|
+
+    top := StandardSystemView new.
+    top extent:300 @ 300.
+    top open.
+
+    top waitUntilVisible.
+    Delay waitForSeconds:1.
+
+    top withCursor:(Cursor wait) do:[
+	savedLabel := top label.
+	top label:'active ...'. top flush.
+	Delay waitForSeconds:5.
+	top label:savedLabel.
+    ]
+</PRE></CODE>
+</A>
+
+More sophisticated applications may want to create an extra area
+for notifications and show these messages there:
+
+<A TYPE="example">
+<CODE><PRE>
+    |top notifier savedLabel|
+
+    top := StandardSystemView new.
+    top extent:300 @ 300.
+
+    notifier := Label origin:0.0@1.0 corner:1.0@1.0 in:top.
+    notifier topInset:(notifier preferredExtent y + (View viewSpacing // 2)) negated.
+    notifier bottomInset:View viewSpacing // 2.
+    notifier horizontalInset:(View viewSpacing // 2).
+    notifier level:-1; adjust:#left.
+
+    top openAndWait.
+
+    Delay waitForSeconds:1.
+
+    top withCursor:(Cursor wait) do:[
+	notifier label:'busy ...'.
+	Delay waitForSeconds:5.
+    ].
+    notifier label:''.
+</PRE></CODE>
+</A>
+
+
+<H3><A HREF="#I_ACTIVITY_PASSING" NAME="ACTIVITY_PASSING">Passing Feedback Text Around</A></H3>
+
+Often, the busy activity is performed in some method which is totally
+unrelated to your views application.
+For example, the model may perform some compute or I/O intensive
+operations, and is not connected to the view (i.e. it does not know where
+any activity notifications should be shown).
+<BR>
+To handle this, <CITE>ST/X</CITE> provides an elegant mechanism based upon the
+the exception mechanism.
+<P>
+For the programmer, the mechanism is easy to use:
+<BR>
+At any place in your code (and in any classes method), you can add
+statements like:
+<CODE><PRE>
+    self activityNotification:'some text'
+</PRE></CODE>
+The implementation of <CODE>#activityNotification:</CODE>
+(in <CODE>Object</CODE>) looks if the activityNotificationSignal
+is currently handled - and, if this is the case, raises the signal,
+passing the message string as argument.
+If no handler exists for it, the notification is ignored.
+
+<P>
+Every windowGroups event dispatch loop includes a handler for that signal, and
+sends <CODE>#showActivity:</CODE> to the topView.
+This topView should be either an instance of a user defined subclass of
+<CODE>StandardSystemView</CODE>, or have an applicationModel attached to it.
+<BR>
+In the first case, you should redefine this method in your view class and
+show the message wherever appropriate. In the second case, the standard topView
+will forward the <CODE>#showActivity</CODE> message to your applicationModel,
+in which you should provide an appropriate method for it.
+
+<P>
+Summary:
+<UL>
+<LI>Define a <CODE>#showActivity:</CODE> method in either your topView class
+or in the applicationModel.
+<P><LI>
+In this method, show the passed message string to either the topViews label
+or show it in a notifier subview.
+<P><LI>
+Wherever long time computations are performed,
+insert <CODE>"self&nbsp;activityNotification:..."</CODE>.
+</UL>
+
+
+<H2><A HREF="#I_COMMANDLINE" NAME="COMMANDLINE">Accessing Command Line Arguments</A></H2>
+
+The command line and arguments are available in a class variable of the
+<CODE>Smalltalk</CODE> class,
+which can be accessed via the class message:
+
+<CODE><PRE>
+    Smalltalk commandLine
+</PRE></CODE>
+
+<CODE><PRE>
+    Smalltalk commandName
+</PRE></CODE>
+
+<CODE><PRE>
+    Smalltalk commandLineArguments
+</PRE></CODE>
+
+<UL>
+<LI><CODE>#commandLine</CODE>
+<BR>
+returns the full command line as a collection of
+strings. This includes the command itself and any startup arguments.
+Arguments to the VM (such as "-I") are not included in this collection.
+The first string in this collection is the executable's name itself.
+<P>
+<LI><CODE>#commandName</CODE>
+<BR>
+returns the executable's name alone.
+<BR>(under Win32, this is the command's full pathName)
+<P>
+<LI><CODE>#commandLineArguments</CODE>
+<BR>
+returns the non system arguments alone,
+without the executable's name.
+</UL>
+<P>
+For example, if you started <CITE>ST/X</CITE> with:
+<CODE><PRE>
+    myApp -i myImage.img -f myScript -q foo bar baz
+</PRE></CODE>
+the returned values will be:
+<CODE><PRE>
+    Smalltalk commandLine
+		-> 'myApp -f myStartupScript -q foo bar baz'
+
+    Smalltalk commandName
+		-> 'myApp'
+
+    Smalltalk commandLineArguments
+		-> 'foo bar baz'
+</PRE></CODE>
+Notice, that the VM arguments (<CODE>"-i myImage.img"</CODE>) are never visible to Smalltalk
+classes, and that the startup arguments (<CODE>"-f myScript -q"</CODE>) have been removed from the
+commandLineArguments return value.
+
+
+<H2><A HREF="#I_HINTS_N_TRICKS" NAME="HINTS_N_TRICKS">Hints &amp; Tricks</A></H2>
+
+The following section gives some hints and tricks,
+useful for view-programming.
+It is definitely incomplete and will grow over time.
+
+
+<H3><A HREF="#I_ASYNC_UPDATE" NAME="ASYNC_UPDATE">Asynchronous Update Processing</A></H3>
+
+If you programmed your view to respond to <CODE>#update</CODE> message
+with a redraw operation, you should keep in mind, that
+this processing takes place in the process which originally generated
+the <CODE>#change</CODE> message.
+<BR>
+If this is some other application or view, the processing is done
+<STRONG>NOT</STRONG> in the updated view.
+<BR>
+For example, consider a browser changing some class.
+This results in
+a <CODE>Smalltalk changed</CODE> message to be sent, leading to
+<CODE>#update</CODE> messages to all other browsers.
+If the other browsers perform a redraw in their <CODE>update</CODE> method,
+the redrawing will be done by the original browsers process.
+<P>
+This is somewhat unfair by the others - especially, if the changing process
+runs at a higher priority than the updating one.
+<BR>
+For update operations which may take some time, it should be
+avoided, by doing an asynchronous update.
+<P>
+This is done renaming the original <CODE>update</CODE> method into
+(say) <CODE>delayedUpdate</CODE> and adding an <CODE>update</CODE> method
+which enters a synthetic event into the event queue, which invokes the
+delayedUpdate handler when the views process regains control.
+i.e., the following code will do this:
+<CODE><PRE>
+    update:something with:aParameter from:changedObject
+	|mySensor|
+
+	mySensor := self sensor.        "/ holds the event queue
+
+	"/ if an update arrives early
+	mySensor isNil ifTrue:[
+	    "/ mhmh - an update, but I am not yet visible
+
+	    ^ self delayedUpdate:something with:someArgument from:changedObject
+	].
+
+	"/ otherwise, enter it into the sensors event queue
+	mySensor
+	    pushUserEvent:#delayedUpdate:with:from:
+	    for:self
+	    withArguments:(Array
+			     with:something
+			     with:aParameter
+			     with:changedObject)
+    !
+
+    delayedUpdate:something with:aParameter from:changedObject
+	...
+	redraw as usual
+	...
+    !
+</PRE></CODE>
+Now, a synthetic event is enqueued into the sensors event queue
+by the <CODE>update</CODE> method, which, when handled will send
+the <CODE>#delayedUpdate:with:from:</CODE> message to the receiver.
+<BR>
+The event handling will be done by the views windowGroup process itself,
+whenever the scheduler resumes that process (this depend upon process
+priorities and system activity).
+<P>
+This mechanism is used in the browser - for details, see the methods
+in the <CODE>BrowserView</CODE> class.
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 1995 Claus Gittinger Development &amp; Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.26 $ $Date: 2016-07-11 09:24:04 $
+</BODY>
+</HTML>

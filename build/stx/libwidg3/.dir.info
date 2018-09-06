@@ -1,0 +1,28 @@
+This directory contains even more widgets. These are for demonstration and fun.
+They are normally not built into the system.
+However, some of them may be nice to polish up your applications;
+especially, have a look at ProgressIndicator and ActionWaitBox.
+
+Use of these classes requires that 'libview' and 'libwidg' are
+also loaded into the system.
+
+Depending on the configuration and capabilities of your Operating-
+System, the resulting classlibrary is either:
+
+	libwidg3.a      - an archive
+
+	libwidg3.obj    - a prelinked object library
+
+	libwidg3.so     - a shared object
+
+If your system supports dynamic object loading, you can filein this
+binary classlib with the fileBrowser or by:
+
+	Smalltak fileInClassLibrary:'libwidg3'
+
+
+Things you can do here:
+
+    make                compile all classes, producing libwidg3
+
+    make objs           compile all required object files

@@ -1,0 +1,29 @@
+/* XPM */
+static char *small_file_ftp_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"20 19 3 1",
+/* colors */
+"  c none",
+"a c white",
+"b c black",
+/* pixels */
+" bbbbbbbbbbbbbbbbbb ",
+" baaaaaaaaaaaaaaaabb",
+" babbbabbbbabbbbaabb",
+" babbbabbbbabbbbbabb",
+" babbaaabbaabbabbabb",
+" babbbaabbaabbabbabb",
+" babbbaabbaabbbbbabb",
+" babbaaabbaabbbbaabb",
+" babbaaabbaabbaaaabb",
+" babbaaabbaabbaaaabb",
+" baaaaaaaaaaaaaaaabb",
+" bbbbbbbbbbbbbbbbbbb",
+"  bbbbbbbbbbbbbbbbbb",
+"                    ",
+"                 b  ",
+" bbbbbbbbbbbbbbbbbb ",
+"bbbbbbbbbbbbbbbbbbbb",
+" bbbbbbbbbbbbbbbbbb ",
+"                 b  ",
+};

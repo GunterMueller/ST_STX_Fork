@@ -1,0 +1,43 @@
+
+<HTML>
+  <HEAD>
+    <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+    <TITLE>Intelligent Code Search</Title>
+  </HEAD>
+  <BODY>
+
+The browser's method list popup menu contains a
+menu item named <I>"Code Search"</I>.
+This behaves similar to a regular text-search, but is aware of the Smalltalk
+syntax, and allows for very specific intelligent search operations, using syntactic match patterns.
+For example, consider the case where you want to find all senders of the <CODE>sort:</CODE>-message,
+but only when the search block contains a unary message send to both elements to be compared.
+For example, sortblock like:
+<CODE><PRE>
+    [:a :b | a name &lt; b name]
+</PRE></CODE>
+should match, whereas:
+<CODE><PRE>
+    [:a :b | self someOtherOperationOn:a and:b]
+</PRE></CODE>
+and:
+<CODE><PRE>
+    [:a :b | a name asLowercase &lt; b name asLowercase]
+</PRE></CODE>
+should not.
+<P>
+To find such constructs, use a code search with the following pattern:
+<CODE><PRE>
+    `@e sort:[:a :b | a `@msg &lt; b `@msg ]
+</PRE></CODE>
+
+<P>
+<P>
+Additional informationen on search patterns are found in the
+<A HREF="../../english/help/Browser/RBSearchPatterns.html">"codepattern help page"</A>.
+<BR>
+Additional informationen on the Browser in the
+<A HREF="../../english/tools/newbrowser/TOP.html">"browser-documentation"</A>.
+
+  </BODY>
+</HTML>

@@ -1,0 +1,149 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Help - Source Code Format Settings</Title>
+</HEAD>
+
+<BODY>
+
+<H1>Source Code Format Settings</H1>
+
+<H2><A NAME="INDEX">Help index</A></H2>
+
+  <UL>
+  <LI><A HREF="#FORMAT_KR_STYLE">Kernighan & Ritchie Style</A>
+  <LI><A HREF="#FORMAT_LISP_STYLE">Lisp Style</A>
+<!--
+  <LI><A HREF="#SYNTAXCOLORING">Syntax coloring</A>
+  <LI><A HREF="#SELECTORCHECK">Immediate selector check</A>
+-->
+  <LI><A HREF="#AUTOFORMAT">Automatic Code Formatting</A>
+  </UL>
+
+<HR>
+
+This dialog allows for the formatting (pretty printer)
+parameters to be configured.
+<P>
+Basically, there are 2 major formatting styles:
+<ol>
+<li>K&amp;R (Kernighan & Ritchie) Style
+<li>Lisp Style
+</ol>
+
+<H2><A NAME="FORMAT_KR_STYLE" HREF="#INDEX">Kernighan &amp; Richtie Style</A></H2>
+This style is used by more than 90% of all programmers and is based on
+the style used in the UNIX operating system's C programs. It is named
+after the original Unix authors.
+Its main difference to the other style is that opening and closing parentheses
+are each on a separate line from the enclosing statements or expressions.
+This makes inserting & deleting lines easy. You can also easily find a block's
+enclosing bracket, by moving down the cursor from the starting line's left column.
+<BR>For example:
+<CODE><PRE>
+    ...
+    someCondition ifTrue:[
+	...
+	[another condition] whileTrue:[
+	    ...
+	].
+	...
+	[
+	    someCode
+	] on:Error do:[
+	    handlerCode
+	]
+    ]
+</PRE></CODE>
+
+<H2><A NAME="FORMAT_LISP_STYLE" HREF="#INDEX">Lisp Style</A></H2>
+This style is used by the rest, and most Smalltalkers (but not the ST/X author!).
+The opening parenthesis is on the same line as the first statement of a block,
+and the closing parenthesis is appended to the last line.
+This usually makes the code slightly denser (1 line per block),
+but makes insertion/deletion of text to the beginning or end of a block a little more work.
+<CODE><PRE>
+    ...
+    someCondition ifTrue:[
+	...
+	[another condition] whileTrue:[
+	    ...].
+	...
+	[
+	    someCode]
+	on:Error do:[
+	    handlerCode]]
+</PRE></CODE>
+
+The settings dialog allows for a quick change between these two styles.
+<P>
+Notice: all of ST/X has been written in the K&amp;R style
+(with the exception of some imported code from friends and public domain sources).
+and is the favourite style used and accepted by the author.
+As it is mostly his task to fix bugs and maintain the code,
+and it makes a huge difference when code has to be read and understood,
+he highly recommends (actually demands) that tis style is used
+when code is to be brought into ST/X.
+
+<!--
+<H2><A NAME="SYNTAXCOLORING" HREF="#INDEX">Syntax coloring</A></H2>
+
+Controls if the syntax of methods should be highlighted in the
+browser, by coloring entities.
+<BR>
+Colors and emphasis can be individually configured for various
+syntactic and semantic entities, such as message selectors, comments,
+global or local variables etc.
+
+<P>
+
+<H2><A NAME="SELECTORCHECK" HREF="#INDEX">Immediate selector check</A></H2>
+
+If on, a syntax check is done "while you type in new characters"
+in the browser, and message selectors are checked on the fly.
+<BR>
+Any unimplemented message is highlighted (bold-red by default.
+<BR>
+You may want to disable this on a slow machine.
+<P>
+-->
+
+<H2><A NAME="AUTOFORMAT" HREF="#INDEX">Automatic Code Formatting</A></H2>
+
+If on, methods source code is formatted (pretty printed) automatically
+when a method's source is displayed.
+<BR>
+For now, the formatter is not invoked on keyboard input;
+you can reformat a changed method source via the popup menu.
+<BR>
+You may want to disable this, if you don't like the formatters output.
+<P>
+The formatter may be configured to either generate lisp-style or
+c-style block format.
+<P>
+Warning: the formatter is based on the BRFormatter code ported from
+the RefactoryBrowser package. Porting is still underway and there may be
+bugs especially with ST/X extended syntax. The original formatter completely
+lost any comment layout, which resulted in very ugly looking source code
+(and is probably one reason, why many people did not comment their code!).
+We tried to fix most of those issues (but who knows...).
+Use at your own risk, and check if you like the output. If not, indent your code
+manually.
+
+<P>
+<P>
+
+
+
+<HR>
+<P>
+<P>
+Copyright &copy;  Claus Gittinger Development & Consulting, all rights reserved
+<P>
+<P>
+
+<HR>
+Doc $Revision: 1.6 $ $Date: 2016-10-30 15:20:58 $
+
+</BODY>
+</HTML>

@@ -1,0 +1,238 @@
+#! /bin/sh
+
+# set -x
+
+#
+# $Header: /cvs/stx/stx/rules/startSampleAPP,v 1.1 2000-01-10 19:02:18 cg Exp $
+#
+# this is an example script (a template) to demonstrate how a smalltalk
+# application could be loaded via a startup script.
+# This is especially useful for server-like (i.e. non-GUI) applications,
+# which are started via cron or inittab.
+#
+# The script below cannot be directly invoked,
+# but may be useful as a template to see how things can be done.
+#
+# It assumes the following:
+#   APP is the name of the application; replace below it as required.
+#   the script itself is installed as .../bin/startAPP
+#   st/x has been installed under its standard path (i.e. /opt/smalltalk/...)
+#   the applications packages are to be found under ../packages/...
+#   there exists an application-specific APP.rc startup script in the current
+#   directory. 
+#
+#
+# arguments:
+#       --watch         start watchDog (kills APP if dead)
+#
+# other args (passed to APP):
+#       --debug         allow for debugger to open on errors/interrupt
+#       --noDebug       completely disable any debuggability
+
+# name of application 
+# (affects reading of <APP>.rc)
+APP=myApp
+
+#
+# any output redirection ?
+#
+# REDIRECT=$HOME/${APP}/var/${APP}.log
+# REDIRECT=/tmp/log/${APP}.log
+# REDIRECT=/var/spool/log/${APP}.log
+REDIRECT=
+
+#
+# any other umask ?
+#
+# umask 022
+
+
+# try to figure out, on which type of
+# system (i.e. solaris, aix, hpux, linux etc.)
+# we are running and find the apropriate binary smalltalk/X
+# executable from one of the architecture-subdirectories.
+#
+
+startdir=`pwd`
+
+basedir=`dirname $0`
+case "${basedir}" in
+    /* )        # We are already absolute, OK.
+	;;
+    .* )        # Need to get an absolute pathname.
+	basedir=`( cd ${basedir}; pwd ) 2> /dev/null`
+	;;
+esac
+if test ! -d "${basedir}"; then
+	echo "${0} [error]: \"${basedir}\" should be a directory, but is not - abort." >&2
+	exit 1
+fi
+cd ${basedir}
+
+# Now let's identify the system:
+UNAME_MACHINE=`(uname -m) 2>/dev/null` || UNAME_MACHINE=unknown
+UNAME_RELEASE=`(uname -r) 2>/dev/null` || UNAME_RELEASE=unknown
+UNAME_SYSTEM=`(uname -s) 2>/dev/null` || UNAME_SYSTEM=unknown
+UNAME_VERSION=`(uname -v) 2>/dev/null` || UNAME_VERSION=unknown
+case "${UNAME_MACHINE}:${UNAME_SYSTEM}:${UNAME_RELEASE}:${UNAME_VERSION}" in
+    *:AIX:*:*)
+	guesssys=aix
+	;;
+    alpha:OSF1:*:*)
+	guesssys=alpha_osf
+	;;
+    *:HP-UX:*:*)
+	guesssys=hpux
+	;;
+    *:Linux:*:*)
+	guesssys=linux
+	;;
+    sun4*:SunOS:5.*:*)
+	guesssys=sun_solaris
+	;;
+    i86pc*:SunOS:5.*:*)
+	guesssys=solaris_386
+	;;
+    *:*:*:*)
+	guesssys=${UNAME_MACHINE}-${UNAME_SYSTEM}${UNAME_RELEASE}.${UNAME_VERSION}
+	;;
+esac
+
+all_systems='aix alpha_osf hpux linux_elf linux_elf_glibc sun_solaris solaris_386'
+path_to_stx=
+# Append "stx" and "bin" as a fallback default.
+for dir in ${all_systems} stx ../bin
+do
+	if test -d ../$dir
+	then
+		path_to_stx=`( cd ../$dir; pwd ) 2> /dev/null`
+		break
+	fi
+	case "${dir}:${guesssys}" in
+	    linux_*:linux )
+		if test -d ../$dir
+		then
+		    path_to_stx=`( cd ../$dir; pwd ) 2> /dev/null`
+		    break
+		fi
+		;;
+	esac
+done
+
+if test -d ./smalltalk/bin
+then
+    path_to_stx=./smalltalk/bin
+else
+    if test -d ../stx/projects/smalltalk
+    then
+	path_to_stx=../stx
+    else
+	if test -d "/opt/smalltalk/bin"
+	then
+	    path_to_stx=/opt/smalltalk/bin
+	else
+	    if test -d "/usr/local/smalltalk/bin"
+	    then
+		path_to_stx=/usr/local/smalltalk/bin
+	    fi
+	fi
+    fi
+fi
+
+if test -z "${path_to_stx}"
+then
+    echo "${0} [error]: FATAL: cannot locate the system specific Smalltalk/X directory" >&2
+    exit 1
+fi
+
+if test -f ${path_to_stx}/projects/smalltalk/smalltalk
+then
+	STX_LIBDIR=${path_to_stx}/projects/smalltalk
+	export STX_LIBDIR
+	smalltalk=${STX_LIBDIR}/smalltalk
+	x_stx="-x ${STX_LIBDIR}/stx"
+elif test `basename ${path_to_stx}` = bin
+then
+	STX_LIBDIR=
+	unset STX_LIBDIR 2> /dev/null
+	smalltalk=${path_to_stx}/smalltalk
+	x_stx="-x ${path_to_stx}/stx"
+	STX_TOPDIR=`cd ${path_to_stx}/.. ; pwd`
+	export STX_TOPDIR
+else
+	echo "No smalltalk in " ${path_to_stx}
+	smalltalk=smalltalk
+	x_stx=
+fi
+
+# Restore the initial starting directory
+cd ${startdir}
+
+if test -f ./${APP}.rc; then
+	:
+else
+	cd ${basedir}/../lib
+fi
+#  Do we have an image already?
+appopts=
+if test -w .; then
+	if test -f ${APP}.img; then
+		appopts="-i ${APP}.img"
+	elif test -f /tmp/${APP}.img; then
+		appopts="-i /tmp/${APP}.img"
+	fi
+elif test -f /tmp/${APP}.img; then
+	appopts="-i /tmp/${APP}.img"
+fi
+if test -z "$appopts"; then
+	appopts="-noInfoPrint -f ${APP}.rc --noLicenceBox"
+fi
+
+#
+# thats not part of the standard delivery:
+# a watchdog, which monitors if the application is still alive ...
+#
+if test "$1"x = "--watch"x ; then
+  if test -f watchDog/watch; then
+	  watch=watchDog/watch
+  else
+      if test -f ./watch; then
+	  watch=./watch
+      else
+	  watch=watch
+      fi
+  fi
+
+  stxPID=$$
+  beef="/tmp/.stillRunning_"${stxPID}
+
+  #
+  # start the watchdog delayed - to allow the application
+  # to come up
+  #
+  ( sleep 10; \
+    echo "${0} [info]: starting watchDog..."; \
+    if [ "${REDIRECT}" = "" ]; \
+    then \
+	${watch} ${stxPID} 30 ${beef}; \
+    else \
+	${watch} ${stxPID} 30 ${beef} >>${REDIRECT} 2>&1; \
+    fi \
+  ) &
+  watchDogArg=--feedDog:${beef}
+fi
+
+echo "${0} [info]: starting application..."
+
+#
+# start smalltalk;
+# it will execute APP.rc from the current directory
+# (optionally with stdout/stderr redirected)
+if [ "${REDIRECT}" = "" ] 
+then
+    exec ${smalltalk} ${x_stx} ${appopts} $* ${watchDogArg}
+else
+    redirectDir=`dirname ${REDIRECT}`
+    test -d ${redirectDir} || mkdir -p ${redirectDir}
+    exec ${smalltalk} ${x_stx} ${appopts} $* ${watchDogArg} >>${REDIRECT} 2>&1
+fi

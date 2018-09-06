@@ -1,0 +1,16 @@
+makefile
+.dependencies
+classList.stc
+.listOfSTfiles
+objbc
+objvc
+MAKE*.*
+ntLibInit.c
+*.H
+*.STH
+*.RES
+*.res
+*.xc
+*.sc
+*.c
+objmingw

@@ -1,0 +1,30 @@
+A quick and dirty viewer for rtf- and image files.
+It can also display NeXT mixed format rtf documents with
+attachments as for example in NeXTmail (thats what this
+was originally written for - before I got my NeXT :-)
+
+Its not at all finished, just a demo ....
+
+start with:
+
+       DocumentView startOn:aFileName
+
+or simply:
+
+        DocumentView start
+
+- and use the 'open' entry in the 'file' menu.
+
+
+(will be autoloaded)
+
+What needs to be done:
+        completely rewrite, using appropriate representation
+        of paragraphs. (using DisplayText is a quick hack -
+        the fragmentation into one object per word makes
+        just too much overhead for even small documents -
+        see bad performance when scrolling)
+
+        add editing capabilities
+
+Dont blame me - its just a dumb viewer

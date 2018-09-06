@@ -1,0 +1,21 @@
+/.cvsignore/1.4/Wed Jan 30 10:44:12 2013//
+/Make.proto/1.6/Tue Nov  4 17:20:44 2014//
+/Make.spec/1.7/Wed Jan 30 11:54:10 2013//
+/SQL__AdaptableApplicationModel.st/1.4/Fri Jul  7 11:46:52 2006//
+/SQL__GetConnectionInformation.st/1.11/Fri Nov 29 14:42:31 2013//
+/SQL__ODBCResultTable.st/1.9/Mon Dec  2 11:34:19 2013//
+/SQL__ODBCResultTableTab.st/1.12/Fri Nov 29 17:54:03 2013//
+/SQL__ODBCSQLScratchpad.st/1.14/Fri Nov 29 20:47:34 2013//
+/SQL__ODBCScratchpad.st/1.19/Sun Dec  1 23:46:22 2013//
+/SQL__ODBCScratchpadTab.st/1.10/Fri Jul  7 11:47:03 2006//
+/abbrev.stc/1.2/Thu Feb  8 16:06:32 2007//
+/applications.nsi/1.2/Thu Feb  8 16:12:05 2007//
+/applications.rc/1.1/Thu Feb  8 16:06:37 2007//
+/applicationsWinRC.rc/1.2/Thu Feb  8 16:12:02 2007//
+/bc.mak/1.8/Tue May 28 10:32:53 2013//
+/bmake.bat/1.3/Thu Feb  8 16:06:34 2007//
+/libInit.cc/1.4/Thu Feb  8 16:06:28 2007//
+/modules.c/1.2/Thu Feb  8 16:11:58 2007//
+/modules.stx/1.2/Thu Feb  8 16:11:57 2007//
+/stx_libdb_libodbc_applications.st/1.5/Thu Feb  8 16:12:06 2007//
+D

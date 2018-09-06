@@ -1,0 +1,116 @@
+; View defaultStyle:#next 
+;
+; NeXT look-alike - almost like motif or iris,
+; but with smoother edges and frames around scrollbars and selections
+;
+; $Header: /cvs/stx/stx/libview/styles/next.style,v 1.21 2000-08-25 09:52:12 cg Exp $
+
+comment  'NeXT look alike'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Angelehnt an NeXT'
+#endif
+#if (Language == #french) or:[Language == #fr]
+comment  'Comme NeXT'
+#endif
+
+is3D                            true
+name                            #next
+
+lightGrey                       Color redByte:170 greenByte:170 blueByte:170
+darkGrey                        Color redByte:85 greenByte:85 blueByte:85
+
+#if Screen current hasGreyscales
+viewGrey                        =lightGrey exactOrNearestOn:(Screen current) 
+lightColor                      Color white
+halfShadowColor                 =darkGrey exactOrNearestOn:(Screen current)
+halfLightColor                  Color white "/ grey:67
+#else
+viewGrey                        Color white
+lightColor                      Color grey:50
+#endif
+
+textCursor.type.                #block
+textCursor.typeNoFocus          #none
+
+shadowColor                     Color black
+
+borderWidth                     0
+viewBackground                  =viewGrey
+popup.borderWidth               1     
+popup.level                     1     
+
+variablePanel.handlePosition     #center 
+variablePanel.handleStyle        #next
+variablePanel.handleImage        Image fromFile:'bitmaps/HandleNext.xpm'
+
+variablePanel.handleImage        Image fromFile:'bitmaps/HandleNext.xpm'
+
+variablePanel.snapLevel         1
+variablePanel.snapEnterLevel    1
+variablePanel.selectedLevel     1
+
+scrollBar.scrollerBordered       true
+
+#if Screen current hasGreyscales
+scroller.viewBackground          (Color grey:50) exactOrNearestOn:(Screen current)
+scroller.thumbColor              (Color lightGrey) exactOrNearestOn:(Screen current)
+scroller.thumbEdgeStyle          #soft
+#else
+scroller.thumbColor              Color white
+#endif
+scroller.thumbLevel              2
+scroller.thumbInset              1
+scroller.borderWidth             1
+scroller.handleImage             Image fromFile:'bitmaps/HandleNext.xpm'
+
+miniScroller.size                2.5       "/ millimeters
+
+button.edgeStyle                 #soft
+button.activeLevel               1
+button.passiveLevel              2
+#if Screen current hasGreyscales
+button.activeForegroundColor     Color black
+button.activeBackgroundColor     Color white
+button.enteredBackgroundColor    (Color lightGrey) exactOrNearestOn:(Screen current)
+button.halfShadowColor           =viewGrey darkened
+button.halfLightColor            Color white
+#else
+button.activeBackgroundColor     Color black
+button.activeForegroundColor     Color white
+#endif
+
+#if Screen current hasGreyscales
+menu.hilightForegroundColor      Color black
+menu.hilightBackgroundColor      Color white
+#else
+menu.hilightForegroundColor      Color white
+menu.hilightBackgroundColor      Color black
+#endif
+menu.buttonActiveLevel               =button.activeLevel
+menu.buttonPassiveLevel              =button.passiveLevel
+menu.buttonActiveBackgroundColor    =button.activeBackgroundColor
+
+
+popUpList.popPosition            #shifted
+
+variableFont                    Font family:'helvetica' face:'medium' style:'roman' size:12
+selection.font                   =variableFont
+label.font                       =variableFont
+
+#if Screen current hasGrayscales not
+html.anchorUnderline                true
+html.anchorForegroundColor          Color black
+html.backgroundColor                Color white
+html.activeAnchorForegroundColor    Color black
+html.activeAnchorBackgroundColor    =htmlBackgroundColor
+html.visitedAnchorForegroundColor   Color black
+html.exampleAnchorForegroundColor   Color black
+#endif
+
+checkToggle.activeImage      Image fromFile:'bitmaps/CheckOnNext.xpm'
+checkToggle.passiveImage     Image fromFile:'bitmaps/CheckOffNext.xpm'
+checkToggle.activeLevel      0
+checkToggle.passiveLevel     0
+checkToggle.activeBackgroundColor =viewGrey
+

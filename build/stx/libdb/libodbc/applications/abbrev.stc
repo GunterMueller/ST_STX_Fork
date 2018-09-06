@@ -1,0 +1,8 @@
+SQL::AdaptableApplicationModel SQL__AdaptableApplicationModel stx:libdb/libodbc/applications 'DataBase-ODBC-Application' 1
+SQL::GetConnectionInformation SQL__GetConnectionInformation stx:libdb/libodbc/applications 'DataBase-ODBC-Application' 1
+SQL::ODBCResultTable SQL__ODBCResultTable stx:libdb/libodbc/applications 'DataBase-ODBC-Application' 1
+SQL::ODBCResultTableTab SQL__ODBCResultTableTab stx:libdb/libodbc/applications 'DataBase-ODBC-Application' 1
+SQL::ODBCSQLScratchpad SQL__ODBCSQLScratchpad stx:libdb/libodbc/applications 'DataBase-ODBC-Application' 1
+SQL::ODBCScratchpad SQL__ODBCScratchpad stx:libdb/libodbc/applications 'DataBase-ODBC-Application' 1
+SQL::ODBCScratchpadTab SQL__ODBCScratchpadTab stx:libdb/libodbc/applications 'DataBase-ODBC-Application' 1
+stx_libdb_libodbc_applications stx_libdb_libodbc_applications stx:libdb/libodbc/applications '* Projects *' 1

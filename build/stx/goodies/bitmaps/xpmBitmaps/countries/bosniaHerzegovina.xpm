@@ -1,0 +1,36 @@
+/* XPM */
+static char *bosniaHerzegovina_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 22 7 1",
+/* colors */
+"a c #2050A0",
+"b c #5070B2",
+"c c #95AA44",
+"d c #DAE214",
+"e c yellow",
+"f c #083C94",
+"g c #A5BADE",
+/* pixels */
+"fffggfceeeeeeeeeeeeeeeeeeeedffff",
+"ffffbafceeeeeeeeeeeeeeeeeeedffff",
+"ffffaggfceeeeeeeeeeeeeeeeeedffff",
+"fffffbbbfceeeeeeeeeeeeeeeeedffff",
+"ffffffaggfceeeeeeeeeeeeeeeedffff",
+"fffffffbbbfceeeeeeeeeeeeeeedffff",
+"ffffffffagbfceeeeeeeeeeeeeedffff",
+"fffffffffabbfceeeeeeeeeeeeedffff",
+"ffffffffffagbfceeeeeeeeeeeedffff",
+"fffffffffffabgfceeeeeeeeeeedffff",
+"ffffffffffffbgafceeeeeeeeeedffff",
+"ffffffffffffaabgfceeeeeeeeedffff",
+"ffffffffffffffbbgfceeeeeeeedffff",
+"fffffffffffffffagbfceeeeeeedffff",
+"ffffffffffffffffabgfceeeeeedffff",
+"fffffffffffffffffbgbfceeeeedffff",
+"ffffffffffffffffffabgfceeeedffff",
+"ffffffffffffffffffffgbfceeedffff",
+"fffffffffffffffffffffbgfceedffff",
+"ffffffffffffffffffffffgbfcedffff",
+"fffffffffffffffffffffffbgfcdffff",
+"ffffffffffffffffffffffffgbfcffff",
+};

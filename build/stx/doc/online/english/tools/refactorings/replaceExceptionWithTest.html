@@ -1,0 +1,41 @@
+<html><head><title>Refactoring: 
+
+
+
+Replace Exception with Test</title></head><body>
+
+
+<H1>
+
+
+
+Replace Exception with Test</H1>
+<P><I><CENTER>
+
+You are throwing an exception on a condition the caller could have checked first.</CENTER></I></P>
+<P><B><CENTER>
+
+Change the caller to make the test first.</CENTER></B></P>
+
+<PRE>
+	double getValueForPeriod (int periodNumber) {
+		try {
+			return _values[periodNumber];
+		} catch (ArrayIndexOutOfBoundsException e) {
+			return 0;
+		}
+	}
+</PRE><P><CENTER><IMG SRC="arrow.gif"/></CENTER></P>
+<PRE>
+	double getValueForPeriod (int periodNumber) {
+		if (periodNumber &gt;= _values.length) return 0;
+		return _values[periodNumber];
+	}
+</PRE>
+
+
+<P>For more information see page 
+	<font color="#FF0000">315</font>
+	of <I>Refactoring</I></P>
+
+<P /><P /><P><CENTER><A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A></CENTER></P></body></html>

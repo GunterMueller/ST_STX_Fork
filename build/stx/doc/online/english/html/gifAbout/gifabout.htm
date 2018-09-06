@@ -1,0 +1,611 @@
+<HTML>
+<HEAD>
+  <TITLE>All About GIF89a</TITLE>
+</HEAD>
+<BODY background="brickz.gif" BGCOLOR=#FFFFFF TEXT=#000000 VLINK=#000040
+LINK=#0000FF ALINK=#FF0000 >
+<! ================ REV3 Standard Header! ================ >
+
+<!-- 
+<P>
+<A NAME="top"></A>
+<TABLE ALIGN=right>
+  <TR ALIGN=center VALIGN="bottom">
+    <TD><A NAME="top"><A HREF="problem.htm">
+      <IMG SRC="backarrw.gif" height=60 width=60 border=0 ALT="Previous Page"><BR>
+      <FONT SIZE="2">[Previous]</FONT></A></A></TD>
+    <TD><A HREF="find.htm"><IMG SRC="4wayarrw.gif" height=50 width=50 border=0
+	  align="absmiddle" ALT="Search &amp; Find"><BR>
+      <FONT SIZE="2">[Find]</FONT></A></TD>
+    <TD><A HREF="http://members.aol.com/royalef1/galframe.htm"><IMG SRC="forwarrw.gif"
+	  height=60 width=60 border=0 ALT="Previous Page" align="top"><BR>
+      <FONT SIZE="2">[Next]</FONT></A></TD>
+  </TR>
+</TABLE>
+<P align=left>
+<FONT SIZE="2" COLOR="BLUE"><B>Royal Frazier's</B></FONT><BR>
+<IMG SRC="g-gifani.gif" align="top"><BR>
+<A HREF="mirrors.htm"><FONT SIZE="2">- MIRROR sites: closer, faster, non-English
+-</FONT></A> <BR clear=all>
+<P align=center>
+<A HREF="gifanim.htm"><IMG SRC="anicon0.gif" border=0 width=87 height=93
+    ALT="[Overview]"></A>
+<A HREF="galframe.htm"><IMG SRC="anicon1.gif" border=0 width=117 height=
+    87 ALT="[Gallery]"></A>
+<A HREF="toolbox.htm"><IMG SRC="anicon3.gif" border=0 width=94 height=84
+    ALT="[Software Toolbox]"></A>
+<A HREF="gifmake.htm"><IMG SRC="anicon4.gif" border=0 width=100 height=85
+    ALT="[Animation Tutorial]"></A>
+<A HREF="gifhtml.htm"><IMG SRC="anicon5.gif" border=0 width=104 height=75
+    ALT="[HTML Assist]"></A>
+<A HREF="problem.htm"><IMG SRC="anicon6.gif" border=0 width=78 height=90
+    ALT="[Critter Report]"></A> <BR clear=all>
+<P align=center>
+<A HREF="royal.htm">[Home]</A> <A HREF="gifanim.htm">[Introduction]</A>
+<A HREF="find.htm">[Find]</A> <A HREF="userguid.htm">[Viewing]</A>
+<A HREF="toolbox.htm">[Software]</A> <A HREF="gifmake.htm"><NOBR>[How to
+make GIF Animations]</NOBR></A> <A HREF="gifhtml.htm">[HTML]</A>
+<A HREF="conserva.htm">[Conservation]</A> <A HREF="topten.htm">[Help]</A>
+<A HREF="problem.htm">[Problems]</A> <A HREF="gifabout.htm">[Technical]</A>
+<A HREF="http://members.aol.com/royalef1/galframe.htm">[Gallery]</A>
+<A HREF="aboutgaw.htm">[About]</A>
+<P><I>If you have a few minutes, please fill out the <A HREF="http://members.aol.com/royalef1/survey.htm" TARGET="_TOP">Visitor Survey</A>. It will help in making this site better.</I><BR>
+  <HR size="3" noshade>
+-->
+
+<FONT COLOR="TEAL"><FONT SIZE="+1"><FONT SIZE="+2">N</FONT>OTE
+<FONT SIZE="+2">T</FONT>O <FONT SIZE="+2">T</FONT>HE
+<FONT SIZE="+2">R</FONT>EADER:</FONT> This page is a very technical explanation
+of the GIF89a format and how it allows animation. If you are looking for
+a tutorial on how to do animated GIFs hit the ANIMATION TUTORIAL icon at
+the top of the page for instructions. This section below includes a byte-for-byte
+break down of the Netscape Application Loop Block. These pages are for people
+wishing to understand the technical merits of the formats and how it works
+inside. I include links to the original Compuserve specifications for GIF87a
+and GIF89a formats. </FONT>
+  <HR>
+<H2>
+  All About GIF89a
+</H2>
+<UL>
+  <LI>
+    <A href="#about">Understanding GIF89a</A>
+  <LI>
+    <A href="#structure">The Structure of a GIF89a file</A>
+  <LI>
+    <A href="#costbene">What are the benefits &amp; limitations of GIF89a
+    animations?</A>
+  <LI>
+    <A href="#specs">The GIF89a Specification</A>
+</UL>
+<P>
+<BR>
+<A name="about"></A>
+<H3>
+  Understanding GIF89A
+</H3>
+<P>
+First, a little legal mumbo-jumbo that has upset a lot of people. The GIF
+image format uses a built-in LZW compression algorithm. This compression
+algorithm is patented technology and currently owned by Unisys Corporation.
+As of 1995, Unisys decided that commercial vendors, whose products use the
+GIF LZW compression, must license its use from UNISYS. End users, online
+services, and non-profit organizations do not pay this royalty. Since it's
+inception GIF has been a royalty-free format. Only as of 1995, did Unisys
+decide to collect royalties. To avoid this royalty, vendors have developed
+an alternative to GIF that supports transparency and interlacing called PNG
+("ping"), the Portable Network Graphic. PNG, however, does not support a
+multiple image data stream to my knowledge.
+<P>
+Now, to clean up some of the mess I've made. I still have to find specifications
+for GIF87a to be sure of everything, but this is how I understand it. GIF87a
+was released...guess when? 1987. GI87a allowed for the following features
+<UL>
+  <LI>
+    LZW compressed images
+  <LI>
+    multiple images encoded within a single files
+  <LI>
+    positioning of the images on a logical screen area <I>(need to confirm this
+    fact)</I>
+  <LI>
+    interlacing <I>(need to confirm this fact)</I>
+</UL>
+<P>
+This means that nine years ago, it was possible to do simple animation with
+GIFs by encoding multiple images, what we will refer to as "frames", in a
+single file. GIF89a is an extension of the 87a spec. GIF89a added:
+<UL>
+  <LI>
+    how many 100ths of a second to wait before displaying the next frame
+  <LI>
+    wait for user input
+  <LI>
+    specify transparent color
+  <LI>
+    include unprintable comments
+  <LI>
+    display lines of text
+  <LI>
+    indicate how the frame should be removed after it has been displayed
+  <LI>
+    application-specific extensions encoded inside the file
+</UL>
+<P>
+Netscape Navigator is the only browser than comes close to full GIF89a
+compliance. The lines of text &amp; user input are not currently supported
+in NEtscape Navigator 2.0, and the image removal doesn't support <I>removal
+by previous image</I>. Most browsers support single image GIF87a and will
+recognize the transparency flag of GIF89a and nothing else. I received numerous
+corrections stating that all transparent GIFs are GIF89a format. I realize
+this. Several people thought it confusing to call this GIF89a animation when
+GIF87a could accommodate some of these animations. I guess the technically
+accurate naming convention would be <I>"mostly GIF89a-compliant animations
+which take advantage of some or all of the GIF89a-compliant features present
+in Netscape Navigator and hopefully other browsers, though some browsers
+technically support GIF87a animation with selective support of GIF89a
+transparency and everything else of GIF89a ignored.</I>" I will continue
+to call it GIF89a animation.
+<P>
+GIF89a is still a 256-color (maximum) format. GIF allows for any number of
+colors between 2 and 256. The fewer colors the less data and the smaller
+the graphic files. If your GIF only uses 4 colors, you can reduce the palette
+to only 2 bits (4 color) and decrease the file size by upwards of 75%.
+<P>
+<B>The following software lets you set bits-per-pixel for GIFs:</B> Abode
+Photoshop(Mac/Win), Boxtop's PhotoGIF PlugIn(MAC), GIFConvertor(Mac), and
+PhotoGIF(Mac), Picture Publisher(Win), Paint Shop Pro 3.0(Win), LVieWPro,
+WebImage from Group42, Graphic Convertor(Mac), Fractal Painter, Painter 2.0,
+PhotoStudio from ArcSoft,
+<A href=" http://www.wizards.dupont.com/cristy/ImageMagick.html">ImageMagick</A>,
+ClarisPaintShop, PaintIt, ColorIt and ToolWorks 2.2(SGI Indy) all do. DeBabelizer
+1.6.5 does but only for GIF87a images. If software NOT listed above can set
+the bits-per-color,
+<A HREF="mailto:royalef@aol.com" TITLE="Submission:Bits-per-color software">please
+let me know</A>. <A name="structure"></A>
+<H4>
+  The Structure of a GIF89a file
+</H4>
+<P>
+This is a little technical but it will give users a real understanding of
+how the GIF works, and what you need to do with it. GIFs are composed of
+<I>Blocks</I> and <I>Extensions</I>. Blocks can be classified into three
+groups:
+<UL>
+  <LI>
+    Control
+  <LI>
+    Graphic-Rendering
+  <LI>
+    Special Purpose
+</UL>
+<P>
+Control blocks, such as the Header, the Logical Screen Descriptor, the Graphic
+Control Extension and the Trailer, control how the graphic data is handled.
+Graphic-Rendering blocks such as the Image Descriptor and the Plain Text
+Extension contain data used to render a graphic . Special Purpose blocks
+such as the Comment Extension and the Application Extension are not used
+by GIF decoders at all. The Logical Screen Descriptor and the Global Color
+Table affect all the images in a single file. Each Control block will only
+affect a single Image block that immediately follows it.
+<P>
+Here's what a GIF looks like inside:
+<H4>
+  GIF89a File Structure
+</H4>
+<UL>
+  <LI>
+    GIF89a HEADER
+  <LI>
+    LOGICAL SCREEN DESCRIPTOR BLOCK
+    <UL>
+      <LI>
+	may include an optional GLOBAL COLOR TABLE (99.5% of the time this will be
+	present)
+    </UL>
+  <LI>
+    optional NETSCAPE APPLICATION EXTENSION BLOCK(:-&gt; surprise)
+  <LI>
+    a stream of graphics (each graphic being composed of the following)
+    <UL>
+      <LI>
+	an optional GRAPHIC CONTROL BLOCK (one preceding each IMAGE)
+      <LI>
+	a single IMAGE DESCRIPTOR or PLAIN TEXT BLOCK
+	<UL>
+	  <LI>
+	    which can include an optional LOCAL COLOR TABLE for an image
+	  <LI>
+	    and the actual IMAGE or TEXT data table
+	</UL>
+    </UL>
+  <LI>
+    GIF TRAILER ends the series of images
+</UL>
+<P>
+COMMENT BLOCKS may appear anywhere as they are ignored. (Do NOT place them
+before the Netscape Looping Extension!!) 
+  <HR>
+<H3>
+  BLOCK DEFINITIONS:
+</H3>
+<H4>
+  HEADER
+</H4>
+<P>
+The HEADER block is a small 6-byte (6-character) block. It is the first block
+in every file and contains the GIF version of the file (i.e either GIF87a
+or GIF89a). GIF image decoders use this information to determine the version
+of the file.
+<H4>
+  LOGICAL SCREEN DESCRIPTOR
+</H4>
+<P>
+The LOGICAL SCREEN DESCRIPTOR is always the second block in a file. It defines
+an area of pixels which you can think of as a screen (like a projector screen).
+The dimensions of this area define the size of your GIF on screen. This
+information determines how much space is reserved on-screen in your browser
+to display the image. If your logical screen is larger than your image, you
+will have space around the image when displayed.
+<P>
+The logical screen area should be large enough to display all of your individual
+frames in it. If an image in the GIF file is larger than the logical screen
+or, by its positioning, extends beyond the screen, the portion that is off-screen
+will not be displayed. Think of it the way a movie that is too big would
+not fit on a projector screen. More importantly,
+<IMG SRC="bug.gif" ALIGN=left WIDTH=36 HEIGHT=43>Netscape Beta4 (possibly
+more) will <FONT COLOR="RED">GPF (General Protection Fault) in Windows
+3.x</FONT> on an image larger than the Logical Screen Header. Do not assume
+all of your images are the same size. Read through their sizes and set the
+logical screen to the largest width &amp; height included in the file.
+<A NAME="screen_background"></A>
+<P>
+The Logical Screen Block also chooses one of the colors in the Global Color
+Table to be the Background color of the screen. This color selection is ignored
+by Netscape Navigator. If a GIF's background area shows through, Navigator
+displays the color set in the BGCOLOR of the page's body or, if none is
+specified, the background color set in the menus under OPTIONS/GENERAL
+PREFERENCES/COLORS. Now, of course, the question arises; how do I get it
+to be transparent? Well, this SHOULDN'T work, but it does. Apparently, if
+Netscape's decoder finds a Control block (it must be first, before any images)
+with Transparency turned on (any color) the background of the GIF will be
+transparent. This will allows background GIFs to fill in the logical screen
+background.
+<P>
+A GIF file contains a <I>global</I> palette of common colors for all the
+images in its file to work from. (NOTE: It is technically possible for a
+GIF NOT to have a global palette, but this would be extremely rare.) This
+palette can have 2, 4, 8, 16, 32, 64, 128 , or 256 defined colors. Palettes
+are very important. Every color displayed in your GIF must come from a palette.
+The fewer colors used, the easier it will be for systems to display your
+images. The global palette is applied to all images in a GIF file. If an
+individual images differs greatly from that global palette, it may have a
+local palette that affects its color ONLY. However, no image can every reference
+more than one palette, so 256 colors per image is the max. Having a bunch
+of local palettes with wildly varied colors can sometimes cause color shifts
+in your display. (it also probably indicates a gaudy mix of colors)
+<P>
+The Logical Screen Header can also contain the aspect ratio of the image.
+This can sometimes account for GIFs appearing stretched out or scrunched.
+I will leave this to other who have use of this. <A NAME="net-extension"></A>
+<H4>
+  APPLICATION EXTENSIONS
+</H4>
+<P>
+Usually a discussion on APPLICATION EXTENSIONS would be left to last. However,
+this is an important issue, and is fitting to discuss at this point. Application
+Extensions allow for blocks of data to be inserted in the GIF for specific
+programs to act upon. It can be for any purpose. For this reason, only special
+programs will do anything with them. The January '95 release of GIF Construction
+Set 1.0G for Windows will insert the Netscape-specific loop-block into a
+GIF. With these blocks, programs could specify special effects or instructions
+on how to handle the image data. Typically, only the programs that define
+these application blocks will understand them.
+<P>
+<B>OKAY...HERE IT IS...LOOPING!</B>
+<P>
+Netscape Navigator has an Application Extension Block that tells Navigator
+to loop the entire GIF file. The Netscape block MUST APPEAR IMMEDIATELY AFTER
+THE GLOBAL COLOR TABLE OF THE LOGICAL SCREEN DESCRIPTOR. Only Navigator 2.0
+Beta4 or better will recognize this Extension block. The block is 19 bytes
+long composed of: (note: hexadecimal equivalent supplied for programmers)
+<PRE>
+byte   1       : 33 (hex 0x21) GIF Extension code
+byte   2       : 255 (hex 0xFF) Application Extension Label
+byte   3       : 11 (hex (0x0B) Length of Application Block 
+		 (eleven bytes of data to follow)
+bytes  4 to 11 : "NETSCAPE"
+bytes 12 to 14 : "2.0"
+byte  15       : 3 (hex 0x03) Length of Data Sub-Block 
+		 (three bytes of data to follow)
+byte  16       : 1 (hex 0x01)
+bytes 17 to 18 : 0 to 65535, an unsigned integer in 
+		 lo-hi byte format. This indicate the 
+		 number of iterations the loop should 
+		 be executed.
+bytes 19       : 0 (hex 0x00) a Data Sub-block Terminator. 
+</PRE>
+<P>
+As of Beta5, the iteration count is ignored and the loop is infinite (an
+iteration count of zero indicates infinite). I strongly suggest you code
+the count to be accurate, so that when iterations begin working your GIF
+will not need to be modified. Technically that is all that needs to be done
+with this block. <A HREF="gifmakg.htm#looping">More about looping</A> later
+in the tutorial.
+<H4>
+  CONTROL BLOCKS
+</H4>
+<P>
+A CONTROL BLOCK controls certain optional aspects of how an image is displayed.
+A Control block only affect the image immediately following it. For this
+reason, you should never include any block between a control block and the
+next image descriptor block. This Graphic Control Extension defines:
+<UL>
+  <LI>
+    if this image has a local palette of its own
+  <LI>
+    if one of the colors in this image is transparent
+  <LI>
+    if a user input is requested before proceeding
+  <LI>
+    if a timed delay in 1/100ths of a second should be used before displaying
+    THIS image.
+  <LI>
+    what should be done with the image after it has been displayed (removal controls)
+</UL>
+<P>
+You should avoid using a local palette as it increases the likelihood of
+a confused video display. If a local palette doesn't exist, the global one
+is used. One of these color is designated as transparent in the control block.
+<P>
+User input and timing work together. When an image is described, it is
+immediately rendered on screen. Then, if a timed delay is set, it will wait
+for <B>x/100ths of a second</B> before removal and proceeding onto the next
+image. If a User Input is specified, the image waits until the user strikes
+a key, clicks a mouse or whatever. What is considered <I>user input</I> is
+determined by the program displaying the GIF. If both options are elected,
+the image remains until the delay expires or a user input occurs, whichever
+comes first.
+<P>
+Just before preceding to the next image, the removal options are performed.
+You may remove the image by:
+<UL>
+  <LI>
+    nothing: perform no action
+  <LI>
+    leave as is: leave the image on screen, should be same as nothing in most
+    cases
+  <LI>
+    previous image: replace it with what was there before; this is difficult
+    to implement and is the most powerful choice.
+  <LI>
+    background: replace with the logical screen background color. (note: If Navigator
+    detected transparency, <A HREF="#screen_background">as written above</A>,
+    this will be replaced by the HTML specified background)
+</UL>
+<H4>
+  IMAGE BLOCK
+</H4>
+<P>
+An IMAGE BLOCK contain (tada!) an actual image. This image can be any size
+and have a palette of any size. You can have a mix of 16-color, 2-color,
+256color, etc images in a single GIF. In addition to the actual image table
+data you have the following:
+<UL>
+  <LI>
+    the picture's size in pixels
+  <LI>
+    the position of the image on the <I>logical screen</I>
+  <LI>
+    whether it is interlaced
+  <LI>
+    an optional local palette for this image
+</UL>
+<P>
+The image's size in pixels cannot be modified. It is determined by the data
+of the image. Changing this would cause data corruption.
+<P>
+The <I>top</I> and <I>left</I> position of the images are within the defined
+logical screen. With this a small bitmap of an object could be placed anywhere
+within the screen area, rather than create an entire image with the object
+positioned within it. <A HREF="gifmake.htm#sequence">More on this</A> in
+the tutorial.
+<P>
+Interlacing is a way of saving and displaying the image data. For interlacing
+to occur, the image must be set to <B>save</B> interlaced. Interlacing is
+not turned by the browser. It may be ignored by the browser. Interlacing
+saves alternate rows, producing a venetian blind or blocky-focusing effect,
+depending upon how the browser handles interlacing. Interlacing stores the
+rows of the image in the following order:
+<PRE>
+      Pass 1 : Every 8th. row, starting with row 0.
+      Pass 2 : Every 8th. row, starting with row 4.
+      Pass 3 : Every 4th. row, starting with row 2.
+      Pass 4 : Every 2nd. row, starting with row 1.
+</PRE>
+<H4>
+  COMMENT BLOCK
+</H4>
+<P>
+You can include comments in your GIF. These can be markers for long animation
+sequences or statements of ownership. I strongly suggest that you place your
+name, email, and home address in the GIF so people can contact you regarding
+your work. These comments DO NOT appear on screen.
+<H4>
+  PLAIN TEXT BLOCKS
+</H4>
+<P>
+In addition to images you can also render text on screen with a GIF.
+Unfortunately many programs don't recognize the text. Netscape does not.
+If you would like to learn more about the Plain Text Blocks read the
+<A HREF="#specs">GIF89a Specification Sheet</A>.
+<H4>
+  TRAILER
+</H4>
+<P>
+The Trailer is simple. It indicates the end of the GIF file. It is unmodifiable
+and cannot be accessed in anyway. 
+  <HR>
+<P>
+Here is an example of the structure of a typical animation file:
+<P>
+GIF89A HEADER
+<P>
+LOGICAL SCREEN DESCRIPTOR
+<P>
+GLOBAL PALETTE
+<P>
+LOOP : Netscape 2.0 Loop
+<P>
+COMMENT "Created By..."
+<P>
+COMMENT "Star at 0 degrees"
+<P>
+CONTROL for IMAGE #1
+<P>
+IMAGE #1
+<P>
+COMMENT "Star at 15 degrees"
+<P>
+CONTROL for IMAGE #2
+<P>
+IMAGE#2
+<P>
+COMMENT "Star at 30 degrees"
+<P>
+CONTROL for IMAGE #3
+<P>
+IMAGE #3
+<P>
+TRAILER 
+  <HR>
+<A name="costbene"></A>
+<H3>
+  What are the benefits &amp; limitations of GIF89a animations?
+</H3>
+<H4>
+  Benefits
+</H4>
+<UL>
+  <LI>
+    All the benefits of GIF: transparency, compression, interlacing,
+    2,4,8,16,32,64,128 &amp; 256 color palettes for optimum size and compression.
+  <LI>
+    Supported by the basic Netscape 2.0 product. No Plug-ins or additional software.
+    Tested on Win 3.1x, Win95, MAC, Unix, Sun, Linux, &amp; Irix.
+  <LI>
+    Web designer does not need access to internet provider's web server, server-side
+    includes (SSI), or CGI/PERL scripting. If you have a program that can make
+    multi-image 89a GIFs, you can make this animation.
+  <LI>
+    The animation is repeatable and reusable. You can place the same image on
+    a page multiple times. It performs a single download for all and loops all
+    from the cache.
+  <LI>
+    The animation only loads once, so your modem doesn't keep downloading constantly.
+    It is faster than server-reliant methods. Check out
+    <A HREF="http://www.mindspring.com/~codex/race.html">the RACE</A>!
+  <LI>
+    The animations are surprisingly compact. The static image of a construction
+    sign above is 4,471 bytes, while the animated version is only 7,080 bytes.
+    The rolling stars (all of them :-&gt;) are 7,635 bytes.
+  <LI>
+    ANYONE can use them on their page. Anyone with a web page can include this
+    animation. IN FACT, if you save any of the animated GIFs to your hard drive,
+    you will have the entire animation to put in your own pages. Please contact
+    the creator for usage.
+  <LI>
+    Works like any other GIF. Include on your page in an IMG or FIG tag, even
+    anchor it. Works invisibly.
+</UL>
+<H4>
+  Limitations
+</H4>
+<UL>
+  <LI>
+    All the limitations of GIFs: max of 256 colors, photographs are better compressed
+    by JPEG
+  <LI>
+    Only plays in Netscape 2.0 or better, but DOES work with many platforms (Windows,
+    MAC, Unix, etc)
+  <LI>
+    Will play once or continuously. Refresh will not play the image again, but
+    RELOAD or resizing the windows will. If the viewer returns BACK to the page
+    from elsewhere, the image will play, EVEN if cached! Later revisions of Navigator
+    may support finite iterations of the animations.
+  <LI>
+    It cannot be used as a background GIF. Only the first frame will display.
+  <LI>
+    <B>Netscape does not fully support GIF89a. </B>
+    <UL>
+      <LI>
+	Ignores user input.
+      <LI>
+	Does not handle <I>previous image</I> for image removal controls.
+      <LI>
+	Plain text is not displayed
+      <LI>
+	Bug in Windows version prevents timed displays of lower than 1/3 of a second
+	between images.
+    </UL>
+  <LI>
+    The animation can be slowed down or interrupted by other images being downloaded
+    and other playing animations.
+  <LI>
+    Animation can be "borrowed" as easily as any GIF
+  <LI>
+    Non-supporting browsers either display the <I>first image</I> <B>(Win 3.x:</B>
+    Cello, Internet Explorer, Netcruiser 2.1, Netscape before 2.0, NCSA Mosaic
+    2.0, Quarterdeck Mosaic, Spry Mosaic 3.0A, Video Online; <B>Unix:</B> NCSA
+    Mosaic 2.7, Netscape before 2.0) or the <I>last image</I> <B>(Win 3.x:</B>
+    AOL2.5(12-95); Unix: SUN's HotJava<B>)</B>. It is safe to say any earlier
+    versions of the browsers listed would behave similarly. If you have tested
+    an unlisted browser please
+    <A HREF="mailto:royalef@aol.com" TITLE="GIF89a in other browsers">email me
+    the results</A>.
+</UL>
+<P>
+  <HR>
+<A NAME="specs"></A>
+<H3>
+  The GIF89a Specification
+</H3>
+<P>
+Compuserve released the technical specification for GIF89a in July of 1989.
+The technical specification is an exact breakdown of the byte-for-byte structure
+and rules for interpreting and building this format. If you are interested
+in a more technical explanation of the format, you can
+<A href="gif89a.txt">read the specifications</A> as published by Compuserve.
+This is the perfect documentation for anyone considering writing code to
+deal with GIFs. The <A HREF="gif87a.txt">GIF87a Specifications</A> are also
+available. 
+  <HR>
+<P>
+Any ideas, suggestions,utilities, or examples, please <A HREF="mailto.htm">mail
+them over</A> for inclusion in this page.
+<P align="center">
+<A HREF="mailto.htm">Royal Frazier</A> <BR CLEAR=ALL>
+<P align=center>
+(<A HREF="#top">Go to the TOP of PAGE for MENUS</A>) 
+<P align=center>
+<!-- BEGIN LINKEXCHANGE CODE -->
+<a href="http://ad.linkexchange.com/X231197/gotoad.map" 
+target="_top">
+<img width=440 height=40 border=1 ismap 
+alt="LinkExchange"
+src="http://ad.linkexchange.com/X231197/logoshowad?free"></a>
+<br><font size=1><a href="http://www.linkexchange.com/" 
+target="_top">
+LinkExchange Member</a></font><br>
+<!-- END LINKEXCHANGE CODE  -->  <HR size=4 noshade>
+<TABLE CELLPADDING=0 CELLSPACING=0 BORDER=0 WIDTH=100%>
+  <TR>
+    <TD width="40%"><FONT SIZE="1" COLOR="GRAY">Copyright 1996,1997 Royal E.
+      Frazier Jr.</FONT></TD>
+    <TD width=20% align=center><IMG src="http://members.aol.com/cgi-bin/counter?royalef/gifabout"
+	  width=68 height=20></TD>
+    <TD width=40% align=right><FONT SIZE="1" COLOR="GRAY">Last Updated: March
+      1997</FONT></TD>
+  </TR>
+</TABLE>
+</BODY></HTML>

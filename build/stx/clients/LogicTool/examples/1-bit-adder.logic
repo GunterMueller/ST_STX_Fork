@@ -1,0 +1,13 @@
+(Input new origin:31@46; name:'inp-1'; id:1; yourself)!
+(Input new origin:29@141; name:'inp-2'; id:2; yourself)!
+(AndGate2 new origin:245@62; name:'and-1'; id:1; yourself)!
+(Output new origin:445@106; name:'carry'; id:1; yourself)!
+(ExorGate2 new origin:256@215; name:'xor-1'; id:1; yourself)!
+(Output new origin:463@241; name:'sum'; id:2; yourself)!
+(Connection new fromNamedGate:'and-1' pin:1 toNamedGate:'carry' pin:1)!
+(Connection new fromNamedGate:'inp-1' pin:1 toNamedGate:'and-1' pin:1)!
+(Connection new fromNamedGate:'inp-2' pin:1 toNamedGate:'and-1' pin:2)!
+(Connection new fromNamedGate:'inp-1' pin:1 toNamedGate:'xor-1' pin:1)!
+(Connection new fromNamedGate:'inp-2' pin:1 toNamedGate:'xor-1' pin:2)!
+(Connection new fromNamedGate:'xor-1' pin:1 toNamedGate:'sum' pin:1)!
+!

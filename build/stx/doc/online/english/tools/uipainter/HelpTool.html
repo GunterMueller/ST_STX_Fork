@@ -1,0 +1,194 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+   <META NAME="Author" CONTENT="Thomas Zwick, eXept software AG, Germany">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.04 [en] (X11; I; Linux 2.0.30 i586) [Netscape]">
+   <TITLE>Using the Help Tool</TITLE>
+</HEAD>
+<BODY>
+<A HREF="ImageEditor.html" NOPRINT><IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="Using the Image Editor" NOSAVE HEIGHT=30 WIDTH=30></A>
+<A HREF="../TOP.html" NOPRINT><IMG SRC="../../../icons/DocsUpArrow.gif" ALT="Programming Tools" NOSAVE HEIGHT=30 WIDTH=30></A>
+<A HREF="ResourceSelectionBrowser.html" NOPRINT><IMG SRC="../../../icons/DocsRightArrow.gif" ALT="Using the Resource Selection Browser" NOSAVE HEIGHT=30 WIDTH=30></A>
+<BR>&nbsp;
+<HR ALIGN=LEFT WIDTH="100%">
+<H1>
+<FONT SIZE=+4>Using the Help Tool</FONT></H1>
+
+<H2>
+Index</H2>
+
+<UL>
+<LI>
+<A HREF="#INTRODUCTION">Introduction</A></LI>
+
+<LI>
+<A HREF="#STARTING">Starting the Help Tool</A></LI>
+
+<LI>
+<A HREF="#DESCRIPTION">Description of a Help Specification</A></LI>
+
+<LI>
+<A HREF="#FUNCTIONS">The Functions of the Help Tool</A></LI>
+</UL>
+
+<HR ALIGN=LEFT WIDTH="100%">
+
+<H2>
+<A NAME="INTRODUCTION"></A>Introduction</H2>
+The <CITE>ST/X</CITE> Help Tool allows you to build and maintain
+help-text dictionaries for graphical
+user interfaces.
+<BR>
+You can define and/or modify the key &lt;-&gt; text associations,
+which specify the helptext to be displayed
+when the user moves the mouse pointer over a widget.
+
+<P>
+By default, the helpText dictionary is stored
+in the method <TT>helpSpec</TT> in the class protocol of the application.
+<BR>
+Common help texts should be moved
+to a superclass of the application class to avoid having the texts around
+multiple times and to make changes easier.
+<P>
+Notice:
+<BR>
+The texts as defined in the helpSpec are used as keys for national language translated
+variants, which are loaded from the application's resource file.
+
+
+<HR ALIGN=LEFT WIDTH="100%">
+
+<H2><A NAME="STARTING"></A>Starting the Help Tool</H2>
+Normally, the Help Tool is embedded as a sub canvas in a
+<A HREF="TOP.html">GUI Painter</A> or
+<A HREF="MenuEditor.html">Menu Editor</A>.
+<BR>
+However, it may also be used stand alone.
+There are 2 ways to start the Help Tool:
+<OL>
+<LI>
+by double-clicking in a <A HREF="../sbrowser/TOP.html">System Browser</A>
+on a resource method&nbsp;<IMG SRC="../../../pictures/HelpIcon.gif" ALT="An icon representing a help resource method" NOSAVE HEIGHT=11 WIDTH=13>
+containing a help specification</LI>
+<P>
+
+<LI>
+by evaluating one of</LI>
+
+<BR><TT>&nbsp;&nbsp;&nbsp; <A TYPE=example>UIHelpTool open</A></TT>
+<BR><TT>&nbsp;&nbsp;&nbsp; UIHelpTool openOnClass:<I>anApplicationClass</I></TT></OL>
+&nbsp;
+
+
+<HR ALIGN=LEFT WIDTH="100%">
+
+<H2><A NAME="DESCRIPTION"></A>Description of a Help Specification</H2>
+
+The specification of a help resource is simply an array of pairs, each
+consisting of a help key and a help text.
+The help resource method has following format:
+
+<P><TT>helpSpec</TT>
+
+<P><TT>&nbsp;&nbsp;&nbsp; &lt;resource: #help></TT>
+
+<P><TT>&nbsp;&nbsp;&nbsp; ^super helpSpec addPairsFrom:</TT>
+
+<P><TT>#(</TT>
+
+<P><TT>#<I>helpKey1</I></TT>
+<BR><TT>'This is the help text for the help key 1.'</TT>
+
+<P><TT>#<I>helpKey2</I></TT>
+<BR><TT>'This is the help text for the help key 2.'</TT>
+
+<P><TT>...</TT>
+
+<P><TT>)</TT>
+<BR>
+
+<P>The resource methods of the help specifications have to be implemented
+as class methods in subclasses of the class <TT>ApplicationModel</TT>.
+Other classes with window or menu resource methods should implement
+the <CODE>#helpSpecClass</CODE>-method,
+to specify the class which provides the help information.
+<BR>
+The returned class should be a subclass of
+<TT>ApplicationModel</TT>:
+<P>
+For example:
+<BR>
+<P><TT>helpSpecClass</TT>
+
+<P><TT>&nbsp;&nbsp; ^<I>ApplicationModelSubclassWithTheHelpSpec</I></TT>
+<BR>&nbsp;
+<BR>&nbsp;
+
+<HR ALIGN=LEFT WIDTH="100%">
+
+<H2>
+<A NAME="FUNCTIONS"></A><B>The Functions of the Help Tool</B></H2>
+
+<TABLE BORDER WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Help Key List</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>List of the help text keys.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B><I>Add</I> Button</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Adds a key.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B><I>Remove</I> Button</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Removes the help text key from the widget.&nbsp;</B>&nbsp;
+<BR>Only available, if the Help Tool is embedded in a GUI Painter or Menu
+Editor.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B><I>Delete</I> Button</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Deletes the help text from the help spec.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Help Key Entry Field</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Unique help text key.&nbsp;</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Help Spec Classes List</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>List of the classes where help specs can
+be/are implemented.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Help Text Text Editor</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Shows the help text.</B>&nbsp;
+<BR>Help text which can be displayed in the application by redefining the
+help call <TT>showHelp: <I>aHelpText</I> for: <I>aView</I></TT>, where
+<I><TT>aHelpText</TT></I> is the help text and <I><TT>aView</TT></I> is
+the widget instance invoked the call. Usually, this text is displayed in
+the application's help or info label; but its also possible to pop up an
+active help bubble.&nbsp;</TD>
+</TR>
+</TABLE>
+
+<P>
+<HR>
+
+<P><IMG SRC="../../../icons/stx.gif" NOSAVE HEIGHT=48 WIDTH=47>
+<BR>Copyright &copy; 1998 eXept Software AG, all rights reserved
+<BR>
+<HR>
+</BODY>
+</HTML>

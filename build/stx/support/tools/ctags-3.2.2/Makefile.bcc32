@@ -1,0 +1,44 @@
+# Simple makefile for Borland C++ 3.1
+# 4.0 can also be used, although the executable will be much bigger!
+
+SOURCES = eiffel.c entry.c fortran.c get.c keyword.c main.c options.c \
+	parse.c read.c sort.c vstring.c
+
+# Adjust the paths to your location of the borland C files
+BCCLOC  = c:\programme\borland\cbuilder3
+BCCLOC  = c:\borland\bcc55
+CC      = $(BCCLOC)\bin\bcc32
+#CC      = $(BCC)
+INC     = -I$(BCCLOC)\include
+LIB     = -L$(BCCLOC)\lib
+
+# Add this file for wildcard expansion (does NOT work with 4.0!)
+#EXTRA   =   $(BCCLOC)\lib\wildargs.obj
+
+# The following compile options can be changed for better machines.
+#       replace -1- with -2 to produce code for a 80286 or higher
+#       replace -1- with -3 to produce code for a 80386 or higher
+#       add -v for source debugging
+OPTIMIZE=-Ox
+
+CFLAGS  = -DMSDOS -w-ccc -w-par -w-pia -w-rch -w-sus $(INC)
+LFLAGS  = $(LIB) $(EXTRA)
+
+ctags.exe: $(SOURCES) respfile
+	$(CC) $(OPTIMIZE) -e$@ @respfile
+
+debug: dctags.exe
+
+dctags.exe: $(SOURCES) respfile debug.c
+	$(CC) -DDEBUG -v -e$@ @respfile debug.c
+
+respfile: makefile.bcc32
+	echo $(CFLAGS) > $@
+	echo $(LFLAGS) >> $@
+	echo $(SOURCES) >> $@
+
+clean:
+	del *.exe
+	del *.obj
+	del respfile
+	del tags

@@ -1,0 +1,30 @@
+Smalltalk packagePath add: (Filename currentDirectory / '..') asString.
+Smalltalk addStartBlock:[
+	Processor startTimeSlicing.
+	Processor supportDynamicPriorities:true.
+	ObjectMemory backgroundCollectProcess priorityRange:(4 to:9).
+	ObjectMemory backgroundFinalizationProcess priorityRange:(4 to:9).
+].
+
+Smalltalk addStartBlock:[
+	Object disableBreakPoint:#jv.
+	Object disableBreakPoint:#mh.
+
+	Filename currentDirectory directoryContents do: [ :file |
+		(file endsWith: '.st') ifTrue: [ Smalltalk fileIn: file ]
+	].
+
+	ObjectMemory justInTimeCompilation: true.
+].
+
+Smalltalk addStartBlock:[
+	| n duration |
+	n := Smalltalk commandLineArguments last asInteger.
+	ObjectMemory scavenge.
+	ObjectMemory tenure.
+	ObjectMemory flushCaches.
+	Object new runBenchmark: n.
+	duration := Object new runBenchmark: n.
+	Transcript showCR: 'EXECUTION TIME: ' , duration printString.
+	Smalltalk exit: 0.
+].

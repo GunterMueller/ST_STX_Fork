@@ -1,0 +1,206 @@
+This directory contains some short demo & example programs,
+which can be used for learning how to work with views. 
+
+Each of them contains a comment somewhere
+at the beginning of the file which starts the demo;
+look for something like: 'ButtonDemo start".
+
+The utilities are:
+
+		ClassTreeGraphView.st
+				uses TreeGraphView (see below)
+
+		WindowTreeView.st
+				shows the hierarchy of smalltalk views
+				another use of TreeGraphView (below)
+
+examples are:
+
+		c_examples      shows how to load & bind object files
+				containing c-functions dynamically.
+				(i.e. instead of static linkage)
+				This does not work on all platforms (yet)
+
+		c++_examples    shows how to load & bind object files
+				containing c++-functions dynamically.
+				(i.e. instead of static linkage)
+				This does not work on all platforms (yet)
+
+The demos are:
+		BDemo1.st       shows the use of buttons
+				and labels
+
+		BDemo2.st       also, but nicer button size
+
+		BDemo3.st       puts 2 buttons with action
+				in a panel for better geometry.
+
+		CalcView.st     a simple calculator
+
+		Calendar.st     a simple calendar program
+				(mimics example in oReillys motif book)
+
+		CommanderDemo.st
+				draws geometric designs using
+				Commander and Pen.
+				(autoloads Commander & Pen classes)
+
+		ColorDraw.st    a simple Paint demo 
+				(inspired by example in oReillys
+				 motif book and written as a
+				 challenge of how simple it is in ST/X)
+
+		ColorDraw2.st   a subclass of the above - adds brushes
+				of varying line-widths.
+				(needs ColorDraw to be filed in first)
+
+		ColorDraw3.st   a subclass of the above; adds scrollbars
+				and redraw features.
+				(needs both of the above and FormDrawView.st
+				 to be filed in)
+
+		ColorScales.st  shows color handling - on b&w displays and
+				low color resolution displays (vga), this
+				demonstrates how colors are automatically 
+				dithered.
+
+		DemoApp2.st	a non-graphical class, used for the
+				standalone example.
+				Prints 50 factorial.
+				Build with:
+				    cd projects/smalltalk
+				    make demoApp2
+
+                DemoApp3.st     a non-graphical class, used for the
+                                standalone example.
+				Implements a UNIX filter.
+                                Build with:
+                                    cd projects/smalltalk
+                                    make demoApp3
+
+		DirTreeV.st     graphical display of a directory tree.
+				(a demo of how to use the ObjectView class)
+
+
+		FormDrawView.st helper for ColorDrawDemo3; provides a saved
+				canvas area.
+
+		Fractal.st      draws fractal mountains / a free goody
+				(example1 to example4 draw into the root window,
+				 example5 creates its own window)
+
+		FractalPatternDemo
+				computer recreations ...
+
+		FractalPlants
+				ditto
+
+		GreyScaleDemo.st  
+				like ColorScales, but only shows grey values.
+
+		HelloView.st    one of the smallest Hello-world programs around.
+				If the goody: 'goodies/Form-SUNForm.chg' has been
+				filedIn, it also demonstrates how to define icons
+				from other-than-X bitmaps (sun-icon format).
+
+		PenDemo.st      draws geometric designs using a Pen.
+				(autoloads Pen class) Also a good example for
+				PanelView, which makes the button-layout (try
+				resizing the view), and both Button and Toggle
+				usage (see label-change in the nib-toggle).
+
+		SliderDemo.st   shows use of Sliders and color handling
+
+		SliderDemo2.st  a subclass of the above with colored sliders
+				(needs above to be filed-in first)
+
+		TreeView.st     shows use of ObjectView; an abstract Tree
+				Viewer.
+
+		ClassTreeView   displays a graphical view of the whole class 
+				hierarchy; allows some limited interaction 
+				by selections and a pop-up menu.
+
+		TreeGraphView.st
+				even better: adds connecting lines. Is also
+				abstract
+
+	Example1 to Example11 give a step-by-step introduction to view
+	programming. They provide examples of increased complexity, starting
+	with a very simple (useless) view, ending in a simple editor application.
+
+
+		Example1.st     simple view with a subview
+
+		Example2.st     simple view with two subviews; shows how sizes
+				can be computed.
+
+		Example3.st     simple view with two subviews; subview sizes are
+				specified relative to superviews size.
+
+		Example4.st     simple view with two subviews; the relative size
+				ratios can be changed (VariableVerticalPanel)
+
+		Example5.st     same, but one of the views shows read-only text
+
+		Example6.st     same, but TextView is scrollable
+
+		Example7.st     same, but TextView shows contents of a file
+
+		Example8.st     a simple view showing the use of PullDownMenu, 
+				Notifiers and Confirmers
+
+		Example9.st     a setup for a scrollable view, with a PullDownMenu
+
+		Example10.st    an editable textview, with scrollbar and useful
+				functions in the PullDownMenu.
+
+		Example11.st    same, but all message texts have been internationalized
+				by using resources.
+
+	Frame1 to Frame6 show examples of frame views:
+
+		Frame1.st       a simple frame
+
+		Frame2.st       also simple, but uses different font
+
+		Frame3.st       a frame around a TextView
+
+		Frame4.st       more complex, two Lists in frames, which are themselfes
+				in a Horizontal panel.
+
+		Frame5.st       two frames, one houses a list which provides a selection 
+				possibility, the other houses a TextView reacting on
+				selections in the list. All of this in a variable panel.
+
+		Frame6.st       same setup, different function. This shows files and
+				their contents
+
+	PathDemo1 to PathDemo8 demonstrate the use of the Path subclasses:
+	(they will autoload some Path stuff)
+
+		PathDemo1.st    shows different instances of class Line.
+				(varying capStyles, varying lineStyles and colors)
+
+		PathDemo2.st    shows LinearFit usage (varying line styles)
+
+		PathDemo3.st    shows Spline usage  (varying line styles)
+
+		PathDemo4.st    shows Arc and Circle usage
+
+		PathDemo5.st    shows Curve usage
+
+		PathDemo6.st    shows Arrows (varying directions, varying styles)
+
+		PathDemo7.st    shows splines, press LeftButton for points, last point
+				with RightButton.
+
+		PathDemo8.st    shows Ellipse usage
+
+	ViewDemo1 to ... will follow
+
+		ViewDemo1.st    shows how to define a view-background pattern
+				(needs 'goodies/Form-Patterns.chg to be loaded)
+
+
+

@@ -1,0 +1,382 @@
+<HTML>
+<HEAD>
+  <TITLE>Making Animated GIFs (part 3 of 3)</TITLE>
+</HEAD>
+<BODY background="recycpap.jpg" BGCOLOR=#FFFFFF TEXT=#000000 VLINK=#000040
+LINK=#0000FF ALINK=#FF0000 >
+<! ================ REV3 Standard Header! ================ >
+<!--
+<P>
+<A NAME="top"></A>
+<TABLE ALIGN=right>
+  <TR ALIGN=center VALIGN="bottom">
+    <TD><A NAME="top"><A HREF="gifmakf.htm">
+      <IMG SRC="backarrw.gif" height=60 width=60 border=0 ALT="Previous Page"><BR>
+      <FONT SIZE="2">[Previous]</FONT></A></A></TD>
+    <TD><A HREF="find.htm"><IMG SRC="4wayarrw.gif" height=50 width=50 border=0
+	  align="absmiddle" ALT="Search &amp; Find"><BR>
+      <FONT SIZE="2">[Find]</FONT></A></TD>
+    <TD><A HREF="gifhtml.htm"><IMG SRC="forwarrw.gif" height=60 width=60 border=0
+	  ALT="Previous Page" align="top"><BR>
+      <FONT SIZE="2">[Next]</FONT></A></TD>
+  </TR>
+</TABLE>
+<P align=left>
+<FONT SIZE="2" COLOR="BLUE"><B>Royal Frazier's</B></FONT><BR>
+<IMG SRC="g-gifani.gif" align="top"><BR>
+<A HREF="mirrors.htm"><FONT SIZE="2">- MIRROR sites: closer, faster, non-English
+-</FONT></A> <BR clear=all>
+<P align=center>
+<A HREF="royal.htm">[Home]</A> <A HREF="gifanim.htm">[Introduction]</A> 
+<A HREF="find.htm">[Find]</A> <A HREF="urlmindr.htm">[UrlMinder]</A> 
+<A HREF="userguid.htm">[Viewing]</A> 
+<A HREF="toolbox.htm">[Software]</A> <A HREF="gifmake.htm"><NOBR>[How to
+make GIF Animations]</NOBR></A> <A HREF="gifhtml.htm">[HTML]</A> 
+<A HREF="conserva.htm">[Smaller GIFs]</A> <A HREF="topten.htm">[Common Problems]</A> 
+<A HREF="problem.htm">[GIF Bugs]</A> <A HREF="gifabout.htm">[Technical]</A> 
+<A HREF="http://members.aol.com/royalef1/galframe.htm">[Gallery]</A> 
+<A HREF="aboutgaw.htm">[About]</A><P ALIGN=center>
+<P><I>If you have a few minutes, please fill out the <A HREF="http://members.aol.com/royalef1/survey.htm" TARGET="_TOP">Visitor Survey</A>. It will help in making this site better.</I><BR>
+  <HR size="3" noshade>
+
+-->
+
+<H2>
+  Constructing Animations, part three
+</H2>
+<UL>
+  <LI>
+    PART ONE : <A HREF="gifmake.htm">Preparing All the Pieces</A>
+  <LI>
+    <A HREF="gifmake.htm#thoughts">Some Thoughts about GIF Animations on the
+    Web</A>
+  <LI>
+    <A HREF="gifmake.htm#sequence">Making a Sequence of Animations</A>
+  <LI>
+    <A HREF="gifmake.htm#tips">Scattered Tips &amp; Tricks</A>
+</UL>
+<UL>
+  <LI>
+    PART TWO : <A HREF="gifmakf.htm">Making a Basic Animation</A>
+  <LI>
+    <A HREF="gifmakf.htm#create">Creating A GIF89A Animation File</A>
+</UL>
+<UL>
+  <LI>
+    PART THREE : <A HREF="gifmakg.htm">Netscape Extensions and Troubleshooting</A>
+  <LI>
+    <A href="gifmakg.htm#looping">Making a Animated GIF loop in Netscape 2.0</A>
+  <LI>
+    <A HREF="gifmakg.htm#trouble">Troubleshooting</A>
+</UL>
+<P>
+<B>NOTE:</B> <I>Due to excessive size, this tutorial is now in three parts.</I>
+  <HR>
+<A NAME="looping"></A><IMG SRC="anicon4.gif" ALIGN=right BORDER=0 width=100
+    height=85>
+<H4>
+  Making a Animated GIF loop in Netscape 2.0
+</H4>
+<P>
+Okay. You've got your GIF, but it only plays once. You'd like it to play
+multiple times or continuously. Well, I can make you a little happier.
+<P>
+Netscape 2.0Beta4 or better recognizes a GIF Application Extension Block
+that will trigger looping. The GIF89a specification allows proprietary data
+to be embedded in a GIF file without causing confusion for other applications
+reading the GIF. When Netscape 2.0beta4 or better detects this extension
+it will load the entire GIF down to the PCs cache, then begin cycling through
+it from the hard disk cache. Here are some important facts about looping
+GIFs:
+<P>
+As of Netscape 2.0b4 through 2.01
+<UL>
+  <LI>
+    If the image is too big for the cache, the animation will not repeat. It
+    will not drag the images across the net over and over the way server-side
+    includes (SSI), server-push, &amp; CGI scripts would.
+  <LI>
+    While playing from cache, the Netscape logo in the upper-right corner of
+    the browser will not show the shooting stars, as this is an indication of
+    network activity.
+  <LI>
+    The STOP button will be available when actively flipping through frames of
+    the animation. If your animation has a long pause between frames (1 second
+    or more) you will notice the STOP button grays out for that time period,
+    then becomes available when it is time to continue the animation. Having
+    the STOP button available is a sign that Netscape is "<I>busy</I>" working
+    on your animation.
+  <LI>
+    The status bar will also flash "##% of ###K" constantly. Most people find
+    this annoying If you have other programs open you will see that your machine
+    is busy doing work.
+  <LI>
+    The viewer of the animation can stop it by hitting the STOP button or pressing
+    ESC.
+  <LI>
+    When an animation is stopped the "Not Available" image is displayed on the
+    animated GIF.
+  <LI>
+    All looping animations loop infinitely.
+</UL>
+<P>
+As of Netscape "Atlas" 3.0 b1
+<UL>
+  <LI>
+    The status bar does not update while looping GIFs.
+  <LI>
+    The STOP button is no longer available during loops.
+  <LI>
+    You cannot stop a looping animation.
+  <LI>
+    Iteration counts are now obeyed, giving you finite loops.
+</UL>
+<P>
+<B>How to insert the Netscape Application Block</B>
+<P>
+There are a few ways to do this. Mostly depending upon the software.
+<P>
+For Windows 3.x and Windows95 users, <A HREF="toolbox.htm#gifcon">GIF
+Construction Set</A> version 1.0G or later will correctly insert the loop
+block for you. If you only have an earlier version, you will need to purchase
+GIFCON from <A HREF="http://www.mindworkshop.com/alchemy/alchemy.html">Alchemy
+Mindworks</A>. And NO, I can't send you registered copies and registration
+codes. For GIFCon 1.0G+ users, simply OPEN your GIF in GIFCON and hit INSERT.
+LOOP is one of the six options on the Insert Block list. Click on Loop, it
+will ask you for the number of iterations. The default is 1000. Read ahead
+for a discussion about <A HREF="#loopiterations">How Many Times you should
+Loop</A>.
+<P>
+<A HREF="toolbox.htm#gifbuilder">GIF Builder</A> (release 0.3.1 was released
+in early April) I understand it will insert the Loop Block for you as well
+and just as easily.
+<P>
+If you are using one of the above programs that insert the loop for you,
+you can skip ahead to <A HREF="#loopiterations">How Many Times you should
+Loop</A>.
+<P>
+For DOS, Windows, Mac and Unix users, you can use the GIFLOOP program I wrote,
+or one of the variations available to insert the Loop Block into an animated
+GIF. It has been translated to from DOS Basic to C, Perl, Applescript, and
+more.
+<P>
+<B>About GIFLOOP program</B>
+<P>
+A Netscape programmer provided me with <A HREF="gifabout.htm#net-extension">the
+specs</A> on this extension originally. Rather than have a bunch of people
+out there struggling to insert this code without messing up their GIFs, I
+put a DOS QBASIC <A HREF="toolbox.htm#gifloop">program in the Software
+Toolbox</A> to do this for us. There are instructions about running it there.
+This has been ported to a compiled C version for Solaris 2.4, and a PERL
+script on the Unix side, and Applescript. Some compiled versions exist, check
+the <A HREF="toolbox.htm">Software Toolbox</A>. Now that the newest versions
+of GIF Construction Set, GIF Builder, WhirlGIF, and SmartDubbing support
+loop blocks, this program is unneeded for many users.
+<P>
+Programmers: If anyone writes an utility like this or more for any platform,
+please make this available to the net. You can FTP it to my area if need
+be. I will set up links to it. <A HREF="mailto.htm">Send me info, if you
+do.</A>
+<P>
+GIFLOOP is only a DOS QBASIC program. Not terribly elegant, but it works.
+Just get into QBASIC and load the file. RUN the program.
+<P>
+<I>It will prompt you for the source file.</I> This must be the GIF89a animation
+with all the frames in it. You CAN modify the animation file after the
+APPLICATION block is in, but it MUST BE a GIF89a file complete with a global
+table for this program to work. You must type the full file name with the
+".GIF" extension.
+<P>
+<I>It will prompt you for the destination file.</I> This can be the same
+as the original, but I don't suggest it. You must type the full file name
+with the ".GIF" extension. If the file already exists, kiss goodbye to the
+old file.
+<P>
+<B>ALWAYS <FONT SIZE="+1">ALWAYS</FONT> <FONT SIZE="+2">ALWAYS</FONT>
+<FONT SIZE="+3">ALWAYS</FONT> have a backup of your animation file!!!</B>
+<P>
+<I>It will prompt you for the number of iterations.</I> As of 2.0beta5 (and
+for the commercial release) specific numbers of iterations will be ignored.
+Looping is infinite or non-existent. In the future this should change. Of
+course the more people know about this the more attention Netscape will give
+this feature.
+<P>
+The planned looping can occur zero through 65,535 times. Zero indicates infinite
+looping. This can be useful in a number of ways. First off, consider that
+there is overhead to playing your images. When Netscape is cycling through
+your images, that takes processor time and slows down other things on the
+PC and in Netscape. Long (several second) delays in an animation alleviate
+this some. You could also stop the animation from cycling after a few times.
+This would please a lot of people as the machine will speed up its reactions
+when the animation stops.
+<P>
+<B>How Many Times Should You Loop</B>
+<P>
+Now that Netscape 3.0 supports loop iteration counts its time to stop those
+endlessly looping animations out there. Unless your animation is
+<B>INCREDIBLY</B> short, people probably don't want to see it more than 20
+times. If your page is one that people will be reading or refering to often
+it can be annoying to have an animation constantly running. Here's a good
+test.
+<P>
+<PRE>Open your Web Page with all those great animations. 
+Leave it open and open your favorite word processor. 
+Start typing a few lines. Notice any pauses...
+</PRE>
+<P>
+Maybe you have the top of the line processor and don't notice the constant
+activity of the animations. On many machines it drains your CPU and makes
+multitasking slow. I try to insert a few seconds (at least) delay between
+loops. I also suggest stopping the animation after a good number of iterations.
+There is no reason to loop "infinitely". You animation isn't so wonderful
+that people want to watch it THAT long. It also slow the reactions of the
+browser on lesser machines.
+<P>
+This is VERY important since Atlas has disabled the browser's ability to
+STOP an animation. That's right...there's no stopping them with Atlas...
+Your browser is captive to any HTML hack who thinks a 2.5 megabyte GIF is
+a small animation. Mr. "I got to have more"'s page with 27 independent
+animations, all looping, all draining the life from your CPU, your hard drive,
+and your time; he's in control now. I have set a message to Netscape to
+reconsider this. It will make animations far more hated than the dreaded
+<BLINK>BLINK</BLINK>.
+<H4 ALIGN=left>
+  Looping Thoughts
+</H4>
+<P>
+Have too many animations and graphics on a page? For continuous animations
+that don't need to constantly play, insert a 5 second wait at the beginning
+or end. During this 5 second (or more) wait Netscape will concentrate on
+other graphics and downloads, speeding them up. This way a single animation
+won't constantly swallow processor time.
+<P>
+<IMG SRC="bug.gif" ALIGN=left width=36 height=43>I noticed that for multiple
+repeating animation files, hitting STOP once may not be enough. After hitting
+STOP, it was grayed then became available again as animation started up again.
+This may have just be odd timing, but it has seemed to happen a few times.
+<P>
+<IMG SRC="bug.gif" ALIGN=left width=36 height=43>2.0Betas up to b6 also have
+a major bug with printing. You can't. Continuous animations causes the printing
+process to go into loops that it never came out of. This is the reason I
+did not use continuous animations on any of the tutorial pages. Beta 6 fixed
+this problem. 
+  <HR>
+<P>
+That is everything that affects animated GIFs. I will amend this as I find
+more. Future additions will also be isolated on an addendum pages so people
+can find all the new info on a single page. 
+  <HR>
+<A name="trouble"></A><IMG SRC="anicon4.gif" ALIGN=right BORDER=0 width=100
+    height=85>
+<H4>
+  Troubleshooting
+</H4>
+<P>
+<B>PROBLEM:</B> Only the first frame of the GIF displays?
+<P>
+<B>ANSWER:</B> GIFs with timed delays never got past this point with 2.0Beta3
+of Netscape Navigator. Browsers that don‘t correctly interpret GIF89A format
+will do this as well.
+<P>
+<B>PROBLEM:</B> The Program I use won’t SAVE in GIF format, or does it badly
+<P>
+<B>ANSWER:</B> Save the image in another bitmapped format (i.e. BMP, PCX,
+PICT, TIF and GIF Construction Set will convert it. I actually find GIFCON
+handles reducing and remapping colors well in most cases.
+<P>
+<B>PROBLEM:</B> My GIF GPFs in Netscape
+<P>
+<B>ANSWER:</B> You have frames that are wider or taller than the logical
+screen header defines. Increase the Logical Screen Header's width and height
+to include the largest dimensions of all images in the file. Or you can rework
+your images to conform to one size. The latter may be difficult to impossible.
+<P>
+<B>PROBLEM:</B> Going to a Web page, or closing, causes Netscape to GPF or
+hit a System Error.
+<P>
+<B>ANSWER:</B> A GPF existed in betas 5 and 6 that cause a GPF when going
+to another page or closing when animations were playing.
+<A HREF="http://www.netscape.com/">Upgrade!</A> This was fixed in the final
+version.
+<P>
+<B>PROBLEM:</B> I can't print my pages
+<P>
+<B>ANSWER:</B> Netscape 2.0 betas 3 through 5 have a problem printing pages
+with looping animations. <A HREF="http://home.netscape.com/">Upgrade to the
+final version</A>
+<P>
+<B>PROBLEM:</B> Some of the images I inserted have changed colors. Particularly,
+the background and whites.
+<P>
+<B>ANSWER:</B> GIF Con is having trouble mapping colors. Try reinserting
+those images with fifteen-bit quantize.
+<P>
+<B>PROBLEM:</B> My images jerks and slides back and forth, or up and down.
+<P>
+<B>ANSWER:</B> The individual frames are different sizes. You must adjust
+the top and left of each individual image to get them to line up. The alternative
+is to regenerate the frames with an equal-sized bounding box to act as a
+stable frame of reference-like a movie screen.
+<P>
+<B>PROBLEM:</B> The images flash and turn odd colors momentarily.
+<P>
+<B>ANSWER:</B> Your video card is probably running in 256 color mode. This
+is the most optimal color depth for video currently. 64k colors tends to
+be visibly slower in displaying Windows. What this means is Windows is working
+off of a palette (like a painters palette) of 256 colors. If the GIFS on
+screen have over 256 unique colors, the video driver begins swapping palettes
+around to compensate for the variety of colors. Eventually this causes an
+effect that often looks like the negative of a photo. Perhaps someone can
+better and more accurately explain what happens and why. The ultimate solution:
+Reduce the variance in colors. Yes you could change to 64k color display.
+However this would slow your machine down (unnecessarily in my mind) and
+it doesn’t make the display better on others who are browsing your page.
+Bitmap textures that have been applied to objects and rendered images introduce
+tremendous variations in color and light. This often increase the size of
+the GIF and the used portion of the palette. Do you need every color of the
+rainbow in 10 different shades? Are those gradient fills really making the
+images better?
+<P>
+<B>PROBLEM:</B> I enter settings in GIFCon but they disappear.
+<P>
+<B>ANSWER:</B> You’re typing [ENTER] instead of clicking on OK. [ENTER] Cancels!
+in early version of GIFCon.
+<A HREF="http://www.mindworkshop.com/alchemy/alchemy.html">Upgrade.</A>
+<P>
+<B>PROBLEM:</B> My GIF didn’t save in GIFCon.
+<P>
+<B>ANSWER:</B> You are using an old version of GIF Con.
+<A HREF="http://www.mindworkshop.com/alchemy/alchemy.html">Upgrade.</A> You
+used SAVE instead of SAVE AS when first saving it. This is a bug. !OR! You
+hit [ENTER} after typing the filename [ENTER] Cancels! Makes sure you use
+the mouse and Click OK in the old version. 
+  <HR>
+<P>
+Any ideas, suggestions,utilities, or examples, please mail them over for
+inclusion in this page.
+<P>
+<A HREF="mailto.htm">Royal Frazier</A> <BR clear=all>
+<P align=center>
+(<A HREF="#top">Go to the TOP of PAGE for MENUS</A>) 
+<P align=center>
+<!-- BEGIN LINKEXCHANGE CODE -->
+<a href="http://ad.linkexchange.com/X231197/gotoad.map" 
+target="_top">
+<img width=440 height=40 border=1 ismap 
+alt="LinkExchange"
+src="http://ad.linkexchange.com/X231197/logoshowad?free"></a>
+<br><font size=1><a href="http://www.linkexchange.com/" 
+target="_top">
+LinkExchange Member</a></font><br>
+<!-- END LINKEXCHANGE CODE  -->  <HR size=4 noshade>
+<TABLE CELLPADDING=0 CELLSPACING=0 BORDER=0 WIDTH=100%>
+  <TR>
+    <TD width="40%"><FONT SIZE="1" COLOR="GRAY">Copyright 1996,1997 Royal E.
+      Frazier Jr.</FONT></TD>
+    <TD width=20% align=center><IMG src="http://members.aol.com/cgi-bin/counter?royalef/ctutor/gifmakg"
+	  width=68 height=20></TD>
+    <TD width=40% align=right><FONT SIZE="1" COLOR="GRAY">Last Updated: March
+      1997</FONT></TD>
+  </TR>
+</TABLE>
+</BODY></HTML>

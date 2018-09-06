@@ -1,0 +1,526 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Program Startup</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="dynamicloading.html"> <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">       <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="deployment.html">  <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Actions performed at Program Startup</H1>
+
+<H2>Contents</H2>
+
+<UL>
+  <LI><A HREF="#INTRO" NAME="I_INTRO">Introduction</A>
+  <LI><A HREF="#STARTUP" NAME="I_STARTUP">VM Startup</A>
+  <LI><A HREF="#CLASSINIT" NAME="I_CLASSINIT">Class Initialization</A>
+  <LI><A HREF="#STARTUP" NAME="I_STARTUP">Smalltalk Startup</A>
+  <UL>
+    <LI><A HREF="#STARTUP1" NAME="I_STARTUP1">Clean Startup</A>
+    <LI><A HREF="#STARTUP2" NAME="I_STARTUP2">Startup with an Image</A>
+  </UL>
+  <LI><A HREF="#SCRIPTS" NAME="I_SCRIPTS">Actions Performed by the Script Files</A>
+  <LI><A HREF="#AUTOLOAD" NAME="I_AUTOLOAD">Installation of Autoloaded Classes</A>
+
+  <LI><A HREF="#SHORTCUT" NAME="I_SHORTCUT">Shortcut Start with an Image</A>
+</UL>
+
+
+<A NAME="INTRO" HREF="#I_INTRO"><H2>Introduction</A></H2>
+
+This document describes the actions performed at startup time.
+This may be of interest, if you want to know how classes are initialized
+and how to add calls to your private C-functions at startup time
+(for example, to initialize additional c-library packages).
+
+<P>
+
+<A NAME="STARTUP" HREF="#I_STARTUP"><H2>VM Startup</A></H2>
+
+Before any smalltalk activity takes place, some virtual machine (VM)
+startup actions are performed:
+<UL>
+
+<LI>allocate or mmap some memory for object space.
+<BR>On systems which provide a working mmap (or equivalent), the objectMemory
+is allocated by virtual allocation (i.e. mmap on '/dev/zero' under unix,
+or VirtualAlloc under MS-Windows).
+<BR>Systems with a half-hearted mmap-implementation (i.e. hpux), a temporary
+file is created, and the objectMemory is mapped onto that one.
+<BR>On all other systems, objectMemory is allocated via 'malloc()' - this has
+the disadvantage, that later resizing of the objectMemory is a much more expensive
+(i.e. slower) operation.
+<P>
+
+<LI>load common symbols from the <CODE>'symbols.stc'</CODE>-file
+<BR>(only done on some systems)
+<P>
+
+<LI>read <CODE>'modules.stx'</CODE> and load all DLL's as listed there
+<BR>(currently, only done on MSWindows systems; on all other systems,
+the list of built-in classLibraries is hard-wired into the stx executable.
+This 'hard-wiring' was done when the stx-executable was linked.)
+<P>
+
+<LI>register all classes as present in the built-in classLibraries
+<BR>(this cares for the proper initialization order, and checks for
+the presence of a classes corresponding superclasses)
+<P>
+
+<LI>create and register all global variables, as defined by all class
+libraries.
+<P>
+
+<LI>create and register class-objects and all methods, blocks and
+global variables as contained in the built-in classLibraries.
+<P>
+
+<LI>invoke all class-initialize methods (see below)
+<P>
+
+<LI>perform further initialization (controlled by smalltalk-code, as described below)
+</UL>
+
+The two system files <CODE>'symbols.stc'</CODE> and <CODE>'modules.stx'</CODE>
+are searched along the following path:
+<BR>Unix systems:
+<UL>
+<CODE>
+<LI>.
+<LI>./include
+<LI>$SMALLTALK_LIBDIR/include
+<LI>$STX_LIBDIR/include
+<LI>/usr/local/lib/smalltalk/include
+<LI>/usr/lib/smalltalk/include
+<LI>/opt/smalltalk/include
+</CODE>
+</UL>
+
+<BR>MS-Windows systems:
+<UL>
+<CODE>
+<LI>.
+<LI>.\include
+<LI>$SMALLTALK_LIBDIR\include
+<LI>$STX_LIBDIR\include
+</CODE>
+</UL>
+
+
+
+<A NAME="CLASSINIT" HREF="#I_CLASSINIT"><H2>Class Initialization</A></H2>
+
+
+In traditional smalltalk implementations, class initialization is
+performed once when the class is filedIn the very first time
+(via the <CODE>#initialize</CODE>
+message at the end of the source file) or manually by the user from within
+the browser or a workspace.
+<P>
+Since traditional smalltalks always use an image, this will contain the
+initialized classes with all of their class variables and class instance variables
+(if any).
+<P>
+In <CITE>Smalltalk/X</CITE> no snapshot image is required: it can be
+started both with and without a snapshot.
+If started with a snapshot, the behavior is as described above: all
+objects are read from the image and the classes found there have already
+executed their <CODE>#initialize</CODE> method in the previous live.
+<P>
+If started without an image, all classes' <CODE>#initialize</CODE> methods
+are called at early startup time, sorted by class inheritance.
+These methods are responsible to create and
+setup any local objects required for proper operation of the class.
+<BR>
+Inside a subclass inheritance level, the order by which those methods are invoked
+is not defined (i.e. in a classes <CODE>#initialize</CODE> method,
+you may depend on all superclasses being already initialized,
+but you may <STRONG>NOT</STRONG> depend on any other classes being initialized.
+<P>
+This means:
+<UL>
+<LI>
+always write your <CODE>"class initialize"</CODE> methods in a way that
+<STRONG>all</STRONG> required setup is performed.
+<P>
+
+<LI>
+<STRONG>Never</STRONG> manually initialize any globals, classvariables etc.
+from within a workspace and expect these to be present when you start
+<CITE>ST/X</CITE> anew.
+<P>
+(Doing so may give you a working setup while running the current image,
+but lead to trouble (i.e. uninitialized objects) when you ever compile
+your classes to machine code and start <CITE>ST/X</CITE> without an image.)
+<P>
+
+<LI>
+Since the order of initialization is undefined (except for superclasses),
+do <STRONG>not</STRONG>
+depend on any other classes being already initialized, or any system
+resources (display, views, fonts, files etc.) being accessible,
+when your classes' <CODE>#initialize</CODE> method is invoked.
+<BR>
+If you need any of the above during initialization time,
+read the startup actions description below.
+<P>
+<LI>
+If resources from other classes are required in the <CODE>#initialize</CODE>
+method,
+<UL>
+<LI>either send <CODE>#initialize</CODE> to the other class from your
+classes initialize method
+<P>
+<LI>or, use a two-step initialization, by making your class a dependent of
+<CODE>ObjectMemory</CODE> and handling the <CODE>#restarted</CODE> or
+<CODE>#returnFromSnapshot</CODE>
+notification in an <CODE>#update:</CODE> method.
+</UL>
+
+<P>
+<LI>
+All classes' <CODE>#initialize</CODE> methods should be prepared being
+invoked multiple times, without getting confused. This is due to the above
+reason; another class may invoke <CODE>#initialize</CODE> since it does
+not know whether the other class was already initialized.
+Typically, an initialize method checks for any of its initialized
+class variables being already non-nil.
+<P>
+<LI>
+Be especially careful with private classes - since their inheritance may lead to
+them being initialized after the owning class, do not depend on private
+classes being in a usable state at the time when the owners <CODE>#initialize</CODE> is invoked.
+<BR>
+If required, use a two-step initialize.
+
+<P>
+<LI>
+Although it should be already clear from the above,
+keep in mind:
+<BR>
+Do not open any views in a classes <CODE>#initialize</CODE> method;
+the view and display handling classes are usually not initialized at that time.
+<BR>
+If you want views to open automatically, make your class a dependent of
+<CODE>ObjectMemory</CODE> (in the <CODE>#initialize</CODE> method) and
+open the views in the classes <CODE>#update:</CODE> method.
+</UL>
+
+
+
+
+<A NAME="STARTUP" HREF="#I_STARTUP"><H2>Smalltalk Startup</H2></A>
+
+During startup the following actions are performed (in the order below):
+<P>
+
+<UL>
+<LI>The "<CODE>main()</CODE>" C-function in <CODE>"librun/main.c"</CODE> is called.
+<BR>
+Since this file is provided in source ,
+this allows adding specific actions for special applications to be added.
+<BR>
+Especially, any user supplied C-code can be initialized there.
+
+<P>
+<LI>memory is initialized, command line arguments are parsed,
+an the symbol table management is initialized.
+
+</UL>
+<P>
+
+The followup actions depend on whether this is a clean startup
+(i.e. without an image)
+or a startup from a snapshot image.
+
+<A NAME="STARTUP1" HREF="#I_STARTUP1"><H3>Clean Startup</H3></A>
+
+A clean startup is performed if
+no snapshot image is present (or the <CODE>"-I"</CODE> command line option was given)
+or if the image file is not readable.
+
+<UL>
+<LI>The "<CODE>stxPreInit()</CODE>" C-function is called.
+<BR>
+This is a user supplied C-function (and defaults to an empty function).
+Another hook, at which special code can be executed.
+At the time this is called, the object memory, global and symbol tables are
+already initialized.
+
+<P>
+<LI>all class, method and literal objects are created
+<BR>
+Every class in the system is found in this stage and registered internally.
+Also, the classes methodDictionaries are built here.
+<BR>
+Technically, this is done by calling all class libraries "<CODE>Init()</CODE>"
+function, which installs the class(es).
+<BR>
+(This is the phase during which the rotating wheel is shown on the terminal)
+
+<P>
+<LI>send
+<A INFO="Browse it" TYPE="example" ACTION="Smalltalk browseInClass:(Smalltalk class) selector:#initializeSystem">
+<CODE>"Smalltalk initializeSystem"</CODE>
+</A>.
+<BR>
+This is the first time the smalltalk world is entered.
+This method in turn:
+<P>
+<UL>
+
+<LI>sends <CODE>"Object initialize"</CODE>.
+
+<P>
+<LI>sends <CODE>"ExternalStream initialize"</CODE>.
+
+<P>
+<LI>initializes the globals <CODE>Stdin</CODE>, <CODE>Stdout</CODE>
+and <CODE>Stderr</CODE>.
+
+<P>
+<LI>initializes the systemPath
+
+<P>
+<LI>sends <CODE>#initialize</CODE> to all other classes in the system
+<A HREF="#FN1" NAME="BACK_FN1">(*)</A>.
+<P>
+Notice, that at this time, the externalStreams <CODE>Stdin</CODE>,
+<CODE>Stdout</CODE> and <CODE>Stderr</CODE> are already initialized and
+I/O on those objects is possible
+(thats the reason for <CODE>ExternalStream</CODE>
+ being initialized manually, before all other classes).
+<P>
+However, also notice that the graphical classes have not yet been
+initialized - it is not possible to open any views or boxes during this
+phase.
+
+<P>
+<LI>enables some interrupts (sets handler objects)
+
+
+<P>
+<LI>sends a change notification "<CODE>ObjectMemory changed:#initialized</CODE>".
+<BR>
+Classes which need to perform any automatic actions
+after all other initializations are done
+(especially: want to allocate resources, access files etc.),
+should register themself as a dependent of ObjectMemory in their
+<CODE>#initialize</CODE> method, and perform these second stage initialization
+actions in their <CODE>#update:</CODE> method.
+
+</UL>
+<P>
+
+<LI>The "<CODE>stxPostInit()</CODE>" C-function is called.
+<BR>
+This is a user supplied C-function (and defaults to an empty function).
+Another hook, at which special code can be executed.
+At this time, all classes are initialized.
+
+<P>
+<LI>send <VAR>startSelector</VAR> to <VAR>startClass</VAR>
+<BR>
+Those two are set via define constants and can be changed by
+recompiling "<CODE>main.c</CODE>".
+<BR>
+If <CODE>"main.c"</CODE> file was compiled with <CODE>-DDIRECT_START</CODE>,
+the above startup message is immediately sent to start execution.
+<BR>
+Otherwise, <CODE>#start</CODE> is sent to the <CODE>Smalltalk</CODE> class,
+and <VAR>startSelector</VAR> and <VAR>startClass</VAR> are passed
+in classVariables. The startup-message will then be sent there, after the
+processScheduler has been initialized and scheduling is enabled.
+<P>
+I.e. if <CODE>"main.c"</CODE> is compiled without <CODE>-DDIRECT_START</CODE>,
+the processor scheduler (and therefore thread-management) is already setup and
+running at the time of the <VAR>startSelector</VAR>-methods invocation,
+and all timer handling and interrupt processing is done as usual.
+<BR>
+With this compiler flag, these facilities are not setup, and the code
+runs bar-bones as a single thread.
+This may be useful for single threaded low-level code (which does not require any
+threading) or if you want to install your own scheduler.
+<P>
+By compiling a different <CODE>"main.c"</CODE>,
+you can arrange for any other method to be called instead (either immediately
+or after process setup).
+<BR>
+(BTW: this is how stand alone applications are built)
+<P>
+The <CODE>"Smalltalk start</CODE> method in turn:
+<UL>
+
+<LI>reads the <CODE>"patches"</CODE> file
+<BR>
+The main action done here is to read the <CODE>"abbrev.stc</CODE>" file,
+and install Autoload-stub classes for all entries found there.
+<BR>
+This is also a place to add patches, which are to be installed automatically.
+
+<P>
+<LI>reads any <CODE>".rc"</CODE> file (either <CODE>"smalltalk.rc"</CODE>
+or an application specific file)
+<BR>
+These files perform most customizations.
+
+<P>
+<LI>starts an event dispatcher process for the display
+
+<P>
+<LI>enters the processors scheduler
+
+<P>
+<LI>forks a thread to perform any startup actions as defined in the startup files
+and (if given) to execute the startup message.
+<A HREF="#FN2" NAME="BACK_FN2">(**)</A>.
+</UL>
+
+<P>
+Have a
+look
+at the implementation of
+<A INFO="Browse it" TYPE="example" ACTION="Smalltalk browseInClass:(Smalltalk class) selector:#start">
+<CODE>Smalltalk start</CODE>
+</A>
+for more details.
+
+</UL>
+
+
+
+
+<DL>
+<DT>Notes:
+<DT><A HREF="#BACK_FN1" NAME="FN1">(*)</A>
+<DD>
+The runtime system makes certain, that superclasses are initialized
+before any subclass. However, for classes within the same inheritance level,
+the order is not defined.
+
+<DT><A HREF="#BACK_FN2" NAME="FN2">(**)</A>
+<DD>
+This is different than it used to be in previous version of <CITE>ST/X</CITE>,
+where no extra process was forked for the startup actions.
+<BR>
+The change was made to allow startup actions to readWait on any socket,
+pipeStream etc., which would not be possible, if the initial process
+(which runs before the process scheduler is enabled) did this.
+<P>
+Very specialized applications, which do not need process scheduling or
+which want to implement their own scheduling mechanisms, may
+use the <CODE>DIRECT_START</CODE> feature, to get their own code
+called, without any standard (ST/X) setups being performed.
+<BR>
+However, it is then their responsibility to correctly initialize the system.
+</DL>
+
+
+
+<A NAME="STARTUP2" HREF="#I_STARTUP2"><H3>Startup with an Image</H3></A>
+
+If a snapshot image is present, initialization order is:
+
+<P>
+<UL>
+<LI>the image is read
+
+<P>
+<LI>The "<CODE>stxPostInit()</CODE>" C-function is called.
+<BR>
+
+<P>
+<LI>The "<CODE>stxPostReInit()</CODE>" C-function is called.
+<BR>
+This is a user supplied function (and defaults to an empty function).
+Another hook, at which special code can be executed.
+At this time, the object memory, global and symbol tables are initialized.
+<P>
+<LI>send <VAR>restartSelector</VAR> to <VAR>startClass</VAR>
+<BR>
+These two are defined in <CODE>"main.c"</CODE> and default to
+<CODE>"Smalltalk"</CODE> and <CODE>"restart"</CODE> respectively.
+</UL>
+
+Have a
+<!A HREF="../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:Smalltalk backRef:'startup.html#STARTUP2'">
+look
+at the implementation of
+<A INFO="Browse it" TYPE="example" ACTION="Smalltalk browseInClass:(Smalltalk class) selector:#restart">
+<CODE>"Smalltalk restart"</CODE>
+</A>
+to see the followup actions.
+
+
+
+
+<A NAME="SCRIPTS" HREF="#I_SCRIPTS"><H2>Actions Performed by the Script Files</H2></A>
+
+During startup, two script files are consulted (filedIn): <CODE>"patches"</CODE>
+and <CODE>"smalltalk.rc"</CODE>.
+<P>
+The <CODE>"patches"</CODE> script first checks for some required classes
+to be present in the system, and then looks for a subdirectory called
+<CODE>"stxPatches"</CODE> and (if present) loads all files found there.
+<P>
+The <CODE>"smalltalk.rc"</CODE> script sets up various common settings,
+installs autoloaded classes (see below), consults the scripts
+<CODE>"host.rc"</CODE> and <CODE>"display.rc"</CODE>,
+and finally invokes <CODE>"private.rc"</CODE>.
+<BR>
+These other scripts are responsible for host-specific setup (printer setting),
+display-specific setup (screen/keyboard configuration) and the start
+of an initial application (the Launcher).
+<P>
+
+All of those scripts are searched along a common searchPath, and
+the default scripts as provided with the delivery can be overwritten,
+by providing a corresponding file in your current directory.
+
+
+
+<A NAME="AUTOLOAD" HREF="#I_AUTOLOAD"><H2>Installation of Autoloaded Classes</H2></A>
+
+Within <CODE>"smalltalk.rc"</CODE>, you will find the expression:
+<CODE><PRE>
+    Smalltalk installAutoloadedClasses
+</PRE></CODE>
+if a "--autoload" command line argument is present.
+This will search for all files called <CODE>"abbrev.stc"</CODE> under all
+directories found along the packagePath,
+and ensures that all of your packages are automatically installed into the system.
+<P>
+Because, this might take a long time (10 or more seconds), depending on the
+number of directories found and the speed of you disk/network drives,
+this is no longer done by default (as it used to be).
+
+<A NAME="SHORTCUT" HREF="#I_SHORTCUT"><H2>Shortcut Start with an Image</H2></A>
+
+On UNIX systems, an image can be started directly by entering its name,
+if the image file has execute permission.
+Thus, if you saved your image as (say) <CODE>"myApp"</CODE>,
+you can make it executable with <CODE>"chmod +x myApp"</CODE>
+and then start it via the simple command <CODE>"myApp"</CODE>.
+<P>
+On VMS, you can start an image with the DCL command: <CODE>"@myApp"</CODE>.
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+<BR>Copyright &copy; 1995 Claus Gittinger Development &amp; Consulting, all rights reserved
+<BR>Copyright &copy; 2006 eXept Software AG, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.33 $ $Date: 2016-10-11 23:45:29 $
+</BODY>
+</HTML>

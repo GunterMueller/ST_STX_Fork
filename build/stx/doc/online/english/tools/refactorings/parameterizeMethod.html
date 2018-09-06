@@ -1,0 +1,30 @@
+<html><head><title>Refactoring: 
+Parameterize Method</title></head><body>
+<H1>
+Parameterize Method</H1>
+<P><I><CENTER>
+
+Several methods do similar things but with different values contained in the method body.</CENTER></I></P>
+<P><B><CENTER>
+
+Create one method that uses a parameter for the different values.</CENTER></B></P>
+<CENTER><IMG SRC="paramMethod.gif"/></CENTER>	
+
+<h2>Corrections</h2><h3>Clarifying the Mechanics</h3>
+<P>I've since (after a suggestion from Prof Kahlbrandt) found better mechanics for this refactoring (changes are in <B>bold</B>)</P>
+<LI>Create a parameterized method that can be substituted for each repetitive method</LI>
+<LI>Compile</LI>
+<LI>Replace <B>the body of </B>one method with a call to the new method</LI>
+<LI>Compile and Test</LI>
+<LI><B>Use Inline Method on the old method</B></LI>
+<LI>Repeat for all the methods.</LI>
+
+<h2>Contributors</h2><UL><LI>Bernd Kahlbrandt</LI>
+</UL>
+
+
+<P>For more information see page 
+	<font color="#FF0000">283</font>
+	of <I>Refactoring</I></P>
+
+<P /><P /><P><CENTER><A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A></CENTER></P></body></html>

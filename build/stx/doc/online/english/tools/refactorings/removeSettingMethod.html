@@ -1,0 +1,33 @@
+<html><head><title>Refactoring: 
+
+
+
+Remove Setting Method</title></head><body>
+
+
+<H1>
+
+
+
+Remove Setting Method</H1>
+<P><I><CENTER>
+
+A field should be set at creation time and never altered.</CENTER></I></P>
+<P><B><CENTER>
+
+Remove any setting method for that field.</CENTER></B></P>
+
+<CENTER><IMG SRC="removeSettingMethod.gif"/></CENTER> 
+
+
+<P>For more information see page 
+	<font color="#FF0000">300</font>
+	of <I>Refactoring</I></P>
+<h2>Corrections</h2><h3>Using Final</h3>
+<P>Paul Haahr kindly pointed out to me that I've not been accurate with the use of <code>final</code> in this refactoring. The point that I missed is that you can't use a final field if the initialization is done in a separate method to the constructor. This the example at the bottom of page 301 (that uses <code>initialize(id)</code>) just does not compile. (My apologies for not testing that fragment, some do slip through the net....) If you want to use a separate method, you can't make the field final</P>
+<P> This also means that the mechanics is incorrect. Making the field final should be the last step not the first, and can only be done if it's possible. </P>
+
+<h2>Contributors</h2><UL><LI>Paul Haahr</LI>
+</UL>
+
+<P /><P /><P><CENTER><A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A></CENTER></P></body></html>

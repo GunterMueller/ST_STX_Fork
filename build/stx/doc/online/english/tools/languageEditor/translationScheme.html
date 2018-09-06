@@ -1,0 +1,89 @@
+<HEAD>
+<TITLE>Language Editor - The Translation Scheme in Smalltalk/X</TITLE>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="intro.html">               <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[next]"></A>
+<A NOPRINT HREF="TOP.html">                 <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="mainMenu.html">   <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H2><A NAME="INTRO" HREF="TOP.html#I_INTRO">The Translation Scheme in Smalltalk/X</A></H2>
+
+In ST/X, language translations come from external files,
+which basically contain key-value pairs.
+This is similar to schemes in other languages,
+however, in ST/X, the english original string is used as key,
+not cryptic number, as in most other such schemes.
+
+<P>
+Our experience showed that there are good reasons for such a scheme:
+<OL>
+<LI>programmers can search for the english original string
+<LI>programmers see in the code, what is shown in a particular label, dialog, etc.
+<LI>language translations can be easily added later
+<LI>even english-to-english translations are possible, by providing an "en.rs" file.
+This is useful to fix typos in already deployed code.
+<LI>although we damand english as original language, third party private developers may
+choose any language as original and provide translations for other languages later.
+Including english.
+<LI>No special tools are needed to edit and maintain language translation files.
+They can be given to a translator without a need for deeper expertise in handling any special
+editor or tool.
+</OL>
+
+<H2>Programmer API</H2>
+
+<H3>Getting the Resources</H3>
+Whenever a programmer needs a user-readable string (i.e. a UI-string),
+he/she writes:
+<CODE>"resources string:'<string to be xlated>'.</CODE> instead
+of using the plain string.
+<P>
+The variable "resources" is an instance variable of ApplicationModel,
+thus every UI application automatically gets the required translations.
+<P>
+Class methods can refer to this via <CODE>"self classResources"</CODE>.
+<P>
+If your class is not inheriting from ApplicationModel,
+use "self class classResources" or "self projectDefinitionClass classResources".
+
+<H3>Getting a String Translated</H3>
+
+For most situations, the above simple translation message is sufficient.
+However, often, other strings need to be embedded inside a UI-String.
+Typically, these are numeric values, file names etc.
+For this, use <CODE>"resources string:'...%1..' with:argument</CODE>, which
+first translates the string, then expands the %i with corresponding argumens from
+the with:-list. Up to 5 parameters can be provided by with:, with:with:... methods.
+More arguments are passed by the <CODE>"withArguments:{ arg1 . ... argN }"</CODE> array construct.
+<P>
+You should never ever concatenate individually translated string pieces,
+because different languages may have a different word order (subject-predicate-object),
+and thus often require different word ordering.
+<P>
+For this, a string such as 'bla bla %1 and %2 with %3" can be given as UI string,
+and translated to a string like "%1 und %2 sowie %3 wurden bla bla".
+<P>
+Finally, in some cases, a resource string may spawn multiple lines,
+and the newline-escape character should be escaped to linebreaks.
+However, this must happen before the expansion, as otherwise MSDOS-filenames woulf
+be presented in multiple lines.
+For this, use the
+<CODE>"resources stringWithCRs:'...%1..' with:arg ...</CODE> message.
+
+... more to come ...
+
+
+<HR>
+<A HREF="mainMenu.html">Next: The Main Menu</A>
+<HR>
+
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif" ALT="[stx logo]">
+Copyright &copy; 2008 eXept Software AG, all rights reserved
+<P>
+<HR>
+Doc $Revision: 1.2 $ $Date: 2016-04-29 14:05:19 $
+
+</BODY>
+</HTML>

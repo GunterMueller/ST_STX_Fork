@@ -1,0 +1,197 @@
+<HTML>
+
+<HEAD>
+<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<TITLE>Smalltalk/X Online Documentation - Compatibility Notes</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="TOP.html" INFO="Back to documentation's main page" > <IMG SRC="../icons/DocsUpArrow.gif" ALT="[up]" NOBORDER></A>
+
+<H1>Compatibility Notes (How to migrate from an older ST/X version</H1>
+<P>
+
+This page leads you towards possible incompatibility problems,
+when migrating from an older <CITE>ST/X</CITE> version.
+<BR>
+Although we try to mention all possible trouble spots, we can
+neither guarantee 100% compatibility, nor can we guarantee
+listing all possible trouble spots in the list below.
+<BR>
+(after all, we are all humans and "to err is human".
+However, we put a lot of effort in trying to maintain backward compatibility as much as possible.)
+
+<P>
+<HR>
+<P>
+
+<H3>5.4.2 to 5.4.3</H3>
+
+<H4>Unicode filename support</H4>
+You should be prepared to now receive unicode strings (Unicode16String) when asking a directory for its contents.
+This should be transparent for most applications.
+However, expect problems, if you use a WriteStream on a String to
+collect text which contains such filenames.
+<BR>Instead of:
+<BLOCKQUOTE><PRE>
+s := WriteStream on:String new
+</PRE></BLOCKQUOTE>
+you should use:
+<BLOCKQUOTE><PRE>
+s := CharacterWriteStream on:String new
+</PRE></BLOCKQUOTE>
+CharacterWriteStream is smart enough to automatically adjust the underlying
+collection and change it from String to Unicode16String or even Unicode32String if required.
+The contents returned by CharacterWriteStream will use the best representation.
+That means that for strings which can be represented using single bytes,
+you will get a String as before.
+<P>
+Of course, you may also expect problems if you destructively access a string with <CODE>at:put:</CODE>,
+trying to put a 16bit character into an 8bit String instance.
+
+<H3>5.3 to 5.4</H3>
+
+<H4>Instance variable changes in libview</H4>
+The following instance variables have been eliminated from <CODE>DisplaySurface</CODE> / <CODE>SimpleView</CODE>:
+<BLOCKQUOTE><PRE>    middleButtonMenu
+    keyCommands
+    gotExpose</PRE></BLOCKQUOTE>
+these are now stored in a "<CODE>moreAttributes</CODE>" dictionary or the
+"<CODE>flags</CODE>" instVar.
+(i.e. the functionality and getters/setters are still there, but stored in another place).
+<P>
+The saved instVar slots are reused, so that subclasses do not have an instVar-index
+recompilation problem.
+This means that the instVar index of all other instVars remains the same, so that binary
+compiled class libraries with subclasses of <CODE>SimpleView</CODE> are still compatible
+(this is of special importance to customer libraries).
+<P>
+NOTICE:
+<BR>
+&nbsp;&nbsp;all direct accesses to <CODE>middleButtonMenu</CODE> and <CODE>keyCommands</CODE> MUST be
+replaced by getter/setter calls.
+
+
+<H3>5.1 to 5.2</H3>
+
+<H4>Unicode support in Change-, Patch and Sourcefiles</H4>
+Starting with 5.2, unicode is supported by corresponding String-classes (Unicode16String)
+and by the tools (editors, compilers etc) and external source files are utf8 enoded.
+For backward compatibility, files as read by the changeBrowser, fileBrowser and stc-compiler
+are considered to be 8859-1 encoded, UNLESS there is an utf8 encoding-hint found near the beginning
+of the input file. Encoding-hints look like
+
+<CODE><PRE>
+     Encoding: utf8
+</PRE></CODE>
+
+and are typically placed into a comment (or a compiler pragma comment).
+<BR>
+This should ensure that old source files (which are 8859-1 encoded) are still compilable,
+while newly created files will be utf8 encoded.
+<P>
+Make sure to clear any existing changeFiles, as change records will be appended utf8-encoded
+by the new version (if you want to use old change-files with the new release).
+<P>
+Application code should be prepared to get Unicode16Strings as the result of messages like
+#asLowercase etc.
+
+
+
+<H3>5.1.4 to 5.1.5</H3>
+
+<H4>HTTPService authentication</H4>
+HTTPService authentication changed from #authenticationFor: which returns a boolean
+to #authenticateFor: which reports the error directly.
+This was changed to allow for the service to generate its own error message and/or to
+return an alternative fallback document.
+
+
+<H3>5.1.1 to 5.1.2</H3>
+
+<h4>Subclasses of HTTPService</h4>
+
+The inheritance of the HTTPService hierarchy has changed, and another abstract class named HTTPSelecorService was added.
+You might have to change the superclass of your HTTPService subclasses from HTTPService to HTTPSelecorService.
+
+
+
+<H3>4.x to 5.x</H3>
+
+<h4>PositionableStream and Subclasses</h4>
+
+The major incompatible change relates to stream positioning: <CITE>ST/X</CITE> used to define the initial read/write position
+as 1, while all other Smalltalks defined it to be 0.
+(i.e. <CITE>ST/X</CITE> defined the position as <var>"the position of the next element"</var>, whereas all others defined it as
+<var>"the position of the last processed element"</var>.)
+<br>
+This incompatibility was due to the fact that the stream positioning was not defined
+in the blue book, and 1-based positions seem to be logical w.r.t. the 1-based indexing of collections.
+<br>
+The position-bias has been changed in order to make porting of code from
+other Smalltalk systems easier.
+
+<P>
+Starting with 4.1.9,  4 methods were added to aid in writing portable code:
+<code><pre>
+    position0Based / position0Based:
+    position1Based / position1Based:
+</pre></code>
+
+These methods are still (and will still be) present, to allow for code to be written
+which works on any system.
+
+<p>
+
+All code which computes a stream position or takes a stream position as collection index,
+using <code>position</code> and/or <code>position:</code> should either:
+<ul>
+<li>be changed to invoke <code>position1Based</code> and/or <code>position1Based:</code>
+<li>or be changed to care for 0-based position values.
+</ul>
+
+<h4>Error Handling when opening FileStreams</h4>
+<p>
+Prior to release 5 no error exception has been raised when opening or creating of a FileStream
+failed. A Notification has been signaled to those, who explicitly handled this notification.
+Most classes did not handle this notification and got a nil-return, when doing e.g.
+<code>'/nonExistingFile' asFilename readStream</code>.
+</p>
+<p>
+From Release 5 on, <code>FileStream openErrorSignal</code> is an error exception and the same as
+<code>ExternalStream openErrorSignal</code>.
+</p>
+For conversion of old programs expecting (and checking for) nil, a new method
+<code>Filename&#187;readStreamOrNil</code> has been introduced. Please use the Filename interface,
+and avoid using FileStreams directly.
+</p>
+<h4>Class</h4>
+
+The layout of Classes has changed, by removing unused instance variables.
+This means, that old binary class libraries and object files are no longer
+compatible. You must stc-recompile your own machine code libraries and
+object files.
+<p>
+Bytecode binaries, source files or autoloaded classes are not affected,
+and do not need special care.
+
+
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../icons/stx.gif" ALT="[stx-logo]">
+<BR>
+Copyright © 1996 Claus Gittinger Development & Consulting, all rights reserved
+<BR>
+Copyright © 2003 eXept Software AG, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+</BODY>
+
+<HR>
+Doc $Revision: 1.23 $ $Date: 2016-11-05 17:38:36 $
+</BODY>
+</HTML>

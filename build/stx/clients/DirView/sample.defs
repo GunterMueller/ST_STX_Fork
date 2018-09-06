@@ -1,0 +1,153 @@
+"
+sample .DeskTop.defs file 
+(usually copied to ~/.DeskTop.defs
+ i.e.
+   cp sample.defs ~/.DeskTop.defs
+)
+
+instead of inventing just another configuration language,
+definitions are given as Smalltalk expressions.
+
+3-levels of .defs files are looked at:
+
+    1st: .DeskTop.defs in current directory
+    2nd: ~/.DeskTop.defs 
+    3rd: /usr/lib/smalltalk/DeskTop.defs 
+
+higher levels are not looked at, if lower level defined a string.
+
+
+Icon definitions:
+
+The expressions must evaluate to a 3-argument block which will be called
+with name, type and mode of the FileObject.
+The expression should return an icon-file name (or non-String if no match)
+"!
+
+'icons' !
+
+[:name :typ :mode | 
+    (typ == #directory)      ifTrue:[^ 'DirObj'].
+    (name endsWith:'.c')     ifTrue:[^ 'C-File'].
+    (name endsWith:'.h')     ifTrue:[^ 'C-File'].
+
+    (name endsWith:'.doc')   ifTrue:[^ 'Text'].
+    (name endsWith:'.txt')   ifTrue:[^ 'Text'].
+
+    (name endsWith:'.rtf')   ifTrue:[^ 'RTFTextObj'].
+    (name endsWith:'.ps')    ifTrue:[^ 'PSTextObj'].
+
+    (name endsWith:'.draw')  ifTrue:[^ 'Draw'].
+    (name endsWith:'.logic') ifTrue:[^ 'Logic'].
+    (name endsWith:'.fax')   ifTrue:[^ 'fax.tiff'].
+    (name endsWith:'.voc')   ifTrue:[^ 'SoundObj'].
+    (name endsWith:'.snd')   ifTrue:[^ 'SoundObj'].
+    (name endsWith:'.au')    ifTrue:[^ 'SoundObj'].
+    (name endsWith:'.midi')  ifTrue:[^ 'MusicObj'].
+    (name endsWith:'.ens')   ifTrue:[^ 'MusicObj'].
+    (name endsWith:'.score') ifTrue:[^ 'MusicObj'].
+    (name endsWith:'.mod')   ifTrue:[^ 'MusicObj'].
+
+    (name endsWith:'.rs')    ifTrue:[^ 'Resource'].
+    (name = 'smalltalk')     ifTrue:[^ 'Smalltalk'].
+    (name = 'patches')       ifTrue:[^ 'CBrowser'].
+    (name = 'changes')       ifTrue:[^ 'CBrowser'].
+"
+    (name = 'core')          ifTrue:[^ 'core'].
+"
+    (name = 'core')          ifTrue:[^ 'core.tiff'].
+    (name endsWith:'.Z')     ifTrue:[^ 'ComprFile'].
+
+    (name endsWith:'.gif')   ifTrue:[^ 'ImageFile'].
+    (name endsWith:'.tiff')  ifTrue:[^ 'ImageFile'].
+    (name endsWith:'.tif')   ifTrue:[^ 'ImageFile'].
+    (name endsWith:'.im8')   ifTrue:[^ 'ImageFile'].
+    (name endsWith:'.icon')  ifTrue:[^ 'ImageFile'].
+    (name endsWith:'.ico')   ifTrue:[^ 'ImageFile'].
+    (name endsWith:'.jpg')   ifTrue:[^ 'ImageFile'].
+    (name endsWith:'.ppm')   ifTrue:[^ 'ImageFile'].
+    (name endsWith:'.pgm')   ifTrue:[^ 'ImageFile'].
+    (name endsWith:'.pbm')   ifTrue:[^ 'ImageFile'].
+    (name endsWith:'.xbm')   ifTrue:[^ 'ImageFile'].
+    (name endsWith:'.xpm')   ifTrue:[^ 'ImageFile'].
+    (name endsWith:'.bmp')   ifTrue:[^ 'ImageFile'].
+    (name endsWith:'.face')  ifTrue:[^ 'ImageFile'].
+
+    (mode == #executable)    ifTrue:[^ 'ExecObj'].
+    (typ == #regular)        ifTrue:[^ 'FileObj'].       
+
+    (name = 'porty')         ifTrue:[^ 'pc_tower.tiff'].
+] !
+
+"
+Action definitions:
+
+The expressions must evaluate to a 3-argument block which will be called
+with name, type and mode of the FileObject.
+The expression should execute an appropriate command on the file.
+"!
+
+'actions' !
+
+[:name :typ :mode | 
+    (name endsWith:'.c')     ifTrue:[^ [:name | EditTextView openOn:name]].
+    (name endsWith:'.h')     ifTrue:[^ [:name | EditTextView openOn:name]].
+    (name endsWith:'.st')    ifTrue:[^ [:name | EditTextView openOn:name]].
+    (name endsWith:'.rs')    ifTrue:[^ [:name | EditTextView openOn:name]].
+    (name endsWith:'.rc')    ifTrue:[^ [:name | EditTextView openOn:name]].
+    (name endsWith:'.doc')   ifTrue:[^ [:name | EditTextView openOn:name]].
+    (name endsWith:'.txt')   ifTrue:[^ [:name | EditTextView openOn:name]].
+    (name endsWith:'.draw')  ifTrue:[^ [:name | DrawTool openOn:name]].
+    (name endsWith:'.rtf')   ifTrue:[^ [:name | DocumentView openOn:name]].
+
+    (name endsWith:'.tar')   ifTrue:[^ [:name | ArchiveView openOn:name]].
+    (name endsWith:'.tar.Z') ifTrue:[^ [:name | ArchiveView openOn:name]].
+    (name endsWith:'.tar.gz') ifTrue:[^ [:name | ArchiveView openOn:name]].
+    (name endsWith:'.zip')    ifTrue:[^ [:name | ArchiveView openOn:name]].
+    (name endsWith:'.sit')    ifTrue:[^ [:name | ArchiveView openOn:name]].
+    (name endsWith:'.tz')     ifTrue:[^ [:name | ArchiveView openOn:name]].
+    (name endsWith:'.taz')    ifTrue:[^ [:name | ArchiveView openOn:name]].
+
+    (name endsWith:'.tiff')  ifTrue:[^ [:name | ImageEditView openOn:name]].
+    (name endsWith:'.tif')   ifTrue:[^ [:name | ImageEditView openOn:name]].
+    (name endsWith:'.gif')   ifTrue:[^ [:name | ImageEditView openOn:name]].
+    (name endsWith:'.im8')   ifTrue:[^ [:name | ImageEditView openOn:name]].
+    (name endsWith:'.jpg')   ifTrue:[^ [:name | ImageEditView openOn:name]].
+"
+    (name endsWith:'.jpg')   ifTrue:[^ [:name | OperatingSystem 
+                                                executeCommand:('djpeg -gif ', name ,
+                                                                ' >/tmp/xx.gif').
+                                                ImageEditView openOn:'/tmp/xx.gif']].
+"
+    (name endsWith:'.fax')   ifTrue:[^ [:name | ImageEditView openOn:name]].
+    (name endsWith:'.xbm')   ifTrue:[^ [:name | ImageEditView openOn:name]].
+    (name endsWith:'.xpm')   ifTrue:[^ [:name | ImageEditView openOn:name]].
+    (name endsWith:'.ppm')   ifTrue:[^ [:name | ImageEditView openOn:name]].
+    (name endsWith:'.pgm')   ifTrue:[^ [:name | ImageEditView openOn:name]].
+    (name endsWith:'.pbm')   ifTrue:[^ [:name | ImageEditView openOn:name]].
+    (name endsWith:'.bmp')   ifTrue:[^ [:name | ImageEditView openOn:name]].
+    (name endsWith:'.icon')  ifTrue:[^ [:name | ImageEditView openOn:name]].
+    (name endsWith:'.face')  ifTrue:[^ [:name | ImageEditView openOn:name]].
+    (name endsWith:'.ico')   ifTrue:[^ [:name | ImageEditView openOn:name]].
+    (name endsWith:'.ps')    ifTrue:[^ [:name | OperatingSystem
+                                                executeCommand:('ghostview ', name ,' &') ]].
+    (OperatingSystem getOSType = 'NeXT') ifTrue:[
+        (name endsWith:'.voc')   ifTrue:[^ [:name | OperatingSystem
+                                                    executeCommand:('(sox ', name ,
+                                                                    ' /tmp/xx.snd' ,
+                                                                    '; sndplay /tmp/xx.snd) &') ]].
+        (name endsWith:'.au')    ifTrue:[^ [:name | OperatingSystem
+                                                    executeCommand:('(sox ', name ,
+                                                                    ' /tmp/xx.snd' ,
+                                                                    '; sndplay /tmp/xx.snd) &') ]].
+        (name endsWith:'.snd')   ifTrue:[^ [:name | OperatingSystem
+                                                    executeCommand:('sndplay ' , name) ]].
+        (name endsWith:'.score') ifTrue:[^ [:name | OperatingSystem
+                                                    executeCommand:('playscore ' , name) ]].
+        (name endsWith:'.ens')   ifTrue:[^ [:name | OperatingSystem
+                                                    executeCommand:('playscore ' , name) ]].
+    ].
+    (name endsWith:'.logic') ifTrue:[^ [:name | LogicTool openOn:name]].
+    (name endsWith:'.chg')   ifTrue:[^ [:name | ChangesBrowser openOn:name]].
+    (name = 'changes')       ifTrue:[^ [:name | ChangesBrowser open]].
+] !

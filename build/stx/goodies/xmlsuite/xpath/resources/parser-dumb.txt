@@ -1,0 +1,105 @@
+LocationPath:    
+	RelativeLocationPath { '1' reverse} 
+	; 
+    
+						
+RelativeLocationPath:    
+	  Step 
+	  	{ XMLv2::XPathExpression with: '1' }
+	| Step "/" RelativeLocationPath
+		{ '3' add: '1'; yourself }
+	;
+     
+
+Step:
+	AxisSpecifier NodeTest Predicate*
+		{ XMLv2::XPathLocationStep new
+			axis: '1';
+			nodeTest: '2';
+			predicates: '3' }
+			
+	;
+			    
+AxisSpecifier:    
+	  ExplicitAxisSpecifier
+	  	{ '1' }
+	| "@"
+		{ XMLv2::XPathAxisAttribute new }
+	| 
+		{ XMLv2::XPathAxisChild new }
+	;
+ 
+ExplicitAxisSpecifier: 
+	  "ancestor::" 
+		{ XMLv2::XPathAxisAncestor new }	 
+	| "ancestor-or-self::" 
+		{ XMLv2::XPathAxisAncestorOrSelf new }	 
+	| "attribute::"   	
+		{ XMLv2::XPathAxisAttribute new }
+	| "child::"
+		{ XMLv2::XPathAxisChild new }
+	| "descendant::"  							
+		{ XMLv2::XPathAxisDescendant new }	 
+	| "descendant-or-self::"  					
+		{ XMLv2::XPathAxisDescendantOrSelf new }	 
+	| "following::"
+		{ XMLv2::XPathAxisFollowing new }	 
+	| "following-sibling::"   				
+		{ XMLv2::XPathAxisFollowingSibling new }	 	
+	| "namespace::"   			
+		{ XMLv2::XPathAxisNamespace new }	 						
+	| "parent::"      							
+		{ XMLv2::XPathAxisParent new }	 		
+	| "preceding::"   							
+		{ XMLv2::XPathAxisPreceding new }	 		
+	| "preceding-sibling::"   					
+		{ XMLv2::XPathAxisPrecedingSibling new }	 	
+	| "self::" 
+		{ XMLv2::XPathAxisSelf new }	 						
+	;
+	
+
+NodeTest:
+	  NameTest
+	  	{ '1' }
+	| KindTest	
+	  	{ '1' }
+	;
+	
+NameTest:
+	  <NCName>
+		{ XMLv2::XPathNameTest new
+			localName:'1' value }
+	| "*"	 
+		{ XMLv2::XPathNameTest new
+			localName:'*'; prefix:'*' }
+	| "*" ":" <NCName>
+		{ XMLv2::XPathNameTest new
+			localName:'*'; prefix:'1' value }
+	| <NCName> ":" "*"
+		{ XMLv2::XPathNameTest new
+			localName:'1' value; prefix:'*' }
+	;
+	
+KindTest:
+	| "node" "(" ")"
+		{ XMLv2::XPathAnyKindTest new }	 							
+	| "document-element" "(" ")"
+		{ XMLv2::XPathDocumentTest new }	 							
+	| "element" "(" ")"
+		{ XMLv2::XPathElementTest new }	 							
+	| "attribute" "(" ")"
+		{ XMLv2::XPathAttributeTest new }	 							
+	| "text" "(" ")"
+		{ XMLv2::XPathTextTest new }	 							
+	| "comment" "(" ")"
+		{ XMLv2::XPathCommentTest new }	 							
+	| "processing-instruction" "(" ")"
+		{ XMLv2::XPathProcessingInstructionTest new }	 							
+	;
+	
+ 
+Predicate:
+	"[" "]"
+		{ XMLv2::XPathPredicate new }	 							
+	;

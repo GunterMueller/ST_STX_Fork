@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<addressbook>
+  <group name="eFractal">
+    <person xml:id="masca">
+      <name>Martin</name>
+      <surname>Dvorak</surname>
+      <nick>Masca</nick>
+      <email>martin.dvorak@efractal.cz</email>
+      <email>masca@volny.cz</email>
+    </person>
+    <person>
+      <name>Filip</name>
+      <surname>Stadnik</surname>
+      <email>filip.stadnik@efractal.cz</email>      
+    </person>
+  </group>
+  <group name="soukromy">
+    <person>
+      <name>Zdenek</name>
+      <surname>Vrany</surname>
+      <email>unas@doma</email>
+    </person>
+  </group>
+</addressbook>

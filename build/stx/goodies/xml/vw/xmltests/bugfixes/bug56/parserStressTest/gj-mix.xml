@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- test if the parser handles the fixed namespace declaration from the dtd -->
+<!DOCTYPE html SYSTEM "fake-gj.dtd">
+<html>
+    <head>
+        <title>Title</title>
+        <meta content="asdf" />
+    </head>
+    <body>
+
+        <h1>Heading Level 1</h1>
+
+        <gj:p>
+            Text in namespace: &gj.namespace;.
+            <gj:em>This text is emphasized</gj:em>.
+        </gj:p>
+    </body>
+</html>

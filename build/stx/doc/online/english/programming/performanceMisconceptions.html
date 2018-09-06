@@ -1,0 +1,147 @@
+<html>
+
+<head>
+<title>Performance Misconceptions and How to Cheat in Benchmarks</title>
+</head>
+
+<body>
+
+<a NOPRINT HREF="humor.html">    <img SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></a>
+<a NOPRINT HREF="TOP.html">         <img SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></a>
+<a NOPRINT HREF="stc.man.html">     <img SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></a>
+
+<h1>Performance Misconceptions and How to Cheat in Benchmarks</h1>
+<p>
+
+Some articles on performance really make me angry.
+Especially, when they compare apples with oranges.
+But some even cheat.
+
+<p>
+Recently, I came along an article on kotlin (http://www.baeldung.com/kotlin-tail-recursion)
+in which two formidable performance numbers are mentioned (1):
+<BR>(sic)<I><PRE>
+    Calculating factorial(50) 1,000,000 times without tail recursion takes ~70ms
+    Calculating factorial(50) 1,000,000 times with tail recursion takes ~45ms
+</PRE></I>
+<P>
+In ST/X, there is not much of a difference when calculating factorials
+either recursive or iterative,
+the CPU will spend >95% multiplying large integers and the call overhead is
+negligible
+(and that is to be expected, unless some clever factorial tricks are used).
+<P>
+Wow, I thought, how do they achieve such an impressive performance?
+<P>
+First of all, the author does not mention the CPU, clock rate and configuration
+of his system. Was there a warmup (for the JITTER) or was it run anew from the command line?
+Not knowing much of kotlin's number handling,
+I tried the following code on my Mac Powerbook, with a 2.6Ghz Core I7, 1600Mhz DDR3, Mid 2012 system:
+<CODE><PRE>
+fun recursiveFactorial(n: Long) : Long {
+    return if (n <= 1) {
+	n
+    } else {
+	n * recursiveFactorial(n - 1)
+    }
+}
+
+fun main(args: Array<String>) {
+    for (x in 1..1000000) {
+	recursiveFactorial(50);
+    }
+}
+</PRE></CODE>
+compiled and ran it with: <CODE>"time java -jar fac.jar"</CODE>
+and got:
+<CODE><PRE>
+    real    0m0.244s
+    user    0m0.238s
+    sys     0m0.038s
+</CODE></PRE>
+Not quite 70ms, but still impressive 240ms.
+I assume that is due to the startup time, or the way the loop is constructed
+(a while may be faster, perhaps).
+
+Running similar code in ST/X:
+<CODE><PRE>
+    Time millisecondsToRun:[
+	1000000 timesRepeat:[
+	    50 factorial
+	]
+    ]
+</PRE></CODE>
+gives me 2760ms.
+<br>
+Dam - "A factor of 10 slower", I thought.
+
+<P>
+But when thinking about it, the question to ask is:
+<B>"is it possible (without cheating) to
+compute (50 factorial) in 70ns?"</B>
+
+<P>
+It might be possible to perform 50 "normal" multiplications in 70ns
+(i.e. 64bit integer arithmetic and a very clever code generator,
+propably using mmx or other parallel instructions...)
+<P>
+But definitely not with a bignum library!
+Because (50 factorial) is "30414093201713378043612608166064768844377641568960512000000000000",
+definitly not fitting in 64bits! (not even 128 bits, by the way,
+as this integer needs 216 bits).
+<P>
+Is it possible, that kotlin uses plain 64bit integers and does no overflow checks?
+<P>
+Conclusion: So lets check!
+<P>
+Adding two lines to the kotlin main function:
+<CODE><PRE>
+    print("fac(50) is: ");
+    println(recursiveFactorial(50));
+</PRE></CODE>
+results in the output:
+<CODE><PRE>
+    fac(50) is: -3258495067890909184
+</PRE></CODE>
+
+So kotlin is using 64bit integer arithmetic, without overflow checking and
+without falling back to largeInteger arithmetic in case of one.
+And therefore, the whole computation is wrong.
+
+<P>
+The largest factorial which can be computed in 64 bit is "(20 factorial)",
+and, in kotlin, that takes:
+<CODE><PRE>
+    real    0m0.206s
+    user    0m0.198s
+    sys     0m0.039s
+</PRE></CODE>
+and in Smalltalk:
+<CODE><PRE>
+    Time millisecondsToRun:[
+	1000000 timesRepeat:[
+	    20 factorial
+	]
+    ]
+</PRE></CODE>
+gives me 50ms (2)
+<P>
+(1) For fairness, this article is about the speedup of tail-recursion vs.
+regular recursion, so using factorial as an example is probably not
+a good choice, given that factorial will spend most of its time in
+multiplying huge numbers in both cases.
+<p>
+(2) I have to admit, that the factorial library function
+of ST/X is heavily tuned. If hand-programmed using recursion,
+I get 250ms, which is slightly slower than the kotlin/java code,
+but a very reasonable result, given that additional
+overflow checks are present in the generated code.
+
+<P>
+More to come.
+
+<hr>
+Doc $Revision: 1.3 $ $Date: 2018-02-20 01:33:54 $
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+/* XPM */
+static char *tiny_yellow_dir_open[] = {
+	"16 16 4 1",
+	". c none",
+	"b c black  m black g4 black",
+	"y c yellow m white g4 grey80",
+	"g c grey70 m white g4 grey70",
+	"................",
+	"................",
+	"................",
+	"..bbbb..........",
+	".bggggb.........",
+	"bggggggbbbbbbb..",
+	"bggggggggggggb..",
+	"bgbbbbbbbbbbbbbb",
+	"bgbyyyyyyyyyyybb",
+	"bbyyyyyyyyyyyyb.",
+	"bbyyyyyyyyyyybb.",
+	"byyyyyyyyyyyyb..",
+	"bbbbbbbbbbbbbb..",
+	"................",
+	"................",
+	"................",
+};
+

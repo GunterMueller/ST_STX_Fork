@@ -1,0 +1,30 @@
+
+syntax: glob
+*Init.c   
+makefile
+*.so
+*.H
+*.o
+*.STH
+*.sc
+objbc
+objvc
+*.class
+java/libs/*.jar
+java/libs-src/*.jar
+*-Test.xml
+st.chg
+package-cache
+mc
+
+# CI Artefacts
+ci/package-cache
+ci/pharo*
+ci/test-data
+ci/*.image
+ci/*.changes
+ci/*.fuel
+ci/*.json
+ci/*.xml
+ci/*.log
+ci/play-cache

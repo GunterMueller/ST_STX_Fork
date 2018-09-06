@@ -1,0 +1,458 @@
+"
+ COPYRIGHT (c) 1998 by eXept Software AG
+	      All Rights Reserved
+
+ This software is furnished under a license and may be used
+ only in accordance with the terms of that license and with the
+ inclusion of the above copyright notice.   This software may not
+ be provided or otherwise made available to, or used by, any
+ other person.  No title to or ownership of the software is
+ hereby transferred.
+"
+
+
+"{ Package: 'stx:clients/Tools' }"
+
+ApplicationModel subclass:#TelnetTool
+	instanceVariableNames:'telnetClient terminalView protocol localEcho'
+	classVariableNames:'LastHost HostHistory DefaultProtocol'
+	poolDictionaries:''
+	category:'demos-Tools-System'
+!
+
+!TelnetTool class methodsFor:'documentation'!
+
+copyright
+"
+ COPYRIGHT (c) 1998 by eXept Software AG
+	      All Rights Reserved
+
+ This software is furnished under a license and may be used
+ only in accordance with the terms of that license and with the
+ inclusion of the above copyright notice.   This software may not
+ be provided or otherwise made available to, or used by, any
+ other person.  No title to or ownership of the software is
+ hereby transferred.
+"
+
+!
+
+documentation
+"
+    graphical user interface to TelnetClient.
+    Demonstrates use of TelnetClient and VT100TerminalView.
+
+
+    [author:]
+	Claus Gittinger (cg@exept.de)
+
+    [see also:]
+	TelnetClient
+	TerminalView
+	Socket
+
+    [start with:]
+	TelnetTool open
+"
+! !
+
+!TelnetTool class methodsFor:'defaults'!
+
+defaultProtocol
+
+    ^ 'telnet'.
+!
+
+icon
+    |img|
+
+    img := Smalltalk imageFromFileNamed:'TelnetIcon.xpm' forClass:self.
+    img isNil ifTrue:[
+	img := Image fromFile:'xpmBitmaps/terminal_images/xterm-icon.xpm'.
+    ].
+    ^ img
+! !
+
+!TelnetTool class methodsFor:'interface specs'!
+
+windowSpec
+    "This resource specification was automatically generated
+     by the UIPainter of ST/X."
+
+    "Do not manually edit this!! If it is corrupted,
+     the UIPainter may not be able to read the specification."
+
+    "
+     UIPainter new openOnClass:TelnetTool andSelector:#windowSpec
+     TelnetTool new openInterface:#windowSpec
+     TelnetTool open
+    "
+
+    <resource: #canvas>
+
+    ^
+
+       #(#FullSpec
+	  #window:
+	   #(#WindowSpec
+	      #name: 'Telnet'
+	      #layout: #(#LayoutFrame 216 0 173 0 515 0 472 0)
+	      #label: 'Telnet'
+	      #min: #(#Point 10 10)
+	      #max: #(#Point 1280 1024)
+	      #bounds: #(#Rectangle 216 173 516 473)
+	      #menu: #menu
+	      #usePreferredExtent: true
+	      #icon: #icon
+	  )
+	  #component:
+	   #(#SpecCollection
+	      #collection:
+	       #(
+		 #(#LabelSpec
+		    #name: 'InfoLabel'
+		    #layout: #(#LayoutFrame 2 0.0 -24 1 2 1.0 -2 1)
+		    #translateLabel: true
+		    #labelChannel: #infoHolder
+		    #level: -1
+		    #adjust: #left
+		)
+		 #(#ArbitraryComponentSpec
+		    #name: 'TelnetView'
+		    #layout: #(#LayoutFrame 0 0.0 0 0.0 0 1.0 -24 1.0)
+		    #hasVerticalScrollBar: true
+		    #component: #terminalView
+		    #hasBorder: false
+		)
+	      )
+	  )
+      )
+
+    "Modified: / 27.7.1998 / 18:43:09 / cg"
+! !
+
+!TelnetTool class methodsFor:'menu specs'!
+
+menu
+    "This resource specification was automatically generated
+     by the MenuEditor of ST/X."
+
+    "Do not manually edit this!! If it is corrupted,
+     the MenuEditor may not be able to read the specification."
+
+    "
+     MenuEditor new openOnClass:TelnetTool andSelector:#menu
+     (Menu new fromLiteralArrayEncoding:(TelnetTool menu)) startUp
+    "
+
+    <resource: #menu>
+
+    ^
+     #(Menu
+	(
+	 (MenuItem
+	    label: 'File'
+	    translateLabel: true
+	    submenu:
+	   (Menu
+	      (
+	       (MenuItem
+		  label: 'Exit'
+		  itemValue: closeRequest
+		  translateLabel: true
+		)
+	       )
+	      nil
+	      nil
+	    )
+	  )
+	 (MenuItem
+	    label: 'Settings'
+	    translateLabel: true
+	    submenu:
+	   (Menu
+	      (
+	       (MenuItem
+		  label: 'Port'
+		  itemValue: setProtocol
+		  nameKey: Port
+		  translateLabel: true
+		)
+	       (MenuItem
+		  label: '-'
+		)
+	       (MenuItem
+		  label: 'Local Echo'
+		  translateLabel: true
+		  indication: localEcho
+		)
+	       )
+	      nil
+	      nil
+	    )
+	  )
+	 (MenuItem
+	    label: 'Connection'
+	    translateLabel: true
+	    submenu:
+	   (Menu
+	      (
+	       (MenuItem
+		  enabled: notConnected
+		  label: 'Connect'
+		  itemValue: connect
+		  translateLabel: true
+		)
+	       (MenuItem
+		  enabled: isConnected
+		  label: 'Disconnect'
+		  itemValue: disconnect
+		  translateLabel: true
+		)
+	       )
+	      nil
+	      nil
+	    )
+	  )
+	 (MenuItem
+	    label: 'Help'
+	    translateLabel: true
+	    startGroup: right
+	    submenu:
+	   (Menu
+	      (
+	       (MenuItem
+		  label: 'ST/X Online Documentation'
+		  itemValue: showDocumentation
+		  translateLabel: true
+		)
+	       (MenuItem
+		  label: '-'
+		)
+	       (MenuItem
+		  label: 'About TelnetView...'
+		  itemValue: showAbout
+		  translateLabel: true
+		)
+	       )
+	      nil
+	      nil
+	    )
+	  )
+	 )
+	nil
+	nil
+      )
+! !
+
+!TelnetTool methodsFor:'aspects'!
+
+infoHolder
+    "automatically generated by UIPainter ..."
+
+    "*** the code below creates a default model when invoked."
+    "*** (which may not be the one you wanted)"
+    "*** Please change as required and accept in the browser."
+
+    |holder|
+
+    (holder := builder bindingAt:#infoHolder) isNil ifTrue:[
+	builder aspectAt:#infoHolder put:(holder := 'Not connected.' asValue).
+    ].
+    ^ holder
+
+    "Modified: / 27.7.1998 / 19:26:26 / cg"
+!
+
+isConnected
+    ^ [telnetClient notNil and:[telnetClient isConnected]]
+
+    "Modified: / 27.7.1998 / 15:08:12 / cg"
+!
+
+localEcho
+    localEcho isNil ifTrue:[
+	localEcho := false asValue.
+	localEcho onChangeSend:#localEchoChanged to:self.
+    ].
+    ^ localEcho
+!
+
+notConnected
+    ^ [telnetClient isNil or:[telnetClient isConnected not]]
+
+    "Modified: / 27.7.1998 / 15:08:26 / cg"
+! !
+
+!TelnetTool methodsFor:'menu actions'!
+
+closeRequest
+    self disconnect.
+    terminalView inStream:nil.
+    super closeRequest.
+
+    "Modified: / 27.7.1998 / 16:05:16 / cg"
+!
+
+connect
+    "open a box asking for the hostname;
+     connect to that host"
+
+    |defaultHost host connection|
+
+    telnetClient isNil ifTrue:[
+	telnetClient := TelnetClient new.
+    ].
+
+    defaultHost := LastHost ? 'localhost'.
+    HostHistory isNil ifTrue:[HostHistory := OrderedCollection new].
+
+    host := Dialog request:'Hostname:' initialAnswer:defaultHost list:HostHistory.
+    host size ~~ 0 ifTrue:[
+	HostHistory remove:host ifAbsent:nil.
+	HostHistory addFirst:host.
+	HostHistory size > 10 ifTrue:[HostHistory removeLast].
+
+	LastHost := host.
+	self withWaitCursorDo:[
+	    self information:'Connecting ...'.
+	    Object abortSignal catch:[
+		protocol isNil ifTrue:[protocol := self class defaultProtocol.].
+		connection := Socket
+				newTCPclientToAddress:host
+				port:(Socket portOfService:protocol).
+	    ].
+	].
+	connection isNil ifTrue:[
+	    self information:(resources string:'Could not connect to %1.' with:host).
+	] ifFalse:[
+	    terminalView readOnly:false.
+
+	    telnetClient connectionBrokenAction:[self brokenConnection].
+	    telnetClient newConnection:connection.
+"/            terminalView updateTimeDelay:0.1.
+	    terminalView inStream:telnetClient.
+	    telnetClient outputStream:terminalView.
+	    builder window topView label:'Telnet - ' , host.
+	    builder window topView iconLabel:host.
+	    host = 'localhost' ifTrue:[
+		host := host , ' (' , OperatingSystem getHostName , ')'
+	    ].
+	    self information:(resources string:'Connected to %1.' with:host).
+	]
+    ]
+
+    "Modified: / 5.5.1999 / 14:53:47 / cg"
+!
+
+disconnect
+    self information:(resources string:'Disconnected.').
+    self disconnected.
+
+    "Modified: / 27.7.1998 / 18:28:37 / cg"
+!
+
+localEchoChanged
+    terminalView localEcho:(localEcho value)
+!
+
+setProtocol
+
+    protocol := Dialog
+	    request:'enter protocol name:'
+	    initialAnswer:(protocol isNil ifTrue:[self class defaultProtocol] ifFalse:[protocol]).
+
+    (Socket portOfService:protocol) isNil ifTrue:[
+	protocol := Integer readFrom:protocol onError:nil.
+	protocol isNil ifTrue:[
+	    Dialog warn:(protocol asString, ' not supported').
+	    self setProtocol.
+	]
+    ]
+! !
+
+!TelnetTool methodsFor:'misc'!
+
+brokenConnection
+    self information:(resources string:'Connection broken.').
+    self disconnected.
+
+    "Modified: / 27.7.1998 / 18:28:28 / cg"
+!
+
+disconnected
+    terminalView inStream:nil.
+    terminalView readOnly:true.
+
+    builder window topView label:'Telnet'.
+    builder window topView iconLabel:'Telnet'.
+    telnetClient notNil ifTrue:[
+	telnetClient connectionBrokenAction:nil.
+	telnetClient outputStream:nil.
+	telnetClient disconnect.
+	telnetClient := nil
+    ].
+
+    "Created: / 27.7.1998 / 18:27:43 / cg"
+    "Modified: / 5.5.1999 / 14:54:00 / cg"
+!
+
+information:aMessage
+    self infoHolder value:aMessage.
+! !
+
+!TelnetTool methodsFor:'misc user interface'!
+
+showAbout
+    "opens an about this application box"
+
+    |rev box myClass clsRev image|
+
+    rev := ''.
+    myClass := self class.
+
+    (clsRev := myClass revision) notNil ifTrue: [rev := '  (rev: ', clsRev printString, ')'].
+    box := AboutBox title:
+	'\Smalltalk/X interface to Telnet
+
+Demonstrates use of TelnetClient
+and VT100TerminalView classes.
+
+Written Jul-1998 by cg@exept.de' withCRs.
+
+    image := self class icon.
+    image notNil ifTrue:[
+	box image:image
+    ].
+    box label:'About Telnet'.
+    box autoHideAfter:10 with:[].
+    box showAtPointer.
+
+    "Modified: / 8.8.1998 / 01:12:17 / cg"
+!
+
+showDocumentation
+    HTMLDocumentView openFullOnDocumentationFile:'TOP.html'.
+
+    "Created: / 27.7.1998 / 18:51:18 / cg"
+! !
+
+!TelnetTool methodsFor:'views'!
+
+terminalView
+    "provide access to my terminal-emulator-view"
+
+    terminalView isNil ifTrue:[
+	terminalView := VT100TerminalView new.
+	terminalView readOnly:true.
+    ].
+    ^ terminalView
+
+    "Modified: / 5.5.1999 / 14:54:10 / cg"
+! !
+
+!TelnetTool class methodsFor:'documentation'!
+
+version
+    ^ '$Header: /cvs/stx/stx/clients/Tools/TelnetTool.st,v 1.19 2016-04-20 21:08:21 mawalch Exp $'
+! !

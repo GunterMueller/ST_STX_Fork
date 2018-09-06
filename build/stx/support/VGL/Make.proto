@@ -1,0 +1,11 @@
+# $Header: /cvs/stx/stx/support/VGL/Make.proto,v 1.2 1999-09-24 10:37:26 cg Exp $
+#
+
+#--------- no need to modify anything below -------
+
+TOP=../..
+SUBDIRS=vogl
+SUPPRESS_LOCAL_ABBREVS="yes"
+
+RCSSOURCES=Make.proto
+LINKSOURCES=Make.proto

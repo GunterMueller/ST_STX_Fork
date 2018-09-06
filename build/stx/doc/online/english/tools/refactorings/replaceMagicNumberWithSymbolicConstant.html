@@ -1,0 +1,53 @@
+<html><head><title>Refactoring: 
+
+
+
+Replace Magic Number with Symbolic Constant</title></head><body>
+
+
+<H1>
+
+
+
+Replace Magic Number with Symbolic Constant</H1>
+<P><I><CENTER>
+
+You have a literal number with a particular meaning.</CENTER></I></P>
+<P><B><CENTER>
+
+Create a constant, name it after the meaning, and replace the number with it.</CENTER></B></P>
+
+<PRE>
+	double potentialEnergy(double mass, double height) {
+		return mass * height * 9.81;
+	}
+</PRE><P><CENTER><IMG SRC="arrow.gif"/></CENTER></P>
+<PRE>
+	double potentialEnergy(double mass, double height) {
+		return mass * GRAVITATIONAL_CONSTANT * height;
+	}
+	static final double GRAVITATIONAL_CONSTANT = 9.81;
+</PRE>
+
+
+<P>For more information see page 
+	<font color="#FF0000">204</font>
+	of <I>Refactoring</I></P>
+
+<h2>Additional Comments</h2><h3>Using a constant method</h3>
+<P>For this refactoring I used a symbolic constant, which is the most common Java idiom.
+</P>
+<P>However an alternative is the constant method, which is a method of this form
+</P>
+<PRE>
+public static double gravitationalConstant() {
+	return 9.81;
+}
+</PRE>
+<P> This idiom is less familiar to C based programmers, but is very familiar to Smalltalkers (who didn't have constants in their language). On the whole I don't tend to use this in Java as it is less idiomatic to the language. However if you need to replace the simple return with a calculated value then it's worth changing the constant field to a constant method. (I guess there should be a refactoring for that....)
+</P>
+
+<h2>Contributors</h2><UL><LI>Jutta Eckstein</LI>
+</UL>
+
+<P /><P /><P><CENTER><A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A></CENTER></P></body></html>

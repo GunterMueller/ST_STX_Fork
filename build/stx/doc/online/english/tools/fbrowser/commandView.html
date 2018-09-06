@@ -1,0 +1,40 @@
+<HEAD>
+<TITLE>Using the File Browser - OS Command View</TITLE>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="contentsView.html">     <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">     <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="tricks.html">     <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[prev]"></A>
+
+<H2><A NAME="COMMAND_VIEW" HREF="TOP.html#I_COMMANDVIEW">OS Command View</A></H2>
+
+This view allows input of OS (UNIX-, DOS- or VMS-) commands.
+Type in a command there and enter <KBD>"Return"</KBD>. The corresponding string
+will be sent to the OperatingSystem as a command and the commands output
+is inserted at the current cursor position in the contents
+view.
+<P>
+Commands are OS-specific; under Windows-NT/95, the command must be a DOS-Box
+command (such as <CODE>"dir"</CODE> or <CODE>"nmake"</CODE>).
+<BR>
+Under UNIX, it must be a valid UNIX-command (such as <CODE>"ls -l"</CODE> or
+<CODE>"make"</CODE>).
+<P>
+The command view keeps a history of commands - you can
+select a previous command by pressing
+the <KBD>"Cursor-UP"</KBD> and <KBD>"Cursor-DOWN"</KBD> keys.
+<BR>
+(you can of course edit previous commands and execute the modified command
+by hitting <KBD>"Return"</KBD>.)
+<P>
+
+The OS commad is executed in the browser's current (i.e. the shown) directory
+(try <CODE>"pwd"</CODE> or <CODE>"dir"</CODE>).
+
+<HR>
+Doc $Revision: 1.9 $ $Date: 2013-08-02 16:47:16 $
+
+</BODY>
+</HTML>
+

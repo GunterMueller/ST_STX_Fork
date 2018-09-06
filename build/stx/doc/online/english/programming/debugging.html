@@ -1,0 +1,1005 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Debugging</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="errormsg.html">     <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<!-- <A NOPRINT HREF="knownbugs.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A> <-->
+<A NOPRINT HREF="contexts.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Advanced Debugging Support in ST/X</H1>
+
+Some short notes on breakpoint debugging and tracing support in <CITE>ST/X</CITE>.
+
+<H2>Contents</H2>
+
+<UL>
+  <LI><A NAME="I_INTRO"         HREF="#INTRO">Introduction</A>
+  <LI><A NAME="I_INSTDEBUG"     HREF="#INSTDEBUG">Instance Oriented Debugging (Wrapper)</A>
+  <UL>
+    <LI><A NAME="I_SELECTORBREAK"   HREF="#SELECTORBREAK">Breakpoint on Selector Sent to an Object</A>
+    <LI><A NAME="I_SELECTORTRACE"   HREF="#SELECTORTRACE">Trace Selector Sent to an Object</A>
+    <LI><A NAME="I_SELECTORTRACESNDR"   HREF="#SELECTORTRACESNDR">Trace Sender of Selector Sent to an Object</A>
+    <LI><A NAME="I_SELECTORGENTRACE"   HREF="#SELECTORGENTRACE">General Tracing/Breakpointing of Selector Sent to an Object</A>
+    <LI><A NAME="I_MODIFICATIONTRAP"   HREF="#MODIFICATIONTRAP">Breakpoint when an Instance Variable is Changed</A>
+  </UL>
+  <LI><A NAME="I_METHODDEBUG"   HREF="#METHODDEBUG">Method Oriented Debugging (Wrapper)</A>
+  <UL>
+    <LI><A NAME="I_METHODBREAK"       HREF="#METHODBREAK">Breakpoint on a Method</A>
+    <LI><A NAME="I_METHODTRACE"       HREF="#METHODTRACE">Tracing a Method</A>
+    <LI><A NAME="I_METHODTRACESNDR"   HREF="#METHODTRACESNDR">Tracing the Sender of a Method</A>
+    <LI><A NAME="I_METHODGENTRACE"    HREF="#METHODGENTRACE">General Tracing/Breakpointing of Methods</A>
+  </UL>
+  <LI><A NAME="I_STATEMENTDEBUG"   HREF="#STATEMENTDEBUG">Line Oriented Debugging</A>
+  <UL>
+    <LI><A NAME="I_STATEMENTBREAK"   HREF="#STATEMENTBREAK">Breakpoint on a Statement Line</A>
+    <LI><A NAME="I_STATEMENTTRACE"   HREF="#STATEMENTTRACE">Tracepoint on a Statement Line</A>
+  </UL>
+  <LI><A NAME="I_CODEDDEBUGGING"   HREF="#CODEDDEBUGGING">Coded Debugging Support</A>
+  <UL>
+    <LI><A NAME="I_HALT"             HREF="#HALTK">Halt</A>
+    <LI><A NAME="I_CODEDBREAKTRACE"  HREF="#CODEDBREAKTRACE">Coded Break/Tracepoints</A>
+    <LI><A NAME="I_ASSERTIONS"       HREF="#ASSERTIONS">Assertions</A>
+    <LI><A NAME="I_DEBUGCODE"        HREF="#DEBUGCODE">Conditionally Executed Debug Code</A>
+  </UL>
+  <LI><A NAME="I_TRANSCRIPTDEBUG"    HREF="#TRANSCRIPTDEBUG">Breakpoint on Output to Transcript</A>
+  <LI><A NAME="I_CLEANUP"       HREF="#CLEANUP">Cleaning Up</A>
+  <LI><A NAME="I_TOOLSUPPORT"   HREF="#TOOLSUPPORT">Tool Support for Breakpoints/Tracing</A>
+  <UL>
+    <LI><A NAME="I_BROWSER"       HREF="#BROWSER">System Browser </A>
+    <LI><A NAME="I_INSPECTOR"     HREF="#INSPECTOR">Inspector</A>
+    <LI><A NAME="I_DEBUGGER"      HREF="#DEBUGGER">Debugger</A>
+    <LI><A NAME="I_OTHERTOOLS"    HREF="#OTHERTOOLS">Other Tools</A>
+  </UL>
+  <LI><A NAME="I_EXAMPLES"      HREF="#EXAMPLES">Example Uses</A>
+  <UL>
+    <LI><A NAME="I_EX_COUNT"    HREF="#EX_COUNT">Counting Method Invocations</A>
+  </UL>
+  <LI><A NAME="I_WARNING"       HREF="#WARNING">Warning</A>
+</UL>
+
+
+<H2><A NAME="INTRO" HREF="#I_INTRO">Introduction</A></H2>
+
+  This text gives some overview on non-obvious (i.e. not well-known)
+  debugging facilities, which are available in <CITE>ST/X</CITE>.
+  Both the underlying programatic interface and the UI support to use them
+  in a more user friendly way are described.
+<P>
+  The debugging facilities can be roughly grouped into 3 basic mechanisms:
+<UL>
+<LI>wrappers - these wrap existing code without recompilation
+<LI>transparent recompilation - these recompile code silently (but leave the source as is)
+<LI>explicit debug code - debug code visible in the source code
+</UL>
+
+<h3>Wrappers</h3>
+  Wrappers allow break and tracepoints to be placed on any method -
+  even primitives or methods of which no source code is available
+  can be traced and/or breakpointed.
+<BR>
+  Also, in contrast to the well known "<CODE>self halt</CODE>",
+  which need a recompilation of the inspected method,
+  these (method oriented) wrappers do not modify the source code
+  or recompile any existing method. Thus machine-code (primitive) methods remain
+  untouched and are not replaced by possibly slower interpreted bytecode.
+<BR>
+  Finally, wrapped code is not reported in the <CODE>"changes"</CODE> file
+  and removing breakpoints is much easier than searching for leftover debug-halts
+  (simply evaluate "MessageTracer cleanup").
+<P>
+  Wrapping break- and tracepoints are possible from both on individual instances,
+  or per method.
+<P>
+  The inspector can install traces/traps on the inspected object via its popup menu.
+
+<h3>Statement Breakpoints</h3>
+  These are implemented by recompiling methods with some additional breakpoint
+  instructions inserted at statement boundaries. These breakpoints can later be
+  individually enabled or disabled without a need for another recompilation.
+  The compilation is not recorded in the change file or change set.
+<br>
+  They can not be placed on methods which contain primitive C code or for which
+  no source code is available.
+
+<h3>Coded Breakpoints</h3>
+  These are implemented as traditional message send as written explicitely
+  into the code, and will be visible in the change file / change set.
+  Additional mechanisms have been added to allow tagging such code (usually with
+  the programmer's initials) so they can both be located easily later,
+  and also enabled/disabled individually or by their tag group.
+
+
+
+<H2><A NAME="INSTDEBUG" HREF="#I_INSTDEBUG">Instance Oriented Debugging (Wrapper)</A></H2>
+
+  These allow tracing/trapping message sends to a particular instance;
+  the object under consideration must already exist.
+  These facilities are triggered upon a send of a specific selector to the object -
+  no matter if the object responds to that message and - if understood, which class
+  finally provides a method for it.
+<P>
+  These facilities are implemented by changing the class of the debugged instance to an
+  anonymous subclass of the creating a wrapper method which is installed in
+  that classes method dictionary.
+<P>
+  Thus no recompilation or runtime checks are needed,
+  which would slow down the system noticably. However, the object's class identity changes
+  while this wrapping is in effect, which may affect code depending on it (i.e. code
+  which does "foo class == SomeClass" or which uses the class as key in an identity-based
+  collection, such as an IdentityDictionary).
+
+<H3><A NAME="SELECTORBREAK" HREF="#I_SELECTORBREAK">Breakpoint on Message Sent to an Object</A></H3>
+
+  This kind of breakpoint is installed by:
+<CODE><PRE>
+    MessageTracer trap:anObject selector:aSelector
+</PRE></CODE>
+  arranges that the debugger is entered, whenever a <VAR>aSelector</VAR>
+  message is sent to <VAR>anObject</VAR>.
+<P>
+You can also specify a list of selectors,
+as in:
+<CODE><PRE>
+    MessageTracer trap:anObject selectors:aCollectionOfSelectors
+</PRE></CODE>
+or arrange for all messages (which are understood) with:
+<CODE><PRE>
+    MessageTracer trapAll:anObject
+</PRE></CODE>
+<P>
+  In the debugger, use <KBD>"step"</KBD>, <KBD>"send"</KBD> or
+<KBD>"continue"</KBD> to resume execution in the breakpointed method.
+<BR>
+  A breakpoint on an individual selector is removed by:
+<CODE><PRE>
+    MessageTracer untrap:anObject selector:aSelector
+</PRE></CODE>
+<BR>
+  to remove all traps on <VAR>anObject</VAR> evaluate:
+<CODE><PRE>
+    MessageTracer untrap:anObject
+</PRE></CODE>
+  Of course, in order to refer to <VAR>anObject</VAR>, you need access to it,
+  so the above is done by evaluating expressions either in an inspector
+  (refering to the object as "self" in its workspace view),
+  or by keeping a reference in a workspace variable (see
+  "<A HREF="../tools/misc/TOP.html#WORKSPACE">Workspace documentation</A>").
+<P>
+  It may also be useful to arrange for the above traps programmatically,
+  for examlpe in a test case. in this case, you would write an exception
+  handler around the code, to catch the breakpoint in your program.
+  (those breakpoints raise a BreakPointInterrupt exception,
+  which is a subexception under ControlInterrupt.)
+<P>
+
+Summarizing example:
+<A TYPE="example">
+<CODE><PRE>
+    |p1 p2|
+
+    'creating points' printNL.
+    p1 := Point x:1 y:1.  p2 := Point x:2 y:2.
+
+    'setting breakpoints' printNL.
+    MessageTracer trap:p1 selector:#size.
+    MessageTracer trap:p1 selector:#x:.
+    MessageTracer trap:p1 selector:#foo.
+
+    "p2 has no breakpoints set: - nothing happens"
+
+    'p2 size' printNL.  p2 size printNL.
+    'p2 x:' printNL.    p2 x:22.
+
+    "now let it trap ..."
+
+    'p1 size' printNL.  p1 size printNL.
+    'p1 x:' printNL.    p1 x:5.
+    'p1 foo' printNL.   p1 foo.
+
+    'remove size-breakpoints' printNL.
+    MessageTracer untrap:p1 selector:#size.
+
+    "nothing happens now ..."
+
+    'p1 size' printNL.  p1 size printNL.
+
+    "but here we trap again ..."
+
+    'p1 x:' printNL.    p1 x:5.
+
+    'remove other breakpoints' printNL.
+    MessageTracer untrap:p1.
+
+    'p1 size' printNL.  p1 size printNL.
+    'p1 x:' printNL.    p1 x:5.
+</PRE></CODE>
+</A>
+
+<H3><A NAME="SELECTORTRACE" HREF="#I_SELECTORTRACE">Trace Selector Sent to an Object</A></H3>
+
+  Tracepoints are installed much like breakpoints.
+  When hit, no debugger is opened, but instead a message is sent to the Transcript and execution proceeds.
+<br>
+  A trace is installed by:
+<CODE><PRE>
+    MessageTracer trace:anObject selector:aSelector
+</PRE></CODE>
+
+  this arranges that a trace message is printed to the standard error output
+  (<CODE>Stderr</CODE>),
+  both upon entry and exit to/from the method.
+<P>
+In analogy to traps, there are also:
+<CODE><PRE>
+    MessageTracer trace:anObject selectors:aCollectionOfSelectors
+</PRE></CODE>
+to install tracers for more selectors, and:
+<CODE><PRE>
+    MessageTracer traceAll:anObject
+</PRE></CODE>
+to install tracers on all implemented selectors.
+
+<P>
+  The trace is removed with:
+<CODE><PRE>
+    MessageTracer untrace:anObject selector:aSelector
+</PRE></CODE>
+  or:
+<CODE><PRE>
+    MessageTracer untrace:anObject
+</PRE></CODE>
+
+  to remove all traces of <VAR>anObject</VAR>.
+<P>
+
+
+  Example:
+<A TYPE="example">
+<CODE><PRE>
+    |p1 p2|
+
+    p1 := Point x:1 y:1.
+    p2 := Point x:2 y:2.
+
+    "set the tracepoints"
+
+    MessageTracer trace:p1 selector:#size.
+    MessageTracer trace:p1 selector:#x:.
+
+    'p2 size / p2 x:' errorPrintNL.
+    p2 size. p2 x:22.
+
+    'p1 size / p1 x:' errorPrintNL.
+    p1 size. p1 x:5.
+
+    'remove tracing of p1 size' errorPrintNL.
+    MessageTracer untrace:p1 selector:#size.
+
+    'p1 size / p1 x:' errorPrintNL.
+    p1 size.  p1 x:5.
+
+    'remove tracing of p1' errorPrintNL.
+    MessageTracer untrace:p1.
+
+    'p1 size / p1 x:' errorPrintNL.
+    p1 size.  p1 x:5.
+</PRE></CODE>
+</A>
+
+
+<H3><A NAME="SELECTORTRACESNDR" HREF="#I_SELECTORTRACESNDR">Trace Sender of Message Sent to an Object</A></H3>
+
+   Often, you don't want all of the information to be output from the above tracepoint.
+   The following variant only outputs a line giving "who called this" information on the Transcript.
+
+<CODE><PRE>
+    MessageTracer traceSender:anObject selector:aSelector
+</PRE></CODE>
+
+  arranges that the sender is output the standard error, whenever some message is sent.
+  Use <CODE>untrace:selector:</CODE> or <CODE>untrace</CODE>
+ (as described above), to remove the trace.
+<A TYPE="example">
+<CODE><PRE>
+    |arr|
+
+    arr := #(1 2 3 4 5).
+    MessageTracer traceSender:arr selector:#at:.
+    arr collect:[:e | ]
+</PRE></CODE>
+</A>
+  in contrast to:
+<A TYPE="example">
+<CODE><PRE>
+    |arr|
+
+    arr := #(1 2 3 4 5).
+    MessageTracer trace:arr selector:#at:.
+    arr collect:[:e | ]
+</PRE></CODE>
+</A>
+
+
+<H3><A NAME="SELECTORGENTRACE" HREF="#I_SELECTORGENTRACE">General Wrapping of Messages Sent to an Object</A></H3>
+
+  The most flexible (but somewhat complicated) mechanism is to provide your own
+  action to be evaluated upon entering/leaving a message send
+(in fact, the above trace and breakpoint facilities are built upon the following mechanism,
+ by installing a tracing/breaking block as action).
+<BR>
+This is done with:
+<CODE><PRE>
+    MessageTracer
+	wrap:anObject
+	selector:aSelector
+	onEntry:entryBlock
+	onExit:exitBlock
+</PRE></CODE>
+
+  where <VAR>anObject</VAR> and <VAR>aSelector</VAR> are as above,
+  <VAR>entryBlock</VAR> is a one-argument block to be evaluated on entry into the method.
+ It will get the current context passed as argument.
+<BR>
+  <VAR>ExitBlock</VAR> is a two-argument block to be evaluated on exit from the
+method. It will get the context
+  and the return value passed as arguments.
+<P>
+  This allows conditional breakpoints or conditional tracing.
+<BR>
+It can also be used
+to implement pre- and post conditions a la <CITE>Eiffel</CITE> while debugging.
+<P>
+  For example, you want to trace any sent to an object with a specific argument,
+  use something like:
+<A TYPE="example">
+<CODE><PRE>
+    |p|
+
+    p := Point new.
+    MessageTracer wrap:p selector:#x:
+		  onEntry:[:con |
+			    (con args at:1) > 5 ifTrue:[
+				Debugger
+				    enter:con
+				    withMessage:'hit breakPoint; arg > 5'
+			    ]
+			  ]
+		  onExit:nil.
+
+    p x:4.  "nothing happens"
+    p x:-1. "nothing happens."
+    p x:10. "bummm"
+</PRE></CODE>
+</A>
+
+(in the above example, the first argument is checked for being greater than 5;
+if so, the debugger is entered)
+
+<P>
+Postcondition checking can be implemented with this mechanism.
+For example if you want to
+check the range of some instance variable after every send of some selector,
+use:
+<CODE><PRE>
+    MessageTracer
+	wrap:someObject
+	selector:someSelector
+	onEntry:nil
+	onExit:[:con :retVal |
+		   (con receiver <VAR>getInstVar</VAR> between:min and:max) ifFalse:[
+			Debugger
+			    enter:con
+			    withMessage:'postcondition violated'
+		   ]
+	       ]
+</PRE></CODE>
+(in the above, replace <VAR>getInstVar</VAR> by an appropriate access selector
+for the instance variable to be checked)
+
+
+
+
+<H3><A NAME="MODIFICATIONTRAP" HREF="#I_MODIFICATIONTRAP">Breakpoint when an Instance Variable is Changed</A></H3>
+
+  This kind of breakpoint is installed by:
+<CODE><PRE>
+    MessageTracer
+	trapModificationsIn:anObject
+</PRE></CODE>
+  and arranges that the debugger is entered, whenever any instance variable is changed in
+  <VAR>anObject</VAR>.
+<P>
+You can also specify a filter block, which gets the old value and new value of the object as arguments:
+  This kind of breakpoint is installed by:
+<CODE><PRE>
+    MessageTracer
+	trapModificationsIn:anObject
+	filter:[:old :new | conditionForBreak]
+</PRE></CODE>
+  arranges for a debugger to be entered if some instance variable is changed in <VAR>anObject</VAR>
+ AND the filterblock returns true.
+
+  Example:
+<A TYPE="example">
+<CODE><PRE>
+    |p1 p2|
+
+    'creating points' printNL.
+    p1 := Point x:1 y:1.  p2 := Point x:2 y:2.
+
+    'setting breakpoints' printNL.
+    MessageTracer trapModificationsIn:p1.
+
+    "p2 has no breakpoints set: - nothing happens"
+
+    'p2 x:' printNL.    p2 x:22.
+    'p2 x' printNL.    p2 x.
+
+    "now let it trap ..."
+
+    'p1 x:' printNL.    p1 x:5.
+    'p1 x' printNL.    p1 x.
+
+    'remove breakpoints' printNL.
+    MessageTracer untrap:p1.
+
+    "nothing happens now ..."
+
+    'p1 x:' printNL.    p1 x:6.
+</PRE></CODE>
+</A>
+
+  Example (only trap modifications of x):
+<A TYPE="example">
+<CODE><PRE>
+    |p|
+
+    'creating point' printNL.
+    p := Point x:1 y:1.
+
+    'setting breakpoints' printNL.
+    MessageTracer trapModificationsIn:p filter:[:old :new | old x ~~ new x].
+
+    "nothing happens for y"
+
+    'p y:' printNL.    p y:22.
+
+    "now let it trap ..."
+
+    'p x:' printNL.    p x:5.
+
+    'remove breakpoint' printNL.
+    MessageTracer untrap:p.
+
+    "nothing happens now ..."
+
+    'p x:' printNL.    p x:6.
+</PRE></CODE>
+</A>
+
+
+<H2><A NAME="METHODDEBUG" HREF="#I_METHODDEBUG">Method Oriented Debugging (Wrapper)</A></H2>
+
+
+  In method oriented debugging, you are not interested in message sends to a concrete
+  object instance, but in evaluation of a specific method.
+  Thus, these facilities catch execution of specific methods - in contrast to sends of specific messages.
+  This implies, you can only catch implemented methods
+  (i.e. it is not possible to catch
+  sends of unimplemented methods here).
+<P>
+Since the breakpoint/trace is placed on a particular method,
+you may have to place multiple debugging points if super-sends are
+involved (which was not the case with the above instance debugging).
+<P>
+The implementation creates a wrapper method and installs it in the classes method dictionary.
+Thus, it does not affect class identity. Also, the original method is kept in a save place
+and reinstalled when the wrap is deinstalled later. As the case in the above mechanism,
+no recompilation is needed, therefore you can wrap even methods with primitive code.
+Also, the change file/change set is not affected.
+<P>
+The system browser provides menu entries in tehe debugging menu (and in the method list#s popup menu),
+for the most common wraps. Below, the underlying programmatic interface is described.
+
+<H3><A NAME="METHODBREAK" HREF="#I_METHODBREAK">Breakpoint on a Method</A></H3>
+
+  A breakpoint on a particular method is installed with:
+<CODE><PRE>
+    MessageTracer trapMethod:aMethod
+</PRE></CODE>
+
+  this arranges that the debugger is entered, whenever <VAR>aMethod</VAR>
+ is about to be executed
+  (no matter, if for instances of the implementing class, or of any subclass).
+<P>
+The browser has convenient menu and toolbar functions to set this kind of breakpoint,
+see below or the <A HREF="../tools/sbrowser/TOP.html#METHOD_MENU.BREAKPOINT">
+SystemBrowser documentation</A>.
+<P>
+
+  Example:
+<A TYPE="example">
+<CODE><PRE>
+    |p1 p2|
+
+    'creating points' printNL.
+    p1 := Point x:1 y:1.
+    p2 := Point x:2 y:2.
+
+    'setting breakpoints' printNL.
+    MessageTracer trapMethod:(Point compiledMethodAt:#printOn:).
+    MessageTracer trapMethod:(Point compiledMethodAt:#x:).
+
+    "all Points will trap"
+
+    'p2' printNL.      p2 printNL.
+    'p2 x:' printNL.   p2 x:22.
+    'p1' printNL.      p1 printNL.
+    'p1 x:' printNL.   p1 x:5.
+
+    'remove size-breakpoints' printNL.
+    MessageTracer untrapMethod:(Point compiledMethodAt:#printOn:).
+
+    "nothing happens now ..."
+
+    'p1' printNL.      p1 printNL.
+
+    "but now ..."
+
+    'p1 x:' printNL.   p1 x:5.
+
+    'remove other breakpoints' printNL.
+    MessageTracer untrapMethod:(Point compiledMethodAt:#x:).
+
+    'p1' printNL.      p1 printNL.
+    'p1 x:' printNL.   p1 x:5.
+</PRE></CODE>
+</A>
+
+<H3><A NAME="METHODTRACE" HREF="#I_METHODTRACE">Tracing a Method</A></H3>
+
+  Like with instance debugging, you can also install a trace
+for a method:
+<CODE><PRE>
+    MessageTracer traceMethod:aMethod
+</PRE></CODE>
+<P>
+
+
+Example:
+<CODE><PRE>
+    MessageTracer traceMethod:(Integer compiledMethodAt:#factorial).
+    5 factorial.
+    MessageTracer untraceMethod:(Integer compiledMethodAt:#factorial)
+</PRE></CODE>
+
+
+<H3><A NAME="METHODTRACESNDR" HREF="#I_METHODTRACESNDR">Tracing the Sender of a Method</A></H3>
+
+Tracing the sender only is done with:
+<CODE><PRE>
+    MessageTracer traceMethodSender:aMethod
+</PRE></CODE>
+<P>
+Example:
+<CODE><PRE>
+    MessageTracer traceMethodSender:(Integer compiledMethodAt:#factorial).
+    5 factorial.
+    MessageTracer untraceMethod:(Integer compiledMethodAt:#factorial)
+</PRE></CODE>
+
+<H3><A NAME="METHODGENTRACE" HREF="#I_METHODGENTRACE">General Wrapping of Methods</A></H3>
+
+  The general wrapping mechanism is also available for methods:
+<CODE><PRE>
+    MessageTracer
+	wrapMethod:aMethod
+	onEntry:entryBlock
+	onExit:exitBlock
+</PRE></CODE>
+<P>
+
+Example 1: catching a specific factorial invocation:
+<A TYPE="example">
+<CODE><PRE>
+    MessageTracer wrapMethod:(Integer compiledMethodAt:#factorial)
+		     onEntry:[:con |
+				con receiver == 3 ifTrue:[
+				    Debugger
+					enter:con
+					withMessage:'3 factorial encountered'
+				]
+			     ]
+		      onExit:[:con :val |
+				'leaving ' errorPrint.
+				con errorPrint. ' -> ' errorPrint.
+				val errorPrintNL.
+			     ].
+    5 factorial.
+</PRE></CODE>
+</A>
+cleanup with:
+<A TYPE="example">
+<CODE><PRE>
+    MessageTracer unwrapMethod:(Integer compiledMethodAt:#factorial)
+</PRE></CODE>
+</A>
+
+Example 2: tracing file-open of specific files:
+<A TYPE="example">
+<CODE><PRE>
+    MessageTracer wrapMethod:(FileStream compiledMethodAt:#openWithMode:)
+		     onEntry:[:con |
+				(con receiver pathName endsWith:'.st') ifTrue:[
+				    'opening ' errorPrint.
+				    con receiver pathName errorPrintNL
+				]
+			     ]
+		       onExit:nil.
+
+    "now, play around with system browser (look at methods source-code)
+     or look at files with the filebrowser ...
+     And watch the output in the xterm window."
+</PRE></CODE>
+</A>
+cleanup with:
+<A TYPE="example">
+<CODE><PRE>
+    MessageTracer unwrapMethod:(FileStream compiledMethodAt:#openWithMode:)
+</PRE></CODE>
+</A>
+
+Example 3: traping access to a specific file:
+<A TYPE="example">
+<CODE><PRE>
+    MessageTracer wrapMethod:(FileStream compiledMethodAt:#openWithMode:)
+		     onEntry:[:con |
+				(con receiver name = 'test') ifTrue:[
+				    Debugger
+					enter:con
+					withMessage:'opening file named ''test'''
+				]
+			     ]
+		       onExit:nil.
+
+    "now, create a file named 'test' with the filebrowser ..."
+</PRE></CODE>
+</A>
+cleanup with:
+<A TYPE="example">
+<CODE><PRE>
+    MessageTracer unwrapMethod:(FileStream compiledMethodAt:#openWithMode:)
+</PRE></CODE>
+</A>
+
+
+<H2><A NAME="STATEMENTDEBUG" HREF="#I_STATEMENTDEBUG">Line Oriented Debugging</A></H2>
+
+Starting with ST/X rel 6.x, a set of statement line oriented debugging mechanisms were added
+and an interface is offfered in the codeview/browser tools. They started as an experiment,
+but now being heavily used for a longer test period, are considered stable and useful.
+However, you still have to enable the "Use Advanced CodeView2" toggle in the tools settings dialog,
+to get these features presented in the IDE.
+<P>
+Once enabled, an additional side panel is shown in codeviews (actually: CodeView2) at the left,
+which displays the line number,
+and also reacts to clicks by adding/removing statement break- and tracepoints.
+<P>
+Notice, that these breakpoints are compiled into the code; therefore, a new method is created and installed
+in the class. Thus, they cannot be placed into primitive code.
+Methods which are already being executed and blocks which have been created before
+are not affected.
+Also, the method's identity changes due to the
+recompilation, which may affect identity based collections. Actually, one of those collections is the browser's
+current method list itself, so many tools had to be changed to deal with this gracefully.
+(there may still be situations, where a tool looses track of this, and shows the original method, or it
+cannot figure out, where a method belongs to).
+
+<H3><A NAME="STATEMENTBREAK" HREF="#I_STATEMENTBREAK">Breakpoint on a Statement Line</A></H3>
+
+Click into the left side bar to place a brakpoint on a stetement line. For message expressions which cross multiple
+lines, a different position may be choosen. I.e. it is (currently) not possible to place breakpoints at arbitrary places in the middle of
+an expression.
+<P>
+When the line reached, a debugger is opened, where single stepping, proceeding or aborting is possible as usual.
+The debugger can also be instructed to ignore this breakpoint (via the menu)
+or to remove this breakpoint (by clicking on the breakpoint in the left side panel).
+It is also possible to add additional breakpoints to the stopped method and proceed, and thus skip forward within
+the debugged method or block.
+
+<H3><A NAME="STATEMENTTRACE" HREF="#I_STATEMENTTRACE">Tracepoint on a Statement Line</A></H3>
+
+Similar to the above breakpoint, a "Shift-Click" installs a tracepoint, which only outputs a message
+to the Transcript.
+
+
+<H2><A NAME="CODEDDEBUGGING" HREF="#I_CODEDDEBUGGING">Coded Debugging Support</A></H2>
+
+<H3><A NAME="HALT" HREF="#I_HALT">Halt</A></H3>
+
+This is the most obvious of the programmed debug helpers, and has been in Smalltalk for decades.
+However, ST/X adds a few more details to it:
+<OL>
+<LI>it is ignored by default in deployed stand alone applications. Thus, any leftover halts will not be
+invoked in the end-user app.
+<LI>it can be globally disabled via a class variable in Object
+<LI>it can be conditionally or unconditionally disabled on a per call-site basis.
+Both for a number of encounters, time or other condition.
+See the debugger's "breakpoint" menu for details.
+</OL>
+
+<H3><A NAME="CODEDBREAKTRACE" HREF="#I_CODEDBREAKTRACE">Coded Break/Tracepoints</A></H3>
+
+Instead of using "halt", we recommend using the "breakPoint:#id" message. It behaves similar to halt, but gets an
+identifier as argument, so selective enabling/disabling is possible. For example, the author uses "breakPoint:#cg" for all
+of his debugging, so breakpoints left in by other team members ill not affect his work.
+<P>
+The breakpoint browser also allows for selective enabling/disabling or filtering the list of shown breakpoints.
+
+
+<H3><A NAME="ASSERTIONS" HREF="#I_ASSERTIONS">Assertions</A></H3>
+
+In ST/X, "assert:" is not only implement in the TestCase class (see SUnit testing), but also in object.
+A debugger is opened, when the assertion fails during development time.
+In a standalone deployed application, these assertions are ignored. The "stc" compiler can be instructed via a command
+line argument, to generate a binary where assertion code is completely ignored.
+
+
+<H3><A NAME="DEBUGCODE" HREF="#I_DEBUGCODE">Conditionally Executed Debug Code</A></H3>
+
+Similar to assertions, and breakpoints with identifier, debugging code can be placed into a "debugCodeFor:#id is:[...]" message.
+This can also be enabled/disabled selectively, and the breakpoint browser will find it easily.
+
+
+<H2><A NAME="TRANSCRIPTDEBUG" HREF="#I_TRANSCRIPTDEBUG">Breakpoint on Output to Transcript</A></H2>
+
+Often you need to remove or disable code which sends
+debug output to the Transcript (eg. before deploying a application).
+Sometimes, this code is hard to find as the message text cannot be found by regular text searches (if it is computed),
+and you spend too much time, looking through all references to Transcript to find it.
+<P>
+The launcher offers a convenient menu item (in the "tools"-"debugging" submenu) to plant a breakpoint
+on whenever a particular message is sent to the Transcript. Once in the debugger, it is trivial locate
+the code which was responsible for that message.
+
+
+<H2><A NAME="CLEANUP" HREF="#I_CLEANUP">Cleaning Up</A></H2>
+
+To remove all break- and trace-points from the system
+(without having to search manually),
+either evaluate:
+<A TYPE="example">
+<CODE><PRE>
+    MessageTracer cleanup
+</PRE></CODE>
+</A>
+to remove all trace points in the system,
+<A TYPE="example">
+<CODE><PRE>
+    MessageTracer untraceAllMethods
+</PRE></CODE>
+</A>
+to remove all method traces.
+<P>
+  Also, the Debuggers popupMenu (in the walkback list) offers an
+  <VAR>untrace all</VAR> entry, which does the above cleanup.
+<BR>
+  You may need this in case you get <VAR>trapped</VAR> by a persistent trap ;-)
+
+
+
+<H2><A NAME="TOOLSUPPORT" HREF="#I_TOOLSUPPORT">Tool Support for Breakpoints/Tracing</A></H2>
+
+<H3><A NAME="BROWSER" HREF="#I_BROWSER">System Browser</A></H3>
+
+
+  The system browser allows setting/clearing of unconditional method breakpoints
+  via the "traffic light" toolbar buttons. More specific break/trace points
+  are found in the "Debug" menu, including per-process or breaks with an arbitrary condition.
+  Additional useful wrappers for method counting, memory usage computation and
+  timing measurements are found in the selector menu.
+<P>
+  The search menu contains useful filters to find methods with breakpoints (although,
+  similar functions are found in the launcher and especially the breakpoint browser).
+  Use the one, which is nearest your mouse pointer!
+<P>
+  Methods being traced or which have a breakpoint are
+  shown with a stop bullet icon before their name (in the top-right method list).
+
+
+<H3><A NAME="INSPECTOR" HREF="#I_INSPECTOR">Inspector</A></H3>
+
+  The Inspector contains items for setting/clearing of full traces and traps
+  in its field-menu. These trace/stop every message send to the traced
+  object. You can also set traps for access to fields - especially useful to catch
+  modifications of an instance variable.
+<BR>
+  Notice, that after a trap has been placed, even accesses from within the
+  inspector itself lead into a debugger.
+<P>
+example:
+<PRE><CODE>
+    see whats sent to a StandardSystemView during its
+    startup ...
+
+    |v|
+
+    v := StandardSystemView new.
+    v inspect.
+    ... now, set a trap ...
+    ...
+    ... then evaluate: 'self open'
+    ... in the inspector
+</CODE></PRE>
+
+<H3><A NAME="DEBUGGER" HREF="#I_DEBUGGER">Debugger</A></H3>
+
+The debugger detects the situation, when it is entered due to a breakpoint, and knows how
+to deal with wrapped methods (for example, when single stepping or when looking into a context's local variables).
+It will silently hide the implementation details and make the walkback list look as if no such wrapping intermediate
+contexts were present (at least, it should ;-) ).
+<P>
+Also, the debugger can be instructed to ignore breakpoints either for some time, for a number of invocations,
+or when some other condition is met. This is <B>*very*</B> useful if a breakpoint was placed on code which is executed
+elsewhere, for example in parts of the GUI.
+See the debugger's menu for details.
+
+
+<H3><A NAME="OTHERTOOLS" HREF="#I_OTHERTOOLS">Other Tools</A></H3>
+
+If you lost track of where and how you planted breakpoints in the system,
+open a
+<A HREF="../tools/misc/TOP.html#BREAKPOINTLIST">Breakpoint Browser</A>,
+which finds all kinds of debugging code and breakpoints and allows for individual
+removeal or ignoring of breakpoints. Also, the browser contains a "Browse Methods with Halt" item
+in its "<I>Browse</I>" - "<I>Methods</I>" menu.
+<p>
+Finally, the Launcher has a "<I>Remove all Breakpoints</I>" menu item in its
+"<I>Tools</I>" - "<I>Debugging</I>" menu.
+
+
+<H2><A NAME="EXAMPLES" HREF="#I_EXAMPLES">Example Uses</A></H2>
+
+
+<H3><A NAME="EX_COUNT" HREF="#I_EX_COUNT">Counting Method Invocations</A></H3>
+
+(Hint: this is found in the browser's debug menu as "Start Counting")
+<p>
+Consider the case where you want to count the number a particular
+method is invoced.
+To do so, we place a wrapper on the method
+which increments a (global) counter:
+<BR>
+For example, lets count the invocations of <CODE>Float +</CODE>:
+<CODE><PRE>
+    Smalltalk at:#MyCount put:0 .
+
+    MessageTracer
+	wrapMethod:(Float compiledMethodAt:#+)
+	onEntry:[:con | MyCount := MyCount + 1]
+	onExit:[:con :ret | ].
+</PRE></CODE>
+Try a few adds applied to a float, and have a look at the globals
+count.
+<BR>
+To remove the wrapper, execute:
+<CODE><PRE>
+    MessageTracer
+	unwrapMethod:(Float compiledMethodAt:#+)
+</PRE></CODE>
+or, simply:
+<CODE><PRE>
+    MessageTracer
+	unwrapAllMethods
+</PRE></CODE>
+and don't forget to remove the global counter:
+<CODE><PRE>
+    Smalltalk removeKey:#MyCount
+</PRE></CODE>
+In the above example, you will notice that a lot of float
+additions happen without your explicit calls (for example, in
+the window handling code). Thus, you may prefer to try it
+with some other method (for example, <CODE>sin</CODE>).
+<P>
+
+
+
+
+<H2><A NAME="WARNING" HREF="#I_WARNING">Warning / Dangers</A></H2>
+
+  Currently the tracing facilities are not smart enough, to detect recursive
+  invocation of trace methods. Thus, if a trace is placed on a method, which is
+  needed for tracing itself, the system will enter some bad (recursive) loop.
+  This may bring you into the debugger or - if the recursion occurs again in
+  the debugger - even into the miniDebugger.
+<P>
+  For example, placing a trace on <CODE>Context &#187; sender</CODE>
+ will lead to this situation,
+  because that method is indirectly called by the trace-code.
+  Thus the process will run into recursion overflow problems, and start up
+  a debugger; this debugger itself will run into the same problem, since during
+  its startup, it reads the context chain using <CODE>Context &#187; sender</CODE>.
+  Finally, ST/X's runtime system will kill the (lightweight) process.
+<P>
+If you are lucky, the system is in a condition to enter the
+<A HREF="../getstart/TOP.html#LEAVEMINIDEBUG">MiniDebugger</A>.
+<BR>
+In this case, try to repair things with:
+<CODE><PRE>
+    MiniDebugger> I                     &lt;- I-command; gets you into a
+					   line-by-line expression evaluator
+
+    MessageTracer unwrapAllMethods      &lt;- remove all breakpoints
+
+					&lt;- empty line to leave the
+					   expression evaluator
+
+    MiniDebugger> a                     &lt;- abort
+</PRE></CODE>
+Notice: the Minidebugger of the newest release has a special command for this:
+<CODE><PRE>
+    MiniDebugger> U                     &lt;- U-command; unwrap all methods
+</PRE></CODE>
+<P>
+  Example:
+<BLOCKQUOTE>
+<STRONG>
+    ATTENTION: save your work before evaluating this
+</STRONG>
+</BLOCKQUOTE>
+<CODE><PRE>
+    MessageTracer traceMethodSender:(Context compiledMethodAt:#sender).
+    thisContext sender.
+    MessageTracer untraceMethod:(Context compiledMethodAt:#sender).
+</PRE></CODE>
+  after the above, you should repair things, by opening a workspace,
+  and evaluating:
+<CODE><PRE>
+    MessageTracer unwrapAllmethods
+</PRE></CODE>
+  (this will remove the tracers, and allow normal use of the debugger again).
+<P>
+  Critical methods are all context methods, string concatenation and printing
+  methods.
+<BR>
+  To trace these critical methods, use the instance debugging facilities
+  described above, instead of method debugging - if possible
+  (it is not possible for context-related methods though).
+<P>
+It is difficult to offer a satisfying solution to this problem -
+the obvious fix (to simply check for recursion in the wrapper method)
+would prevent the tracing or breakpointing of recursive methods, such
+as the factorial-example above.
+<P>
+Future versions may provide better solutions - for now, be warned.
+<BR>
+  <B>Late note</B>: we have worked hard to detect the problems as described above in most
+  cases; the debugger tries hard to detect recursive errors, halts and breakpoints,
+  and ignores them. However, there may still be some rare situations, where this detection
+  may fail (if the fail-detection code is itself affected).
+<P>
+  In situations where the debugger itself (or code called by it) is to be debugged,
+  you can enable the "Halts in Debugger" feature via the debugger's menu.
+<P>
+
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 2013 Claus Gittinger Development &amp; Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.26 $ $Date: 2016-11-05 17:38:36 $
+</BODY>
+</HTML>

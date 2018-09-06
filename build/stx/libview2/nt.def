@@ -1,0 +1,11 @@
+LIBRARY         libview2
+DESCRIPTION     'Smalltalk/X View classes 2'
+VERSION         3.5
+CODE            EXECUTE READ 
+DATA            READ WRITE
+SECTIONS
+    INITCODE    READ EXECUTE 
+    INITDATA    READ WRITE
+    RODATA      READ SHARED
+EXPORTS 
+    _libview2_Init

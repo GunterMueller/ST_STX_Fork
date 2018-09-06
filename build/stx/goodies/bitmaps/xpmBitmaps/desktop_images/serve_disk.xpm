@@ -1,0 +1,33 @@
+/* XPM */
+static char *serve_disk_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"31 17 9 1",
+/* colors */
+"a c #0000FF",
+"b c #C6C3C6",
+"c c green",
+"d c black",
+"e c white",
+"f c #000084",
+"g c #008200",
+"h c #848284",
+"i c none",
+/* pixels */
+"iiiihhhhhhhhhhhhhhhhhhhhhhhhhhi",
+"iiihbbbbbbbbbbbbbbbbbbbbbbbbbhd",
+"iihbbbbbbbbbbbbbbbbbbbbbbbbbhhd",
+"iheeeeeeeeeeeeeeeeeeeeeeeeehhhd",
+"ihebbbbbbbbbbbbbbbbbbbcccbbhhhd",
+"ihebbbbbbbbbbbbbbbbbbbgggbbhhhd",
+"fffffffbbbbbbbbbbbbbbbbbbbbhhhd",
+"aaaaaaadhhhhhhhhhhhhhhhhhbbhhhd",
+"aaaaaaadhhhhhhhhheeeeeeeebbhhhd",
+"fffffffdbeeeeeeeehhhhhhhhbbhhhd",
+"fffffffdbeeeeeeeeeehheeeebbhhhd",
+"fffffffdbeeeeeedeeeeedbbbbbhhdi",
+"fffffffdbbbeeeeeddddddhhhhhhdii",
+"fffffffdddbbbeeeehhhddddddddiii",
+"fffffffdiidbbbbeeeeeeeebhdiiiii",
+"dddddddiiiiddhhhhhhhhhhddiiiiii",
+"iiiiiiiiiiiiiddddddddddiiiiiiii",
+};

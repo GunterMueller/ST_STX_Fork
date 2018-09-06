@@ -1,0 +1,28 @@
+"*
+ * Encoding: iso8859-1
+ *
+ * $Header$
+ *
+ * MIMEType: application/x-smalltalk-source
+ *
+ * ST/X startup configuration file - for OS-X.
+ *
+ * DONT add site specific things here - use your own h_xxx.rc file instead
+ * where xxx stands for your hostname(s)
+ *"
+
+"/
+"/ you should have XCode (at least the command line tools) installed
+"/
+
+Smalltalk wasStartedFromImage ifFalse:[
+    ParserFlags
+	ccCompilationOptions:
+	    '-O3 -mmacosx-version-min=10.6'
+	  , ' -I../../support/VGL/vogl/src'
+	  , ' -F/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks'
+	  , ' -framework Foundation'
+	  , ' -framework ApplicationServices'
+	  , ' -framework CoreFoundation'.
+].
+!

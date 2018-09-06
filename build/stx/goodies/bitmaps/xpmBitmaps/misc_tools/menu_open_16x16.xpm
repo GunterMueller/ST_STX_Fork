@@ -1,0 +1,28 @@
+/* XPM */
+static char *menu_open_16x16_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 5 1",
+/* colors */
+"a c black",
+"b c yellow",
+"c c #808000",
+"d c white",
+"e c none",
+/* pixels */
+"eeeeeeeeeeeeeeee",
+"eeeeeeeeeaaaeeee",
+"eeeeeeeeaeeeaeae",
+"eeeeeeeeeeeeeaae",
+"eaaaeeeeeeeeaaae",
+"abdbaaaaaaaeeeee",
+"adbdbdbdbdaeeeee",
+"abdbdbdbdbaeeeee",
+"adbdbaaaaaaaaaaa",
+"abdbacccccccccae",
+"adbdcccccccccaee",
+"abacccccccccaeee",
+"aacccccccccaeeee",
+"aaaaaaaaaaaeeeee",
+"eeeeeeeeeeeeeeee",
+"eeeeeeeeeeeeeeee",
+};

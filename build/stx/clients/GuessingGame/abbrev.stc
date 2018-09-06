@@ -1,0 +1,4 @@
+Games::AnimalGuessingGame AnimalGuessingGame stx:clients/GuessingGame 'games-AnimalGuessing' 0
+Games::GuessingGame GuessingGame stx:clients/GuessingGame 'games-AnimalGuessing' 1
+Games::GuessingGameLeafNode GuessingGameLeafNode stx:clients/GuessingGame 'games-AnimalGuessing' 0
+Games::GuessingGameNode GuessingGameNode stx:clients/GuessingGame 'games-AnimalGuessing' 0

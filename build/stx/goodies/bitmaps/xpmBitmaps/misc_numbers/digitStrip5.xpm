@@ -1,0 +1,18 @@
+/* XPM */
+static char *digits5_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"92 9 2 1",
+/* colors */
+"a c black",
+"b c white",
+/* pixels */
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"baaaabbbaabbbaaaabbaaaabbabbabbaaaabbaabbbbaaaabbaaaabbaaaabbbaabbbbbabbbbaaaabbbbbbbbbbbbbb",
+"babbabbbbabbbabbabbbbbabbabbabbabbabbabbbbbabbabbabbabbabbabbbaabbbbababbbabbbabbbbbbbbbbbbb",
+"babbabbbbabbbbbbabbbbbabbabbabbabbbbbabbbbbbbbabbabbabbabbabbbbbbbbabbbabbabbbabbbbbbbbbbbbb",
+"babbabbbbabbbaaaabbaaaabbaaaabbaaaabbaaaabbbbaabbaaaabbaaaabbbbbbbbaaaaabbaaaabbbbbbbbbaaaab",
+"babbabbbbabbbabbbbbbbbabbbbbabbbbbabbabbabbbbabbbabbabbbbbabbbbbbbbabbbabbabbbbbbbaabbbbbbbb",
+"babbabbbbabbbabbabbbbbabbbbbabbabbabbabbabbbbabbbabbabbbbbabbbaabbbabbbabbabbbbbbbaabbbbbbbb",
+"baaaabbaaaabbaaaabbaaaabbbbbabbaaaabbaaaabbbbabbbaaaabbbbbabbbaabbbabbbabbabbbbbbbbabbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbabbbbbbbbb",
+};

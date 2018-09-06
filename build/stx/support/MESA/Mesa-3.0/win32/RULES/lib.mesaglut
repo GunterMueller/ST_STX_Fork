@@ -1,0 +1,8 @@
+
+!IF "$(STATIC_MESA)" != "1"
+!ERROR lib.$(LIBBASE) : This file require STATIC_MESA be set to 1.
+!ENDIF
+
+!INCLUDE .\rules\lib.mesaglut.core
+
+CPPOPTS = /DW32_MESA $(CPPOPTS)

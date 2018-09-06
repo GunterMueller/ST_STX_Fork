@@ -1,0 +1,5 @@
+Warning:
+All link files must be created with absolute path to the executable & the working path (no variables permitted!)
+
+This is probably the best way:
+mklink /H C:\users\<user_id>\desktop\smalltalk.lnk C:\prg_sdk\Stx_stable\stx-jv\build\stx\projects\smalltalk\smalltalk_close_shell.lnk

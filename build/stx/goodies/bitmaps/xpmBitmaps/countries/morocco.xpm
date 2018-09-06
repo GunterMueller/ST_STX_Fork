@@ -1,0 +1,29 @@
+/* XPM */
+static char *morocco_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 20 2 1",
+/* colors */
+"a c red",
+"b c #2e8b57",
+/* pixels */
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaabaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaabaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaabbbbabbbbaaaaaaaaaaa",
+"aaaaaaaaaaaaaabaaabaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaababaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaabbbaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaabbbabbbaaaaaaaaaaaa",
+"aaaaaaaaaaaabaaaaaaabaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+};

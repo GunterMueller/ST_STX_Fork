@@ -1,0 +1,885 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Useful Selectors</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="syntaxCheatSheet.html">   <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[next]"></A>
+<A NOPRINT HREF="TOP.html"> <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="codingStyle.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>List of Useful Selectors</H1>
+
+<H2>Introduction</H2>
+
+<P>
+The following is just a keyword list to give you a hint what to search for.
+Use the <A HREF="../tools/sbrowser/TOP.html">SystemBrowser</A> to find
+<A HREF="../tools/sbrowser/TOP.html#HOWTO.WHOIMPLEMENTS">implementors</A>
+or
+<A HREF="../tools/sbrowser/TOP.html#HOWTO.WHOSENDS">senders</A>
+of those messages.
+<P>
+Looking at the comments in the implementors will give you more information about
+what is done in those methods; looking at the senders code, you will learn more
+on how those messages are typically used.
+<P>
+Notice that the browser supports wildcard searches - thus you can search for
+patterns such as <KBD>"at*"</KBD> or even <KBD>"n*ut*"</KBD>.
+<P>
+A note to beginners:
+<BLOCKQUOTE>
+  what you see below is NOT smalltalk syntax, but a small fraction of messages
+  understood by classes in the system; there is much more.
+<P>
+  For smalltalk syntax and the basic classes/messages, see
+<UL>
+<LI><A HREF="../overview/literature.html#[1]">
+<CITE>Smalltalk 80, The Language and Implementation</CITE></A>
+<P>
+<LI><A HREF="../overview/literature.html#[2]">
+<CITE>Smalltalk 80, The Language</CITE></A>
+<P>
+<LI><A HREF="../overview/literature.html#[7]">
+<CITE>Inside Smalltalk volume 1</CITE></A>
+</UL>
+<P>
+  If you are new to Smalltalk and used to other programming languages,
+  many binary selectors may look like syntax to you.
+  Beside the obvious "+", "-" etc. the most
+  noteworthy are "," (concatenation), "?" (default value), "@" (point instantiation)
+  and "=>" (association instantiation). These are names for operations just like
+  the others and are implemented as methods of their respective receiver classes
+  (to the left of the operator).
+</BLOCKQUOTE>
+
+Also, you will find demonstration code and examples for some concepts
+in the directory <CODE>"doc/coding"</CODE>. All classes also contain
+a documentation category and many have an examples method there.
+<BR>
+A step-by-step introduction into the view classes is found
+in the document <a href="viewintro.html">'introduction to view programming'</a>.
+<P>
+<P>
+In the list below, the characters <KBD>'['</KBD> and <KBD>']'</KBD> mean:
+<VAR>optional</VAR>;
+thus:
+<BLOCKQUOTE>
+<CODE>
+  foo:[bar:]
+</CODE>
+</BLOCKQUOTE>
+means that both methods for <CODE>foo:</CODE> and <CODE>foo:bar:</CODE> are provided.
+<BR>
+(for beginners: this means that there are two methods in the system:
+ <CODE>foo:</CODE> and <CODE>foo:bar:</CODE>)
+<P>
+
+This list is far from complete, currently there are about 40000 methods
+(try <CODE><A type=example showresult>Method instanceCount</A></CODE>)
+in more than 4500 classes
+(try <CODE><A type=example showresult>Class allSubInstances size</A></CODE>)
+to be found in the base system alone
+<BR>
+(not counting some additional goodies, demos etc. and many autoloaded methods).
+<BR>
+It should be clear that the list
+below is only a very small extract.
+<P>
+Happy browsing ...
+<P>
+
+<PRE>
+
+</PRE>
+<H1>Most Useful Selectors</H1>
+
+<H2>Creating Objects</H2>
+<HR>
+<PRE>
+new                             - message to a class - returns a new (typically initialized) instance
+new:                            - (usually a ) message to a container class
+				  returns a container instance of (preallocated) size
+basicNew                        - message to a class - returns a new definitely uninitialized instance
+</PRE>
+
+<H2>Copying Objects</H2>
+<HR>
+
+<PRE>
+shallowCopy                     - shallow copy (the copy references the same objects)
+deepCopy                        - deep copy (referenced objects are also deep-copied)
+				  Handles recursive and self-referencing structures.
+copy                            - usually defaults to a shallow copy
+
+
+</PRE>
+
+<H2>General Queries</H2>
+<HR>
+<PRE>
+class                           - return an object's class
+respondsTo:                     - ask if message is understood
+isMemberOf:                     - ask if instance of a class (not recommended)
+isKindOf:                       - ask if instance of a class or subclass (not recommeneded)
+isNil                           - true if object is nil
+notNil                          - true if object is not nil
+isClass                         - true if object is a class
+isNumber                        - true if object is a number
+isXXXX                          - some more of this
+respondsToArithmetic            - true if object understands arithmetic messages
+
+allOwners                       - returns a collection of objects referencing the receiver
+allInstances                    - returns a collection of a class's instances
+allDerivedInstances             - returns a collection of a class's and subclass's instances
+
+
+</PRE>
+
+
+
+<H2>Comparing</H2>
+<HR>
+<H3>General</H3>
+<PRE>
+==                              - identical;  i.e. the same object
+~~                              - not identical
+=                               - equal; i.e. same structure and/or value(s)
+~=                              - not equal
+hash                            - return a key for hashing
+identityHash                    - return a key for hashing on identity
+
+
+</PRE>
+
+
+<H3>Magnitudes</H2>
+<PRE>
+>                               - greater than
+>=                              - greater or equal
+&lt;                               - less than
+&lt;=                              - less or equal
+
+between:and:                    - test if in a range
+min:                            - minimum
+max:                            - maximum
+
+
+</PRE>
+
+
+<H2>Arithmetic (Numbers)</H2>
+<HR>
+<PRE>
++                               - addition
+-                               - difference
+*                               - product
+/                               - division - tends to convert to float
+//                              - truncating division - returns integer
+\\                              - modulo
+
+abs                             - absolute value
+negated                         - negated value (0 - receiver)
+
+rounded                         - round to nearest integer
+truncated                       - truncate towards zero
+ceiling                         - round toward positive infinity
+floor                           - round toward negative infinity
+
+asFloat                         - coerce to float
+asInteger                       - coerce to integer (i.e. truncates)
+
+log:                            - logarithm
+sin                             - sine
+cos                             - cosine
+raiseTo:                        - raise to power
+sqrt                            - square root
+
+even                            - true if even
+odd                             - true if odd
+sign                            - signum (-1, 0, 1)
+positive                        - true if positive
+negative                        - true if negative
+
+
+</PRE>
+
+
+
+<H2>Bitwise Operations (Integers)</H2>
+<HR>
+<PRE>
+bitAnd:                         - bitwise and
+bitOr:                          - bitwise or
+bitXor:                         - bitwise exclusive or
+bitInvert                       - bitwise complement
+bitShift:                       - shift
+
+
+</PRE>
+
+
+
+<H2>Logical Operations (Booleans)</H2>
+<HR>
+
+<PRE>
+&amp;                               - logical and (evaluating)
+|                               - logical or  (evaluating)
+not                             - logical not
+
+and:                            - logical and (non evaluating)
+or:                             - logical or  (non evaluating)
+
+
+</PRE>
+
+
+
+<H2>Collections</H2>
+<HR>
+
+<H3>Sizing</H3>
+<PRE>
+size                            - number of elements
+isEmpty / notEmpty              - true/false if collection is empty
+</PRE>
+
+
+<H3>Adding</H3>
+<PRE>
+add:                            - add a new element
+addAll:                         - add all elements of argument
+at:put:                         - store element into collection
+atAllPut:                       - fill
+atAll:put:                      - fill parts
+addFirst:                       - add at beginning
+addLast:                        - add at end
+</PRE>
+
+
+<H3>Removing</H3>
+<PRE>
+remove:[ifAbsent:]              - remove an element [with opt. error handler]
+removeAll:                      - remove all
+removeFirst                     - remove first element
+removeLast                      - remove last element
+removeKey:                      - remove a key
+</PRE>
+
+
+<H3>Accessing</H3>
+<PRE>
+at:                             - retrieve at index/key
+at:ifAbsent:                    - retrieve, with handler if index is absent
+first                           - retrieve first element
+last                            - retrieve last element
+</PRE>
+
+
+<H3>Testing</H3>
+<PRE>
+includes:                       - true if element is in the collection
+includesIdentical:              - not just the same - but that particular object
+includesAny:                    - true if any is in the collection
+includesAll:                    - true if all are in the collection
+occurrencesOf:                  - return number of occurrences of an element
+includesKey:                    - return true if key is valid
+indexOf:[ifAbsent:]             - search and return position using = (indexable collections)
+identityIndexOf:[ifAbsent:]     - search and return position using == (indexable collections)
+</PRE>
+
+
+<H3>Iterating</H3>
+<PRE>
+do:                             - enumerate collection elements
+keysAndValuesDo:                - same, but pass keys and values to block
+reverseDo:                      - in reverse order
+collect:                        - enumerate elements, collect results
+select:[ifNone:]                - enumerate elements, collect some elements
+reject:                         - enumerate elements, collect some elements
+inject:into:                    - enumerate and accumulate some result
+findFirst:                      - find first/last element for which a check returns true
+findLast:
+with:do:                        - enumerate two collections in one loop
+with:collect:
+contains:                       - check if any element applies
+</PRE>
+
+<H3>Converting</H3>
+<PRE>
+asArray                         - return an array with the same elements
+asOrderedCollection             - return an orderedCollection with the same elements
+asSortedCollection              - return a sortedCollection with the same elements
+asSet                           - return a set with the same elements
+asBag                           - return a bag with the same elements
+readStream                      - return a stream to read the elements
+writeStream                     - return a stream to write into the collection
+</PRE>
+
+
+<H3>Sorting</H3>
+<PRE>
+sort[:]                         - inplace sort [with optional sort criteria]
+topologicalSort[:]              - full search (slow) [with optional sort block]
+reverse                         - reverse elements order
+</PRE>
+
+
+<H3>Copy (Copy &amp; Replace - Non Destructive)</H3>
+<PRE>
+copyFrom:                                       - copy to the end
+copyTo:                                         - copy from beginning
+copyFrom:to:                                    - copy part
+copyWith:                                       - copy and append
+copyWithout:                                    - copy and remove
+copyWithoutIndex:                               - copy and remove (indexable collections)
+copyWithoutLast:                                - copy except last elements
+
+copyReplaceFrom:[to:][with:][startingAt:]       - copy and replace in the copy
+
+copy                                            - copy all
+deepCopy
+shallowCopy
+</PRE>
+
+<H3>Replacing (Destructive)</H3>
+<PRE>
+replaceFrom:[to:][with:][startingAt:]           - replace elements
+replaceAll:by:                                  - search & replace
+</PRE>
+
+
+<H3>String Specials</H3>
+<PRE>
+,                                       - concatenation
+
+paddedTo:[with:]                        - padding [with optional fill character]
+leftPaddedTo:[with:]
+
+asUppercase                             - copy and make copy uppercase
+asLowercase                             - copy and make copy lowercase
+asUppercaseFirst                        - copy and make the first character uppercase
+
+asNumber                                - read number from string
+asFilename                              - convert to a filename
+
+match:                                  - (simple) regular expression match
+startsWith:                             - query for prefix
+endsWith:                               - query for suffix
+findString:[startingAt:[ifAbsent:]]     - substring search
+spellAgainst                            - spelling difference
+
+sameAs:                                 - compare ignoring case
+
+countWords                              - simple scanning
+asCollectionOfWords                     - separate into individual words
+asCollectionOfLines                     - separate at line boundaries
+asCollectionOfSubstringsSeparatedBy:    - separate at other boundaries
+
+withoutSpaces                           - copy & remove leading & trailing spaces
+withoutSeparators                       - copy & remove leading & trailing whitespace
+
+indexOfSeparator[StartingAt:]           - search for any whitespace
+indexOfNonSeparator                     - search for non whitespace
+
+asStringWith:from:to:compressTabs:final:- concatenate many strings
+
+
+</PRE>
+
+
+<H2>Printing &amp; Storing</H2>
+<HR>
+
+<H3>Printing</H3>
+<PRE>
+printOn:                        - basic low level object printing
+				  Does NOT output quotes around strings, so it
+				  can be used directly to print into a file.
+
+print                           - print receiver on standard output (Stdout)
+printCR                         - same, followed by a newline
+
+errorPrint                      - print receiver on standard error (Stderr)
+errorPrintCR                    - same, followed by a newline
+
+infoPrint                       - like above; can be turned off with --infoPrint
+infoPrintCR                     - same, followed by a newline
+
+printString                     - returns a string for printing (uses #printOn:)
+displayString                   - same as printString, but used when &lt;anObject>
+				  is to be shown in a view (such as an inspector).
+				  Different from printString in some classes.
+
+printStringRadix:               - integers) returns a printString in different radix
+
+Number displayRadix:            - set the default radix used in displayString
+</PRE>
+
+
+<H3>Formatted Printing</H3>
+<PRE>
+printOn:paddedTo:[with:]        - print and pad output on the right
+				  [with optional fill character]
+printOn:leftPaddedTo:[with:]    - print and pad output on the left
+printStringPaddedTo:[with:]     - return a right padded printstring
+printStringLeftPaddedTo:[with:] - return a left padded printstring
+bindWith:[with:[with:]]         - slice printStrings into a format string
+</PRE>
+
+
+<H3>Storing</H3>
+<PRE>
+storeOn:                        - store a textual representation.
+				  Warning: this is slow, creates huge files and
+					   does not handle self references.
+readFrom:                       - retrieve an object stored with 'storeOn:'
+
+storeBinaryOn:                  - stores &lt;anObject> in a binary representation
+				  (handles recursive and self referencing objects)
+readBinaryFrom:                 - retrieves an object stored with 'binaryStoreOn:'
+
+
+</PRE>
+
+
+
+<H2>Object Dependencies</H2>
+<HR>
+<PRE>
+addDependent:                   - make another object be a dependent
+removeDependent:                - remove a dependent
+dependents                      - get dependents
+changed:[with:]                 - notify dependents of a change
+broadcast:[with:]               - broadcast a message
+update:[with:][from:]           - sent to dependents
+onChangeSend:to:                - send a particular message on change
+onChangeEvaluate:               - evaluate a block on change
+
+</PRE>
+
+
+
+<H2>Debugging</H2>
+<HR>
+
+
+<H3>Transcript messages</H3>
+<PRE>
+Transcript show:                - shows an object's printString on the Transcript
+Transcript showCR:              - same, but appends a carriage return (line end)
+Transcript cr                   - only appends a carriage return (line end)
+Transcript flash                - wakeup the user
+Transcript clear                - clear the Transcript
+</PRE>
+
+
+<H3>Alerts</H3>
+<PRE>
+warn:                           - pops up a warning box - suppressible
+information:                    - pops up an information box - suppressible
+notify:                         - pops up a notifier - not suppressible
+confirm:                        - asks yes/no questions
+</PRE>
+
+
+<H3>Debugging</H3>
+<PRE>
+halt                            - raise halt signal - usually ends in debugger
+halt:                           - halt with message
+error                           - raise error signal - usually ends in debugger
+error:                          - error with message
+assert:                         - assert that some condition is true
+
+inspect                         - to have a deeper look into any object
+basicInspect
+</PRE>
+
+
+<H3>Advanced Debugging</H3>
+<PRE>
+MessageTracer trace:selector:     - to trace sends of a selector to an object
+MessageTracer trap:selector:      - to trape send of a selector to an object
+MessageTracer untrap:[selector:]  - remove trace or trap
+
+MessageTally spyOn:               - execution profile
+MessageTally spyDetailOn:         - same, with higher clock resolution
+
+
+</PRE>
+
+
+
+<H2>Special Object Manipulations</H2>
+<HR>
+<PRE>
+instSize                        - returns number of named instance variables
+instVarAt:                      - returns a named instance variable (do not use)
+instVarAt:put:                  - set a named instance variable (never use)
+
+become:                         - become another object - and vice versa
+becomeSameAs:                   - one-way become
+becomeNil                       - effectively destroy an object
+
+changeClassTo:                  - for dynamic inheritance
+
+
+</PRE>
+
+
+
+<H2>Handling Errors</H2>
+<HR>
+<PRE>
+handle:do:                      - define a signal handler for an evaluation
+				  handler does #return, #returnWith:, #restart or #resume
+				  (see Exception)
+catch:                          - catch signals while evaluating (i.e. abort execution)
+ignore:                         - catch signals and continue evaluation
+
+handlerBlock:                   - defines a handler block for a signal
+
+ex return[:]                    - return from an exception [with optional value]
+ex restart                      - restart execution after an exception
+ex proceed[With:]               - continue execution from an exception [with optional value]
+
+signal raise                    - raise an exception
+signal isHandled                - query if currently handled
+
+Object doesNotUnderstandSignal  - some common signals
+Number divisionByZeroSignal
+Float domainErrorSignal
+PipeStream brokenPipeSignal
+Socket brokenConnectionSignal
+Object abortSignal
+
+Object noHandlerSignal          - raised for unhandled signals
+
+Object errorSignal              - parent of all signals handling this one als handles all others
+Number arithmeticSignal         - parent of all arithmetic signals
+
+
+</PRE>
+
+<H2>Queries & Notifications</H2>
+<HR>
+<PRE>
+answer:do:                      - answer a query inside a block evaluation
+query                           - request an answer from someone above in the
+				  calling hierarchy
+QuerySignal default:            - define a default answer to a query
+</PRE>
+
+
+<H2>Program Control</H2>
+<HR>
+
+<H3>Basic Control</H3>
+<PRE>
+ifTrue:[ifFalse:]               - simple if
+ifFalse:[ifTrue:]
+
+whileTrue:                      - loop test at entry
+whileFalse:
+
+whileTrue                       - condition only
+whileFalse
+
+doUntil:                        - loop test at end
+doWhile:
+
+loop                            - loop forever
+loopWithExit                    - and with exit
+
+timesRepeat:                    - counted loop
+
+to:[by:]do:                     - loop with index
+
+do:                             - loop over elements of a collection
+keysAndValuesDo:                - loop with index &amp; element
+reverseDo:                      - the other way
+?                               - nil check; used with lazy initialized variables
+</PRE>
+
+
+<H3>Evaluating Blocks</H3>
+<PRE>
+value                           - evaluate without
+value:[value:[value:]]          - evaluate with arguments (up to 4)
+valueWithArguments:             - evaluate with arguments from an array
+valueWithExit                   - evaluate with exit possibility
+valueOnUnwindDo:                - with cleanup actions on unwind
+valueNowOrOnUnwindDo:           - with cleanup in any case
+valueUninterruptably            - evaluate with interrupts blocked
+</PRE>
+
+
+<H3>Message Sending / Method Evaluation</H3>
+<PRE>
+perform:[with:[with:]]          - perform; for non-constant selector sends
+perform:withArguments:          - with arguments from an array
+perform:ifNotUnderstood:        - save perform with handler
+perform:inClass:withArguments:  - perform, with class for lookup (super-send)
+
+
+</PRE>
+
+
+
+<H2>Processes (also called "<VAR>threads</VAR>")</H2>
+<HR>
+<H3>Creation</H3>
+<PRE>
+fork                            - create a process to execute in parallel
+forkAt:prio                     - with any priority
+newProcess                      - create, but don't run
+
+Processor activeProcess         - get the current process
+Processor activePriority        - get the current priority
+</PRE>
+
+
+<H3>Control</H3>
+<PRE>
+suspend                         - suspend a process
+resume                          - resume a process
+terminate                       - terminate a process
+terminateNoSignal               - quick terminate a process
+priority[:]                     - get/set priority
+
+interruptWith:                  - interrupt a process
+</PRE>
+
+
+<H3>Semaphores, SharedQueues and Delays</H3>
+<PRE>
+wait[WithTimeout:]              - suspend process to wait on semaphore [with optional timeout]
+signal                          - wakeup processes waiting on semaphore
+signalIf                        - wakeup, but only if being waited upon
+signalOnce                      - signal, but only if count is zero
+
+critical:                       - critical regions (mutual exclusion)
+
+next                            - controlled access to sharedQueues
+nextPut:
+
+Delay forSeconds:               - create a Delay object
+Delay forMilliseconds:
+
+wait                            - suspend process to wait on delay
+resume                          - premature wakeup of a delay
+</PRE>
+
+
+<H3>Accessing the Context Chain</H3>
+<PRE>
+thisContext                     - the context of the current method
+				  (this is not a message, but a pseudo variable)
+thisContext sender              - the caller's context
+return[:]                       - return from a context (with value); no cleanup
+restart                         - restart a context
+resume                          - continue execution in a context
+unwind[:]                       - return from context with cleanup actions
+
+
+</PRE>
+
+
+
+<H2>Files (Filenames)</H2>
+<HR>
+<PRE>
+asFilename                      - convert string to filename
+
+exists                          - check existence of a file
+isReadable                      - check if readable
+isDirectory                     - check if directory
+
+copyTo:                         - copy a file
+renameTo:                       - rename a file
+remove                          - remove a file or directory (must be empty)
+delete                          - remove a file (ST-80 compatibility)
+recursiveRemove                 - remove a directory and all of its contents
+
+filesMatching:                  - match filenames
+filenameCompletion              - search for best match
+
+directoryContents               - ask directory for its entries
+contentsOfEntireFile            - get all of a file's contents
+
+
+makeDirectory                   - create a new directory
+Filename newTemporary           - create unique temporary file names in /tmp
+Filename newTemporaryIn:        - create unique temporary file names somewhere
+
+
+</PRE>
+
+
+<H2>File- and Stream-I/O</H2>
+<HR>
+<PRE>
+FileStream oldFileNamed:        - open an existing file
+FileStream readonlyFileNamed:   - open read-only
+FileStream newFileNamed:        - open/create for writing
+
+aFilename readStream            - stream on a file (given the name) for reading
+aFilename writeStream           - for writing
+
+collection readStream           - stream on a collection for reading
+collection writeStream          - for writing
+
+binary                          - read bytes (as opposed to characters)
+
+atEnd                           - check for end-of-stream
+</PRE>
+
+
+<H3>Reading</H3>
+<PRE>
+next[:]                         - read next (n) element(s)
+
+peek                            - look ahead
+nextPeek                        - read and look ahead
+peekFor:                        - look ahead and compare
+
+upTo:                           - read up to some element
+upToEnd                         - read till end is reached
+
+skip:                           - skip
+skipFor:                        - skip up to
+skipThrough:                    - skip up to and including
+skipAny:                        - skip all from a collection
+skipToAll:                      - skip until arg matches (string search)
+</PRE>
+
+
+<H3>Writing</H3>
+<PRE>
+nextPut:                        - append an element
+next:put:                       - append an element repeated
+nextPutAll:[startingAt:to:]     - append (part of) a collection
+</PRE>
+
+<H3>ExternalStream Specials</H3>
+<PRE>
+readWait[WithTimeout:]          - wait for data to become available for reading
+writeWait[WithTimeout:]         - wait until write is possible without blocking
+
+canReadWithoutBlocking          - check for data being available for reading
+canWriteWithoutBlocking         - check if write is possible
+
+ioctl:[with:]                   - perform ioctl
+blocking:                       - turn on/off blocking I/O
+buffered:                       - turn on/off buffered I/O
+</PRE>
+
+
+<H3>Reading/Writing Character Streams</H3>
+<PRE>
+nextLine                        - read a line (external streams)
+nextWord                        - read a word (external streams)
+nextChunk                       - read a chunk in fileIn format (external streams)
+
+nextPutLine:                    - append a line plus newline character
+
+peekForLineStartingWith:        - search for &amp; return next matching line
+peekForLineStartingWithAny:     - same, but match any of a collection
+
+upToSeparator                   - read up to next whitspace (character streams)
+
+skipSpaces                      - skip all spaces (character streams)
+skipSeparators                  - skip whitespace (character streams)
+skipSeparatorsExceptCR          - skip whitespace, stop at line end (character streams)
+skipLine                        - skip one line (i.e. up to newline)
+</PRE>
+
+
+<H3>Reading/Writing Binary Data</H3>
+<PRE>
+nextByte                        - read a byte
+nextShortMSB:                   - read a signed short (2 bytes) specifying msb or lsb
+nextUnsignedShortMSB:           - read an unsigned short (2 bytes) specifying msb or lsb
+nextLongMSB:                    - read a signed long (4 bytes) specifying msb or lsb
+nextUnsignedLongMSB:            - read an unsigned long (4 bytes) specifying msb or lsb
+nextBytes:into:                 - read some bytes
+
+nextPutByte:                    - write a byte
+nextPutShort:MSB:               - write a signed short (2 bytes), specifying msb or lsb
+nextPutLong:MSB:                - write a signed long (4 bytes), specifying msb or lsb
+nextPutBytes:from:              - write some bytes
+
+
+</PRE>
+<HR>
+<P>
+
+<H1>List of Most Useful Classes</H1>
+
+<PRE>
+Collection                      - protocol should be known; most other
+				  collections implement part or all of
+				  its protocol.
+
+OrderedCollection               - most often used indexable collection
+Array                           - second most often used indexable collection
+String                          - it's all about text
+Set                             - often overlooked by beginners
+Dictionary                      - often overlooked by beginners
+
+
+Number                          - common protocol for all numbers
+
+Stream                          - common protocol for both, internal and
+ExternalStream                    external streams
+
+Filename                        - implements all kinds of filename queries
+
+Block                           - all control structures use them;
+				  if you understand blocks, you understand
+				  Smalltalk ;-)
+
+Process                         - threads and synchronization
+Semaphore
+Delay
+</PRE>
+
+<P>
+<HR>
+
+<H1>List of Interesting Globals</H1>
+<PRE>
+Smalltalk                       - contains all globals (name&lt;->object associations)
+
+Transcript                      - to send informal messages to the user
+
+Stdout                          - standard output stream (i.e. xterm or console)
+Stderr                          - standard error stream (i.e. xterm or console)
+Stdin                           - standard input stream (i.e. xterm os console)
+
+Display                         - default display Workstation
+(Screen current)                - current display (use with multi display applications)
+
+Processor                       - for process scheduling
+
+OperatingSystem                 - for system queries
+</PRE>
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 1995 Claus Gittinger Development &amp; Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.34 $ $Date: 2017-08-30 19:42:21 $
+</BODY>
+</HTML>

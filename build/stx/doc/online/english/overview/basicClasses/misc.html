@@ -1,0 +1,567 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Basic classes - Other classes</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="exceptions.html"> <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">         <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="classes.html">     <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Other classes</H1>
+<P>
+There are many other useful classes found in the system. Only a few of them
+are mentioned below.
+<P>
+<UL>
+<LI> <A HREF="#TIME" NAME="I_TIME">Time</A> - time of day
+<LI> <A HREF="#DATE" NAME="I_DATE">Date</A> - dates
+<LI> <A HREF="#TIMESTAMP" NAME="I_TIMESTAMP">Timestamp</A> - date and time combined
+<LI> <A HREF="#TIMEDURATION" NAME="I_TIMEDURATION">TimeDuration</A> - durations
+<LI> <A HREF="#CHARACTER" NAME="I_CHARACTER">Character</A> - printable characters
+<LI> <A HREF="#POINT" NAME="I_POINT">Point</A> - coordinates in 2D
+<LI> <A HREF="#RECTANGLE" NAME="I_RECTANGLE">Rectangle</A> - rectangular areas in 2D
+<LI> <A HREF="#BOOLEAN" NAME="I_BOOLEAN">Boolean</A> - true and false
+<LI> <A HREF="#BLOCK" NAME="I_BLOCK">Blocks</A> - deferred execution
+<LI> <A HREF="#OS" NAME="I_OS">OperatingSystem</A> - low level OS services
+<LI> <A HREF="#SMALLTALK" NAME="I_SMALLTALK">Smalltalk</A> - global variables and system services
+<LI> <A HREF="#OBJMEM" NAME="I_OBJMEM">ObjectMemory</A> - low level memory management services
+</UL>
+Use the systemBrowser to have a more detailed look into the implementation.
+
+<H2><A HREF="#I_TIME" NAME="TIME">Time</A></H2>
+
+Instances of <CODE>Time</CODE> represent a particular time of day.
+<BR>
+The typical uses are:
+<P>
+<UL>
+<LI> creation:
+<CODE><PRE>
+    <VAR>aTime</VAR> := Time now
+</PRE></CODE>
+<CODE><PRE>
+    <VAR>aTime</VAR> := Time nowWithMilliseconds
+</PRE></CODE>
+for backward compatibility with GUI and other I/O related interfaces,
+the wellknown "<CODE>Time now</CODE>" method returns a time with second resolution.
+The time, when asked to print itself, will not print the milliseconds if they are zero.
+Thus "<CODE>Time now printString</CODE>" will print as "hh:mm:ss" (as it did for the past 30years).
+<p>
+To get a higher resolution time, use "<CODE>Time nowWithMilliseconds</CODE>",
+which includes milliseconds and will also print them.
+<p>
+
+<LI> creation:
+<CODE><PRE>
+    <VAR>aTime</VAR> := Time hours:<VAR>hours</VAR> minutes:<VAR>minutes</VAR> seconds:<VAR>seconds</VAR>
+</PRE></CODE>
+or:
+<CODE><PRE>
+    <VAR>aTime</VAR> := Time hours:<VAR>hours</VAR> minutes:<VAR>minutes</VAR> seconds:<VAR>seconds</VAR> milliseconds:<VAR>millis</VAR>
+</PRE></CODE>
+
+<LI> queries:
+<CODE><PRE>
+    <VAR>aTime</VAR> hour
+
+    <VAR>aTime</VAR> minutes
+
+    <VAR>aTime</VAR> seconds
+
+    <VAR>aTime</VAR> milliseconds
+</PRE></CODE>
+</UL>
+<P>
+The Time class also provides useful methods to measure the execution time of a block:
+<CODE><PRE>    Time millisecondsToRun:[...]</PRE></CODE>
+and to get the internal (millisecond-)timer's value.
+<P>
+Notice that <CODE>Time</CODE> only represents times within a day - instances do not differenciate between
+times of different dates. Use <CODE>Timestamp</CODE> to represent a time at a particular date.
+
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in the
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:Time backRef:'misc.html'">
+"<CODE>Time</CODE> class documentation"</A>
+and in the
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:Timestamp backRef:'misc.html'">
+"<CODE>Timestamp</CODE> class documentation"</A>.
+
+
+
+<H2><A HREF="#I_DATE" NAME="DATE">Date</A></H2>
+
+Date represents a particular calendar day.
+<P>
+Typical uses are:
+<P>
+<UL>
+<LI> creation:
+<CODE><PRE>
+    <VAR>aDate</VAR> := Date today
+</PRE></CODE>
+
+<LI> creation:
+<CODE><PRE>
+    <VAR>aDate</VAR> := Date day:<VAR>day</VAR> month:<VAR>month</VAR> year:<VAR>year</VAR>
+</PRE></CODE>
+
+<LI> queries:
+<CODE><PRE>
+    <VAR>aDate</VAR> year
+
+    <VAR>aDate</VAR> month
+
+    <VAR>aDate</VAR> day
+
+    <VAR>aDate</VAR> dayOfWeek
+
+    <VAR>aDate</VAR> dayOfWeekName
+
+    <VAR>aDate</VAR> dayOfYear
+</PRE></CODE>
+
+<LI> arithmetic:
+<CODE><PRE>
+    <VAR>aDate</VAR> addDays: <VAR>numDays</VAR>
+</PRE></CODE>
+
+<CODE><PRE>
+    <VAR>aDate</VAR> daysUntil: <VAR>anotherDate</VAR>
+</PRE></CODE>
+
+<CODE><PRE>
+    <VAR>aDate</VAR> daysSince: <VAR>anotherDate</VAR>
+</PRE></CODE>
+</UL>
+
+The Date class protocol also provides many methods to convert months or days to/from string
+representation and various queries:
+<UL>
+<LI> name queries:
+<CODE><PRE>
+    <VAR>aDate</VAR> weekday
+</PRE></CODE>
+<CODE><PRE>
+    <VAR>aDate</VAR> weekdayForLanguage:#fr
+</PRE></CODE>
+<LI> name queries:
+<CODE><PRE>
+    <VAR>aDate</VAR> abbreviatedDayName
+</PRE></CODE>
+<CODE><PRE>
+    <VAR>aDate</VAR> abbreviatedDayNameForLanguage:#en
+</PRE></CODE>
+<CODE><PRE>
+    <VAR>aDate</VAR> monthName
+</PRE></CODE>
+<CODE><PRE>
+    <VAR>aDate</VAR> monthNameForLanguage:#fr
+</PRE></CODE>
+<LI> name queries:
+<CODE><PRE>
+    <VAR>aDate</VAR> abbreviatedMonthName
+</PRE></CODE>
+<CODE><PRE>
+    <VAR>aDate</VAR> abbreviatedMonthNameForLanguage:#de
+</PRE></CODE>
+
+<LI> leapYear:
+<CODE><PRE>
+    <VAR>aDate</VAR> isLeapYear
+</PRE></CODE>
+<CODE><PRE>
+    <VAR>aDate</VAR> dayInWeek
+</PRE></CODE>
+<CODE><PRE>
+    <VAR>aDate</VAR> weekInYear
+</PRE></CODE>
+<CODE><PRE>
+    <VAR>aDate</VAR> daysInMonth
+</PRE></CODE>
+<CODE><PRE>
+    <VAR>aDate</VAR> daysLeftInMonth
+</PRE></CODE>
+</UL>
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in the
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:Date backRef:'misc.html'">
+"<CODE>Date</CODE> class documentation</A>".
+<P>
+Notice:
+<br>
+In previous versions, dates were limited to
+being greater or equal to 1-jan-1901. This limitation was removed in 6.2.5. Arbitrary dates can now
+be constructed and compared. However, for all leap year computations, the gregorial calendar is
+used, and no julian conversion is attempted (i.e. the so called "proleptic gregorian calendar" is used).
+
+
+<H2><A HREF="#I_TIMESTAMP" NAME="TIMESTAMP">Timestamp</A></H2>
+
+Timestamps represent a point in time in millisecond resolution.
+The internal representation is based on utc (i.e. every timestamp keeps its time as a utc time),
+however it is possible to convert timestamps into other timezones or to make them explicit UtcTimestamps.
+These only have different external print formats - the time information itself is not affected.
+Thus it is possible to compare two timestamps from different timezones for equality and order,
+without a need to care for timezones on a programmer level.
+
+<BR>
+Typical uses are:
+<P>
+<UL>
+<LI> creation (as local or utc timestamp):
+<CODE><PRE>
+    <VAR>aTimestamp</VAR> := Timestamp now
+
+    <VAR>aTimestamp</VAR> := UtcTimestamp now
+</PRE></CODE>
+
+<LI> conversion:
+<CODE><PRE>
+    <VAR>aDate</VAR> := <VAR>aTimestamp</VAR> asDate
+
+    <VAR>aTime</VAR> := <VAR>aTimestamp</VAR> asTime
+
+    <VAR>aTime</VAR> := <VAR>aTimestamp</VAR> asLocalTimestamp
+
+    <VAR>aTime</VAR> := <VAR>aTimestamp</VAR> asUtcTimestamp
+
+    <VAR>aTime</VAR> := <VAR>aTimestamp</VAR> asTZTimestamp:utcOffset
+
+    <VAR>aTime</VAR> := <VAR>aTimestamp</VAR> asTZTimestampInZone:'EST'
+
+</PRE></CODE>
+<LI> queries (converting a TZ name to an utcOffset):
+<CODE><PRE>
+    <VAR>Timestamp</VAR> utcOffsetFrom:<VAR>aString</VAR>
+</PRE></CODE>
+<LI> printing:
+<CODE><PRE>
+    <VAR>Timestamp</VAR> printIso8601FormatOn:<VAR>aStream</VAR>
+</PRE></CODE>
+<CODE><PRE>
+    <VAR>Timestamp</VAR> printIso8601CompressedOn:<VAR>aStream</VAR>
+</PRE></CODE>
+</UL>
+
+Read more in the
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:Timestamp backRef:'misc.html'">
+"<CODE>Timestamp</CODE> class documentation</A>".
+
+
+
+<H2><A HREF="#I_TIMEDURATION" NAME="TIMEDURATION">TimeDuration</A></H2>
+
+These represent a time period in millisecond resolution. They are mostly used for their nice printed representation.
+You will usually get instances of timeDuration when subtracting times or timestamps.
+<BR>
+Typical uses are:
+<P>
+<UL>
+<LI> creation:
+<CODE><PRE>
+    <VAR>aTimeDuration</VAR> := <VAR>timestamp1</VAR> - <VAR>timestamp2</VAR>
+
+    <VAR>aTimeDuration</VAR> := 50 milliseconds
+
+    <VAR>aTimeDuration</VAR> := 5 seconds
+
+    <VAR>aTimeDuration</VAR> := 12 minutes
+
+    <VAR>aTimeDuration</VAR> := 3 days
+
+    <VAR>aTimeDuration</VAR> := Timeduration hours:<VAR>h</VAR> minutes:<VAR>m</VAR> seconds:<VAR>s</VAR> milliseconds:<VAR>ms</VAR>
+</PRE></CODE>
+
+<LI> measuring execution time:
+<CODE><PRE>
+    <VAR>aTimeDuration</VAR> := TimeDuration toRun: [ ... ]
+</PRE></CODE>
+
+<LI> arithmetic:
+<CODE><PRE>
+    <VAR>aTimeDuration</VAR> + <VAR>aTimeDuration</VAR>
+
+    <VAR>aTimeDuration</VAR> - <VAR>aTimeDuration</VAR>
+
+    <VAR>aTimeDuration</VAR> * <VAR>aNumber</VAR>
+
+    <VAR>aTimeDuration</VAR> / <VAR>aTimeDuration</VAR>
+
+    <VAR>aTimeDuration</VAR> / <VAR>aNumber</VAR>
+</PRE></CODE>
+</UL>
+
+Read more in the
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:Timeduration backRef:'misc.html'">
+"<CODE>Timeduration</CODE> class documentation</A>".
+
+
+
+<H2><A HREF="#I_CHARACTER" NAME="CHARACTER">Character</A></H2>
+
+Instances of <CODE>Character</CODE> represent printable characters.
+The character range is not limited to 8bit; 16bit and even 32 bit characters are possible
+(although the windows operating system is limited to 16bit).
+<P>
+Characters are most often used as elements of <CODE>String</CODE> and <CODE>TwoByteString</CODE>;
+on their own, they are seldom encountered.
+<BR>
+Typical uses are:
+<P>
+<UL>
+<LI> queries:
+<CODE><PRE>
+    codePoint
+</PRE></CODE>
+<CODE><PRE>
+    isDigit
+</PRE></CODE>
+<CODE><PRE>
+    isLetter
+</PRE></CODE>
+<CODE><PRE>
+    isUppercase
+</PRE></CODE>
+<LI> conversion:
+<CODE><PRE>
+    asUppercase
+</PRE></CODE>
+<CODE><PRE>
+    asLowercase
+</PRE></CODE>
+</UL>
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in the
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:Character backRef:'misc.html'">
+"<CODE>Character</CODE> class documentation</A>".
+
+
+
+<H2><A HREF="#I_POINT" NAME="POINT">Point</A></H2>
+
+Instances of <CODE>Point</CODE> represent a coordinate in 2D space.
+They are most often used in the graphical user interface to represent window positions,
+window extents, position of graphical objects etc.
+<BR>
+Typical uses are:
+<P>
+<UL>
+<LI> creation:
+<CODE><PRE>
+    <VAR>aPoint</VAR> := Point x:<VAR>xCoordinate</VAR> y:<VAR>yCoordinate</VAR>
+</PRE></CODE>
+
+<LI> creation:
+<CODE><PRE>
+    <VAR>aPoint</VAR> := <VAR>xCoordinate</VAR> @ <VAR>yCoordinate</VAR>
+</PRE></CODE>
+
+<LI> accessing:
+<CODE><PRE>
+    <VAR>xCoordinate</VAR> := <VAR>aPoint</VAR> x
+
+    <VAR>yCoordinate</VAR> := <VAR>aPoint</VAR> y
+</PRE></CODE>
+</UL>
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in the
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:Point backRef:'misc.html'">
+"<CODE>Point</CODE> class documentation</A>".
+
+
+
+<H2><A HREF="#I_RECTANGLE" NAME="RECTANGLE">Rectangle</A></H2>
+
+Like with <CODE>Point</CODE>, instances of <CODE>Rectangle</CODE> are used in the
+graphical user interface. They represent a rectangular area defined by
+an originPoint and a cornerPoint. (the actual internal implementation may be different).
+<BR>
+Typical uses are:
+<P>
+<UL>
+<LI> creation:
+<CODE><PRE>
+    <VAR>aRectangle</VAR> := Rectangle origin:<VAR>originPoint</VAR> corner:<VAR>cornerPoint</VAR>
+
+    <VAR>aRectangle</VAR> := Rectangle origin:<VAR>originPoint</VAR> extent:<VAR>extentPoint</VAR>
+
+    <VAR>aRectangle</VAR> := Rectangle x:<VAR>originX</VAR> y:<VAR>originY</VAR> width:<VAR>width</VAR> height:<VAR>height</VAR>
+</PRE></CODE>
+
+<LI> accessing:
+<CODE><PRE>
+    <VAR>originPoint</VAR> := <VAR>aRectangle</VAR> origin
+
+    <VAR>cornerPoint</VAR> := <VAR>aRectangle</VAR> corner
+
+    <VAR>extentPoint</VAR> := <VAR>aRectangle</VAR> extent
+
+    <VAR>width</VAR> := <VAR>aRectangle</VAR> width
+
+    <VAR>height</VAR> := <VAR>aRectangle</VAR> height
+<BR>
+</PRE></CODE>
+
+<LI> rectangle operations:
+<CODE><PRE>
+    <VAR>newRectangle</VAR> := <VAR>aRectangle</VAR> intersect:<VAR>antherRectangle</VAR>
+
+    <VAR>newRectangle</VAR> := <VAR>aRectangle</VAR> scaledBy:<VAR>scaleFactor</VAR>
+
+    <VAR>newRectangle</VAR> := <VAR>aRectangle</VAR> translatedBy:<VAR>translation</VAR>
+</PRE></CODE>
+
+</UL>
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in the
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:Rectangle backRef:'misc.html'">
+"<CODE>Rectangle</CODE> class documentation</A>".
+
+
+
+<H2><A HREF="#I_BOOLEAN" NAME="BOOLEAN">Boolean</A></H2>
+
+Boolean is the abstract superclass of the two classes <CODE>True</CODE> and <CODE>False</CODE>,
+of which each has only one instance: <CODE>true</CODE> and <CODE>false</CODE> respectively.
+<P>
+Conceptionally, conditional evaluation of expressions is implemented by booleans;
+however, most control structures are inline coded by the compilers for more performance.
+<BR>
+This means, that even though you find the <CODE>#ifTrue:</CODE> and
+<CODE>#ifFalse:</CODE> methods in these two classes,
+these methods are rarely executed.
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in the
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:Boolean backRef:'misc.html'">
+"<CODE>Boolean</CODE> class documentation</A>".
+
+
+
+
+<H2><A HREF="#I_BLOCK" NAME="BLOCK">Block</A></H2>
+
+Blocks represent pieces of executable code, which can be evaluated upon request.
+Conceptionally, all control structures in smalltalk are implemented using blocks;
+however, most are inline coded by the compilers for more performance.
+<BR>
+Blocks keep the methods environment in which they where created (they are really closures).
+Therefore, it is possible to access method locals from within a block even after the
+creating method has returned (For the curious: as in <CITE>ST-80</CITE>).
+<P>
+Using blocks, you can create your own control, enumeration and looping constructs.
+<BR>
+Typical uses are:
+<P>
+<UL>
+<LI> conditional evaluation:
+<CODE><PRE>
+    <VAR>aBoolean</VAR> ifTrue:[ ... trueBlock ... ] ifFalse:[ ... falseBlock ... ]
+</PRE></CODE>
+
+<LI> looping:
+<CODE><PRE>
+    [ ... conditionBlock ... ] whileTrue:[ ... loopedBlock ... ]
+</PRE></CODE>
+<CODE><PRE>
+    <VAR>start</VAR> to: <VAR>stop</VAR> do: [:<VAR>loopVar</VAR> | ... loopedBlock ... ]
+</PRE></CODE>
+
+<LI> enumeration:
+<CODE><PRE>
+    <VAR>aCollection</VAR> do:[:<VAR>element</VAR> | ... block executed for each element ... ]
+</PRE></CODE>
+
+<LI> using blocks as button action:
+<CODE><PRE>
+    <VAR>aButton</VAR> action:[ ... block executed when button is pressed ... ]
+</PRE></CODE>
+</UL>
+To make good use of the smalltalk language, blocks should be understood in depth.
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in the
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:Block backRef:'misc.html'">
+"<CODE>Block</CODE> class documentation</A>".
+
+
+
+<H2><A HREF="#I_OS" NAME="OS">OperatingSystem</A></H2>
+
+Class <CODE>OperatingSystem</CODE> offers low level access to the underlying
+OS services. The actual set of implemented messages
+depends on the particular OS used.
+<BR>
+For portability, you should try to avoid these - most of the functionality
+is also available via standard classes,
+such as <CODE>Time</CODE>, <CODE>FileStream</CODE>, <CODE>Filename</CODE> etc.
+<P>
+more to be documented
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in the
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:OperatingSystem backRef:'misc.html'">
+"<CODE>OperatingSystem</CODE> class documentation</A>".
+
+
+<H2><A HREF="#I_SMALLTALK" NAME="SMALLTALK">Smalltalk</A></H2>
+
+Class <CODE>Smalltalk</CODE> keeps track of all global variables on the system.
+Also, it offers many functions for system management, initialization, startup and shutdown.
+<P>
+more to be documented
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in the
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:Smalltalk backRef:'misc.html'">
+"<CODE>Smalltalk</CODE> class documentation</A>".
+
+
+<H2><A HREF="#I_OBJMEM" NAME="OBJMEM">ObjectMemory</A></H2>
+
+Class <CODE>ObjectMemory</CODE> provides access to low level memory management functions.
+There are methods to control the behavior of the garbage collector, interrupt handling etc.
+<BR>
+Also, query methods on memory usage, GC reclamation rates etc. are found there.
+
+<P>
+more to be documented
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in the
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:ObjectMemory backRef:'misc.html'">
+"<CODE>ObjectMemory</CODE> class documentation</A>".
+
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif">
+Copyright © 1996 Claus Gittinger Development & Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.25 $ $Date: 2014-11-29 11:55:42 $
+</BODY>
+</HTML>

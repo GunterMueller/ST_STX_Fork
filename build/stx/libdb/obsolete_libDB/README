@@ -1,0 +1,2 @@
+The classes here are obsoleted and removed soon from the distribution;
+please use the new libodbc stuff (which is known to work with adabas)

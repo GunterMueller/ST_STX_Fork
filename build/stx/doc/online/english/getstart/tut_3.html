@@ -1,0 +1,552 @@
+<HTML>
+<HEAD>
+<TITLE>Tutorial - Defining Classes and Methods</TITLE>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="tut_2b.html"> <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="tutorial.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="tut_5.html"> <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+
+<H1><A NAME="FOREWORD">Foreword</A></H1>
+<P>
+Smalltalk systems provide an integrated programming environment,
+which is quite different to almost any other programming system.
+The difference is that in Smalltalk,
+both your program and the IDE live in and are part of the same object-world.
+In Smalltalk, you are not editing a file or code from which an application is built.
+Instead, you are adding code to the IDE to add your application(s) to it.
+This does not mean, that it is not possible or common to create a stand alone application
+for deployment eventually. But during the development, your code and the IDE are
+one program. Even more striking is the fact, that often Smalltalk programmers have ALL of their
+code they ever developed in their IDE. This makes reuse much more straight forward.
+<P>
+The Smalltalk IDE is a really integrated environment,
+not just a bunch of editing tools wrapped into as single frame.
+<P>
+
+This programming environment allows up-to date access to an object's instance variables,
+to a classes definition,
+the set of messages which are implemented there (i.e. the protocol),
+the source code of those methods, the execution state and much more.
+<BR>
+In addition, cross references can be searched
+(who sends which message, who implements which message, who references a variable etc.),
+breakpoints can be set and modifications can be made to a class.
+<BR>
+Modifications to a class can be made at any time - even while there are active instances of it around;
+any modification is immediately effective (that does make a difference in programmers productivity !).
+<P>
+
+
+<H1><A NAME="DEFINING_CLASSES">Defining new Classes</A></H1>
+
+In Smalltalk, writing programs consists of defining classes
+(whose instances represent the objects of your application),
+and defining some protocol (i.e. methods, which define how those objects react
+to messages).
+<P>
+Every Smalltalk system also includes a (usually) large collection of
+useful classes, which provide building blocks and cover a wide area of
+typical objects/operations. Therefore, a big part of learning
+how to write Smalltalk programs consists of learning how to use
+the class library.
+
+<P>
+Although it is possible to define new classes programatically (i.e. by
+sending definition-messages to some object in a workspace or by a program),
+classes are normally defined using a browser. This tool provides functions
+for most programming tasks and will be your most-used tool when
+working with Smalltalk.
+<BR>
+Therefore, take some time and play around in a <I>System browser</I> to get a feeling for it.
+<BR>
+Also,  have a look at the
+<A HREF="../tools/sbrowser/TOP.html">browser's documentation</A>
+and the
+<A HREF="../tools/newbrowser/TOP.html">new improved browser's documentation</A>.
+
+<P>
+
+You can open a <I>System browser</I> either via the launcher's menu,
+via an inspector's menu,
+or by sending a "browse"-message to any object.
+<P>
+
+All classes are organized by various aspects: inheritance hierarchy, package-ownership
+and class category.
+When opened, the default organization shown in the browser is "by <DFN>class category</DFN>".
+<BR>
+Class Categories exist only for organization - to allow grouping of classes
+with similar behavior. For example, all container classes are organized under categories
+starting with "collection". This makes it easy to find a class.
+<P>
+
+To define a new class, first add a new
+class category using the class-category-lists popup menu:
+<P>
+<IMG SRC="NewClass1.gif" ALT="[fig: adding category1]">
+<P>
+enter the name of the new category:
+<P>
+<IMG SRC="NewClass2.gif" ALT="[fig: adding category2]">
+<P>
+and click on the 'create' button of the entry box.
+<P>
+The browser will add this new category to its list and
+select (i.e. highlight) it:
+<P>
+<IMG SRC="NewClass3.gif" ALT="[fig: adding category2]">
+<P>
+
+<P>
+
+then, select the class-lists <I>new class</I>
+menu item,
+<P>
+<IMG SRC="NewClass4.gif" ALT="[fig: adding class]">
+<P>
+to get a definition template into the codeView:
+<P>
+<IMG SRC="NewClass5.gif" ALT="[fig: template1]">
+<P>
+Fill out the template
+<P>
+<IMG SRC="NewClass6.gif" ALT="[fig: template2]">
+<P>
+and <I>accept</I> it using codeViews popup menu.
+<P>
+<IMG SRC="NewClass7.gif" ALT="[fig: accepting]">
+<P>
+
+This creates your new class and the browser will update
+its class-list view, showing your new class:
+<P>
+<IMG SRC="NewClass8.gif" ALT="[fig: accepted]">
+<P>
+
+In this example, we defined a <CODE>Person</CODE>-class,
+and defined two instance variables named <I>name</I> and
+<I>firstname</I>.
+I.e. instances of this class will be able to hold references
+to two other objects, and those will be referred to as <I>name</I> and
+<I>firstname</I>.
+
+
+
+
+<H2><A NAME="CREATING_INSTANCES">Creating an Instance of a Class</A></H2>
+
+Now, our new class is known to the system, and new instances
+can be created by sending the <CODE>new</CODE> message
+to the class:
+<A TYPE="copyexample"><CODE><PRE>
+    Person new
+</PRE></CODE></A>
+
+You can type in the above expression into
+any code view or workspace, select it and use one of the
+"DoIt" / "PrintIt" / "InspectIt" menu functions.
+<p>
+You don't have to compile, build or otherwise
+care for the compilation details.
+The class is ready to be used at the moment
+you defined and accepted its definition.
+<p>
+You may wonder, how our new class 'knows' how to respond to
+the <CODE>"new"</CODE>-message - the answer is that all classes
+are themself instances of a so called <I>metaclass</I>, which
+itself inherits from the <CODE>Behavior</CODE> class.
+<BR>
+<CODE>Behavior</CODE> defines quite a bunch of useful protocol,
+one being the <CODE>"new"</CODE>-method.
+<BR>
+If you are curious, have a look at the <CODE>Behavior</CODE>
+class in your browser and see what other useful protocol is found there.
+
+
+
+<H2><A NAME="DEFINING_METHODS">Defining Methods</A></H2>
+
+<H3><A NAME="COMMON_PROTOCOL">Inherited Protocol</A></H3>
+
+So far, instances of the <CODE>Person</CODE> class do not
+provide any special protocol - however,
+a lot is inherited from its superclass: <CODE>Object</CODE>.
+<P>
+Therefore, we can already ask instances about their class or class-name,
+we can compare instances, ask an instance for a copy of itself
+and ask it for its printed string representation.
+<BR>
+Try a few expressions (using <I>printIt</I>) in a workspace:
+<P>
+Its printed representation (called <I>printString</I>):
+<A TYPE="copyexample"><CODE><PRE>
+     Person new printString
+</PRE></CODE></A>
+Display it on the Transcript:
+<A TYPE="copyexample"><CODE><PRE>
+     Transcript show:(Person new).
+     Transcript cr.
+</PRE></CODE></A>
+another method to display it on the Transcript:
+<A TYPE="copyexample"><CODE><PRE>
+     Person new printOn:Transcript.
+</PRE></CODE></A>
+Comparing for identity:
+<A TYPE="copyexample"><CODE><PRE>
+     |p1 p2|
+
+     p1 := Person new.
+     p2 := Person new.
+     p1 == p2
+</PRE></CODE></A>
+Asking for a copy:
+<A TYPE="copyexample"><CODE><PRE>
+     |p1 p2|
+
+     p1 := Person new.
+     p2 := p1 copy.
+     Transcript showCR:p1.
+     Transcript showCR:p2.
+</PRE></CODE></A>
+
+Also, have a look at the implementation of some of the above
+protocol - especially, have a look into the <CODE>"printString"</CODE>
+implementation and understand that there is another (more basic) functionality
+involved (to give you a hint: figure out what the role of the <CODE>"printOn:"</CODE>
+method is ...)
+<P>
+
+In order to do someting useful with persons, we must tell them how
+to respond to more specific messages - i.e. we have to add some more protocol.
+Also, we might want to redefine some of the inherited protocol,
+for example, we may want to change the way instances represent themself
+in their printString.
+<P>
+
+The task of adding protocol (i.e. methods) is much like
+what we did to define the class - first we have to
+define a method category by selecting the <I>new method category</I>
+item from the method-category-list:
+<P>
+<IMG SRC="NewClass9.gif" ALT="[fig: new method category]">
+<P>
+enter some descriptive name:
+<P>
+<IMG SRC="NewClass10.gif" ALT="[fig: new method category]">
+<P>
+and click the 'create' button.
+<P>
+Then, either ask for a methods template code or simply type in the
+code and <I>accept</I> it via the codeViews popup menu.
+
+<H3><A NAME="ACCESS_SETTER">Adding Protocol for Access</A></H3>
+
+As a first step, we need some protocol to change
+our person object's contents - i.e. to access the name and firstName.
+<BR>
+Lets start with a name-setting method:
+<P>
+<IMG SRC="NewClass11.gif" ALT="[fig: new method category]">
+<P>
+
+The above method defines how instances of our class will react
+to the <CODE>setName:</CODE> keyword message - a message with one
+argument.
+<BR>
+Here, the <CODE>"setName:"</CODE> method simply
+binds the instance variable called <I>name</I> to whatever was
+given as the messages argument.
+<P>
+We can check this in a workspace, by evaluating:
+<A TYPE="copyexample"><CODE><PRE>
+    Person new setName:'Miller'
+</PRE></CODE></A>
+Of course, this is pretty useless, since we should have a look into
+our person instance, in order to validate that it really did what
+it is supposed to ...
+<BR>
+... for this, Smalltalk provides a tool called
+<I><A HREF="../tools/misc/TOP.html#INSPECTOR">inspector</A></I>,
+which allows us to peek into an object.
+<BR>
+Try the above expression again, this time using the <I>inspectIt</I>
+menu function (instead of <I>doIt</I>). This evaluates the expression
+and opens an inspector on the result:
+<P>
+<IMG SRC="NewClass12.gif" ALT="[fig: inspector on a person]">
+<P>
+click on the <I>name</I> item in the list, to see its value:
+<P>
+<IMG SRC="NewClass13.gif" ALT="[fig: inspector on a person]">
+<P>
+
+Also, open an inspector on a fresh person - and see what
+the instance variables are initialized with (automatically).
+<P>
+
+
+In addition to setting a persons name, we would also like to
+ask a person for its name.
+<BR>
+Similar to the above <I>setter</I>-method, we need a corresponding
+<I>getter</I>-method, which returns some information about the person
+object.
+<P>
+
+
+<H3><A NAME="RETURNING_VALUE">Returning a Value from a Method</A></H3>
+
+To return some value from a message, a <I>return</I>-expression is
+used - its syntax is:
+<CODE><PRE>
+     ^ expression
+</PRE></CODE>
+i.e. a little up-arrow (^) followed by an expression.
+<P>
+this evaluates the expression and returns the expressions value
+from the method - effectively returning that value as the value
+of the message send (remember: all methods are invoked due to
+some message-expression evaluation).
+<P>
+Now, that we know that every message-send evaluates to something,
+and all messages are actually implemented in some method, you may ask
+what value is returned if no explicit return expression is evaluated
+in a method (as in our first example method).
+<BR>
+The answer is:<BR>
+ <B>if no explicit return value is given in a method,
+the value returned is the original receiver of the message</B>
+<P>
+This makes sense, because if the returned value is the original object,
+it may be the target of another message send, as in:
+<A TYPE="copyexample"><CODE><PRE>
+    (Person new setName:'Miller') setFirstName:'Fred'
+</PRE></CODE></A>
+or, if we know the preceedence rules:
+<A TYPE="copyexample"><CODE><PRE>
+    Person new setName:'Miller' setFirstName:'Fred'
+</PRE></CODE></A>
+
+Many methods (and therefore: many messages) return the original
+receiver - however, there are some noticable exceptions, which
+form a trap to beginners. If you are in doubt, better do not depend
+on a methods returnValue and write things down explicit:
+<A TYPE="copyexample"><CODE><PRE>
+    |newPerson|
+
+    newPerson := Person new.
+    newPerson setName:'Miller'.
+    newPerson setFirstName:'Fred'.
+</PRE></CODE></A>
+Although it takes more to type this, it definitely makes things
+clearer and less error prone.
+<P>
+Now, we are ready to add the <i>getter</I>-method for the persons
+name;
+<BR>
+add the following method to the <CODE>Person</CODE> class:
+<A TYPE="copyexample"><CODE><PRE>
+    getName
+	"return the persons name"
+
+	^ name
+</PRE></CODE></A>
+
+As an excercise, add corresponding <I>set</I>- and <I>get</I>- methods for
+the <I>firstname</I> instance variable.
+
+
+
+<H3><A NAME="REDEFINING_PRINT">Redefining the "printOn:"-Method</A></H3>
+
+Up to now, persons did not show themself nicely when displayed in
+the Transcript, or when printed via <I>printIt</I>.
+<BR>
+In order to change this, we need some background information:
+<P>
+Whenever an object is to be displayed somewhere (for example: in the Transcript),
+the object in question is asked for its printString (using the <CODE>printString</CODE>
+-message).
+<BR>
+Therefore, it would make sense, to redefine this, to get a nicer printout
+of persons.
+<BR>
+However, if you had a look at the implementation of this message, you might have
+noticed, that the <CODE>printStirng</CODE> implementation simply forwards the
+real work to some other method, by sending the <CODE>printOn:</CODE> message.
+<BR>
+This one is supposed to append a printed representation to some stream,
+which gets passed as argument.
+<BR>
+The reason for this is to avoid the construction of many temporary strings, when
+objects are printed on the printer or a printed representation is stored
+into a file;
+in those cases, the <CODE>printOn:</CODE> message is sent directly, passing
+the destination stream as argument.
+<P>
+So, we better redefine the <CODE>printOn:</CODE> method, and a possible implementation
+could be:
+<A TYPE="copyexample"><CODE><PRE>
+    printOn:aStream
+	"send a printed representation of myself
+	 to aStream."
+
+	aStream nextPutAll:'Person('.
+	aStream nextPutAll:'name='.
+	name printOn:aStream.
+	aStream nextPutAll:' firstname='.
+	firstname printOn:aStream.
+	aStream nextPutAll:')'.
+</PRE></CODE></A>
+An interesting detail of the above code is that the
+<I>name</I> and
+<I>firstname</I> instance variables are themself asked to print on the stream,
+instead of passing them as argument of a <CODE>"nextPutAll:"</CODE> message.
+<BR>
+This has the advantage that anything can be used as name/firstname;
+as opposed to <CODE>"aStream nextPutAll:name"</CODE> - which implies
+that its argument is some string-like object.
+<P>
+With that addition, our person object prints much nicer;
+try it with 'Fred Miller':
+<A TYPE="copyexample"><CODE><PRE>
+    |p|
+
+    p := Person new.
+    p setName:'Miller'.
+    p setFirstName:'Fred'.
+
+    Transcript showCR:p
+</PRE></CODE></A>
+
+
+<H3><A NAME="CHANGING_METHODS">Changing a Method</A></H3>
+
+Very often, an existing method has to be changed - either to fix a bug,
+to add functionality, or because you do not like its behavior.
+<BR>
+To change some existing method, select it in the browser, make any changes
+to the text as required, and <I>accept</I> it again.
+<P>
+Lets change the <CODE>printOn:</CODE> method, to display persons in another format:
+<A TYPE="copyexample"><CODE><PRE>
+    printOn:aStream
+	"send a printed representation of myself
+	 to aStream."
+
+	aStream nextPutAll:'a person named '.
+	firstname printOn:aStream.
+	aStream space.
+	name printOn:aStream.
+</PRE></CODE></A>
+
+Notice, that when you <I>accept</I> something in the browser,
+the code is compiled and installed as specified in the text -
+regardless of which method the text originally came from.
+<BR>
+This allows you to take any other methods code as a template to start with.
+<BR>
+I.e. you don't have to type in all of the methods text if you find some
+similar method.
+
+
+<H3><A NAME="ADDING_INSTVARS">Adding more Instance Variables</A></H3>
+
+In much the same way, more instance variables can be added to the person-class.
+<BR>
+Click on the class, to get its definition, add another identifier
+to the <I>instanceVariableNames</I> section, and <I>accept</I>.
+<P>
+For the curious:
+<BR>
+You should notice, that since you changed the definition of person,
+any existing person object cannot be an instance of this 'new' class,
+because they do neither know about, nor hold on any of the
+additional instance variables.
+<BR>
+Therefore, any existing instances are now made instances of a so called
+<I>obsolete</I> person class - the old person class will stay around in
+the system until no more obsolete person objects are in the system.
+
+<P>
+As an exersize, add an instance variable called <I>telno</I> and also
+add corresponding access protocol.
+<BR>
+By now, you may wonder if such mechanic things as defining access methods
+could not be done automatically - you are right !
+<BR>
+The browser's method category menu provides a function called
+<I>"generate access methods"</I>. This defines get- and set-methods for
+either a single or all instance variables - the methods will be named
+according to the instance variables name(s).
+<P>
+To try it, select a name from the instance variable
+list and invoke that menu item:
+<P>
+<IMG SRC="NewClass14.gif" ALT="[fig: new method category]">
+<P>
+
+
+
+<H2><A NAME="REDEFINING_CLASSPROTOCOL">Redefining the class protocol</A></H2>
+
+As mentioned earlier, every class is an instance of its metaclass - therefore,
+the classes protocol (i.e. messages such as <CODE>#new</CODE>) are
+defined in its metaclass.
+<BR>
+We can change and/or enhance a classes class-protocol in the same way
+we do to the instance protocol; in the browser, the <I>class/instance</I>
+toggle is used to switch between the two protocol sets.
+<P>
+As an example, let us redefine our persons <CODE>#new</CODE> method,
+to automatically initalize the name fields of the newly created person
+object:
+<BR>
+<UL>
+<LI>switch to the class-protocol
+<LI>create a new method-category (call it <I>"instance creation"</I>)
+</UL>
+then, add the following method:
+<A TYPE="copyexample"><CODE><PRE>
+   new
+	|newPerson|
+
+	newPerson := super new.
+	newPerson setName:'*** no name yet ***'.
+	^ newPerson.
+</PRE></CODE></A>
+The interesting thing here is the <CODE>"super new"</CODE>.
+This invokes the original <CODE>#new</CODE> method, as inherited from
+some superclass (i.e. the one we have overwritten).
+<BR>
+Since we have redefined the <CODE>#new</CODE> method,
+a simple <CODE>"self new"</CODE> would lead to an endless recursion.
+
+
+
+
+<P>
+<HR>
+Continue in <A HREF="tut_5.html">"Creating a Web Application"</A>.
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif" ALT="[stx-logo]">
+<BR>Copyright &copy; Claus Gittinger Development & Consulting
+<BR>Copyright &copy; eXept Software AG
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.9 $ $Date: 1998/10/30 21:02:51 $
+
+</BODY>
+</HTML>

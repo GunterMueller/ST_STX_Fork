@@ -1,0 +1,58 @@
+/* XPM */
+/*****************************************************************************/
+/**       This pixmap is kindly offered by Claus Gittinger ;-) - 1992 -     **/
+/**       eXept Software AG                                                 **/
+/*****************************************************************************/
+static char *xterm-linux2_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"64 38 9 1",
+/* colors */
+"a c black",
+"b c #b2abac",
+"c c #c2c2c2",
+"d c #837d7e",
+"e c #273a0e",
+"f c white",
+"g c black",
+"j c yellow",
+"k c none",
+/* pixels */
+"kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk",
+"kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk",
+"kkkkkkkkkkkkkkkkkkkkkkkkkkbbbbbbbbbbbbbbbbbbbbbbbbbbbkkkkkkkkkkk",
+"kkkkkkkkkkkkkkkkkkkkkkkkkbcccccccccccccccccccccccccccbkkkkkkkkkk",
+"kkkkkkkkkkkkaaaaakkkkkkkbcccccccccccccccccccccccccccccddkkkkkkkk",
+"kkkkkkkkkkkkaaaaaakkkkkkbcceeeeeeeeeeeeeeeeeeeeeeeccccddkkkkkkkk",
+"kkkkkkkkkkkaaaaaaakkkkkkbcceeeeeeeeeeeeeeeeeeeeeeeecccdddkkkkkkk",
+"kkkkkkkkkkkaaaaaaaakkkkkbcceeffefeefeffffeefeeeeeeecccdddkkkkkkk",
+"kkkkkkkkkkkaffaffaakkkkkbcceeeeeeeeeeeeeeeeeeeeeeeecccddddkkkkkk",
+"kkkkkkkkkkkaafaafaakkkkkbcceeffffeffefffeeeeeeeeeeecccddddkkkkkk",
+"kkkkkkkkkkkaaaaafaakkkkkbcceeeeeeeeeeeeeeeeeeeeeeeecccdddddkkkkk",
+"kkkkkkkkkkkajjjjjaaakkkkbcceeffffffffffefffffeeeeeecccdddddkkkkk",
+"kkkkkkkkkkkaajjajaaakkkkbcceeeeeeeeeeeeeeeeeeeeeeeecccdddddkkkkk",
+"kkkkkkkkkkkajaajjaaakkkkbcceefffeffffeffeefffeeeeeecccdddddkkkkk",
+"kkkkkkkkkkaaaaafffaaakkkbcceeeeeeeeeeeeeeeeeeeeeeeecccdddddkkkkk",
+"kkkkkkkkkkafffffffaaakkkbcceefeeeeeeeeeeeeeeeeeeeeecccdddddkkkkk",
+"kkkkkkkkkaafffffffaaaakkbcceeeeeeeeeeeeeeeeeeeeeeeecccdddddkkkkk",
+"kkkkkkkkaaaffffffffaaaakbcceeffffefefffefeeeeeeeeeecccdddddkkkkk",
+"kkkkkkkkaafffffffffaaaaabcceeeeeeeeeeeeeeeeeeeeeeeecccdddddkkkkk",
+"kkkkkkkkafffffffffffaaaabcceefeffffeeeeeeeeeeeeeeeecccdddddkkkkk",
+"kkkkkkkaafffffffffffaaaabccceeeeeeeeeeeeeeeeeeeeeeccccddddkkkkkk",
+"kkkkkkaaafffffffffffaaaabcccccccccccccccccccccccccccccdddkkkkkkk",
+"kkkkkkaaaffffffffffffaaakbcccccccccccccccccccccccccccdddkkkkkkkk",
+"kkkkkkjjaffffffffffaaaaakkkkdddddddddddddddddddddddddbbbddkkkkkk",
+"kkkkkkjjjaffffffffajjaaaakkkkbbbbbbbbbbbbbbbbbbbbbbbbbbdddkkkkkk",
+"kkkaaajjjaafffffffajjajjakkkddddddddddddddddddddddddddddddkkkkkk",
+"kkajjjjjjjaafffffffajjjjjaacccccccccccccccccccccccccccddddbbkbbk",
+"kkkajjjjjjjaffffffaajjjjjjjccccccccccccccccccaaaaaaaccddddkkbkkb",
+"kkkajjjjjjjafffffaaajjjjjjaddddddddddddddddddddddddcccdddkkkkkbk",
+"kkkaajjjjjjjaaaaaaaajjjaccccccccccccccccccccccccccdddddkkkkkkbkk",
+"kkkkkkaajjjaakkkkkaajjaccccccccccccccccccccccccccddkkkkkkddddddk",
+"kkkkkkkkkaaakkkkkkkaaadccfffffffffffffffffffcccccddkkkdddddbbbdk",
+"kkkkkkkkkkkkkkkkkkkkkdccccccccccccccccccccccccccddkkkddcccddbbdk",
+"kkkkkkkkkkkkkkkkkkkkdccffffffffffffffffffffccccddkkkkdcccccbbdkk",
+"kkkkkkkkkkkkkkkkkkkdccccccccccccccccccccccccccddkkkkkdbbbbbddkkk",
+"kkkkkkkkkkkkkkkkkkkddddddddddddddddddddddddddddkkkkkkdddddddkkkk",
+"kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk",
+"kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk",
+};

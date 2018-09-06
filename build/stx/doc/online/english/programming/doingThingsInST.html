@@ -1,0 +1,485 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Things you can do in Smalltalk </Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="tenOneLiners.html">   <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">  <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="differences.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Things you can do in Smalltalk</H1>
+
+<UL>
+<LI><A NAME="I_INTRODUCTION" HREF="#INTRODUCTION">Introduction</A>
+<LI><A NAME="I_INSTALLING_CODE" HREF="#INSTALLING_CODE">Installing new Code without Downtime</A>
+<LI><A NAME="I_OBJECT_REFLECTING" HREF="#OBJECT_REFLECTING">Reflecting on Object References</A>
+<LI><A NAME="I_PRIVATE_VARIABLES" HREF="#PRIVATE_VARIABLES">Iterating over Private Variables</A>
+<LI><A NAME="I_GENERATING_CODE" HREF="#GENERATING_CODE">Generating Code Dynamically</A>
+<LI><A NAME="I_SINGLETONS" HREF="#SINGLETONS">Singletons</A>
+<LI><A NAME="I_TRACING_AND_COUNTING" HREF="#TRACING_AND_COUNTING">Tracing, Counting</A>
+<LI><A NAME="I_FACTORYPATTERN" HREF="#FACTORYPATTERN">Factory Pattern</A>
+<LI><A NAME="I_EXCEPTIONS" HREF="#EXCEPTIONS">Powerful Exceptions</A>
+<LI><A NAME="I_NUMERIC_CLASSES" HREF="#NUMERIC_CLASSES">Powerful Numeric Class Hierarchy</A>
+<LI><A NAME="I_QUINING" HREF="#QUINING">Quining - A Program which Generates its own Source</A>
+</UL>
+
+<H2><A HREF="#I_INTRODUCTION" NAME="INTRODUCTION">Introduction</A></H2>
+
+<P>
+Many things which are difficult or even impossible to solve in other programming
+languages are simple or trivial in a highly reflective system such as Smalltalk.
+Many of the patterns as collected and described by the gang of four are not needed
+or are much simpler in Lisp or in Smalltalk.
+<BR>
+This document will show some of this kind -
+it is not about things you can do in Smalltalk which you can also do in any other
+language, but about things which are very easily done in Smalltalk but drive you mad in
+other languages.
+<BR>
+Even if you are already a smalltalker, it may also be interesting to read and to get new ideas.
+
+
+<H2><A HREF="#I_INSTALLING_CODE" NAME="INSTALLING_CODE">Updates, Fixing without Downtime (24/7 operation)</A></H2>
+
+This is almost trivial to implement in a system where packages, classes and even individual
+methods can be added or removed dynamically at any time. Some of our projects are required
+to operate without downtime - even when updates, patches or other maintenance operations are
+to be performed.
+You can add support for that into your product relatively easily - the code to load and compile patches
+from a directory into a running program is as simple as:
+<CODE><PRE>
+    'patches' asFilename directoryContentsDo:[:eachFile |
+	Smalltalk fileIn:eachFile
+    ].
+</PRE></CODE>
+Of course, in addition to new classes, you can add code for any class - even system classes or Object.
+You can of course also add code for classes of which instances already exist.
+
+
+<H2><A HREF="#I_OBJECT_REFLECTING" NAME="OBJECT_REFLECTING">Reflecting on Object References</A></H2>
+This may sound strange, but it seems to be an obvious problem for many other systems:
+"how can you get rid of unwanted object references?".
+One such example is Firefox which, even after years of development is still uncapable
+of dealing properly with instanciated JavaScript objects (yes, did you notice that your
+Firefox's memory footage is ever-growing with some JavaScript code ?).
+<P>
+Smalltalk provides very powerful reflection and manipulation features on the object
+reference level. For example, it is possible to find all instances of a class:
+<CODE><PRE>
+    SomeClass allInstances
+</PRE></CODE>
+all derived instances:
+<CODE><PRE>
+    SomeClass allSubInstances
+</PRE></CODE>
+and get rid of them:
+<CODE><PRE>
+    SomeClass allInstancesDo:[:inst | inst becomeNil]
+</PRE></CODE>
+That single line would help firefox in its tab-remove code:
+<CODE><PRE>
+    SomeClass
+	allInstancesDo:[:inst |
+	    (inst isOwnedBy:tabToBeClosed) ifTrue:[
+		inst becomeNil]]
+</PRE></CODE>
+
+Be assured that I am totally aware that the above is only a hack to fix bugs which are actually
+elsewhere. However, quite obviously it seems to be *VERY* hard to fix those bugs in the first place.
+Therefore, a cleanup action at tab-closing time would help a lot, and in my opinion, a workaround and
+repair is much better than the current way to handle this kind of memory leak via a "crashing garbage collect".
+
+
+
+<H2><A HREF="#I_PRIVATE_VARIABLES" NAME="PRIVATE_VARIABLES">Iterating over Private Variables (i.e. Instance Variables)</A></H2>
+
+In Paul Graham's paper <A href="http://www.paulgraham.com/popular.html">"Being Popular"</A>,
+we find the following citation:
+<P><CITE>
+In Common Lisp I have often wanted to iterate through the fields of a struct--
+to comb out references to a deleted object, for example,
+or find fields that are uninitialized.
+I know the structs are just vectors underneath.
+And yet I can't write a general purpose function that I can call on any struct.
+I can only access the fields by name, because that's what a struct is supposed to mean.
+</CITE>
+<P>
+In Smalltalk, you can access an object's slot via the <CODE>"instVarAt:"</CODE>,
+<CODE>"instVarAt:put:"</CODE> and <CODE>"instVarNamed:"</CODE> messages.
+The names of the slots are retrieved with <CODE>"allInstanceVariableNames"</CODE>,
+the number of slots via <CODE>"instSize"</CODE>.
+<P>
+Thus, a debugging method to dump *ANY* object's contents could be:
+<CODE><PRE>
+    dump: someObject
+	someObject class allInstanceVariableNames
+	    doWithIndex:[:name :idx |
+		Transcript
+		    show:name;
+		    show:' is ';
+		    showCR:(someObject instVarAt:idx).
+	    ]
+</PRE></CODE>
+of course, you can also write a block (aka-function) for this:
+<CODE><PRE>
+    dumper :=
+	[:someObject |
+	    someObject class allInstanceVariableNames
+		doWithIndex:[:name :idx |
+		    Transcript
+			show:name;
+			show:' is ';
+			showCR:(someObject instVarAt:idx).
+		]
+	].
+</PRE></CODE>
+and iterate over a collection of objects to be dumped with:
+<CODE><PRE>
+    objectsDoBeDumped do:dumper
+</PRE></CODE>
+to dump the Transcript, try:
+<CODE><PRE>
+    dumper value:Transcript
+</PRE></CODE>
+
+Please <B>DO NOT</B> use such things in regular code - it should be restricted
+only to debugging and support code. If overused, it may make the program hard to understand,
+hard to debug and very hard to maintain. Also, you loose many of the IDE's nice and useful
+help functions (senders, implementors, access-finders etc.).
+
+
+<H2><A HREF="#I_GENERATING_CODE" NAME="GENERATING_CODE">Generating Code Dynamically</A></H2>
+
+One of the nice features of an IDE being "really" integrated is that the compiler
+tools are still around at program execution time.
+This can be useful to create code on the fly - a useful feature both for intelligent
+programs which learn new tricks, and to provide some scripting facility to the user.
+
+<H3>Dynamically generated Blocks</H3>
+Lets start with a dynamic block (aka a closure or function), created from a string:
+<A Type="example"><CODE><PRE>
+    |s b|
+
+    s := '[:a :b | (a squared + b squared) sqrt ]'.
+    b := (Block fromString:s).
+    Transcript showCR:(b value:3 value:4)
+</PRE></CODE></A>
+It's a bit of a pity, that the internal represenation differs much more
+from the textual one. Things are more coherent in Lisp-like languages.
+But fair enough for our needs...
+<P>
+You can (and should) analyze the code for the messages being sent, to make sure that no
+bad messages (i.e. only allowed ones) are introduced if the codestring originates from a user:
+<A Type="example"><CODE><PRE>
+    |s b allMessages|
+
+    s := '[:a :b | (a squared + b squared) sqrt ]'.
+    b := (Block fromString:s).
+    allMessages := b homeMethod literals.
+    Transcript show:'block contains messages: '; showCR:allMessages.
+</PRE></CODE></A>
+for example, to verify that the user does not inject bad code into a scripting engine:
+<A Type="example"><CODE><PRE>
+    |s b codeString allowedMessages|
+
+    allowedMessages := #( + - * / sqrt squared sin cos value ).
+    codeString := Dialog request:'Give an expression on a and b.
+Use parenthesis as in (a*5) + (b sin):'.
+    codeString notEmptyOrNil ifTrue:[
+	s := '[:a :b | ',codeString,']'.
+	b := (Block fromString:s).
+	((b homeMethod literals)
+	    contains:[:msg |
+		(allowedMessages includes:msg) not
+	    ])
+	ifTrue:[
+	    Transcript showCR:'Sorry - the block contains a bad message'.
+	] ifFalse:[
+	    Transcript show:'The value of "',codeString,'" for a=4,b=5 is '; showCR:(b value:4 value:5).
+	].
+    ].
+</PRE></CODE></A>
+Use this as a basis to write your own spread-sheet;
+if required, write your own parser which adds proper operator precedence,
+or use the built-in JavaScript parser.
+<P>
+For check-code like the above, the builtin Parser or RBParser frameworks can be used.
+Then, reflect on the parseTree instead of either source- or byte-code.
+
+
+<H3>Dynamically generated Methods</H3>
+
+Of course, a class can also learn (and forget) new tricks.
+Many AI (Artificial Intelligence) algorithms depend upon a system which can learn and enhance itself.
+Here, a new method is added to an existing class:
+<A Type="example" showresult><CODE><PRE>
+    Number
+	compile:'cubed ^ self * self * self'
+</PRE></CODE></A>
+and can be used immediately as in:
+<A Type="example" showresult><CODE><PRE>
+    5 cubed
+</PRE></CODE></A>
+or with a floating point number, as in
+<A Type="example" showresult><CODE><PRE>
+    5.0 cubed
+</PRE></CODE></A>
+
+or, it can be forgotten:
+<A Type="example"><CODE><PRE>
+    Number removeSelector:#cubed
+</PRE></CODE></A>
+(retry the above example after the removal, to see that integers really no longer know
+how to compute volumes...)
+
+
+<H3>Dynamically generated Classes</H3>
+
+Anonymous classes are not known to anyone, but implement some interface.
+Let us dynamically generate a class to represent people with first and lastName,
+and the create an instance of it (which is shown in an inspector).
+Notice, that you will not find the class in the browser, and that it will be
+garbage collected automatically when you release the reference to it (by closing the inspector):
+<A Type="example"><CODE><PRE>
+    |cls|
+
+    cls := Object
+	      subclass:'anonymous'
+	      instanceVariableNames:'firstName lastName'
+	      classVariableNames:nil
+	      poolDictionaries:nil
+	      category:nil
+	      inEnvironment:nil.
+    cls compile:'firstName ^firstName'.
+    cls compile:'firstName:s firstName := s'.
+    cls compile:'lastName ^lastName'.
+    cls compile:'lastName:s lastName := s'.
+
+    ((cls new firstName:'hello') lastName:'world') inspect.
+</PRE></CODE></A>
+
+Anonymous classes are very helpful to represent objects as read from external specifications.
+For example, instances of IDL, XML or ASN1 specified types can be represented as instances of
+such dynamically created classes. Of course, you would also generate access methods to the
+individual fields dynamically.
+<P>
+
+<H3>Dynamically generating Code without affecting the ChangeFile/ChangeList</H3>
+
+When any of the above examples is executed, a changeList entry is added to both the in-memory changeSet and
+the external changeFile. This can be turned off, by wrapping the compiling code inside:
+<CODE><PRE>
+    Class withoutUpdatingChangesDo:[
+	...
+	cls compile:'...'
+	...
+    ].
+</PRE></CODE>
+
+... more to be added here ...
+
+
+
+<H2><A HREF="#I_SINGLETONS" NAME="SINGLETONS">Singletons</A></H2>
+
+Because classes are objects where the protocol is defined by the metaclass,
+overriding the "<CODE>new</CODE>" method allows for all kinds of additional
+functionality. A singleton class is simply one, which remembers the very first
+instance it ever created and returns that again. The best place to remember that instance
+is a classInstance variable (called "<VAR>theOneAndOnlyInstance</VAR>" in the example below).
+<BR>A corresponding instance creation method could be:
+<CODE><PRE>
+    new
+	theOneAndOnlyInstance isNil ifTrue:[
+	    theOneAndOnlyInstance := super new.
+	].
+	^ theOneAndOnlyInstance
+</PRE></CODE>
+
+
+<H2><A HREF="#I_TRACING_AND_COUNTING" NAME="TRACING_AND_COUNTING">Tracing, Counting, Limiting the Number of Instances</A></H2>
+
+From the above, it should be obvious, how all of the above features are implemented by
+either redefining the instance creation method or adding extra instance creators.
+<BR>The fact, that we can add our own additional instance creation methods
+(with a name other than the common "new") is often overseen by non-Smalltalkers:
+<CODE><PRE>
+    newCounted
+	instanceCount := instanceCount + 1.
+	^ self new
+</PRE></CODE>
+
+
+<H2><A HREF="#I_FACTORYPATTERN" NAME="FACTORYPATTERN">Factory is not needed</A></H2>
+The fact that classes are first-class citizens and can therefore be passed around as argument
+or returned as return value, makes the factory pattern almost obsolete.
+For example, the code to let a view-object dynamically decide for itself which class to instantiate
+for its controller-object looks is as trivial as:
+<CODE><PRE>
+    controller
+	^ self controllerClass new
+</PRE></CODE>
+where <CODE>controllerclass</CODE> can be as simple as returning the class reference:
+<CODE><PRE>
+    controllerClass
+	^ VeryStrictController
+</PRE></CODE>
+or do some fancy decision making:
+<CODE><PRE>
+    controllerClass
+	(Time now hour between:18 and:20) ifTrue:[
+	    ^ FriendlyControllerForHappyHour
+	].
+	^ super controllerClass
+</PRE></CODE>
+(where "<CODE>VeryStrictController</CODE>" and "<CODE>FriendlyControllerForHappyHour</CODE>"
+would be the classes to instanciate)
+<P>
+The advantage of being a fully dynamically typed language ensures that this code even works
+unchanged in ten years, when fifty new classes and subclasses for controlling have been added
+in various parts of a bigger system.
+
+
+<H2><A HREF="#I_EXCEPTIONS" NAME="EXCEPTIONS">Powerful Exception Handling</A></H2>
+
+The exception handling system in Smalltalk is much more powerful than anything available
+in C, C++, Java or C#. The one feature which is missing in all of them is called
+"<I>proceedable exceptions</I>".
+This means that an exception handler is allowed to perform some operation
+(or do nothing, if it likes) <B>AND</B>
+let the program continue execution at the point after the raise.
+<P>
+Some have argued "<VAR>why would one want to proceed after a raise</VAR>" - but that's the typical
+"<VAR>I am a hammer - everything must be a nail</VAR>" attitude - or in other words:
+"<VAR>if all I can use raising for is to
+signal non-proceedable hard error situations, why would I want to proceed after an exception?</VAR>".
+<P>
+A more intelligent aproach is to see an exception as "<VAR>something unexpected happened - can anyone help?</VAR>".
+or even: "<VAR>something unexpected happened - is anyone interested?</VAR>".
+<P>
+If you look at exceptions from this perspective, it makes sense to send notifications, warnings,
+progress-information etc. all using the exception mechanism.
+For example, in <I>Smalltalk/X</I>, all info- and progress notifications are performed by raising a Notification.
+<P>
+Even more convenient is the situation if some object deep down in the calling hierarchy needs
+additional information to handle an unnormal situation. For example, a compiler might need to
+know if it is ok to compile code with ugly or old style code in it. If the compiler is executed in the
+interactive IDE, and a user has originated the compile operation, it is convenient to open a little
+dialog window and ask the user. However, if the compilation is within a batch operation, and 3000 files are
+to be compiled, you better not ask the user for every method. In <I>Smalltalk/X</I>,
+a so called <I>Query</I> is
+used - this is a kind of exception which - if unhandled, proceeds with a default value, but can be
+handled and return a value as requested from the user.
+In all languages without proceedable exceptions, you would have to pass such information down
+either via arguments along every called function, or by setting global or other static flags, which
+will later make it hard to use the compiler in a multithreaded operation.
+
+
+<H2><A HREF="#I_NUMERIC_CLASSES" NAME="NUMERIC_CLASSES">Powerful Numeric Class Hierarchy</A></H2>
+
+The fact that integer operations cannot overflow and divisions automatically generate fractions if required
+is one feature which is often overlooked. Smalltalk as a very powerful, highly polymorphic numeric class
+hierarchy which is not even aproached by most programming languages (Lisp being a noticable exception, again).
+<P>
+If you compute values in a 32bit environment, you have to be very careful to not
+generate incorrect results. The situation is less of a problem with 64bit integers (but still present),
+However, it requires the programmer to always think about the consequences and never forget to
+write "long long" instead of "int". Programmers must also always know the value range of their integers -
+something which can be hard if you write a reusable library component, and you have no control over the incoming
+values.
+
+Another problem are rounding errors due to floating point arithmetic.
+A programmer has to always think not only about the type ("<CODE>int</CODE>", vs, "<CODE>long</CODE>", vs. "<CODE>long long</CODE>")
+but also the values of intermediate results.
+<P>
+To illustrate this, try to evaluate a trivial expression like "<CODE>a / b * c</CODE>" with a,b,c being integers.
+Without much thinking, you'd write in C:
+<CODE><PRE>
+    int a, b, b;
+
+    ...
+    result = a / b * c;
+    ...
+</PRE></CODE>
+(yes, you would write it that way, wouldn't you ?)
+<P>
+Now, how about "a=1", "b=2", "c=5" ?.
+<P>
+Every kid tells you: "well, the result is 5/2 (or 2.5, if you like).
+<BR>
+But not so the advanced programmer; he'd say:
+"<I>well, in theory. But in the real world, the result is zero, because of integer truncation</I>".
+Programmers tend to "make virtues out of necessities" and blame themself for obvious
+deficiencies of the language system. <I>Real programmers know their system's limitations</I>.
+BTW, the situation is not better in the C++, Java and C# world.
+<P>
+Let us continue for our amusement; you might think about how to fix this and write:
+<CODE><PRE>
+    int a, b, b;
+
+    ...
+    result = (int)((float)a / (float)b * c);
+    ...
+</PRE></CODE>
+good try.
+<BR>But what do you expect as answer, if you give it
+"a=100000001", "b=100000000", "c=100000000" ?
+<P>
+Surprise, surprise: we get "100000000".
+Well, fair enough; who cares for that little error.
+Who cares for that lost penny - simply transfer it to my account (yeah, that's what banks do usually) !
+<P>
+Ok, you say, lets get rid of the rounding error, and go back to integer code.
+To avoid the truncation, let's multiply first:
+<CODE><PRE>
+    int a, b, b;
+
+    ...
+    result = a * c / b;
+    ...
+</PRE></CODE>
+sounds better, what do we get ?
+<P>
+Wow, 277 !
+<P>
+The problem with these languages is that the code looks ok, but computes something radically different from
+what you read. The operation which is performed in the above code is actually:
+<CODE><PRE>
+    result = trunc( (int)(unsigned(a * c) mod 4294967295) / b);
+</PRE></CODE>
+In Smalltalk, you can compute such a wierd thing - but then you'd also write it down that way !
+<P>
+Conclusion: without a proper numeric class hierarchy, it is VERY difficult (but not impossible) to write mathematical
+correct computations.
+
+
+<H2><A NAME="QUINING" HREF="#I_QUINING">Finally, for your amusement: Quining - A Program which Generates its own Source</A></H2>
+
+Not really being what we'd call a day-to-day problem, but fun to try: self-reproducing (quining) programs.
+Here is one possible Smalltalk solution:
+
+<A Type="example"><CODE><PRE>
+|a| a := '[:a | Transcript show:''|a| a := '';showCR:a storeString,''.'';showCR:''(Block readFrom:a) value:a'' ]'.
+(Block readFrom:a) value:a
+</PRE></CODE></A>
+
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 2007-2009 eXept Software AG, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.10 $
+last modified $Date: 2016-07-11 09:24:05 $
+</BODY>
+</HTML>

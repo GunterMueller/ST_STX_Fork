@@ -1,0 +1,10 @@
+Test (bitmap) images in various formats.
+To read them, use the ImageReader (or one of its subclasses),
+or tell Image to create an instance from a file with:
+    Image fromFile:'...'
+
+as in:
+
+(Image
+    fromFile:'../../goodies/bitmaps/xpmBitmaps/countries/germany.xpm'
+) inspect

@@ -1,0 +1,3 @@
+Adaption of the Dolphin HTTPRequest framework.
+Untested, but should work more or less.
+(not used in ST/X; we use the HTTPInterface class for our needs, which offers similar functionality)

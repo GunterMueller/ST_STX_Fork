@@ -1,0 +1,263 @@
+; View defaultStyle:#Adwaita
+;
+; $Header$
+
+name                            #Adwaita
+scroller.vista3DStyle           false
+
+comment                 'GNOME3 Adwaita lookalike (unfinished)'
+previewFileName         'viewStyleSample_adwaita.png'
+
+#if (Language == #german) or:[Language == #de]
+comment  'an GNOME3 Adwaita angelehnter Stil (unvollstndig)'
+#endif
+
+#if (Language == #french) or:[Language == #fr]
+comment  'Un style qui rsemble GNOME3 Adwaita (incomplet)'
+#endif
+
+
+ToolbarIconLibrary              ?(Smalltalk at:#AdwaitaToolbarIconLibrary) ? (Smalltalk at:#VistaToolbarIconLibrary) ? (Smalltalk at:#XPToolbarIconLibrary) ? GenericToolbarIconLibrary
+useQuestForHelp                 false
+
+;
+; unfinished
+;
+
+;
+; notice: the values below
+; are not used when running under native Windows
+; (uses system-settings values then)
+;
+#if Screen current hasGreyscales
+
+selectionBlue                   ?(Color red:29 green:56 blue:85) exactOrNearestOn:(Screen current)
+
+viewGrey                        ?(Color grey:93)  exactOrNearestOn:(Screen current)
+viewLightGrey                   ?Color white
+lightColor                      ?Color white
+halfShadowColor                 ?(Color grey:80) exactOrNearestOn:(Screen current)
+halfLightColor                  =viewGrey
+shadowColor                     ?(Color grey:60) exactOrNearestOn:(Screen current)
+
+#else
+
+selectionBlue                   Color black
+viewGrey                        Color white
+viewLightGrey                   Color white
+lightColor                      Color grey:50
+shadowColor                     Color black
+
+#endif
+
+
+lightenedViewGrey               ?Color redByte:240 greenByte:240 blueByte:240
+darkenedViewGrey                ?Color redByte:150 greenByte:150 blueByte:150
+
+
+#include 'mswindows95.common'
+
+
+menu.enteredLevel               0
+; menu.buttonEnteredLevel         2   "/ sigh - does not work
+
+;; enable this, when old menuView cares for it also
+;; menu.itemMargin                          1
+menu.selectionFollowsMouse                  true
+menu.hilightBackgroundColor                 =selectionBlue
+menu.enteredBackgroundColor                 =menu.hilightBackgroundColor
+menu.enteredForegroundColor                 =menu.hilightForegroundColor
+menu.iconIndicationOn.bitmapFile            'CheckOn_xp.xpm'
+menu.iconIndicationOff.bitmapFile           'CheckOff_xp.xpm'
+menu.iconRadioOn.bitmap                     (ToolbarIconLibrary radioOnIcon)
+menu.iconRadioOff.bitmap                    (ToolbarIconLibrary radioOffIcon)
+menu.iconDisabledIndicationOn.bitmapFile    'CheckOn_disabled_xp.xpm'
+menu.iconDisabledIndicationOff.bitmapFile   'CheckOff_disabled_xp.xpm'
+menu.iconDisabledRadioOn.bitmap             (ToolbarIconLibrary radioOnDisabledIcon)
+menu.iconDisabledRadioOff.bitmap            (ToolbarIconLibrary radioOffDisabledIcon)
+
+menu.iconIndicationOn             [ToolbarIconLibrary checkToggleOnIcon]
+menu.iconIndicationOff            [ToolbarIconLibrary checkToggleOffIcon]
+menu.iconDisabledIndicationOn     [ToolbarIconLibrary checkToggleOffDisabledIcon]
+menu.iconDisabledIndicationOff    [ToolbarIconLibrary checkToggleOffIcon]
+
+pullDownMenu.level                0
+
+
+;button.edgeStyle                       #soft
+;button.activeLevel                     -1
+;button.passiveLevel                    3
+;button.enteredBackgroundColor          [ (Screen current getSystemColor:#'COLOR_BTNFACE') lightened ]
+
+comboView.downForm                      [ToolbarIconLibrary scrollDownOffIcon]
+comboView.disabledDownForm              [ToolbarIconLibrary scrollDownOffIcon]
+comboView.enteredDownForm               [ToolbarIconLibrary scrollDownOffEntered2Icon]
+comboView.activeDownForm                [ToolbarIconLibrary scrollDownActiveIcon]
+; comboView.downFormFile                  'ComboDn_xp.xpm'.
+; comboView.disabledDownFormFile          'ComboDn_disabled_xp.xpm'.
+; comboView.activeDownFormFile            'ComboDn_active_xp.xpm'.
+; comboView.enteredDownFormFile           'ComboDn_entered_xp.xpm'.
+comboView.button.activeLevel            0
+comboView.button.passiveLevel           0
+comboView.button.activeBackgroundColor  =viewGrey
+; comboView.button.activeBackgroundColor  (Color white)
+; comboView.button.backgroundColor        (Color white)
+; comboView.level                         0
+
+; selection.highlightEnterItem       true         "/ underline-highlight item under cursor
+
+scroller.viewBackground          (Color redByte:16rEF greenByte:16rEF blueByte:16rEF)
+scroller.thumbColor              (Color redByte:192 greenByte:192 blueByte:192)
+"/ scroller.thumbLightColor         (Color redByte:16rCF greenByte:16rDD blueByte:16rFD)
+scroller.thumbLightColor         (Color redByte:238 greenByte:244 blueByte:254)
+scroller.thumbShadowColor        (Color redByte:16r83 greenByte:16r9E blueByte:16rD8)
+scroller.thumbEnteredColor       (Color red:64 green:75 blue:98)
+scroller.thumbActiveColor        (Color red:42 green:76 blue:91)
+scroller.thumbLevel              0
+scroller.thumbInset              1
+; scroller.thumbFrameColor         ?Color white "/ (Color redByte:175 greenByte:190 blueByte:240) darkened
+scroller.thumbFrameColor         (Color redByte:192 greenByte:192 blueByte:192)
+; scroller.thumbFrameColor2        (Color redByte:16rEF greenByte:16rEF blueByte:16rEF)
+scroller.thumbEdgeStyle          #edged
+
+scroller.NTallyMarks             4
+scroller.tallyLevel              1
+scroller.tallyInset              6
+scroller.tallyDistance           3
+
+scroller.snapBackDistance        100
+scroller.minThumbSize            16
+
+scroller.thumbColor              (Color red:64 green:75 blue:98)
+scroller.vista3DStyleLightColor  (Color rgbValue:16rBDD4EF)
+scroller.thumbEnteredColor       (Color rgbValue:16r89adda)
+scroller.thumbActiveColor        (Color rgbValue:16r89adda)
+scroller.thumbFrameColor         (Color grey:65)
+scroller.thumbFrameColor2        nil
+scroller.tallyLevel              0
+scroller.NTallyMarks             3
+
+scroller.vista3DStyle            true
+
+miniScroller.size               3     "/ in millimeters
+
+
+arrowButton.upForm                  [ToolbarIconLibrary scrollUpOffIcon]
+arrowButton.enteredUpForm           [ToolbarIconLibrary scrollUpOffEntered2Icon]
+arrowButton.activeUpForm            [ToolbarIconLibrary scrollUpActiveIcon]
+arrowButton.disabledUpForm          [ToolbarIconLibrary scrollUpOffIcon]
+
+arrowButton.downForm                [ToolbarIconLibrary scrollDownOffIcon]
+arrowButton.enteredDownForm         [ToolbarIconLibrary scrollDownOffEntered2Icon]
+arrowButton.activeDownForm          [ToolbarIconLibrary scrollDownActiveIcon]
+arrowButton.disabledDownForm        [ToolbarIconLibrary scrollDownOffIcon]
+
+arrowButton.leftForm                [ToolbarIconLibrary scrollLeftOffIcon]
+arrowButton.enteredLeftForm         [ToolbarIconLibrary scrollLeftOffEntered2Icon]
+arrowButton.activeLeftForm          [ToolbarIconLibrary scrollLeftActiveIcon]
+arrowButton.disabledLeftForm        [ToolbarIconLibrary scrollLeftOffIcon]
+
+arrowButton.rightForm               [ToolbarIconLibrary scrollRightOffIcon]
+arrowButton.enteredRightForm        [ToolbarIconLibrary scrollRightOffEntered2Icon]
+arrowButton.activeRightForm         [ToolbarIconLibrary scrollRightActiveIcon]
+arrowButton.disabledRightForm       [ToolbarIconLibrary scrollRightOffIcon]
+
+
+arrowButton.leftFormFile          'ScrollLt.xp.xpm'
+arrowButton.enteredLeftFormFile   'ScrollLt_entered.xp.xpm'
+arrowButton.activeLeftFormFile    'ScrollLt_active.xp.xpm'
+arrowButton.disabledLeftFormFile  'ScrollLt_disabled.xp.xpm'
+
+arrowButton.rightFormFile         'ScrollRt.xp.xpm'
+arrowButton.enteredRightFormFile  'ScrollRt_entered.xp.xpm'
+arrowButton.activeRightFormFile   'ScrollRt_active.xp.xpm'
+arrowButton.disabledRightFormFile 'ScrollRt_disabled.xp.xpm'
+
+arrowButton.passiveLevel          0
+arrowButton.activeLevel           0
+arrowButton.backgroundColor       =scroller.viewBackground
+arrowButton.activeBackgroundColor =scroller.viewBackground
+
+noteBook.backgroundColor          =lightenedViewGrey
+noteBook.activeBackgroundColor    =viewBackground
+noteBook.foregroundColor          Color black
+noteBook.lightColor               =darkenedViewGrey
+noteBook.shadowColor              =darkenedViewGrey
+noteBook.passiveBackgroundColor   =lightenedViewGrey
+noteBook.activeTabMarkerColor     =selectionBlue
+
+selection.hilightFrameColor       =selectionBlue
+
+
+checkToggle.bitmapFile            'CheckOn10_xp.xpm'
+radioButton.passiveImage          [ToolbarIconLibrary radioOffIcon]
+radioButton.activeImage           [ToolbarIconLibrary radioOnIcon]
+radioButton.enteredPassiveImage   [ToolbarIconLibrary radioOffEnteredIcon]
+radioButton.enteredActiveImage    [ToolbarIconLibrary radioOnEnteredIcon]
+radioButton.disabledPassiveImage  [ToolbarIconLibrary radioOffDisabledIcon]
+radioButton.disabledActiveImage   [ToolbarIconLibrary radioOnDisabledIcon]
+checkToggle.disabledActiveImage   [ToolbarIconLibrary checkToggleOnDisabledIcon]
+checkToggle.disabledPassiveImage  [ToolbarIconLibrary checkToggleOffDisabledIcon]
+checkToggle.activeImage           [ToolbarIconLibrary checkToggleOnIcon]
+checkToggle.passiveImage          [ToolbarIconLibrary checkToggleOffIcon]
+checkToggle.enteredPassiveImage   [ToolbarIconLibrary checkToggleOffEnteredIcon]
+checkToggle.enteredActiveImage    [ToolbarIconLibrary checkToggleOnEnteredIcon]
+checkToggle.activeLevel           0
+checkToggle.passiveLevel          0
+checkToggle.disabledBackgroundColor     =viewGrey
+checkToggle.backgroundColor             =viewGrey
+checkToggle.activeBackgroundColor       =viewGrey
+
+
+
+popup.borderColor                   (Color grey:50)
+popup.borderWidth                   1
+editField.level                     0
+editField.borderWidth               1
+editField.borderColor               (Color redByte:175 greenByte:190 blueByte:240)
+
+; does not work
+; comboView.level                   0
+; comboView.borderWidth             1
+; comboView.borderColor             (Color redByte:175 greenByte:190 blueByte:240)
+
+; label.foregroundColor             (Color redByte:0 greenByte:70 blueByte:213)
+; button.foregroundColor            (Color black)
+; radioButton.foregroundColor       (Color black)
+; checkBox.labelForegroundColor     (Color black)
+
+; noteBook.foregroundColor          (Color redByte:0 greenByte:70 blueByte:213)
+framedBox.foregroundColor         (Color redByte:0 greenByte:70 blueByte:213)
+
+variablePanel.handleLevel       0
+
+variablePanel.snapLevel         0
+variablePanel.snapEnterLevel    1
+variablePanel.selectedLevel     -1
+
+infoBox.iconFile                'bitmaps/Information_XP.xpm'
+warningBox.iconFile             'bitmaps/Warning_XP.xpm'
+requestBox.iconFile             'bitmaps/Request_XP.xpm'
+errorBox.iconFile               'bitmaps/Error_XP.xpm'
+
+selection.backgroundColor       (Color white)
+
+;selection.hilightForegroundColor    (Color black)
+;selection.hilightBackgroundColor    (Color rgbValue:16rDFF0F8)
+;selection.hilightFrameColor         (Color rgbValue:16r96D9F9)
+
+;;;menu.hilightForegroundColor         (Color black)
+;;;menu.hilightBackgroundColor         (Color rgbValue:16rDAEBF3)
+;;;menu.hilightFrameColor              (Color rgbValue:16rA8D8EB)
+
+editField.selectionBackgroundColor   =selectionBlue
+editField.selectionForegroundColor   (Color white)
+
+scrolledView.level      0
+
+; See https://developer.gnome.org/hig/stable/dialogs.html.en
+dialogBox.okAtLeft              (OperatingSystem isOSXlike) "false"
+horizontalPanel.okCancelBox     #fitSpace
+
+launcher.editorLevel        1
+

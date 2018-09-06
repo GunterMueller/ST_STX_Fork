@@ -1,0 +1,238 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Basic classes - Exceptions</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="process.html"> <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html#I_EXCEPTIONS">         <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="misc.html"> <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Exceptions and Signals</H1>
+<P>
+<B>This document needs to be updated for class based exceptions.
+It only describes the old instance based signals.</B>
+Please read the class-documentation of the Exception class for more info.
+<P>
+Smalltalk provides a powerful and flexible mechanism to handle exceptions
+and errors in a graceful way.
+Errors raise a so called <VAR>Signal</VAR>, which can be handled by a handlerblock.
+<BR>
+Especially with respect to instance creation, deletion and garbage collection,
+Smalltalk exceptions are very clean and easy to use.
+<BR>
+All error conditions can be trapped and reacted upon by signal handlers.
+This includes situations which are fatal in other languages, such as
+stack overflow or array index bounds violations.
+<P>
+The most interesting classes are:
+<UL>
+<LI> <A HREF="#SIGNAL">Signal</A>- instance based exceptions
+<LI> <A HREF="#SIGNALSET">SignalSet</A>- a set of signals/exceptions with single handler
+<LI> <A HREF="#EXCEPTIONHANDLERSET">ExceptionHandlerSet</A>- a set of signals/exceptions with mutliple handlers
+<LI> <A HREF="#EXCEPTION">Exception</A> - class based exceptions
+</UL>
+Please read <A HREF="../../programming/exceptions.html">``Exception handling and signals''</A> for more details.
+<BR>
+See <A HREF="../../programming/errormsg.html#SIGNALS">``List of signals''</A> for a partial list of signals,
+where they are created and what they mean.
+
+<H2><A HREF="#I_SIGNAL" NAME="SIGNAL">Signal</A> (instance based exceptions)</H2>
+
+Notice: this is an old-style (but still supported) mechanism for instance based
+exception handling. Signals are more lightweight in that they do not need
+an Exception class to be defined. I.e. you can create and handle such signals
+dynamically without the overhead of creating a class for it.
+<P>
+
+Every exception condition is assigned a signal or an exception class,
+which is raised when that condition is encountered.
+Therefore, a signal object pr an exception class can be thought of a way to identify a
+particular exception.
+Classes which raise a signal (as opposed to an exception) in one of its methods,
+creates these signal objects at class initialization time and keeps them in
+class variables for later. These classes provide access methods for these in their class
+protocol.
+<P>
+Notice that most parts of the system have been changed to use the newer class-based
+exception mechanism, in which the Exception class itself is used as signal.
+The protocols and semantics are identical, so all of the following is valid both for
+signal instances and Exception classes.
+<BR>
+Typical use:
+<UL>
+<LI> Signal access:
+<CODE><PRE>
+    Number arithmeticSignal
+
+    Number divisionByZeroSignal
+
+    Object errorSignal
+</CODE></PRE>
+
+<LI> handling signals/exceptions:
+<CODE><PRE>
+    [ ...some computation ... ] on:<VAR>aSignalOrExceptionClass</VAR> do:[ ... handlerBlock ...]
+
+    <VAR>aSignalOrExceptionClass</VAR> handle:[ ... handlerBlock ...] do:[ ...some computation ... ]
+
+    <VAR>aSignalOrExceptionClass</VAR> catch:[ ...some computation ... ]
+</CODE></PRE>
+</UL>
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in the
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:Signal backRef:'exceptions.html'">
+<CODE>Signal</CODE></A>
+and
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:Exception backRef:'exceptions.html'">
+<CODE>Exception</CODE>
+class documentation</A>.
+
+
+
+<H2><A HREF="#I_SIGNALSET" NAME="SIGNALSET">SignalSet</A></H2>
+
+SignalSets represent a collection of Signals that can be handled in one handler as a group.
+These can be easily created with the , (comma) operator.
+They understand the same protocol as signals and exception classes:
+<UL>
+<LI> Handling multiple Exceptions in one handler:
+<CODE><PRE>
+    [ ...some computation ... ]
+	on:<VAR>ExceptionClass1</VAR>,<VAR>ExceptionClass1</VAR>,...
+	do:[:<VAR>ex</VAR> | ... handlerBlock ...]
+</CODE></PRE>
+</UL>
+Inside the handlerblock,
+you can ask for the responsible exception creator by sending
+<CODE>creator</CODE> to the <VAR>ex</VAR> argument.
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in the
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:SignalSet backRef:'exceptions.html'">
+<CODE>SignalSet</CODE> class documentation</A>.
+
+
+<H2><A HREF="#I_EXCEPTIONHANDLERSET" NAME="I_EXCEPTIONHANDLERSET">ExceptionHandlerSet</A></H2>
+
+ExceptionHandlerSet allows to specify a number of handlers
+to be specified for a number of signals/exceptions for
+the execution of the protected block.
+This avoids the need for deeply nested handler blocks.
+<P>
+They understand the same protocol as signals and exception classes.
+<UL>
+<LI> Handling multiple Exceptions in different handlers:
+<CODE><PRE>
+    (ExceptionHandlerSet
+	on:<VAR>Ex1</VAR> do:[:<VAR>ex</VAR> | ... handler for Ex1 ...];
+	on:<VAR>Ex2</VAR> do:[:<VAR>ex</VAR> | ... handler for Ex2 ...];
+	...
+	handleDo:[
+	    ...
+	    protected block
+	    ...
+	].
+</CODE></PRE>
+</UL>
+Notice the use of ; (cascade) when the above handlerset setup code.
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in the examples section of the
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:ExceptionHandlerSet backRef:'exceptions.html'">
+<CODE>ExceptionhandlerSet</CODE> class documentation</A>.
+
+
+
+
+<H2><A HREF="#I_EXCEPTION" NAME="EXCEPTION">Exception</A></H2>
+
+Instances of <CODE>Exception</CODE> are created when a signal/exception is raised.
+They keep some information on where and why the exception occured and are passed as argument
+to the signal handler block. Within the handler block, execution can be continued in various ways,
+via messages to the exception object.
+<BR>
+Typical uses:
+<UL>
+<LI> handler setup:
+<CODE><PRE>
+    [
+	... some computation
+    ] on: <VAR>aSignalOrExceptionClass</VAR> do:[:<VAR>ex</VAR> |
+	... handler action
+    ]
+
+  or:
+
+    <VAR>aSignalOrExceptionClass</VAR>
+	handle:[:<VAR>ex</VAR> |
+	    ... handler action
+	]
+	do:[
+	    ... some computation
+	]
+</CODE></PRE>
+
+<LI> handler actions:
+<CODE><PRE>
+    <VAR>aSignalOrExceptionClass</VAR> handle:[:<VAR>ex</VAR> |
+	...
+	<VAR>ex</VAR> return
+    ]
+
+    <VAR>aSignalOrExceptionClass</VAR> handle:[:<VAR>ex</VAR> |
+	...
+	<VAR>ex</VAR> restart
+    ]
+
+    <VAR>aSignalOrExceptionClass</VAR> handle:[:<VAR>ex</VAR> |
+	...
+	<VAR>ex</VAR> resume
+    ]
+</CODE></PRE>
+<LI> queries:
+<CODE><PRE>
+    <VAR>anException</VAR> parameter
+
+    <VAR>anException</VAR> creator
+
+    <VAR>anException</VAR> errorString
+
+    <VAR>anException</VAR> handlerContext
+
+    <VAR>anException</VAR> suspendedContext
+</CODE></PRE>
+
+<LI> raising an exception/signal:
+<CODE><PRE>
+    <VAR>aSignalOrExceptionClass</VAR> raise
+
+    <VAR>aSignalOrExceptionClass</VAR> raiseWith:<VAR>parameter</VAR>
+</CODE></PRE>
+
+</UL>
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in the
+<A HREF="../../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:Exception backRef:'exceptions.html'">
+<CODE>Exception</CODE> class documentation</A>.
+
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif">
+Copyright © 1996 Claus Gittinger Development & Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+
+<HR>
+Doc $Revision: 1.27 $ $Date: 2016-01-21 16:22:39 $
+<BODY>
+</HTML>

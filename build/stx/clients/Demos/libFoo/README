@@ -1,0 +1,16 @@
+These demo classes allow first experiments in creating
+binary class libraries. Read the documentation for more info.
+
+The binary foo library is created by:
+
+   step 1: create a Make.proto (& Makefile from it) with:
+
+	stmkmp	(found in the rules directory)
+
+   step 2: create the libFoo class library:
+
+	make
+
+The resulting binary can either be linked statically to a
+new smalltalk exeutable, or loaded dynamically into the 
+running system via fileIn.

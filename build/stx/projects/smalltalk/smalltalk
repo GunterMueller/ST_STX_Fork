@@ -1,0 +1,390 @@
+#!/bin/bash
+
+# $Header$
+#
+#
+# startup script for smalltalk
+# actually, simply calls stx, passing all arguments.
+#
+
+# In previous versions, smalltalk used to be the executable itself.
+# This lead to problems on systems, where things like LD_LIBRARY_PATH
+# should be set in advance.
+# Now, here is a place to do such things ...
+
+#
+# -x name specifies an explicit executable
+#         to avoid executing another stx from some directory along the PATH
+#         (i.e to force use: ./smalltalk -x ./stx)
+#
+# -X name specifies an explicit path to the stx executable
+#         to avoid executing another stx from some directory along the PATH
+#         (i.e to force use: ./smalltalk -X .)
+#         [almost the same as above]
+#
+# -ldd    show ldd-output (to debug, which libs are loaded)
+#
+# all other args go to stx & the user classes
+#
+STX_VERSION_DEFAULT=8.0.0
+
+# Do not change following line, $STX_VERSION_DEFAULT serves
+# as placeholder and it's being replaced during installation
+# process.
+STX_VERSION=$STX_VERSION_DEFAULT
+
+STX_EXE=stx
+STX_BIN_DIR=$(dirname $0)
+SUPERVISOR=
+
+if ! test -f "$STX_BIN_DIR/Make.proto"; then
+    # Running in Smalltalk/X jv-branch from and "installation tree"
+    STX_HOME="$STX_BIN_DIR/.."
+    STX_TOPDIR="$STX_HOME/lib/smalltalkx/$STX_VERSION"
+    STX_LIBDIR="$STX_TOPDIR/lib"
+    STX_PACKAGEDIR="$STX_TOPDIR%/packages"
+    STX_EXE="$STX_TOPDIR/bin/stx-bin"
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$STX_LIBDIR/lib"
+fi
+
+if [ "$STX_LIBDIR" != "" ]
+then
+    if [ ! -f $STX_LIBDIR/smalltalk.rc ]
+    then
+       echo "smalltalk [warning]: ignore wrong STX_LIBDIR setting ($STX_LIBDIR)"
+       STX_LIBDIR=""
+    fi
+fi
+
+
+# notice: STXLIBDIR is filled in here by install-sh script
+if test -z "$STX_LIBDIR"
+then
+    bindir=`dirname $0`
+    case "$bindir" in
+        /* )
+        ;;
+        .* )
+        bindir=`( cd $bindir; pwd ) 2> /dev/null`
+        ;;
+    esac
+    if [ -d ${bindir}/../lib ]
+    then
+        STX_LIBDIR=`cd ${bindir}/../lib ; pwd`
+    fi
+fi
+
+if [ -z "$STX_LIBDIR" ]
+then
+    if [ -d ../lib ]
+    then
+        STX_LIBDIR=`cd ../lib ; pwd`
+    fi
+fi
+if [ ! -d "$STX_LIBDIR" ]
+then
+    if [ -d ../lib ]
+    then
+        STX_LIBDIR=`cd ../lib ; pwd`
+    fi
+fi
+
+if test -z "$STX_TOPDIR"
+then
+    if [ -f ../lib/smalltalk.rc ]
+    then
+        STX_TOPDIR=`cd .. ; pwd`
+    else
+       if [ -f $STX_LIBDIR/../lib/smalltalk.rc ]
+       then
+           STX_TOPDIR=`cd $STX_LIBDIR/.. ; pwd`
+       else
+           if [ -f $STX_BIN_DIR/smalltalk.rc ]
+           then
+              STX_TOPDIR=`cd $STX_BIN_DIR/../.. ; pwd`
+           fi
+       fi
+    fi
+fi
+
+# echo STX_LIBDIR is $STX_LIBDIR
+# echo STX_TOPDIR is $STX_TOPDIR
+
+export STX_LIBDIR STX_TOPDIR
+
+# echo STX is $STX_EXE
+
+function error() {
+	echo "$0: $1"	
+	exit 1
+}
+
+function usage() {
+cat <<USAGE_END
+usage: $(basename $0) <args to launcher script> <args to VM> <args to startup classes>
+
+args to launcher script:
+   -x prog ................ use prog instead of stx as executable
+   -X dir ................. use stx from dir instead of default (PATH)
+   --ldd .................. show which shared libraries are used
+   --vdb .................. run with Visual / VM Debugger
+   --gdb .................. run with gdb (type r in debugger to start)   
+   --cgdb ................. run with cgdb (type r in debugger to start)                            
+   --callgrind ............ run under callgrind profiler tool with profiling 
+                            off. Use this to profile some benchmark.
+   --callgrind-startup .... run under callgrind profiler tool with profiling 
+                            on. Use this to profile VM startup.
+   --stap SCRIPT .......... run given systemtap script, passing stx command as
+                            stap -c 'stx ...' Systemtap may not be compiled in.
+   --record ............... record execution using rr. 
+   --replay ............... replay last recorded execution using rr. Must be used
+                            in combination with --vdb.
+USAGE_END
+  $STX_BIN_DIR/$STX_EXE --help
+  exit 0
+}
+
+
+while [ $# -gt 0 ]
+do
+    case $1 in
+        --help)
+            usage
+            ;;
+        -x)
+            STX_EXE=$2
+            shift 2
+            ;;
+        -X)            
+            STX_EXE=$2/stx
+            shift 2
+            ;; 
+        --ldd)            
+            DEBUGLIB=yes
+            shift
+            ;;
+        --gdb|--cgdb|--vdb|--callgrind|--callgrind-startup|--stap)
+			if [ ! -z "$SUPERVISOR" ]; then
+				error "$1 cannot be used together with $SUPERVISOR."
+			fi			
+			if [ "x$RECORD" == "xyes" ]; then
+				error "$1 cannot be used together with --record"
+			fi
+			if [ "x$REPLAY" == "xyes" ]; then
+				if [ "$1" != "--vdb" ]; then
+					error "$1 cannot be used together with --replay"
+				fi
+			fi
+            SUPERVISOR=$1            
+            if [ $SUPERVISOR == "--stap" ]; then
+            	if [ -z "$2" ]; then
+                	error "--stap requires systemtap script to run"
+                fi
+                if [ ! -r "$2" ]; then
+                	error "$2: no such file or not readable"
+                fi
+                STAPSCRIPT=$2
+                shift
+            fi
+            shift
+            ;;     
+        --record)
+			if [ ! -z "$SUPERVISOR" ]; then
+				error "$1 cannot be used together with $SUPERVISOR."				
+			fi
+			if [ "x$REPLAY" == "xyes" ]; then
+				error "$1 cannot be used together with --replay"
+			fi
+			RECORD=yes
+			shift
+        	;;        
+        --replay)
+			if [ ! -z "$SUPERVISOR" ]; then
+				if [ "$SUPERVISOR" != "--vgb" ]; then
+					error "$1 cannot be used together with $SUPERVISOR."
+				fi
+			fi
+			if [ "x$RECORD" == "xyes" ]; then
+				error "$1 cannot be used together with --record"
+			fi
+        	REPLAY=yes
+        	shift
+        	;;   
+        *)
+            break
+            ;;
+    esac
+done 
+
+#
+#
+# some have Xlibs in /usr/openwin/lib ...
+#
+if [ -d /usr/openwin/lib ]
+then
+    if [ "$LD_LIBRARY_PATH" != "" ]
+    then
+    LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/openwin/lib:/usr/local/lib/smalltalk/lib
+    else
+    LD_LIBRARY_PATH=/usr/openwin/lib:/usr/local/lib/smalltalk/lib
+    fi
+    if [ "$SHLIB_PATH" != "" ]
+    then
+    SHLIB_PATH=$SHLIB_PATH:/usr/openwin/lib:/usr/local/lib/smalltalk/lib
+    else
+    SHLIB_PATH=/usr/openwin/lib:/usr/local/lib/smalltalk/lib
+    fi
+else
+    if [ "$LD_LIBRARY_PATH" != "" ]
+    then
+    LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/smalltalk/lib
+    else
+    LD_LIBRARY_PATH=/usr/local/lib/smalltalk/lib
+    fi
+    if [ "$SHLIB_PATH" != "" ]
+    then
+    SHLIB_PATH=$SHLIB_PATH:/usr/local/lib/smalltalk/lib
+    else
+    SHLIB_PATH=/usr/local/lib/smalltalk/lib
+    fi
+fi
+
+#
+# if started via ./smalltalk, prepend . to the PATH
+# (to allow test of ./stx even when stx is found along the PATH)
+#
+case $0 in
+    ./*)
+    PATH=.:$PATH
+    export PATH
+    ;;
+esac
+
+#
+# debugging which stx & shared libs are used ...
+#
+whichOne=`/bin/sh -c "type $STX"`
+if [ "$STX_EXE" = "stx" ]
+then
+  if [ -f stx ]
+  then
+    whichOne=`/bin/sh -c "type stx"`
+    if [ "$whichOne" != "stx is ./stx" ]
+    then
+      echo "************* WARNING the executed" $whichOne
+      echo "************* (may not be appropriate for used shared libs)"
+      echo "************* Try './smalltalk -ldd' for more details"
+      echo "************* or force the local stx to be used with"
+      echo "************* './smalltalk -x ./stx'"
+      echo
+    fi
+  fi
+fi
+
+if [ "$DEBUGLIB" = "yes" ]
+then
+  echo "used " $whichOne
+  echo "used LD_LIBRARY_PATH is " $LD_LIBRARY_PATH
+  echo "used SHLIB_PATH is " $SHLIB_PATH
+  echo "used STX_LIBDIR is " $STX_LIBDIR
+  case `uname` in
+    HP-UX*)
+      chatr "$STX_BIN_DIR/$STX_EXE"
+      ;;
+
+    *)
+      ldd -r "$STX_BIN_DIR/$STX_EXE"
+      ;;
+  esac
+  exit 0
+fi
+
+#
+# how did HP mess up things so badly ?
+# It takes a veeeery long time for stx to start
+# (the spinning wheel is shown when stx's main
+#  starts to run - all the time in between is
+#  spent in the systems loader ...)
+#
+# if [ "`uname`" = "HP-UX" ]
+# then
+#     echo "Please be patient - hp systems are very slow."
+# fi
+
+PATH=$PATH:$STX_BIN_DIR
+export PATH
+# echo PATH is $PATH
+# echo DISPLAY is $DISPLAY
+
+
+#
+# When running on modern DE (such as GNOME or KDE), install 
+# .desktop and .svg so to get nice(r) icon and - more importantly - 
+# proper window grouping in task list. 
+#
+# See issue #66: https://swing.fit.cvut.cz/projects/stx-jv/ticket/66
+#           
+if [ ! -z "$XDG_CURRENT_DESKTOP" ]; then
+    icon_dir=~/.local/share/icons/hicolor/scalable/apps
+    dskp_dir=~/.local/share/applications
+    if [ ! -f "$icon_dir/smalltalkx.svg" ]; then
+        mkdir -p "$icon_dir" || true
+        cp "$STX_BIN_DIR/smalltalkx.svg" "$icon_dir" || true
+    fi
+    if [ ! -f "$dskp_dir/smalltalkx.desktop" ]; then
+        mkdir -p "$dskp_dir" || true
+        cp "$STX_BIN_DIR/smalltalkx.desktop" "$dskp_dir" || true
+    fi
+fi
+
+
+if [ ! -z "$STAPSCRIPT" ]; then
+    echo "$STX_TOPDIR/stx/hacking/tapset"
+    CMD="$STX_EXE $@"
+    echo "$CMD"
+    exec stap --unprivileged $STAPSCRIPT -I "$STX_TOPDIR/hacking/tapset" -c "$CMD"
+fi
+
+if [ "x$RECORD" == "xyes" ]; then
+	exec rr $STX_EXE ${1+"$@"}
+elif [ ! -z "$SUPERVISOR" ]; then
+	case "$SUPERVISOR" in
+		--gdb)
+			exec gdb --tui --args $STX_EXE ${1+"$@"}
+			;;
+		--cgdb)
+			exec cgdb --args $STX_EXE ${1+"$@"}
+			;;
+		--vdb)
+			if which "vdb"; then
+                vdb=vdb
+            elif [ -x "$STX_BIN_DIR/../../../jv/vdb/application/vdb" ]; then
+                vdb="$STX_BIN_DIR/../../../jv/vdb/application/vdb"
+            else
+                error "could not find Visual / VM Debugger (vdb)"                
+            fi   
+            if [ "x$REPLAY" == "xyes" ]; then
+            	exec vdb --replay $STX_EXE ${1+"$@"}
+            else
+            	exec vdb $STX_EXE ${1+"$@"}
+            fi
+            ;;
+		--callgrind)
+    		exec valgrind --tool=callgrind --instr-atstart=no $STX_EXE ${1+"$@"}
+    		;;
+    	--callgrind-startup)
+			exec valgrind --tool=callgrind $STX_EXE ${1+"$@"}
+    		;;
+    	--stap)			
+    		exec stap --unprivileged $STAPSCRIPT -I "$STX_TOPDIR/librun" -c "$STX_EXE $@"
+    		;;
+    	*)
+			error "Unknown supervisor option: $SUPERVISOR"
+			;;
+	esac
+else
+	exec $STX_EXE ${1+"$@"}
+fi
+
+
+

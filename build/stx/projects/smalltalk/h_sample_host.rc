@@ -1,0 +1,109 @@
+"*
+ * Encoding: iso8859-1
+ *
+ * $Header$
+ *
+ * MIMEType: application/x-smalltalk-source
+ *
+ * ST/X startup configuration file:
+ * sample startup configuration for host specific stuff -
+ *
+ * You should copy this file to h_<your_host_name>.rc
+ * and change it for your site.
+ *"
+
+"*
+ * NNTPSERVER configuration (for newsReader)
+ *"
+(OperatingSystem getEnvironment:'NNTPSERVER') isNil ifTrue:[
+    'h_sample_host.rc [info]: please edit me for NNTPSERVER setup' infoPrintCR.
+"/    'h_sample_host.rc [info]: setting NNTPSERVER to <your-NNTP-host-here>' infoPrintCR.
+"/    Smalltalk at:#NNTPSERVER put:'<your-NNTP-host-here>'.
+].
+!
+
+"*
+ * printer configuration
+ * - uncomment the one you have
+ *"
+
+'h_sample_host.rc [info]: please edit me for printer setup' infoPrintCR.
+"/ 'h_sample_host.rc [info]: configuring printer ...' infoPrintCR
+!
+
+"/ PostscriptPrinterStream autoload.
+"/ Smalltalk at:#Printer put:PostscriptPrinterStream.
+
+"/
+"/ HPLjetIIPrinterStream autoload.
+"/ Smalltalk at:#Printer put:HPLjetIIPrinterStream.
+"/
+
+"/
+"/ EpsonFX1PrinterStream autoload.
+"/ Smalltalk at:#Printer put:EpsonFX1PrinterStream.
+"/
+
+"*
+ * define the printCommands presented in the launchers
+ * settings menu:
+ *"
+"/ Printer defaultCommands:#('lpr' 'lpr -h' 'cat | rsh <host> lpr -h')
+
+"*
+ * define the initial printCommand:
+ *
+ *
+ * this one for bsd-type real unixes
+ *"
+"/
+"/ Printer printCommand:'lpr'.
+"/
+
+"*
+ * this one specifies a printer
+ *"
+"/
+"/ Printer printCommand:'lpr -Pdali'.
+"/
+
+
+"*
+ * this one for sys5-type machines
+ *"
+"/
+"/ Printer printCommand:'lp'.
+"/
+
+
+"*
+ * or even more fancy:
+ *"
+"/
+"/ Printer printCommand:'lp -d letterquality'.
+"/
+
+
+"*
+ * and these are examples for remote printing
+ *"
+"/
+" /Printer printCommand:'rcmd ama lp -d letterquality'.
+"/
+"/
+"/Printer printCommand:'rsh avalon ''cat >/dev/lp'''.
+"/
+
+"*
+ * ghostview viewing
+ *"
+"/
+"/ Smalltalk at:#Printer put:PostscriptPrinterStream.
+"/ Printer printCommand:'cat > /tmp/psfile ; ghostview psfile'.
+"/ Printer printCommand:'cat > /tmp/psfile'.
+"/
+
+
+Printer leftMargin:4.
+
+!

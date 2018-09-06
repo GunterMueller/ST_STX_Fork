@@ -1,0 +1,30 @@
+/* XPM */
+static char *uk_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 20 3 1",
+/* colors */
+"a c red",
+"b c #24208D",
+"c c white",
+/* pixels */
+"aaccbbbbbbbbcaaaaacbbbbbbbbbccaa",
+"ccaaccbbbbbbcaaaaacbbbbbbbccaacc",
+"bbccaaccbbbbcaaaaacbbbbbccaaccbb",
+"bbbbccaccbbbcaaaaacbbbccaaccbbbb",
+"bbbbbbcaaccbcaaaaacbccaaccbbbbbb",
+"bbbbbbbccaaccaaaaaccaaccbbbbbbbb",
+"bbbbbbbbbcaacaaaaacaacbbbbbbbbbb",
+"cccccccccccccaaaaacccccccccccccc",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"cccccccccccccaaaaacccccccccccccc",
+"bbbbbbbbccaacaaaaaccaaccbbbbbbbb",
+"bbbbbbccaacbcaaaaacbccaaccbbbbbb",
+"bbbbbcaaccbbcaaaaacbbbccaaccbbbb",
+"bbbccaccbbbbcaaaaacbbbbbccaaccbb",
+"bbcaacbbbbbbcaaaaacbbbbbbbccaacb",
+"ccaccbbbbbbbcaaaaacbbbbbbbbbccac",
+"aacbbbbbbbbbcaaaaacbbbbbbbbbbbca",
+};

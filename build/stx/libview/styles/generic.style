@@ -1,0 +1,502 @@
+; this style sheet lists all possible style-values
+; you can not use it directly as a style, but
+; as a template - to copy individual setting
+; into your private style file (if you want to create your own ones)
+;
+; Of course, you can also pick one of the supplied styles,
+; or include an existing style in your new style - changing values
+; as required. (see AEG_sailer.style as an example).
+;
+; After you created the style-file (and have it accessible in the
+; resources directory), you can use this style by adding
+; a line as follows to your 'display.rc' or 'private.rc' file:
+;    View defaultStyle:#foo
+; where 'foo' is the name of the style-file name without the '.style'
+; ending.
+; Since it must be a symbol, use quotes around, if non alphanumeric 
+; characters are in the name.
+.
+; I.e:
+;    View defaultStyle:#motif
+;    View defaultStyle:#normal
+;    View defaultStyle:#'motif_light'
+;
+; Many of the values here are defaulted to useful values,
+; if not mentioned here - so there is no real need to define
+; all of them for new styles. 
+;
+;
+; $Header$
+
+;
+; agenda:
+;   the following list contains all possible style-values and their
+;   default values (i.e. in your style-file you have to include only
+;   those differing from the default).
+;
+;   The first word is the style-sheet variable name, the rest (separated
+;   by one or more spaces) is evaluated as a smalltalk expression and becomes
+;   the value of the variable.
+;
+;   Lines beginning with ';' are comments.
+;
+;   The construct '? ...' meands: only assign new value if no value has been
+;   specified already; this allows included files (for example: motif.common)
+;   to change value only if not already defined by the includer.
+;
+;   The construct '=foo' means: use the value of the foo-variable described
+;   above.
+;   If a value is symbolic, the possible values are shown in a comment.
+;
+;   Conditional settings are possible, by including these between
+;       #if <st-expression>
+;       ...
+;       #endif
+;   For example, colors can be set different for mono vs. color displays.
+;   else constructs are possible too:
+;       #if <st-expression>
+;       ...
+;       #else
+;       ...
+;       #endif
+;
+;   finally, other files can be included:
+;
+;       ...
+;       #include 'filename'
+;       ...
+;
+; ----------------------------------------------------------------------------
+
+; if it some type of 3D style
+; (affects default levels, borderWidth and spacing between views etc.)
+; all styles which have 3D effects should set this to true
+
+comment  'not a usable style\\This file is used as reference and documentation.'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Dies ist kein nutzbarer Stil\\Diese Datei dient als Referenz und Dokumentation.'
+#endif
+
+;
+; if its a 3D style, spacing between components is often different;
+; also, no borders are generated.
+;
+is3D                    false
+
+;
+; the name of the style (will vanish)
+;
+name                    #unknown
+
+;
+; borders - if is3D is true, these are ignored
+;
+borderWidth             0
+borderColor             Color black
+
+;
+; these are macros used below
+;
+viewGrey                Color grey:67
+lightGrey               (Color grey:67) lightened
+darkGrey                (Color grey:67) darkened
+fixedFont               Font family:'courier' face:'medium' style:'roman' size:12
+variableFont            Font family:'helvetica' face:'medium' style:'roman' size:12
+
+;
+; the default size of topViews;
+; if unspecified, 2/3 of the screen dimension are taken
+;
+standardSystemView.defaultExtent            (Screen current extent * (2/3))
+;
+; same for modal boxes
+;
+modalBox.defaultExtent                      200@150
+
+;
+; the default font (notice that there are extra variables for
+; labelFont, textFont, menuFont etc.)
+;
+font                    =fixedFont
+
+;
+; the default view background
+;
+viewBackground          =viewGrey
+
+;
+; space between widgets
+;
+viewSpacing             nil "defaults to 1mm"
+
+;
+; when drawing shadow and light (3D-effect)
+; ignored if is3D is false
+;
+shadowColor             nil     "nil means: use viewBackground darkened"
+lightColor              nil     "nil means: use viewBackground lightened"
+halfShadowColor         nil     "nil means: some default"
+halfLightColor          nil     "nil means: some default"
+
+;
+; how are views highlighted when the focus is stepped
+; via the keyboard (#FocusNext i.e. Ctrl-CursorRight / #FocusPrevious i.e. Ctrl-CursorLeft) ?
+;
+focusColor              Color red       "red is the default anyway"
+focusBorderWidth        2               "2 is the default anyway"
+
+;
+; show a shadow under popup views ?
+; if popupShadowColor is non-nil, shadow is drawn in this
+; solid color; otherwise shadow is drawn by halftoning the pixels below.
+; This may be slow on some X-servers.
+;
+popup.shadow             false   
+popup.shadowColor        Color black
+popup.level              nil     
+popup.borderWidth        1            "2D styles only"
+popup.borderColor        Color black  "2D styles only"   
+;
+; this controls if popups have to be clicked again to go away (if false)
+; or vanish automatically, when the button is released (if true)
+; the default is true
+;
+popup.hideOnRelease      true    
+; UNIMPLEMENTED. popup.edgeStyle          nil          "or #soft"   
+
+;
+; menus
+;
+menu.font                    =variableFont
+menu.foregroundColor         nil "means: use default from superclass"
+menu.backgroundColor         nil "means: use default from superclass"
+menu.hilightForegroundColor  =menu.backgroundColor  "if level is ~~ 0, default is menuForegroundColor"
+menu.hilightBackgroundColor  =menu.foregroundColor  "if level is ~~ 0, default is menuBackgroundColor"
+menu.hilightLevel            0
+menu.separatingLineLevel     0
+menu.checkColor              nil "means: use fgColor"
+menu.showAccelerators        true
+menu.subMenuPopInRightHalfOnly  false "if true, only pop submenus if pointer is in rightHalf"
+
+;
+; pullDownMenu takes menu style if not specified otherwise
+;
+pullDownMenu.viewBackground          =menuViewBackground
+pullDownMenu.foregroundColor         =menuForegroundColor
+pullDownMenu.backgroundColor         =menuBackgroundColor
+pullDownMenu.hilightForegroundColor  =menuHilightForegroundColor
+pullDownMenu.hilightBackgroundColor  =menuHilightBackgroundColor
+pullDownMenu.shadowColor             =menuShadowColor
+pullDownMenu.lightColor              =menuLightColor
+pullDownMenu.font                    =menuFont
+pullDownMenu.edgeStyle               nil    "or #soft"
+pullDownMenu.separatingLines         true
+pullDownMenu.level                   1
+pullDownMenu.hilightLevel            =menuHilightLevel "ifnil: 0"
+pullDownMenu.autoselectFirst         false
+
+;
+;if #toggle pressing an item again (in the pull-menus item) hides a shown (kept)
+;menu. Otherwise a press outside of the item-area is required to hide the menu.
+;
+pullDownMenu.toggleMode              #toggle
+
+;
+;if true, menus topview is raised when an entry is activated
+;
+pullDownMenu.raiseTop                true
+
+;
+; popupList
+;
+popUpList.popPosition                nil   "or #shifted, or #below"
+
+;
+; label defaults 
+; (these are inherited by Button, Toggles etc. if not redefined)
+
+label.foregroundColor        Color black
+label.backgroundColor        =viewBackground
+label.font                   =fixedFont
+
+;
+; buttons, toggles etc.
+;
+button.font                      nil     "nil means: use font"
+button.edgeStyle                 nil     "or #soft"
+button.borderWidth               nil     "nil means: use value of borderWidth"
+button.activeLevel               -1
+button.passiveLevel              1
+button.foregroundColor           nil     "nil means: use label-value"
+button.backgroundColor           nil     "nil means: use label-value"
+button.font                      nil     "nil means: use label-value"
+button.disabledForegroundColor   Color grey
+button.disabledBackgroundColor   nil     "nil means: use bgColor"
+button.enteredForegroundColor    nil     "nil means: use fgColor"
+button.enteredBackgroundColor    nil     "nil means: use bgColor"
+button.activeForegroundColor     nil     "nil means: use fgColor"
+button.activeBackgroundColor     nil     "nil means: use bgColor"
+button.returnButtonHasImage      true    "place a return-icon into defaultButtons"
+button.returnButtonHasBorder     false   "place a border around defaultButtons"
+
+; arrow buttons in scrollBars
+;
+arrowButton.style                 nil    "choose one of (#st80 #motif #mswindows nil)"
+arrowButton.foregroundColor       nil    "nil means: use buttons default"
+arrowButton.activeForegroundColor nil    "nil means: use buttons default"
+arrowButton.activeBackgroundColor nil    "nil means: use buttons default"
+arrowButton.upFormFile            'ScrollUp.xbm'
+arrowButton.downFormFile          'ScrollDn.xbm'
+arrowButton.leftFormFile          'ScrollLt.xbm'
+arrowButton.rightFormFile         'ScrollRt.xbm'
+arrowButton.activeLevel           nil    "nil means: use buttons default"
+arrowButton.passiveLevel          nil    "nil means: use buttons default"
+
+;
+; show a little lamp (a la IRIS) in toggles ?
+;
+toggle.showLamp          false         "false means: no lamp"
+toggle.lampColor         Color yellow  "ignored if above is false"
+toggle.lampWidthMM       1.8           "mm"
+toggle.lampHeightMM      3.5           "mm"
+
+;
+; the color of checkmarks (normally black; IRIS shows them red)
+;
+checkToggle.checkColor   Color black
+checkToggle.bitmapFile   'CheckOn.xbm'
+checkToggle.style        #cross       "or #check only taken if file is nil"
+checkToggle.activeBackgroundColor  nil   "means: use buttons default"
+checkToggle.activeLevel            nil   "means: use buttons default"
+checkToggle.passiveLevel           nil   "means: use buttons default"
+
+noteBook.halfLightColor          =button.halfLightColor
+noteBook.halfShadowColor         =button.halfShadowColor
+noteBook.shadowColor             =button.shadowColor
+noteBook.lightColor              =button.lightColor
+"/ noteBook.foregroundColor           =button.foregroundColor
+"/ noteBook.disabledForegroundColor   =dbutton.isabledForegroundColor
+noteBook.canvasFrameLevel          1
+noteBook.edgeStyle                 #soft
+
+;
+; text view backgrounds - this is not the same as
+; textBackgroundColor (although it looks better if it is ...)
+;
+textView.background              Color white
+TextView.st80Selections         false   "/ enables ST80 style doubleClick
+
+;
+; texts in ListView, TextView, EditTextView etc.
+;
+text.foregroundColor             Color black
+text.backgroundColor             Color white
+text.font                        =fixedFont
+text.tabPositions                #(1 9 17 25 33 41 49 57 65 73 81 89 97 105 113 121 129 137 145)
+
+textCursor.foregroundColor       Color white
+#if Screen current hasColors
+textCursor.backgroundColor       Color red
+#else
+textCursor.backgroundColor       Color black
+#endif
+textCursor.type                  #block "choose one of (#block #ibeam #Ibeam #caret #solidCaret #bigCaret #bigSolidCaret)"
+textCursor.typeNoFocus          nil   "/ means same as textCursor; #none is also allowed
+
+;
+; text view selections
+;
+text.wordSelectCatchesBlanks     false
+text.st80Selections              false
+
+text.selectionForegroundColor    =text.backgroundColor
+#if Screen current hasColors
+text.selectionBackgroundColor    Color green
+#else
+#  if Screen current hasGreyscales
+text.selectionBackgroundColor    Color grey
+#  else
+text.selectionBackgroundColor    =text.foregroundColor
+#  endif
+#endif
+editText.requestFocusOnPointerEnter     true   "/ anded with UserPrefs
+
+;
+; text in editfields
+;
+editField.foregroundColor           Color black
+editField.backgroundColor           Color white
+editField.selectionForegroundColor  Color white
+editField.selectionBackgroundColor  Color black
+editField.font                      =fixedFont
+editField.requestFocusOnPointerEnter true       "/ anded with UserPrefs
+editField.cursorType                nil "/ means same as textCursor
+editField.cursorForegroundColor     nil "/ means same as textCursor
+editField.cursorBackgroundColor     nil "/ means same as textCursor
+
+;
+; special values for the transcript
+;
+transcript.foregroundColor       Color black
+transcript.backgroundColor       Color white
+transcript.cursorForegroundColor =transcript.backgroundColor
+transcript.cursorBackgroundColor =transcript.foregroundColor
+
+;
+; highlighting errors in codeviews
+;
+codeError.selectionForegroundColor       =text.selectionForegroundColor
+#if Screen current hasColors
+codeError.selectionBackgroundColor       Color red
+#else
+codeError.selectionBackgroundColor       =text.selectionBackgroundColor
+#endif
+
+;
+; selection-in-list
+;
+selection.multiSelectionModifier         nil "means: #Shift; alternative: #Control"
+selection.foregroundColor                nil "means: use text-backgroundColor"
+selection.backgroundColor                nil "means: use viewBackground"
+selection.hilightForegroundColor         nil "means: use backgroundColor"
+selection.hilightBackgroundColor         nil "means: use foregroundColor"
+selection.hilightFrameColor              nil "means: no frame around selection"
+selection.hilightLevel                   0
+selection.hilightStyle                   nil "means: depend on styles name"
+selection.font                           nil "means: use textFont"
+selection.disabledForegroundColor        nil "means: use grey"
+;NOTIMPL selection.rightArrowStyle
+selection.rightArrowLevel                1
+selection.requestFocusOnPointerEnter     true  "/ anded with UserPrefs
+selection.highlightEnterItem             false "/ underline-highlight item under cursor
+
+;
+; variable panels
+;
+variablePanel.barHeight          nil "height in pixels. nil means: use barHeightMM or default"
+variablePanel.barWidth           nil "width in pixels. nil means: use barWidthMM or default"
+
+variablePanel.barHeightMM        2
+variablePanel.barWidthMM         3
+
+variablePanel.showHandle         true
+variablePanel.handlePosition     scrollbar.position "/ OLD: #right "#center #left"
+variablePanel.handleStyle        nil    "nil means: as appropriate per style-name; i.e. #next., #motif ..."
+;                                      in addition to the known ones, 
+;                                      #none, #iris, #line, #motif or #full are also allowed                                        
+variablePanel.handleColor        Black  "only for #iris, #normal and #mswindows"
+variablePanel.handleLevel        2      "only if not #line"
+
+; OBSOLETE: variablePanel.trackingLine       false  "false means: track bar; true means: only track line"
+variablePanel.trackingStyle      #solidRectangle  "/ means: rectangle track. 
+						 "/ Also possible:or: #solidLine or: #dashedLine
+variablePanel.separatingLine     false  "true means: draw an edged line in addition to handle"
+variablePanel.barHeight          2
+
+scrolledView.level               -1                 "level of scrolled view. -1 for 3D styles; 0 for 2D styles"
+scrollableView.level             nil                "nil: as specified elsewhere; only 0 for openWin"
+scrolledView.borderWidth         nil                "nil: slave views own preferrence; 1 in openWin"
+scrolledView.margin              =viewSpacing // 2  "outer margin around scrolledView"
+scrollBar.spacing                =viewSpacing // 2  "space between scrolledview and scrollBar"
+scrollBar.hiding                 false              "/ automatic hiding of useless scrollBars
+
+
+;
+; scrollbar position in scrolled views
+;
+scrollBar.position               #left   "or: #right"
+
+;
+; scrollbars
+;
+scrollBar.buttonPositions        #around         "or: #top #bottom"         
+scrollBar.level                  0               "level of scrollBar"
+scrollBar.elementSpacing         0               "spacing betwen buttons & thumb"
+scrollBar.disableButtons         false           "shall we disable buttons if appropriate"
+scrollBar.neverMini              false           "force big scrollBars"
+scrollBar.hiding                 false           "hide scrollBars if nothing to scroll"
+
+;
+; scrollers (also used in scrollBars & also affects sliders)
+;
+scroller.viewBackground          Color grey
+scroller.thumbColor              Color white
+scroller.thumbEnteredColor       =scrollerThumbColor
+scroller.thumbFrameColor         Color black "nil means no frame"
+scroller.thumbLevel              0
+scroller.thumbActiveLevel        =scrollerThumbLevel
+scroller.thumbInset              0
+scroller.thumbFixHeight          false
+scroller.thumbEdgeStyle          nil "or #soft"
+scroller.level                   0
+scroller.borderWidth             =borderWidth
+scroller.NTallyMarks             0
+scroller.tallyLevel              0
+scroller.ghostColor              nil     " nil means: no ghosting"
+scroller.ghostLevel              0       "only used if above color is nonNil"
+scroller.snapBack                false   "w95 behavior: snap back if moved out of the scroller"
+scroller.middleButtonJump        false   "xterm behavior: middle button jumps to click position"
+scroller.autoRepeat              true
+scroller.initialRepeatDelay      0.2     "seconds"
+scroller.repeatDelay             0.1     "seconds"
+scroller.vScrollerWidth          nil     " nil means: compute from screens resolution"
+scroller.hScrollerHeight         nil     " nil means: compute from screens resolution"
+scroller.snapBackDistance        30
+scroller.minThumbSize            8
+
+;
+; sliders may have different tally definition than scrollers
+;
+slider.NTallyMarks       1
+slider.tallyLevel        -1
+slider.level             nil     "nil means: inherit from scroller"
+
+miniScroller.size        2.5     "/ millimeters
+
+;
+; framed boxes
+;
+framedBox.foregroundColor        Color black
+framedBox.labelPosition          #topCenter "#topLeft #topRight #bottomLeft #bottomCenter #bottomRight"
+framedBox.font                   nil  "nil means: as inherited from view"
+
+ruler.foregroundColor            nil "nil means: use foregroundColor or Black or White"
+ruler.backgroundColor            nil "nil means: use viewBackground"
+ruler.metric                     nil "nil means: use #mm for german, #inch for all others"
+
+;
+; dialog boxes
+;
+
+dialogBox.okAtLeft               false  "if true: ok at left/cancel at right; if false, vice-versa"
+dialogBox.returnShiftsFocusToOK  false  "if true, return shifts focus to OK button"
+					"(i.e. we need another Return for confirmation)"
+					"if false, Return immediately closes the box with OK"
+;
+; information-box
+;
+informationBox.icon      (Image fromFile:'bitmaps/Information.xbm')
+
+;
+; warnbox
+;
+warnBox.icon             (Image fromFile:'bitmaps/Information.xbm')
+
+;
+; yes/no requests
+;
+requestBox.icon          (Image fromFile:'bitmaps/Request.xbm')
+
+
+html.backgroundColor                Color grey:80
+html.anchorForegroundColor          Color blue darkened
+html.activeAnchorForegroundColor    Color red
+html.activeAnchorBackgroundColor    =htmlBackgroundColor
+html.visitedAnchorForegroundColor   Color red:30 green:0 blue:80
+html.exampleAnchorForegroundColor   Color red:40 green:0 blue:0
+html.anchorUnderline                false
+
+dataSet.labelView.level             -1
+dataSet.labelView.verticalSpace     2
+

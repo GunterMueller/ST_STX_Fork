@@ -1,0 +1,39 @@
+# $Header: /cvs/stx/stx/clients/ColorPanel/Make.proto,v 1.7 1999-12-01 15:29:34 cg Exp $
+#
+# -------------- no need to change anything below ----------
+
+TOP=../..
+MODULE=stx
+MODULE_DIR=clients/ColorPanel
+PACKAGE=$(MODULE):$(MODULE_DIR)
+SUBDIRS=
+LIBNAME=libColorPanel
+
+STCOPT=$(CLIENT_STCOPT)
+STCLOCALOPT=-I$(TOP)/libwidg2 '-package=colorPanel(stx:clients/ColorPanel)' -H. +optspace3 -varPrefix=$(LIBNAME) $(STUBFLAGS)
+
+#
+# local objects
+#
+OBJS=      \
+	   ColorPanel.$(O)           \
+	   ThreeSliderPanel.$(O)     \
+	    HLSPanel.$(O)            \
+	    RGBPanel.$(O)            \
+	   SteppingColorSlider.$(O)  \
+	    SteppingHueSlider.$(O)   \
+	    ColorSlider.$(O)         \
+	    HueSlider.$(O)           \
+	    SaturationSlider.$(O)    \
+	    SteppingSaturationSlider.$(O)    \
+	   ColorWheel.$(O)
+
+all::      otherHeaders classLibRule
+
+otherHeaders: $(TOP)/include/HStepSlider.H
+
+$(TOP)/include/HStepSlider.H:
+	(cd $(TOP)/libwidg2 ; make HStepSlider.c; rm -f HStepSlider.c)
+
+# BEGINMAKEDEPEND
+# ENDMAKEDEPEND

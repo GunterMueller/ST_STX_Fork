@@ -1,0 +1,143 @@
+"*
+ * $Header: /cvs/stx/stx/rules/sampleApp.rc,v 1.2 2000-01-18 08:48:08 cg Exp $
+ *
+ * Example startup script for a standAlone (server) application;
+ * to be used in conjuntion with startSampleAPP shell script.
+ *
+ * This is not usable on its own, but instead to be used as
+ * an example template.
+ * For real use, rename this to APP.rc (APP being the name of your application),
+ * and change the package load expressions below.
+ *"
+
+|debugging appClass appStartSelector|
+
+appName := 'myApp'.
+appClassName := #MyApplicationClass.
+appStartSelector := #open.
+appPackageToLoad := 'myCompany:myApplication'.
+appPackageDir := '../packages'.
+
+
+"/
+"/ if there is no --debug command line arg,
+"/ disable all debugPrinting.
+"/
+debugging := (Smalltalk commandLineArguments includes:'--debug').
+
+debugging ifFalse:[
+    Smalltalk at:#'Smalltalk:StandAlone' put:true.
+    Exception emergencyHandler:(NoHandlerError notifyingEmergencyHandlerForUserProcesses).
+].
+
+Display isNil ifTrue:[
+    Smalltalk beHeadless:true.
+].
+
+(appName , '.rc [info]: reading smalltalk.rc.') infoPrintCR.
+Smalltalk fileIn:'smalltalk.rc'.
+
+"/ overwrite any language setting ...
+"/ Smalltalk language:#german.
+ObjectMemory infoPrinting:false.
+"/ ObjectMemory debugPrinting:false.
+Smalltalk infoPrinting:false.
+Compiler warnings:false.
+
+"/
+"/ Add the APP source directory to the packagePath:
+"/
+(appPackageDir asFilename) exists ifFalse:[
+    (appName , '.rc [error]: missing applications package directory - exit.') errorPrintCR.
+    (Smalltalk commandLineArguments includes:'--debug') ifTrue:[
+	self halt
+    ].
+    Smalltalk exit.
+].
+
+Smalltalk packagePath addFirst:(appPackageDir asFilename pathName).
+Smalltalk flushPathCaches.
+
+"/
+"/ load the detemobil application code
+"/ (typically contained in some shared class libs)
+"/
+appPackageToLoad notNil ifTrue:[
+    (appName , '.rc [info]: Loading application...') printCR. 
+
+    Object userInterruptSignal handle:[:ex |
+	'Interrupted' errorPrintCR.
+	Smalltalk exit.
+    ] do:[
+	Smalltalk silentLoading:true.
+	Smalltalk loadPackage:appPackageToLoad.
+    ].
+].
+
+"/
+"/ see if the application was loadable
+"/
+(Smalltalk at:appClassName) isNil ifTrue:[
+    (appName , '.rc [error]: could not find/load app class - exit.') errorPrintCR.
+    (Smalltalk commandLineArguments includes:'--debug') ifTrue:[
+	self halt
+    ].
+    Smalltalk exit
+].
+
+"/
+"/ see if there are patches to apply
+"/
+'./patches' asFilename exists ifTrue:[
+    (appName , '.rc [info]: loading patches...') infoPrintCR.
+    './patches' asFilename directoryContents do:[:f |
+	Smalltalk fileIn:('./patches/' , f)
+    ]
+].
+
+"/
+"/ save an image for fast start in future runs 
+"/
+Smalltalk addStartBlock:[
+    |appimg arg feedFile|
+
+    '.' asFilename isWritable ifTrue:[
+	appimg := appName , '.img'
+    ] ifFalse:[
+	appimg := '/tmp/' , appName , '.img'
+    ].
+
+    appimg asFilename exists ifFalse:[
+	"/ funny - the image will contain this 
+	"/ startupBlock ...
+	"/ ... but find that APP.img already exists.
+
+"/      (appName , '.rc [info]: saving snapshot image for quick start...') infoPrintCR.
+"/      ObjectMemory snapShotOn:appimg.
+    ].
+
+    "/
+    "/ feed a watchDog (not delivered with the standard system)
+    "/
+    arg := Smalltalk commandLineArguments 
+		detect:[:arg | arg startsWith:'--feedDog:'] ifNone:nil.
+    arg notNil ifTrue:[
+	"/ the rest after the colon is the feed-filename
+	feedFile := arg copyFrom:(arg indexOf:$:)+1.
+	(appName , '.rc [info]: starting WatchDogFeeder on ''' , feedFile , '''...') printCR.
+	WatchDogFeeder startFeeding:feedFile.
+    ].
+
+    (appName , '.rc [info]: starting...') printCR.
+    (Smalltalk at:appClassName) perform:appStartSelector.
+
+    (Smalltalk commandLineArguments includes:'--noDebug') ifTrue:[
+	Debugger := MiniDebugger.
+	Inspector := MiniInspector.
+    ] ifFalse:[
+	Debugger := DebugView ? MiniDebugger.
+	Inspector := InspectorView ? MiniInspector.
+    ]
+].
+!
+

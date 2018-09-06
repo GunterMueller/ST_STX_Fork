@@ -1,0 +1,12 @@
+a mail reader
+
+Its not finished and might have bugs ....
+
+start with:
+
+       MailView start
+
+(will be autoloaded)
+
+The write-back-mailbox function (after letters are deleted) has not been
+tested in depth - so be warned.

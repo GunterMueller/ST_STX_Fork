@@ -1,0 +1,191 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+   <META NAME="Author" CONTENT="Claus Atzkern, eXept software AG, Germany">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.04 [en] (X11; I; Linux 2.0.30 i586) [Netscape]">
+   <TITLE>The Layout of the Widgets</TITLE>
+</HEAD>
+<BODY>
+&nbsp;<A HREF="TOP.html" NOPRINT><IMG SRC="../../../icons/DocsUpArrow.gif" ALT="Using the GUI Painter" NOSAVE HEIGHT=30 WIDTH=30></A>
+<BR>&nbsp;
+<HR ALIGN=LEFT WIDTH="100%">
+<H1>
+<FONT SIZE=+4>The Layout of the Widgets</FONT></H1>
+
+<H2>
+Index</H2>
+
+<UL>
+<LI>
+<A HREF="#INTRO">Introduction</A></LI>
+
+<LI>
+<A HREF="#THELAYOUTTYPES">The Layout Types</A></LI>
+
+<UL>
+<LI>
+<A HREF="#THEFRAMELAYOUT">The <I>Frame</I> Layout</A></LI>
+
+<LI>
+<A HREF="#THEORIGINLAYOUT">The <I>Origin</I> Layout</A></LI>
+
+<LI>
+<A HREF="#THEORIGINALIGNMENTLAYOUT">The <I>Origin Alignment </I>Layout</A></LI>
+
+<LI>
+<A HREF="#THEPOINTLAYOUT">The <I>Point</I> Layout</A></LI>
+
+<LI>
+<A HREF="#THERECTANGLELAYOUT">The <I>Rectangle</I> Layout</A></LI>
+
+<LI>
+<A HREF="#THEEXTENTLAYOUT">The <I>Extent</I> Layout</A></LI>
+</UL>
+</UL>
+&nbsp;
+<H2>
+
+<HR ALIGN=LEFT WIDTH="100%"></H2>
+
+<H2>
+<A NAME="INTRO"></A>Introduction</H2>
+The GUI Painter allows you to change the geometry layout of each widget.
+At the time of writing this document,
+five types of layouts are available.
+(excluding an 'extented'
+ layout, which is set automatically to all widgets whose container
+ organizes
+ the layouts automatically - for example a panel).
+
+<P>The <I>Layout</I> section of the GUI Painter for the widgets provides
+two major services:
+<UL>
+<LI>
+changing the layout type of a widget</LI>
+
+<LI>
+changing the set of values assigned to the current layout type</LI>
+</UL>
+To access the layout of a widget, the widget and the <I>Layout</I> section
+in the control window of the GUI Painter must be selected:
+
+<P>On the bottom of the <I>Layout</I> section, a list of all <I>Layout</I>
+types available for the selected widget is shown (as tabs).
+<BR>
+The default layout type of a widget is derived from its template widget
+from the gallery window. The values can be changed or by selecting another
+layout type, values of the new layout type are computed from the current
+positions of the widget.
+<BR>&nbsp;
+<H2>
+
+<HR ALIGN=LEFT WIDTH="100%"></H2>
+
+<H2><A NAME="THELAYOUTTYPES"></A>The Layout Types</H2>
+
+<H3><A NAME="THEFRAMELAYOUT"></A>The Frame Layout</H3>
+In the Frame layout the origin of the widget is controlled by the left
+and top, the corner or extent is defined by the right and bottom settings.
+Each setting has a relative part plus an offset. In case of relative values,
+the edges will change in relationship to that of its container widget.
+<BR>
+<P><IMG SRC="../../../pictures/GUIPainterLayoutFrame.gif" NOSAVE HEIGHT=285 WIDTH=383>
+<BR>The <I>Frame</I> section
+
+<P>
+For example, to arrange for a widget to always fill the top half of its
+container, give it the following frame values:
+<BR>- 0.0 relative origin left
+<BR>- 0.0 relative origin top;
+<BR>- 1.0 relative corner right
+<BR>- 0.5 relative corner bottom
+<BR>- all offsets 0
+
+<BR>
+A <I>Frame</I> layout with zero relative parts is equal to a <I>Rectangle</I>
+layout.
+<BR>
+If a widget has been given a frame layout, the widgets own preferences
+are ignored - the size is completely controlled by the window specification.
+<P>
+
+
+<H3><A NAME="THEORIGINLAYOUT"></A>The Origin Layout</H3>
+The <I>Origin</I> layout controls the origin of the widget via a relative
+part plus an offset. In case of relative values the origin will change
+in relationship to that of its container widget. The right and bottom value
+derives from the widget extent.
+
+<P><IMG SRC="../../../pictures/GUIPainterLayoutOrigin.gif" NOSAVE HEIGHT=285 WIDTH=383>
+<BR>The <I>Layout/Origin</I> section
+
+<P>
+If a widget has been given an origin-layout , the widgets extent is
+controlled by the widget itself (i.e. its preferred extent is taken).
+However, the widgets origin is controlled by the window specification.
+
+
+
+<H3><A NAME="THEORIGINALIGNMENTLAYOUT"></A>The AlignmentOrigin Layout</H3>
+Since the extent of a widget could be configured variable (not fixed),
+the user may want to define a fixed edge to its current origin. The left
+and top settings controls the origin of the widget. The user can now define
+any reference point within the widget to be fixed. If the extent of the
+widget changed, for example by switching the font, the widget is resized
+whereby the reference point keeps its position. The reference point itself
+is specified as a fraction of the widget size.
+
+<P><IMG SRC="../../../pictures/GUIPainterLayoutOriginAlignment.gif" NOSAVE HEIGHT=285 WIDTH=383>
+<BR>The <I>Layout/Origin Alignment</I> section
+
+<P>
+Notice, that the Origin layout above is a special case of the
+AlignmentOrigin layout (reference point is the top-left corner).
+
+
+<H3><A NAME="THEPOINTLAYOUT"></A>The Point Layout</H3>
+In the <I>Point</I> layout the origin of the widget is controlled by the
+left and top settings via a fixed offset within its container widget. The
+right and bottom value are derived from the widget extent.
+
+<P><IMG SRC="../../../pictures/GUIPainterLayoutPoint.gif" NOSAVE HEIGHT=285 WIDTH=383>
+<BR>The <I>Layout/Point </I>section
+
+<P>
+Notice, that the Point layout is a special case of the
+Origin layout above (zero relative parts).
+
+
+<H3><A NAME="THERECTANGLELAYOUT"></A>The Rectangle Layout</H3>
+In the <I>Rectangle</I> layout all edges of the widget are fixed within
+its container widget. Each setting is defined via an absolute offset. There
+is no relationship of the sizes to that of its container. When the container's
+size is variable, you may want to arrange the widget size in relation to
+that of the container. Thus you may use a <I>Frame</I> layout with all
+settings set to relative.
+
+<P><IMG SRC="../../../pictures/GUIPainterLayoutRectangle.gif" NOSAVE HEIGHT=285 WIDTH=383>
+<BR>The <I>Layout/Rectangle</I> section
+
+<P>
+Notice, that the Rectangle layout is a special case of the
+Frame layout above (zero relative parts).
+
+
+<H3><A NAME="THEEXTENTLAYOUT"></A>The Extent Layout</H3>
+In the <I>Extent</I> layout the widget's origin is controlled by its container
+widget; only the extent of the widget is specified.
+
+<P><IMG SRC="../../../pictures/GUIPainterLayoutExtent.gif" NOSAVE HEIGHT=281 WIDTH=383>
+<BR>The <I>Layout/Extent</I> section
+<BR>&nbsp;
+
+<P>
+<HR>
+
+<P><IMG SRC="../../../icons/stx.gif" NOSAVE NOPRINT HEIGHT=48 WIDTH=47 ALIGN=CENTER>
+<BR>Copyright &copy; 1998 eXept Software AG, all rights reserved
+<BR>
+<HR>
+</BODY>
+</HTML>

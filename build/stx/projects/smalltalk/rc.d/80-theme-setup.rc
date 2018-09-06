@@ -1,0 +1,3 @@
+OperatingSystem isUNIXlike ifTrue:[
+    View defaultStyle:#Adwaita.
+]

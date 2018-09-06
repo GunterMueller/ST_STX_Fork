@@ -1,0 +1,323 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - WWW Server</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="goody_smacc.html">     <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="goody_swiki.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>WWW Server</H1>
+
+<H2>Overview</H2>
+
+This goody implements a Web Server with additional functionality.
+<P>
+In addition to serving HTTP file requests, this server allows for
+smalltalk applications to register themself as request handlers,
+and thereby generating HTML responses dynamically (i.e. programmatically).
+<BR>
+This dynamic HTML may be either generated directly by a smalltalk
+object, or by executing embedded smalltalk found in a file document.
+<P>
+The
+<code><A HREF="onlyInSTX.html"
+   INFO="Browse HTTPServer"
+   ACTION="browse:HTTPServer"
+>HTTPServer</a></code>
+ consist of a merged functionality from the original ST/X
+server, the PWS (Pluggable Web Server) code as provided with the Squeak PWS-Swiki,
+compatibility code to support Comanche applications and new additional features for
+performance, administration and ease of configuration.
+<BR>
+Features are:
+<UL>
+<LI>Supports multiple servers on multiple ports
+<LI>Regular file access via a configurable root directory (or multiple virtual roots)
+<LI>Configurable file caching
+<LI>Configuration via the Launcher's settings dialog and/or via HTTP.
+<LI>Keep alive connections (HTTP1.1)
+<LI>Basic and MD5 based digest authentication schemes
+<LI>Temporary (graphic) links for generated images
+<LI>SOAP callout mechanism
+<LI>Can be compiled into a standAlone webServer (see the projects/webServer directory)
+<LI>Pluggable Service Applications
+<BR>Includes demos for
+ <UL>
+ <LI>hello world
+ <LI>process monitor (i.e. monitoring ST/X)
+ <LI>a very simple webShop application
+ <LI>a sophisticated webSlideShow application
+ </UL>
+
+<LI>PWS-applications:
+<BR>
+Including:
+ <UL>
+ <LI>editable pages (everyone may edit)
+ <LI>authorized pages (edit by authorized people only)
+ <LI>embedded smalltalk pages
+ </UL>
+
+<LI>ComSwiki (Comanche Swiki)
+<BR>
+This includes:
+ <UL>
+ <LI>modern Swiki with flexible/dynamically changable styles
+ <LI>administration via http
+ </UL>
+
+<LI>STT (Smalltalk templates)
+<BR>
+This provides functionality similar to php; html pages, which may contain embedded
+smalltalk code (as processing instructions).
+<LI>CGI callout mechanism
+<LI>Configurable reply presentors for adjustable look (corporate identity)
+<LI>FCGI (callin from apache) setup possible
+
+
+</UL>
+<P>
+
+
+
+<H2>Documentation</H2>
+See the documentation methods in HTTPServer;
+<BR>
+Especially:
+<CODE><PRE>
+    HTTPServer howToStart.
+    HTTPServer howToConfigure.
+</PRE></CODE>
+
+ComSwiki documentation found on <A HREF="http://minnow.cc.gatech.edu/swiki">Swiki-FAQ</A>.
+<BR>
+And, "<I>use the source, Luke</I>".
+
+
+There is a lot of information to be found on the various swikis;
+however, the following seems to be of special interest and is
+therefore included here:
+
+
+
+
+<H2>Examples</H2>
+Start up the HTTPserver (see the launcher's communications-settings dialog),
+and your favourite browser.
+<BR>
+As there are now quite a number of options and configuration parameters,
+we recommend using the advanced settings dialog to configure the server.
+
+<P>
+However, the server may also be started and configured programmatically,
+by evaluating:
+<CODE><PRE>
+    HTTPServer startServer
+</PRE></CODE>
+or:
+<CODE><PRE>
+    HTTPServer startServerOnPort:aPortNumber
+</PRE></CODE>
+
+<P>
+<b>Notice</b>, that under Unix, the HTTPServer cannot usually serve the default HTTP port (80),
+because this is a system port, which cannot be served by non-priviledged users
+ (Windows, as usual, does not care much about priviledges).
+<P>
+Therefore, the default port is 8080, which is a non-priviledged port
+(you must run ST/X as superuser, or make it a setuid-root program,
+in order to allow serving the priviledged port). Another secure approach is to
+have apache run as your primary server in the standard port, and use an FCGI connection
+to the ST/X server. That is also the setup we use on our own www.exept.de webserver.
+<P>
+Do not forget to enter the correct port number in the browser
+(i.e. enter the URL <CODE>"http://hostname:port/"</CODE>).
+<P>
+<b>Late note:</b>
+On many systems, the 8080-port is also in use (by the zope webServer).
+<BR>
+So you may want to use 9090, 8081 or 8088 (sigh).
+<P>
+Depending on which features were enabled in the settings dialog,
+the default page includes links to demonstrate features of the server.
+<BR>
+If you see an empty page or an error message in your webBrowser,
+(re-)check your service settings in the launcher's webService settings dialog.
+
+<P>
+Be aware, that the home page is just a pluggable service, and that it is
+very easy to create your own one (have a look at the
+<code><A HREF="onlyInSTX.html"
+   INFO="Browse Demos::WebHomePageForSTX"
+   ACTION="browse:Demos::WebHomePageForSTX"
+>WebHomePageForSTX</a></code> class to see how).
+<P>
+Quick start:
+<BR>
+Start the server on 8081:
+
+<TABLE width="100%" bgcolor="#eedddd"><TR><TD>
+<A type="example"><CODE><PRE>
+    HTTPServer startServerOnPort:8081
+</PRE></CODE></a>
+</TD></TR></TABLE>
+
+Open a browser on it:
+
+<TABLE width="100%" bgcolor="#eedddd"><TR><TD>
+<A type="example"><CODE><PRE>
+    OperatingSystem executeCommand:'/usr/local/mozilla/mozilla localhost:8081/'
+</PRE></CODE></a>
+</TD></TR></TABLE>
+
+
+<H2><A NAME="CREATING_NEW_WEBSERVICES">Creating New WebServices</A></H2>
+
+New services can be either be created by using the
+STT (embedded smalltalk code) mechanism,
+or by subclassing either
+<code><A HREF="onlyInSTX.html"
+   INFO="Browse HTTPService"
+   ACTION="browse:HTTPService"
+>HTTPService</a></code>
+or
+<code><A HREF="onlyInSTX.html"
+   INFO="Browse HTTPActionService"
+   ACTION="browse:HTTPActionService"
+>HTTPActionService</a></code>
+ and defining the minimum required protocol there.
+<p>
+The difference is that an <code>HTTPService</code> is defined by at lease two URL-path components;
+the first selects the service whereas the second is used as a message selector.
+For protection, the message selector is validated by asking the service for its <code>allowedMessages</code>.
+
+<p>
+In contrast to this, <code>HTTPActionService</code> instances are always invoked via their <code>process:</code>
+method (i.e. it has the freedom of simulating any document hierarchy below.
+<p>
+Typically, <code>HTTPService</code> instances are better suited for RPC-like action calls
+(parametrized by additional arguments after the 2nd URL component),
+whereas <code>HTTPActionService</code> instances are recommended if fileSystem hierarchies are to be
+emulated.
+
+<p>
+STT examples are found in the "<code>goodies/webServer/data</code>" directory.
+<BR>
+Examples of subclasses of
+<code>HTTPService</code> and <code>HTTPActionService</code> are found via the browser.
+
+
+
+<H2><A NAME="STANDALONE_WEBSERVER">Standalone (headless) WebServer Operation</A></H2>
+
+Under Unix/Linux systems, the webServer can be built as a standalone (non-GUI) server application,
+which can be started automatically via the init process (i.e. automatically, when the
+operatingsystem is bootstrapped).
+<P>
+Makefiles and additional code for the standAlone server is found in the "<CODE>projects/webServer</CODE>"-directory.
+<P>
+To build the standAlone webServer executable, enter (at the shell-command level):
+<CODE><PRE>
+    $ cd projects/webServer
+    $ make
+</PRE></CODE>
+
+After building, enter:
+<CODE><PRE>
+    $ webServer --help
+</PRE></CODE>
+for usage information.
+
+<H2>Licensing</H2>
+This addOn package is NOT to be considered part of the base ST/X system.
+It is provided physically with the ST/X delivery, but only for your
+convenience.
+<P>
+Legally, it is a freeware or public domain goody, as specified in
+the goodies copyright notice (see the goodies source).
+
+<H2>No Warranty</H2>
+This goody is provided AS-IS without any warranty whatsoever.
+
+
+<H2>Apache as frontEnd</H2>
+
+Text from Xerxes R&aring;nby (found on <A HREF="http://wiki.squeak.org/swiki/19">Swiki-FAQ</A>)
+<P>
+Apache as a "frontend" on top of Comanche using "reverse proxying" and "virtual hosting".
+Here is a vhost entry for the apache 1.3 httpd.conf file
+for a virtual domain called "http://www.foo.com"
+<BR>
+I hope this will help.
+
+don't forget to load your proxy and rewrite module, rewrite is used to handle some misplaced url's.
+<CODE><PRE>
+    LoadModule proxy_module /usr/lib/apache/modules/libproxy.so
+    LoadModule rewrite_module /usr/lib/apache/modules/mod_rewrite.so
+
+    &lt;VirtualHost&gt;
+    ServerName wiki.foo.com
+    #basic you will need something like this
+    ProxyPass / http://www.foo.com:8000/foo/
+    ProxyPassReverse / http://www.foo.com:8000/foo/
+    RewriteEngine on
+    RewriteRule ^/foo/(.*)$ /$1 [R]
+
+    #move of some files located in / on the original swiki
+    RewriteRule ^/comanche.gif$ http://www.foo.com:8000/comanche.gif [R]
+    RewriteRule ^/favicon.ico$ http://www.foo.com/favicon.ico [R]
+
+    #These rules makes apache handle heavy workload for uploads and button graphics.
+    #note these two "speedups" will not work on ComSwiki 1.3 for files with spaces in the filename.
+    RewriteRule ^/schemes/foo/(.*)$ http://www.foo.com/foo_scheme/$1 [R]
+    RewriteRule ^/uploads/(.*)$ http://www.foo.com/foo_uploads/$1 [R]
+
+    #Forces edit page requests to go to the slower wiki. if you never want to reveal your true swiki url remove this line.
+    RewriteRule ^/(.*.edit)$ http://www.foo.com:8000/foo/$1 [R]
+
+    &lt;/VirtualHost&gt;
+</PRE></CODE>
+
+Notice from eXept: we did not validate the above information.
+
+
+
+
+<H2>Notice</H2>
+
+The PWS code is no longer maintained (but kept there for backward compatibility).
+We recommend using the HTTPService interface scheme for new applications.
+
+
+<H2>Origin/Authors</H2>
+HTTPServer is a merge of the original file-based ST/X httpServer,
+the PWS (Pluggable Web Server) as provided by Squeak developers,
+and (new!) the ComSwiki code.
+<P>
+Origin/Authors:
+<BR>
+Squeak (PWS and ServerAction hierarchy))
+<BR>
+Claus Gittinger (original HTTPServer, file access, cgi, caching &amp; keepAlive)
+<BR>
+Christian Penk (ComSwiki layer, refactoring into Services)
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.21 $
+</BODY>
+</HTML>

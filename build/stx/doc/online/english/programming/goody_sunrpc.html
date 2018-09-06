@@ -1,0 +1,150 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - SunRPC Remote Procedure Call Implementation</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="rose.html"> <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html"> <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="goody_javaScript.html"> <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>SunRPC Remote Procedure Call Implementation</H1>
+
+<H2>Overview</H2>
+
+This framework implements the complete SunRPC Remote Procedure Call protocol,
+including both client and server modes, an IDL parser, XDR marshalling,
+a portMapper, NFS server and NFS-mount implementations, and a bunch of demo applications.
+
+
+<H2>Documentation</H2>
+See the README and documentation protocols of the various SunRPC classes.
+
+<H2>DemoServer Example</H2>
+
+A minimal RPC setup is found in the two classes DemoServer and DemoClient;
+<H4>Server</H4>
+
+The DemoServer provides a single rpc-procedure, <CODE>"showOnTranscript"</CODE>,
+expecting a string argument, which is displayed on the transcript.
+<P>
+The range of ip-port numbers which the server uses is defined by the following method:
+<CODE><PRE>
+    portNumbers
+	^ #( 44400 to: 44499 )
+</PRE></CODE>
+this lets the server process choose any free port in the given range.
+Notice that clients of the server need not know the concrete port number, as
+all rpc servers register themselfes at the portmapper.
+The portmapper maps the programs number (as specified in its xdr definition) to
+the port number on which the server sits.
+<BR>
+Portmapper is usually already installed on your system (on all unix systems);
+however, a smalltalk implementation of it is also part of the ST/X distribution.
+<P>
+
+The interface is defined in the classes <CODE>xdr</CODE> method, which is defined
+as:
+<CODE><PRE>
+    xdr
+	^ '
+
+	typedef string stringArg&lt;&gt;;
+
+	program DEMO {
+		version DEMOVERS {
+			void
+			null(void) = 0;
+
+			boolean
+			showOnTranscript(stringArg) = 1;
+		} = 1;
+	} = 200199;
+    '
+</PRE></CODE>
+Notice, that all RPC servers should provide the <CODE>"null"</CODE> procedure,
+which can be used for connectivity testing.
+<BR>
+However, the programmer is not required to implement this method (it is inherited, from
+the DemoServers superclass: <CODE>RPCServer</CODE>.
+<P>
+The implementation of the <CODE>showOnTranscript</CODE> is simple:
+<CODE><PRE>
+    showOnTranscript:argVector
+	Transcript showCR:(argVector at:1).
+	^ true.
+</PRE></CODE>
+
+Thats all - the server is started by evaluating:
+<CODE><PRE>
+    SunRPC::DemoServer start
+</PRE></CODE>
+After that, you should find the server process in the ProcessMonitor, as it waits
+for incoming connections.
+<BR>
+Also, you can should find the server registered in the portmapper,
+by executing (on the shell level) the following command (as root on most systems) :
+<CODE><PRE>
+    # rpcinfo -p
+</PRE></CODE>
+the programnumber (20199) should be in the list.
+
+
+<H4>Client</H4>
+Now, a client could be implemented in any programming language with RPC support
+(notice, that RPC implementations are available for virtually all programming languages).
+<P>
+A smalltalk client is especially simple; only two methods are required to implement
+a DemoClient: <CODE>xdr</CODE> (on the class side) to define the interface, and
+a call-wrapper.
+<P>
+The interface definitionis the same as the servers definition, therefore,
+<CODE>xdr</CODE> is defined in DemoClient as:
+<CODE><PRE>
+    xdr
+	^ DemoServer xdr
+</PRE></CODE>
+
+the call wrapper is:
+<CODE><PRE>
+    showOnTranscript:aString
+	|reply|
+
+	reply := self operation:#showOnTranscript argument:aString.
+	^ reply
+</PRE></CODE>
+
+<P>
+Now, a client request can be sent with:
+<CODE><PRE>
+    |demoClient|
+
+    demoClient := SunRPC::DemoClient toHost:'localhost'.
+    demoClient showOnTranscript:'hello world'.
+</PRE></CODE>
+
+<H2>No Warranty</H2>
+This goody is provided AS-IS without any warranty whatsoever.
+
+
+<H2>Origin/Authors</H2>
+<BR>
+    Claus Gittinger
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 2002 eXept Software AG
+
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.5 $
+</BODY>
+</HTML>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project name="stx.libjava.tests" default="compile" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+    <import file="build.auto.xml"/>
+
+    <path id="test.classpath">
+        <path refid="build.classpath"/>
+        <pathelement path="${build.bin.dir}"/>
+        <pathelement path="${build.bin-tests.dir}"/>
+        <pathelement path="${TOP}/libjava/tests/java/bin"/>        
+    </path> 
+
+    <target name="compile.classloader-tests-classes" extensionOf="compile.post">
+        <mkdir dir="classloader-tests-classes/bin"/>
+        <javac srcdir="classloader-tests-classes/src"
+               destdir="classloader-tests-classes/bin"
+               classpathref="build.classpath"/>
+    </target>
+    
+    <target name="compile.INVOKEX" extensionOf="compile.post">
+        <mkdir dir="bin-tests-INVOKEX"/>
+
+    	<javac 
+            debug="true"
+            debuglevel="lines,vars,source"
+            srcdir="src-tests-INVOKEX"
+            destdir="bin-tests-INVOKEX"
+            classpathref="build.classpath"/>
+
+        <delete>
+            <fileset dir="bin-tests-INVOKEX">
+                <include name="stx/libjava/tests/mocks/MissingMethodA.class"/>                                  	
+            </fileset>
+        </delete>
+        
+        <mkdir dir="bin-tests-INVOKEX-missing-methods"/>
+        <javac 
+            debug="true"
+            debuglevel="lines,vars,source"
+            srcdir="src-tests-INVOKEX-missing-methods"
+            destdir="bin-tests-INVOKEX-missing-methods"
+            classpathref="build.classpath">
+        </javac>
+        
+        <!-- 
+        <copy file="bin-tests-INVOKEX-missing-methods/stx/libjava/tests/mocks/MissingMethodI.class"
+            tofile="bin-tests-INVOKEX/stx/libjava/tests/mocks/MissingMethodI.class"/>
+        -->        
+        <copy file="bin-tests-INVOKEX-missing-methods/stx/libjava/tests/mocks/MissingMethodA.class"
+            tofile="bin-tests-INVOKEX/stx/libjava/tests/mocks/MissingMethodA.class"/>
+        
+    </target>
+
+    <target name="clean.classloader-tests-classes" extensionOf="clean.post">
+        <delete dir="classloader-tests-classes/bin" />
+    </target>
+
+    <target name="clean.INVOKEX" extensionOf="clean.post">
+        <delete dir="bin-tests-INVOKEX" />
+        <delete dir="bin-tests-INVOKEX-missing-methods" />
+    </target>
+    
+    <target name="test.INVOKEX">
+        <java classpath="${build.classpath.prereqs}:bin-tests-INVOKEX" classname="stx.libjava.tests.vm.INVOKEX"/>
+    </target>
+
+    <target name="test.run.bin" extensionOf="test.run.post">
+        <mkdir dir="${test.report.dir}"/>        
+        <junit fork="yes" failureproperty="test.failure">
+            <classpath refid="test.classpath"/>                            
+            <formatter type="plain"/>
+            <batchtest todir="${test.report.dir}">
+                <fileset dir="${build.src.dir}">
+                    <include name="**/*.java"/>                    
+                    <exclude name="stx/libjava/tests/mocks/**/*.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
+    <target name="test.run.INVOKEX" extensionOf="test.run.post">
+        <mkdir dir="${test.report.dir}"/>        
+        <junit fork="yes" failureproperty="test.failure">
+            <classpath>
+            	<pathelement path="bin-tests-INVOKEX"/>
+            	<path refid="build.classpath"/>
+            </classpath>                         
+            <formatter type="plain"/>
+            <batchtest todir="${test.report.dir}">
+                <fileset dir="src-tests-INVOKEX">
+                    <include name="**/*.java"/>                    
+                    <exclude name="stx/libjava/tests/mocks/**/*.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+</project>

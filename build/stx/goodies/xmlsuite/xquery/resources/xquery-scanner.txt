@@ -1,0 +1,25 @@
+<whitespace> :  [\f\n\r\t\v]+;
+<comment> : \(\:.*\:\);
+<char> : [a-zA-Z];
+<digit> : [0-9];
+<char_ref> : ((&\#[0-9]+\;) | (&\#x[0-9a-fA-F]+\;));
+
+<ncnamechar> : (<char> | <digit> | \. | \- | \_);
+<ncname> : (<char> | \_) (<ncnamechar>)*;
+<qname> : (<ncname> \:)? <ncname>;
+
+<digits> : [0-9]+;
+<integer_literal> : <digits>;
+<decimal_literal> : (\.<digits>) | (<digits>\.[0-9]*);
+<double_literal> : ((\.<digits>) | (<digits>(\.[0-9]*)?)) [eE] [\+\-]? <digits>;
+
+<predefined_entity_ref> : &(lt | gt | amp | quot | apos)\;;
+<escape_quot> : "";
+<escape_apos> : '';
+
+<string_literal> : (" (<predefined_entity_ref> | <char_ref> | <escape_quot> | [^"&])* ") | (' (<predefined_entity_ref> | <char_ref> | <escape_apos> | [^'&])* ');
+
+<element_content_char> : <char> | <digit> | [ ];
+<element_content_char2> : <char> - [{}<&] | <digit>;
+<qout_attr_content_char> : <char> - ["{}<&];
+<apos_attr_content_char> : <char> - ['{}<&];

@@ -1,0 +1,29 @@
+/* XPM */
+static char *poland_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 20 2 1",
+/* colors */
+"d c #ff0000",
+"c c white",
+/* pixels */
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"dddddddddddddddddddddddddddddddd",
+"dddddddddddddddddddddddddddddddd",
+"dddddddddddddddddddddddddddddddd",
+"dddddddddddddddddddddddddddddddd",
+"dddddddddddddddddddddddddddddddd",
+"dddddddddddddddddddddddddddddddd",
+"dddddddddddddddddddddddddddddddd",
+"dddddddddddddddddddddddddddddddd",
+"dddddddddddddddddddddddddddddddd",
+"dddddddddddddddddddddddddddddddd",
+};

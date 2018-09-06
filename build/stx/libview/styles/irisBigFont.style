@@ -1,0 +1,15 @@
+; View defaultStyle:#irisBigFont 
+;
+; silicon graphics style with large fonts
+;
+; $Header: /cvs/stx/stx/libview/styles/irisBigFont.style,v 1.2 1995-12-14 15:15:53 cg Exp $
+
+#include 'iris.style'
+
+comment  'Silicon graphics'' iris look alike\with larger text font' 
+
+#if (Language == #german) or:[Language == #de]
+comment  'An Silicon Graphics Iris angelehnter Stil,\mit größerem Zeichensatz für Texte.'
+#endif
+
+textFont Font family:'courier' size:14

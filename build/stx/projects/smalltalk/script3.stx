@@ -1,0 +1,11 @@
+#!stx --script
+"/
+"/ a word count script
+"/
+|wc|
+
+wc := 0.
+[Stdin atEnd] whileFalse:[
+    wc := wc + Stdin nextLine asCollectionOfWords size.
+].
+wc printCR.

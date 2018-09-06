@@ -1,0 +1,119 @@
+<HEAD>
+<TITLE>Using the File Browser - Introduction</TITLE>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="TOP.html">         <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="menu.html">   <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H2><A NAME="INTRO" HREF="TOP.html#I_INTRO">Introduction</A></H2>
+
+FileBrowsers allow inspection and manipulation of files
+and directories.
+In addition to inspecting directories, you can
+also use them as an editor for text files.
+Finally, they can be used to load (and compile)
+Smalltalk source code into the system.
+<P>
+A fileBrowser can be either started by the
+<A HREF="../misc/TOP.html#LAUNCHER">Launcher</A>
+<BR>
+or by evaluating the Smalltalk expression
+<BR>
+<A TYPE="example">
+<CODE><PRE>
+    FileBrowser open
+</PRE></CODE>
+</A>
+in a
+<A HREF="../misc/TOP.html#WORKSPACE">Workspace</A>
+or from within your program.
+<P>
+The above starts the fileBrowser in the current directory.
+To start a browser on some other directory, evaluate:
+<BR>
+<CODE><PRE>
+    FileBrowser openOn:'someDirectory'
+</PRE></CODE>
+
+<P>
+Typically, after startup, a fileBrowser looks like:
+<P>
+<IMG SRC="../../../pictures/fbrowser.gif" ALT="[fig: filebrowser hardcopy]">
+<P>
+It consists of 4 subviews; these are:
+
+<OL>
+<LI><A HREF="pathField.html">path field</A>
+<BR>shows the name of the current directory
+<P>
+<LI><A HREF="#PATTERNFIELD">file pattern field</A>
+<BR>allows a match pattern to be entered
+<P>
+<LI><A HREF="fileList.html">file list</A>
+<BR>shows file- and directory names
+<P>
+<LI><A HREF="contentsView.html">contents view</A>
+<BR>shows a files contents
+<P>
+<LI><A HREF="commandView.html">OS command view</A> (not shown in above figure)
+<BR>allows input of OS (UNIX-) commands
+</OL>
+
+<P>
+To see the contents of a file, simply double-click on the
+corresponding name entry in the file list. If the
+selected item is a text file, its contents is shown in the
+lower (contents-) view.
+<BR>
+If its a bitmap image file (TIFF, JPG etc.), an image inspector
+is opened on its contents.
+<BR>
+If the item
+name represents a directory, a change-directory into this
+directory is performed.
+<P>
+When changing directories, the fileBrowser will automatically look for
+a file named <CODE>".dir.info"</CODE> or <CODE>"README"</CODE>
+and show its contents if present. (so, its a good idea to create such
+a file in every directory, to lead your friends through the directory jungle.)
+<P>
+<A NAME = "PATTERNFIELD">The</A>
+file list will only show files matching the pattern in
+the pattern field, which is by default <CODE>"*"</CODE>, thus matching all
+files. Directories are always shown, unaffected by the match pattern.
+To change the match pattern, move the mouse pointer into the pattern
+field, edit the pattern and type return
+(or <VAR>accept</VAR> in the pattern fields own popupMenu).
+<P>
+
+All of the above mentioned subviews provide a popup menu, which is
+activated by the middle mouse button
+(or the right button, if you use a 2-button mouse).
+<P>
+
+<DL>
+<DT>By the way:
+<DD>
+pressing an alphabetic key in the fileList will make it scroll
+to the next entry whose name starts with that character.
+If you press <KBD>"<B>SHIFT</B>"</KBD> at the same time, it will
+find the previous entry starting with that character.
+<BR>
+Typing <KBD>"<B>RETURN</B>"</KBD> performs the double click function
+on the selected entry.
+<BR>
+Also notice that <KBD>"<B>CURSOR_UP</B>"</KBD>, <KBD>"<B>CURSOR_DOWN</B>"</KBD>
+<KBD>"<B>HOME</B>"</KBD> and <KBD>"<B>END</B>"</KBD> keys
+too can be used to change the selection, while <KBD>"<B>PAGE_UP</B>"</KBD>
+and <KBD>"<B>PAGE_DOWN</B>"</KBD>
+scroll the list.
+<BR>
+This is true for all views which show a list to select entries from.
+</DL>
+
+<HR>
+Doc $Revision: 1.15 $ $Date: 2016-09-14 09:41:12 $
+
+</BODY>
+</HTML>

@@ -1,0 +1,141 @@
+<!ENTITY % coreattrs
+ "id          ID             #IMPLIED
+  class       CDATA          #IMPLIED"
+  >
+
+<!ENTITY % LanguageCode "NMTOKEN">
+
+<!ENTITY % i18n
+ "lang        %LanguageCode; #IMPLIED
+  xml:lang    %LanguageCode; #IMPLIED"
+  >
+
+
+
+<!ENTITY % URI "CDATA">
+    <!-- a Uniform Resource Identifier, see [RFC2396] -->
+
+<!ENTITY % attrs "%coreattrs; %i18n;" >
+
+<!-- text alignment for p, div, h1-h6. The default is
+     align="left" for ltr headings, "right" for rtl -->
+
+<!ENTITY % phrase.basic "em | strong" >
+
+<!ENTITY % phrase "%phrase.basic;">
+
+
+<!ENTITY % heading "h1|h2">
+
+<!ENTITY % block.mix "" >
+
+<!ENTITY % block
+    "p | %heading; | div %block.mix; ">
+
+<!-- %Inline; covers inline or "text-level" elements -->
+<!ENTITY % Inline.mix "">
+<!ENTITY % Inline.elements "%phrase; | span %Inline.mix;">
+<!ENTITY % Inline "(#PCDATA | %Inline.elements; )*">
+
+
+<!-- %Flow; mixes block and inline and is used for list items etc. -->
+<!ENTITY % Flow.mix "">
+<!ENTITY % Flow "(#PCDATA | %Inline.elements; | %block; %Flow.mix; )*">
+
+
+<!--================ Document Structure ==================================-->
+
+<!-- the namespace URI designates the document profile -->
+
+<!ELEMENT html (head, body)>
+<!ATTLIST html
+  %i18n;
+  id          ID             #IMPLIED
+  xmlns       %URI;          #FIXED 'http://localhost/fake-xhtml'
+  >
+
+<!--================ Document Head =======================================-->
+
+<!ENTITY % head.misc "(meta)*">
+
+<!-- content model is %head.misc; combined with a single
+     title and an optional base element in any order -->
+
+<!ELEMENT head (%head.misc;,
+     (title, %head.misc;)) >
+
+<!ATTLIST head
+  %i18n;
+  id          ID             #IMPLIED
+  profile     %URI;          #IMPLIED
+  >
+
+<!-- The title element is not considered part of the flow of text.
+       It should be displayed, for example as the page header or
+       window title. Exactly one title is required per document.
+    -->
+<!ELEMENT title (#PCDATA)>
+<!ATTLIST title 
+  %i18n;
+  id          ID             #IMPLIED
+  >
+
+<!-- generic metainformation -->
+<!ELEMENT meta EMPTY>
+<!ATTLIST meta
+  %i18n;
+  id          ID             #IMPLIED
+  http-equiv  CDATA          #IMPLIED
+  name        CDATA          #IMPLIED
+  content     CDATA          #REQUIRED
+  scheme      CDATA          #IMPLIED
+  >
+
+<!--=================== Document Body ====================================-->
+
+<!ELEMENT body %Flow;>
+<!ATTLIST body
+  %attrs;
+  >
+
+<!ELEMENT div %Flow;>  <!-- generic language/style container -->
+<!ATTLIST div
+  %attrs;
+  >
+
+<!--=================== Paragraphs =======================================-->
+
+<!ELEMENT p %Inline;>
+<!ATTLIST p
+  %attrs;
+  >
+
+<!--=================== Headings =========================================-->
+
+<!--
+  There are six levels of headings from h1 (the most important)
+  to h6 (the least important).
+-->
+
+<!ELEMENT h1  %Inline;>
+<!ATTLIST h1
+  %attrs;
+  >
+
+<!ELEMENT h2 %Inline;>
+<!ATTLIST h2
+  %attrs;
+  >
+
+<!--===================== Inline Elements ================================-->
+
+<!ELEMENT span %Inline;> <!-- generic language/style container -->
+<!ATTLIST span
+  %attrs;
+  >
+
+<!ELEMENT em %Inline;>   <!-- emphasis -->
+<!ATTLIST em %attrs;>
+
+<!ELEMENT strong %Inline;>   <!-- strong emphasis -->
+<!ATTLIST strong %attrs;>

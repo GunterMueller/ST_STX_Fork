@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+   this emulatates a "modular" dtd like xhtml-1.1.
+   exercises code that handles IGNORE and INCLUDE 
+   conditional sections 
+   
+   same as modular2.xml, except we try to use an
+   element that is not defined (because we told the
+   parser to ignore it).   this should result in an error
+   -->
+<!DOCTYPE html SYSTEM "fake-modular.dtd" [
+    <!ENTITY % Modular.module "IGNORE" >
+]>
+<html>
+    <head>
+        <title>Title</title>
+        <meta content="asdf" />
+    </head>
+    <body>
+
+        <h1>Heading Level 1</h1>
+
+        <modular:xxx>This comes from the modular dtd</modular:xxx>
+        <modular:xxx>And should produce an error, because that
+            part is disabled</modular:xxx>
+
+    </body>
+</html>

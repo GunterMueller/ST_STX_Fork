@@ -1,0 +1,32 @@
+/* XPM */
+static char *phone_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"22 22 3 1",
+/* colors */
+"a c white",
+"b c black",
+"c c none",
+/* pixels */
+"cccccccccccccccccccccc",
+"cccccccccccccccccccccc",
+"cccccccbbbbbbbbccccccc",
+"cccccbbbaaaaaabbbccccc",
+"ccccbbaaaaaabbaabbcccc",
+"cccbbaaaaaabbbbaabbccc",
+"cccbaaaaaabbbbabaabccc",
+"ccbbaaaaabbbbabbaabbcc",
+"ccbaaaaabbbbbbbaaaabcc",
+"ccbaaaabbbaabbaaaaabcc",
+"ccbaaabbbaaaaaaaaaabcc",
+"ccbaaabbbaaaaaaaaaabcc",
+"ccbaabbbbbbaaaaaaaabcc",
+"ccbaabbbbabaaaaaaaabcc",
+"ccbbabbbabbaaaaaaabbcc",
+"cccbaabbbbaaaaaaaabccc",
+"cccccbbabaaaaaaaabbccc",
+"cccccbbaaaaaaaaabbcccc",
+"ccccccbbbaaaaabbbccccc",
+"ccccccccbbbbbbbccccccc",
+"cccccccccccccccccccccc",
+"cccccccccccccccccccccc",
+};

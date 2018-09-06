@@ -1,0 +1,108 @@
+<HTML>
+<HEAD>
+<TITLE>Tutorial - More Smalltalk</TITLE>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="tut_7b.html"> <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="tutorial.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="tut_edit.html"> <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1><A NAME="MORE_SMALLTALK">More Smalltalk</A></H1>
+
+This document describes other important features and mechanisms which are part of the language
+or class library, but have been ignored until now.
+
+
+<H2><A NAME="OTHER_VARIABLES">Other Variable Types</A></H2>
+
+Beside <I>globals</I>, <I>method locals</I> and <I>instance variables</I>,
+there are also:
+
+<UL>
+<LI><I>Class Instance Variables</I>
+<BR>
+Because classes are also objects, they too can have additional private variable slots,
+much the same as normal objects can. A class instance variable's definition is inherited by
+a subclass; however, the subclass may place its own value into its slot.
+That means, once defined by a class, the class and all of its subclasses have that slot,
+but each one may put a different value into it.
+Class instance variables are seen by class methods only.
+Their lifetime is the lifetime of the class.
+<P>
+
+<LI><I>Class Variables</I> (also called "<I>Statics</I>" in newer literature)
+<BR>
+These are defined in the class definition. Their lifetime is that of the class.
+They are visible both from class- and from instance methods.
+They are shared with and seen by subclasses.
+This means, that in contrast to the above class instance variables,
+subclasses do not have their own private slot. Instead, they all share the single variable
+cell that the defining class created.
+<P>
+
+<LI><I>Pool Variables (in Pool Dictionaries)</I>
+<BR>
+Pool variables are seen by all classes which "subscribe" to a given pool.
+Then all the variables defined by that pool become visible and accessible within a class on
+both the class and instance side. The pool itself is actually a implemented as class
+and the pool variables are its class variables. Thus the pool's initialization code
+(#initialize method on the class side) typically sets initial values for the pool variables.
+<P>
+
+<LI><I>Block Local Variables</I>
+<BR>
+Block locals are similar to method locals.
+They are seen within the block.
+This includes all containing sub-blocks.
+<BR>
+Due to the closure-behavior of both block- and methodContexts,
+these variables may outlife their defining block's life.
+This happens, whenever a subblock which referes to such a variable
+is exposed to somewhere outside the block. For example, when a subblock is stored into
+a variable or another object, or if it is returned as a value.
+
+
+</UL>
+
+<H2><A NAME="CONTEXTS">Contexts</A></H2>
+
+Block- and Methodvariables are stored in so called <VAR>Contexts</VAR>.
+These are created for every method- or block invokation.
+They have to major purposes:
+<OL>
+<LI>to remember the caller's context and keep the current pc (for proper return to the caller)
+<LI>to store local variables (method- and block variables)
+<LI>to provide space for intermediate values (expression evaluation stack)
+</OL>
+In other programming languages, these would be called <VAR>Stack Frame</VAR>, and that's what they
+are most of the time. However, via the pseudo variable <VAR>thisContext</VAR>,
+they can be accessed at any time and treated like any other first class object:
+you can store them in other objects or return them as value.
+<P>
+C-programmers should notice that the Smalltalk runtime system
+makes sure that the memory space used by a context gets moved from the stack
+to the heap automatically, whenever required. As a programmer, this movement
+is completely transparent.
+
+
+<P>
+<P>
+<HR>
+Continue in <A HREF="tut_edit.html">"More Smalltalk"</A>.
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif" ALT="[stx-logo]">
+<BR>Copyright &copy; Claus Gittinger Development & Consulting
+<BR>Copyright &copy; eXept Software AG
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.5 $ $Date: 2016-01-27 17:47:46 $
+
+</BODY>
+</HTML>

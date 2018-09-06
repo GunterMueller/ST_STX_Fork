@@ -1,0 +1,13 @@
+*.STH
+MAKE0000.*
+objbc
+ntLibInit.c
+*.dll
+*.tds
+*.res
+buildDate.h
+main.c
+resources
+keyboard.rc
+objvc
+objmingw

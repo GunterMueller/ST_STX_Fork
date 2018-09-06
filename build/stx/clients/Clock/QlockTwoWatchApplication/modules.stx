@@ -1,0 +1,27 @@
+# $Header: /cvs/stx/stx/clients/Clock/QlockTwoWatchApplication/modules.stx,v 1.19 2016-04-04 20:31:46 cg Exp $
+#
+# DO NOT EDIT 
+# automagically generated from the projectDefinition: stx_clients_Clock_QlockTwoWatchApplication.
+#
+# Warning: once you modify this file, do not rerun
+# stmkmp or projectDefinition-build again - otherwise, your changes are lost.
+#
+# This file is (currently) only used with win-95 / win-NT versions of STX.
+# It lists the dll's which are to be loaded at startup time.
+# Notice, lines starting with a "#" are comments.
+# Lines starting with a "*" are treated as comments by the VM, but are usually loaded
+# by the application at the very beginning.
+#
+# All classes loaded at startup time will be present as precompiled classes.
+# Others might be autoloaded or loaded explicit using "Smalltalk loadPackage:xxx".
+#
+libstx_libbasic
+libstx_libbasic2
+libstx_libcomp
+libstx_libview
+libstx_libbasic3
+libstx_libui
+libstx_libview2
+libstx_libwidg
+libstx_libwidg2
+

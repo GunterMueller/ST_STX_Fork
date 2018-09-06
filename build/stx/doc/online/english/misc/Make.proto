@@ -1,0 +1,8 @@
+# $Header: /cvs/stx/stx/doc/online/english/misc/Make.proto,v 1.1 1995-10-27 17:27:19 cg Exp $
+#
+
+#--------- no need to modify anything below -------
+
+TOP=../../../..
+
+RCSSOURCES=Make.proto *.html

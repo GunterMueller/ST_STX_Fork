@@ -1,0 +1,30 @@
+# $Header: /cvs/stx/stx/libdb/nonsql/Make.proto,v 1.1 2015-09-16 13:14:54 cg Exp $
+
+# -------------- no need to change anything below ----------
+
+# the COMMON/defines - file sets
+#
+#    OPTIONAL_GOODIES=benchmarks paths tgen
+#
+# this can be set to empty in a PACKS-file, to
+# get rid of those packages.
+#
+
+TOP=../..
+
+#
+# directories, where binaries are built ...
+#
+SUBDIRS=\
+	kyotocabinet \
+
+
+#
+# directories where Makefiles are generated,
+# and where st-files are searched for autoloading
+# (i.e. added to abbrev.stc (and therefore known about)
+#
+#ALLSUBDIRS=
+
+
+all::

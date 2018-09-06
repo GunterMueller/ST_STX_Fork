@@ -1,0 +1,31 @@
+#encoding iso8859-1
+
+;
+; Launcher: Esperanto
+
+'Afrikaans'         'Afrikansa'
+'Arabic'            'Araba'
+'Chinese'           'Cina'
+'Chinese (simplified)'          'Cina (simplified)'
+'Chinese (traditional)'         'Cina (traditional)'
+'Croatian'          'Kroata'
+; 'Czech'             'Czech'
+'Danish'            'Danska'
+'Dutch'             'Nederlanda'
+'English (US)'      'Angla (US)'
+'English (UK)'      'Angla (UK)'
+; 'Esperanto'         'Esperanto'
+'Finnish'           'Finna'
+'French'            'Franca'
+'German'            'Germana'
+'Greek'             'Greka'
+'Italian'           'Itala'
+'Latin'             'Latina'
+'Japanese'          'Japana'
+'Norwegian'         'Norvega'
+'Portuguese'        'Portugala'
+'Portuguese (Brazilian)'    'Portugala (brazila)'
+'Russian'           'Rusa'
+'Spanish'           'Hispana'
+'Swedish'           'Sveda'
+'Turkish'           'Turka'

@@ -1,0 +1,281 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Help - Source Code Repository Setup Dialog</Title>
+</HEAD>
+
+<BODY>
+
+<H1>Source Code Repository Setup Dialog</H1>
+
+<H2><A NAME="INDEX">Help index</A></H2>
+
+<UL>
+ <LI><A HREF="#INTRODUCTION">Introduction</A>
+ <UL>
+  <LI><A HREF="#REPOSITORY_TYPES">Repository Types</A>
+  <LI><A HREF="#MODULES_AND_PACKAGES">Modules and Packages</A>
+  <LI><A HREF="#SINGLE_REPOSITORY_TYPE">Single Repository Type Setup</A>
+  <LI><A HREF="#MULTIPLE_REPOSITORY_TYPE">Multiple Repository Type Setup</A>
+ </UL>
+<P>
+ <LI><A HREF="#SETTINGS">Source Code Manager Settings Dialog</A>
+ <UL>
+   <LI><A HREF="#ENABLE_REPOSITORY">Repository Enabled</A>
+   <LI><A HREF="#DEFAULT_TYPE">Default Repository Type</A>
+   <LI><A HREF="#PERMODULE_TYPE">Repository Type per Package</A>
+   <LI><A HREF="#SOURCE_CACHE">Source Cache</A>
+   <LI><A HREF="#USE_LOCAL_SOURCE">Use Local Source</A>
+   <LI><A HREF="#KEEP_METHOD_SOURCE">Keep Method Source</A>
+   <LI><A HREF="#CHECK_HALTS">Check for Halt and other bad Message Sends</A>
+   <LI><A HREF="#VERBOSE">Verbose</A>
+ </UL>
+</UL>
+
+<H2><A NAME="INTRODUCTION" HREF="#INDEX">Introduction</A></H2>
+
+Source code repositories provide support for versioning of classes and packages (= projects).
+The basic operations are "<i>checkin</i>" to save the state of a class, group of classes, or package,
+and "<i>checkout</i>" to load a previous version's state. Also, various support functions are
+provided, such as logging (who changed what) and diffing (comparing against an older version).
+<P>
+Notice that it makes sense to configure and maintain a repository connection,
+even if you do not do any changes to the system yourself.
+For example, to see the source code of system classes,
+you need either the source files to be present on your machine,
+or a repository connection to the eXept public repository.
+Using a repository connection avoids the need to install those sources,
+and also allows for easy check/compare against recent changes done by others.
+<P>
+Exept maintains a readonly up-to-date copy of its own development repository
+on a publically reachable host. You can configure the system to always fetch
+sourcecode from that repository and/or to compare your version against an
+up-to-date version on that host. The public cvs repository is updated every
+night and contains all of the Smalltalk source code of the base ST/X system
+
+
+<H3><A NAME="REPOSITORY_TYPES" HREF="#INDEX">Repository Types</A></H3>
+
+A number of different source code repository mechanisms are supported:
+<UL>
+<LI><b><A HREF="cvsSetup.html">CVS</A></b> - a file/container based respository. This can be used both locally or
+in a team via remote access to a central server host. CVS is quite old and
+has a number of disadvantages; mostly its dependency on a central server,
+which makes offline work (i.e. without a CVS connection) very inconvenient.
+Also, the central service may become a major bottleneck and interaction can
+become slow if the connection bandwidth is low. Being strictly file based,
+CVS has poor support for packaging/versioning whole applications.
+<P>
+
+<LI><b><A HREF="svnRepositorySetup.html">SVN (Subversion)</A></b> - a file/container based respository, similar to CVS, but newer.
+SVN tries to solve some of the shortcomings of CVS, but still is suffering from its
+dependency on a central server and has also been mostly outdated by new systems like
+Mercurial and Git.
+<P>
+
+<LI><b><A HREF="perforceSetup.html">P4 (Perforce)</A></b> - a commercial product which also supports team operation via a central server host.
+Support for P4 has been provided and is maintained by a customer of eXept,
+and provided as-is, without warranty.
+<P>
+
+<LI><b><A HREF="mercurialRepositorySetup.html">Mercurial</A></b> - another free sourcecode management framework. Also the underlying mechanism used for Kiln repositories.
+This is being developed and will replace CVS in the very near future as
+the base of eXept's ST/X development.
+It is already in use at eXept internally.
+<P>
+
+<LI><b><A HREF="gitRepositorySetup.html">Git</A></b> - another free sourcecode management framework which is heavily used in the Linux community.
+Git and Mercurial share a number of features and seem to be similar in functionality and performance
+for regular file based work.
+However, we encountered a number of problems when using Git,
+especially when files/classes are renamed or moved inside the hierarchy.
+We have therefore stopped any Git development and will move towards Mercurial.
+You will still find setup UIs and code for Git support in the system.
+It is left there in case someone wants to continue or has to interact with
+a Git repository, but it will not be maintained by eXept.
+<P>
+
+<LI><b><A HREF="monticelloRepositorySetup.html">Monticello</A></b> - an archive-format for versioning and project interchange used by the Squeak
+Smalltalk community.
+Support for this repository type is experimental.
+Its raison d'etre in ST/X is mostly for package interchange with Squeak and
+VisualWorks systems, which also support this package format. It can also be
+used for small classroom projects. However, UI support for this type
+is limited
+(especially user interfaces for versioning, comparing, history etc. are spartanic or missing)
+<P>
+
+<LI><b><A HREF="storeDBSetup.html">STORE</A></b> - a source code repository based on a central relational database which is accessed via ODBC).
+This is a vendor specific repository from Cincom for their Visualworks Smalltalk product.
+Support for this repository type is experimental.
+<BR>
+Notice that Cincom changed the database definions after this scm manager
+was developed for ST/X, and this manager is no longer compatible with the
+current STORE database as maintained by Cincom.
+Although this will probably not require a lot of work to fix,
+we do not intent to maintain this code. Use as-is without any warranty.
+(however, we'd be happy if you return any changes/fixes which make this class
+compatible with Cincom's current STORE database).
+<P>
+
+<LI><b><A HREF="fileBasedRepositorySetup.html">File-Repository</A></b> - a simple respository which uses the local filesystem for versioning.
+Only useful as a demo and for small classroom projects.
+<P>
+
+<LI><b><A HREF="databaseRepositorySetup.html">DB-Repository</A></b> - a simple respository which uses a relational database for versioning.
+Only useful as a demo and for small classroom projects.
+<P>
+
+</UL>
+Each type of repository is handled by a separate source code manager. For example, the CVS support
+is realized by the <CODE>CVSSourceCodeManager</CODE> class.
+<P>
+
+<H3><A NAME="MODULES_AND_PACKAGES" HREF="#INDEX">Modules and Packages</A></H3>
+
+<cite>Smalltalk/X</cite> organizes classes in modules and packages and associates a so-called packageID to every class and method.
+The packageID consists of the concatenation of the module and package.
+For example the packageID "<i>stx:libbasic</i>" refers to the "<i>libbasic</i>" package in the "<i>stx</i>" module.
+Or, "<i>exept:expecco/plugins/manualTest</i>" refers to the "<i>expecco/plugins/manualTest</i>" package in the "<i>exept</i>" module.
+<p>
+
+
+<H3><A NAME="SINGLE_REPOSITORY_TYPE" HREF="#INDEX">Single Repository Type Setup</A></H3>
+
+In a single repository type setup, all modules are managed by the same type of source code manager.
+For example, if you use CVS to manage your own local sources,
+and want to access the public exept repository (which is a CVS repository).
+In this mode of operation, all you need is to set the "Default Repository Type" to CVS
+and configure the individual CVSRoots in the CVS-settings dialog,
+so that the "stx"-module is accessed from the exept public repository,
+and your own classes from your private (local) repository.
+
+<H3><A NAME="MULTIPLE_REPOSITORY_TYPE" HREF="#INDEX">Multiple Repository Type Setup</A></H3>
+
+Use this, if you have a local non-CVS repository (P4, SVN or HG) and you still want to access
+the public exept CVS repository.
+In this case, choose your own repository type as "Default Repository Type",
+and define "Type = CVS" for the "stx"-module in the "Per Package Setting".
+
+
+<H2><A NAME="SETTINGS" HREF="#INDEX">Source Code Manager Settings Dialog</A></H2>
+
+<H3><A NAME="ENABLE_REPOSITORY" HREF="#INDEX">Repository Enabled</A></H3>
+
+If disabled, source requests will be tried to be resolved from the local file system
+(by searching for a directory structure corresponding to a packageID-path).
+
+
+<H3><A NAME="DEFAULT_TYPE" HREF="#INDEX">Default Repository Type</A></H3>
+
+Specifies the default type of source code manager (CVS, SVN, P4 etc.) to be
+used for all packages which are not listed in the per-package settings list.
+<BR>
+I.e. its the fallback type used for all other packages, not listed below.
+
+
+
+<H3><A NAME="PERMODULE_TYPE" HREF="#INDEX">Type per Package</A></H3>
+
+Each package (= project) can be managed by a separate source code manager on possibly different hosts.
+This list defines the type of source code manager (CVS, SVN, P4 etc.) on a per-package basis.
+The package is given as a match-string, thus associating "goodies:foo/*" to the P4 manager,
+will configure all packages below the "goodies:foo" package to be managed by a perforce
+source code manager. Further details (location of the P4 reporitory) are then to be specified
+in the corresponding manager's configuration tab (in this case: the P4 configuration settings).
+
+
+<H3><A NAME="SOURCE_CACHE" HREF="#INDEX">Source Cache</A></H3>
+
+Performing a slow checkOut operation for every class which is visited in
+the browser does slow down the system's responses - especially the search functions
+(senders/string-search etc.) may become unusably slow.
+<BR>
+To avoid this, the sourcecode-manager can keep track of already checked-out classes
+and remembers those in a cache directory. This cache may grow over time, as
+it remembers multiple versions of all classes of which source code has ever
+been asked for.
+<BR>
+The default location for this cache is <CODE>"/tmp/stx_sourceCache"</CODE> (unix)
+or <CODE>"&lt;userDefault&gt;\local files\Temp\stx_sourceCache"</CODE> (windows).
+<BR>
+Over time, this directory may grow and should be purged from time to time
+(The purge operation removes old versions in the cache and leaves the youngest only).
+<BR>
+It is not dangerous, to remove those old files, as they will be re-checked out
+as required (for example, when you do a "compare with previous" operation later).
+
+
+<H3><A NAME="USE_LOCAL_FILES" HREF="#INDEX">Use Local Files if Present</A></H3>
+
+If enabled, source requests will be <B>first</B> tried to be resolved from the local file system
+(by searching for a directory structure corresponding to a packageID-path),
+<B>then</B> via a CVS request.
+<BR>
+This is a useful setup, if your CVS connection is very slow or unreliable,
+as most of the CVS requests are avoided.
+However, it has the severe drawback, that you may never modify any of the local source files.
+<BR>
+Be aware, that the source code manager trusts the versionNumber found in the
+sourcefile, to correspond to the versionNumber of the compiled class.
+Manually editing a sourceFile, will certainly lead to invalid sourcecode
+being shown in the browser.
+<BR>
+The reason is that in order for the browser to be able to fetch a methods source,
+it fetches the source (by release) and extracts a methods source from the file position
+as kept in the method-object.
+<BR>
+If the file is modified, this file position information becomes invalid.
+<P>
+Keep this in mind, when enabling this feature.
+
+<!--
+<H3><A NAME="USE_LOCAL_SOURCE" HREF="#INDEX">Use Local Source</A></H3>
+If enabled, the local fileSystem is first checked for a sourcefile to be present.
+This speeds up the source code access, but is somewhat dangerous: if the file
+was modified (for example in an external editor), the file-positions from the compiled
+methods will no longer be valid, resulting in garbage source to be presented in the browser.
+This means that: you shalt never edit or otherwise modify the source files if this flag is
+enabled. Actually, it is not really needed, if the source cache is enabled.
+-->
+
+<H3><A NAME="KEEP_METHOD_SOURCE" HREF="#INDEX">Keep Method Source</A></H3>
+If enabled, any method's source code is remembered as string in the image,
+once it has been acquired either from a file or from the repository.
+As a result, your image will grow by roughly 10-20Mb over time.
+However, source code access and search operations in the browser will become much faster
+over time (until the working set of source code has been loaded).
+
+
+<H3><A NAME="CHECK_HALTS" HREF="#INDEX">Check for Halt and other bad Message Sends</A></H3>
+
+If enabled, code which is about to be checked into the repository is
+checked for a number of "considered bad" code constructs.
+Among them are:
+<UL>
+<LI>Leftover sends of the <CODE>#halt</CODE>-message
+<LI>Sends of the <CODE>#error</CODE>-message (i.e. without descriptive text-argument)
+</UL>
+
+
+<H3><A NAME="VERBOSE" HREF="#INDEX">Verbose</A></H3>
+
+If enabled, feedback information about what is going on will be sent to the Transcript window.
+
+<P>
+<P>
+
+
+
+<HR>
+<P>
+<P>
+Copyright &copy;  eXept Software AG, all rights reserved
+<P>
+<P>
+
+<HR>
+Doc $Revision: 1.7 $ $Date: 2016-07-18 11:53:49 $
+
+</BODY>
+</HTML>

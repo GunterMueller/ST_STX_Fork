@@ -1,0 +1,8 @@
+[phases]
+publish = false
+
+[paths]
+canonical = https://bitbucket.org/janvrany/stx-goodies-refactoryBrowser
+staging = https://bitbucket.org/janvrany/stx-goodies-refactoryBrowser
+default = https://bitbucket.org/janvrany/stx-goodies-refactoryBrowser
+

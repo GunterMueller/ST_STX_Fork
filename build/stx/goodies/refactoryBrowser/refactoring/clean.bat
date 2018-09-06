@@ -1,0 +1,1 @@
+del/q objbc\*.obj

@@ -1,0 +1,175 @@
+<title>Headings</title> <h1>Headings</h1>
+
+<B>Permitted Context:</B> %Body.Content<BR>
+<B>Content Model:</B> %text
+
+<p>HTML defines six levels of headings. A heading element implies all
+the font changes, paragraph breaks before and after, and any white
+space necessary to render the heading. The heading elements are H1, H2,
+H3, H4, H5, and H6 with H1 being the highest (or most important) level
+and H6 the least. For example:
+
+<PRE>&lt;H1&gt;This is a top level heading&lt;/H1&gt; Here is some text.
+&lt;H2&gt;Second level heading&lt;/H2&gt; Here is some more text.</PRE>
+
+<P>Use the DIV element together with header elements when you want to
+make the hierarchical structure of a document explicit. This is needed
+as header elements themselves only contain the text of the header, and
+do not imply any structural division of documents into sections. Header
+elements have the same content model as paragraphs, that is text and
+character level markup, such as character emphasis, inline images, form
+fields and math.
+
+<p>Headers play a related role to lists in structuring documents, and
+it is common to number headers or to include a graphic that acts like a
+bullet in lists. HTML 3.0 recognizes this with attributes that assist
+with numbering headers and allow authors to specify a custom graphic.
+
+<P>The numbering style is controlled by the style sheet, e.g.
+
+<ol><li>The style sheet specifies whether headers are numbered, and
+which style is used to render the current sequence number, e.g. arabic,
+upper alpha, lower alpha, upper roman, lower roman or a numbering
+scheme appropriate to the current language.
+
+<li>Whether the parent numbering is inherited, e.g. "5.1.d" where 5 is
+the current sequence number for H1 headers, 1 is the number for H2
+headers and 4 for H3 headers. </ol>
+
+<p>The <tt>seqnum</tt> and <tt>skip</tt> attributes can be used to
+override the default treatment of header sequence numbers, and provide
+for a continuity with numbered lists.
+
+<p>The <tt>dingbat</tt> or <tt>src</tt> attribute may be used to
+specify a bullet-like graphic to be placed adjacent to the header. The
+positioning of this graphic is controlled by the style sheet. The
+graphic is for decorative purposes only and silently ignored on
+non-graphical HTML user agents.
+
+
+<h3>Word Wrapping</h3>
+
+<P>User agents are free to wrap lines at whitespace characters so as to
+ensure lines fit within the current window size. Use the <B>&amp;nbsp;</B>
+entity for the non-breaking space character, when you want
+to make sure that a line isn't broken! Alternatively, use the NOWRAP
+attribute to disable word wrapping and the &lt;BR&gt; element to force
+line breaks where desired.
+
+<P><I>Netscape includes two tags: &lt;NOBR&gt;...&lt;/NOBR&gt;, and
+&lt;WBR&gt;. The former turns off wordwrapping between the start and
+end NOBR tag, while WBR is for the rare case when you want to specify
+where to break the line if needed. Should HTML 3.0 provide an
+equivalent mechanism to WBR, (either a tag or an entity)?</I>
+
+<H3>Permitted Attributes</h3>
+
+<DL> <DT>ID <DD>An SGML identifier used as the target for hypertext
+links or for naming particular elements in associated style sheets.
+Identifiers are NAME tokens and must be unique within the scope of the
+current document.
+
+<DT>LANG <DD>This is one of the ISO standard language abbreviations,
+e.g. "en.uk" for the variation of English spoken in the United Kingdom.
+It can be used by parsers to select language specific choices for
+quotation marks, ligatures and hypenation rules etc. The language
+attribute is composed from the two letter language code from ISO 639,
+optionally followed by a period and a two letter country code from ISO
+3166.
+
+<DT>CLASS <DD>This a space separated list of SGML NAME tokens and is
+used to subclass tag names. For instance, &lt;H2 CLASS=Section&gt;
+defines a level 2 header that acts as a section header. By convention,
+the class names are interpreted hierarchically, with the most general
+class on the left and the most specific on the right, where classes are
+separated by a period. The CLASS attribute is most commonly used to
+attach a different style to some element, but it is recommended that
+where practical class names should be picked on the basis of the
+element's semantics, as this will permit other uses, such as
+restricting search through documents by matching on element class
+names. The  conventions for choosing class names are outside the scope
+of this specification.
+
+<DT>ALIGN <DD>Headings are usually rendered flush left. The ALIGN
+attribute can be used to explicitly specify the horizontal
+alignment:<BR><BR>
+
+<dl> <dt>align=left <dd>The heading is rendered flush left (the
+default).
+
+<dt>align=center <dd>The heading is centered.
+
+<dt>align=right <dd>The heading is rendered flush right.
+
+<dt>align=justify <dd>Heading lines are justified where
+practical, otherwise this gives the same effect as the default
+<tt>align=left</tt> setting. </dl>
+
+<p>For example:
+
+<pre>&lt;h1 align=center&gt;This is a centered heading&lt;/H1&gt;
+Here is some text. &lt;H2 align=right&gt;and this is a flush right
+heading&lt;/H2&gt; Here is some more text.</pre>
+
+<DT>CLEAR <DD>This attribute is common to all block-like elements. When
+text flows around a figure or table in the margin, you sometimes want
+to start an element like a header, paragraph or list below the figure
+rather than alongside it. The CLEAR attribute allows you to move down
+unconditionally:<BR><BR>
+
+<DL>
+<DT>clear=left<DD>move down until left margin is clear
+<DT>clear=right<DD>move down until right margin is clear
+<DT>clear=all<DD>move down until both margins are clear
+</DL>
+
+<P>Alternatively, you can decide to place the element alongside the
+figure just so long as there is enough room. The minimum width needed
+is specified as:<BR><BR>
+
+<DL>
+<DT>clear="40 en"<DD>move down until there is at least 40 en units free
+<DT>clear="100 pixels"<DD>move down until there is at least 100 pixels
+free
+</DL>
+
+<P>The style sheet (or browser defaults) may provide default minimum
+widths for each class of block-like elements.
+
+<DT>SEQNUM <DD>A sequence number is associated with each level of
+header from the top level (H1) to the bottom level (H6). This attribute
+is used to set the sequence number associated with the header level of
+the current element to a given number, e.g. SEQNUM=10. Normally, the
+sequence number is initialized to 1 at the beginning of the document
+and incremented after each header element. It is reset to 1 by any
+header element of a higher level, e.g. an H1 header resets the sequence
+numbers for H2 to H6. The style of header numbering is controlled by
+the style sheet.
+
+<DT>SKIP <DD>Increments the sequence number before rendering the
+element. It is used when headers have been left out of the sequence.
+For instance, SKIP=3 advances the sequence number past 3 omitted items.
+
+<DT>DINGBAT <DD>Specifies an iconic image to appear preceding the
+header. The icon is specified as an entity name. A list of standard
+icon entity names for HTML 3.0 is given in an appendix of this
+specification.
+
+<DT>SRC <DD>Specifies an image to appear preceding the header. The
+image is specified as a URI. This attribute may appear together with
+the MD attribute.
+
+<DT>MD <DD>Specifies a message digest or cryptographic checksum for the
+associated graphic specified by the SRC attribute. It is used when you
+want to be sure that a linked object is indeed the same one that the
+author intended, and hasn't been modified in any way. For instance,
+MD="md5:jV2OfH+nnXHU8bnkPAad/mSQlTDZ", which specifies an MD5 checksum
+encoded as a base64 character string. The MD attribute is generally
+allowed for all elements which support URI based links.
+
+<DT>NOWRAP <DD>The NOWRAP attribute is used when you don't want the
+browser to automatically wrap lines. You can then explicitly specify
+line breaks in headings using the BR element. For example:
+
+<PRE>&lt;h1 nowrap&gt;This heading has wordwrap turned off&lt;br&gt;
+and the BR element is used for explicit lin

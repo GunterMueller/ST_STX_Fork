@@ -1,0 +1,233 @@
+# TARGTYPE "Win32 (x86) Console Application" 0x0103
+
+!IF "$(CFG)" == ""
+CFG=Win32 Debug
+!MESSAGE No configuration specified.  Defaulting to Win32 Debug.
+!ENDIF 
+
+!IF "$(CFG)" != "Win32 Release" && "$(CFG)" != "Win32 Debug"
+!MESSAGE Invalid configuration "$(CFG)" specified.
+!MESSAGE You can specify a configuration when running NMAKE on this makefile
+!MESSAGE by defining the macro CFG on the command line.  For example:
+!MESSAGE 
+!MESSAGE NMAKE /f "nt.mak" CFG="Win32 Debug"
+!MESSAGE 
+!MESSAGE Possible choices for configuration are:
+!MESSAGE 
+!MESSAGE "Win32 Release" (based on "Win32 (x86) Console Application")
+!MESSAGE "Win32 Debug" (based on "Win32 (x86) Console Application")
+!MESSAGE 
+!ERROR An invalid configuration is specified.
+!ENDIF 
+
+################################################################################
+# Begin Project
+# PROP Target_Last_Scanned "Win32 Debug"
+CPP=cl.exe
+RSC=rc.exe
+
+BINDIR=..\bin
+LIBDIR=..\lib
+
+ALL : $(LIBDIR)\libbasic.lib $(BINDIR)\libbasic.dll
+
+$(LIBDIR) : 
+	if not exist $(LIBDIR)/nul mkdir $(LIBDIR)
+
+
+!IF  "$(CFG)" == "Win32 Debug"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 1
+# PROP BASE Output_Dir "WinDebug"
+# PROP BASE Intermediate_Dir "WinDebug"
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 1
+# PROP Output_Dir "WinDebug"
+# PROP Intermediate_Dir "WinDebug"
+OUTDIR=.\WinDebug
+INTDIR=.\WinDebug
+
+$(OUTDIR) : 
+    if not exist $(OUTDIR)/nul mkdir $(OUTDIR)
+
+DEFS=/D"DEBUG" /D"WIN32" /D"_CONSOLE"
+O=obj
+
+# ADD BASE CPP /nologo /W3 /GX /Zi /YX /Od /D "WIN32" /D "DEBUG" /D "_CONSOLE" /FR /c
+# ADD CPP /nologo /W3 /GX /Zi /YX /Ob1 /I "..\include" /D "DEBUG" /D "WIN32" /D "_CONSOLE" /FR /c
+# SUBTRACT CPP /WX
+CPP_PROJ=/nologo /W3 /GX /Zi /YX /Ob1 /I "..\include" $(DEFS) /FR$(INTDIR)/\
+ /Fp$(OUTDIR)/"libbasicnt.pch" /Fo$(INTDIR)/ /Fd$(OUTDIR)/"libbasicnt.pdb" /c 
+CPP_OBJS=.\WinDebug/
+# ADD BASE RSC /l 0x409 /d "DEBUG"
+# ADD RSC /l 0x409 /d "DEBUG"
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+
+.\WinDebug\stcnt.bsc : $(OUTDIR)  $(BSC32_SBRS)
+    $(BSC32) @<<
+  $(BSC32_FLAGS) $(BSC32_SBRS)
+<<
+
+LIBRUN=..\lib\librun.lib
+
+LINK32=link.exe
+# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /NOLOGO /SUBSYSTEM:console /DEBUG /MACHINE:I386
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib wsock32.lib /NOLOGO /SUBSYSTEM:console /DEBUG /MACHINE:I386
+
+LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib \
+ wsock32.lib \
+ $(LIBRUN) \
+ /NOLOGO /SUBSYSTEM:console /INCREMENTAL:yes\
+ /PDB:$(OUTDIR)/"libbasicnt.pdb" /DEBUG /MACHINE:I386 /DLL \
+ /OUT:"WinDebug\libbasic.dll" /DEF:nt.def 
+DEF_FILE=nt.def
+LINK32_OBJS= \
+            Object.$(O)                                   \
+              Unix.$(O)                                   \
+              Autoload.$(O)                               \
+              Behavior.$(O)                               \
+                ClassDescr.$(O)                           \
+                  Class.$(O)                              \
+                  Metaclass.$(O)                          \
+              Project.$(O)                                \
+              Boolean.$(O)                                \
+                True.$(O)                                 \
+                False.$(O)                                \
+              CCReader.$(O)                               \
+              Coll.$(O)                                   \
+                Bag.$(O)                                  \
+                FileDir.$(O)                              \
+                SeqColl.$(O)                              \
+                  ArrColl.$(O)                            \
+                    Array.$(O)                            \
+                      WeakArr.$(O)                        \
+                    ByteArray.$(O)                        \
+                      CharArray.$(O)                      \
+                        String.$(O)                       \
+                          Symbol.$(O)                     \
+                      UIBytes.$(O)                        \
+                    DoubleArray.$(O)                      \
+                    FloatArray.$(O)                       \
+                Interval.$(O)                             \
+                LinkList.$(O)                             \
+                  Semaphore.$(O)                          \
+                OrdColl.$(O)                              \
+                  SortColl.$(O)                           \
+                Set.$(O)                                  \
+                  Dict.$(O)                               \
+                    IdDict.$(O)                           \
+                      WeakIdDict.$(O)                     \
+                  IdSet.$(O)                              \
+                    WeakIdSet.$(O)                        \
+                    SignalSet.$(O)                        \
+                    SemaSet.$(O)                          \
+              Context.$(O)                                \
+                BContext.$(O)                             \
+              Delay.$(O)                                  \
+              Exception.$(O)                              \
+              ExecFunc.$(O)                               \
+                CompCode.$(O)                             \
+                  Block.$(O)                              \
+                    CheapBlk.$(O)                         \
+                  Method.$(O)                             \
+              Filename.$(O)                               \
+              Link.$(O)                                   \
+                Process.$(O)                              \
+              Magnitude.$(O)                              \
+                LookupKey.$(O)                            \
+                  Assoc.$(O)                              \
+                AbstrTime.$(O)                            \
+                  AbsTime.$(O)                            \
+                  Time.$(O)                               \
+                ArithVal.$(O)                             \
+                  Number.$(O)                             \
+                    Fraction.$(O)                         \
+                    Integer.$(O)                          \
+                      LargeInt.$(O)                       \
+                      SmallInt.$(O)                       \
+                    LPReal.$(O)                           \
+                      Float.$(O)                          \
+                  Point.$(O)                              \
+                Character.$(O)                            \
+                Date.$(O)                                 \
+              Message.$(O)                                \
+              MiniDebug.$(O)                              \
+              MiniIns.$(O)                                \
+              ObjMem.$(O)                                 \
+              ProcSched.$(O)                              \
+              Geometric.$(O)                              \
+                Rectangle.$(O)                            \
+              Registry.$(O)                               \
+                HRegistry.$(O)                            \
+              Signal.$(O)                                 \
+                QuerySig.$(O)                             \
+              Smalltalk.$(O)                              \
+              Stream.$(O)                                 \
+                PeekStr.$(O)                              \
+                  PosStream.$(O)                          \
+                    ReadStr.$(O)                          \
+                    WriteStr.$(O)                         \
+                      RWStream.$(O)                       \
+                      ActorStr.$(O)                       \
+                      ExtStream.$(O)                      \
+                        FileStr.$(O)                      \
+                          DirStr.$(O)                     \
+                        UnbndExtStr.$(O)                  \
+                          NPExtStr.$(O)                   \
+                            PipeStr.$(O)                  \
+              UndefObj.$(O)                               \
+	libbasicInit.obj
+
+$(BINDIR)\libbasic.dll: $(OUTDIR)\libbasic.dll
+	-copy $(OUTDIR)\libbasic.dll $(BINDIR)\*.*
+
+$(LIBDIR)\libbasic.lib: $(OUTDIR)\libbasic.lib
+	-copy $(OUTDIR)\libbasic.lib $(LIBDIR)\*.*
+
+.\WinDebug\libbasic.lib : $(OUTDIR) $(DEF_FILE) $(LINK32_OBJS)
+    -$(LINK32) @<<
+  $(LINK32_FLAGS) $(LINK32_OBJS)
+<<
+
+.\WinDebug\libbasic.dll : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS) $(LIBRUN)
+    $(LINK32) @<<
+  $(LINK32_FLAGS) $(LINK32_OBJS)
+<<
+
+!ENDIF 
+
+.c{$(CPP_OBJS)}.obj:
+   $(CPP) $(CPP_PROJ) $<  
+
+.cpp{$(CPP_OBJS)}.obj:
+   $(CPP) $(CPP_PROJ) $<  
+
+.cxx{$(CPP_OBJS)}.obj:
+   $(CPP) $(CPP_PROJ) $<  
+
+############################################################################
+# Begin Group "src"
+
+STC=..\bin\stc
+INCL=-I"..\include"
+STCFLAGS=-H..\include
+DBGFLAGS=-Yd
+# FFLAGS=-Fo.\WinDebug
+
+.SUFFIXES: .st .obj
+
+.st.obj:
+    $(STC) $(INCL) $(FFLAGS) $(STCFLAGS) $(DBGFLAGS) $(DEFS) -c $<
+
+.c.obj:
+    $(CC) $(INCL) $(FFLAGS) $(DEFS) $(DBGFLAGS) -c $<
+
+# End Source File
+############################################################################
+
+# End Group
+# End Project
+############################################################################

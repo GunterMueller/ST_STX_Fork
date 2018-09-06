@@ -1,0 +1,19 @@
+<root>
+
+  <subelement>
+    <a>characters</a>
+  </subelement>
+
+  <subelement>
+    <b/>
+    <c/>
+  </subelement>
+
+  <subelement>
+    <b/>
+    <c/>
+    <b/>
+    <c/>
+  </subelement>
+
+</root>

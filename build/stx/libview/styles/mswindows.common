@@ -1,0 +1,109 @@
+; common for all mswindows-like styles
+;
+; this is not yet completed
+;
+; $Header: /cvs/stx/stx/libview/styles/mswindows.common,v 1.12 2013-11-25 15:24:54 stefan Exp $
+
+name                            #mswindows
+
+;this seems not fully true, buttons
+;and scrollers show some 3D.
+;anyway, most other views are flat.
+is3D                            false
+
+#if Screen current hasGreyscales not
+viewGrey                        Color white
+#endif
+
+borderWidth                     1
+popupBorderWidth                1
+viewBackground                  =viewGrey
+
+font                            Font family:'arial' face:'medium' style:'roman' size:10
+textFont                        Font family:'courier new' face:'medium' style:'roman' size:10
+
+scrollBar.position               #right
+scrollBar.buttonPositions        #around
+scrollBar.spacing                0
+
+scroller.borderWidth             1
+#if Screen current hasGreyscales
+scroller.viewBackground          Color grey:80
+#else
+scroller.viewBackground          Color white
+#endif
+scroller.fullViewBackground      Color white
+scroller.thumbColor              Color grey:80
+
+scroller.thumbLevel              3 "2"
+scroller.thumbFixHeight          true
+scroller.thumbEdgeStyle          #soft
+scroller.thumbFrameColor         Color black
+scroller.ghostFrameColor         Color darkGrey
+
+; variablePanel.showHandle       false
+
+framedBox.labelPosition          #topLeft
+framedBox.3DFrame                false
+
+button.edgeStyle                 #soft
+button.activeLevel               -1
+button.passiveLevel              4 "3"
+button.disabledForegroundColor       Color darkGrey
+button.borderWidth               0
+
+#if Screen current hasGreyscales
+button.foregroundColor           Color black
+button.backgroundColor           Color grey:80
+button.disabledEtchedForegroundColor Color white
+button.activeForegroundColor     =buttonForegroundColor
+button.activeBackgroundColor     =buttonBackgroundColor
+#endif
+
+button.returnButtonHasBorder     true
+
+arrowButton.style                #mswindows
+arrowButton.upFormFile           'ScrollUp_win.xbm'
+arrowButton.downFormFile         'ScrollDn_win.xbm'
+arrowButton.leftFormFile         'ScrollLt_win.xbm'
+arrowButton.rightFormFile        'ScrollRt_win.xbm'
+
+checkToggle.bitmapFile           nil
+checkToggle.style                #cross
+checkToggle.activeLevel          0
+checkToggle.passiveLevel         0
+checkToggle.borderWidth          1
+checkToggle.activeBackgroundColor Color white
+checkToggle.backgroundColor       Color white
+
+radioButton.style                #round2D
+
+;
+; selection-in-list
+;
+#if Screen current hasColors
+selection.hilightForegroundColor Color white
+selection.hilightBackgroundColor Color blue
+selection.hilightFrameColor      Color black
+#endif
+
+menuView.background              Color white
+
+pullDownMenu.keepMenu            true
+
+popUpList.popPosition            #below
+
+#if Screen current hasGrayscales not
+html.anchorUnderline                true
+html.anchorForegroundColor          Color black
+html.backgroundColor                Color white
+html.activeAnchorForegroundColor    Color black
+html.activeAnchorBackgroundColor    =html.backgroundColor
+html.visitedAnchorForegroundColor   Color black
+html.exampleAnchorForegroundColor   Color black
+#else
+html.backgroundColor               Color white
+html.anchorForegroundColor         Color green darkened
+html.visitedAnchorForegroundColor  =html.anchorForegroundColor darkened darkened
+html.anchorUnderlines              true
+#endif

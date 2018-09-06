@@ -1,0 +1,66 @@
+# %W% %E%
+
+# -------------- no need to change anything below ----------
+
+SHELL=/bin/sh
+
+TOP=../..
+MODULE=stx
+MODULE_DIR=clients/Animation
+PACKAGE=$(MODULE):$(MODULE_DIR)
+SUBDIRS=
+RCSSOURCES=*.st Make.proto bitmaps/*.xbm resources/*.rs
+
+I=$(INCLUDE)
+SYSLIBS    = -lX11
+
+STCOPT=$(CLIENT_STCOPT)
+
+# CFLAGS  = -I$(INCLUDE) $(OS) $(OPT) $(DBG) $(DEFS)
+# STCFLAGS= -v -H$(INCLUDE)
+STCFLAGS= -H. -I. -I$(INCLUDE) $(STCOPT)
+
+LIBNAME=Animation
+
+PROGS      = Animation GlobeDemo
+
+all::       $(PROGS)
+
+AOBJS=      classList.o Animation.o
+GOBJS=      classList.o Animation.o GlobeDemo.o
+
+objs::      $(AOBJS) $(GOBJS)
+
+Animation:  autoClassInit $(AOBJS) 
+	    $(CC) -c $(CFLAGS) -DSTARTUP_CLASS="Animation" \
+			       -DSTARTUP_SELECTOR='"start"' $(MAIN)
+	    $(LD) $(LDFLAGS) -o Animation \
+		  $(CRT0) main.o $(AOBJS) \
+		  $(LIBWIDGOBJ) $(LIBVIEWOBJ) $(LIBCOMPOBJ) $(LIBBASICOBJ) \
+		  $(LIBRUNDIR)/hidata.o $(LIBRUN) \
+		  $(MATHLIB) $(SYSLIBS) $(OTHERLIBS) $(CRTN)
+	    rm -f main.o
+
+Animation2:  autoClassInit $(AOBJS)
+	    $(CC) -c $(CFLAGS) -DSTARTUP_CLASS="Animation" \
+			       -DSTARTUP_SELECTOR='"start"' $(MAIN)
+	    $(LD) $(ST_LDFLAG) $(LDFLAGS) -o Animation \
+		  $(CRT0) main.$(O) classList.$(O) \
+		  $(AOBJS) $(LIBWIDGOBJ) $(LIBVIEWOBJ) $(LIBCOMPOBJ) $(LIBBASICOBJ) \
+		  $(LIBRUNDIR)/hidata.$(O) $(LIBRUN) \
+		  $(MATHLIB) $(EXTRALIBS) $(SYSLIBS) $(CRTN)
+
+GlobeDemo:  autoClassInit $(GOBJS) 
+	    $(CC) -c $(CFLAGS) -DSTARTUP_CLASS="GlobeDemo" \
+			       -DSTARTUP_SELECTOR='"start"' $(MAIN)
+	    $(LD) $(LDFLAGS) -o GlobeDemo \
+		  $(CRT0) main.o $(GOBJS) \
+		  $(LIBWIDGOBJ) \
+		  $(LIBVIEWOBJ) \
+		  $(LIBCOMPOBJ) \
+		  $(LIBBASICOBJ) \
+		  $(LIBRUNDIR)/hidata.o $(LIBRUN) \
+		  $(MATHLIB) $(SYSLIBS) $(OTHERLIBS) $(CRTN)
+
+# BEGINMAKEDEPEND
+# ENDMAKEDEPEND

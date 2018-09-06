@@ -1,0 +1,83 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Help - Changefile Settings</Title>
+</HEAD>
+
+<BODY>
+
+<H1>Changefile Settings</H1>
+
+<H2><A NAME="INDEX">Help index</A></H2>
+
+<UL>
+<!-- <LI><A HREF="#LOG_METHODS">Remember changed methods</A>  -->
+  <LI><A HREF="#LOG_COMPILES">Log compiles in changes file</A>
+  <LI><A HREF="#LOG_DOITS">Log doIts in changes file</A>
+  <LI><A HREF="#CHANGEFILE">Change file name</A>
+</UL>
+
+<HR>
+
+<!-- <H2><A NAME="LOG_METHODS" HREF="#INDEX">Remember changed methods</A></H2>
+
+If enabled, the system will keep a history for every changed method,
+which associates the method to its previous version.
+This allows quick undoing of method changes (without a need to recompile
+the method from its source).
+<BR>
+Notice, that this history will eat up lots of memory over time - you
+should flush it occasionally via the memoryMonitors <VAR>flush method history</VAR>
+menu item.
+<BR>
+The browser's <VAR>compare with previous</VAR> and <VAR>back to previous</VAR> items
+in the method list menu are only available, if the method history is turned on.
+<P>
+It is a good idea to turn on this feature,
+before modifications to the compiler classes
+are attempted, since those can then be undone without a need for a working
+compiler (in case you broke it). But make certain, that a SystemBrowser is
+open ...
+-->
+
+
+<H2><A NAME="LOG_COMPILES" HREF="#INDEX">Log compiles in changes file</A></H2>
+
+If enabled, every class or method change will be recorded in
+the changes file.
+<BR>
+Notice> it does NOT make any sense, to turn this off.
+
+
+<H2><A NAME="LOG_DOITS" HREF="#INDEX">Log doIts in changes file</A></H2>
+
+If enabled, every <VAR>doIt</VAR>, <VAR>printIt</VAR> and <VAR>inspectIt</VAR>
+action done in browsers or inspectors will also be recorded in the changes file.
+<BR>
+It does not make sense, to turn this on, since the change file will probably grow
+to a huge size over time.
+
+
+<H2><A NAME="CHANGEFILE" HREF="#INDEX">Change file name</A></H2>
+
+Names the file where changes are recorded.
+<P>
+If multiple users are working in the same directory, it is recommended, to use
+separate changeFiles (updates are not automatically synchronized).
+<P>
+Changing the name temporarily may also be useful to separate changes
+done in different projects.
+<P>
+
+<HR>
+<P>
+<P>
+Copyright &copy;  Claus Gittinger Development & Consulting, all rights reserved
+<P>
+<P>
+
+<HR>
+Doc $Revision: 1.2 $ $Date: 2013-08-02 16:47:15 $
+
+</BODY>
+</HTML>

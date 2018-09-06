@@ -1,0 +1,2179 @@
+<HTML>
+<HEAD>
+<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<TITLE>Smalltalk/X Online Documentation - Getting started</TITLE>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="../TOP.html" INFO="Back to documentation's main page" > <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+
+<H1>Getting started</H1>
+
+<H2>Contents</H2>
+
+<UL>
+<LI><A HREF="#INTRO" NAME="I_INTRO">Introduction</A>
+
+<LI><A HREF="#STARTING_AND_STOPPING" NAME="I_STARTING_AND_STOPPING">Starting & Stopping</A>
+<UL>
+  <LI><A HREF="#STARTING" NAME="I_STARTING">Starting Smalltalk/X</A>
+  <LI><A HREF="#STOPPING" NAME="I_STOPPING">Stopping Smalltalk/X</A>
+  <LI><A HREF="#STARTIMAGE" NAME="I_STARTIMAGE">Restarting Smalltalk/X</A>
+  <LI><A HREF="#COMMANDLINE" NAME="I_COMMANDLINE">Command Line Arguments</A>
+  <UL>
+    <LI><A HREF="#VM_ARGUMENTS" NAME="I_VM_ARGUMENTS">VM Arguments</A>
+    <LI><A HREF="#NON_VM_ARGUMENTS" NAME="I_NON_VM_ARGUMENTS">Non-VM Arguments</A>
+    <LI><A HREF="#SCRIPTING" NAME="I_SCRIPTING">Scripting Command Line Options (--eval and --script)</A>
+    <LI><A HREF="#SCRIPTING_EXAMPLES" NAME="I_SCRIPTING_EXAMPLES">Scripting Examples</A>
+    <LI><A HREF="#REPLMODE" NAME="I_REPLMODE">REPL (Read-Eval-Print-Loop) Mode Option (--repl)</A>
+    <LI><A HREF="#QUICKSTART" NAME="I_QUICKSTART">Quickstart Command Line Option (--quick)</A>
+    <LI><A HREF="#AUTOLOADSTART" NAME="I_AUTOLOADSTART">Autoload Command Line Option (--autoload)</A>
+  </UL>
+</UL>
+
+<LI><A HREF="#DEBUGGER" NAME="I_DEBUGGER">The Debugger</A>
+<UL>
+  <LI><A HREF="#LEAVEDEBUGGER" NAME="I_LEAVEDEBUGGER">Leaving the Debugger</A>
+  <LI><A HREF="#ENTERDEBUGGER" NAME="I_ENTERDEBUGGER">Entering the Debugger</A>
+  <LI><A HREF="#ABORTING" NAME="I_ABORTING">Aborting without Entering the Debugger</A>
+  <LI><A HREF="#LEAVEMINIDEBUG" NAME="I_LEAVEMINIDEBUG">Leaving the Low-Level Emergency Debugger</A>
+</UL>
+
+<LI><A HREF="#EDITING" NAME="I_EDITING">Editing</A>
+<UL>
+  <LI><A HREF="#MENUS" NAME="I_MENUS">PopUp Menus</A>
+  <LI><A HREF="#SCROLLING" NAME="I_SCROLLING">Scrolling Text</A>
+  <LI><A HREF="#SELECTING" NAME="I_SELECTING">Selecting Text</A>
+  <LI><A HREF="#TEXTEDITING" NAME="I_TEXTEDITING">Editing Text</A>
+  <LI><A HREF="#SPECIALCHARACTERS" NAME="I_SPECIALCHARACTERS">Special Characters</A>
+  <LI><A HREF="#ACCEPTING" NAME="I_ACCEPTING">Accepting</A>
+  <LI><A HREF="#KEYACCELS" NAME="I_KEYACCELS">Keyboard Accelerators / Function Keys</A>
+  <LI><A HREF="#FONT" NAME="I_FONT">Changing the Font</A>
+  <LI><A HREF="#TABBING" NAME="I_TABBING">Moving the Keyboard Focus (Tabbing)</A>
+  <LI><A HREF="#FOCUSMODE" NAME="I_FOCUSMODE">Focus Mode ("focus-follows-mouse" vs. "focus-on-click")</A>
+</UL>
+
+<LI><A HREF="#SMALLTALK" NAME="I_SMALLTALK">Smalltalk</A>
+<UL>
+  <LI><A HREF="#EVALEXPR" NAME="I_EVALEXPR">Evaluating Smalltalk Expressions</A>
+  <LI><A HREF="#LOADINGCODE" NAME="I_LOADINGCODE">Loading Existing Code / Using the FileBrowser</A>
+  <LI><A HREF="#IMPORTINGCODE" NAME="I_IMPORTINGCODE">Importing Code from Other Smalltalk Dialects</A>
+  <LI><A HREF="#PROGRAMMING" NAME="I_PROGRAMMING">Programming</A>
+  <LI><A HREF="#LEARNING" NAME="I_LEARNING">Learning Smalltalk</A>
+</UL>
+</UL>
+
+
+<H2><A HREF="#I_INTRO" NAME="INTRO">Introduction</A></H2>
+
+This document will give you some short information, on
+how to start & stop the <CITE>Smalltalk/X</CITE> development system (IDE)
+and how to use <CITE>ST/X</CITE> for scripting.
+You will also learn
+how to leave the system once you entered the debugger
+or if the system seems not to respond anymore.
+Also, you will get a short introduction of how to edit text,
+use the scrollbars and how to evaluate Smalltalk expressions.
+<P>
+If you are new to <CITE>Smalltalk/X</CITE>,
+or even new to Smalltalk,
+please take a few minutes,
+to read this document.
+
+
+<H1><A HREF="#I_STARTING_AND_STOPPING" NAME="STARTING_AND_STOPPING">Starting and Stopping Smalltalk/X</A></H2>
+<H2><A HREF="#I_STARTING" NAME="STARTING">Starting Smalltalk/X</A></H2>
+
+To start <CITE>Smalltalk/X</CITE>,
+type <CODE>"smalltalk"</CODE> (or <CODE>"stx"</CODE>)
+at the Unix (or Windows) prompt.
+<P>
+If you downloaded the developer's package,
+and did not install ST/X in a standard place,
+you will have to change the directory first:
+<CODE><PRE>
+    % cd projects/smalltalk
+    % ./stx
+    &lt;some info messages>
+    reading 'private.rc'...
+    starting Launcher...
+</PRE></CODE>
+On most Unix systems, the current directory is not in the PATH,
+and you have to type "<CODE>./smalltalk</CODE>" or "<CODE>./stx</CODE>".
+<P>
+For historic reasons,
+the IDE is found in the "<code>projects/smalltalk</code>" subdirectory.
+One reason was that there are multiple pre-compiled Smalltalk applications found under this
+folder.
+Beside the actual IDE, there is a stand alone webserver (which serves the eXept web site),
+a tinytalk, which is a smalltalk without UI classes, and other helloWorld-like demo programs.
+You can ignore all those others and only care for "<code>projects/smalltalk</code>".
+<P>
+The <CODE>"smalltalk"</CODE> command found there is actually a little shell script,
+which sets up the LD_LIBRARY path (so the class libraries, which are the libxxx.so files, are found)
+and calls the real executable <CODE>"stx"</CODE>.
+<P>
+If your path and ld-library path settings are correct, you can call <CODE>"stx"</CODE>
+directly (if not, try <CODE>"export LD_LIBRARY_PATH=."</CODE> before).
+On most systems today, the LD_LIBRARY_PATH already includes the current directory,
+and "stx" command works out of the box.
+
+<P>
+Of course, you can also double-click on the icon in the K-, Gnome or Windows desktop or file manager.
+<P>
+Windows-users will find two executables: <CODE>"stx.exe"</CODE> and <CODE>"stx.com"</CODE>.
+The difference is described below.
+<BR>
+Mac OSX users will almost certainly get a message like <VAR>"stx not found"</VAR>.
+This is because the current directory "." is not included in the shell's PATH variable.
+Please try "<code>./stx</code>" then.
+<P>
+
+<H3>Startup Actions</H3>
+When started, <CITE>Smalltalk/X</CITE> first reads and evaluates a script-file
+called <CODE>"smalltalk.rc"</CODE>,
+which consists of regular Smalltalk expressions in
+<A HREF="../programming/fileoutFormat.html">fileOut-format</A>
+(i.e. Smalltalk
+expressions separated by an exclamation mark '!').
+<BR>
+Smalltalk looks for this file FIRST in your current directory,
+THEN in a folder named ".smalltalk" under your home folder,
+THEN in some standard places
+(usually <CODE>"/opt/smalltalk/lib"</CODE> or
+<CODE>"/usr/local/lib/smalltalk/"</CODE> under Unix
+and <CODE>"\Programs\smalltalk\lib"</CODE> under MSDos).
+<P>
+After setting up various defaults (keyboard maps, function keys, view style etc.),
+this script finally starts up a
+<A HREF="../tools/misc/TOP.html#LAUNCHER">Launcher</A>
+and a
+<A HREF="../tools/misc/TOP.html#WORKSPACE">Workspace</A>
+window.
+
+The Launcher provides menus and buttons for the
+most common actions and also a
+<A HREF="../tools/misc/TOP.html#TRANSCRIPT">Transcript</A>
+view, which plays the role of a Smalltalk console
+where relevant system information is shown (for example: info and warning messages).
+<br>
+Other tools which can be opened via the Launcher's menu and toolbar
+are described in more detail later.
+<P>
+
+When you are new to the system, you probably do not want (need) to
+modify those startup script files -
+the setup done there should be perfect for most users.
+<BLOCKQUOTE>
+However, you can of course modify the startup scripts according
+to your personal preferences and/or add your own startup tools there.
+</BLOCKQUOTE>
+More info on these script files and startup actions is found in the
+documents
+<A HREF="../installation/TOP.html"><VAR>``Installation''</VAR></A>
+and especially in
+<A HREF="../custom/TOP.html"><VAR>``Configuration & Customization''</VAR></A>.
+
+
+<H3><A HREF="#I_CONSOLE_MODE" NAME="CONSOLE_MODE">Console vs. Non-Console Operation (Win32)</A></H3>
+
+Notice that for Windows operating systems (Win-NT, Win-2K, Win-XP, Vista, Win7/8/10 etc.),
+two executables are provided: "<CODE>stx.com</CODE>" and "<CODE>stx.exe</CODE>".
+<P>
+The first ("<CODE>stx.com</CODE>") is a console application, which shows a command-window into which trace and debug
+info is written. It is also used to communicate with the user in case of a hard internal
+error, if the graphical debugger is no longer working, or if <CITE>ST/X</CITE> has been built without
+graphical debugging support.
+<p>
+The second ("<CODE>stx.exe</CODE>") is a non-console application. If it ever encounters problems, there
+is no way to communicate with the user, and it will finish (just like all other windows
+applications do).
+<BR>
+However, it does write its diagnostic output to a log file
+(defaults to "<CODE>smalltalk.log</CODE>", unless suppressed by a
+ <A HREF="#COMMANDLINE">command line argument</A>).
+
+
+
+
+<H2><A HREF="#I_STOPPING" NAME="STOPPING">Stopping Smalltalk/X</A></H2>
+
+To leave the Smalltalk system, select the "<VAR>Exit</VAR>"
+item in the Launcher's file menu ("<VAR>File</VAR>"->"<VAR>Exit</VAR>").
+<BR>
+The Launcher will ask you to confirm before exiting.
+<P>
+An attempt to close the launcher window (via the windows close-button) leads to
+a confirmation dialog. This gives you a chance to either stop Smalltalk (and close all of its windows)
+or to only close the Launcher (and leave other windows open).
+<P>
+You can also type "CTRL-C" at the command propt, where "stx" was started
+(if it was actually started via the command line).
+Then, you will get into a mini debugger,
+which is described <A HREF="#LEAVEMINIDEBUG">below</A>.
+
+
+<H3><A HREF="#I_SNAPSHOT" NAME="SNAPSHOT">Snapshot Image</A></H3>
+You can leave the system both with and without saving a so called "<VAR>snapshot image</VAR>".
+If a snapshot is taken, Smalltalk will save its complete state in a snapshot file,
+from which you can restart and continue your work where you left.
+<P>
+It is recommended, that you save a snapshot image
+in regular intervals (whenever some work has been done).
+However, it is non-fatal if you do not,
+because ST/X logs all your programming work in a so called "<VAR>changes file</VAR>",
+which can be replayed (loaded). So even if you do not have a snapshot,
+it is quite easy to get to the state before, without loosing any of your work.
+<P>
+You may of course have multiple snapshot images around,
+either to separate projects, or to be able to quickly return to
+various previous states of your work.
+<BR>
+Use different and meaningful names for the snapshots.
+<P>
+Please notice, that <DFN>ST/X</DFN> does not need an image!
+<P>
+It can (and usually is) started without a snapshot image.
+All classes and objects (i.e. views,tools etc.)
+are created and initialized during a normal (non-snapshot) start
+by sending the "initialize" message to every loaded class,
+followed by the UI startup, which is actually controlled by a script file.
+
+
+
+<H2><A HREF="#I_STARTIMAGE" NAME="STARTIMAGE">Restarting Smalltalk/X</A></H2>
+When <CITE>Smalltalk/X</CITE> is restarted,
+it looks for a snapshot file named <CODE>"st.img"</CODE> (in the current directory
+or your workspace directory under "~/.smalltalk")
+and, if present, loads the state found in this file.
+If not, a normal "clean start" is performed.
+<BR>
+This allows you to continue your work anytime later, right at the
+point where you left it (if you saved a snapshot image - of course).
+
+<P>
+If you saved your snapshot under another name, start <CITE>Smalltalk/X</CITE> with an <VAR>image</VAR> (-i) argument
+as in:
+<CODE><PRE>
+    stx -i &lt;nameOfImage.img&gt;
+</PRE></CODE>
+If you want to start <CITE>Smalltalk/X</CITE> from scratch,
+ignoring any existing snapshot image,
+use the <VAR>ignore</VAR> (-I) flag, as in:
+<CODE><PRE>
+    stx -I
+</PRE></CODE>
+
+Hint/trick:
+<BR>
+On Unix systems, you can also change the permissions of the snapshot file
+to be executable (i.e. <CODE>"chmod +x st.img</CODE>") and
+make certain that a <I>Smalltalk/X</I> executable is found along the path
+by the name <CODE>"stx"</CODE>.
+Then, the snapshot file can be restarted simply by entering its name
+to the shell prompt.
+<P>
+You can also rename the snapshot image to whatever name you prefer
+(such as <CODE>"myImage"</CODE>), and make it executable.
+This allows startup of an (application-) snapshot image simply by
+its name.
+<P>
+On modern graphical operating systems, you can also drag the icon,
+which represents a snapshot file, on your desktop over the <I>Smalltalk/x</I> icon,
+or double-click on a snapshot image icon.
+
+
+<H2><A HREF="#I_COMMANDLINE" NAME="COMMANDLINE">Command Line Arguments</A></H2>
+
+Both the <I>ST/X</I> runtime system (VM) and the Smalltalk application / IDE
+understand a number of command line arguments.
+Among others, the VM options control the memory management behavior,
+debug message printing and startup behavior.
+<P>
+All of the "<DFN>VM-Arguments</DFN>" <B>must occur before</B> any command line
+arguments for the Smalltalk application (the "<DFN>Non-VM-Arguments</DFN>").
+<BR>
+The runtime system's command line parser stops after the last
+recognized VM-argument or when it encounters a "<code>--</code>" argument (two dashes)
+and passes the rest to the Smalltalk system (or a Smalltalk application),
+where it is available as "<CODE>Smalltalk &#187; commandLineArguments</CODE>".
+(also use "<code>--</code>" to pass an argument which conflicts with a VM-option's name to your program)
+<P>
+When <CITE>ST/X</CITE> itself is started (i.e. the IDE),
+the startup method which gets the initial control and
+which does command line argument parsing
+is "<CODE>Smalltalk &#187; start</CODE>".
+<P>
+When a standalone application is compiled and linked
+(eg. using the ProjectBuilder),
+the application's startup-class as specified in the project definition is responsible for this
+(see the "<CODE>StandaloneStartup</CODE>" class for an example).
+<P>
+
+
+<H3><A HREF="#I_VM_ARGUMENTS" NAME="VM_ARGUMENTS">VM Arguments</A></H3>
+Some VM-arguments are specific to the architecture, operating system or <CITE>ST/X</CITE> version.
+To get a full list, type "stx --help".
+<br>Some useful VM-arguments are:
+<UL>
+ <LI>Execution
+   <UL>
+     <LI><CODE>-i </CODE><i>&lt;snapshotFileName&gt;</i>
+     <BR>read &lt;snapshotFileName&gt; instead of "st.img".
+     </LI>
+     <P>
+     <LI><CODE>-I</CODE>
+     <BR>ignore any existing "st.img" file and perform a clean fresh cold start.
+	Notice that this is the default when any of the scripting options below is given.
+     </LI>
+   </UL>
+ </LI>
+ <P>
+
+ <LI>Information and Logging
+   <UL>
+     <LI><CODE>--help</CODE>
+     <BR>show a help message listing all valid command line arguments, then exit.
+This will probably tell you more than is listed here.
+     </LI>
+
+     <P>
+     <LI><CODE>--noLog</CODE>
+     <BR>turns logging off (stx.exe on Windows only).
+     </LI>
+
+     <P>
+     <LI><CODE>--logFile </CODE><i>&lt;fileName&gt;</i>
+     <BR>log into &lt;fileName&gt; (stx.exe on Windows only).
+     </LI>
+
+     <P>
+     <LI><CODE>--noBanner</CODE>
+     <BR>Suppress the splash-screen banner (only on Windows).
+       <BR>If not suppressed, type ESCAPE or CTRL-C to the banner window, to make it go away earlier
+       (useful, if it covers other windows).
+	Notice that this is the default when any of the scripting options below is given.
+     </LI>
+
+     <P>
+     <LI><CODE>--infoPrint</CODE>
+     <BR>Enable information messages, both from the VM and from Smalltalk code
+	This is the default for the <cite>ST/X</cite> IDE,
+	but not when scripting (see below).
+     </LI>
+
+     <P>
+     <LI><CODE>--noInfoPrint</CODE>
+     <BR>Suppress information messages, both from the VM and from Smalltalk code
+	 (i.e. suppresses output from infoPrint/infoPrintCR).
+	Notice that this is the default when any of the scripting options below is given.
+	If you want infoPrints in a script, use "<code>--infoPrint</code>".
+     </LI>
+
+   </UL>
+ </LI>
+ <P>
+
+ <LI>Debugging
+   <UL>
+     <LI><CODE>-Tinit</CODE>
+     <BR>trace the init phase (startup). This is useful for developers, if an incompatible or buggy library (dll)
+is loaded during startup, to locate the problem.
+<br>There are many more -Txxx tracing options; type "<code>stx --help</code>" to get a full list.
+     </LI>
+   </UL>
+ </LI>
+</UL>
+
+
+<H3><A HREF="#I_NON_VM_ARGUMENTS" NAME="NON_VM_ARGUMENTS">Non-VM Arguments</A></H3>
+Valid non-VM (i.e. arguments interpreted by the Smalltalk system) are:
+<UL>
+ <LI>Execution
+   <UL>
+     <LI><CODE>--quick</CODE>
+     <BR>quick startup; suppresses the installation of autoloaded classes,
+       banner and system workspace.
+       Notice, that in previous versions, the default startup behavior included
+       a hierarchical directory scan for all ".st" files and installing them as
+       autoloaded stubs. So those classes were automatically lazy-loaded, whenever
+       referred to. This was found to be problematic; both due to the long startup times,
+       and because it made determining the set of required library classes for standalone applications
+       difficult. Therefore, this is no longer the default behavior.
+       In order to get this old behavior, please use the "--autoload" option.
+       However, the "<code>--quick</code>" option still suppresses the license confirmation banner.
+     </LI>
+     <P>
+     <LI><CODE>--packagePath </CODE><i>&lt;dir&gt;</i><CODE> (-PP)</CODE>
+     <BR>adds dir to the package path.
+       This will also be consulted when packages are loaded.
+       <br>Multiple filder pathes can be given, if separated by a comma.
+     </LI>
+     <P>
+     <LI><CODE>--load </CODE><i>&lt;file_or_package&gt;</i><CODE> (-l)</CODE>
+     <BR>preloads a file or package.
+       The argument must be either an existing source- or binary class library file,
+       or a packageID of the form
+       "m:d1/.../di". Packages are searched in a subdirectory named
+	"m/d1/.../di" along the package path or in the "packages" folder.
+       <br>Multiple files/packages can be given, if separated by a comma.
+     </LI>
+     <P>
+     <LI><CODE>--noAutoload </CODE>
+     <BR>suppress autoloading of any package.
+       This suppresses the autoloading of packages which were specified in the
+       settings dialog ("<i>Settings</i>" - "<i>System</i>" - "<i>Autoloaded Packages</i>").
+       Notice: package autoloading is a different mechanism than the old class-stub autoloading.
+     </LI>
+     <P>
+     <LI><CODE>--autoload </CODE>
+     <BR>enforce the old class-stub autoload behavior based on a recursive directory scan.
+       This recursively scans all directories alog the package path for autoloadable
+       classes and installs them as class stubs. This may take a long time, but allows
+       for all demos and additional tools to be immediately visible in the browser and
+       usable for code.
+       Notice: this is different from package autoloading, which is much faster, as it
+       can determine the package location without an exhaustive search. It is also more secure,
+       as it ensures that prerequisites and initializations are performed correctly.
+     </LI>
+     <P>
+     <LI><CODE>--verbose (-V)</CODE>
+     <BR>turns on more diagnostic messages during startup.
+     Among others, this prints pathes, startup actions and other details,
+     which are usually only of interest, if something does not work as expected.
+     </LI>
+     <P>
+     <LI><CODE>--debug</CODE>
+     <BR>enables debugging of standalone applications or command-line scripts/eval expressions
+     via the MiniDebugger. If not given, errors will terminate the program/evaluation with a
+     walkback. Notice, that this option is not needed for the ST/X IDE itself (i.e. only for
+     standaone programs or when scripting via one of the options below.
+     </LI>
+     <P>
+     <LI><CODE>--silent</CODE>
+     <BR>turns off all diagnostic messages during startup
+     and in case of errors (i.e. not even an error message is printed).
+     However, there is still the exit status, which is non-zero in case of an error.
+     </LI>
+     <P>
+     <LI><CODE>--ignoreHalt</CODE>
+     <BR>disables halts. Any halt or breakpoint in the program/script will be ignored.
+     Useful during development, if there are leftover halts in the program.
+     This option is useful with the scripting options, described below.
+     </LI>
+     <P>
+     <LI><CODE>--ignoreAssert</CODE>
+     <BR>disables assertions. Any assert: in the program/script will be ignored.
+     </LI>
+     <P>
+     <LI><CODE>--noShellArgs </CODE>
+     <BR>suppress shell argument inclusion (see below).
+     </LI>
+   </UL>
+ </LI>
+</UL>
+
+<H3><A HREF="#I_SCRIPTING" NAME="SCRIPTING">Scripting Command Line Options (--eval and --script)</A></H3>
+
+The following command line options allow for
+Smalltalk scripts to be executed without a graphical user interface
+and without an IDE (and of course also without a snapshot image).
+<P>
+For scripting, it is recommended to install <CITE>ST/X</CITE> at a standard place
+("<CODE>/usr/local/bin</CODE>", "<CODE>/opt/smalltalk</CODE>" under Linux/Unix/OSX,
+or "<CODE>c:\Programs\SmalltalkX</CODE>" under Windows),
+and to make sure that the <CITE>ST/X</CITE> executable's folder is in the path.
+Then scripts can be executed on the shell level with "<CODE>stx</CODE>" or
+the script's name (as described below).
+<P>
+The scripting options imply a "--silent" option behavior;
+this means that no diagnostic output is generated
+(unless you reenable it via an option
+and of course except output which is generated explicitly by the script).
+
+<p>
+The individual scripting options are:
+<UL>
+     <LI><CODE>--file </CODE><i>"&lt;fileName&gt;</i>" ( -f  for short)
+     <BR>expressions in the script file are executed (fileIn format).
+     The file must be in Smalltalk chunk format
+    (i.e. it may contain a saved class's source, for the class to be loaded).
+If in combination with "-E", "-P", "-F" and "-R", this option should be placed
+before the other, and the script file is read silently before the corresponding
+evaluation(s) are performed. Thus, additional classes or packages can be loaded
+or defined in the script file.
+<BR>
+If a "-f" argument is given without one of the other scripting args (-E, -P, -F or -R),
+then only the script file is consulted (and <CITE>ST/X</CITE> quits after that).
+It is the script's responsibility to
+load and start or open any application, if that is intended.
+     </LI>
+
+     <P>
+     <LI><CODE>--eval </CODE><i>"&lt;st-expression&gt;</i>" ( -E  for short)
+     <BR>evaluate &lt;st-expression&gt;, then exit. No implicit printing is done.
+     Undefined variables are automatically defined as doIt temporaries
+     (as in a workspace, with the autodefine option turned on).
+     </LI>
+
+     <P>
+     <LI><CODE>--print </CODE><i>"&lt;st-expression&gt;</i>" ( -P  for short)
+     <BR>evaluate &lt;st-expression&gt;, print the result then exit.
+     Undefined variables are automatically defined as doIt temporaries.
+     (as in a workspace, with the autodefine option turned on).
+     </LI>
+
+     <P>
+     <LI><CODE>--filter </CODE><i>"&lt;st-expression&gt;</i>" ( -F  for short)
+     <LI><CODE>--filter </CODE><i>"&lt;expr1&gt;</i>" <i>"&lt;expr2&gt;</i>" <i>"&lt;expr3&gt;</i>" ( -F  for short)
+     <BR>read linewise input from Stdin until EOF is encountered.
+The evaluation takes place
+in the context of the String instance (i.e. "self" refers to the line-string)
+but is also accessable as "line".
+     Undefined variables are automatically defined as temporaries
+     (as in a workspace, with the autodefine option turned on).
+<br>With a single argument, &lt;st-expression&gt; is evaluated for each line.
+<br>With 3 arguments, &lt;expr1&gt; is evaluated first, then &lt;expr2&gt; for each line,
+and finally &lt;expr3&gt;.
+     </LI>
+
+     <P>
+     <LI><CODE>--run </CODE><i>"&lt;className&gt;</i>"
+     <BR>looks if a class by that name is loaded,
+     and tries to send it a "main:", "main" or "start" message (in that order).
+     Can be used to run individual scripts contained in a single file (source or package),
+     by first loading, then starting.
+<br>
+     For example: "<code>stx -I -l MyClass.st --run MyClass</code>" can be used to
+     load and run a class's main method as a script.
+<br>
+     And: "<code>stx -I -l my/package/app --run MyAppplication</code>" would load
+     a package (probably as a binary compiled class library) and start its main method
+     in the MyApplication class (which ought to be in that package, of course).
+     </LI>
+
+     <P>
+     <LI><CODE>--scripting </CODE><i>&lt;portNr&gt;</i> [ <CODE>--allowHost </CODE><i>&lt;host&gt;</i> ]
+     <BR>start the remote scripting service.
+       This allows for <CITE>ST/X</CITE> to be completely remote-controlled
+       via a telnet session from the local or a remote host.
+       If this option is given, a regular Smalltalk IDE (or application) is started,
+       with the scripting server running in the background.
+       <BR>
+       The scripting service will accept both Smalltalk-
+       and JavaScript-like syntax, which can be changed dynamically by a directive.
+       See <A HREF="../programming/goody_scripting.html">"Scripting Service"</A>
+       for more info.
+     </LI>
+</UL>
+
+<I>Smalltalk/X</I> behaves slightly different when in any of those scripting modes:
+<ul>
+<li>no launcher or other window is opened initially;
+<li>in case of an unhandled exception;
+a text-based <A HREF="#LEAVEMINIDEBUG">MiniDebugger</A> is entered instead of the graphical debugger.
+<li>unless an explicit "<code>-i</code>" argument is given,
+no image file is automatically loaded
+(i.e. a "<code>-I</code>" argument is not required);
+<li>the banner and infoPrint options are turned off (i.e. "--silent" by default);
+<li>the command line (excluding the VM- and Smalltalk options) is provided
+in a number of additional Workspace variables:
+<br>&nbsp;&nbsp;&nbsp;&nbsp;"<code>_$0</code>" - the command's name
+<br>&nbsp;&nbsp;&nbsp;&nbsp;"<code>_$n</code>" - the number of arguments on the command line
+<br>&nbsp;&nbsp;&nbsp;&nbsp;"<code>_$1</code>" .. "<code>_$&lt;n&gt;</code>" - the command's arguments (up to &lt;n&gt; arguments)
+<br>&nbsp;&nbsp;&nbsp;&nbsp;"<code>_$$</code> - all of the command's arguments (as a collection)
+</ul>
+
+<H3><A HREF="#I_SCRIPTING_EXAMPLES" NAME="SCRIPTING_EXAMPLES">Scripting Examples</A></H3>
+
+<H4>Command Line Scripting Examples:</H4>
+
+<BLOCKQUOTE>
+
+<A TYPE="copyexample"><CODE>stx -E "Delay waitForSeconds:1"</CODE></A>
+<br>- <I> same as "sleep 1"</I>
+<p>
+<A TYPE="copyexample"><CODE>stx -P "Smalltalk versionString"</CODE></A>
+<br>- <I> prints the <CITE>ST/X</CITE> version string"</I>
+<p>
+<A TYPE="copyexample"><CODE>stx -P "4567 * 8975"</CODE></A>
+<br>- <I>compute and print result</I>
+<p>
+<A TYPE="copyexample"><CODE>stx -P "a:=4567. a*a*8975"</CODE></A>
+<br>- <I>compute and print result (the variable "a" is automatically defined)</I>
+<p>
+<A TYPE="copyexample"><CODE>stx -P "100 factorial"</CODE></A>
+<br>- <I>compute and print result</I>
+<p>
+<A TYPE="copyexample"><CODE>stx -F "line asLowercase"</CODE></A>
+<br>- <I>converts its input to lowercase output (up to an EOF)</I>
+<p>
+<A TYPE="copyexample"><CODE>stx -F "count := 1" "count := count+1" "count printCR"</CODE></A>
+<br>- <I>counts the number of lines of its input (up to an EOF). I.e. this is the same as the "wc -l" command under Unix.</I>
+<p>
+<A TYPE="copyexample"><CODE>stx -E "Workspace open"</CODE></A>
+<br>- <I>opens a Workspace window</I>
+<p>
+<A TYPE="copyexample"><CODE>stx -E "WorkspaceApplication open"</CODE></A>
+<br>- <I>opens a full blown Workspace application</I>
+<p>
+<A TYPE="copyexample"><CODE>stx -E "Smalltalk loadPackage:'myPack'. MyApp open"</CODE></A>
+<br>- <I>loads a user package (typically from a binary compiled class library) and runs it</I>
+<p>
+<A TYPE="copyexample"><CODE>stx --load "myPack" --run "MyApp"</CODE></A>
+<br>- <I>does the same as above, but is less cryptic</I>
+
+</BLOCKQUOTE>
+
+<H4>File Scripting Example1:</H4>
+
+<BLOCKQUOTE>
+File "<code>script1.stx</code>":
+<A type="copyexample"><CODE><PRE>
+  #!stx --script
+  1 to:10 do:[:i |
+     'the factorial of %d is %d\n' printf:{ i . i factorial }
+  ].
+</PRE></CODE></A>
+Execute with:
+<CODE><PRE>
+  > stx --script script1.stx
+</PRE></CODE>
+or even better with:
+<CODE><PRE>
+  > chmod +x script1.stx
+  > ./script1.stx
+</PRE></CODE>
+</BLOCKQUOTE>
+<P>
+
+<H4>File Scripting Example2:</H4>
+
+<BLOCKQUOTE>
+File "<code>script2.stx</code>":
+<CODE><PRE>
+  #!stx --script
+  Workspace open.
+</PRE></CODE>
+Execute with:
+<CODE><PRE>
+  > chmod +x script1.stx
+  > ./script2.stx
+</PRE></CODE>
+</BLOCKQUOTE>
+
+<H4>File Scripting Example3:</H4>
+Notice the use of the command line argument:
+
+<BLOCKQUOTE>
+File "<code>script4.stx</code>":
+<A type="copyexample"><CODE><PRE>
+  #!stx --script
+  1 to: (_$1 asInteger) do:[:i |
+     'the factorial of %d is %d\n' printf:{ i . i factorial }
+  ].
+</PRE></CODE></A>
+Execute with:
+<CODE><PRE>
+  > chmod +x script4.stx
+  > ./script4.stx 25
+</PRE></CODE>
+</BLOCKQUOTE>
+<P>
+
+<H4>Error Handling in Scripting Mode</H4>
+In case of an error, the scripting options print an error message and exit.
+To enable debugging (with a MiniDebugger), add the "<code>--debug</code>" option (before any -P/-E option).
+To get a walkback, add a "<code>--debugPrint</code>" or "<code>--verbose</code>" option.
+<P>
+The following examples demonstrate the error behavior (in this case, a division by zero error):
+<BLOCKQUOTE>
+<A TYPE="copyexample"><CODE>stx -P "1 / 0"</CODE></A> prints an error message
+<p>
+<A TYPE="copyexample"><CODE>stx --debugPrint -P "1 / 0"</CODE></A> prints an error message plus walkback
+<p>
+<A TYPE="copyexample"><CODE>stx --verbose -P "1 / 0"</CODE></A> the same
+<p>
+<A TYPE="copyexample"><CODE>stx --debug -P "1 / 0"</CODE></A> opens a mini debugger
+<p>
+<A TYPE="copyexample"><CODE>stx --silent -P "1 / 0"</CODE></A> just returns an error-exit code
+<p>
+</BLOCKQUOTE>
+
+<H3><A HREF="#I_REPLMODE" NAME="REPLMODE">REPL (Read-Eval-Print-Loop) Mode Option (--repl)</A></H3>
+
+The "<code>--repl</code>" (or "<code>-R</code>" for short) command line argument starts a read-eval-print-loop,
+in which expressions can be evaluated in an interactive line-by-line mode.
+Long evaluations or endless loops can be stopped by presing CTRL-C, which gets you into
+a MiniDebugger, and the evaluation can be aborted with the 'a(bort)' command.
+<P>
+The repl will auto-declare undefined variables as workspace variables,
+and their values will be retained between evaluations
+(like in a <A HREF="../tools/misc/TOP.html#WORKSPACE">Workspace</A>, with the "auto-define-as-Workspace-variables" option enabled).
+The previous expression's value is available as "<code>_0</code>".
+<p>
+The input can be either in traditional chunk file format or in a special repl-format,
+where chunks are separated by either an empty line,
+or a line ending in a "." character
+(if you want to enter more text, add a space character after the period).
+<P>
+By default, the repl is in non-chunk mode.
+<P>
+While reading, lines beginning in a "#"-character are treated as directives:
+<UL>
+<LI><code>#help</code> (or <code>"?"</code>)
+<br>output a short list of supported directives.
+<P>
+<LI><code>#use </code><i>&lt;packageName&gt;</i>
+<br>load a precompiled package (such as "stx:goodies/regex").
+<P>
+<LI><code>#show [all | variables | processes | memory | packages | modules | flags]</code>
+<br>show various internals
+<P>
+<LI><code>#set / #clear</code> <i>&lt;flagName&gt;</i>
+<br>set/clear options.
+Useful options are "<code>timing</code>" and "<code>profiling</code>".
+Type "<code>#help</code>" to get a list of flags.
+<P>
+<LI><code>#apropos <i>&lt;keywordPattern&gt;</i>
+<br>show class names and selectors which match the keyworPattern (GLOB search)
+<P>
+<LI><code>#list <i>&lt;className&gt; [ &lt;selector&gt; ]</i>
+<br>show the class definition and comment or the source code of a method
+<P>
+<LI><code>#read </code><i>&lt;fileName&gt;</i>
+<br>read another script file in chunk format,
+or in repl-format (if a line beginning with "#" is encountered in the file).
+<P>
+<LI><code>#edit [ </code><i>&lt;className&gt;</i><code> [ </code><i>&lt;selector&gt;</i><code> ] ]</code>
+<br>open an external editor on a class or individual method.
+Without an argument, the last edited item is edited again.
+The editor can be specified in either the shell environment
+variables "<code>STX_EDITOR</code>" or "<code>EDITOR</code>",
+or via the "<code>#set editor path-to-command</code>" directive.
+<P>
+<LI><code>#ide</code>
+<br>enter the <CITE>ST/X</CITE> IDE (opens a Launcher).
+Control is returned to the REPL when the launcher is closed.
+<P>
+<LI><code>#break</code> <i>&lt;className&gt;</i> <i>&lt;selector&gt;</i>
+<br>set a breakpoint.
+<P>
+<LI><code>#delete</code> <i>&lt;className&gt;</i> <i>&lt;selector&gt;</i>
+<br>remove a breakpoint.
+<P>
+<LI><code>#exit</code> (or EOF)
+<br>exit the read-eval-print loop.
+</UL>
+
+If an error is encountered during the evaluation,
+a line-oriented debugger is invoked (MiniDebugger).
+By default, you'll be asked if you want to debug,
+but this can be turned off ("<CODE>#set debugconfirm false</CODE>").
+You can also completely disable the debugger ("<CODE>#set nodebug</CODE>");
+if disabled, the cause of the error is printed,
+and the REPL continues reading the next command/expression.
+<P>
+By default, the REPL shows a hello message, and both command prompts and answer prompts.
+Give a "<CODE>--silent</CODE>" (or "<CODE>-q</CODE>") option to disable the hello message and answer prompts
+(ST/X will behave similar to GNU Smalltalk then).
+The answer prompt can also be changed by "<CODE>#clear answerprompt</CODE>".
+<BR>Type "<CODE>#show flags</CODE>" to see more options.
+<P>
+Example Session (user input in bold):
+<p>
+<A TYPE="copyexample"><CODE><PRE>
+  &gt; <b>stx -R</b>
+  STX&gt; <b>#clear answerprompt</b>
+  STX&gt; <b>10 factorial.</b>
+  <i>3628800</i>
+  STX&gt; <b>#set timing</b>
+  STX&gt; <b>100 factorial.</b>
+  <i>9332621544394415268169923885...</i>
+  <i>10ms</i>
+  STX&gt; <b>#clear timing</b>
+  STX&gt; <b>x := 10 factorial.</b>
+  STX&gt; <b>x + x.</b>
+  <i>7257600</i>
+  STX&gt; <b>#show variables</b>
+  <i>_0 -> 7257600</i>
+  <i>_1 -> 3628800</i>
+  <i>_2 -> 9332621544394415268169923885</i>
+  <i>_3 -> 3628800</i>
+  <i>x -> 3628800...</i>
+  STX&gt; <b>'hello'
+  asUppercase
+  .</b>
+  <i>'HELLO'</i>
+  STX&gt; <b>'hello' asUppercaseFirst.</b>
+  <i>'Hello'</i>
+  STX&gt; <b>'hello' foo.</b>
+  <i>Error encountered: String does not understand: #foo</i>
+  <i>Debug (y/n): </i><b>y</b>
+    <i>...</i>
+    <i>backtrace</i>
+    <i>...</i>
+    <i>MiniDebugger&gt; </i><b>a</b>
+    <i>Evaluation aborted.</i>
+  STX&gt; <b>#set nodebug</b>
+  STX&gt; <b>'hello' foo.</b>
+  <i>Evaluation aborted: String does not understand: #foo</i>
+  STX&gt; <b>#clear nodebug</b>
+  STX&gt; <b>#read MyApplication.st</b>
+  STX&gt; <b>MyApplication start</b>
+  STX&gt; </b>^D</b>
+  &gt;
+</PRE></CODE></A>
+(CTRL-D is the EOF-character on Unix; type CTRL-Z on Windows)
+
+<H3><A HREF="#I_SHELL_ARGS" NAME="SHELL_ARGS">Defaulting Command Line Options via Shell Variables</A></H3>
+
+Two shell environment variables may be defined to provide additional
+<CITE>ST/X</CITE> command line options:
+<UL>
+<LI>STX_MORE_ARGS
+<BR>if set, and the "<code>--noShellArgs</code>" option is not present, the value of this
+shell variable is prepended to the list of arguments.
+<P>
+
+<LI>STX_DEFAULT_ARGS
+<BR>if no command line argument was given at all (i.e. <CITE>ST/X</CITE> was started with "stx" alone),
+the value of this shell variable is used as a list of arguments.
+</UL>
+These two options may be useful to enforce the old autoload/quickstart behavior
+on systems with many ST-scripts written for a previous release,
+or to generally enable/disable certain features, based on the programmer's private
+environment.
+
+<H3><A HREF="#I_QUICKSTART" NAME="QUICKSTART">Quickstart Command Line Option (--quick)</A></H3>
+
+Notice:
+<br>this behavior is now the default.
+So the option is no longer needed.
+To get the old behavior, use the "<code>--autoload</code>" option.
+The following chapter describes the old behavior.
+<P>
+
+When started without a snapshot image, <I>Smalltalk/x</I> first does a recursive scan
+of all directories below the stx-top directory for autoloadable packages.
+This is done for your convenience, so that many tools, demos and other support classes
+are already present as autoload-stubs in the class hierarchy. Autoloaded classes are simple
+proxy objects which perform an on-demand lazy loading of missing code for you.
+<P>
+This recursive scan can be somewhat slow if many directories are present or the filesystem
+is slow (on a network drive). It is therefore often useful to start the system without
+autoloaded classes, and load missing packages either via
+the launcher's file menu, pr programatically with
+<CODE><PRE>
+    Smalltalk loadPackage: &lt;packageID&gt;
+</PRE></CODE>
+or by opening a fileBrowser on a directory and applying the "<I>Install Autoloaded Classes</I>" menu function
+on it. Also, the system workspace includes a page with useful package-loading expressions.
+<P>
+To start <CITE>ST/X</SITE> without autoloaded classes, use the "<code>--quick</code>" command line option.
+<P>
+Motivation for no longer making this a default behavior:
+<br>
+Because autoloading is only possible
+in the IDE (where the classes source code is accessible), but not for standalone applications,
+a common error situation is to access or depend upon classes which were originally autoloaded,
+but not binary-compiled into a classLibrary-dll. So during development in the IDE, these classes
+were present and everything worked fine.
+On the other hand, it lead to a runtime exception in the deployed application.
+Therefore, it was recommended to always use the "<code>--quick</code>" option during development,
+so the programmer got informed about any missing class.
+<br>
+We thought, that it is better to avoid such mistakes right away.
+
+<H3><A HREF="#I_AUTOLOADSTART" NAME="AUTOLOADSTART">Autoload Command Line Option (--autoload)</A></H3>
+
+This option forces the old behavior, where the whole directory tree is scanned for autoloadable classes.
+This used to be done automatically, but turned out to become both unreasonably slow and
+dangerous.
+Please compile any of your classes into packages and load packages.
+This is both much faster,
+and also less error prone (read the argument above).
+If you need the old (scanning) behavior, use the "<code>--autoload</code>" command line argument.
+
+
+<H1><A HREF="#I_DEBUGGER" NAME="DEBUGGER">The Debugger</A></H2>
+<H2><A HREF="#I_LEAVEDEBUGGER" NAME="LEAVEDEBUGGER">Leaving the Debugger</A></H2>
+
+Whenever some error occurs in Smalltalk, or a breakpoint is encountered,
+a debugger window pops up (or a MiniDebugger, if scripting),
+which shows where the error occurred
+and how the system got there (this is called a <VAR>backtrace</VAR> or <VAR>walkback</VAR>).
+Since you may sooner or later get into the debugger,
+it is useful to give a brief description of how to get back to your normal work.
+<P>
+You should be aware that the debugger is one of your best friends in the Smalltalk IDE.
+In contrast to other programming languages, getting into the debugger is far from
+being fatal in Smalltalk. In fact, many Smalltalk programmers place breakpoints into
+as yet unimplemented branches of their source, and develop the program almost exclusively
+inside the debugger, by adding the missing code, as the halts are reached.
+This ensures, that all of the code has been reached at least once and has already
+been tested at least once when the coding is complete.
+<P>
+
+<BR>
+The debugger's actions are controlled by a set of buttons, a main menu,
+and a popup menu in the walkback view
+(for the less frequently used functions).
+<P>
+The most useful button actions are:
+<UL>
+
+<LI><VAR>Abort</VAR>
+<BR>
+execution continues at some save place in the interrupted process.
+<BR>
+The definition of what a <VAR>"save place"</VAR> is,
+depends on the process: for UI processes (such as workspaces, launchers
+etc. ) it's usually the place where input events are read.
+<BR>
+(To Smalltalkers: technically, an <CODE>AbortOperationRequest</CODE> exception is raised,
+for which a handler exists in the window's main event loop.)
+<BR>
+(To C-talkers: this is kind of a <VAR>longjmp</VAR> back to the
+window's main eventloop.)
+<P>
+
+<LI><VAR>Continue</VAR>
+<BR>
+the debugger will be closed, execution continues where it
+was interrupted.
+<BR>
+This will often trigger other errors and
+bring the debugger back again, if the error occurs in a loop,
+or if the followup processing gets confused by the first error.
+(for example, if the error was an unimplemented message
+send, the <VAR>continue</VAR>-function will continue
+as if the method was a no-operation and returned nil,
+which is often not what the caller expected.)
+Notice that not all exceptions are proceedable. For a non-proceedable exception,
+the "<VAR>Continue</VAR>"-button is disabled and you have to "<VAR>Abort</VAR>" instead.
+<P>
+
+<LI><VAR>Terminate</VAR>
+<BR>
+this will terminate the process (thread) in which the error occured.
+<BR>
+Usually, there is one process associated to each toplevel window
+on the screen. Pressing <VAR>terminate</VAR> shuts down this process
+and closes all of its views.
+Therefore, if an error occurs while evaluating a
+<VAR>doIt</VAR> in a workspace,
+the <VAR>terminate</VAR> function will abort
+the processing, terminate the process and close the
+workspace as a side effect.
+<P>
+The <VAR>terminate</VAR> function is disabled,
+if the affected process is the scheduler or the event dispatcher process
+(since if those were terminated, proper operation of the system
+would no longer be possible).
+<P>
+
+<LI><VAR>Next</VAR> and <VAR>Step</VAR>
+<BR>
+single-step to the next line ("Next") or message send ("Step") in the
+selected method.
+In contrast to the "Send"-button, these step over any code in called methods (unless another error or halt is encountered).
+The debugger will regain control after the step, and show the
+current line, the position of the next message send which is about to be executed.
+"Next" and "Step" always operate on the currently selected context in the top list.
+By selecting the "about to be executed method" in the walkback,
+you can continue stepping in this called method.
+By selecting a context further up in the calling hierarchy (i.e. further down in the list),
+a caller can be stepped.
+<P>
+
+<LI><VAR>Restart</VAR>
+<BR>
+restarts the selected method from the beginning. This is especially useful after a code change
+in that method, or in one of the methods called by it.
+
+</UL>
+
+A close of the debugger-window via the button in the window-title area,
+or the window manager has the same effect as "<VAR>Abort</VAR>".
+<P>
+There are many other button and menu functions in the debugger.
+Read
+<A HREF="../tools/debugger/TOP.html"><VAR>``Using the debugger''</VAR></A>
+for more information.
+<P>
+Hint:
+<BR>
+When you are new to the system, you probably should not care about
+all of those options;
+simply press <VAR>Abort</VAR> or the close-button in the windows title area
+to get out of the faulty computation.
+
+
+
+<H2><A HREF="#I_ENTERDEBUGGER" NAME="ENTERDEBUGGER">Entering the Debugger</A></H2>
+
+The debugger can be entered either due to an
+unhandled error
+(such as <VAR>division by zero</VAR>, or <VAR>array bounds check</VAR> etc.)
+or by an explicit request
+such as sending a <CODE>halt</CODE>-message to an object or
+a code breakpoint.
+<P>
+You can also type the interrupt key <KBD>"<B>Break/Pause</B>"</KBD> in any view,
+to force the corresponding view-process to be interrupted and to enter the debugger.
+Thus, to interrupt an ongoing doIt, simply press <KBD>"Break/Pause"</KBD> into the
+workspace window. If your keyboard does not provide such a key, try <KBD>"CTRL-."</KBD> which
+is provided as an alternative (and is also compatible to other Smalltalk system's interrupt key).
+<BR>
+(The key used to be "Ctrl-c" in previous Unix versions,
+but has been changed to have a unified keyboard mapping across systems.
+"Ctrl-c" is now <VAR>copy</VAR> on all systems.)
+<P>
+
+Finally, pressing <KBD>"<B>CTRL-c</B>"</KBD>
+in the terminal (xterm- or console) window where Smalltalk was started,
+forces a hard-interrupt, which interrupts any running process -
+even the scheduler, event dispatcher, other system process.
+This will usually bring you into a so called "<VAR>Minidebugger</VAR>" (see below),
+a very simple command line debugger.
+If <CITE>ST/X</CITE> does not even respond to <KBD>"<B>CTRL-c</B>"</KBD>
+in the terminal window, try quickly pressing it twice or more times.
+<P>
+The Minidebugger is especially useful to leave endless loops in
+undebugged user primitive code or if you made a mistake in changing some system code.
+
+<P>
+On some Unix systems, this interrupt key is labeled <KBD>"<B>INTR</B>"</KBD>
+or <KBD>"<B>DEL</B>"</KBD>.
+<BR>
+If <KBD>"CTRL-c"</KBD> does not work in your xterm,
+read the Unix manual page on the <CODE>`stty'</CODE> command for details.
+<P>
+Notice, that you can have multiple debuggers open at the same time,
+operating on different processes.
+However, only one so called "<VAR>modal debugger</VAR>" may operate on
+the scheduler or event dispatcher process. Pressing the interrupt key
+in the terminal window will usually bring you into a modal debugger.
+
+
+<FORM ACTION="../misc/onlyInSTX.html"
+      METHOD="DOIT |
+      [self halt:'press continue, abort or terminate'] fork.
+      ">
+
+If you want me to open a debugger for you, press:<INPUT TYPE="submit" VALUE="open debugger">.
+</FORM>
+<P>
+or evaluate one of the following in a workspace:
+<A TYPE="example" INFO="execute the example"><CODE><PRE>
+    self halt:'stopped for debug'
+</PRE></CODE></A>
+or
+<A TYPE="example" INFO="execute the example"><CODE><PRE>
+    |someVariable|
+
+    someVariable := 0.
+    Transcript showCR:(5 / someVariable)
+</PRE></CODE></A>
+
+
+<P>
+<H2><A HREF="#I_ABORTING" NAME="ABORTING">Aborting without Entering the Debugger</A></H2>
+
+If you simply want to abort some ongoing operation in some view
+(for example, a long evaluation in a workspace, or a file-load operation
+in a Filebrowser), you can also type <KBD>"<B>CTRL-Break</B>"</KBD>.
+<BR>
+This also interrupts the process in whatever it is doing, but
+aborts the operation without entering a debugger. I.e. this is equivalent to interrupting the
+program, followed by the debugger's "abort".
+<BR>
+(for experts: an <I>AbortOperationRequest</I> exception is raised, instead of <I>UserInterrupt</I>)
+<P>
+The <KBD>"<B>CTRL-Break</B>"</KBD> key handling is a functionality of
+the Smalltalk event handler - it does not work in the terminal window.
+<P>
+(Notice: in previous releases, this function used to be on the "<KBD>Ctrl-y</KBD>" key-combination.
+This has been changed to conform to standard conventions. "<KBD>Ctrl-y</KBD>" now means "redo")
+
+
+<H2><A HREF="#I_LEAVEMINIDEBUG" NAME="LEAVEMINIDEBUG">Leaving the Low-Level Emergency (Mini-)Debugger</A></H2>
+
+Whenever a serious error occurs within the graphical debugger itself,
+or when an error occurs during startup (before the GUI has been initialized),
+or if an error is encountered in a deployed non-GUI standalone application,
+or in scripting mode,
+you may find yourself in a line-by-line debugger called the <VAR>MiniDebugger</VAR>.
+This MiniDebugger allows for some limited debugging without using the graphical user interface.
+<P>
+The system considers errors occuring in the graphical debugger itself as serious.
+
+
+For example, if you have changed the Scrollbar class which
+ is also used in the debugView, or if any other error occurs while
+ the debugView is initializing itself.
+<P>
+You may also get into the MiniDebugger,
+if you press <KBD>"<B>CTRL-C</B>"</KBD> in the
+terminal window.
+<P>
+<UL>
+<LI>Type <KBD>"<B>?</B>"</KBD> at its prompt to get a list of options.
+<P>
+<LI>try <KBD>"<B>c</B>"</KBD> (for <VAR>continue</VAR>)
+<LI>try <KBD>"<B>a</B>"</KBD> (for <VAR>abort</VAR>)
+<LI>if that does not help, try <KBD>"<B>T</B>"</KBD> (for <VAR>terminate process</VAR>)
+<LI>or <KBD>"<B>Q</B>"</KBD> (for <VAR>quick terminate process</VAR>)
+<LI>or <KBD>"<B>x</B>"</KBD> (to exit <CITE>Smalltalk/X</CITE>)
+</UL>
+The "Q"-command (<VAR>quick terminate process</VAR>) terminates the current
+process without any cleanup actions being performed - this may leave dead windows on your
+screens which have to be manually destroyed (use the Launcher's <VAR>tools-destroy view</VAR> menu function).
+Be aware, that this may also leave files open and semaphores locked.
+So this should be used wth great care.
+<P>
+If all of the above fail, you should exit Smalltalk, restart from a previously saved image and
+reapply any changes using the <A href="../tools/cbrowser/TOP.html">ChangesBrowser</A>.
+The MiniDebugger also offers two commands for emergency
+saving: "S" to save a crash-image,
+and "C" to save your session changes into a separate
+changes file.
+<P>The crash image can be browsed later with the snapshot image browser,
+or you can try to restart it (although that will likely fail).
+
+<P>
+In rare cases (other Smalltalk processes are running, and the scheduler
+suspended the debuggers process),
+the <VAR>MiniDebugger</VAR> may seem to not react to your input.
+<BR>
+If this happens, press the interrupt key again (as described above) and try again.
+The interrupt should reenter the <VAR>MiniDebugger</VAR> in an exclusive
+input mode and stop any scheduling of other processes.
+
+
+
+<H1><A HREF="#I_EDITING" NAME="EDITING">Editing</A></H1>
+<H2><A HREF="#I_MENUS" NAME="MENUS">PopUp Menus</A></H2>
+
+Most views offer functions via a <VAR>PopUpMenu</VAR>.
+This menu is activated by pressing the right mouse button in the view.
+(Historically, it was located on the middle mouse button, and is therefore
+sometimes referred to as <VAR>middleButtonMenu</VAR>;
+However, this naming is historic. You can customize your mouse buttons,
+if you don't like this. Left-handers typically prefer things to be vice
+versa).
+<BR>
+Read <A HREF="../custom/TOP.html#MOUSE"><VAR>``Configuration & Customization''</VAR></A>
+on how this is done.
+<P>
+The menu's entries depend on the type of view and often on the
+context or type of object/text being displayed.
+Typically, it offers operations on the contents or the current selection.
+<P>
+Some views offer an extra <VAR>control-middleButtonMenu</VAR>,
+which is activated if the <KBD>"<B>CTRL</B>"</KBD> key is
+pressed simultaneously with the mouse button.
+<BR>
+These <VAR>control menus</VAR> provide additional functions - which are
+either seldom needed
+or perform <CITE>ST/X</CITE>'s developers hidden private goody operations ;-).
+<BR>
+However, they may be useful for others too - try the <VAR>control menu</VAR>
+in the browser's code view or its class list (select a class first).
+
+
+
+<H2><A HREF="#I_SCROLLING" NAME="SCROLLING">Scrolling Text</A></H2>
+
+<H3><A NAME="SCROLLING_SCROLLBAR">Scrolling using Scrollbars</A></H2>
+
+The scrollbars shown beside the actual text work
+as usual, however, they provide the following special
+behavior:
+
+<UL>
+<LI>when the mouse-button is pressed below or above the
+so-called <VAR>thumb</VAR>, the text is
+scrolled page-wise (one page for every click).
+
+<P>
+<LI>If the <KBD>"<B>SHIFT</B>"</KBD> key is pressed while the mouse
+button is pressed, positioning will be to that
+position.
+Thus you can position quickly within an even large text.
+
+<P>
+<LI>If the <KBD>"<B>CTRL</B>"</KBD> key is pressed while the mouse
+button is pressed, positioning will be to the very top or to the end
+of the document.
+
+<P>
+<LI>if you keep holding the mouse button down in one of the scrollbars up/down buttons,
+the view starts to autorepeat its scroll operation.
+It stops doing so, if you move the mouse pointer out of the up/down buttons area,
+or if the mouse button is released.
+<BR>
+Pressing <KBD>"<B>SHIFT</B>"</KBD> speeds up the autoscroll a bit
+
+<P>
+<LI>If you move the mouse horizontally in vertical scroller
+or vertically in a horizoontal scroller),
+while keeping the mouse button pressed,
+the scroller will at some distance snap back and scroll to its original position.
+Move the mouse back towards the scroller to continue scrolling.
+This is very useful if you either change you mind while scrolling,
+or if you only want to look at some other place in the document
+and return to where you started.
+
+</UL>
+(see more on text positioning in the section on keyboard commands).
+<P>
+
+<H3><A NAME="SCROLLING_MOUSEWHEEL">Scrolling using the Mouse-Wheel</A></H2>
+
+If your mouse has a mouseWheel, the scroll amount can be adjusted via the control-
+and shift keys as follows:
+<UL>
+<LI>If the <KBD>"<B>SHIFT</B>"</KBD> key is pressed while the mouseWheel
+is operated, the mouseWheel performs LINE-wise scrolling.
+<P>
+
+<LI>If the <KBD>"<B>CTRL</B>"</KBD> key is pressed while the mouseWheel
+is operated, the mouseWheel performs PAGE-wise scrolling.
+<P>
+
+<LI>Otherwise, the mouseWheel adjusts its scroll speed according to the
+size of the document and the size of the window.
+Typically, each motion-tick leads to a scroll of a few lines of text.
+
+</UL>
+
+<H3><A NAME="SCROLLING_CURSOR">Scrolling using Cursor-Keys</A></H2>
+
+Text-windows can also be scrolled
+by pressing the <KBD>"<B>CTRL</B>"</KBD> key together with a cursor key.
+
+<P>
+Of course, moving the text-cursor in a textView or moving the selection in a list-view
+via the cursor keys also leads to a scroll operation if required.
+
+
+<H3><A NAME="SCROLLING_MINISCROLLER">Mini Scrollers</A></H2>
+Some views which are considered to be less likely to be scrolled often,
+show a mini scroller. These are thin scrollers, without buttons.
+They are typically shown in selection lists
+and require less valuable screen space. Otherwise, they behave like regular scrollbars.
+
+
+<H2><A HREF="#I_SELECTING" NAME="SELECTING">Selecting Text</A></H2>
+
+Text is selected using the left-mouse button:
+<OL>
+<LI>press the button over the first character to be
+selected,
+<LI>while-being pressed, move the mouse-pointer to the
+end position
+<LI>release the mouse-button.
+</OL>
+
+The current selection will be highlighted.
+Pressing the
+left mouse button again makes the system forget the
+old selection and start a new one, except when you
+press the <KBD>"<B>SHIFT</B>"</KBD> key while pressing the button.
+<BR>
+In this case, the current selection will be expanded.
+You can expand a selection at any time, even if you
+leave and reenter the view containing the selection.
+It is therefore possible, to scroll the view (using
+the scrollbar) or perform any other function (page-up
+or page-down), required to make the desired end-position
+visible. A selection can be expanded in both directions,
+any number of times.
+<P>
+It is also possible to move the mouse pointer out of
+the view, while the mouse button is kept pressed.
+The view will then start to automatically scroll.
+The farther away you move the pointer from the views border,
+the faster will it scroll.
+This is the easiest way of selecting text:
+just let it scroll by and stop when the end-position arrives.
+<P>
+<UL>
+<LI>a <B>double click</B> selects the word under the mouse pointer,
+<LI>a <B>triple click</B> selects the whole line,
+<LI>a <B>quadruple click</B> selects the whole text.
+</UL>
+<P>
+If you keep the button pressed and start to move
+after a double click, it continues to select whole words;
+moving after a triple click continues to select whole lines.
+<BR>
+<P>
+If you double click one of a parenthesis, bracket
+or brace, the text up to and including the
+matching one is selected.
+<P>
+Notice, <CITE>ST/X</CITE> differentiates between two types of selections:
+<UL>
+<LI>regular selections which were created by dragging the mouse,
+<LI>and pasted selections, which were created by pasting text.
+</UL>
+These behave different, when a key is pressed or text is pasted:
+<BR>
+a user selection is replaced by the characters entered at the keyboard, or
+by pasting text from the clipboard.
+<BR>
+In contrast, already pasted text is not again replaced; instead, new text
+as entered or pasted is inserted behind the selection.
+(allowing for multiple paste operations to be performed).
+<BR>
+In some viewStyles, pasted selections are shown in a slightly different color,
+than regular selections.
+<P>
+
+There are also two convenient keyboard shortcuts
+<A HREF="#FN1" NAME="BACK_FN1">(*)</A>
+for selecting:
+<UL>
+<LI><KBD>"<B>CTRL-a</B>"</KBD> - <VAR>select all</VAR>
+<BR>to select the whole text (same as quadruple-click)
+<P>
+<LI><KBD>"<B>ESC</B>"</KBD>
+<BR>
+to select from the beginning of the line up to
+the current cursor position. (Thus to evaluate
+something in a workspace, you have to press two keys only:
+<KBD>"<B>ESC</B>"</KBD> followed by <KBD>"<B>CMD-d</B>"</KBD>.)
+</UL>
+
+Notice:
+<BLOCKQUOTE>
+In Smalltalk, <VAR>selecting</VAR> has always been a
+separate action than <VAR>copying</VAR>. To copy something into a buffer,
+you <B>first</B> have to select the text <B>then</B> do a <VAR>copy</VAR>
+action.
+<BR>
+In contrast to that, X-Window's xterm and toolkit views use
+a different style where select and copy are combined;
+whenever text is selected, this is <B>automatically</B> placed into
+the copy buffer.
+<P>
+Especially when new to the system, this may be a bit confusing.
+<BR>
+(My personal feeling is that X's behavior is a result of a poor
+design, which was later made a ``feature'' - especially with the newest
+xterms, where you have to press <KBD>"<B>SHIFT</B>"</KBD> in addition,
+making things even more confusing ;-)
+</BLOCKQUOTE>
+
+
+<H2><A HREF="#I_TEXTEDITING" NAME="TEXTEDITING">Editing Text</A></H2>
+
+All views which show text allow you to perform the usual
+functions via their middleButtonMenu or keyboard shortcuts
+(also called "<VAR>keyboard accelerators</VAR>").
+Because all text views are based on a common EditTextView class,
+the behavior of all of them is similar.
+<P>
+Most editors allow you to type in changes in a modeless fashion
+anywhere on the editors window area
+(i.e. there are no invisible and hidden tabulators or end-of-line characters
+embedded). Like on a piece of paper, you can position the text-cursor whereever
+you like, and start typing text.
+The editor will insert blanks or empty lines automatically, as required.
+This behavior can be turned off by checking the <VAR>"ST80 Cursor Behavior"</VAR>-flag in the
+("<VAR>Settings</VAR>" - "<VAR>Tools</VAR>" - "<VAR>Editor</VAR>")
+settings dialog.
+<P>
+
+<H3><A HREF="#I_SPECIALCHARACTERS" NAME="SPECIALCHARACTERS">Special Characters</A></H3>
+
+Special characters, such as math, greek, arrows and other characters which are
+not found on the keyboard,
+can be entered via a special-character window, which is opened via the popup menu
+("<VAR>Other</VAR>" -> "<VAR>Special Characters</VAR>").
+This window behaves like a keyboard: click on a character to get it inserted into the text.
+Notice, that most fonts do not contain glyphs for all characters.
+Such characters will be displayed as a fallback (default) character, which is typically
+a rectangular empty box. However, even if not drawn correctly, the text will contain
+the corresponding character, and will be displayed correctly, if a proper font is chosen.
+
+
+<H3><A HREF="#I_ACCEPTING" NAME="ACCEPTING">Accepting</A></H3>
+
+Text is usually not stored (or installed), until <VAR>"accepted"</VAR>.
+What exactly <VAR>"accept"</VAR> means depends on the context: in a file-browser,
+it means that the changed contents is written back to the file. In
+a class-browser, it means that the changed code is compiled and installed.
+<P>
+The opposite of <VAR>"accept"</VAR> is <VAR>"cancel"</VAR>. This will undo you changes
+and revert back to the last saved (<VAR>"accepted"</VAR>) version.
+<P>
+As an option, the class browser adds two buttons to its code-editor window.
+These allow for very quick <VAR>"accept"</VAR> or <VAR>"cancel"</VAR>.
+Also, they give a very prominent feedback on the modification state of the text.
+
+
+<H3><A HREF="#I_KEYACCELS" NAME="KEYACCELS">Keyboard Accelerators / Function Keys</A></H3>
+
+<BR>
+Notice that the function key mapping may be different on some systems.
+If in doubt, open the "<i>Settings</i>"-"<i>Keyboard-Mappings</i>" dialog in the launcher.
+This shows a list of the actual mapping. Also, it is controlled by two files which are
+consulted during startup ("<I>keyboard.rc</I>" and "<I>keyboardMacros.rc</I>"), which can be changed and reconsulted, of course.
+
+<UL>
+
+<LI><KBD>"<B>CTRL-c</B>"</KBD> - <VAR>Copy</VAR>
+<BR>
+the selected text is copied into the copy-paste-buffer.
+This also places the selection into the display's clipboard,
+to allow pasting it into a non Smalltalk (xterm) view.
+
+<P>
+<LI><KBD>"<B>CTRL-x</B>"</KBD> - <VAR>Cut</VAR>
+<BR>
+the selected text is deleted.
+The text is also copied into the copy-paste-buffer
+and to the display's clipBoard.
+
+<P>
+<LI><KBD>"<B>CTRL-v</B>"</KBD> - <VAR>Paste</VAR>
+<BR>
+the contents of the copy-paste-buffer is inserted at the
+current cursor position. If there is currently a selection,
+the selected text will be replaced.
+This also pastes selections from other (xterm) windows.
+<P>
+If you press the <KBD>"<B>Shift</B>"</KBD> key in addition
+(i.e. <KBD>"<B>CTRL-SHIFT-V</B>"</KBD>), a list of previously
+copied text fragments is shown, from which you can choose the
+text that should be pasted ("copy history").
+
+<P>
+<LI><KBD>"<B>CMD-j</B>"</KBD> - <VAR>Join line</VAR>
+<BR>
+joins the cursor-line with the next line at the current cursor column.
+(i.e. the rest of the line after the cursor is deleted).
+
+<P>
+<LI><KBD>"<B>CTRL-f</B>"</KBD> or <KBD>"<B>CMD-s</B>"</KBD>- <VAR>Find / Search & Replace</VAR>
+<BR>
+opens a panel to start a string search. The entered search string
+and case-ignore-mode are remembered for followup "<VAR>Search forward</VAR>"
+and "<VAR>Search backward</VAR>" operations (see below).
+<BR>
+The dialog also offers an option to replace matching strings by another string.
+<P>
+<LI><KBD>"<B>CMD-f</B>"</KBD> - <VAR>Search forward</VAR>
+<BR>
+search forward in the text, and position the cursor to (and select)
+the next occurrence of the search-string.
+The search-string is either the current
+selection or - if there is no selection - the last search string
+entered into the search-string box.
+<BR>
+Thus, to search for the next occurrence of some word under the cursor,
+select it and type <KBD>"<B>CMD-f</B>"</KBD>.
+
+<P>
+<LI><KBD>"<B>CMD-b</B>"</KBD> - <VAR>Search backward</VAR>
+<BR>
+search backward in the text, like above, but search backward.
+<P>
+
+<LI><KBD>"<B>CMD-w</B>"</KBD> - <VAR>Select word</VAR>
+<BR>
+selects the word under the cursor, or the whitespace between
+words, depending on the character under the cursor.
+A word is defined as any sequence of alphanumeric characters
+delimited by separators. If there is currently a selection,
+the next word or whitespace is selected.
+<P>
+
+<LI><KBD>"<B>CTRL-l</B>"</KBD> - <VAR>Goto line-number</VAR>
+<BR>
+opens a box to ask for a line-number and positions the cursor to that line.
+<P>
+
+<A NAME="FUNCTION_KEY_UNDO"></A>
+<LI><KBD>"<B>CTRL-z</B>"</KBD> - <VAR>Undo</VAR>
+<BR>
+undoes the effect of the last text-modification(s).
+Every editor keeps a (possibly unlimited) undo list.
+This list remembers all changes made to the text and allows for undo/redo of edit modifications.
+The redo function is found in the textview's popup-menu (under the "others"-submenu).
+<BR>
+The undo list is cleared whenever the text is <VAR>"accepted"</VAR> (see below)
+(i.e. a files text is written back or a methods code is saved).
+
+<P>
+<A NAME="FUNCTION_KEY_REDO"></A>
+<LI><KBD>"<B>CTRL-y</B>"</KBD> - <VAR>Redo</VAR>
+<BR>
+undoes the the last undo.
+
+
+<P>
+<A NAME="FUNCTION_KEY_FONTSIZE_PLUS"></A>
+<LI><KBD>"<B>CTRL-+</B>"</KBD> - <VAR>Larger font</VAR>
+<BR>
+<LI><KBD>"<B>CTRL--</B>"</KBD> - <VAR>Smaller font</VAR>
+<BR>
+these change the font size of the view (which has the focus).
+With <KBD>"SHIFT"</KBD>, the font size of all views is changed.
+(read more in <A HREF="#FONT">"Changing the Font"</A> below).
+
+</UL>
+
+Some keyboards (for example on Sun workstations) provide
+function keys labeled <KBD>"<B>copy</B>"</KBD>, <KBD>"<B>cut</B>"</KBD>,
+<KBD>"<B>paste</B>"</KBD> and so on.
+These keys should also behave as expected (this depends on your startup file).
+<P>
+
+Cursor positioning:
+<UL>
+
+<LI><KBD>"<B>Home</B>"</KBD> or <KBD>"<B>Pos-1</B>"</KBD> (Mac: "FN-CrsrLeft")- <VAR>start of line</VAR>
+<BR>
+position the cursor to the begin of the current line.
+If the line is indented (i.e. spaces at the beginning),
+and the cursor was positioned after the first non-space character,
+the cursor will be moved to right before the first non-blank character.
+Otherwise, the cursor is positioned to column 1.
+<P>
+
+<LI><KBD>"<B>End</B>"</KBD> (Mac: "FN-CrsrRight") - <VAR>end of line</VAR>
+<BR>
+position the cursor to the end of the current line
+<P>
+
+<LI><KBD>"<B>Ctrl-w</B>"</KBD> - <VAR>next word</VAR>
+<BR>
+position the cursor to the beginning of the next word.
+Numbers (i.e. digit sequences) are treated like words.
+Other characters (punktuation) are treated like single-character words.
+<P>
+
+<LI><KBD>"<B>Ctrl-W</B>"</KBD> - <VAR>end of word / next word</VAR>
+<BR>
+similar to the above. However, the cursor
+is first moved to the end of the current word.
+Then, the next press moves it to the beginning of the next word.
+Useful especially in a keyboard macro, to position the cursor to the end of a word.
+<P>
+
+<LI><KBD>"<B>Ctrl-m</B>"</KBD> - <VAR>match</VAR>
+<BR>
+position the cursor on the matching parenthesis.
+The definition of what matching parenthesis are
+depends on the editor's (programming-) language setting.
+Usually, this will be Smalltalk-mode, where "()", "[]" and "{}"
+are defined as pairs.
+However, the editor of a filebrowser uses the mime-type of the
+edited document to define those pairs.
+So, for example when editing HTML or XML, "&lt;&gt;" are also defined as matching pairs.
+</UL>
+
+Other functions which affect the cursor position:
+<UL>
+<LI><KBD>"<B>SHIFT-Return</B>"</KBD> - <VAR>non inserting cursor return</VAR>
+<P>
+
+<LI><KBD>"<B>SHIFT-Tab</B>"</KBD> - <VAR>non inserting tab</VAR>
+<br>however, if there is a line-selection (i.e. a full line or a number of full lines),
+<KBD>SHIFT-Tab</KBD> will undent by 4 (remove 4 leading spaces).
+<br>Unshifted, the <KBD>Tab</KBD>-key will indent the selected lines by 4 spaces.
+<P>
+
+<LI><KBD>"<B>Ctrl-Home</B>"</KBD> - <VAR>start-of-screen/text</VAR>
+<BR>
+when first pressed, move the cursor to the first visible line.
+If pressed again, move it to the very beginning of the text.
+<P>
+<!--
+<LI><KBD>"<B>Shift-Home</B>"</KBD> - <VAR>start-of-text</VAR>
+<BR>
+Move the cursor to the very beginning of the text.
+<P>
+-->
+
+<LI><KBD>"<B>Ctrl-END</B>"</KBD> - <VAR>end-of-screen/text</VAR>
+<BR>
+when first pressed, move the cursor to the last visible line.
+If pressed again, move it to the very end of the text.
+<P>
+
+<!--
+<LI><KBD>"<B>Shift-END</B>"</KBD> - <VAR>end-of-text</VAR>
+<BR>
+Move the cursor to the very end of the text.
+<P>
+-->
+
+<LI><KBD>"<B>PageUp</B>"</KBD> - <VAR>previous page</VAR>
+<P>
+
+<LI><KBD>"<B>PageDown</B>"</KBD> - <VAR>next page</VAR>
+<P>
+</UL>
+
+<P>
+<A NAME="FUNCTION_KEYS">Function-keys</A>
+(these are configured during startup, by the "<I>keyboard.rc</I>" script-file):
+<UL>
+
+<A NAME="FUNCTION_KEY_CODE_COMPLETION"></A>
+<LI><KBD>"<B>F2</B>"</KBD> - <VAR>Rename</VAR>
+<BR>
+Which object is to be renamed depends upon the view in which you pressed the key.
+In a fileBrowser, the currently selected file(s) is/are renamed.
+In a systemBrowser, the class, method or selected variable is renamed.
+<P>
+
+<A NAME="FUNCTION_KEY_COMMENT"></A>
+<LI><KBD>"<B>F3</B>"</KBD> - <VAR>Comment</VAR>
+<BR>
+comment the selected (Smalltalk-) code.
+If the selection is a "full-lines-selection", an End-of-line comment is used.
+<BR>
+If the selection is a single word, or spawning multiple lines but not covering full first and last lines,
+a regular comment is used.
+<BR>
+If nothing is selected, the current cursors line is commented.
+<P>
+
+<A NAME="FUNCTION_KEY_UNCOMMENT"></A>
+<LI><KBD>"<B>F4</B>"</KBD> - <VAR>Uncomment</VAR>
+<BR>
+uncomment the selected (Smalltalk-) code.
+<BR>
+The same heuristic behavior is as in the above <VAR>"Comment"</VAR> function is used.
+<P>
+
+<LI><KBD>"<B>F6</B>"</KBD> - <VAR>Case Change</VAR>
+<BR>
+convert the selected text to lowercase / uppercase / uppercase-first.
+Press this key multiple times to cycle through the above conversions.
+<P>
+
+<A NAME="FUNCTION_KEY_AGAIN"></A>
+<LI><KBD>"<B>F8</B>"</KBD> - <VAR>Redo/Again</VAR>
+<BR>
+search forward and repeat the last <I>cut</I>- or <I>replace</I>-operation.
+<BR>For example, to replace all occurrences of "foo" by "bar" in the text,
+select the first "foo" and type "bar" to replace it.
+Then repeat pressing <KBD>F8</KBD> until no more replacements are possible.
+<P>
+
+<LI><KBD>"<B>F9</B>"</KBD> - <VAR>Undent by four</VAR>
+<BR>
+if present, remove 4 leading spaces in the cursor line,
+or the selected line range.
+<br>The same operation is performed by the <KBD>SHIFT-Tab</KBD>-key (if there is a line-selection)
+<P>
+<LI><KBD>"<B>F10</B>"</KBD> - <VAR>Indent by four</VAR>
+<BR>
+add 4 more leading spaces in the cursor line,
+or the selected line range.
+<br>The same operation is performed by the <KBD>Tab</KBD>-key (if there is a line-selection)
+<P>
+<LI><KBD>"<B>F11</B>"</KBD> - <VAR>Undent by one</VAR>
+<BR>
+if present, remove one leading spaces in the cursor line, or
+the selected line range.
+<P>
+<LI><KBD>"<B>F12</B>"</KBD> - <VAR>Indent by one</VAR>
+<BR>
+add one more leading spaces in the cursor line, or
+the selected line range.
+
+
+<P>
+</UL>
+
+The following keyboard command is available in views
+which show code (i.e. browsers) and the File- and ChangeBrowser:
+<UL>
+<A NAME="FUNCTION_KEY_ACCEPT"></A>
+<LI><KBD>"<B>CMD-a</B>"</KBD> or <KBD>"<B>CTRL-s</B>"</KBD> - <VAR>accept / save</VAR>
+<BR>
+the whole text (not just the selection) will
+be installed and changes be made permanent.
+The definition of what exactly <VAR>"installing"</VAR>
+means is context dependent:
+<P>
+<UL>
+<LI>in a <A HREF="../tools/fbrowser/TOP.html">file browser</A>, the text is saved into the edited file.
+<P>
+<LI>in a <A HREF="../tools/sbrowser/TOP.html">system browser</A>, the current method will be
+recompiled from the editor's code and installed;
+or if a class definition is being shown, a class is created/modified.
+<P>
+<LI>in a <A HREF="../tools/debugger/TOP.html">debugger</A>, the selected method is be recompiled from the editor's text
+<P>
+<LI>in an <A HREF="../tools/misc/TOP.html#INSPECTOR">inspector</A>, the selected text's value is stored into the selected instance variable.
+<P>
+<LI>a <A HREF="../tools/cbrowser/TOP.html#INSPECTOR">change browser</A> <VAR>applies</VAR> the shown change.
+</UL>
+</UL>
+
+The following keyboard commands are available in views
+which show Smalltalk code (i.e. browsers and debuggers):
+<UL>
+<A NAME="FUNCTION_KEY_EXPLAIN"></A>
+<LI><KBD>"<B>CMD-e</B>"</KBD> - <VAR>explain</VAR> (Windows: <KBD>"<B>F1</B>"</KBD>)
+<BR>
+tries to explain the selected text, which must be a single
+word. This figures out, who implements a message or where a peritcular
+variable is defined.
+
+<P>
+<A NAME="FUNCTION_KEY_ABBREVIATION"></A>
+<LI>"<KBD><B>CMD-SPACE</B></KBD>" - <VAR>abbreviation/snippet insert</VAR>
+<BR>
+inserts a snippet using the word before the text-cursor as the name of of the abbreviation.
+For example, typing "itf" followed by "<KBD><B>CMD-SPACE</B></KBD>" will insert a template
+for the "ifTrue:ifFalse:" message send. The set of abbreviations can be edited via the Workspaces
+pulldown menu.
+
+<P>
+<A NAME="FUNCTION_KEY_COMPLETION"></A>
+<LI>"<KBD><B>CTRL-SPACE</B></KBD>" - <VAR>code completion</VAR>
+<BR>
+complete the word to the left of the cursor.
+This completion is syntax aware - if the word to the left of the cursor is a partial variable
+name, the best variable (as visible in the scope) is searched. If it's a message selector, the best
+matching message name is searched.
+<BR>
+If more than one completion is possible, a popup menu offers a choice among the most likely completions.
+<P>
+Notice that most programmers prefer "as you type" completion hints,
+which shows possible completions automatically.
+Enable this via the Launcher's
+"<I>System</I>" - "<I>Settings</I>" - "<I>Tools</I>" - "<I>Editor</I>" settings dialog.
+</UL>
+
+
+<P>
+No change in the text will have any permanent effect,
+unless you <VAR>accept</VAR> the new text.
+Thus, to revert back to the original code in a system browser,
+simply reselect the method again.
+<BR>
+
+<P>
+Please read
+<A HREF="../custom/TOP.html#KEYCOMMANDS"><VAR>``Keyboard commands''</VAR></A>
+in <VAR>``Configuration & Customization''</VAR>
+on how to add/change function keys settings.
+Especially, if your window manager (motif) catches some of these keys
+for its own window operations, you may have to change (some of) these
+settings. (i.e. use <KBD>"CTRL"</KBD> instead of <KBD>"CMD"</KBD>).
+<BR>
+Finally, see the <CODE>keyPress:x:y:</CODE> methods
+in the <CODE>TextView</CODE> class and its subclasses.
+You can easily modify these to add more functions.
+<P>
+In addition to using (and defining keys for) those builtin functions,
+it is also possible to define your own text or action macros.
+Read <A HREF="../custom/TOP.html#KEYMACROS"><VAR>``Keyboard macros''</VAR></A>
+in <VAR>``Configuration & Customization''</VAR> for more info on this.
+<P>
+
+
+<H3><A HREF="#I_FONT" NAME="FONT">Changing the Font</A></H3>
+The default font used by text editors is specified in a preference settings entry.
+This setting affects the initial font of new text editors.
+Any individual editor's font can be later changed via its popup menu,
+and the font size alternatively via keyboard shortcuts or the mouse wheel.
+<P>
+As opposed to many other (Smalltalk-) IDEs,
+we prefer a fixed-width font for code,
+as it makes tabular data much easier to look at
+and leads to a more consistent indentation.
+Therefore, the default is set to a fixed width "Courier" font.
+If you don't like this, please change it via the Launcher's settings dialog
+("<VAR>Settings</VAR>" - "<VAR>ViewStyle</VAR>" - "<VAR>Font</VAR>").
+<P>
+To change an individual editor's font (i.e. one which is already open),
+open its font selection dialog via the "<VAR>Other</VAR>" - "<VAR>Other</VAR>" - "<VAR>Font</VAR>" - popup menu item.
+<BR>
+The font size can be quickly changed by turning the mouse-wheel while keeping
+the "<KBD>CTRL</KBD>"-Key pressed,
+or with the "<KBD>CTRL-+</KBD>" (ctrl-plus) and "<KBD>CTRL--</KBD>" (ctrl-minus) keys.
+<P>
+In addition, "<KBD>SHIFT-CTRL-+</KBD>" and
+"<KBD>SHIFT-CTRL--</KBD>" will change the font sizes of ALL text views.
+
+
+
+
+<H2><A HREF="#I_TABBING" NAME="TABBING">Moving the Keyboard Focus (Tabbing)</A></H2>
+
+Within a complex view or a dialog,
+the keyboard focus can be stepped through the fields by pressing
+<KBD>"<B>Tab</B>"</KBD> or <KBD>"<B>SHIFT-Tab</B>"</KBD>.
+<BR>
+This works for all components, except text views which allow <KBD>"<B>Tab</B>"</KBD>
+as regular text input (i.e. all code views).
+<P>
+If you don't like this behavior,
+define an additional pair of tabbing keys, to function as (alternative)
+<KBD>"<B>FocusNext</B>"</KBD> and <KBD>"<B>FocusPrevious</B>"</KBD> keys.
+<BR>
+Using the keyboard map, these can be set to <KBD>"<B>Alt-CursorLeft</B>"</KBD>
+and <KBD>"<B>Alt-CursorRight</B>"</KBD>, for example.
+<BR>
+(the default mapping defines both <KBD>"<B>Alt</B>"</KBD> and <KBD>"<B>Ctrl</B>"</KBD>
+combinations of the cursor keys.)
+<BR>
+
+<P>
+A dialog can be quickly closed (cancelled) with the <KBD>"<B>Escape</B>"</KBD> key.
+
+
+<H2><A HREF="#I_FOCUSMODE" NAME="FOCUSMODE">Focus Mode ("focus-follows-mouse" vs. "focus-on-click")</A></H2>
+
+Depending on your personal preference,
+the keyboard focus can be configured to either
+follow the mouse pointer automatically ("focus-follows-mouse" mode)
+or to change when a widget is clicked upon ("focus-on-click" mode).
+<BR>
+To change this, change the Launcher's <I>"Settings"</I>-<I>"Viewstyle"</I>-<I>"Focus Follows Mouse"</I> checkBox setting.
+<P>
+Notice, that an explicit focus-assignment (eg. via tabbing) is never changed by simple mouse movements.
+
+
+
+<H1><A HREF="#I_SMALLTALK" NAME="SMALLTALK">Smalltalk</A></H1>
+<H2><A HREF="#I_EVALEXPR" NAME="EVALEXPR">Evaluating Smalltalk Expressions</A></H2>
+
+Most views which show code and especially workspaces allow you to
+select some text and immediately evaluate this as a
+Smalltalk expression
+(remember the old Basic-interpreters ? :-).
+
+This is very useful to try out things quickly,
+without actually creating a program for it.
+Your first experiments should probably be done in a workspace.
+
+<P>
+The middle button menu's <VAR>doIt</VAR> function does
+this; it parses the selected text (i.e. checks it for being a correct
+piece of Smalltalk code) and silently evaluates
+the corresponding Smalltalk expressions.
+
+To try it, open a workspace and type (or copy-paste from this example):
+<A TYPE="example" INFO="execute the example">
+<CODE><PRE>
+    Transcript showCR:'hello'
+</PRE></CODE>
+</A>
+or:
+<A TYPE="example" INFO="execute the example">
+<CODE><PRE>
+    Transcript showCR:(100 factorial)
+</PRE></CODE>
+</A>
+or:
+<A TYPE="example" INFO="execute the example">
+<CODE><PRE>
+    WorkspaceApplication open
+</PRE></CODE>
+</A>
+In the workspace, select the text and evaluate it using <VAR>doIt</VAR>
+(if nothing is selected, the whole text of the current cursor line is evaluated).
+
+<P>
+Unless the expression does some printing itself (as in the first two examples),
+the result of the evaluation is not shown anywhere.
+<BR>
+To <B>see</B> the result of such an evaluation, use the middle button menu's
+<VAR>printIt</VAR> function.
+<BR>
+Just like <VAR>doIt</VAR>, this evaluates the expression;
+however, after the evaluation, it inserts a printed representation
+of the result at the current text-cursor position.
+<BR>
+See the difference between <VAR>doIt</VAR> and <VAR>printIt</VAR>
+when executing:
+<BR>
+<A TYPE="example" INFO="execute the example">
+<CODE><PRE>
+    100 factorial
+</PRE></CODE></A>
+(the factorial operation computes the product 1*2*3*4*...*100)
+<P>
+Finally, <VAR>inspectIt</VAR> opens an inspector window
+on the result, where you can have a look at the resulting
+object in more detail.
+<BR>
+Try to inspect the result of:
+<A TYPE="example" INFO="execute the example">
+<CODE><PRE>
+    Array new:10
+</PRE></CODE></A>
+or
+<A TYPE="example" INFO="execute the example">
+<CODE><PRE>
+    Point x:10 y:25
+</PRE></CODE></A>
+
+Each has a convenient keyboard shortcut:
+<UL>
+<LI><KBD>"<B>CMD-d</B>"</KBD> - <VAR>doIt</VAR>
+<BR>
+the selected text is evaluated as a Smalltalk expression
+(if nothing is selected, the whole text in the cursors line is evaluated).
+<P>
+
+<LI><KBD>"<B>CMD-p</B>"</KBD> - <VAR>printIt</VAR>
+<BR>
+the selected text is evaluated as a Smalltalk expression,
+and a printed representation of the result is inserted as the
+new selection (use <VAR>cut</VAR> to remove it).
+<P>
+
+<LI><KBD>"<B>CMD-i</B>"</KBD> - <VAR>inspectIt</VAR>
+<BR>
+the selected text is evaluated as a Smalltalk expression
+and an Inspector is opened on the result.
+</UL>
+
+In addition, it is often convenient to open a browser on an expression's class
+(especially, if the expression consists of the global variable which names that class)
+For this, use the <VAR>browseIt</VAR> shortcut function:
+
+<UL>
+<LI><KBD>"<B>CMD-B</B>"</KBD> - <VAR>browseIt</VAR> (notice the shifted-"B" key)
+<BR>
+evaluates the selected text, and opens a browser on the result (if it evaluated to a class)
+or on its class.
+</UL>
+
+In case you run into an endless loop, or the evaluation
+takes too long, the evaluation may be interrupted or aborted with:
+<UL>
+<LI><KBD>"<B>Break</B>"</KBD> - <VAR>interrupt</VAR>
+<BR>
+stops the evaluation and enters a debugger.
+In the debugger, you may proceed with the evaluation by pressing 'Continue'.
+Depending on the system, the break key is either
+the <KBD>"<B>Interrupt/Pause</B>"</KBD>-key or <KBD>"<B>CTRL-c</B>"</KBD>.
+For the convenience of Squeak and VisualWorks users,
+"<B>CMD-.</B>" (alt-period) is also mapped to this function.
+<P>
+<LI><KBD>"<B>CTRL-Break</B>"</KBD> - <VAR>abort</VAR>
+<BR>
+stops and aborts the evaluation (without debugger).
+</UL>
+Notice: in previous versions, <VAR>interrupt</VAR> used to be mapped to "<KBD>CTRL-c</KBD>"
+and <VAR>abort</VAR> to "<KBD>CTRL-y</KBD>". This has been changed for standard conformance.
+"<KBD>CTRL-c</KBD>" is now always <VAR>copy</VAR> and "<KBD>CTRL-y</KBD>" is <VAR>redo</VAR>.
+
+<P>
+Also notice that all keyboard shortcuts are defined in the startup
+scripts (usually in "<CODE>display.rc</CODE>").
+Read <A HREF="../custom/TOP.html"><VAR>``Configuration & Customization''</VAR></A>
+and have a look at the startup files.
+
+
+<H3><A HREF="#I_EVAL_SCOPE" NAME="EVAL_SCOPE">Variables and Scope in a doIt Evaluation</A></H3>
+
+Doits are evaluated in a variable scope,
+which depends on the situation and tool in which it is performed.
+
+Especially the visibility of local variables and the meaning of
+the "self" pseudo variable varies:
+<DL>
+<DT>In a <A HREF="../tools/misc/TOP.html#WORKSPACE">Workspace</A>
+<DD>"self" refers to nil. Global variables (Smalltalk bindings)
+are visible. In addition, special Workspace- and Doit-Variables
+are optionally visible (see the description in
+<A HREF="../tools/misc/TOP.html#WORKSPACE">Workspace</A>).
+
+<DT>In an <A HREF="../tools/misc/TOP.html#INSPECTOR">Inspector</A>
+<DD>"self" refers to the inspected object. Direct and
+inherited instance variables and class variables are visible.
+
+<DT>In a <A HREF="../tools/debugger/TOP.html">Debugger</A>
+<DD>"self" refers to the receiver of the currently selected context.
+Like in the code, method local variables, direct and
+inherited instance variables and class variables are visible.
+
+<DT>In a <A HREF="../tools/newbrowser/TOP.html">Browser</A>
+<DD>"self" refers to the selected class.
+Class variables and private classes are visible.
+</DL>
+
+
+<H2><A HREF="#I_LOADINGCODE" NAME="LOADINGCODE">Loading Existing Code / Using the FileBrowser</A></H2>
+
+Files containing Smalltalk code
+(in <A HREF="../programming/fileoutFormat.html">fileOut-format</A>),
+binary bytecode ('.cls'-files) or compiled machineCode ('.so' or '.dll' files)
+can be loaded into the system either by evaluating:
+<CODE><PRE>
+    Smalltalk fileIn:<VAR>filename</VAR>
+</PRE></CODE>
+in a workspace (with <VAR>doIt</VAR>),
+or - more convenient - by using the <A HREF="../tools/fbrowser/TOP.html">FileBrowser</A>.
+<BR>
+To load a file in the FileBrowser, select the file
+and execute its "<VAR>fileIn</VAR>" function from
+tje middle button menu
+in the browser's upper (file-list) panel.
+<BR>
+As a concrete exercise, <VAR>fileIn</VAR> the contents of
+<CODE>"stx/clients/Clock/Clock.st</CODE>.
+Watch the Transcript for what is going on.
+<P>
+To see the contents of a file, double-click on its name
+in the fileBrowser's top list. Also directories are changed in this way.
+<P>
+More info on the fileBrowser is found in
+<A HREF="../tools/fbrowser/TOP.html"><VAR>``Using the FileBrowser''</VAR></A>.
+<P>
+
+<H2><A HREF="#I_IMPORTINGCODE" NAME="IMPORTINGCODE">Importing Code from Other Smalltalk Dialects</A></H2>
+
+<CITE>Smalltalk/X</CITE> understands ParcPlace's
+<CITE>Smalltalk-80 / VisualWorks</CITE>,
+Digitalks <CITE>Smalltalk/V</CITE> and <CITE>Squeak</CITE> source formats
+(limited support for IBM's <CITE>VisualAge</CITE> is also available).
+<P>
+Non-graphical classes should work (almost) unchanged even if they originated from
+these systems - if you find interesting code on an ftp-archive,
+you may also try to fileIn this.
+<P>
+Although <CITE>ST/X</CITE> was written to be protocol compatible to other Smalltalk
+implementations (i.e. ANSI-Smalltalk),  most classes were implemented differently and internals are
+completely different.
+Loaded code depending on such internals may not work as expected.
+<p>
+In practice, most non-graphical classes work unchanged;
+however, if a loaded class depend
+on a particular superclass implementation (accessing instance variables),
+or superclass hierarchy (accessing superclasses by name),
+this may not be true. In this case, you should open a Changes Browser
+on the source file, and apply individual changes one-by-one, to see where
+problems arise.
+<P>
+Packages from Squeak/Pharo can also be imported in their native Monticello package format;
+for this, use a <A HREF="../tools/misc/monticellobrowser.html">"Monticello Browser"</A>.
+
+
+<H2><A HREF="#I_PROGRAMMING" NAME="PROGRAMMING">Programming</A></H2>
+
+To write your own code (classes) or to modify existsing code,
+open a System Browser which is the central tool for programmers.
+<P>
+Start by examining existing simple demo programs (such as
+the ClockView, TicTacToe, PenDemo etc.
+<BR>
+All classes also include a documentation method category,
+where you will find two methods called "<I>documentation</I>" and
+"<I>examples</I>".
+<BR>
+The examples can be selected in the browser and evaluated via the
+<I>doIt</I> menu function.
+<P>
+More info on the System Browser is found in
+<A HREF="../tools/sbrowser/TOP.html"><VAR>``Using the SystemBrowser''</VAR></A>.
+<BR>
+An introduction to Smalltalk and programming is found in the
+<A HREF="../getstart/tut_1.html"><VAR>``Smalltalk Beginners Tutorial''</VAR></A>.
+
+<P>
+
+
+<H2><A HREF="#I_LEARNING" NAME="LEARNING">Learning Smalltalk</A></H2>
+
+If you are new to Smalltalk,
+start by learning how to use the non graphical basic classes.
+<UL>
+<LI>get yourself a textbook on Smalltalk (see <A HREF="../overview/literature.html">literature</A>)
+<LI>learn how to use the
+<A HREF="../tools/sbrowser/TOP.html"><VAR>SystemBrowser</VAR></A>
+<LI>try and understand the basic classes (especially: containers, numbers & streams)
+<LI>create and inspect instances of some classes
+<LI><VAR>'talk'</VAR> to these objects in the inspector
+<LI>place breakpoints on methods and see what happens when single stepping
+<LI>although there are lots of existing classes, create new collection classes
+and play with them
+</UL>
+A very quick introduction to the language and classes is found in the
+<A HREF="tutorial.html"><VAR>``Tutorial''</VAR></A>.
+<P>
+For a rough overview of what is there, read
+<A HREF="../overview/basicClasses/TOP.html"><VAR>``Basic Classes Overview''</VAR></A>
+and start excursions to the classes encountered there.
+<BR>
+Many classes contain example methods in their documentation category.
+Try these, and understand what is going on there. Also, many methods (especially in
+the collection classes) contain a comment with some sample expressions at the end.
+These are meant to show short typical uses of those methods.
+<P>
+Getting more used to the language, try creating a little graphical
+application or a web service.
+<P>
+Read and understand the coding examples found in the directories
+<CODE>"doc/coding"</CODE> and <CODE>"clients/Demos"</CODE>.
+
+
+
+<H3>Notes:</H3>
+
+<A HREF="#BACK_FN1" NAME="FN1">(*) keyboard shortCuts</A>
+<BR>
+The keyboard shortcuts as described here are not hard-coded;
+instead, the bindings of keys to functions is done in your startup scripts.
+This document describes the default bindings as set in the "<CODE>keyboard.rc</CODE>" script.
+See <A HREF="../custom/TOP.html#KEYBOARD">``Keyboard Settings''</A>
+on how to change these.
+<P>
+
+<A HREF="#BACK_FN2" NAME="FN2">(**) command key</A>
+<BR>
+The command key is labeled different on some keyboards;
+try <KBD>"<B>ALT</B>"</KBD>, <KBD>"<B>CMD</B>"</KBD>, <KBD>"<B>META</B>"</KBD>
+or similar.
+<P>
+Notice that some window managers catch some
+command-key combinations themselfes - NOT passing those key events to
+<CITE>ST/X</CITE>
+(this is especially true for <VAR>motif's mwm</VAR> and <VAR>fvwm</VAR>,
+and for MacOSX, where some CTRL-key combinations might be used for desktop operations) .
+<P>
+If this is the case with (some of) your keys,
+you may either disable the window manager's key functions (in the wm's resource file)
+or change the settings
+(in your <CODE>"private.rc"</CODE>) to use
+different control- or command key combinations instead.
+<P>
+Most of the window manager's key functions are hardly ever used if you have a mouse
+hooked to your system - so it may be preferrable to disable those,
+instead of
+redefining <CITE>ST/X</CITE>'s key mapping.
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif" ALT="[stx-logo]">
+<BR>Copyright &copy; Claus Gittinger Development & Consulting
+<BR>Copyright &copy; eXept Software AG
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.29 $ $Date: 1999/07/07 14:09:52 $
+
+</BODY>
+</HTML>

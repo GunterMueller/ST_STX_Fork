@@ -1,0 +1,1101 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - CVS Sourcecode & Revision Management</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="sourcemanager.html"> <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">       <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="sourcemanager_svn.html">  <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>CVS Sourcecode & Revision Management</H1>
+
+<H2>Contents</H2>
+
+<UL>
+  <LI><A HREF="#INTRO" NAME="I_INTRO">Introduction</A>
+  <LI><A HREF="#SETUP" NAME="I_SETUP">Setting up the CVS Repository</A>
+  <LI><A HREF="#SOURCE_ACCESS" NAME="I_SOURCE_ACCESS">Automatic Source Access via the Revision Management</A>
+  <LI><A HREF="#MODULES_N_PACKAGES" NAME="I_MODULES_N_PACKAGES">Modules and Packages</A>
+  <LI><A HREF="#USING" NAME="I_USING">Using the Revision Management - Day-to-Day Usage</A>
+  <UL>
+    <LI><A HREF="#ADDING_NEW" NAME="I_ADDING_NEW">Adding a new Class to the Repository</A>
+    <LI><A HREF="#CHECKING_IN" NAME="I_CHECKING_IN">Checking a new Version of a Class into the Repository</A>
+    <LI><A HREF="#CHECKING_OUT" NAME="I_CHECKING_OUT">Checking out (loading) a Class from the Repository</A>
+    <LI><A HREF="#COMPARING" NAME="I_COMPARING">Comparing a Class with any Repository Version</A>
+    <LI><A HREF="#LOGGING" NAME="I_LOGGING">Getting Information about Changes to a Class</A>
+    <LI><A HREF="#LOGGING_ALL" NAME="I_LOGGING_ALL">Getting Information about Changes to the Repository</A>
+    <LI><A HREF="#ATTACHING_TO_EXEPT_FOR_UPDATE" NAME="I_ATTACHING_TO_EXEPT_FOR_UPDATE">Attaching to eXept's ST/X Repository</A>
+    <LI><A HREF="#SETUP_FOR_LOCAL_CVS" NAME="I_SETUP_FOR_LOCAL_CVS">Setting up a Local CVS (For Your Projects Only)</A>
+  </UL>
+  <LI><A HREF="#CARE" NAME="I_CARE">Special Care & Feeding</A>
+  <UL>
+    <LI><A HREF="#CLEANING_LOG" NAME="I_CLEANING_LOG">Cleaning History Logs</A>
+    <LI><A HREF="#MOVING_CONTAINER" NAME="I_MOVING_CONTAINER">Moving a Container</A>
+
+  </UL>
+<!--  <LI><A HREF="#PRODUCTION" NAME="I_PRODUCTION">Production</A>  -->
+  <LI><A HREF="#TROUBLE_GUIDE" NAME="I_TROUBLE_GUIDE">Trouble Guide</A>
+  <UL>
+    <LI><A HREF="#TROUBLE_LOCKS" NAME="I_TROUBLE_LOCKS">Leftover Locks</A>
+    <LI><A HREF="#TROUBLE_TIME" NAME="I_TROUBLE_TIMES">Time Synchronization Problems</A>
+    <LI><A HREF="#TROUBLE_REMOVE" NAME="I_TROUBLE_REMOVES">Removing Containers</A>
+    <LI><A HREF="#TROUBLE_REMOVE_DIRECTORIES" NAME="I_TROUBLE_REMOVE_DIRECTORIES">Removing (package-) Directories</A>
+    <LI><A HREF="#TROUBLE_RENAME" NAME="I_TROUBLE_RENAME">Renaming Containers</A>
+  </UL>
+  <LI><A HREF="#READING" NAME="I_READING">Further Reading</A>
+  <LI><A HREF="#DISCLAIMER" NAME="I_DISCLAIMER">Disclaimer</A>
+</UL>
+
+
+<A NAME="INTRO" HREF="#I_INTRO"><H2>Introduction</A></H2>
+
+<CITE>ST/X</CITE> includes interface classes
+and browser support which allow smalltalk classes to be managed by
+the <A HREF="man:cvs">CVS</A> (<VAR>Concurrent Version System</VAR>)
+sourcecode revision management system.
+<P>
+CVS itself is based upon
+<A HREF="man:rcsintro">RCS</A> (<VAR>revision control system</VAR>),
+both are available free of charge through
+various FTP cites and/or freeware CD publications.
+<P>
+The choice for using CVS
+was due to its support of stateless sourcecode
+handling (i.e. source files do not have to be locked while being edited)
+and by handling complete hierarchies of sourcecode, including multiple revisions, tagging of releases, branches
+on top of all of the RCS functionality.
+<P>
+In addition, CVS allows access to the repository either directly through the file system
+(i.e. by keeping the repository locally or NFS-mounting a remote repository) and
+via TCP/IP, through a server mode.
+This makes CVS perfect for geographically distant workgroups.
+<BR>
+In fact: within the <CITE>ST/X</CITE> developer group,
+two members are located some 50 kilometers away, accessing the companies repository via modem/ISDN,
+customers have up-to-date read-only access to the <CITE>ST/X</CITE> CVS-repository via TCP/IP,
+and the rest of the world now has read-only access to a nightly synchronized copy
+of a part of the <CITE>ST/X</CITE> CVS repository on (http://exept.eu.org).
+
+<P>
+
+If you do not want to use CVS, and another sourcecode management system is to be used,
+you have to write your own class, which provides the interface and functionality
+of <CODE>CVSSourceCodeManager</CODE> and install it by binding the
+global smalltalk variable <CODE>"SourceCodeManager"</CODE> to it.
+<BR>
+(For an experienced smalltalker, this should be pretty straightforward:
+only a few methods have to be redefined there.
+Most work is done in its abstract superclass: <CODE>AbstractSourceCodeManager</CODE>.)
+
+<P>
+Access to the source containers is not limited or specific to <CITE>ST/X</CITE>;
+all repository manipulations are also possible by shell commands - it is therefore
+possible (and easy) to add automatic extraction and building via shell commands scripts.
+<P>
+NOTICE:
+<BR>
+At the time of this writing, the Win32 version of CVS only supports
+the client mode - i.e. it is not possible to setup a cvs repository server on a Win32 machine.
+Win32 users will need a Unix server for their source repository
+(which is not a bad idea b.t.w - for various other reasons ;-)
+
+
+
+<A NAME="SETUP" HREF="#I_SETUP"><H2>Setting up the CVS Repository</A></H2>
+
+Unless your system alread has the CVS sourcecode management package
+installed and operating
+(most linux systems will have),
+you have to get the CVS distribution from some place, possibly compile it,
+and install all of its commands to be found along your PATH.
+<BR>
+For Unix/Linux, we recommend placing the executables into <CODE>"/usr/local/bin"</CODE>;
+for windows the installation typically asks for a directory where the binaries are to
+be installed. Remember this, as you may need this path later unless the binaries
+are included in the standard PATH. For example, on most of our windows systems,
+the cvs used is the turtoise-cvs and it installs to
+<CODE>"c:\programs\turtoisecvs\bin\cvs.exe"</CODE>.
+
+<P>
+We also highly recommend that you have a look at the CVS documentation
+and manual pages - not all required maintenance activities
+are supported on the smalltalk level.
+<BR>
+Also, please do not trust on every detail described below;
+by the time you read this, new CVS versions may behave slighlty different.
+<P>
+
+As a quick check for a working CVS command set, see if
+the following CVS commands are available on your system:
+<BR>
+<CODE><PRE>
+    <A HREF="man:cvs">cvs</A>   <A HREF="man:cvsinit">cvsinit</A> (cvs1.6 only)
+</PRE></CODE>
+
+<BR>
+The following description is valid for CVS versions 1.6 through 1.8;
+we cannot guarantee, that the commands work the same with newer releases.
+If there are any incompatibilities, consult the CVS manual pages, go back to a supported
+version, let us know or fix the CVSSourceCodeManager class.
+
+<P>
+As a next step, you should create a repository, which will hold your
+source tree. This has to be done only once, and is therefore not supported
+by a fancy <CITE>ST/X</CITE> user interface.
+<P>
+We recommend using an absolute pathname to a symbolic link,
+which points to the actual physical repository.
+Doing so enables you to move the repository to some other place,
+without affecting any settings. Also, remote machines can easily NFS-mount
+the repository to wherever they like, and set a corresponding symbolic link.
+<P>
+Within <CITE>eXept</CITE> we use a common repository path of <CODE>"/cvs/stx"</CODE>
+on all machines, which is a symbolic link to a local directory on the source code server
+machine itself, and a symbolic link to the NFS mounted directory on all other machines.
+
+(Added 2012: this has been no longer true for quite some time now: we no longer
+compile on the server machine itself, and use ":pserver:cvs.exept.de:/cvs/stx" as CVSROOT on all
+remote machines)
+<P>
+Assuming, your source repository is to be called <CODE>"/cvs/stx"</CODE>,
+enter the following shell commands:
+<CODE><PRE>
+    CVSROOT=/cvs/stx
+    export CVSROOT
+    cvsinit (cvs rev1.6) / cvs init (cvs rev1.8)
+</PRE></CODE>
+if all works well, you should see some output similar to the following
+(which was from cvs1.6):
+<CODE><PRE>
+    Creating the /cvs/stx/CVSROOT directory...
+    Creating a simple /cvs/stx/CVSROOT/modules file...
+    Creating a simple /cvs/stx/CVSROOT/loginfo file...
+    Creating a simple /cvs/stx/CVSROOT/commitinfo file...
+    Creating a simple /cvs/stx/CVSROOT/rcsinfo file...
+    Creating a simple /cvs/stx/CVSROOT/editinfo file...
+    Creating a simple /cvs/stx/CVSROOT/rcstemplate file...
+    Creating a simple /cvs/stx/CVSROOT/checkoutlist file...
+    Copying the new version of 'commit_prep'
+      to /cvs/stx/CVSROOT for you...
+    Copying the new version of 'log_accum'
+      to /cvs/stx/CVSROOT for you...
+    Copying the new version of 'cln_hist'
+      to /cvs/stx/CVSROOT for you...
+    Enabling CVS history logging...
+    All done!  Running 'mkmodules' as my final step...
+</PRE></CODE>
+Depending on the cvs version being used, your output may look different.
+<BR>
+In fact, the rev1.8 "cvs init" command is silent.
+<P>
+
+<BR>
+If <CITE>ST/X</CITE> was already running, it has to be either restarted
+(since the CVSROOT setting has already been checked, during early startup of <CITE>ST/X</CITE>)
+or alternatively, reinitialize the <CODE>CVSSourceCodeManager</CODE> class
+as described below.
+<P>
+Do not forget to set the CVSROOT shell variable to the name of your
+repositories directory - a good place to do this is your <CODE>".profile"</CODE>
+or <CODE>".login"</CODE> file:
+<CODE><PRE>
+    CVSROOT=/cvs/stx
+    export CVSROOT
+</PRE></CODE>
+or (csh users):
+<CODE><PRE>
+    setenv CVSROOT /cvs/stx
+</PRE></CODE>
+For remote operation, better use:
+<CODE><PRE>
+    CVSROOT=:pserver:&lt;my_cvs_host&gt;:/cvs/stx
+</PRE></CODE>
+<P>
+You can also define the repository and reinitialize the
+class in a workspace or from your <CODE>"private.rc"</CODE> startup script:
+<CODE><PRE>
+    CVSSourceCodeManager initializeForRepository:'/cvs/stx'.
+</PRE></CODE>
+Finally (and this is the recommended way to do it):
+you can also use the launcher's settings dialog to specify the CVSRoot directory,
+which will be stored in your ST/X's user-preferences file, which is "<CODE>~/.smalltalk/settings.rc</CODE>".
+
+<P>
+The source repository is protected from unauthorized access
+by the usual UNIX file access protection mechanisms - so you may want to limit read/write/execute
+access as appropriate.
+(but if you work in a group, do not forget to provide group access,
+and add the participating users to a corresponding group.
+<P>
+
+After that, CVS is ready to be used with <CITE>ST/X</CITE>.
+
+
+
+
+
+<A NAME="SOURCE_ACCESS" HREF="#I_SOURCE_ACCESS"><H2>Automatic Source Access via the Revision Management</A></H2>
+
+All access to a classes source (i.e. from within the browser's or the debugger)
+is via the sourceCodeManager, if activated.
+<BR>
+After a classes source has found its way to the repository,
+there is no longer any need to keep individual source files in the source directory.
+<P>
+Whenever a classes source is requested for, the sourceCodeManager is asked for the
+source code corresponding to the classes version.
+
+<BR>
+(this statement is not valid for your <CITE>ST/X</CITE> system classes
+ - unless you create a container
+ for them and check them into the repository as well.)
+<P>
+
+<H3>Local file access as a fallback</H3>
+If for any reason, the sourceCodeManager cannot find or access a source container,
+the source directory is searched for a plain source file as a fallback.
+<BR>
+However, in this case, the local source file's version must correspond to the classes
+actual version; otherwise, you will see garbage in the browser.
+<BR>
+The file's version is validated against the classes version, but there are situations,
+in which a conflict goes undetected.
+For example, if you modify the source file while the system is running, such that
+the position of the version-string within the file does not change.
+<P>
+
+
+<H3>Caching checked out sources</H3>
+Since source access via the CVS mechanism may be slow (especially, if the
+server remote, and a slow wide-area network is in-between),
+every checked out source is cached in a local file.
+<BR>
+By default, these cache files are kept in <CODE>"/tmp/stx_sourceCache"</CODE>;
+the path to the cache directory is found and can be changed via the launcher's <VAR>settings</VAR>
+menu (or be set in a <CODE>"private.rc"</CODE> file).
+<BR>
+You may clean or remove this cache directory at any time (even automatically,
+over night). If some class file is not found there, a new checkout is performed
+whenever the class source is required again (you may even clear that directory
+while <CITE>ST/X</CITE> is running ...).
+
+
+
+
+
+
+<A NAME="MODULES_N_PACKAGES" HREF="#I_MODULES_N_PACKAGESG"><H2>Modules and Packages</A></H2>
+
+The CVS system places source files into subdirectories within the
+repositories top directory. In CVS, these are called <VAR>modules</VAR>,
+and will be refered to as <VAR>CVS-modules</VAR> in the following description.
+<P>
+In contrast to the above, <CITE>ST/X</CITE> uses a two level naming scheme,
+organizing classes into so called <VAR>modules</VAR> and <VAR>packages</VAR>.
+<BR>
+This helps to avoid conflicts arising when packages from different vendors are
+named alike - by prefixing a vendor-specific module name,
+it is possible to identify the source files
+within the repository - even if the same package names are used.
+<P>
+In addition, ST/X can use the module part to switch between multiple
+CVS roots - i.e. it is possible to place different projects onto
+different CVS servers.
+<BR>
+The launcher's source-and -debugger setting dialog allows for individual CVSRoots
+to be specified (per module).
+
+For example, a setup could define remote CVS access via the eXept CVS server
+for all classes under the <CODE>"stx"</CODE>-module,
+and local access to all your own packages (on your local server).
+
+<P>
+Since CVS does not distinguish between modules and packages,
+<CITE>ST/X</CITE> concatenates the <VAR>smalltalk-module</VAR> name
+and <VAR>smalltalk-package</VAR> name when forming a CVS module name.
+
+<P>
+By convention, the smalltalk-module should always be your company's name
+(for modules which are considered to be ``global''),
+and your own user name (for modules which are ``local'').
+
+All original smalltalk code as distributed
+was defined under a special module called <CODE>"stx"</CODE>.
+Treat this as a reserved name; i.e. <STRONG>never</STRONG> create a module called <CODE>"stx"</CODE>.
+<P>
+
+Within a smalltalk-module, multiple smalltalk-packages can be present;
+for example, the <CITE>ST/X</CITE> basic classes are all registered under
+the <CODE>"libbasic"</CODE>-package under the <CODE>"stx"</CODE>-module.
+<BR>
+The package need not be located directly under the module - you may insert
+intermediate levels, to further organize your repository. For example,
+some classes of the original system are packaged as <CODE>"goodies/persistency/..."</CODE>.
+
+<H3>Summary: setting up the CVS system</H3>
+
+To summarize the above (which may sound a bit confusing):
+<BR>
+<UL>
+<LI>If you use CVS, use <CODE>"/cvs/stx"</CODE> as repository, create it as a symbolic link
+to your actual repository.
+<BR>
+Modules and packages are created as subdirectories of this top directory.
+<LI>the module name <CODE>"stx"</CODE> is reserved for all original smalltalk code
+<LI>use your company's name or <CODE>"private"</CODE> as module name
+<LI>organize packages under your module as you like - the package may be located
+arbitrarily deep under your module.
+<LI>on the client side, set the shell variable CVSROOT to "/cvs/stx" if you use nfs
+or a local repository.
+<BR>
+If you use a central non-nfs server (or you are forced to work under windows),
+set CVSROOT to "serverHostName:/cvs/stx" or ":pserver:whatever".
+<BR>
+ST/X provides no GUI frontend to "cvs login" to a pserver - this should
+be done once from the command line level.
+</UL>
+
+
+
+
+<A NAME="USING" HREF="#I_USING"><H2>Using the Revision Management - Day-to-Day Usage</A></H2>
+
+All of <CITE>ST/X's</CITE> interfacing to the source repository is through
+the system browsers extra-class menu (also called the <VAR>Control-class-menu</VAR>).
+<P>
+
+
+The following sections describe various day-to-day uses and how to perform typical
+tasks.
+
+
+<A NAME="ADDING_NEW" HREF="#I_ADDING_NEW"><H3>Adding a new Class to the Repository</A></H3>
+
+When you have finished a first version of a new class,
+you may want to add it to the source repository.
+<BR>
+In a <VAR>systemBrowser</VAR>, select the
+<IMG NOPRINT SRC="../../pictures/rightArrow.xbm"><VAR>`source container ...'</VAR> item in
+the class list menu;
+this opens a dialog, asking you to enter the module and package name:
+<P INDENT=50>
+<IMG SRC="../../pictures/DefiningSourceCodeContainer.gif">
+<P>
+(Notice: in the New-SystemBrowser, this dialog appears when you checkIn
+ a class for the very first time).
+<P>
+Change the module- and package-name as appropriate and click on <VAR>"ok"</VAR>.
+<BR>
+You can also define a different source file name
+to be used for the class - although this is not recommended
+(it keeps things simpler, if source files
+are named after the class).
+
+<P>
+After a positive confirmation, all intermediate package directories are created
+(with lots of confirmations ;-),
+and eventually, a new sourcecode container is created within the repository as:
+<CODE><PRE>
+    $CVSROOT/&lt;module>/&lt;package>/filename,v
+</PRE></CODE>
+<BR>
+(this is a regular RCS container - read the
+<A HREF="man:rcs">RCS manual pages</A> for more information)
+and the classes sourcecode is checked into the repository as initial version.
+<P>
+As a side effect, a method named <CODE>#version</CODE> will be created in the
+class protocol, if not already present.
+This method is defined to return the classes version as a string.
+Never manually modify this method, since its return value is later used
+by the sourceCodeManager, to find a classes correct source.
+You will be asked to confirm the creation of this method.
+
+
+
+<A NAME="CHECKING_IN" HREF="#I_CHECKING_IN"><H3>Checking a new Version of a Class into the Repository</A></H3>
+
+You should update a class in the repository
+whenever some major change was made and the changes have been tested.
+To check a changed class into the repository, select the browser's
+<IMG NOPRINT SRC="../../pictures/rightArrow.xbm"><VAR>`check into source repository'</VAR>
+item and enter some descriptive comment into the appearing dialog.
+<BR>
+If you did not create a container as described in the previous section,
+you will now be asked again.
+
+<P>
+After the confirmation, 3 things may happen:
+
+<OL>
+<LI>no other changes were checked into the repository in the meanwhile,
+and the checkin succeeds. The new version will be added to the repository
+as the most recent one. Notice, that all previous versions are still present in the
+repostory and can be extracted by the corresponding revision number.
+<BR>
+Since a classes revision number is contained in the <CODE>#version</CODE> method,
+old versions of that class (for example, those living in old snapshot images,
+or being executed by other users) can still correctly extract their corresponding
+source code from the container.
+<BR>
+Your current classes version number (in the running image)
+will be updated to the new revision number in the repository.
+<P>
+
+<LI>some changes were made to the same class by someone else in the meanwhile,
+but those changes do not conflict with your changes.
+<BR>
+A conflict is defined as two changes within the same range of source lines.
+<P>
+In this case, CVS is able to merge the two changed versions into a new one automatically.
+<BR>
+<CITE>ST/X</CITE> pops up a difference view, which shows the original version,
+your version and the merged version side-by-side, with affected lines color-highlighted.
+<P>
+It is up to you, to check if the other changes do not conflict with yours
+(they almost always do not - but it does not hurt, to have a look anyway).
+<P>
+If you proceed, the merged version will be entered into the repository as described above.
+<P>
+
+<LI>some changes were made to the same class by someone else in the meanwhile,
+and those changes DO conflict with your changes.
+<P>
+In this case, CVS cannot automatically merge the changes, and manual actions are
+required.
+<BR>
+<CITE>ST/X</CITE> pops up a box telling you who did the conflicting change.
+You have a chance of either look at the conflicts in more detail or resolve the conflicts.
+<BR>
+To resolve the conflicts, an editor containing a merge of
+the repository version and your current versions
+is opened. In this text, conflicting regions are color-highlighted. You should edit the
+text, by fixing the conflicts and finally <VAR>accept</VAR> & close this editor.
+<BR>
+This edited version will be checked into the repository as the newest version.
+<P>
+Be very careful, when editing - no syntax checking is done and the resulting source
+is checked in without further validation. It is a good idea to reload the class from the
+repository (see below) to validate its correctness.
+<BR>
+We are aware of the fact, that this is somewhat inconvenient, and future versions
+of <CITE>ST/X</CITE> will contain a changesBrowser-like interface for conflict resolving.
+<BR>
+However, this kind of conflict occurs very seldom
+(over all of ST/X's lifetime, there have been only a few of them)
+therefore, you will probably never run into this trouble.
+
+</OL>
+
+A checkin from any user does NOT automatically update the other users images or
+view of the world; these continue to see & use the classes version which was either
+built into the executable (for compiled classes) or which was the most recent at load
+time (for autoloaded or repository-loaded classes).
+<P>
+To update, the other users should use the browser's
+<IMG NOPRINT SRC="../../pictures/rightArrow.xbm"><VAR>'fileIn from repository'</VAR>
+menu function.
+
+<P>
+By the way: CVS (actually: RCS) only stores the change-delta between versions.
+Under normal situations, those sourceContainers do not grow to huge files over time.
+
+
+
+
+<A NAME="CHECKING_OUT" HREF="#I_CHECKING_OUT"><H3>Checking out (loading) a Class from the Repository</A></H3>
+
+Any version of an existing class can be loaded (i.e. filed-in) from the repository by activating the
+browsers <IMG NOPRINT SRC="../../pictures/rightArrow.xbm"><VAR>'fileIn from repository'</VAR> menu item.
+<BR>
+You are asked for a version number - if left blank, the newest version is loaded.
+<P>
+In order to protect your existing class (in the running image) in case of a corrupted class load,
+your original class will be renamed and kept as <VAR>"&lt;className>_saved"</VAR>.
+<BR>
+Thus, if anything fails, reinstall the original class
+(by renaming the saved class back to the original name)
+and blame the other guy who checked in the garbage.
+<BR>
+If the loaded class looks ok and works, you should remove the saved backup class.
+<P>
+Notice, that the old class may be kept alife (as anonymous class), if there were
+instances of it AND the instance layout has changed in the new version
+(i.e. if instance variables were added or removed).
+<BR>
+To physically get rid of the old class, all instances of it must be removed (i.e. unreachable)
+and no references via global variables may exist.
+<BR>
+You can clear out instances with:
+<CODE><PRE>
+    someClass allInstancesDo:[:inst |
+	inst becomeNil
+    ]
+</PRE></CODE>
+be warned - don't remove active view instances with the above:
+your system may become unusable if you do.
+<P>
+To load new classes (i.e. classes which are not contained in your image), select the
+<IMG NOPRINT SRC="../../pictures/rightArrow.xbm"><VAR>'fileIn new from repository'</VAR> menu item,
+which is shown in the control-menu if no class is currently selected.
+<BR>
+This asks for a module, package and class (or container-) name and files-in whatever is found there.
+<P>
+Use this, to load new classes which were brought into the repository by others.
+
+
+
+<A NAME="COMPARING" HREF="#I_COMPARING"><H3>Comparing a Class with any Repository Version</A></H3>
+
+The browser's class menu contains an item
+(<IMG NOPRINT SRC="../../pictures/rightArrow.xbm"><VAR>'compare with repository'</VAR>) which
+allows you to enter a classes revision number and compare that version with your
+systems actual version.
+A difference view will be opened, which shows the two versions side-by-side.
+Differences are highlighted as follows:
+<DL>
+<DT>green<DD>code which present in the repository but NOT in your version (i.e. added)
+<DT>red<DD>code which present in your version but NOT in the repository (i.e. removed)
+<DT>blue<DD>code which has changed
+</DL>
+
+You can compare your current class with any older version, or
+(if your version is outdated by new versions) with any newer version.
+<BR>
+If you give no revision number to the asking dialog box, the compare will be against
+the repositories most recent version.
+
+
+
+<A NAME="LOGGING" HREF="#I_LOGGING"><H3>Getting Information about Changes to a Class</A></H3>
+
+The class menus <IMG NOPRINT SRC="../../pictures/rightArrow.xbm"><VAR>'revision log'</VAR> item
+lists changes made to the selected class in chronological order.
+<P>
+In addition, some nice-to-know information about the class concerning its
+source repository and current version is displayed.
+<P>
+Use this, to find out who made a change, why he did it and when it was checked into
+the repository.
+<P>
+A typical revision log looks like:
+<CODE><PRE>
+    **** Loaded classes binary information ****
+
+      Binary based upon : 1.185
+
+    **** Classes source information ****
+
+      Filename ........ : NewLauncher.st
+      Revision ........ : 1.185
+      Checkin date .... : 1996/09/07 12:42:13
+      Checkin user .... : cg
+      Repository: ..... : stx
+      Directory: ...... : libtool
+      Container ....... : /cvs/stx/stx/libtool/NewLauncher.st,v
+
+    **** Repository information ****
+
+      Total revisions: 185
+      Newest revision: 1.185
+
+      revision 1.185         date: 1996/09/07 12:42:13       author: cg
+	    only show sourceCodeManager items, if its present
+
+      revision 1.184         date: 1996/09/07 11:34:33       author: ca
+	    rightMargin
+
+      revision 1.183         date: 1996/09/05 19:57:30       author: cg
+	    checkin from browser
+
+      revision 1.182         date: 1996/09/05 13:37:06       author: ca
+	    ....
+	    ....
+</PRE></CODE>
+
+The top section tells you what version your compiled binary (if any) is based upon.
+This section is empty, if the class in question is not a compiled class in the
+executable.
+<P>
+The next section gives the classes logical version as extracted from the
+classes version string. Notice, that this may be different from the
+binary version, in case of a changed class which was checked-into the repository.
+<P>
+The third (and most interesting) part logs the changes by data & time.
+
+
+
+<A NAME="LOGGING_ALL" HREF="#I_LOGGING_ALL"><H3>Getting Information about Changes to the Repository</A></H3>
+
+Another useful list is generated by the browser's
+<IMG NOPRINT SRC="../../pictures/rightArrow.xbm"><VAR>'overall history ..'</VAR> item,
+which is found in the classCategories-control-menu.
+<BR>
+This function first asks for a starting date and then
+lists all of the repository changes since that date. The date can be entered
+symbolically (such as <VAR>'yesterday'</VAR>, <VAR>'last year'</VAR>
+or <VAR>'a month ago'</VAR>), by giving a time (i.e. <VAR>'05:00'</VAR>),
+or a numeric date (i.e. <VAR>mm/dd</VAR>).
+<P>
+This is useful, to get a list of changes made by others within a workgroup
+(use this in regular intervals, overnight, after a weekend, or when returning from vacation ;-).
+<P>
+Its output typically looks like:
+<CODE><PRE>
+    **** source repository history since yesterday ****
+
+
+     date  time     user             file  rev    module/package
+
+    09/09 10:00   stefan     TableView.st  1.18   stx/libtable
+    09/09 10:24   stefan  TableColSpec.st  1.9    stx/libtable
+    09/09 10:24   stefan  TableColView.st  1.15   stx/libtable
+    09/09 10:25   stefan     TableView.st  1.19   stx/libtable
+    09/09 10:30   stefan       PipeStr.st  1.44   stx/libbasic
+    09/09 13:29       cg     ByteArray.st  1.69   stx/libbasic
+    09/09 16:56       cg     BrwsrView.st  1.165  stx/libtool
+    09/09 16:58       cg      RsrcPack.st  1.36   stx/libview
+    09/09 16:59       cg    HTMLDocGen.st  1.32   stx/libbasic3
+    09/09 17:01       cg      CVSSCMgr.st  1.93   stx/libbasic3   current:    1.95
+    09/09 17:02       cg    HTMLParser.st  1.20   stx/libbasic3
+    09/09 17:04   stefan     Smalltalk.st  1.171  stx/libbasic    current:    1.170
+	    ...
+	    ...
+</PRE></CODE>
+
+Notice the lines marked with <VAR>current: ...</VAR> in the last column:
+these classes have differing version numbers in the repository and in your environment.
+<P>
+The command line interface to CVS provides a whole bunch of additional commands
+for statistics and logging information.
+For special needs, use those commands (either in the fileBrowser or read it through a
+<CODE>PipeStream</CODE>).
+
+
+
+<A NAME="ATTACHING_TO_EXEPT_FOR_UPDATE" HREF="#I_ATTACHING_TO_EXEPT_FOR_UPDATE"><H3>Attaching to eXept's ST/X Repository</A></H3>
+
+Starting November 2003, most of eXept's ST/X CVS repository is mirrored on host "exept.eu.org"
+with nightly synchronization and readonly access for everybody.
+<P>
+If you want to attach your running Smalltalk to this repository
+to compare classes against the newest version or to get new patches,
+proceed as follows:
+
+<OL>
+<LI>login (has to be done only once, per machine)
+<BR>
+Either from withing the settings dialog (via the login-button),
+or in a native terminal window (shell terminal),
+and enter the following command (same for Unix and Win32):
+<CODE><PRE>
+    cvs -d :pserver:stx@exept.eu.org:/stx login
+</PRE></CODE>
+When asked for a password, enter "stx".
+<BR>
+Under Win32, do not use the ST/X terminal view, as the password is asked for on
+the real console, which is not emulated correctly.
+<P>
+
+<LI>set CVSROOT in your smalltalk for the stx module tree
+<BR>
+Go to the launcher's settings dialog and select the "SourceCode Management" section.
+<BR>
+
+<IMG NOPRINT SRC="../../pictures/SettingDialog_CVS.gif" ALT="[SettingsDialog]">
+<P>
+
+In the CVSRoot-per-Module section, add an entry by entering:
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;<CODE>"stx"</CODE>
+<BR>into the module field, and
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;<CODE>":pserver:stx@exept.eu.org:/stx"</CODE>
+<BR>into the CVSRoot field.
+<BR>
+Leave the default CVSRoot definition empty or as appropriate for your local CVS operation.
+<BR>
+
+<IMG NOPRINT SRC="../../pictures/SettingDialog_CVS2.gif" ALT="[SettingsDialog2]">
+
+<P>
+Press "Add/Apply" in the per-Module section and "Apply" at the bottom of the Dialog.
+<P>
+
+<LI>
+Thats it !
+<BR>
+Now, all class sources which are under the <CODE>"stx"</CODE>-module will be fetched from
+the eXept repository.
+<BR>
+To get a new version of an individual class, select the class in a browser
+and invoke the <VAR>"Compare with newest in repository"</VAR> menu function.
+<BR>
+To update a class, use the browser's <VAR>"Load newest version from Repository"</VAR> menu function.
+</OL>
+
+<P>
+We are sorry - for the moment, there is no good system-wide update
+mechanism implemented (although, multiple classes or packages can be selected and a
+bulk-update can be done in the browser).
+<BR>
+This will be added in one of the next releases.
+
+<P>
+Notice:
+<BR>
+The above setup will use the eXept repository only for classes
+under the <CODE>"stx"</CODE>-module tree.
+<BR>
+If you want to use a local CVS for your own project files,
+either set the CVSRoot for your module or set the default CVSRoot (i.e. for all other module roots).
+<P>
+In any case. make sure that your own classes are under a different module top;
+we recommend using something like <NOBR>"&lt;companyName>:&lt;project>"</NOBR> as packageID.
+
+This way, both a remote and a local CVS repository can be used simultaneously.
+
+<IMG NOPRINT SRC="../../pictures/SettingDialog_CVS2.gif" ALT="[SettingsDialog2]">
+
+
+
+<A NAME="SETUP_FOR_LOCAL_CVS" HREF="#I_SETUP_FOR_LOCAL_CVS"><H3>Setting up a Local CVS (For Your Projects Only)</A></H3>
+
+You may want to setup a CVS repository for your own projects,
+while avoiding access to eXept's repository for all of ST/X's
+base classes (as described above).
+<BR>
+This is done as follows:
+<OL>
+<LI>Disable the <B>default</B> repository
+<BR>i.e. leave the "CVSRoot default" textfield empty.
+<LI>For each of your modules (i.e. top project id),
+add a module and CVSRoot entry to the per-Module list.
+</OL>
+This will arrange for the ST/X basic systems classes' sourcecode to be
+accessed via the file system (i.e. as unpacked from the tar/zip file),
+AND use two local repositories for local projects.
+<BR>
+An example setup dialog would look like:
+
+<IMG NOPRINT SRC="../../pictures/SettingDialog_CVS3.gif" ALT="[SettingsDialog3]">
+
+
+
+
+<A NAME="CARE" HREF="#I_CARE"><H2>Special Care & Feeding</A></H2>
+
+Beside the above day-to-day use, other actions are to be performed
+in regular, but longer intervals.
+<BR>
+To avoid unauthorized or accidential destruction of you
+repository and/or history log, we highly recommend to protect
+the repository's files from write access by the average user.
+<P>
+Therefore, the following description is targeted at the sourceCode
+administrator - not at the average user.
+
+
+
+<A NAME="CLEANING_LOG" HREF="#I_CLEANING_LOG"><H3>Cleaning History Logs</A></H3>
+
+CVS keeps a history log file (if installed with default options),
+which may grow pretty large over time. This history log keeps track
+both of changes made in the repository and of all checkout operations.
+<P>
+This history log has nothing to do with a source containers individual
+revision log (which is held in the container itself).
+Therefore, the operations below do NOT destroy your version logging information.
+<P>
+
+To avoid filling up your disk,
+you may want to either remove this history-log file or remove some entries
+from time to time. The history log is located in the repository an named:
+<CODE><PRE>
+    $CVSROOT/CVSROOT/history
+</PRE></CODE>
+(notice, the first CVSROOT being a meta symbol - the second CVSROOT is
+ to be read literally).
+<P>
+Each entry in this file consists of a single ascii line. The first
+character is one of:
+<DL>
+<DT>'O'<DD>checkout
+<DT>'F'<DD>release
+<DT>'T'<DD>rtag
+<DT>`W'<DD>update: a file was deleted
+<DT>`U'<DD>update: normal update
+<DT>'G'<DD>update: a merge was necessary and succeeded
+<DT>'C'<DD>update: a merge was necessary and collisions were detected
+<DT>'M'<DD>commit: a file was modified
+<DT>`A'<DD>commit: a file was first added
+<DT>`R'<DD>commit: a file is removed.
+</DL>
+
+<H4>Removing normal checkout records</H4>
+
+Probably the least interesting entries in this log
+are the 'O' and 'U' <VAR>checkout records</VAR> which are generated
+for normal checkout operations (i.e. read accesses and updates which did not
+lead to a conflict).
+<P>
+These can be cleaned by:
+<CODE><PRE>
+    cd $CVSROOT/CVSROOT
+    grep -v "^O" history | grep -v "^U" > history.new
+    mv history.new history
+</PRE></CODE>
+The above removes about 80% of all records in the history log.
+<P>
+
+<H4>Removing all checkout records</H4>
+
+To remove all except for the <VAR>commit records</VAR> (i.e. those that really
+changed the repository), the following can be used:
+<CODE><PRE>
+    cd $CVSROOT/CVSROOT
+    grep -v "^O" history | grep -v "^U" | grep -v "^G" | grep -v "^C" > history.new
+    mv history.new history
+</PRE></CODE>
+
+<H4>Removing old records</H4>
+
+<P>
+Since the log entries are in chronological order,
+another alternative is to remove the first <VAR>n</VAR> entries
+(and/or keep them in some <VAR>old-history</VAR> file):
+<CODE><PRE>
+    cd $CVSROOT/CVSROOT
+    numEntries=`cat history | wc -l`
+    head -10000 history > history.old
+    tail -$numEntries history > history.new
+    mv history.new history
+</PRE></CODE>
+
+Be careful, all of the above commands do not care for history updates
+during the file-manipulation. Logging is effectively disabled for the time duration
+of the command(s). You better perform those after regular work hours
+(and/or ask your team members to not check new stuff into the repository
+for a while ...).
+
+<H4>Removing all records, but continue logging</H4>
+
+By truncating the history file to zero size, you get rid
+of all your history information:
+<CODE><PRE>
+    cd $CVSROOT/CVSROOT
+    echo > history
+</PRE></CODE>
+
+
+
+<H4>Disabling history logging altogether</H4>
+
+CVS will not create a history file itself - by removing it,
+history logging is disabled alltogether:
+<CODE><PRE>
+    cd $CVSROOT/CVSROOT
+    rm history
+</PRE></CODE>
+
+
+
+<A NAME="MOVING_CONTAINER" HREF="#I_MOVING_CONTAINER"><H3>Moving a Container</A></H3>
+
+Occasionally, a classes container needs to be moved to some other directory
+(for example, if you originally checked it into the package "foo:private/MyClass.st,v"
+and want to move it to "foo:project1/MyClass.st,v".
+<P>
+Although possible, we do NOT recommend to simply move the container (i.e. the ",v"-file),
+since that would make a checkout of previous versions impossible (remember, that
+the container in "foo:private" might still be required to reconstruct a previous
+release).
+<P>
+The best solution is to:
+<OL>
+<LI>Copy the container
+<CODE><PRE>
+cd CVSROOT
+cp foo/private/MyClass.st,v foo/project1/MyClass.st,v
+</PRE></CODE>
+<P>
+<LI>Check out the file into your working tree
+<CODE><PRE>
+cd WORKTOP/foo/project1
+cvs upd MyClass.st
+</PRE></CODE>
+<P>
+<LI>Remove the old file
+<CODE><PRE>
+cd WORKTOP/foo/private
+rm MyClass.st
+cvs remove MyClass.st
+cvs commit MyClass.st
+</PRE></CODE>
+</OL>
+
+This has the advantage of preserving the revision log in both containers,
+AND allows for checkout of any previous release.
+
+
+
+<A NAME="TROUBLE_GUIDE" HREF="#I_TROUBLE_GUIDEL"><H2>Trouble guide</A></H2>
+
+<A NAME="TROUBLE_LOCKS" HREF="#I_TROUBLE_LOCKSL"><H3>Leftover Locks</A></H3>
+
+Occasionally, CVS seems to forget to clean up temporary locks (this may depend on
+the specific version used). A symtom of this error os that class checkin
+is not possible, and CVS reports an error about a file being locked.
+<P>
+This is a temporary lock, which is set by CVS during the checkin operation.
+<BR>
+You should wait for a while and retry the checkin - after all, another member of your
+workgroup could be in the middle of a checkin operation ...
+... if the second attempt fails again, verify that noone is active in the repository.
+<P>
+If this is the case, manually remove the lock file in the repository.
+<BR>
+The lock file is found in "&lt;<VAR>repository</VAR>&gt;/&lt;<VAR>module</VAR>&gt;/&lt;<VAR>package</VAR>&gt;"</CODE>
+ directory, and named <VAR>",&lt;filename>,v,"</VAR> - i.e. comma-rcsFile-comma.
+
+<P>
+This error originates in CVS, which not always cleans up its lockfiles in case of
+an aborted repository operation.
+<BR>
+Look for newer version of CVS and - if appropriate - update your installation.
+<P>
+In any case, consult a sysadmin or your sourceAdministrator
+to have a look at leftOver locks.
+
+
+<A NAME="TROUBLE_TIME" HREF="#I_TROUBLE_TIME"><H3>Time Synchronization Problems</A></H3>
+
+CVS is quite sensitive to unsynchronized processor times: if multiple systems access the
+repository, AND the time/date setting on some machine is out of sync, an error message
+may be reported, that checkin is impossible due to a backward timewarp.
+(i.e. your machines time is behind the date of the repository version).
+<P>
+If the time delta is in the order of an hour (which is often the case, if daylight saving
+time is not correctly switched on a system),
+you can wait for that time and retry the checkin.
+<P>
+However, the real fix is to synchronize your clocks - since the trouble will be persistent
+and may reoccur with the next checkin attempt.
+<P>
+If everything else fails, temporarily change the modification time of the repository container
+for the checkin to proceed. After the checkin, change the time back to a reasonable
+value (i.e. touch the file).
+<P>
+In any case, consult a sysadmin and ask him to synchronize the clocks.
+
+
+
+<A NAME="TROUBLE_REMOVE" HREF="#I_TROUBLE_REMOVE"><H3>Removing Containers</A></H3>
+
+There is no browser interface to
+remove a classes source revision or to physically
+remove a source container (the browser's <VAR>remove container</VAR> operation
+only performs a logical remove; actually the container
+is renamed into a separate <VAR>Attic</VAR>
+directory - it will still be physically present, in case someone needs to
+checkout an older revision).
+<P>
+The reason for this behavior
+is simply that the system cannot know (or find out), if there are any
+smalltalk executables or snapshot images around, which still require that particular
+class or version of it.
+<BR>
+Therefore, within a workgroup, it is not up to individual users to remove containers.
+<P>
+This operation has to be done by an administrator, who has to manually remove a container
+(or package directory) - either via shell commands, or via the fileBrowser.
+
+
+<A NAME="TROUBLE_REMOVE_DIRECTORIES" HREF="#I_TROUBLE_REMOVE_DIRECTORIES"><H3>Removing Directories</A></H3>
+
+Packages cannot be removed via the browser; to make things worse,
+they cannot even be removed via regular CVS commands on the client
+side.
+<BR>
+In order to remove a package, you must login to the CVS server host
+(or chdir to the CVS root), and manually remove directories.
+<P>
+Due to a bug in the CVS client, a followup "cvs upd" will fail,
+and report a missing directory (at least with CVS up to version 1.9.28),
+because the removed directory is still listed in the CVS/Entries file.
+<P>
+To remove a package directory, you have to:
+<UL>
+<LI>go to the CVSroot (on the CVS server), and remove the directory there
+<LI>go back to EVERY clients (work tree), remove the corresponding line in CVS/Entries
+<LI>if a CVS/Entries.log file exists, remove the correspoonding line there as well
+<LI>remove the directory.
+<LI>perform a "cvs update -d"
+</UL>
+
+There seems (to date) no other workaround for that.
+
+
+<A NAME="TROUBLE_RENAME" HREF="#I_TROUBLE_RENAME"><H3>Renaming Containers</A></H3>
+
+To rename a container, we recommend the following, which avoids
+loosing the change history AND preserves the original for checkout of
+previous releases:
+<UL>
+<LI>go to the CVSroot (on the CVS server), and COPY the container to its new name
+<BR>(i.e. do NOT move/rename it)
+<LI>go back to the client (work tree) and check it out
+<LI>on the client (in the work tree), remove the file and perform a cvs remove, cvs commit
+<LI>if required, recompile the class library after changing the Makefiles
+</UL>
+This makes sure, that a tagged-checkout of a previous release will still
+find the original container (in the servers Attic directory),
+and the revision-log remains available in the new container.
+<BR>
+(although it creates a little file-space overhead)
+
+
+<A NAME="READING" HREF="#I_READING"><H2>Further Reading</A></H2>
+
+More detailed information on CVS is found in
+the original authors document:
+<A HREF="../other/cvs.html">CVS - Concurrent Versions System</A>,
+which describes command options and internals.
+
+
+
+<A NAME="DISCLAIMER" HREF="#I_DISCLAIMER"><H2>Disclaimer</A></H2>
+
+The RCS and CVS packages as contained on the <CITE>ST/X</CITE> installation CD
+are not part of the licenced <CITE>ST/X</CITE> software - these can be copied
+and used as stated in the corresponding licence & copyright information files.
+<P>
+These programs are provides by eXept for your convenience - especially, if you
+do not have direct access to an internet ftp server. All of them are freely
+available through various other sources, such as source CD compilations,
+ftp servers or mail reply servers.
+<P>
+These programs are provided by eXept "AS IS", without any express or
+implied warranty.
+At no time shall eXept be liable for any direct, indirect, incidential,
+special, exemplary, consequential or whatsoever damages.
+
+
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 1996-2003 eXept Software AG, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.11 $ $Date: 2018-02-19 13:12:07 $
+</BODY>
+</HTML>

@@ -1,0 +1,11 @@
+This directory contains resource files for the widgets.
+
+The widget classes get their strings from these resource files.
+These files are only read during startup.
+
+Notice: starting with ST/X vsn 5.5.1, all resource strings are being
+	concentrated into a single catalog (libview/resources/<LANG>.rs)
+
+Notice: in ST/X above vsn 2.10.2, all style relevant stuff has
+	been removed from the resource files into separate style
+	sheets. Resourcefiles now only contain string translations.

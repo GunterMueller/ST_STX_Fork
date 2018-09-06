@@ -1,0 +1,171 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Help - Language Settings</TITLE>
+</HEAD>
+
+<BODY>
+
+<H1>Language Settings</H1>
+
+<H2><A NAME="INDEX">Help Index</A></H2>
+
+<UL>
+<LI><A HREF="#LANG_SUPPORTED">Supported Languages</A>
+<LI><A HREF="#LANG_CHANGE">Changing the Language during your Session</A>
+<LI><A HREF="#LANG_DEFAULT">Setting a Default Language</A>
+<LI><A HREF="#LANG_REREAD_FILES">Rereading the Resource Files</A>
+<LI><A HREF="#LANG_HELP">Author is asking for Help</A>
+<LI><A HREF="#MORE_INFO">Further Reading</A>
+</UL>
+
+<HR>
+
+<H2><A NAME="LANG_SUPPORTED" HREF="#INDEX">Supported Languages</A></H2>
+
+<CITE>ST/X</CITE> itself is independent of the language;
+all messages are translated via textfiles (so called "<VAR>resource files</VAR>",
+which are read at startup time, or when the language setting is changed.
+<P>
+These resource files are searched in a directory named
+<CODE>"resources"</CODE>
+in the classes' package-directory.
+Typically, in Unix, these are located in
+<CODE>"/opt/smalltalk/packages"</CODE>
+or
+<CODE>"/usr/local/lib/smalltalk/packages"</CODE>.
+<P>
+However, because a number of directories are tried when resource files are searched for,
+you can easily create private resource files, by placing them into a <CODE>"resources"</CODE> subdirectory,
+and placing a modified version of (some of) those files there (if you don't like the standard messages).
+<P>
+Also, files are first tried class-specific, then package-specific. For example, the resources
+for the NewLauncher class are first tried in a file named "NewLauncher.rs", then "libtool.rs".
+<P>
+For example, the translations for the NewLauncher class (which is in the 'libtool'-package)
+are first looked up from a file named <CODE>".../stx/libtool/resources/NewLauncher.rs"</CODE> (which is not present),
+then in <CODE>".../stx/libtool/resources/libtool.rs"</CODE>.
+<P>
+In contrast to other such translation schemes, where a symbolic key is used,
+ST/X uses the original english text as a key.
+Translations for a particular language may or may not be present in
+those files - if not, the original internal messages (english) are used.
+<P>
+When editing those files, be aware that they may contain 8bit national
+characters or even invisible escape sequences (the japanese files do).
+<BR>
+Use an editor which is prepared to handle 8bit (or even 16bit) characters -
+<BLOCKQUOTE>
+<B>ATTENION: some old system's editors silently strip of the highest bit and
+thereby corrupt these files.
+(Old versions of vi are known to do this)
+</B>
+</BLOCKQUOTE>
+We recommend using <CITE>ST/X's</CITE> fileBrowser.
+
+<P>
+For some languages (i.e. japanese), you need a font which is capable of
+displaying those characters.
+The Launcher/FileBrowser will open a font dialog, asking for a font change, if required.
+
+
+
+<H2><A NAME="LANG_CHANGE" HREF="#INDEX">Changing the Language during your Session</A></H2>
+
+Changing the language during a session only affects new views;
+existing views (either iconified or open) keep their resources as valid
+when created. The reason is that these language translations are cached
+internally within the view instances.
+<BR>
+This may be somewhat annoying with popupMenus: the old view
+continues to display the previous language strings,
+while the (new) popupMenus
+already show their texts in the changed language.
+<P>
+Sorry for that inconvenience - but we assume that the language is not changed
+too often during sessions ;-),
+and supporting dynamic language changes would require quite some programming
+effort, as the geometry of all windows could change, due to changed label strings.
+<P>
+The launcher responds to language changes by reopening a new launcher view.
+<BR>
+You should close all other views and reopen them anew.
+
+
+
+
+<H2><A NAME="LANG_DEFAULT" HREF="#INDEX">Setting a Default Language</A></H2>
+
+When started, <CITE>ST/X</CITE> sets the language from the
+shell environment variable ``<CODE>LANG</CODE>''.
+<BR>
+Thus, you may add a line such as:
+<CODE><PRE>
+    setenv LANG de
+</PRE></CODE>
+or:
+<CODE><PRE>
+    LANG=de
+    export LANG
+</PRE></CODE>
+to your login profile (if not already present).
+
+<P>
+It is also possible, to set the language in the
+<CODE>"private.rc"</CODE> startup file, which should be in your startup
+directory or in <CODE>"$HOME/.smalltalk"</CODE>.
+<BR>
+To do this, add a line as:
+<CODE><PRE>
+    Smalltalk at:#Language put:#de
+</CODE></PRE>
+
+
+
+<H2><A NAME="LANG_REREAD_FILES" HREF="#INDEX">Rereading the Resource Files</A></H2>
+
+The new language dialog offers an additional button,
+to reread the translations.
+<BR>
+This is useful after the translation files have been edited.
+<BR>
+However, it will only affect new windows, and the Launcher is not reopened.
+
+
+
+
+<H2><A NAME="LANG_HELP" HREF="#INDEX">Asking for Help</A></H2>
+
+Please excuse me, if translations for your language are imprecise,
+funny, wrong or even offending. Some of those translations were created by
+looking up dictionaries - and we will correct them as soon as possible,
+whenever we get informed.
+<P>
+Please help us by sending back suggestions and/or corrected texts - thank you.
+
+
+
+<H2><A NAME="MORE_INFO" HREF="#INDEX">Further Reading</A></H2>
+
+For more information, read <A HREF="../../custom/TOP.html">
+<VAR>"Configuration & Customization"</VAR></A>.
+
+
+
+<P>
+<P>
+
+
+
+<HR>
+<P>
+<P>
+Copyright &copy; Claus Gittinger Development & Consulting, all rights reserved
+<P>
+<P>
+
+<HR>
+Doc $Revision: 1.13 $ $Date: 2012-11-01 13:51:50 $
+
+</BODY>
+</HTML>

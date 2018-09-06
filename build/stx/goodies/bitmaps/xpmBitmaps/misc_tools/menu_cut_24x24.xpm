@@ -1,0 +1,35 @@
+/* XPM */
+static char *menu_cut_24x24_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"24 24 4 1",
+/* colors */
+"a c black",
+"b c #000080",
+"c c white",
+"d c none",
+/* pixels */
+"dddddddddddddddddddddddd",
+"dddddddddddddddddddddddd",
+"ddddddddadddddaddddddddd",
+"ddddddddadddddaddddddddd",
+"ddddddddadddddaddddddddd",
+"ddddddddadddddaddddddddd",
+"ddddddddaadddaaddddddddd",
+"dddddddddadddadddddddddd",
+"dddddddddaadaadddddddddd",
+"ddddddddddadaddddddddddd",
+"ddddddddddaaaddddddddddd",
+"dddddddddddadddddddddddd",
+"ddddddddddbabddddddddddd",
+"ddddddddddbdbddddddddddd",
+"dddddddddbbdbbdddddddddd",
+"dddddddddbdddbbbbddddddd",
+"ddddddbbbbdddbdddbdddddd",
+"dddddbdddbdddbdddbdddddd",
+"dddddbdddbdddbdddbdddddd",
+"dddddbdddbdddbdddbdddddd",
+"dddddbdddbddddbbbddddddd",
+"dddddbdddbdddddddddddddd",
+"ddddddbbbddddddddddddddd",
+"dddddddddddddddddddddddd",
+};

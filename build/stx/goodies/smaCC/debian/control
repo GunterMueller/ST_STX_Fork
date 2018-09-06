@@ -1,0 +1,13 @@
+Source: smalltalkx-pkg-smacc
+Section: devel
+Priority: optional
+Maintainer: Jan Vrany <vranyj1@fel.cvut.cz>
+Build-Depends: debhelper (>= 5)
+Standards-Version: 3.7.2
+
+Package: smalltalkx-pkg-smacc
+Architecture: all
+Depends: smalltalkx-runtime
+Description: Smalltalk Compiler Compiler for Smalltalk/X
+ Smalltalk Compiler Compiler for Smalltalk/X. 
+ See http://www.refactory.com/Software/SmaCC/

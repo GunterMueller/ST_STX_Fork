@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?eclipse.ant.import?>
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="stx.libjava.tools.dependencies" default="dependencies">
+    <property name="ivy.jar" value="../../java/ivy-2.3.0.jar"/>
+    <target name="dependencies" description="Download required libraries">
+        <taskdef
+            resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant"
+            classpath="${ivy.jar}"/>
+         <ivy:retrieve
+                conf="binaries"
+                pattern="libs/[artifact]-[revision].[ext]"/>
+         <ivy:retrieve
+                conf="sources"
+                pattern="libs-src/[artifact]-[revision].[ext]"/>
+    </target>
+    <target name="dependencies-report" description="Generate report on dependencies">
+        <taskdef
+            resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant"
+            classpath="${ivy.jar}"/>
+         <ivy:resolve />
+
+         <ivy:report conf="binaries" organisation="SWING Research Group &amp; eXept Software A.G." module="stx.libjava.benchmarks"/>
+    </target>
+
+
+</project>

@@ -1,0 +1,233 @@
+<html>
+<head>
+<title>Refactoring: 
+Convert Dynamic to Static Construction</title>
+</head>
+<body>
+<H1>
+Convert Dynamic to Static Construction</H1>
+<P>
+<B> Refactoring contributed by 
+	
+Gerard M. Davison </B>
+</P>
+<P>
+<I>
+<CENTER>
+You have code that loads other classes dynamically. This can introduce a un-waranted overhead and can produce code that is more fragile.
+</CENTER>
+</I>
+</P>
+<P>
+<B>
+<CENTER>
+Replace the dynamic class loading with static code.
+</CENTER>
+</B>
+</P>
+
+
+<PRE>
+
+
+
+   try
+   {
+      DataProvider dp = (DataProvider)
+         Class.forName("org.davison.data.jdbc.JDBCProvider").newInstance();
+   }
+   catch (IllegalAccessException iae)
+   {
+      // Convert exception to error to preseve the interface.
+      //
+      
+      throw new IllegalAccessError(iae.getMessage());
+   }
+   catch (InstantiationException ie)
+   {
+      // Convert exception to error to preseve the interface.
+      //
+      
+      throw new InstantiationError(ie.getMessage());      
+   }
+   catch (ClassNotFoundException cnfe)
+   {
+      // Convert exception to error to preseve the interface.
+      //
+
+      throw new NoClassDefFoundError(cnfe.getMessage());
+   }
+
+
+
+</PRE>
+<P>
+<CENTER>
+<IMG SRC="arrow.gif"></CENTER>
+</P>
+
+<PRE>
+<PRE>
+
+   import org.davison.data.jdbc.JDBCProvider;
+
+   .
+   .
+   .
+   
+   DataProvider dp = new JDBCProvider();
+
+</PRE>
+</PRE>
+
+<h2>Motivation</h2>
+<P>
+In some cases code is written with dynamic dependencies between parts of the code by utilising Java ability to load and instantiate arbitrary classes. If not properly managed, this can cause run-time errors. This design can impart a performance penalty because of the extra levels of indirection. It can also prevent the compiler from detecting certian types of error.
+</P>
+
+
+<h2>Mechanics</h2>
+<UL>
+
+<LI>Identify the places where the different classes are instantiated. If there is more than one place, you might like to make use of code consolidation refactorings to create one entry point.</LI>
+
+<LI>You can remove the code that instantiates the classes using java.lang.reflect. We will instead call the constructors directly.</LI>
+
+<LI>Replace the code that selects the name of the class with simpler code that simply returns a new instance.</LI>
+
+<LI>Add in import statements as required for the classes being constructed.</LI>
+
+<LI>You are now ready to compile and test the code. Make sure that any dependant code is also tested properly.</LI>
+
+<LI>The refactoring is complete.</LI>
+</UL>
+<h2>Example</h2>
+<UL>
+<P>
+Start with this code:
+</P>
+
+<PRE>
+
+
+   try
+   {
+      DataProvider dp = (DataProvider)
+         Class.forName("org.davison.data.jdbc.JDBCProvider").newInstance();
+   }
+   catch (IllegalAccessException iae)
+   {
+      // Convert exception to error to preseve the interface.
+      //
+      
+      throw new IllegalAccessError(iae.getMessage());
+   }
+   catch (InstantiationException ie)
+   {
+      // Convert exception to error to preseve the interface.
+      //
+      
+      throw new InstantiationError(ie.getMessage());      
+   }
+   catch (ClassNotFoundException cnfe)
+   {
+      // Convert exception to error to preseve the interface.
+      //
+
+      throw new NoClassDefFoundError(cnfe.getMessage());
+   }
+
+
+</PRE>
+
+
+<P>
+We can remove the error handling code and simply instantiate the class.
+</P>
+
+<PRE>
+
+
+   DataProvider dp = new JDBCProvider();
+   
+
+</PRE>
+<P>
+The final step is to add in the correct import statement
+</P>
+
+<PRE>
+
+   import org.davison.data.jdbc.JDBCProvider;
+
+   .
+   .
+   .
+   
+   DataProvider dp = new JDBCProvider();
+   
+
+</PRE>
+
+
+<P>
+Compile and test at this point as we have code that is complete. 
+</P>
+<P>
+When this is finished and all dependent classes are re-tested, the refactoring is complete.
+</P>
+
+<P>
+Another way of creating compile time dependencies is to use class literals. This would still have the overhead of dynamic instantiation. I would not recommend this unless you have good reason; but here is the code converted to use this method.
+</P>
+
+<PRE>
+
+
+
+   try
+   {
+      DataProvider dp = (DataProvider)
+         org.davison.data.jdbc.JDBCProvider.class.newInstance();
+   }
+   catch (IllegalAccessException iae)
+   {
+      // Convert exception to error to preseve the interface.
+      //
+      
+      throw new IllegalAccessError(iae.getMessage());
+   }
+   catch (InstantiationException ie)
+   {
+      // Convert exception to error to preseve the interface.
+      //
+      
+      throw new InstantiationError(ie.getMessage());      
+   }
+   catch (ClassNotFoundException cnfe)
+   {
+      // Convert exception to error to preseve the interface.
+      //
+
+      throw new NoClassDefFoundError(cnfe.getMessage());
+   }
+
+
+</PRE>
+
+
+
+</UL>
+
+
+<P>
+</P>
+<P>
+</P>
+<P>
+<CENTER>
+<A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A>
+</CENTER>
+</P>
+</body>
+</html>

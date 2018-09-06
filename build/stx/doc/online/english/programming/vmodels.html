@@ -1,0 +1,3288 @@
+<html>
+
+<head>
+
+   <title>Understanding and Using ValueModels</title>
+
+   <meta name="GENERATOR" content="Mozilla/3.0b3Gold (Win32)">
+
+</head>
+
+<body>
+
+<A NOPRINT HREF="viewtricks.html">       <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">              <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="dragAndDrop.html"> <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+
+<h1>Understanding and Using ValueModels </h1>
+
+
+
+<h4>Bobby Woolf
+
+<br>Knowledge Systems Corporation </h4>
+
+
+
+<p>Copyright &copy; 1994, Bobby Woolf and Knowledge Systems Corporation.
+
+All Rights Reserved.
+
+<P>
+<hr></p>
+This document was found in the smalltalk archives;
+it is NOT part of the <CITE>ST/X</CITE> licenced package.
+<BR>
+We have included it in the documentation hierarchy for those
+of you without internet access.
+<hr></p>
+<P>
+
+
+
+
+<h2>Table of Contents<font SIZE=+3> </font></h2>
+
+
+
+<h3><a href="#introduction">Introduction</a> </h3>
+
+
+
+<h3>1. <a href="#what_is_a_valuemodel">What is a ValueModel?</a> </h3>
+
+
+
+<h4>1.1 <a href="#use_a_valuemodel_to_generalize">Use a ValueModel to generalize
+
+an object's aspect</a> </h4>
+
+
+
+<p>How can one object retrieve and change a collaborator object in a uniform
+
+way, regardless of what larger object the collaborator may be a part of?
+
+</p>
+
+
+
+<h4>1.2 <a href="#use_a_valuemodel_to_share">Use a ValueModel to share
+
+a value</a> </h4>
+
+
+
+<p>How can two objects share a common value in such a way that both can
+
+access and change the common value, and whenever one changes the common
+
+object the other will be notified automatically? </p>
+
+
+
+<h3>2. <a href="#how_to_use_valuemodels">How to use ValueModels</a> </h3>
+
+
+
+<h4>2.1 <a href="#use_onchangesendto">Use onChangeSend:to: to register
+
+interests on a value</a> </h4>
+
+
+
+<p>How can an object that is using the value contained in a ValueModel
+
+be notified whenever the value changes? </p>
+
+
+
+<h4>2.2 <a href="#use_valuemodel_chains">Use ValueModel chains instead
+
+of onChangeSend:to:</a> </h4>
+
+
+
+<p>What if the update that is performed when a change occurs is so simple
+
+that a separate &lt;something&gt;Changed method seems unnecessary? </p>
+
+
+
+<h4>2.3 <a href="#encapsulate_senders">Encapsulate senders of value and
+
+value:</a> </h4>
+
+
+
+<p>When using ValueModels, how does the programmer know when to use value
+
+and value:? </p>
+
+
+
+<h4>2.4 <a href="#ensure_that_all_objects">Ensure that all objects sharing
+
+a value use the same ValueModel</a> </h4>
+
+
+
+<p>How can multiple objects that need to share the same value be assured
+
+of sharing a single ValueModel? </p>
+
+
+
+<h4>2.5 <a href="#keep_a_valuemodel">Keep a ValueModel's value's type consistent</a>
+
+</h4>
+
+
+
+<p>When an object gets a value from a ValueModel, how does it know the
+
+type of object it will receive? </p>
+
+
+
+<h3>3. <a href="#types_of_valuemodels">Types of ValueModels</a> </h3>
+
+
+
+<h4>3.1 <a href="#use_a_valueholder">Use a ValueHolder to hold a stand-alone
+
+object</a> </h4>
+
+
+
+<p>How can I wrap ValueModel behavior around the objects in my instance
+
+variables? </p>
+
+
+
+<h4>3.2 <a href="#use_an_aspectadaptor">Use an AspectAdapter to hold an
+
+aspect of an object</a> </h4>
+
+
+
+<p>How can I wrap ValueModel behavior around my retrieval of an aspect
+
+of another model? </p>
+
+
+
+<h4>3.3 <a href="#use_a_bufferedvalueholder">Use a BufferedValueHolder
+
+to delay the commit of a new value</a> </h4>
+
+
+
+<p>My view has a number of values. How can I allow the user to change all
+
+of them without changing them in the application model, then accept or
+
+cancel all of the changes at one time? </p>
+
+
+
+<h4>3.4 <a href="#use_a_rangeadaptor">Use a RangeAdaptor to channel a number's
+
+range</a> </h4>
+
+
+
+<p>How can I easily convert a real world quantity to a percentage such
+
+that whenever the quantity changes, the percentage is automatically recalculated?
+
+</p>
+
+
+
+<h4>3.5 <a href="#use_an_indexedadaptor">Use an IndexedAdaptor to hold
+
+a single index in a Collection</a> </h4>
+
+
+
+<p>How can I wrap ValueModel behavior around a particular element in a
+
+Collection? </p>
+
+
+
+<h4>3.6 <a href="#use_a_slotadaptor">Use a SlotAdaptor to hold a single
+
+instance variable</a> </h4>
+
+
+
+<p>How can I wrap ValueModel behavior around a particular instance variable
+
+in an object without changing what kind of object an instance variable
+
+holds? </p>
+
+
+
+<h4>3.7 <a href="#use_a_pluggableadaptor">Use a PluggableAdaptor to hold
+
+some part of an object</a> </h4>
+
+
+
+<p>How can I wrap ValueModel behavior around an arbitrary portion of an
+
+object? </p>
+
+
+
+<h4>3.8 <a href="#use_a_typeconverter">Use a TypeConverter to convert a
+
+value between types</a> </h4>
+
+
+
+<p>Two objects wish to share a value, but one dependent wants it expressed
+
+as one type and the other expects another type. How can the value appear
+
+as the appropriate type of object for each dependent? </p>
+
+
+
+<h4>3.9 <a href="#use_a_scrollvalueholder">Use a ScrollValueHolder to hold
+
+a position in n-dimensional space</a> </h4>
+
+
+
+<p>What object should I use to keep track of how much a point's position
+
+on a grid has changed? </p>
+
+
+
+<h4>3.10 <a href="#use_a_selectioninlist">Use a SelectionInList to hold
+
+a list and its selection</a> </h4>
+
+
+
+<p>How can I set-up a list such that it can tell me which item is currently
+
+being used? </p>
+
+
+
+<h3><a href="#appendices">Appendices </a></h3>
+
+
+
+<h4><a href="#references">References</a> </h4>
+
+
+
+<h4><a href="#about_the_author">About the author</a> </h4>
+
+
+
+<p>
+
+<hr></p>
+
+
+
+<h2><a name="introduction"></a>Introduction </h2>
+
+
+
+<p>In Objectworks 4.1, ParcPlace introduced the Value Model framework.
+
+Back then, it only consisted of two concrete classes. The Objectworks code
+
+didn't use this framework very much, so neither did most application developers.
+
+However, this framework was greatly enhanced to help form the foundation
+
+of ParcPlace's next release, VisualWorks 1.0. This version of Smalltalk
+
+expanded the framework to contain numerous concrete subclasses and associated
+
+classes. </p>
+
+
+
+<p>This document will answer these questions: </p>
+
+
+
+<ul>
+
+<li>What is the ValueModel framework? </li>
+
+
+
+<li>Why was this framework developed? </li>
+
+
+
+<li>How should developers use this framework? </li>
+
+
+
+<li>How specifically should developers use the framework's concrete classes?
+
+</li>
+
+</ul>
+
+
+
+<p>VisualWorks uses this framework to convert users' painted views into
+
+application models containing executable code. The framework is used extensively
+
+by the generated code in application models and the code developers write
+
+to enhance their application models. </p>
+
+
+
+<p>However, the framework does more than just enable VisualWorks to automatically
+
+generate application model code. It significantly enhances the dependency
+
+framework and helps developers separate application models and domain models
+
+into distinct objects. In fact, although VisualWorks' code generators use
+
+ValueModels exclusively in <tt>ApplicationModel</tt>s, they may be even
+
+more useful when employed in domain models. </p>
+
+
+
+<p>This paper contains guidelines explaining what <tt>ValueModel</tt>s
+
+are, why they were developed, and how to use them. You, the reader, are
+
+expected to be familiar with ParcPlace Smalltalk (either Objectworks 4.x
+
+or VisualWorks) as well as basic Smalltalk syntax and object-oriented practices.
+
+You should have a basic understanding of the dependency framework whereby
+
+an object notifies its dependents of a change by sending itself <tt>changed...</tt>,
+
+which causes each dependent to receive <tt>update:...</tt>. You should
+
+have used the UI Painter facility in VisualWorks to create your own subclass
+
+of <tt>ApplicationModel</tt> and design a view for it. </p>
+
+
+
+<p>In general, though, intimate knowledge of Smalltalk is not required
+
+to understand these guidelines. Although they document the Value Model
+
+framework in VisualWorks, the concepts behind the framework that motivate
+
+its use are not VisualWorks specific or even Smalltalk specific (although
+
+they may be specific to object-oriented programming!). Thus even though
+
+these guidelines are designed primarily for VisualWorks programmers, other
+
+developers using object-oriented techniques can benefit from them as well.
+
+</p>
+
+
+
+<h2><a name="_Toc308279015"></a>1. <a name="what_is_a_valuemodel"></a>What
+
+is a ValueModel? </h2>
+
+
+
+<p>&quot;Value Model&quot; is the name of a framework in VisualWorks. It
+
+is implemented by the <tt>ValueModel</tt> hierarchy, but also has some
+
+related classes outside that hierarchy like <tt>SelectionInList</tt> and
+
+<tt>DependencyTransformer</tt>. <tt>ValueModel</tt> itself is an abstract
+
+class; you actually use instances of <tt>ValueModel</tt>'s concrete subclasses.
+
+</p>
+
+
+
+<p>A <tt>ValueModel</tt> has two main characteristics: </p>
+
+
+
+<ul>
+
+<li>Its aspect is always <tt>value</tt>. This means that its getter message,
+
+setter message, and update aspect are <tt>value</tt>, <tt>value:</tt>,
+
+and <tt>#value</tt> respectively. </li>
+
+
+
+<li>It informs its dependents whenever its value changes. It has a standard
+
+mechanism for registering interest in the value, and those objects that
+
+have done so will be notified in a standard way. </li>
+
+</ul>
+
+
+
+<p>This provides a simple, generic interface between any object (a value)
+
+and a value-based object (such as a visual widget that displays a single
+
+value). The value and the value-based object do not have to be customized
+
+for each other; the <tt>ValueModel</tt> does this by connecting the two
+
+and translating the interactions between them as necessary. Thus the value-based
+
+object neither knows nor cares where the value comes from or how to access
+
+it. The object is able to simply send <tt>value</tt> to its <tt>ValueModel</tt>,
+
+which in turn does whatever is necessary to obtain the value, then returns
+
+it. </p>
+
+
+
+<p>If the value changes, it notifies the widget. This is the case even
+
+when multiple widgets share the same value; when one widget changes the
+
+value, it does not have to perform any notification because the <tt>ValueModel</tt>
+
+does so. In this way, the widget simply uses the value as it sees necessary
+
+and does not have to worry about what the consequences might be to anyone
+
+else who might also be using the value. </p>
+
+
+
+<p>For additional information about what <tt>ValueModel</tt>s are and how
+
+to use them, see <a href="#discrete_charm_of_valuemodel">[Par93]</a>. </p>
+
+
+
+<p>Here are some guidelines that describe what <tt>ValueModel</tt>s are
+
+and what they do: </p>
+
+
+
+<h3><a name="_Toc308279016"></a>1.1 <a name="use_a_valuemodel_to_generalize"></a>Use
+
+a ValueModel to generalize an object's aspect </h3>
+
+
+
+<h4>Problem </h4>
+
+
+
+<p><a name="_Toc308279017"></a>How can one object retrieve and change a
+
+collaborator object in a uniform way, regardless of what larger object
+
+the collaborator may be a part of? </p>
+
+
+
+<h4>Context </h4>
+
+
+
+<p>The object will treat its collaborator as a single value. It will need
+
+to be able to retrieve this value, and change its setting by storing a
+
+new value. Since the value may change, the object will need to be notified
+
+when the value changes. </p>
+
+
+
+<p>The object will need to send messages to retrieve and set the value.
+
+The object's design can be simplified if these messages are always the
+
+same. It will also need to listen for notification that the value has changed
+
+to a new object. Again, if this notification is always the same, the object's
+
+design can be simplified. </p>
+
+
+
+<p>The value may be stored in several different ways: It may be a stand-alone
+
+object. It may be a part of a larger object. It might not be an object
+
+at all, but rather one that can be generated from others whenever it is
+
+needed. If these specifics of how the value is stored can be hidden from
+
+the object using it, that object's design can be simplified. </p>
+
+
+
+<p>Behavior will be needed to allow a value to be accessed using standard
+
+messages. More will be needed to access it, depending on how it is stored.
+
+This behavior should be implemented in a way that is as reusable as possible.
+
+Then the code that handles these issues for one value can be used with
+
+all values that have similar circumstances. </p>
+
+
+
+<h4>Solution </h4>
+
+
+
+<p>Use a <tt>ValueModel</tt> to store the value. <tt>ValueModel</tt> is
+
+an abstract class, so you'll actually use an instance of one of <tt>ValueModel</tt>'s
+
+concrete subclass. Which subclass you'll use will depend on a couple of
+
+factors. How is the value stored in the system? How does it needs to be
+
+retrieved from the system? What conversion needs to be performed on the
+
+object during the retrieval process? (See &quot;3. <a href="#types_of_valuemodels">Types
+
+of ValueModels</a>&quot;.) </p>
+
+
+
+<p>A <tt>ValueModel</tt> has the aspect of <tt>value</tt>. This means that
+
+to retrieve the value, the getter message is <tt>value</tt>; to change
+
+the value, the setter message is <tt>value:</tt>; and to listen for updates
+
+when the value changes, the update aspect is <tt>#value</tt>. </p>
+
+
+
+<p>Once the <tt>ValueModel</tt> is established on the value, you don't
+
+need to know where it comes from, what its real name or aspect is, or what
+
+other objects might be using it. The <tt>ValueModel</tt> takes care of
+
+these details. You automatically know how to retrieve it and change it
+
+using the standard <tt>value</tt> aspect. In this way you always know how
+
+to use the value and don't need to be concerned about the details. </p>
+
+
+
+<h4>Examples </h4>
+
+
+
+<p><b>Example 1</b> </p>
+
+
+
+<p>Let's say you want to implement a time widget that displays a clock
+
+face on a view. (Maybe you implement two, analog and digital.) Its state
+
+will be based on an instance of <tt>Time</tt>. </p>
+
+
+
+<p>Where might this instance of <tt>Time</tt> come from? Someone might
+
+create one in a workspace and send it <tt>displayAsClock</tt>. It might
+
+be one half of a <tt>DateTime</tt> object, or an aspect of a <tt>LogEvent</tt>
+
+object. It might sit in a particular place in memory, the result of a primitive
+
+that constantly reads the system clock and replaces the <tt>Time</tt> instance
+
+whenever the clock changes. As you can see, you don't know where it might
+
+be coming from. </p>
+
+
+
+<p>And you shouldn't know where it's coming from. Even if you're implementing
+
+the clock view for one particular model, you should generalize your implementation
+
+to fit any <tt>Time</tt> instance that comes along. </p>
+
+
+
+<p>So design it to access its <tt>Time</tt> object via a <tt>ValueModel</tt>.
+
+That means that it uses <tt>value</tt> to get the <tt>Time</tt> from its
+
+view's model, <tt>value:</tt> to set it, and re-performs the get when it
+
+receives a <tt>#value</tt> change notification. </p>
+
+
+
+<p>Which concrete subclass of <tt>ValueModel</tt> you use will depend,
+
+case by case, on how the <tt>Time</tt> is stored in the system. With the
+
+appropriate kind of <tt>ValueModel</tt>, your clock widget will work with
+
+any model that contains a <tt>Time</tt>, including a stand-alone instance
+
+of <tt>Time</tt> itself. </p>
+
+
+
+<p><b>Example 2</b> </p>
+
+
+
+<p>Most of the widgets that use <tt>ValueModel</tt>s are visual widgets.
+
+For an example that is a model widget, see <tt>SelectionInList</tt> (see
+
+also &quot;3.10 <a href="#use_a_selectioninlist">Use a SelectionInList
+
+to hold a list and its selection</a>&quot;). </p>
+
+
+
+<p>Whereas a <tt>ValueModel</tt> has one aspect, <tt>value</tt>, <tt>SelectionInList</tt>
+
+has three: <tt>list</tt>, <tt>selectionIndex</tt>, and <tt>selection</tt>.
+
+The first two are implemented &quot;physically&quot; through the instance
+
+variables <tt>listHolder</tt> and <tt>selectionIndexHolder</tt>; the third
+
+is implemented &quot;logically&quot; in terms of the first two. The two
+
+instance variables are, you guessed it, <tt>ValueModel</tt>s (actually
+
+<tt>ValueHolder</tt>s; see &quot;3.1 <a href="#use_a_valueholder">Use a
+
+ValueHolder to hold a stand-alone object</a>&quot;). </p>
+
+
+
+<h3><a name="_Toc308279018"></a>1.2 <a name="use_a_valuemodel_to_share"></a>Use
+
+a ValueModel to share a value </h3>
+
+
+
+<h4>Problem </h4>
+
+
+
+<p><a name="_Toc308279019"></a>How can two objects share a common value
+
+in such a way that both can access and change the common value, and whenever
+
+one changes the common object the other will be notified automatically?
+
+</p>
+
+
+
+<h4>Context </h4>
+
+
+
+<p>The change/update mechanism in VisualWorks enables an object to notify
+
+its dependents when its internal state changes. But that mechanism does
+
+not work when the object is replaced with an entirely new object; all of
+
+the dependents are still attached to the old object. The dependents and
+
+the old object are unaware that the old object has been replaced with the
+
+new one. </p>
+
+
+
+<p>The behavior that is performing the swap could use the message <tt>become:</tt>
+
+to change all pointers to the old object to point to the new one. However,
+
+<tt>become:</tt> is inefficient, makes code difficult to maintain, can
+
+cause unwanted side effects, and doesn't notify dependents. It will confuse
+
+objects that wanted to point to the old object even if it were replaced
+
+with a new one, and the dependents will not be notified that the replacement
+
+has been made. </p>
+
+
+
+<p>For a set of objects that are sharing a value to all automatically share
+
+a replacement value, their pointers require a level of indirection. Instead
+
+of pointing directly to the shared object, they should point to an object
+
+that will not be replaced, which in turn will point to the shared value.
+
+This intermediary object will be a container that holds the value being
+
+shared. </p>
+
+
+
+<p>Because the objects sharing the value will have to access it through
+
+the container, that container will know when the value has been replaced.
+
+Thus the container can notify the dependents whenever the value is replaced.
+
+</p>
+
+
+
+<h4>Solution </h4>
+
+
+
+<p>When two objects need to share a common object, they should place that
+
+object in a <tt>ValueModel</tt> and share that <tt>ValueModel</tt>. They
+
+can then register their interests on the value and the <tt>ValueModel</tt>
+
+will notify them when the value changes (see &quot;2.1 <a href="#use_onchangesendto">Use
+
+onChangeSend:to: to register interests on a value</a>&quot;). To manipulate
+
+the value, they will go through the <tt>ValueModel</tt> (see &quot;1.1
+
+<a href="#use_a_valuemodel_to_generalize">Use a ValueModel to generalize
+
+an object's aspect</a>&quot;), allowing it to monitor their actions. As
+
+necessary, it will execute overhead behavior like translating the value
+
+or notifying dependents of a change. </p>
+
+
+
+<h4>Example </h4>
+
+
+
+<p>Let's say two application models need to use the same value in a domain
+
+model. Either application model might change the value, in which case the
+
+other needs to be informed so that it can update itself accordingly. </p>
+
+
+
+<p>A simple way to accomplish this is for the domain model to store the
+
+value in a <tt>ValueModel</tt>. Then each application model can latch on
+
+to the <tt>ValueModel</tt> and access the value by sending the model <tt>value</tt>.
+
+Each one can change the value by sending the model <tt>value:</tt>. Of
+
+course, when one changes the value, the other needs to know about it, so
+
+both will register their interest with the <tt>ValueModel</tt> (see &quot;2.1
+
+<a href="#use_onchangesendto">Use onChangeSend:to: to register interests
+
+on a value</a>&quot;). This way, when the value changes, the application
+
+models will be notified. In fact, the object changing the value may not
+
+be one of the application models. The domain model may decide to change
+
+its internal state, and in doing so, change the value. Even in this case,
+
+all of the value's dependents (who registered themselves as such), including
+
+the two application models, will be notified. </p>
+
+
+
+<h2><a name="_Toc308279020"></a><font SIZE=+1>2. <a name="how_to_use_valuemodels"></a>How
+
+to use </font><font SIZE=+2>ValueModels </font></h2>
+
+
+
+<p>A <tt>ValueModel</tt> is a powerful mechanism that will abstract an
+
+object's aspect and define its dependents. However, given that <tt>ValueModel</tt>s
+
+provide this behavior, how should programmers design them into their code
+
+to implement useful system functionality? </p>
+
+
+
+<p><tt>ValueModel</tt>s also introduce a layer of indirection that can
+
+quickly complicate the model's use of its aspects and obscure the interface
+
+protocol for the collaborators that use those aspects. When a programmer
+
+first starts to use <tt>ValueModel</tt>s, he can easily become confused
+
+about when he needs to send <tt>value</tt> or <tt>value:</tt> to an object.
+
+Because of this confusion, he will have difficulty getting otherwise simple
+
+code to work. Once his code does work, it often contains unneeded senders
+
+of <tt>value</tt> and <tt>value:</tt>; these can lead to more subtle problems.
+
+</p>
+
+
+
+<p>This section contains guidelines and tips for how to write code that
+
+uses <tt>ValueModel</tt>s. A programmer does not have to follow these guidelines
+
+to write code successfully, but they will often make the code simpler and
+
+better encapsulated. This will be an especially big help to someone trying
+
+to learn how to use <tt>ValueModel</tt>s. </p>
+
+
+
+<p>Here are some guidelines that describe how to use <tt>ValueModel</tt>s:
+
+</p>
+
+
+
+<h3><a name="_Toc308279021"></a>2.1 <a name="use_onchangesendto"></a>Use
+
+onChangeSend:to: to register interests on a value </h3>
+
+
+
+<h4>Problem </h4>
+
+
+
+<p><a name="_Toc308279022"></a>How can an object that is using the value
+
+contained in a <tt>ValueModel</tt> be notified whenever the value changes?
+
+</p>
+
+
+
+<h4>Context </h4>
+
+
+
+<p>When multiple objects share a value, they should share a single <tt>ValueModel</tt>
+
+wrapped around that value (see &quot;1.2 <a href="#use_a_valuemodel_to_share">Use
+
+a ValueModel to share a value</a>&quot;). When the <tt>ValueModel</tt>
+
+changes the value, it will notify its dependents. </p>
+
+
+
+<p>To be notified, each dependent must register its interest in this value
+
+(hence making itself a dependent). This will make it a logical dependent
+
+of the value (which is implemented as making it a physical dependent of
+
+the <tt>ValueModel</tt>). </p>
+
+
+
+<p>Since the only update aspect a <tt>ValueModel</tt> ever sends is <tt>#value</tt>,
+
+this is the only one the dependents must listen for. </p>
+
+
+
+<p>It is insufficient for a dependent to simply listen for notification
+
+of a change. When it receives such notification, it must perform actions
+
+to respond to the change. To encapsulate this series of actions and give
+
+it a name, they should be collected together into a method (which in turn
+
+may use other methods). By collecting this series of actions into a method,
+
+the series can be reused whenever it is needed, even if the need is not
+
+caused by a change notification. For example, a newly created object might
+
+perform these actions to initialize itself, then re-perform them whenever
+
+it receives a change notification. </p>
+
+
+
+<p>When an object's design dictates that it be a dependent of a value,
+
+the code to implement that assumption should be encapsulated inside the
+
+object. </p>
+
+
+
+<p>When an object is no longer being used, it should release its dependencies
+
+so that it will no longer receive notification of changes. </p>
+
+
+
+<h4>Solution </h4>
+
+
+
+<p>To register your interest in a <tt>ValueModel</tt>'s value, send the
+
+<tt>ValueModel</tt> </p>
+
+
+
+<pre><tt>
+    aValueModel onChangeSend: aSelector to: aDependent
+</tt></pre>
+
+
+
+<p>where <tt>aSelector</tt> is the name of the method you want run when
+
+the value changes and <tt>aDependent</tt> is the object that contains the
+
+method (usually yourself). </p>
+
+
+
+<p>The <tt>onChangeSend:to:</tt> messages should be sent by the initialize
+
+method of the dependent object; this means that the to: parameter will
+
+be self. By establishing the dependency during initialization, this ensures
+
+that it will be established only once, and that it will be established
+
+before the object is used. </p>
+
+
+
+<p>The dependent object should also implement release to release its dependencies
+
+by sending </p>
+
+
+
+<pre><tt>
+    aValueModel retractInterestsFor: aDependent
+</tt></pre>
+
+
+
+<p>to the <tt>ValueModel</tt>. In this way, for each sender of <tt>onChangeSend:to:</tt>
+
+in initialize, there should be a corresponding sender of <tt>retractInterestsFor:</tt>
+
+in release. </p>
+
+
+
+<p>(<b>Note</b>: In practice, sending <tt>retractInterestsFor:</tt> when
+
+the dependent is released is not always necessary. When the <tt>ValueModel</tt>'s
+
+container is released and garbage collected at the same time as the dependent
+
+is, whether or not their dependency is disconnected is irrelevant. However,
+
+in many cases, the dependent is released while the <tt>ValueModel</tt>'s
+
+container remains in use. In such cases, to keep the obsolete dependent
+
+from receiving updates from the <tt>ValueModel</tt>, it should release
+
+its dependency as part of releasing itself. Thus it's safest to always
+
+release the dependency, even though this sometimes is not necessary.) </p>
+
+
+
+<h4>Examples </h4>
+
+
+
+<p><b>Example 1</b> </p>
+
+
+
+<p>An application model needs to know when the value in the domain model
+
+changes. Luckily the domain model stores the value in a <tt>ValueModel</tt>
+
+so that the application model can easily register its interest in the value
+
+and receive notification when the value changes. The application model
+
+has a method, <tt>domainValueChanged</tt>, that it wants to run whenever
+
+the value in the domain model changes. </p>
+
+
+
+<p>Here's the code in the application model to do this: </p>
+
+
+
+<pre><tt>
+    initialize
+	...
+	self domainModel sharedAspectHolder
+	    onChangeSend:#domainValueChanged
+	    to:self.
+	...
+
+
+    domainValueChanged
+	&quot;The domain model changed; update the app model&quot;
+
+	self sharedAspect:(self domainModel sharedAspect)
+
+
+    release
+	...
+	self domainModel sharedAspectHolder
+	    retractInterestsFor:self.
+	...
+</tt></pre>
+
+
+
+<p>(In the above examples: <tt>domainModel</tt> is a method that returns
+
+the application model's domain model; <tt>sharedAspectHolder</tt> returns
+
+the <tt>ValueModel</tt> holding the value of interest (see &quot;2.3 <a href="#encapsulate_senders">Encapsulate
+
+senders of value and value:</a>&quot;); and <tt>domainValueChanged</tt>
+
+performs the steps in the application model necessary when the value changes.
+
+In real code, these methods would have more descriptive names.) </p>
+
+
+
+<p><b><font SIZE=-1>Example 2</font></b> </p>
+
+
+
+<p>I have a list of <tt>Thing</tt>s being displayed in my view, and I want
+
+<tt>selectedThingChanged</tt> run whenever the selection in the list changes.
+
+</p>
+
+
+
+<p>Here's the code (see also &quot;3.10 <a href="#use_a_selectioninlist">Use
+
+a SelectionInList to hold a list and its selection</a>&quot;): </p>
+
+
+
+<ul>
+
+<li><tt>initialize: &quot;self thingsSelectionInList selectionIndexHolder
+
+onChangeSend: #selectedThingChanged to: self&quot;</tt> </li>
+
+
+
+<li><tt>selectedThingChanged: &quot;self selectedThing: self thingsSelectionInList
+
+selection&quot;</tt> </li>
+
+
+
+<li><tt>release: &quot;self thingsSelectionInList selectionIndexHolder
+
+retractInterestsFor: self&quot;.</tt> </li>
+
+</ul>
+
+
+
+<h3><a name="_Toc308279023"></a>2.2 <a name="use_valuemodel_chains"></a>Use
+
+ValueModel chains instead of onChangeSend:to: </h3>
+
+
+
+<h4>Problem </h4>
+
+
+
+<p><a name="_Toc308279024"></a>What if the update that is performed when
+
+a change occurs is so simple that a separate <tt>&lt;something&gt;Changed
+
+method seems unnecessary?</tt> </p>
+
+
+
+<h4>Context </h4>
+
+
+
+<p>If an object is to understand a particular message, it must implement
+
+or inherit the corresponding method. Each such method adds to the object's
+
+bulk and the amount of code a developer must learn to maintain the object.
+
+Thus an object should not contain methods it does not need. </p>
+
+
+
+<p>Each time a dependent registers its interest on a value using <tt>onChangeSend:to:</tt>
+
+(see &quot;2.1 <a href="#use_onchangesendto">Use onChangeSend:to: to register
+
+interests on a value</a>&quot;), it must specify a <tt>&lt;something&gt;Changed</tt>
+
+message in itself to be sent. Thus the dependent must implement or inherit
+
+a method for this message. </p>
+
+
+
+<p>Complex methods are necessary; they are how objects implement their
+
+behavior. But simple <tt>&lt;something&gt;Changed</tt> methods that do
+
+nothing more than re-fetch the value that changed do not significantly
+
+enhance the overall behavior provided by the object. </p>
+
+
+
+<p>An object designed to automatically re-fetch a value whenever it changes
+
+would encapsulate this functionality. It would automatically initialize
+
+its value in the dependent object, then update it when the value in the
+
+parent changes. This behavior would be easy to reuse, and its role would
+
+be easily recognizable, simplifying maintenance. </p>
+
+
+
+<h4>Solution </h4>
+
+
+
+<p>Rather than implementing an extremely simple <tt>&lt;something&gt;Changed</tt>
+
+method in the dependent to be sent by <tt>onChangeSend:to:</tt>, eliminate
+
+that extra step by using a <a name="OLE_LINK2"></a><tt>ValueModel</tt>
+
+instead. This will connect the parent and dependent models using two <tt>ValueModel</tt>s.
+
+The parent object will contain the first <tt>ValueModel</tt>; that <tt>ValueModel</tt>
+
+will be the subject of the second, which will in turn be contained by the
+
+dependent object. Whenever the value in the parent changes, the first notifies
+
+its dependents, which causes the second to update its value in the dependent.
+
+</p>
+
+
+
+<h4>Examples </h4>
+
+
+
+<p><b>Example 1</b> </p>
+
+
+
+<p>A domain model has an aspect <tt>address</tt>. The application model
+
+needs to hold this address so that it can display it in its view. The domain
+
+model should store its address in a <tt>ValueHolder </tt>(see &quot;3.1
+
+<a href="#use_a_valueholder">Use a ValueHolder to hold a stand-alone object</a>&quot;)
+
+so that the application model can register its interest on the value by
+
+sending the <tt>ValueHolder onChangeSend: #addressChanged to: self</tt>
+
+(see &quot;1.2 <a href="#use_a_valuemodel_to_share">Use a ValueModel to
+
+share a value</a>&quot;). <tt>addressChanged</tt> would simply read the
+
+new value from the <tt>ValueHolder</tt> and store it into the application
+
+model: <tt>self address: self domainModel address.</tt> </p>
+
+
+
+<p>However, the <tt>addressChanged</tt> method is so simple that it's not
+
+even necessary. Instead, make a variable in the application model that
+
+stores the value in an <tt>AspectAdapter</tt> (see &quot;3.2 <a href="#use_an_aspectadaptor">Use
+
+an AspectAdapter to hold an aspect of an object</a>&quot;). The <tt>AspectAdapter</tt>'s
+
+subject channel is the address <tt>ValueModel</tt> in the domain model
+
+and its aspect is value. This way, whenever the address value in the domain
+
+model changes, its <tt>ValueHolder</tt> will issue an update. This will
+
+trigger the <tt>AspectAdapter</tt> to issue an update, which will cause
+
+its dependents (such as the field subview that displays the address) to
+
+update. All of this is done as a chain of events without you needing to
+
+write any further code (such as <tt>addressChanged</tt>). </p>
+
+
+
+<p>(<b>Note</b>: You could almost have the instance variable in the domain
+
+model and the one in the application model contain the same <tt>ValueHolder</tt>.
+
+Unfortunately, this typically doesn't work because VisualWorks feels compelled
+
+to insert a <tt>TypeConverter</tt> (see &quot;3.8 <a href="#use_a_typeconverter">Use
+
+a TypeConverter to convert a value between types</a>&quot;) between the
+
+domain model's <tt>ValueHolder</tt> and the application model. It does
+
+this because the <tt>ValueHolder</tt> can hold any object but the application
+
+model requires a specific type, such as a <tt>String</tt> or a <tt>Number</tt>.
+
+Thus the <tt>TypeConverter</tt> is needed to guard against the <tt>ValueHolder</tt>
+
+containing nil, which will be converted to the empty string or zero. Having
+
+both models share the same <tt>ValueModel</tt> might seem to be the simplest
+
+solution, since it uses only one <tt>ValueModel</tt> instead of two. However,
+
+VisualWorks will insert one anyway, so you get two <tt>ValueModel</tt>s
+
+even if you only specify one. Since an <tt>AspectAdaptor</tt> is a little
+
+more efficient than a <tt>TypeConverter</tt>, you might as well specify
+
+which type of <tt>ValueModel</tt> to use.) </p>
+
+
+
+<p><b>Example 2</b> </p>
+
+
+
+<p>The application model contains a list and a field that should display
+
+the current selection in the list. You could use a <tt>SelectionInList</tt>
+
+and send its <tt>selectionIndexHolder onChangeSend: #selectionChanged to:
+
+self</tt>, where <tt>selectionChanged</tt> reads the selection and stores
+
+that in the field's <tt>ValueModel</tt> (typically a <tt>ValueHolder</tt>).
+
+</p>
+
+
+
+<p>There is, however, a simpler way that avoids implementing <tt>selectionChanged</tt>.
+
+Make the field's <tt>ValueModel</tt> a <tt>PluggableAdaptor</tt> like this:
+
+</p>
+
+
+
+<pre><tt>
+    field := (PluggableAdaptor on: listSelectionInList)
+		getBlock: [ :m | m selection]
+		putBlock: [ :m :v | m selection: v]
+	       updateBlock: [ :m :a :p | a == #selectionIndex].
+</tt></pre>
+
+
+
+<p>This way, whenever the selection changes, the <tt>PluggableAdaptor</tt>
+
+will catch the update and update the field with the new value (see &quot;3.7
+
+<a href="#use_a_pluggableadaptor">Use a PluggableAdaptor to hold some part
+
+of an object</a>&quot;). </p>
+
+
+
+<p>(Note: The field should really just use an <tt>AspectAdaptor</tt> whose
+
+aspect is selection (see &quot;3.2 <a href="#use_an_aspectadaptor">Use
+
+an AspectAdapter to hold an aspect of an object</a>&quot;). However, when
+
+a <tt>SelectionInList</tt>'s selection changes, it issues the update aspect
+
+<tt>#selectionIndex</tt>, not <tt>#selection</tt>. Since an <tt>AspectAdaptor</tt>'s
+
+update aspect must be the same as its get selector, you have to use a <tt>PluggableAdaptor</tt>
+
+because it allows you to specify them separately. This would no longer
+
+be necessary if <tt>SelectionInList</tt> were fixed to issue both <tt>#selection</tt>
+
+and <tt>#selectionIndex</tt> update aspects whenever the selection/selectionIndex
+
+changed.) </p>
+
+
+
+<p><b>Example 3</b> </p>
+
+
+
+<p>Use <a name="OLE_LINK1"></a><tt>AspectAdaptor</tt>s (see &quot;3.2 <a href="#use_an_aspectadaptor">Use
+
+an AspectAdaptor to hold an aspect of an object</a>&quot;) on a &quot;selection
+
+channel&quot; to allow the selection of an object and display its aspects.
+
+In this technique, a <tt>ValueModel</tt> is set-up to hold the current
+
+selection. If this selection is made via a <tt>SelectionInList</tt>, use
+
+the technique described above to attach the <tt>ValueModel</tt> to the
+
+<tt>SelectionInList</tt>. This <tt>ValueModel</tt> that holds the selection
+
+is called a <i>selection channel</i>. With the selection channel established,
+
+attach <tt>AspectAdaptor</tt>s (or other <tt>ValueModel</tt>s) to it to
+
+display the object's aspects (or other values). </p>
+
+
+
+<p>With this arrangement, whenever the selection changes, the selection
+
+channel's value changes, which triggers the <tt>AspectAdaptor</tt>s. They
+
+in turn re-read their values and update their dependents, which redisplay
+
+or otherwise update themselves. </p>
+
+
+
+<p>This selection channel technique is well documented in <a href="#discrete_charm_of_valuemodel">[Par93]</a>.
+
+</p>
+
+
+
+<h3><a name="_Toc308279025"></a>2.3 <a name="encapsulate_senders"></a>Encapsulate
+
+senders of value and value: </h3>
+
+
+
+<h4>Problem </h4>
+
+
+
+<p><a name="_Toc308279026"></a>When using <tt>ValueModel</tt>s, how does
+
+the programmer know when to use <tt>value</tt> and <tt>value:</tt>? </p>
+
+
+
+<h4>Context </h4>
+
+
+
+<p>To use a variable's value, a programmer must know what type of object
+
+the value is. This way he knows what protocols the value supports and thus
+
+what messages it will understand. </p>
+
+
+
+<p>When a message returns a value (besides <tt>self</tt>), the message
+
+name should describe or suggest the value returned. </p>
+
+
+
+<p>When using <tt>ValueModel</tt>s, the programmer must know which messages
+
+return the <tt>ValueModel</tt>s and which return the values themselves.
+
+Usually the sender will be interested in the value, not the <tt>ValueModel</tt>
+
+that contains it. </p>
+
+
+
+<p>An object's accessing protocol should simply provide its aspects while
+
+hiding how those aspects are implemented. This will better encapsulate
+
+the object and make it simpler to maintain. </p>
+
+
+
+<h4>Solution </h4>
+
+
+
+<p>Implement separate messages for accessing an object's aspects (values)
+
+verses accessing the <tt>ValueModel</tt>s that contain those aspects. </p>
+
+
+
+<p>If a model has an aspect called <tt>aspect</tt> that is being stored
+
+in a <tt>ValueModel</tt> that will be held in an instance variable, name
+
+the instance variable <tt>aspectHolder</tt>. Initialize the instance variable
+
+in the initialize method to be the necessary kind of <tt>ValueModel</tt>.
+
+Create a getter for it named after the instance variable, <tt>aspectHolder</tt>,
+
+but do not implement a setter for it (see &quot;2.4 <a href="#ensure_that_all_objects">Ensure
+
+that all objects sharing a value use the same ValueModel</a>&quot;). Also
+
+implement a pair of getter/setter methods for the value, <tt>aspect</tt>
+
+and <tt>aspect</tt>:, that use the <tt>aspectHolder</tt> method. </p>
+
+
+
+<p>Use the message <tt>aspectHolder</tt> when you need the <tt>ValueModel</tt>,
+
+like to send it <tt>onChangeSend:to:</tt> (see &quot;2.1 <a href="#use_onchangesendto">Use
+
+onChangeSend:to: to register interests on a value</a>&quot;). Otherwise,
+
+use <tt>aspect</tt> and <tt>aspect:</tt> to get and set the value; they
+
+encapsulate the object that implements them, simplify its accessing protocol,
+
+and hide exactly how the value is stored. </p>
+
+
+
+<h4>Examples </h4>
+
+
+
+<p><b>Example 1</b> </p>
+
+
+
+<p>A model has the aspect <tt>address</tt> which the model stores in an
+
+instance variable. You need to be able to update other values when the
+
+address changes, so you'll store the <tt>address</tt> in a <tt>ValueModel</tt>
+
+and the other values will register their interests on it using <tt>onChangeSend:to:</tt>.
+
+You want to avoid using senders of <tt>value</tt> and <tt>value:</tt> in
+
+your code. </p>
+
+
+
+<p>Name the instance variable <tt>addressHolder</tt> and initialize it
+
+in <tt>initialize</tt> to be an appropriate kind of <tt>ValueModel</tt>.
+
+Implement <tt>addressHolder</tt> to return the instance variable's value,
+
+but <U>don't</U> implement <tt>addressHolder:</tt>. Implement <tt>address</tt>
+
+as &quot;<tt>^ self addressHolder value</tt>&quot; and <tt>address:</tt>
+
+as &quot;<tt>self addressHolder value: newAddress</tt>&quot;. </p>
+
+
+
+<p>Now, to get and set the address, use the messages <tt>address</tt> and
+
+<tt>address:</tt>. To be notified when the address changes, send <tt>onChangeSend:to:</tt>
+
+to the result of the message <tt>addressHolder</tt>. </p>
+
+
+
+<p><b>Example 2</b> </p>
+
+
+
+<p>The model in Example 1 is an <tt>ApplicationModel</tt>; the aspect <tt>address</tt>
+
+is being set via the Properties Tool or Multi Tool. </p>
+
+
+
+<p>Specify the aspect as <tt>addressHolder</tt> (to get VisualWorks to
+
+give the instance variable the name you want). When you install and define
+
+the model, it will create the instance variable <tt>addressHolder</tt>
+
+and implement the method <tt>addressHolder</tt> for you (and not implement
+
+<tt>addressHolder:</tt>, which is fine). Now implement <tt>address</tt>
+
+and <tt>address:</tt> as directed above. </p>
+
+
+
+<p><b>Example 3</b> </p>
+
+
+
+<p>If the instance variable is to hold a <tt>SelectionInList</tt> (not
+
+a <tt>ValueModel</tt>), don't call it <tt>&lt;list&gt;Holder</tt> because
+
+that's misleading. A variable named <tt>&lt;aspect&gt;Holder</tt> should
+
+understand the <tt>value</tt> aspect, but a <tt>SelectionInList</tt> will
+
+not. Instead, name the variable <tt>&lt;aspect&gt;SelectionInList</tt>
+
+or <tt>&lt;aspect&gt;SIL</tt>, which indicates that it understands the
+
+aspects <tt>list</tt> and <tt>selection</tt>. </p>
+
+
+
+<h3><a name="_Toc308279027"></a>2.4 <a name="ensure_that_all_objects"></a>Ensure
+
+that all objects sharing a value use the same ValueModel </h3>
+
+
+
+<h4>Problem </h4>
+
+
+
+<p><a name="_Toc308279028"></a>How can multiple objects that need to share
+
+the same value be assured of sharing a single <tt>ValueModel?</tt> </p>
+
+
+
+<h4>Context </h4>
+
+
+
+<p>When two objects need to share the same object, they should share a
+
+single <tt>ValueModel</tt> wrapped around that object (see &quot;1.2 <a href="#use_a_valuemodel_to_share">Use
+
+a ValueModel to share a value</a>&quot;). </p>
+
+
+
+<p>The shared <tt>ValueModel</tt> will have to be stored in a commonly
+
+accessible place; usually, one of the objects will store the <tt>ValueModel</tt>
+
+and make it accessible to the others. </p>
+
+
+
+<p>If the <tt>ValueModel</tt> stored in this common place is shared by
+
+a couple of objects, then changed to contain a different <tt>ValueModel</tt>
+
+instance, not all of the objects will be sharing the same <tt>ValueModel</tt>.
+
+</p>
+
+
+
+<p>To make sure they are all sharing the same <tt>ValueModel</tt> instance,
+
+the <tt>ValueModel</tt> should be set once and then never changed. </p>
+
+
+
+<h4>Solution </h4>
+
+
+
+<p>When an instance variable holds a <tt>ValueModel</tt>, create a getter
+
+method for it but not a setter method, and initialize it in the initialize
+
+method. This way, it gets set once and will never get reset. </p>
+
+
+
+<p>This guideline will be sufficient for typical uses. There are some fairly
+
+advanced uses of <tt>ValueModel</tt>s, however, where a method to set the
+
+<tt>ValueModel</tt> externally is necessary. </p>
+
+
+
+<h4>Example </h4>
+
+
+
+<p>See the examples in &quot;2.3 <a href="#encapsulate_senders">Encapsulate
+
+senders of value and value:</a>&quot;. </p>
+
+
+
+<h3><a name="_Toc308279029"></a>2.5 <a name="keep_a_valuemodel"></a>Keep
+
+a ValueModel's value's type consistent </h3>
+
+
+
+<h4>Problem </h4>
+
+
+
+<p><a name="_Toc308279030"></a>When an object gets a value from a <tt>ValueModel</tt>,
+
+how does it know the type of object it will receive? </p>
+
+
+
+<h4>Context </h4>
+
+
+
+<p><tt>ValueModel</tt> is a container object. The object it contains, its
+
+value, can be any type of <tt>Object</tt>. <tt>ValueModel</tt> is implemented
+
+to work with any type of <tt>Object</tt> as its value. </p>
+
+
+
+<p>Collaborators using an object interact with it through one or more behavior
+
+protocols. Thus the object must be able to perform the protocols. In implementation
+
+terms, this means that the object must understand the messages being sent
+
+to it, which are the messages in those protocols. </p>
+
+
+
+<p>An object's type is defined by the protocols it is able to perform.
+
+The more specialized an object's behavior is, the more specialized some
+
+of its protocols are. Collaborators will interact with specialized objects
+
+using specialized protocols that most objects don't perform. </p>
+
+
+
+<p>Although a <tt>ValueModel</tt> can hold any type of object as its value,
+
+the collaborators using that value may use a protocol that not all objects
+
+perform. Thus the value in a <tt>ValueModel</tt> cannot be just any type
+
+of object, it must be of a type that supports the protocol that its collaborators
+
+will use. If its collaborators use several protocols, the value must be
+
+of a type that supports all of them. </p>
+
+
+
+<h4>Solution </h4>
+
+
+
+<p>When defining a variable's type as <tt>ValueModel</tt>, also specify
+
+the <tt>ValueModel</tt>'s value's type. Declare and initialize the <tt>ValueModel</tt>
+
+with a valid value. When changing the <tt>ValueModel</tt>'s value, ensure
+
+that the new value is of the specified type. </p>
+
+
+
+<p>When implementing code, you must make sure that the object that is used
+
+as an argument to value: is of the specified type. This way, when other
+
+objects retrieve the value, they can assume its type is correct and that
+
+it will support the protocols they will use. </p>
+
+
+
+<h4>Example </h4>
+
+
+
+<p>Let's say a <tt>Person</tt> domain object contains an age aspect that
+
+must be a non-negative integer. <tt>age</tt> is stored in a <tt>ValueHolder</tt>
+
+to simplify its use. </p>
+
+
+
+<p>These code segments represent valid uses of age that will keep its type,
+
+<tt>Integer</tt>, consistent: </p>
+
+
+
+<ul>
+
+<li>definition comment in <tt>Person</tt>: &quot;&lt;ValueModel on: Integer&gt;&quot;
+
+</li>
+
+
+
+<li><tt>Person&gt;&gt;initialize:</tt> &quot;ageHolder := ValueHolder on:
+
+0&quot; (<tt>0</tt> is an <tt>Integer</tt>) </li>
+
+
+
+<li><tt>Person&gt;&gt;age:</tt>: &quot;newAge &gt;= 0 ifTrue: [self ageHolder
+
+value: newAge]&quot; (enforces that <tt>age</tt> is positive) </li>
+
+
+
+<li>&quot;self age: 21&quot; (<tt>21</tt> is an <tt>Integer</tt>) </li>
+
+
+
+<li>&quot;self age + 1&quot; (<tt>Integer</tt>s understand <tt>+</tt>)
+
+</li>
+
+
+
+<li>&quot;self age: self age // 2&quot; (<tt>//</tt> returns an <tt>Integer</tt>)
+
+</li>
+
+</ul>
+
+
+
+<p>These code segments show invalid uses of <tt>age</tt> because they do
+
+not preserve the <tt>Integer</tt> type specification: </p>
+
+
+
+<ul>
+
+<li>definition comment in <tt>Person</tt>: &quot;&lt;ValueModel on: Integer&gt;&quot;
+
+(same as above, this is OK) </li>
+
+
+
+<li><tt>Person&gt;&gt;initialize</tt>: &quot;ageHolder := ValueHolder on:
+
+0.0&quot; (<tt>0.0</tt> is not an <tt>Integer</tt>) </li>
+
+
+
+<li><tt>Person&gt;&gt;age:</tt>: &quot;self ageHolder value: newAge&quot;
+
+(this is OK, but assumes that <tt>newAge</tt> is valid) </li>
+
+
+
+<li>&quot;self age: 5.5&quot; (<tt>5.5</tt> is not an <tt>Integer</tt>)
+
+</li>
+
+
+
+<li>&quot;self age tooYoung ifTrue: [...]&quot; (<tt>Integer</tt>s do not
+
+understand <tt>tooYoung</tt>) </li>
+
+
+
+<li>&quot;self age: self age / 2&quot; (<tt>/</tt> does not always return
+
+an <tt>Integer</tt>) </li>
+
+</ul>
+
+
+
+<p>Be careful to write code like the first set, not the second, in order
+
+to keep a variable's type consistent. </p>
+
+
+
+<h2><a name="_Toc308279031"></a><font SIZE=+1>3. <a name="types_of_valuemodels"></a>Types
+
+of </font><font SIZE=+2>ValueModels </font></h2>
+
+
+
+<p>Typically, discussions about the Value Model framework center around
+
+the class <tt>ValueModel</tt>, because it is the abstract class that defines
+
+the basic behavior and interface of all <tt>ValueModel</tt>s. It is, however,
+
+an abstract class; there are no instances of <tt>ValueModel</tt> to use.
+
+A programmer must actually use instances of <tt>ValueModel</tt>'s subclasses.
+
+</p>
+
+
+
+<p>In VisualWorks 1.0, the <tt>ValueModel</tt> hierarchy contains a number
+
+of concrete subclasses. Their front end is always the same: a single aspect
+
+named <tt>value</tt> that remembers the interests registered on that value.
+
+What distinguishes them is their back ends: how they attach to other models,
+
+how they hold/retrieve their values, and how they convert and/or translate
+
+their values. By knowing what each one does, a programmer can choose which
+
+one to use for the job at hand. </p>
+
+
+
+<p>Here are some guidelines that describe how to use the different types
+
+of <tt>ValueModel</tt>s and their associated classes: </p>
+
+
+
+<h3><a name="_Toc308279032"></a>3.1 <a name="use_a_valueholder"></a>Use
+
+a ValueHolder to hold a stand-alone object </h3>
+
+
+
+<h4>Problem </h4>
+
+
+
+<p><a name="_Toc308279033"></a>How can I wrap <tt>ValueModel</tt> behavior
+
+around the objects in my instance variables? </p>
+
+
+
+<h4>Context </h4>
+
+
+
+<p><tt>ValueModel</tt> behavior is often desirable (see &quot;1. <a href="#what_is_a_valuemodel">What
+
+is a ValueModel?</a>&quot;). </p>
+
+
+
+<p>The <tt>ValueModel</tt> must store the object it is holding because
+
+there are no other objects to do so. </p>
+
+
+
+<p>The <tt>ValueModel</tt> does not need to perform any sort of conversion
+
+or translation on the value; it should just return the value as is. </p>
+
+
+
+<h4>Solution </h4>
+
+
+
+<p>Use a <tt>ValueHolder</tt>, the simplest and most commonly used type
+
+of <tt>ValueModel</tt>. It will wrap the object within itself, thus giving
+
+the object <tt>ValueModel</tt> behavior. Store the <tt>ValueHolder</tt>
+
+in the instance variable. </p>
+
+
+
+<h4>Example </h4>
+
+
+
+<p>A domain model has multiple aspects; the value of each of these is stored
+
+in an instance variable. Multiple application models may need to share
+
+each of these values. </p>
+
+
+
+<p>Make each instance variable a <tt>ValueHolder</tt> to store the aspect's
+
+value. This will facilitate abstracting the value's aspect and make it
+
+easy to register interest on the value, without introducing any unnecessary
+
+overhead. </p>
+
+
+
+<p>A simple way to wrap a <tt>ValueHolder</tt> around a value is to send
+
+the value <tt>asValue</tt> (The message <tt>asValueModel</tt> would probably
+
+be more intuitive.). So to set-up a domain model with a number of aspects
+
+in <tt>ValueHolders</tt> (see &quot;2. <a href="#how_to_use_valuemodels">How
+
+to use ValueModels</a>&quot;), your initialize method will look like this:
+
+</p>
+
+
+
+<pre><tt>
+    initialize
+	...
+	aspect1Holder := self aspect1DefaultValue asValue.
+	aspect2Holder := self aspect2DefaultValue asValue.
+	&lt;etc.&gt;
+	...
+</tt></pre>
+
+
+
+<p>Then it will need getters for the aspect holders and getters and setters
+
+for the aspect values. </p>
+
+
+
+<h3><a name="_Toc308279034"></a>3.2 <a name="use_an_aspectadaptor"></a>Use
+
+an AspectAdaptor to hold an aspect of an object </h3>
+
+
+
+<h4>Problem </h4>
+
+
+
+<p><a name="_Toc308279035"></a>How can I wrap <tt>ValueModel</tt> behavior
+
+around my retrieval of an aspect of another model? </p>
+
+
+
+<h4>Context </h4>
+
+
+
+<p><tt>ValueModel</tt> behavior is often desirable (see &quot;1. <a href="#what_is_a_valuemodel">What
+
+is a ValueModel?</a>&quot;). </p>
+
+
+
+<p>The <tt>ValueModel</tt> does not need to actually store the value because
+
+it is already being stored by another model. </p>
+
+
+
+<p>When that model's aspect's value changes (and the model notifies its
+
+dependents), the <tt>ValueModel</tt> should update its value. If the model
+
+does not notify its dependents when its aspect's value changes, its dependents
+
+(including your <tt>ValueModel</tt>) won't get updated. </p>
+
+
+
+<p>The <tt>ValueModel</tt> does not need to perform any sort of conversion
+
+or translation on the value; it should just return the value as is. </p>
+
+
+
+<h4>Solution </h4>
+
+
+
+<p>Use an <tt>AspectAdaptor</tt>, popular because models with simple aspects
+
+are popular. Unlike a <tt>ValueHolder</tt> (see &quot;3.1 <a href="#use_a_valueholder">Use
+
+a ValueHolder to hold a stand-alone object</a>&quot;), the object itself
+
+won't be wrapped with <tt>ValueModel</tt> behavior. But the process of
+
+retrieving and storing the object as an aspect of its container model will
+
+be wrapped as a <tt>ValueModel</tt>. This is how this kind of <tt>ValueModel</tt>
+
+is able to monitor the container model for changes in the aspect. </p>
+
+
+
+<h4>Example </h4>
+
+
+
+<p>A domain model has multiple aspects; the value of each of these is stored
+
+in an instance variable. The developer who implemented the domain model
+
+used simple aspects to store and retrieve the values, but he didn't use
+
+<tt>ValueModel</tt>s to make registering dependencies easy. Your application
+
+model needs to use some of these aspects. </p>
+
+
+
+<p>Your application model will need an <tt>AspectAdaptor</tt> for each
+
+aspect it wishes to share with the domain model. Let's say these are the
+
+specifics for two of the aspects (these examples are from <a href="#discrete_charm_of_valuemodel">[Par93]</a>):
+
+</p>
+
+
+
+<table BORDERCOLOR=#000000 BORDER=1>
+
+<tr>
+
+<td WIDTH=110><i><font SIZE=-1>aspect name</font></i></td>
+
+
+
+<td WIDTH=110><i>getter name</i></td>
+
+
+
+<td WIDTH=110><i>setter name</i> </td>
+
+
+
+<td WIDTH=126><i>update aspect</i></td>
+
+</tr>
+
+
+
+<tr>
+
+<td WIDTH=110><tt>name</tt></td>
+
+
+
+<td WIDTH=110><tt>name</tt></td>
+
+
+
+<td WIDTH=110><tt>name:</tt> </td>
+
+
+
+<td WIDTH=126><tt>#name</tt> </td>
+
+</tr>
+
+
+
+<tr>
+
+<td WIDTH=110><tt>address</tt> </td>
+
+
+
+<td WIDTH=110><tt>getAddress</tt> </td>
+
+
+
+<td WIDTH=110><tt>setAddress:</tt> </td>
+
+
+
+<td WIDTH=126><tt>#getAddress</tt> </td>
+
+</tr>
+
+</table>
+
+
+
+<p>(<b>Note</b>: The update aspect must always be the same as the getter
+
+name. If the aspect you're adapting does not follow this convention, use
+
+a <tt>PluggableAdaptor</tt>; see &quot;3.7 <a href="#use_a_pluggableadaptor">Use
+
+a PluggableAdaptor to hold some part of an object</a>&quot;.) </p>
+
+
+
+<p>The initialize code to set-up these two adapters would be: </p>
+
+
+
+<pre><tt>
+    initialize
+	nameHolder := (AspectAdapter subject:domainModel sendsUpdates:true)
+			   forAspect: #name.
+
+	addressHolder := (AspectAdapter subject:domainModel sendsUpdates:true)
+			   accessWith:#getAddress
+			   assignWith: #setAddress.
+</tt></pre>
+
+
+
+<p>Then it will need getters for the aspect holders and getters and setters
+
+for the aspect values. </p>
+
+
+
+<h3><a name="_Toc308279036"></a>3.3 <a name="use_a_bufferedvalueholder"></a>Use
+
+a BufferedValueHolder to delay the commit of a new value </h3>
+
+
+
+<h4>Problem </h4>
+
+
+
+<p><a name="_Toc308279037"></a><font SIZE=-1>My view has a number of values.
+
+How can I allow the user to change all of them without changing them in
+
+the application model, then accept or cancel all of the changes at one
+
+time?</font> </p>
+
+
+
+<h4>Context </h4>
+
+
+
+<p>This mechanism should be a <tt>ValueModel</tt> so that it will have
+
+the generic aspect <tt>value</tt>. That way, it can be used to store any
+
+aspect necessary (see &quot;1.1 <a href="#use_a_valuemodel_to_generalize">Use
+
+a ValueModel to generalize an object's aspect</a>&quot;). </p>
+
+
+
+<p>It should get its value from another <tt>ValueModel</tt>, so that it
+
+can retrieve its value generically. </p>
+
+
+
+<p>This mechanism will need a trigger with three positions: commit, neutral,
+
+and flush. Nothing happens to the values in the application model until
+
+the trigger flips out of neutral. </p>
+
+
+
+<p>If multiple fields are to trigger simultaneously, their <tt>ValueModel</tt>s
+
+will need to share a single trigger. </p>
+
+
+
+<h4>Solution </h4>
+
+
+
+<p>Use a <tt>BufferedValueHolder</tt> as a layer of separation between
+
+the model and the <tt>ValueModel</tt> for a field. A regular <tt>ValueModel</tt>
+
+will immediately store a new value in the model (and notify dependents
+
+accordingly). However, a <tt>ValueModel</tt> stored inside a <tt>BufferedValueHolder</tt>
+
+will suspend the new value until you say to commit it to the model. </p>
+
+
+
+<h4>Example </h4>
+
+
+
+<p>Let's say an application model has three fields and a pair of accept/cancel
+
+buttons. You want to allow the user to edit the fields, but not commit
+
+the edits to the model until the user presses accept. If he presses cancel,
+
+the edits should be discarded and the fields should display the original
+
+values from the model. </p>
+
+
+
+<p>To implement this behavior, use two layers of <tt>ValueModel</tt>s instead
+
+of just one. The top layer will consist of unbuffered <tt>ValueModel</tt>s
+
+-- like <tt>ValueHolder</tt>, <tt>AspectAdapter</tt>, <tt>PluggableAdaptor</tt>,
+
+etc. -- depending on how they must retrieve and translate their values.
+
+The bottom layer, between the <tt>ValueModel</tt>s and the application
+
+model, consists of <tt>BufferedValueHolder</tt>s, one for each <tt>ValueModel</tt>
+
+in the top layer. </p>
+
+
+
+<p>Connect the <tt>BufferedValueHolder</tt>s together with a single trigger
+
+that is a <tt>ValueModel</tt> whose value is a <tt>Boolean</tt> or <tt>nil</tt>.
+
+As long as the trigger is <tt>nil</tt>, nothing happens. If the trigger
+
+changes its state to <tt>true</tt>, the <tt>BufferedValueHolder</tt>s commit
+
+their values; if it changes to <tt>false</tt>, they discard their values
+
+and reset to the original values from the <tt>ValueModel</tt>s. Thus the
+
+accept button should set the trigger to <tt>true</tt> and cancel should
+
+set it to <tt>false</tt>. </p>
+
+
+
+<p>One view could conceivably contain multiple groups of <tt>BufferedValueHolder</tt>s,
+
+each group sharing its own trigger. This would allow each group to be committed
+
+individually. </p>
+
+
+
+<h3><a name="_Toc308279038"></a>3.4 <a name="use_a_rangeadaptor"></a>Use
+
+a RangeAdaptor to channel a number's range </h3>
+
+
+
+<h4>Problem </h4>
+
+
+
+<p><a name="_Toc308279039"></a>How can I easily convert a real world quantity
+
+to a percentage such that whenever the quantity changes, the percentage
+
+is automatically recalculated? </p>
+
+
+
+<h4>Context </h4>
+
+
+
+<p>A quantity is often more easily understood by expressing it as a percentage
+
+(a number between 0 and 100%). </p>
+
+
+
+<p>A percentage quantity can easily be displayed in intuitive ways: a dial,
+
+a needle on a gauge, etc. A group of percentage quantities can be displayed
+
+together as a bar graph, a pie chart, etc. </p>
+
+
+
+<p>When a quantity is confined to a range, it can easily be converted into
+
+a percentage quantity. </p>
+
+
+
+<p>The object holding a percentage quantity should be a <tt>ValueModel</tt>
+
+so that it can be used to store any aspect necessary and the quantity can
+
+be easily shared (see &quot;1. <a href="#what_is_a_valuemodel">What is
+
+a ValueModel?</a>&quot;). </p>
+
+
+
+<p>The getter and setter value and value: should return a percentage. If
+
+the sender wants the original number within a range, it'll access the value
+
+directly. </p>
+
+
+
+<h4>Solution </h4>
+
+
+
+<p>Use a <tt>RangeAdaptor</tt>, a <tt>ValueModel</tt> that converts a number
+
+in a specified range into a percentage quantity. It sits between the <tt>ValueModel</tt>
+
+holding the value within the range and the model wanting a percentage quantity.
+
+The percentage quantity will be expressed as a number between 0 and 1.
+
+</p>
+
+
+
+<h4>Example </h4>
+
+
+
+<p>Slider visual widgets use a <tt>RangeAdaptor</tt> to convert a number
+
+in a specified range into a set range, 0 to 1. The <tt>RangeAdaptor</tt>
+
+must know the minimum and maximum values in the range, and must know the
+
+step size to use when converting the percentage back into a number in the
+
+range. Because a <tt>RangeAdaptor</tt> is a <tt>ValueModel</tt>, when the
+
+number in the range changes, the <tt>RangeAdaptor</tt> recalculates the
+
+percentage and notifies its dependents automatically. </p>
+
+
+
+<h3><a name="_Toc308279040"></a>3.5 <a name="use_an_indexedadaptor"></a>Use
+
+an IndexedAdaptor to hold a single index in a Collection </h3>
+
+
+
+<h4>Problem </h4>
+
+
+
+<p><a name="_Toc308279041"></a>How can I wrap <tt>ValueModel</tt> behavior
+
+around a particular element in a <a name="OLE_LINK3"></a><tt>Collection</tt>?
+
+</p>
+
+
+
+<h4>Context </h4>
+
+
+
+<p><tt>ValueModel</tt> behavior is often desirable (see &quot;1. <a href="#what_is_a_valuemodel">What
+
+is a ValueModel?</a>&quot;). </p>
+
+
+
+<p>The <tt>ValueModel</tt> does not need to actually store the value because
+
+it is already being stored by the <tt>Collection</tt>. </p>
+
+
+
+<p>To hide the fact that this object is stored in a <tt>Collection</tt>,
+
+use a <tt>ValueModel</tt> so that it will have the generic aspect value.
+
+</p>
+
+
+
+<p>The <tt>ValueModel</tt> does not need to perform any sort of conversion
+
+or translation on the value; it should just return the value as is. </p>
+
+
+
+<h4>Solution </h4>
+
+
+
+<p>Use an <tt>IndexedAdaptor</tt> to give a <a name="OLE_LINK4"></a><tt>Collection</tt>
+
+element the aspect <tt>value</tt>. Since an <tt>IndexedAdaptor</tt> interfaces
+
+with the <tt>Collection</tt> via the element's index, the <tt>Collection</tt>
+
+must understand <tt>at:</tt> and <tt>at:put:</tt> (thus it must be an <tt>Array</tt>
+
+or an <tt>OrderedCollection</tt>). The <tt>IndexedAdaptor</tt> will also
+
+allow the element to be shared by multiple dependents. If an <tt>IndexedAdaptor</tt>
+
+changes an element to another, the new element will appear in the old element's
+
+position in the <tt>Collection</tt>. </p>
+
+
+
+<h4>Example </h4>
+
+
+
+<p>Let's say you have a list of <tt>Person</tt> elements and a view that
+
+displays the fields for a Person. The fields should all be <tt>AspectAdapter</tt>s
+
+on a selection channel. Since the list is a <tt>SequenceableCollection</tt>,
+
+the user can walk through the list by incrementing an index pointer into
+
+the list. Thus the selection channel should be a <tt>IndexedAdaptor</tt>
+
+that is a <tt>ValueModel</tt> on an element in the list. </p>
+
+
+
+<p>Here's how to initialize the <tt>IndexedAdaptor</tt>: </p>
+
+
+
+<pre><tt>
+    selectionChannel := (IndexedAdaptor subject: personList)
+			     forIndex: 1.
+</tt></pre>
+
+
+
+<p>The view will initially display the information for the first <tt>Person</tt>
+
+in the list. To display <tt>Person</tt> <i>n</i>, set the <tt>IndexedAdaptor</tt>'s
+
+index to <i>n</i>. To walk through the list, increment or decrement the
+
+index. </p>
+
+
+
+<h3><a name="_Toc308279042"></a>3.6 <a name="use_a_slotadaptor"></a>Use
+
+a SlotAdaptor to hold a single instance variable </h3>
+
+
+
+<h4>Problem </h4>
+
+
+
+<p><a name="_Toc308279043"></a><font SIZE=-1>How can I wrap </font><tt>ValueModel</tt>
+
+behavior around a particular instance variable in an object without changing
+
+what kind of object an instance variable holds? </p>
+
+
+
+<h4>Context </h4>
+
+
+
+<p><tt>ValueModel</tt> behavior is often desirable (see &quot;1. <a href="#what_is_a_valuemodel">What
+
+is a ValueModel?</a>&quot;). </p>
+
+
+
+<p>If the nature of the instance variable can be changed from a variable
+
+that holds a value to a variable that holds a <tt>ValueModel</tt> that
+
+holds a value, use a <tt>ValueHolder</tt> (see &quot;3.1 <a href="#use_a_valueholder">Use
+
+a ValueHolder to hold a stand-alone object</a>&quot;). This will require
+
+changing some of the object's methods, such as the getter and setter for
+
+the instance variable, as well as any other methods that access the variable
+
+directly, such as <tt>initialize</tt>. </p>
+
+
+
+<p>If the instance variable is an aspect of the object, with getter and
+
+setter methods to access the instance variable, use an <tt>AspectAdapter</tt>
+
+(see &quot;3.2 <a href="#use_an_aspectadaptor">Use an AspectAdapter to
+
+hold an aspect of an object</a>&quot;). </p>
+
+
+
+<p>If there are other means in the object's public interface to get and
+
+set the value of this instance variable, use a <tt>PluggableAdaptor</tt>
+
+(see &quot;3.7 <a href="#use_a_pluggableadaptor">Use a PluggableAdaptor
+
+to hold some part of an object</a>&quot;). </p>
+
+
+
+<p>The <tt>ValueModel</tt> does not need to actually store the value because
+
+it is already being stored by another object. </p>
+
+
+
+<p>To hide the fact that this object is an instance variable with no accessor
+
+methods, use a <tt>ValueModel</tt> so that it will have the generic aspect
+
+value. </p>
+
+
+
+<p>The <tt>ValueModel</tt> does not need to perform any sort of conversion
+
+or translation on the value; it should just return the value as is. </p>
+
+
+
+<h4>Solution </h4>
+
+
+
+<p>Use a <tt>SlotAdaptor</tt> to give an object's instance variable the
+
+aspect value. The <tt>SlotAdaptor</tt> will also allow the element to be
+
+shared by multiple dependents. If the <tt>SlotAdaptor</tt> is used to change
+
+the value, the object's instance variable will now have the new value.
+
+</p>
+
+
+
+<p>(<b>Note</b>: Changing an instance variable out from under an object
+
+in this manner is a bad idea. You should use a setter method in the object's
+
+public interface to make such changes. Changing an instance variable directly
+
+is a private procedure that could make the object's state (or those of
+
+its dependents) inconsistent. Whenever possible, use an <tt>AspectAdapter</tt>
+
+or a <tt>PluggableAdaptor</tt>, not a <tt>SlotAdaptor</tt>. ) </p>
+
+
+
+<h4>Example </h4>
+
+
+
+<p>Let's say <tt>aThing</tt> contains the instance variable amount, but
+
+<tt>aThing</tt> does not provide sufficient behavior for getting and setting
+
+amount. You can attach a <tt>SlotAdaptor</tt> directly to the instance
+
+variable with this code: </p>
+
+
+
+<pre><tt>
+    amountHolder := SlotAdaptor subject: aThing.
+    amountHolder
+	forIndex:
+		(amountHolder subject class
+		 allInstVarNames indexOf: 'amount').
+</tt></pre>
+
+
+
+<p><tt>amountHolder</tt> is now a <tt>ValueModel</tt> whose value is the
+
+exact same object as the one in the instance variable amount. If the <tt>SlotAdaptor</tt>
+
+puts a different object in that instance variable, <tt>aThing</tt> will
+
+never know. The next time <tt>aThing</tt> uses that instance variable,
+
+the variable will contain a different value than the last time <tt>aThing</tt>
+
+used it. </p>
+
+
+
+<h3><a name="_Toc308279044"></a>3.7 <a name="use_a_pluggableadaptor"></a>Use
+
+a PluggableAdaptor to hold some part of an object </h3>
+
+
+
+<h4>Problem </h4>
+
+
+
+<p><a name="_Toc308279045"></a>How can I wrap <tt>ValueModel</tt> behavior
+
+around an arbitrary portion of an object? </p>
+
+
+
+<h4>Context </h4>
+
+
+
+<p><tt>ValueModel</tt> behavior is often desirable (see &quot;1. <a href="#what_is_a_valuemodel">What
+
+is a ValueModel?</a>&quot;). </p>
+
+
+
+<p>The <tt>ValueModel</tt> does not need to actually store the value because
+
+it is already being stored by another object. </p>
+
+
+
+<p>If the value is stored in the model as an aspect, use an <tt>AspectAdapter</tt>
+
+(see &quot;3.2 <a href="#use_an_aspectadaptor">Use an AspectAdapter to
+
+hold an aspect of an object</a>&quot;). </p>
+
+
+
+<p>If the value is an element in a <tt>Collection</tt>, use an <tt>IndexedAdaptor</tt>
+
+(see &quot;3.5 <a href="#use_an_indexedadaptor">Use an IndexedAdaptor to
+
+hold a single index in a Collection</a>&quot;). </p>
+
+
+
+<p>If the value is stored in an instance variable that cannot be accessed
+
+adequately through the model's behavior, use a <tt>SlotAdaptor</tt> (see
+
+&quot;3.6 <a href="#use_a_slotadaptor">Use a SlotAdaptor to hold a single
+
+instance variable</a>&quot;). </p>
+
+
+
+<p>Obtaining the value from the model may be tricky. The value may need
+
+to be derived from explicit values in the model; to store it back, the
+
+<tt>ValueModel</tt> may need to dissect the value to get its components
+
+and store them into the model. The <tt>ValueModel</tt> may need to make
+
+a series of decisions to decide if its value should be updated. </p>
+
+
+
+<p>In fact, the <tt>ValueModel</tt> may not appear to hold a value at all,
+
+but rather to be a detection system for an event that may occur. </p>
+
+
+
+<h4>Solution </h4>
+
+
+
+<p>Use a <tt>PluggableAdaptor</tt> to hold an arbitrary portion of an object
+
+when no other kind of <tt>ValueModel</tt> will work. <tt>PluggableAdaptor</tt>
+
+is a very brute force style of <tt>ValueModel</tt> that is overkill in
+
+many cases. However, when the value that one model wants and that which
+
+the other model has are very different, a <tt>PluggableAdaptor</tt> is
+
+often able to bridge these differences whereas no other kind of <tt>ValueModel</tt>
+
+can. </p>
+
+
+
+<h4>Examples </h4>
+
+
+
+<p><b>Example 1</b> </p>
+
+
+
+<p>Let's say the domain model holds the aspects <tt>firstName</tt> and
+
+<tt>lastName</tt>. The application model wants an instance of <tt>FullName</tt>
+
+that contains the information in the domain model. To store a new name,
+
+the <tt>FullName</tt> will have to be broken apart into the domain model's
+
+aspects. When either of these aspects of the domain model changes, the
+
+<tt>FullName</tt> in the application model will have to be updated accordingly.
+
+</p>
+
+
+
+<pre><tt>
+    (PluggableAdaptor on: self domianModel)
+	getBlock:[:model |
+		  FullName
+		      firstName: model firstName
+		      lastName: model lastName]
+
+	putBlock: [ :model :value &quot;aFullName&quot; |
+		  model
+		      firstName: value firstName;
+		      lastName: value lastName]
+
+	updateBlock: [ :model :aspect :parameter |
+		      aspect == #firstName |
+		      aspect == #lastName].
+</tt></pre>
+
+
+
+<p><b>Example 2</b> </p>
+
+
+
+<p>ParcPlace has already implemented some specialized messages; browse
+
+<tt>PluggableAdaptor</tt> to review them: </p>
+
+
+
+<ul>
+
+<li><tt>collectionIndex:</tt> -- Makes the <tt>PluggableAdaptor</tt> work
+
+like an <tt>IndexedAdaptor</tt>. </li>
+
+
+
+<li><tt>getSelector:putSelector:</tt> -- Makes it work like an <tt>AspectAdapter</tt>.
+
+</li>
+
+
+
+<li><tt>performAction:</tt> -- Used to make a <tt>Button</tt> act like
+
+an <tt>ActionButton</tt>. </li>
+
+
+
+<li><tt>selectValue:</tt> -- Acts like a <tt>Boolean</tt> whose value reflects
+
+whether or not the value being held is equal to <tt>aValue</tt>. </li>
+
+</ul>
+
+
+
+<h3><a name="_Toc308279046"></a>3.8 <a name="use_a_typeconverter"></a>Use
+
+a TypeConverter to convert a value between types </h3>
+
+
+
+<h4>Problem </h4>
+
+
+
+<p><a name="_Toc308279047"></a>Two objects wish to share a value, but one
+
+dependent wants it expressed as one type and the other expects another
+
+type. How can the value appear as the appropriate type of object for each
+
+dependent? </p>
+
+
+
+<h4>Context </h4>
+
+
+
+<p>When two dependents want two types of objects for the same value, this
+
+assumes that the value can be converted from one type of object to the
+
+other and back again. If not, they cannot share the same value instance.
+
+</p>
+
+
+
+<p>The value to be converted should be accessed via the generic aspect
+
+<tt>value</tt>. </p>
+
+
+
+<p>The converted value should be accessed via the generic aspect <tt>value</tt>.
+
+</p>
+
+
+
+<h4>Solution </h4>
+
+
+
+<p>Use a <tt>TypeConverter</tt> to convert the type of object being held
+
+as a value in one <tt>ValueModel</tt> into the type expected by the model.
+
+When storing a new value, the <tt>TypeConverter</tt> will perform the inverse
+
+conversion. </p>
+
+
+
+<p><b>Note</b>: The <tt>updateBlock</tt> for a <tt>TypeConverter</tt> is
+
+always true. <tt>TypeConverter</tt> redefines <tt>value:</tt> not to send
+
+out updates. This way, the objects at either end of the converter handle
+
+sending-out updates and the converter just conveys them transparently.
+
+</p>
+
+
+
+<h4>Examples </h4>
+
+
+
+<p><b>Example 1</b> </p>
+
+
+
+<p>Let's say a couple of objects want to share a value that is a <tt>Number</tt>,
+
+and a couple of other objects want to share the same value as a <tt>String</tt>.
+
+Here's how: </p>
+
+
+
+<pre><tt>
+    valueAsNumberHolder := ValueHolder on:theNumber.
+    converter := (TypeConverter on: valueAsNumberHolder) numberToText.
+    valueAsStringHolder := (AspectAdapter
+				subject:converter
+				sendsUpdates:true)
+			      forAspect:#value.
+</tt></pre>
+
+
+
+<p>With this setup, objects that want to share the value as a <tt>Number</tt>
+
+register their interests on <tt>valueAsNumberHolder</tt>; those which want
+
+the value as a <tt>String</tt> register with <tt>valueAsStringHolder</tt>.
+
+</p>
+
+
+
+<p><b>Example 2</b> </p>
+
+
+
+<p>Many of the most common conversions have already been defined for you,
+
+like <tt>numberToText</tt>. Browse <tt>TypeConverter</tt> to see others
+
+like <tt>dateToText</tt>, <tt>stringOrSymbolToText</tt>, and <tt>stringToNumber</tt>.
+
+</p>
+
+
+
+<h3><a name="_Toc308279048"></a>3.9 <a name="use_a_scrollvalueholder"></a>Use
+
+a ScrollValueHolder to hold a position in <i>n</i>-dimensional space </h3>
+
+
+
+<h4>Problem </h4>
+
+
+
+<p><a name="_Toc308279049"></a>What object should I use to keep track of
+
+how much a point's position on a grid has changed? </p>
+
+
+
+<h4>Context </h4>
+
+
+
+<p>A single <tt>Number</tt> will be insufficient. It can keep track of
+
+the point's distance from the grid's origin, but that will not be enough
+
+information to calculate the point's unique position on the grid. There
+
+will need to be one <tt>Number</tt> for each dimension of the grid. </p>
+
+
+
+<p>Just knowing the position on the grid (the point) is insufficient. If
+
+the point must move across the grid in quantum steps, the size of the minimum
+
+step must be available. When the point tries to move, its movements must
+
+be constrained to those which are a multiple of the grid step size. </p>
+
+
+
+<h4>Solution </h4>
+
+
+
+<p>Use a <tt>ScrollValueHolder</tt> to hold the scroll position of a point
+
+(which may or may not be an instance of <tt>Point</tt>, which is two-dimensional).
+
+Set the <tt>grid</tt> to be the minimum size of each step the point must
+
+take when it moves. </p>
+
+
+
+<h4>Example </h4>
+
+
+
+<p><tt>ScrollWrapper</tt>s are the heart of how the scroll bars on a view
+
+work; they connect the scroll bars to the view. The <tt>ScrollWrapper</tt>
+
+must remember what its position is; the position is stored in a <tt>ScrollValueHolder</tt>.
+
+The view's scroll position without a valid scroll position being stored
+
+in the <tt>ScrollValueHolder</tt>. </p>
+
+
+
+<p>Before storing a new scroll position, the <tt>ScrollValueHolder</tt>
+
+will round it off to the nearest grid position. This position is incremented/decremented
+
+by one grid size when a scroll bar button is pushed. The position will
+
+be adjusted, if necessary, to make it stay within the wrapper's bounds.
+
+</p>
+
+
+
+<p>The value of the <tt>ScrollValueHolder</tt> can be adjusted programatically.
+
+To auto-scroll the view for the user, store a new scroll position into
+
+the <tt>ScrollValueHolder</tt>. The new value will be validated, stored,
+
+and the wrapper will be informed of the new value, at which time the wrapper
+
+will scroll the view.
+
+<br></p>
+
+
+
+<h3><a name="_Toc308279050"></a>3.10 <a name="use_a_selectioninlist"></a>Use
+
+a SelectionInList to hold a list and its selection </h3>
+
+
+
+<h4>Problem </h4>
+
+
+
+<p><a name="_Toc308279051"></a>How can I set-up a list such that it can
+
+tell me which item is currently being used? </p>
+
+
+
+<h4>Context </h4>
+
+
+
+<p>A <tt>Collection</tt> knows which items it contains, and can allow you
+
+to reference one item at a time, but cannot tell you which one is currently
+
+being referenced. </p>
+
+
+
+<p>An item cannot tell you which <tt>Collection</tt> it is a part of. In
+
+fact, it may not be part of any <tt>Collection</tt>, or may be part of
+
+several. </p>
+
+
+
+<p>Thus another object will need to contain the list and keep track of
+
+which item is currently being used. It should work with any list and selection,
+
+regardless of what their aspects are. </p>
+
+
+
+<p>You may need to know when the currently referenced item changes. </p>
+
+
+
+<p>You may need to know when the items in the list change. </p>
+
+
+
+<h4>Solution </h4>
+
+
+
+<p>Use a <tt>SelectionInList</tt> to track a list and its current selection.
+
+If you register your interest in one of its aspects (<tt>list</tt> or <tt>selectionIndex</tt>),
+
+it will notify you of changes. </p>
+
+
+
+<p>(<b>Editorial comment</b>: <tt>SelectionInList</tt>'s interface actually
+
+isn't as clean as it ought to be. It implements two aspects, <tt>list</tt>
+
+and <tt>selectionIndex</tt>, using two <tt>ValueModel</tt>s, <tt>listHolder</tt>
+
+and <tt>selectionIndexHolder</tt>. It then implements a third aspect, <tt>selection</tt>,
+
+but does not implement it using a <tt>ValueModel</tt>. So there is no <tt>selectionHolder</tt>
+
+to register interest with, nor to send out selection changed aspects. See
+
+also &quot;2.2 <a href="#use_valuemodel_chains">Use ValueModel chains instead
+
+of onChangeSend:to:</a>&quot;.) </p>
+
+
+
+<h4>Example </h4>
+
+
+
+<p>Here's how to create a <tt>SelectionInList</tt> of <tt>Person</tt> objects:
+
+</p>
+
+
+
+<pre><tt>
+    personSelectionInList := (SelectionInList with: self peopleList)
+				selectionIndex: 1.
+</tt></pre>
+
+
+
+<p>This will contain the list of <tt>Person</tt>s; the first one is selected.
+
+To be notified when the list is replaced with another, register your interest
+
+with <tt>listHolder</tt>. Register interest with <tt>selectionIndexHolder</tt>
+
+and you'll be notified when the selection (actually the selection index)
+
+changes. To change its list, selection index, or selection programatically,
+
+use <tt>list:</tt>, <tt>selectionIndex:</tt>, and <tt>selection:</tt>.
+
+
+
+<hr></p>
+
+
+
+<h2><a name="appendices"></a>Appendices </h2>
+
+
+
+<h3><a name="references"></a>References </h3>
+
+
+
+<ol>
+
+<li><a name="discrete_charm_of_valuemodel"></a>[Par93] ParcPlace Systems,
+
+Sunnyvale, CA. The discrete charm of the ValueModel. Parc<i>Notices</i>,
+
+pp. 1, 8-9, Summer 1993, Vol. 4, No. 2. </li>
+
+</ol>
+
+
+
+<h3><a name="about_the_author"></a>About the author </h3>
+
+
+
+<p>Bobby Woolf is a Senior Member of Development Staff at Knowledge Systems
+
+Corp. in Cary, North Carolina. He mentors Smalltalk developers in the use
+
+of VisualWorks, ENVY, and design patterns. He welcomes your comments at
+
+<a href="mailto:woolf@acm.org">woolf@acm.org</a> or at <a href="http://www.ksccary.com">http://www.ksccary.com</a>.
+
+
+
+<br>
+
+<hr></p>
+
+
+
+</body>
+<!-- Doc $Revision: 1.6 $ $Date: 2016-07-11 09:24:05 $ -->
+
+</html>

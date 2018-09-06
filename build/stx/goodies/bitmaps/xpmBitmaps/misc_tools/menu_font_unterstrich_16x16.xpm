@@ -1,0 +1,27 @@
+/* XPM */
+static char *menu_font_unterstrich_16x16_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 4 1",
+/* colors */
+"a c black",
+"b c #DBE1F2",
+"c c #D9DFF0",
+"d c none",
+/* pixels */
+"dddddddddddddddd",
+"dddddddddddddddd",
+"dddddddddddddddd",
+"ddddaaaddaaadddd",
+"dddddaadddaadddd",
+"dddddaadddaadddd",
+"dddddaadddaadddd",
+"dddddaadddaadddd",
+"dddddaadddaadddd",
+"dddddaadddaadddd",
+"ddddddaaaaaadddd",
+"dddddddddddddddd",
+"dddaaaaaaaaaabbb",
+"dddddddddddddddd",
+"dddddddddddddddd",
+"dddddddddddddddd",
+};

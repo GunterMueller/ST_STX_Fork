@@ -1,0 +1,424 @@
+<HTML>
+<HEAD>
+<TITLE>Tutorial - Opening a Workspace</TITLE>
+</HEAD>
+
+<BODY>
+
+<A HREF="tutorial.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]" NOPRINT></A>
+<A HREF="tut_1b.html">      <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]" NOPRINT></A>
+
+
+<H1>Getting Started</H2>
+
+<H2><A HREF="#I_STARTUP" NAME="STARTUP">Starting ST/X</A></H2>
+
+There are a number of useful command line options to speed up the startup,
+to preload packages or to suppress diagnostic messages.
+See <A HREF="TOP.html">'Getting Started' for a detailed description.
+
+<H2><A HREF="#I_LAUNCHER" NAME="LAUNCHER">The Launcher Tool</A></H2>
+
+The launcher window is the central tool to launch other tools for programming
+and to display information messages.
+Toolbar buttons are provided for the most commonly used tools,
+such as
+<A HREF="../tools/misc/TOP.html#WORKSPACE">"Workspace"</A> (for immediate code evaluator)
+<A HREF="../tools/sbrowser/TOP.html">System Browser</A> (Class Browser to find, create and modify code),
+<A HREF="../tools/fbrowser/TOP.html">File Browser</A> (to inspect, modify files or load code files) and
+<A HREF="../tools/cbrowser/TOP.html">Changes Browser</A> (to see your recent changes).
+<P>
+Notice that some toolbar buttons show a history or special menu,
+when the mouse button is kept pressed. If you only click on them momentarily
+(i.e. release quickly), they will open the tool in a default mode (usually on
+the last location or in a default mode).
+
+
+<H2><A HREF="#I_SAVING" NAME="SAVING">Saving a Snapshot Image</A></H2>
+
+At any time during your work, you can always save the current state of the system
+in a so-called <DFN>"snapshot image file"</DFN>,
+from which the system can recover at a later time.
+
+So, if during your excursion through the system, you are getting thirsty and you need a break,
+simply leave the system and confirm the saving when asked.
+<P>
+It is also a good idea to create a snapshot before you try out something dangerous
+- such as modifying a base system or GUI class.
+To save a snapshot, click on the save button in the launcher windows toolbar
+(it's the little diskette icon, if you are one of those oldsters who still know what that is).
+<P>
+When you later restart Smalltalk, it will return to exactly the point where
+you left off before (try it now and here to get that secure feeling!).
+<P>
+However, <B>don't panic</B>:
+<BR>
+you cannot really destroy or do permanent harm to your <CITE>ST/X</CITE> system in the browser -
+the worst that can happen is that your last few changes are lost
+and you have to restart the system in fresh state
+(i.e. without a snapshot).
+From this, you can incrementally reapply your changes in the
+<A HREF="../tools/cbrowser/TOP.html">ChangesBrowser</A>.
+<P>
+The way this is done is described below, in <A HREF="tut_6.html">"Recovering from a Crash"</A>.
+
+
+<H2><A HREF="#I_PATCHES" NAME="PATCHES">Applying Patches</A></H2>
+
+Patches can be created by yourself, eXept, or other Smalltalkers.
+They are typically deployed as patchfiles in <A HREF="../programming/fileoutFormat.html">chunk format</A>.
+The two easiest ways to create a patchfile are by:
+<OL>
+<LI>saving a class or individual methods in the SystemBrowser to a file
+<LI>saving/appending individual changes in the ChangesBrowser
+</OL>
+The appropriate editor for a patch file is the ChangesBrowser - a regular text editor is not recommended.
+
+<P>
+To load a patchfile, open a FileBrowser, select the file and choose the "<I>FileIn</I>" menu function (in the "File"-Menu).
+You will also find a "<I>FileIn</I>" button in the filebrowser's toolbar menu.
+If you want to look at the individual patches before installing (in case you don't trust them),
+you can also open a ChangesBrowser on it (in the FileBrowser's "<I>Tools</I>" menu),
+and look at individual patches before applying them. The ChangesBrowser would
+also show a colored diffview in case existing code is changed.
+<P>
+Of course, such files can also be loaded programmatically with:
+<CODE><PRE>
+    '...filename...' asFilename fileIn.
+</PRE></CODE>
+or a ChangesBrowser opened by:
+<CODE><PRE>
+    ChangesBrowser openOn:'...filename...'
+</PRE></CODE>
+
+<P>
+Any such loaded changes are only life during the current session.
+Therefore, you should save a snapshot image after loading, and use that image in the future
+(it's a good idea to start with a fresh system, apply any patches and keep that
+image around as a startup image for new projects).
+<P>
+Alternatively, you can also create a subdirectory
+named "userPatches" under the binary directory (the one in which your stx executable is located).
+All files found there will be automatically loaded at initial startup
+(but not, when an image is restarted).
+Thus, saving all patch files there assures, that they are present, whenever you
+start stx from scratch (i.e. via "<CODE>stx -I</CODE>").
+<P>
+Of course, you can put any class definition or other expressions (in chunk format)
+into this directory. It is therefore possible to have any private tool automatically
+installed and started with every startup.
+(if in doubt, take the ".rc" files found in the execution directory as a guideline)
+
+
+<H2><A HREF="#I_WORKSPACE" NAME="WORKSPACE">Opening a Workspace</A></H2>
+
+Before starting your first excursion into the Smalltalk system and programming language, you should
+first learn how to open a workspace window and how to leave the debugger
+in case you run into an error (which is quite likely :-).
+<P>
+A workspace window is NOT used for programming. Instead, it is a scratchpad window
+into which some code can be typed for demonstration, to try things and as a temporary buffer
+(as an editor, to keep code snipplets around).
+<P>
+A workspace allows you to enter Smalltalk code and execute it.
+This is also refered to as "<VAR>immediate execution</VAR>",
+since you can typeIn some piece of code and immediately evaluate it.
+There is no need for a main-program or a slow compile/link/execute cycle.
+<P>
+
+<P>
+For a new workspace, select the <IMG SRC="../../pictures/rightArrow.xbm" ALT="[--&gt;]"><VAR>workspace</VAR> item in the
+Launcher's <IMG SRC="../../pictures/rightArrow.xbm" ALT="[--&gt;]"><VAR>tools</VAR> menu.
+
+<P>
+<IMG ALIGN=middle SRC="OpenWorkspace.gif" ALT="[Workspace-menu-screenshot]">
+<BR>(these pictures were taken a long time ago on a Silicon Graphics Indy machine.
+Obsolete now, but I keep them for nostalgic reasons)
+<P>
+The above action
+<A HREF="../misc/onlyInSTX.html" INFO="Click to open a Workspace." ACTION="WorkspaceApplication open">opens a view</A>
+which looks similar to (<A NAME="BACK_FN1" HREF="#FN1">*</A>):
+<P>
+<IMG ALIGN=middle SRC="Workspace1.gif" ALT="[Workspace-screenshot-1]">
+
+<P>
+You can use workspaces as text scratchpads, as copy buffers or
+to evaluate Smalltalk expressions (which is their main use).
+Some more info about workspaces is found in the workspace chapter of the
+<A HREF="../tools/misc/TOP.html#WORKSPACE">"Tools Manual"</A>.
+
+
+<H3><A NAME="EXPRESSION_EVALUATION">Expression Evaluation</A></H3>
+
+Expression evaluation is called
+"<VAR>doIt evaluation</VAR>", or "<VAR>doIt</VAR>" for short.
+You can also have the result printed (pasted) into the workspace.
+This operation is called "<VAR>printIt</VAR>".
+Finally, if you want to investigate the internals of a returned object (for example,
+if it's a structured object or a collection), you can open an inspect-window on the result.
+This operation is called "<VAR>inspectIt</VAR>".
+In the following, we will refer to all of these actions generally as "<VAR>doIt</VAR>".
+
+<P>
+<VAR>DoIts</VAR> are perfect to try out something quickly:
+you can evaluate expressions to send messages,
+without a need to write a full program which remains permanently in the system
+(and has to be removed later).
+<BR>
+They can also be used for all kinds of computations (such as math),
+or as a scripting language - i.e. for the kind of work
+other less lucky programmers have to use batch, shell or even (uh - ugly) tcl scripts for.
+Some examples of useful scripts are found in "<A NAME="I_USEFUL_SCRIPTS" HREF="tut_scripts.html">Useful Scripts for Workspaces</A>".
+
+
+
+<P>
+To execute some Smalltalk code, type it into the workspace:
+<P>
+<IMG ALIGN=middle SRC="Workspace2.gif" ALT="[Workspace-screenshot-2]">
+<P>
+select it (using the mouse):
+<P>
+<IMG ALIGN=middle SRC="Workspace3.gif" ALT="[Workspace-screenshot-3]">
+<P>
+and evaluate it with the workspaces middle-button <IMG SRC="../../pictures/rightArrow.xbm" ALT="[--&gt;]"><VAR>printIt</VAR> menu function:
+<P>
+<IMG ALIGN=middle SRC="Workspace4.gif" ALT="[Workspace-screenshot-4]">
+<P>
+the result is displayed in the workspace:
+<P>
+<IMG ALIGN=middle SRC="Workspace5.gif" ALT="[Workspace-screenshot-5]">
+<P>
+
+There are also keyboard accelerators for all common operations:
+"<VAR>doIt</VAR>" is usually bound to <KBD>"<B>Alt-d</B>"</KBD>
+and "<VAR>printIt</VAR>" to <KBD>"<B>Alt-p</B>"</KBD>.
+
+If these do not seem to work, try the <KBD>"<B>Ctrl</B>"</KBD>-key
+instead of <KBD>"<B>Alt</B>"</KBD>.
+<BR>
+A list of accelerators is found in
+"<A HREF="TOP.html#KEYACCELS">Getting started - Keyboard accelerators</A>".
+<P>
+Finally, a selection is quickly made by pressing the <KBD>"<B>ESC</B>"</KBD> key,
+which selects the current line's text from the beginning to the current textcursor position.
+(i.e. a printIt operation can also be done with two keys:
+"<VAR>ESC</VAR>" followed by "<VAR>printIt</VAR>")
+<P>
+In addition (because we are lazy), <VAR>doIt</VAR>-evaluations are also possible
+without any selection at all; in this case, the current cursor line is taken and evaluated.
+(i.e. a printIt operation can be done with a single "<VAR>printIt</VAR>" key,
+as long as the cursor is in the line to be evaluated).
+<P>
+
+Like on a piece of paper,
+you can click-and-type anywhere within the workspace
+(i.e. you are not forced to type into the last line or right after a line-end).
+However, if you prefer that old <var>emacs</var> or <var>vi</var>-feeling,
+take a look at the
+"<I>tools</I>"-"<I>editor</I>" settings dialog in the launcher.
+(check the item named "<I>Textcursor behavior at line-end</I>").
+
+<p>
+Also, any text in the workspace can be selected for doIt evaluation
+You can reselect any previous expression and you do not have to retype any text.
+PrintIt will paste its result after the selection.
+
+
+<P>
+Try a few expressions; such as:
+<BR>
+(don't care for the as yet unknown Smalltalk syntax - the meaning will be explained later)
+<BR>
+<A type="example" SHOWRESULT INFO="Click to execute the example"><CODE><PRE>
+    1 + 2
+</PRE></CODE></A>
+<A type="example" SHOWRESULT INFO="Click to execute the example"><CODE><PRE>
+    2 sqrt
+</PRE></CODE></A>
+<A type="example" INFO="Click to execute the example (look at the Launcher's Transcript window)"><CODE><PRE>
+    Transcript showCR:'hello world'
+</PRE></CODE></A>
+<A type="example" INFO="Click to execute the example (look at the Launcher's Transcript window)"><CODE><PRE>
+    Transcript showCR:(2 sqrt)
+</PRE></CODE></A>
+<A type="example" INFO="Click to execute the example"><CODE><PRE>
+    (Button label:'hello') open
+</PRE></CODE></A>
+<A type="example" INFO="Click to execute the example"><CODE><PRE>
+    WorkspaceApplication open
+</PRE></CODE></A>
+<A type="example" INFO="Click to execute the example"><CODE><PRE>
+    |b|
+    b := Button label:'hello'.
+    b action:[ b destroy ].
+    b open
+</PRE></CODE></A>
+Check for yourself, when it's useful to <VAR>doIt</VAR>, and when to <VAR>printIt</VAR>.
+Also check, what these expressions actually print, when asked to do so.
+
+
+<H3><A NAME="EVALUATION_WORKSPACE">Evaluation Workspace</A></H3>
+
+For beginners (and to try and explore more Smalltalk expressions),
+the new workspace application offers a special 3-pane
+
+<A HREF="../misc/onlyInSTX.html" INFO="Click to open an Evaluation Workspace." ACTION="WorkspaceApplication openEvaluationWorkspace">
+<I>evaluation workspace</I></A>
+
+which includes convenient buttons for evaluation, displays the set of workspace variables,
+a separate result view, and also keeps a list of recent evaluation results.
+<BR>
+This is opened via the <I>"New Evaluation Workspace"</I> or <I>"Add Evaluation Page"</I> menu items
+of the workspace application.
+
+
+<H3><A NAME="MYWORKSPACE">MyWorkspace</A></H3>
+
+If a file named "<CODE>MyWorkspace.wsp</CODE>" exists in the ST/X directory,
+the system workspace which is opened initially will automatically add a tab with that file's contents.
+Also, a "<I>MyWorkspace</I>" menu item is shown in the menu which is associated
+with the workspace icon in the Launcher's toolbar.
+<P>
+You can place commonly used Smalltalk expressions into that file;
+for example, the author's file looks like:
+<BLOCKQUOTE><CODE type="example"><PRE>
+Smalltalk loadPackage:'exept:expecco/application'.
+Smalltalk loadPackage:'expeccoNET:server/application'.
+
+Smalltalk loadPackage:'stx:goodies/sunit'.
+
+Smalltalk loadPackage:'stx:goodies/magritte'.
+Smalltalk loadPackage:'stx:goodies/magritte/tests'.
+
+Smalltalk loadPackage:'exept/libcrypt'.
+Smalltalk loadPackage:'exept/libcrypt/tests'.
+Smalltalk loadPackage:'exept/libcrypt/ssl'
+Smalltalk loadPackage:'exept/libcrypt/ssl/tests'.
+Smalltalk loadPackage:'exept/instantMessaging/jabber'
+Smalltalk loadPackage:'exept/vncViewer'.
+Smalltalk loadPackage:'exept/programming/oom'.
+
+Smalltalk loadPackage:'stx:libsvn'.
+Smalltalk loadPackage:'cvut:fel/smallruby'.
+Smalltalk loadPackage:'cvut:stx/goodies/libtool3'.
+Smalltalk loadPackage:'cvut:stx/goodies/libwidg4'.
+
+Smalltalk loadPackage:'cg:private' asAutoloaded:true
+
+Smalltalk loadPackage:'cg:croquet'.
+Croquet allClassesDo:[:cls | cls initialize].
+TestingScriptRegistry := nil.
+Croquet::SimpleDemoMasterSimple new open
+
+Smalltalk loadPackage:'cg:constraints'.
+
+Smalltalk loadPackage:'cg:newCompiler'.
+cg_newCompiler loadSubProjects
+
+Object enableBreakPoint:#cg.
+Object disableBreakPoint:#cg.
+</PRE></CODE></BLOCKQUOTE>
+
+Once you have such a set of heavily used expressions, it is very easy to
+use: just place the cursor into the line and press <VAR>doIt</VAR>.
+
+<H2><A HREF="#I_DEBUGGER" NAME="DEBUGGER">Leaving the Debugger</A></H2>
+
+Whenever an error is encountered, Smalltalk opens a debug window,
+which displays the state of execution and a walkback list
+(this shows how you got to the point where the error was detected).
+<BR>
+During this introduction, as a beginner, you should probably not care too much
+for all the information as displayed; instead simply abort whatever operation you started.
+We will learn more about the debugger later.
+<P>
+So, if you get into the debugger while evaluating the following examples,
+press the debugger's "<VAR>Abort</VAR>" button (or simply close it)
+and retry whatever you did
+(but look for any typing errors - otherwise you may get another debugger)
+<P>
+Do NOT fear the debugger - as opposed to whatever programming experience you might have,
+the Smalltalk debugger is your best friend and the better programmers
+actually write most of their program in the debugger!
+<P>
+To get used to the debugger, try the following example
+(which contains an error on purpose) in a workspace.
+(if tried from within the document viewer, a confirmation dialog will be shown
+before the debugger window is actually opened):
+<A type="example" INFO="Click to execute the example"><CODE><PRE>
+    1 / (1 min:0)
+</PRE></CODE></A>
+In the debugger, press the "<I>Abort</I>"-button to leave the erroneous execution.
+<BR>
+For more information on what is shown in the debugger and how to use
+it, read "<A HREF='../tools/debugger/TOP.html'>Using the Debugger</A>".
+
+
+
+<H2><A HREF="#I_ENTERDEBUGGER" NAME="ENTERDEBUGGER">Entering the Debugger</A></H2>
+
+Sometimes, you want to interrupt an ongoing operation and force it into a debugger
+to see where the time is spent, or to stop it.
+A typical situation is when you programmed an endless loop,
+or the execution takes longer than expected.
+<BR>
+Try evaluating (but read on, before you do it):
+<CODE><PRE><A HREF="../misc/onlyInSTX.html"
+   ACTION="doit: WorkspaceApplication openWith:
+'[
+    100 factorial
+] loop' " INFO="Click to open a Workspace on this Text">
+    [
+	100 factorial
+    ] loop
+</PRE></CODE></A>
+this will execute the factorial computation in an endless loop, and thereby locking up
+the workspace window: it will no longer react to your input and will not redraw itself if uncovered or
+resized.
+To get out of this situation and into a debugger,
+type the Interrupt-Key (<KBD>"Break"</KBD>/<KBD>"Pause"</KBD>)
+in the workspace which is blocked. If your keyboard does not
+have such a key, try <KBD>"Alt-."</KBD> (Alt-period) or
+<KBD>"Ctrl-."</KBD> (Ctrl-period),
+which work on all systems.
+<P>
+In the debugger, either press the "<I>Abort</I>"-button to leave the erroneous execution,
+or <I>"Continue"</I> to proceed.
+<P>
+Another option to stop a runaway program is to press
+<KBD>"<B>CTRL-Break</B>"</KBD> or <KBD>"<B>CTRL-Y</B>"</KBD> (Ctrl-Shift-y).
+This has the same effect as the debugger's abort action described above.
+The ongoing computation is immediately stopped and the workspace returns to its idle state,
+awaiting your next command. In this case, no debugger is opened.
+
+<P>
+<HR>
+Continue in "<A HREF="tut_1b.html">Hello World in 5 Minutes</A>".
+
+<P>
+
+Notes:
+<BR>
+<A NAME="FN1" HREF="#BACK_FN1">(*)</A> it will definitely look different, especially more modern.
+The screenshots here are *very* old, and the author does not find the time to do this
+screenshotting over and over
+(actually, this is
+just a fine excuse for his nostalgic feelings).
+So some of this document is still showing how it looked 20 years ago.
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif" ALT="[stx-logo]">
+<BR>Copyright &copy; Claus Gittinger Development & Consulting
+<BR>Copyright &copy; eXept Software AG
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.17 $ $Date: 1999/08/10 13:05:26 $
+
+</BODY>
+</HTML>

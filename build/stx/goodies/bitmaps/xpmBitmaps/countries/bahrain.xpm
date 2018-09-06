@@ -1,0 +1,29 @@
+/* XPM */
+static char *bahrain_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 20 2 1",
+/* colors */
+"a c red",
+"b c white",
+/* pixels */
+"bbbbbbbbaaaaaaaaaaaaaaaaaaaaaaaa",
+"bbbbbbaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"bbbbbbbbaaaaaaaaaaaaaaaaaaaaaaaa",
+"bbbbbbaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"bbbbbbbbaaaaaaaaaaaaaaaaaaaaaaaa",
+"bbbbbbaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"bbbbbbbbaaaaaaaaaaaaaaaaaaaaaaaa",
+"bbbbbbaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"bbbbbbbbaaaaaaaaaaaaaaaaaaaaaaaa",
+"bbbbbbaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"bbbbbbbbaaaaaaaaaaaaaaaaaaaaaaaa",
+"bbbbbbaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"bbbbbbbbaaaaaaaaaaaaaaaaaaaaaaaa",
+"bbbbbbaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"bbbbbbbbaaaaaaaaaaaaaaaaaaaaaaaa",
+"bbbbbbaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"bbbbbbbbaaaaaaaaaaaaaaaaaaaaaaaa",
+"bbbbbbaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"bbbbbbbbaaaaaaaaaaaaaaaaaaaaaaaa",
+"bbbbbbaaaaaaaaaaaaaaaaaaaaaaaaaa",
+};

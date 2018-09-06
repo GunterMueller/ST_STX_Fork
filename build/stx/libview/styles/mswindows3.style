@@ -1,0 +1,8 @@
+; View defaultStyle:#win95 
+;
+; $Header: /cvs/stx/stx/libview/styles/mswindows3.style,v 1.28 1998-05-05 19:15:15 cg Exp $
+
+; renamed to mswindows95
+; I leave it here for private.rc backward compatibility
+
+#include 'mswindows95.style'

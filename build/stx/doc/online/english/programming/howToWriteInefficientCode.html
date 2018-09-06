@@ -1,0 +1,177 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - performance hints</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="performanceHints.html">     <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html"> <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="wishList.html">      <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>How to Write Inefficient Code</H1>
+
+<H2>Contents</H2>
+
+<UL>
+<LI><A NAME="I_INTRO" HREF="#INTRO">Introduction</A>
+<LI><A NAME="I_COLLECTIONS" HREF="#COLLECTIONS">Bad Use of Collections</A>
+<UL>
+<LI><A NAME="I_UPDATING_A_LIST" HREF="#UPDATING_A_LIST">Updating/Merging a List</A>
+</UL>
+</UL>
+
+<A NAME="INTRO" HREF="#I_INRO"><H2>Introduction</H2></A>
+
+This could have been a separate chapter of the previous document,
+<A HREF="performanceHints.html">"<I>Hints on Writing Eficient Code</I>"</A>,
+but to emphasize on my frustration, it is presented in a separate paper.
+<P>
+
+Sometimes I come along code, which brings tears to my eyes.
+Code which is both almost incomprehensable and unbelievably slow.
+<P>
+Almost always, this is due to a complete misunderstanding of
+what happens, when collections are getting bigger, and a bad (O(n^2) or worse)
+algorithm is used.
+<P>
+In this document, I will list "goodies" as I find them,
+together with an explanation of what is going on.
+
+
+<A NAME="COLLECTIONS" HREF="#I_COLLECTIONS"><H2>Bad Uses of Collections</H2></A>
+
+<A NAME="UPDATING_A_LIST" HREF="#I_UPDATING_A_LIST"><H3>Updating/Merging a List</H3></A>
+
+Recently, I encountered the following code,
+which maintains a list of file names, reads a directory and updates the
+in-memory list from what it finds in the folder.
+It is part of a UI which monitors a folder and presents an up-to-date
+view of its contents:
+<CODE><PRE>
+    ...
+    oldListOfFiles := self listOfFiles copy.
+    (currentFilenames asSortedCollection: [:f1 :f2| f1 baseName < f2 baseName]) asSet
+    do: [:fileName|
+	(oldListOfFiles detect: [:fileRow| fileRow fileName = fileName] ifNone: nil) isNil
+	ifTrue: [
+	    |nearestFileRow r|
+
+	    nearestFileRow := self listOfFiles indexOf: (self listOfFiles detect: [:fileRow| fileRow baseName > fileName baseName] ifNone: nil).
+	    nearestFileRow = 0
+		ifTrue: [self listOfFiles add: (r := FileRow new fileName: fileName asFilename)]
+		ifFalse: [self listOfFiles add: (r := FileRow new fileName: fileName asFilename) beforeIndex: nearestFileRow].
+	    monitoring ifTrue: [self selectionOfFile value: r].
+	]
+    ].
+    self listOfFiles reverseDo: [:fileRow|
+	(currentFilenames includes: fileRow fileName)
+	ifFalse: [self listOfFiles remove: fileRow]
+    ]
+    ...
+</PRE></CODE>
+How does the above algorithm behave with 100 files in folder?
+What happens, if showing my holiday-image folder, with 4000 jpeg files?
+<P>
+
+The first thing to check is, if <CODE>"self listOfFiles"</CODE> is expensive.
+It could (in theory) read the folder's contents.
+Inspection shows, that it does not;
+instead it asks a builder for the valueHolder with:
+<CODE><PRE>
+listOfFiles
+    |holder|
+    (holder := builder bindingAt:#listOfFiles) isNil ifTrue:[
+	builder aspectAt:#listOfFiles put:(holder :=  List new).
+    ].
+    ^ holder
+</PRE></CODE>
+Well, it is called 3 times in the inner loop; with 4000 files, this is 12000 calls to the
+<CODE>bindingAt:</CODE> method.
+<BR>This results in a Dictionary lookup with O(1) complexity. So no real problem here.
+<P>
+Tuning this, will give us a few milliseconds in speedup.
+So let's care for this later, when the milliseconds count and go for the big time-eaters first.
+<P>
+Here is an estimate of the call-counts,
+for an N element folder,
+when n+ files have been encountered to be new,
+and n- have been encountered to be gone:
+<CODE><PRE>
+	...
+1       oldListOfFiles := self listOfFiles copy.
+1       (currentFilenames asSortedCollection: [:f1 :f2| f1 baseName < f2 baseName]) asSet
+1       do: [:fileName|
+N           (oldListOfFiles detect: [:fileRow| fileRow fileName = fileName] ifNone: nil) isNil
+N           ifTrue: [
+n+              |nearestFileRow r|
+n+
+n+              nearestFileRow := self listOfFiles indexOf: (self listOfFiles detect: [:fileRow| fileRow baseName > fileName baseName] ifNone: nil).
+n+              nearestFileRow = 0
+n+                  ifTrue: [self listOfFiles add: (r := FileRow new fileName: fileName asFilename)]
+n+                  ifFalse: [self listOfFiles add: (r := FileRow new fileName: fileName asFilename) beforeIndex: nearestFileRow].
+n+              monitoring ifTrue: [self selectionOfFile value: r].
+	    ]
+	].
+1       self listOfFiles reverseDo: [:fileRow|
+N           (currentFilenames includes: fileRow fileName) ifFalse:[
+n-              self listOfFiles remove: fileRow
+	    ]
+	]
+	...
+</PRE></CODE>
+n+ and n- are typically small; but there are situations,
+when they do become large, and these should also be handled gracefully
+(in case many files are copied from the camera,
+or bulk-moved to another folder).
+<P>
+Let's break the lines, to see more details on the execution counts:
+<CODE><PRE>
+	...
+1       oldListOfFiles := self listOfFiles copy.
+1       (currentFilenames asSortedCollection:
+NlogN       [:f1 :f2| f1 baseName < f2 baseName])
+1           asSet
+1       do: [:fileName|
+N           (oldListOfFiles
+N               detect:
+N*N                 [:fileRow| fileRow fileName = fileName] ifNone: nil) isNil
+N           ifTrue: [
+n+              |nearestFileRow r|
+n+
+n+              nearestFileRow := self listOfFiles
+n+                                  indexOf: (self listOfFiles
+n+                                      detect:
+N*n+                                        [:fileRow| fileRow baseName > fileName baseName]
+				    ifNone: nil).
+n+              nearestFileRow = 0
+n+                  ifTrue: [self listOfFiles add: (r := FileRow new fileName: fileName asFilename)]
+n+                  ifFalse: [self listOfFiles add: (r := FileRow new fileName: fileName asFilename) beforeIndex: nearestFileRow].
+n+              monitoring ifTrue: [self selectionOfFile value: r].
+	    ]
+	].
+1       self listOfFiles reverseDo: [:fileRow|
+N           (currentFilenames includes: fileRow fileName) ifFalse:[
+n-              self listOfFiles remove: fileRow
+	    ]
+	]
+	...
+</PRE></CODE>
+
+incomplete - continued later...
+
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright © 2016 Claus Gittinger Development & Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.2 $ $Date: 2016-09-14 09:48:41 $
+</BODY>
+</HTML>

@@ -1,0 +1,187 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+   <META NAME="Author" CONTENT="Thomas Zwick, eXept software AG, Germany">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.04 [en] (X11; I; Linux 2.0.30 i586) [Netscape]">
+   <TITLE>The Arbitrary Component Widget</TITLE>
+</HEAD>
+<BODY>
+<A HREF="TOP.html#TABLEOFTHEWIDGETS" NOPRINT><IMG SRC="../../../icons/DocsUpArrow.gif" ALT="Table of the Widgets" NOSAVE HEIGHT=30 WIDTH=30></A>
+<A HREF="SubSpecification.html" NOPRINT><IMG SRC="../../../icons/DocsRightArrow.gif" ALT="The SubSpecification Wigdet" NOSAVE HEIGHT=30 WIDTH=30></A>
+<BR>&nbsp;
+<HR ALIGN=LEFT WIDTH="100%">
+
+<H1><FONT SIZE=+4>Arbitrary Component Widgets</FONT></H1>
+
+<IMG SRC="../../../pictures/GUIPainterWidgetArbitrary.gif" ALT="[A View of an empty Arbitrary Widget]" NOSAVE HEIGHT=24 WIDTH=207>
+<P>View Class: <TT>&lt;any&gt;</TT>
+<BR>Spec Class: <TT>ArbitraryComponentSpec</TT>
+
+<P><B>Arbitrary Component Widgets</B> allow inclusion of view-components
+which are not directly supported by the GUI painter.
+<BR>
+(i.e. views, for which no corresponding UI-specification class exists,
+and also your own, private widget classes)
+
+<HR ALIGN=LEFT WIDTH="100%">
+
+<H3>The <I>Basics</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>ID</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Unique symbolic name (ID) of the box.&nbsp;</B>&nbsp;
+<BR>This ID can be used by the application to access the widget
+via <TT>"builder &#187; componentAt:#ID"</TT>.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>View</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Name of a method in the application, which
+returns a view instance.</B>
+<BR>The view returned by that method will be placed inside the arbitrary component widget.
+<BR>As an alternative, the name of a view class can be given here;
+<BR>in this case, the view instance as returned from the #new class-message is embedded.
+</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Model</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for the model
+which is passed transparently to the view.&nbsp;</B>&nbsp;
+<BR>Usually a <TT><A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance.
+<BR>This requires that the embedded view responds to the #model: message,
+<BR>
+which it does automatically, if it inherits from the View class,
+but does not so, if inheriting from SimpleView.
+</TD>
+</TR>
+
+</TABLE>
+
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Popup Menu Selector</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for the building
+of a popup menu for the widget.</B>&nbsp;
+<BR>It should return a menu spec or a menu.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Popup Menu Performer</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for sending
+the messages of the popup menu items to an object.</B>&nbsp;
+<BR>It should return an object which is able to receive the messages
+<BR>as specified in the menu items.
+<BR>If blank, the application gets the menu messages.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Menu Editor</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Opens a Menu Editor on the popup menu
+spec.
+</TR>
+
+</TABLE>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Vertical Scroll Bar</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the widget
+provides vertical scrolling capabilities.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Vertical Mini Scroll Bar</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the widget
+uses a small vertical scroll bar.</B>&nbsp;
+<BR>This attributes can only be set, if the attribute <I>Vertical Scroll
+Bar </I>is turned on.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Horizontal Scroll Bar</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the widget
+provides horizontal scrolling capabilities.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Horizontal Mini Scroll Bar</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the widget
+uses a small horizontal scroll bar.</B>&nbsp;
+<BR>This attributes can only be set, if the attribute <I>Horizontal Scroll
+Bar</I> is turned on.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Auto Hide</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Controls autoHiding of scrollbars</B>.
+<BR>If on, scrollbars hide themself, if the contents is smaller than
+the scrolled view.
+<BR>If off, scrollBars never hide themSelf.
+<BR>If set to default, the autoHide feature is controlled by the viewStyle
+<BR>and scrollbars behave "natural" for the operating system.
+<BR>(true for windows, false for most unix-styles).
+</TD>
+
+</TABLE>
+
+<H3>The <I>Details</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Initially Disabled</B></TD>
+<TD ALIGN=LEFT VALIGN=TOP BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that
+the widget is initially enabled.</B><BR>
+The view should respond to <CODE>#enable</CODE> and <CODE>#disabled</CODE></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Initially Invisible</B></TD>
+<TD ALIGN=LEFT VALIGN=TOP BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that
+the widget is initially invisible.</B></TD>
+</TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Bordered</B></TD>
+<TD ALIGN=LEFT VALIGN=TOP BGCOLOR="#FFFFFF" NOSAVE><B>Enable a border around
+the embedded view.</B></TD>
+</TR>
+</TABLE>
+
+
+<H3>The <I>Help</I> Section:</H3>
+
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="HelpTool.html">Using the Help Tool</A>"
+
+<H3>The <I>Layout</I> Section:</H3>
+
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="LayoutTool.html">The Layout of the Widgets</A>"
+
+<P>
+<HR>
+
+<P><IMG SRC="../../../icons/stx.gif" ALT="[stx-logo]" NOSAVE NOPRINT HEIGHT=48 WIDTH=47 ALIGN=CENTER>
+<BR><TT>Copyright &copy; 1998 eXept Software AG, all rights reserved</TT>
+<BR>
+<HR>
+</BODY>
+</HTML>

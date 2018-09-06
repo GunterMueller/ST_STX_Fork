@@ -1,0 +1,555 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - differences</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="doingThingsInST.html">     <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="performanceHints.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Differences between ST/X and other Smalltalks</H1>
+
+<UL>
+<LI><A HREF="#Intro" NAME="Index">Short Introduction</A>
+<P>
+<LI><A HREF="#PoolDictionaries" NAME="Index">PoolDictionaries</A>
+<LI><A HREF="#FloatVsDouble" NAME="Index">Floats vs. Doubles</A>
+<LI><A HREF="#FloatOverAndUnderflow" NAME="Index">Float Arithmetic Over/Inderflow</A>
+<LI><A HREF="#LargeInteger" NAME="Index">LargeInteger</A>
+<LI><A HREF="#MethodDictionary" NAME="Index">MethodDictionary</A>
+<LI><A HREF="#ClassNames" NAME="Index">Class Names</A>
+<LI><A HREF="#NewStrings" NAME="Index">New Strings</A>
+<LI><A HREF="#StringCompare" NAME="Index">String Compare</A>
+<LI><A HREF="#SymbolCompare" NAME="Index">String Compare against Symbols</A>
+<LI><A HREF="#Dependents" NAME="Index">Dependents</A>
+<LI><A HREF="#DirectPointers" NAME="Index">Direct Pointers</A>
+<LI><A HREF="#VariableCollections" NAME="Index">Variable Collections</A>
+<LI><A HREF="#WriteStream" NAME="Index">WriteStream</A>
+<LI><A HREF="#RestartingContexts" NAME="Index">Restarting / Returning from Contexts</A>
+<LI><A HREF="#ProcessesAfterRestart" NAME="Index">Processes after an Image Restart</A>
+<LI><A HREF="#ClassAndMethodCategories" NAME="Index">Class and Method-Categories</A>
+<LI><A HREF="#FileoutOrder" NAME="Index">Fileout Order; Class vs. Instance Methods</A>
+
+
+</UL>
+
+<H2><A NAME="Intro" HREF="#Index">Short Introduction</A></H2>
+
+All Smalltalk dialects differ slightly in some minor implementation details,
+of which some are visible on the programmer level.
+This document tries to summarize at least the one's which are known to the author.
+<P>
+The dialects mentioned are:
+<UL>
+<LI><CITE>Smalltalk-80</CITE> or <CITE>ST-80</CITE>
+<br>referring to the original "Blue Book" Smalltalk.
+
+<LI><CITE>Squeak</CITE> and <CITE>Pharo</CITE>
+<br>this started from <CITE>ST-80</CITE> as a base, but has moved on a lot since then.
+
+<LI><CITE>VisualWorks</CITE> or <CITE>VW</CITE>
+<br>also started from <CITE>ST-80</CITE> as a base, but also has changed on a lot since then.
+
+<LI><CITE>ST/V</CITE> and <CITE>VSE (Visual Smalltalk Enterprise)</CITE>
+<br>departed early from <CITE>ST-80</CITE>. Used to be pretty wide spread,
+but has been no longer supported since ParcPlace bought the product.
+These days (2015), it is very seldom still in use.
+
+<LI><CITE>V'Age (VisualAge Smalltalk)</CITE>
+<br>originally from IBM (Instantiations), and now maintained by Instantiations.
+<br>has been massively used in the commercial world until IBM lost interest in it.
+</UL>
+
+<H2><A NAME="PoolDictionaries" HREF="#Index">PoolDictionaries</A></H2>
+<BR>
+Before release 5.3, <CITE>ST/X</CITE> did not support pool dictionaries.
+<BR>
+The implementation of pool dictionaries is based on class variables (i.e. pool variables are actually
+implemented as class variables of a SharedPool class).
+<BR>
+A poolvariable must be initialized in the pool classes #initialize method.
+
+<P>
+<H2><A NAME="FloatVsDouble" HREF="#Index">Floats vs. Doubles</A></H2>
+<BR>
+  <CITE>Smalltalk-80</CITE> supported only single 4-byte precision real numbers
+  named <CODE>Float</CODE>.
+<BR>
+  <CITE>VisualWorks</CITE> added
+  8-byte double precision reals, named <CODE>Double</CODE>.
+<BR>
+  <CITE>ST/V</CITE> only supports 8-byte floats, which are named <VAR>Float</VAR> there.
+<P>
+  <CITE>ST/X</CITE> provides single precision real numbers, called
+  <CODE>ShortFloat</CODE> and double precision numbers, called <CODE>Float</CODE>.
+  An alias named <VAR>Double</VAR> is provided for compatibility.
+  This scheme provides the best compatibility of <CITE>ST/X</CITE>
+  to all of the above dialects. If code is imported, referring to the Float class,
+  it will work (although the precision of the real will be higher than in VisualWorks).
+
+
+<P>
+<H2><A NAME="FloatOverAndUnderflow" HREF="#Index">Float Arithmetic Over/Inderflow</A></H2>
+<BR>
+  Floating point arithmetic uses the underlying machine (i.e. C-language)
+  support for double-precision arithmetic.
+  If, in case of over- / underflow, the machine does NOT create a NAN
+  (Not A Number) and does NOT create a floating point exception,
+  <CITE>ST/X</CITE> will NOT detect these conditions.
+<BR>
+  (however, in reality, all real-world system do so)
+
+<P>
+<H2><A NAME="LargeInteger" HREF="#Index">LargeInteger</A></H2>
+<BR>
+  <CITE>ST/X</CITE> uses a single class to represent LargeIntegers, where the
+  instances keep track of their sign plus absolute value.
+  This is contrast to <CITE>ST-80</CITE>, <CITE>VisualWorks</CITE> and <CITE>Squeak</CITE>
+  where the sign is encoded in the class by using separate LargePositive-
+  and LargeNegativeInteger classes.
+
+
+<P>
+<H2><A NAME="MethodDictionary" HREF="#Index">Method Dictionary</A></H2>
+<BR>
+  In <CITE>ST/X</CITE>, up to rev. 2.10.9, classes kept the methods
+  and selectors in separate
+  Arrays instead of a dictionary. This was done to avoid the
+  need for knowledge about the implementation of dictionaries in the
+  runtime system.
+<BR>
+  Thus, in <CITE>ST/X</CITE> it is allowed to change the layout of
+  Set and Dictionary without affecting the workings of the runtime system.
+<P>
+  <CITE>ST-80</CITE> uses dictionaries (or a variant: "MethodDictionary") to
+  hold the selector-to-method associations.
+<BR>
+Unless you access these instance variables directly, the protocol makes
+both implementations compatible (i.e. the #methodDictionary method in <CITE>ST/X</CITE>
+creates a true dictionary from these arrays and the #methodDictionary: method
+extracts things from the supplied dictionary).
+<BR>
+For portability, you should always use those access methods
+- never directly manipulate those instance variables.
+<P>
+Starting with rev. 2.10, <CITE>ST/X</CITE> uses a a lightweight
+MethodDictionary class. Its protocol looks much like
+a dictionary to the outside world, but it is implemented differently
+and its layout is known & understood by the VM.
+<BR>
+You cannot change the instance layout of MethodDictionary.
+
+<P>
+<H2><A NAME="ClassNames" HREF="#Index">Class Names</A></H2>
+<BR>
+  All major Smalltalk dialects (and <CITE>ST/X</CITE>) return a classes name as a symbol.
+The only exception is <CITE>ST/V</CITE>, which returns a string.
+
+
+<P>
+<H2><A NAME="NewStrings" HREF="#Index">New Strings</A></H2>
+<BR>
+In <CITE>ST/X</CITE>, newly created strings are filled with space characters
+(Character space); <CITE>ST-80</CITE> fills them with a null character
+(Character value:0).
+<BR>
+If you care for compatibility, you should create your
+strings in <CITE>ST/X</CITE> with:
+<CODE><PRE>
+	String new:<VAR>n</VAR> withAll:Character space
+</PRE></CODE>
+this will return the same (space filled) string on all systems.
+
+<P>
+<H2><A NAME="StringCompare" HREF="#Index">String Compare</A></H2>
+<BR>
+In <CITE>ST-80</CITE>, the equal method (<CODE>#=</CODE>) of strings does a
+case insensitive compare;
+<BR>i.e. (<CODE>'foo' = 'FoO'</CODE> -> <VAR>true</VAR>).
+<BR>In <CITE>ST/X</CITE>, the compare is case sensitive.
+<BR>
+To compare strings while ignoring case differences,
+use the <CODE>#sameAs:</CODE> message in <CITE>ST/X</CITE>.
+<P>
+
+<H2><A NAME="SymbolCompare" HREF="#Index">String Compare against Symbols</A></H2>
+<BR>
+In <CITE>ST-80</CITE>, strings and symbols do not compare equal, even
+if they contain the same (Character-) Elements.
+<BR>In <CITE>ST/X</CITE>, the the comparison returns true, if the elements are the same;
+i.e. (<CODE>'foo' = #'foo'</CODE> -> <VAR>true</VAR>).
+
+<P>
+<H2><A NAME="Dependents" HREF="#Index">Dependents</A></H2>
+<BR>
+  <CITE>ST-80</CITE> stores dependents in a Set;
+   <CITE>ST/X</CITE> uses a WeakSet.
+<BR>
+This has the advantage, that a missing #release of a dependent will not
+lead to memory leaks. On the other hand, dependents will not be kept from
+being garbage collected simply by being a dependent of someone.
+<P>
+It has been reported that some ST-80 programs seem to depend on this
+being true, keeping references to some objects only via the dependency
+relationship.
+<BR>
+To the author, this looks like a questionable design.
+<P>
+For programs which depend on the ST-80 semantics, <CITE>ST/X</CITE> offers
+an additional non-weak dependency mechanism, which is available via the
+messages: <CODE>#addNonWeakDependent:</CODE>, <CODE>#nonWeakDependents</CODE>
+and <CODE>#removeNonWeakDependent:</CODE>. These methods are found in the
+<CODE>Object</CODE> class.
+
+
+
+
+<P>
+<H2><A NAME="DirectPointers" HREF="#Index">Direct Pointers</A></H2>
+<BR>
+  <CITE>ST/X</CITE> does NOT use an object table, but represents objects by
+  direct pointers to the underlying storage.
+  This is an implementation issue
+  and does not have an impact on the semantic of the language.
+<BR>
+  Using direct pointer should give the system some speed advantage in the
+  normal case,
+  by avoiding a memory indirection in every object access.
+<P>
+  However, a possible drawback is, that it makes the <CODE>"become:"</CODE>
+  operation slower
+  in some cases, since instead of a simple pointer exchange, the whole memory
+  may have to be scanned for references (this is the worst case; in many situations,
+  only a search through a smaller part of the memory is required).
+<P>
+  To avoid this, most collection classes have been rewritten to avoid <CODE>"become:"</CODE>,
+  which may make these classes less compatible for subclassing (more on this below).
+<P>
+  It is not guaranteed, that this may hold in future versions - an experimental
+  indirect version is planned to measure the speed (dis)advantage and decide upon
+  these results (due to simplifications in the garbageCollector, it has still
+  to be proved, if there is really a disadvantage).
+<P>
+  Another possible problem is identityHashing, which cannot be based upon the
+  pointer (i.e. address of the object table entry) in <CITE>ST/X</CITE>.
+  To support <CODE>identityHash</CODE>, <CITE>ST/X</CITE> reserves some bits in the object header which
+  contain the hash key. Since only 12 bits are currently available, hash-
+  collisions are to be expected in IdSets/IdDicts with more than 4096 elements
+  (usually, collisions occure before that many elements are added).
+<P>
+If you plan to hash heavily on instances of some new class <STRONG>and</STRONG> those hashtables
+are going to be (much) larger than 4k elements, you can (should)
+provide a different <CODE>identityHash</CODE> implementation, which assigns unique
+hashKeys (i.e. from a simple counter) to new instances and keep this hashkey in an
+instance variable.
+<BR>
+Redefine <CODE>identityHash</CODE> in that class to return
+the value of this instance variable.
+<BR>
+I.e. implement:
+<CODE><PRE>
+    ... subclass:#MyClass
+	...
+	instanceVariableNames:'... hashKey ...'
+	classVariableNames:'NextHashKey'
+	...
+
+    !MyClass class methodsFor:'initialization'!
+
+    initialize
+	NextHashKey := 1
+    ! !
+
+    !MyClass methodsFor:'hashing'!
+
+    identityHash
+	"get my hashKey"
+
+	"my key is nil, when asked for the hashKey the very first
+	 time. Then assign a new unique key.
+	 When asked again, return the (now nonNil) hashKey, as assigned
+	 previously.
+	"
+	hashKey isNil ifTrue:[
+	    hashKey := NextHashKey.
+	    NextHashKey := NextHashKey + 1
+	].
+	^ hashKey
+    !
+</PRE></CODE>
+If you plan to hash heavily on instances of existing system classes,
+there is no easy fix, since the field reserved in the object header cannot
+easily be made larger.
+<P>
+Notice, that the expected number of hash collisions is not growing too fast;
+the default hash provides reasonably good behavior for sizes up to
+(say) 50000 elements.
+<P>
+Measuring code:
+<A TYPE="Example">
+<CODE><PRE>
+    |set names t|
+
+    #(5000 10000 50000 100000 200000) do:[:n |
+	"
+	 only want to measure the time spent in the set;
+	 therefore, create the names before doing the timing:
+	"
+	set := IdentitySet new:n.
+	names := (1 to:n) collect:[:i | i printString asSymbol].
+
+	t := Time millisecondsToRun:[
+		names do:[:nm | set add:nm]
+	     ].
+
+	Transcript show:'with '; show:n printString; show:' elements; adding -> ';
+		   show:t printString; show:'ms'; endEntry.
+
+	t := Time millisecondsToRun:[
+		names do:[:nm | set includes:nm]
+	     ].
+
+	Transcript show:' testing -> ';
+		   show:t printString; show:'ms'; cr; endEntry.
+
+    ].
+    "get rid of the 200000 new symbols"
+    set := names := nil.
+    ObjectMemory reclaimSymbols.
+</PRE></CODE>
+</A>
+the code above was executed three times on a 100Mhz R4000 (32Mb SGI Indy - no 2nd level cache)
+and on a 133 Mhz P5, 32Mb and 256Kb second level cache.
+<P>
+Varying the number of elements, they shows the following runtime behavior
+(both tests were executed with interpreted bytecode - compiled code is
+slightly faster):
+<BR>
+R4000:
+<BR>
+<CODE><PRE>
+    with   5000 elements; adding ->  103ms testing ->   91ms
+    with  10000 elements; adding ->  234ms testing ->  195ms
+    with  50000 elements; adding -> 1132ms testing -> 1037ms
+    with 100000 elements; adding -> 5115ms testing -> 4642ms
+    with 200000 elements; adding -> 6455ms testing -> 4296ms
+</PRE></CODE>
+Pentium:
+<BR>
+<CODE><PRE>
+    with   5000 elements; adding ->   72ms testing ->   54ms
+    with  10000 elements; adding ->  142ms testing ->  116ms
+    with  50000 elements; adding ->  764ms testing ->  578ms
+    with 100000 elements; adding -> 2533ms testing -> 2003ms
+    with 200000 elements; adding -> 2925ms testing -> 2410ms
+</PRE></CODE>
+
+Notice, that the above execution times are more affected by memory reclamation
+speed and garbage collector effects than by the raw hashing speed; which explains
+the unreasonable result in the 100000 element testrun
+(on the tested systems, the newSpace's size is 400k.
+ Thus, sets with sizes upto about 50k elements fit into it - bigger ones
+ are allocate in the oldSpace).
+<P>
+I'd be interested in the results on other smalltalk systems.
+
+<P>
+<H2><A NAME="VariableCollections" HREF="#Index">Variable Collections</A></H2>
+<BR>
+In <CITE>ST/X</CITE>, collections are not implemented as
+variable subclasses of <CODE>Collection</CODE>. Instead, most collections
+have an added instance variable which holds the variable part.
+<BR>
+For example, in <CITE>ST-80</CITE>, OrderedCollection may be defined as:
+<CODE><PRE>
+    Collection variableSubclass:#OrderedCollection
+	       instanceVariableNames:'index1 index2'
+		...
+</PRE></CODE>
+while in <CITE>ST/X</CITE>, the corresponding definition is:
+<CODE><PRE>
+    Collection subclass:#OrderedCollection
+	       instanceVariableNames:'contentsArray index1 index2'
+		...
+</PRE></CODE>
+Originally, the reason to do so was to avoid the use of #become:, which
+can be expensive in direct pointer implementations (see above).
+<BR>
+Thus, to grow an orderedCollection, <CITE>ST-80</CITE> would do:
+<CODE><PRE>
+    ...
+    newCollection := OrderedCollection new:newSize.
+    newCollection replaceFrom:1 with:self startingAt:1.
+    self become:newCollection
+    ...
+</PRE></CODE>
+while in <CITE>ST/X</CITE>, the code for grow is:
+<CODE><PRE>
+    ...
+    newContents := Array new:newSize.
+    newContents replaceFrom:1 with:contents startingAt:1.
+    contentsArray := newContents
+    ...
+</PRE></CODE>
+not arguing which is more elegant, it adds some incompatibility when
+subclasses of those collections are filed-in from <CITE>ST-80</CITE>.
+To port such code to <CITE>ST/X</CITE>, you have to replace all
+access-messages to the receiver (self) by corresponding messages to the
+contents array;
+<BR>
+i.e. withing the subclass,
+<CODE><PRE>
+    ...
+    self basicAt:index
+    ...
+</PRE></CODE>
+has to be changed to:
+<CODE><PRE>
+    ...
+    contentsArray basicAt:index
+    ...
+</PRE></CODE>
+
+<P>
+<H2><A NAME="WriteStream" HREF="#Index">WriteStream</A></H2>
+<BR>
+In <CITE>ST-80</CITE>, a writeStreams <CODE>#contents</CODE> method returns a copy of
+the currently accumulated contents, while <CODE>#reset</CODE> simply positions the
+write pointer back to the beginning.
+<BR>
+In <CITE>ST/X</CITE>, <CODE>#contents</CODE> may return the contents directly
+(i.e. NOT a copy) in some cases and <CODE>#reset</CODE> always creates a new empty contents
+collection. This has been done (in <CITE>ST/X</CITE>)
+after investigating the typical uses of a writestream and finding out
+that most are for generation of some collection via append operations (to avoid concatenation).
+<BR>
+With that change, the creation of another garbage object is avoided in most situations
+<BR>
+You have to be aware of this, if you access the contents of a writeStream
+AND continue to write to the stream after that.
+
+<P>
+<H2><A NAME="RestartingContexts" HREF="#Index">Restarting / Returning from Contexts</A></H2>
+
+<BR>
+  In <CITE>ST/X</CITE>, contexts are only made restartable/returnable
+  if its home method/block contains a non inlined block.
+  This means, that you cannot return from or restart every context in the
+  calling chain from within the debugger.
+  Also, code which follows the sender chain (i.e. <CODE>"thisContext sender"</CODE>),
+  cannot assume that these contexts are returnable or restartable.
+<BR>
+  Contexts which contain an exception handler are always restartable/returnable,
+  since they will contain a non inlined block.
+<BR>
+  This little inconvenience was
+  the price to pay for slightly faster execution (less state has to be
+  saved in a methods entry code).
+
+
+<P>
+<H2><A NAME="ProcessesAfterRestart" HREF="#Index">Processes after an Image Restart</A></H2>
+
+<BR>
+In <CITE>ST/X</CITE>, processes cannot be continued after an image
+restart. Instead, all processes must be recreated manually.
+<BR>
+A process can be instructed to automatically restart itself (from the beginning)
+at image restart time,
+but continuation (at the point where it was left) is not and will probably never
+be implemented.
+<BR>
+The reason is that to implement this, many CPU and compiler dependencies
+(layout of the machine stack) had to be coded into <CITE>ST/X's</CITE> runtime system;
+thereby limiting its high portability.
+<P>
+All view processes are automatically restarted by the system,
+however their process priority is not restored correctly.
+<P>
+Other processes should be restarted in an <CODE>#update</CODE> method of an object
+which is a dependent of ObjectMemory. After restart, these dependents
+will be notified by ObjectMemory doing a <CODE>self changed:#restart</CODE>.
+<P>
+Late note:
+<BR>
+With rel2.10.4 of <CITE>ST/X</CITE>, processes can be marked as restartable.
+These processes will automatically be restarted (executing the first statement
+of their creation block) when an image is snapped in.
+<BR>
+Of course, this still does not continue the process where it left off,
+but at least reliefs you from caring about image restart, installing dependents etc.
+<P>
+Your process should decide on some flag (instance variable of some object)
+whether it has been restarted and try to continue where it left off.
+<BR>
+However, be aware that it is not possible to restart or continue any
+context objects which were created in its previous life.
+
+<P>
+<H2><A NAME="ClassAndMethodCategories" HREF="#Index">Class and Method-Categories</A></H2>
+<BR>
+<CITE>ST/V</CITE> and <CITE>VisualAge</CITE> dialects do not support
+class- and method categories.
+<BR>
+If such code is filedInto <CITE>ST/X</CITE>, classes will be categorized under
+the pseudo category <VAR>"ST/V classes"</VAR> and methods under <VAR>"no category"</VAR>.
+<P>
+<CITE>ST-80</CITE> holds the class categories in a special organization object,
+which keeps category vs. class relations in a dictionary-like fashion.
+<BR>
+In that, a category may even exist (and persist) without any classes belonging to
+it.
+<P>
+In <CITE>ST/X</CITE>, the classCategory is kept in an instance variable of the class
+object - therefore, removing a categories last class also logically removes that
+category.
+<BR>
+As a side effect, categories created in the browser vanish, if no class is created
+in that category.
+<P>
+
+The above is also true for methodCategories - here, the category is kept
+in the method object - NOT in the class object (as done in <CITE>ST-80</CITE>).
+<BR>
+Likewise, methodCategories vanish, if no method is ever created for it,
+or the last method within a category is removed.
+
+
+<P>
+<H2><A NAME="FileoutOrder" HREF="#Index">Fileout Order; Class vs. Instance Methods</A></H2>
+<BR>
+In an <CITE>ST/X</CITE> fileOut, class methods are stored before instance methods;
+in <CITE>VW / ST-80</CITE> class methods come last (which is wrong)
+<P>
+The reason is that in VW, a class cannot be filedIn again iff it redefines the syntax
+of its methods (via #compilerClass); for example, it is not possible to
+correctly transport SQL classes via fileOut-fileIn, since those redefine the compilerClass
+(in a class method), which comes after the instance methods. Therefore, compilation errors
+will arise during fileIn of the instance methods.
+
+<BR>
+
+
+
+
+
+
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 1995 Claus Gittinger Development &amp; Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.27 $ $Date: 2016-07-11 09:24:05 $
+</BODY>
+</HTML>

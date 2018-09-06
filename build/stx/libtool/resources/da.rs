@@ -1,0 +1,56 @@
+#encoding iso8859-1
+
+; $Header: /cvs/stx/stx/libtool/resources/da.rs,v 1.2 2008/11/28 16:41:56 cg Exp $
+;
+; Launcher
+
+; 'Afrikaans'         'Afrikaans'
+'Arabic'            'Arabisk'
+'Chinese'           'Kinesisk'
+'Chinese (simplified)'          'Kinesisk (simplified)'
+'Chinese (traditional)'         'Kinesisk (traditional)'
+'Croatian'          'Kroatisk'
+'Czech'             'Tjekkisk'
+'Danish'            'Dansk'
+'Dutch'             'Hollandsk'
+; 'Esperanto'             'Esperanto'
+'English (US)'      'Engelsk (US)'
+'English (UK)'      'Engelsk (UK)'
+'Finnish'           'Finsk'
+'French'            'Fransk'
+'German'            'Tysk'
+'Greek'             'Græsk'
+; 'Hindi'             'Hindi'
+'Italian'           'Italiensk'
+'Japanese'          'Japansk'
+'Norwegian'         'Norsk'
+'Korean'            'Koreansk'
+'Turkish'           'Tyrkisk'
+'Polish'            'Polsk'
+'Russian'           'Russisk'
+'Spanish'           'Spansk'
+'Slovak'            'Slovakisk'
+'Swedish'           'Svensk'
+'Portuguese (Brazilian)'    'Portugisisk (brasiliansk)'
+'Portuguese'                'Portugisisk'
+
+
+'about Smalltalk/X'     'om Smalltalk/X'
+'file'                  'hent'
+'tools'                 'værktøj'
+'projects'              'planlægge'
+'new project'           'ny planlægge'
+'select project'        'vælge planlægge'
+
+'snapshot'              'gem'
+'snapshot & exit'       'gem & afslut'
+'Save Image'            'gem'
+'Exit'                  'afslut'
+'exit smalltalk'        'afslut smalltalk'
+'printer'               'udskriv'
+'settings'              'tilpasning'
+
+'language'              'sprog'
+'view style'            'vindue'
+'messages'              'beretning'
+'screen'                'skærm'

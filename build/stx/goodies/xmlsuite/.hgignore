@@ -1,0 +1,31 @@
+
+syntax: glob
+*Init.c   
+makefile
+*.so
+*.H
+*.o
+*.STH
+*.sc
+objbc
+objvc
+*.class
+java/libs/*.jar
+java/libs-src/*.jar
+*-Test.xml
+st.chg
+
+# Expat by-prodicts
+core/expat-2.0.1/Makefile
+core/expat-2.0.1/bin/xmlwf
+core/expat-2.0.1/config.log
+core/expat-2.0.1/config.status
+core/expat-2.0.1/expat_config.h
+core/expat-2.0.1/include/expat.h
+core/expat-2.0.1/include/expat_external.h
+core/expat-2.0.1/lib/libexpat.a
+core/expat-2.0.1/lib/libexpat.so.1
+core/expat-2.0.1/lib/libexpat.so.1.5.2
+core/expat-2.0.1/libtool
+core/expat-2.0.1/man/man1/xmlwf.1
+

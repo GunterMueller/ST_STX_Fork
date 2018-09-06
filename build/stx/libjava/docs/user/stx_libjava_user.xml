@@ -1,0 +1,553 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article>
+  <chapterinfo>
+    <author>
+      <firstname>Jan</firstname>
+
+      <surname>Vraný</surname>
+
+      <email>jan.vrany[AT]fit.cvut.cz</email>
+    </author>
+  </chapterinfo>
+
+  <title>Java Support</title>
+
+  <subtitle>The Smalltalk/X Unified Virtual Machine</subtitle>
+
+  <?dbhtml filename="java.html"?>
+
+  <abstract>
+    <para>The Smalltalk/X virtual machine (runtime system) allows for Java
+    code to be executed within the Smalltalk environment. This integration is
+    virtually seamless - from a programmers point of view, there is no
+    difference between a Smalltalk object and a Java object. Java classes
+    inherit from Object - much like most other Smalltalk classes. This allows
+    for Java classes to be loaded into the system and used in the same way as
+    Smalltalk classes, giving Smalltalk/X user access to vast amount of Java
+    libraries.</para>
+  </abstract>
+
+  <section>
+    <title id="sec-instalation-and-configuration">Installation &amp;
+    Configuration</title>
+
+    <?dbhtml filename="java-installation-and-configuration.html"?>
+
+    <para>TBW...</para>
+
+    <section>
+      <title>Loading Java support</title>
+
+      <para>STX:LIBJAVA is a part of Smalltalk/X. To load it into a
+      Smalltalk/X environment, execute following:</para>
+
+      <programlisting>Smalltalk loadPackage: #'stx:libjava'.
+Smalltalk loadPackage: #'stx:libjava/tools'.</programlisting>
+    </section>
+
+    <section>
+      <title>Configuring Java</title>
+
+      <para/>
+    </section>
+
+    <section>
+      <title id="sec-inst_and_config-init">Initializing Java</title>
+
+      <para>Before any user Java code can be loaded and executed, the
+      STX:LIBJAVA has to be initialized. During the initialization, basic
+      classes are loaded and initialized - such as <ulink
+          url="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html">
+          <classname>java.lang.Object</classname>
+        </ulink>, <ulink
+          url="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html">
+          <classname>java.lang.String</classname>
+        </ulink>. To initializa Java in running Smalltalk/X, execute:</para>
+
+      <programlisting>JavaVM boot.</programlisting>
+
+      <para>You may later shutdown or reboot Java by:</para>
+
+      <programlisting>JavaVM shutdown.
+JavaVM reboot.</programlisting>
+
+      <note>
+        <para>During shutdown, all pure-Java threads are uncoditionally
+        terminated and Java classes are unloaded. This may have funny
+        consequences, especially when a Smalltalk thread is actually executing
+        a Java code and it may be manifested in weird way. The shutdown is
+        here mainly for development purposes - in an application, you
+        shouldn't do a Java shutdown. If you do, result is undefined.</para>
+      </note>
+    </section>
+  </section>
+
+  <section id="sec-helloworld">
+    <title>Hello World!</title>
+
+    <?dbhtml filename="java-helloworld.html"?>
+
+    <subtitle>A quick tutorial for the impatient</subtitle>
+
+    <para>In this we'll provide a quick tour showing how to develop a simple
+    "Hello World!" application using Smalltalk/X and Java. You will need to
+    properly install following:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para><ulink
+        url="https://swing.fit.cvut.cz/projects/stx-jv">Smalltalk/X
+        jv-branch</ulink>. Strictly speaking, this is not necessary and you
+        may use eXept's Smalltalk/X, however, at the time of writing this
+        document, <ulink
+        url="http://www.exept.de/en/products/smalltalk-x.html">eXept's
+        Smalltalk/X</ulink> does not come with up-to date STX:LIBJAVA,
+        Mercurial support and other tweaks.</para>
+      </listitem>
+
+      <listitem>
+        <para>JDK 6 or 7. We recommend using OpenJDK 7 on Linux and Zulu 7 on
+        Windows<footnote>
+            <para>
+              <ulink
+              url="http://www.azulsystems.com/products/zulu/downloads">http://www.azulsystems.com/products/zulu/downloads</ulink>
+            </para>
+          </footnote>.</para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="http://ant.apache.org/">Apache Ant</ulink>. An
+        Apache Ant is used to batch-compile Java sources.</para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="https://mercurial.selenic.com/">Mercurial</ulink>.
+        We'll use Mercurial as source code management for the "Hello World!"
+        project.</para>
+      </listitem>
+    </itemizedlist>
+
+    <section>
+      <title>Implementing the "Hello World!"</title>
+
+      <para>This simple application will consist of two classes:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>A Java class <code>
+              <classname>jv.demos.helloworld_1.core.HelloWorld</classname>
+            </code> that will actually print a greeting to standard output
+          (when run as standalone application from console) or to Transcript
+          (when executed within a Smalltalk/X IDE, i.e., from
+          workspace).</para>
+        </listitem>
+
+        <listitem>
+          <para>A Smalltalk class <code>
+              <classname>HelloWorldStartup</classname>
+            </code> that will serve as an entry point when application is run
+          standalone. This one will initialize STX:LIBJAVA (as it's not
+          initialized by default) and fire the Java code.</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>We'll package both classes together into a single Smalltalk/X
+      package named <package>jv:demos/helloworld_1</package>.</para>
+
+      <para>Before we start, we have to initialize STX:LIBJAVA. For details,
+      refer to <xref linkend="sec-inst_and_config-init"/>, for now, just
+      execute in workspace:</para>
+
+      <programlisting>JavaVM boot.</programlisting>
+
+      <para>Once the STX:LIBJAVA is booted, create a Java class. In a class
+      browser, select <menuchoice>
+          <guimenuitem>Class</guimenuitem>
+
+          <guimenuitem>New</guimenuitem>
+
+          <guimenuitem>Java Class</guimenuitem>
+        </menuchoice>. In the browser's code pane, a template of Java class
+      definition appears. In our case, the new class's source code may look
+      like:</para>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/browser-HelloWorld-1.png"/>
+        </imageobject>
+      </mediaobject>
+
+      <itemizedlist>
+        <listitem>
+          <para><emphasis>Line 1:</emphasis> A Java package to which the class
+          belongs. It's name could have any value, but we strongly recommend
+          to use a Smalltalk/X package name as prefix for Java package. It
+          makes the code easier to understand.</para>
+        </listitem>
+
+        <listitem>
+          <para><emphasis>Line 7</emphasis>: An annotation which actually
+          tells the Smalltalk/X IDE to which <emphasis>Smalltalk/X
+          package</emphasis> the class belongs to. WIthout this annotation,
+          Smalltalk/X IDE <emphasis>would not know</emphasis> so when later on
+          you commit the package from the browser, the Java class will not be
+          commited - which is not what you want!</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>Once you accept the code, the Java class is compiled and loaded
+      into a running system. Now you should be able to use it from a
+      workspace. Open one and evaluate:</para>
+
+      <programlisting>helloworld := JAVA jv demos helloworld_1 core HelloWorld new.
+helloworld greet.
+</programlisting>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/stx_screenshot_016.png"/>
+        </imageobject>
+      </mediaobject>
+
+      <para>The first line instantiates the <code>
+          <classname>HelloWorld</classname>
+        </code> class from Smalltalk. You may alternatively instantiate it as
+      follows:</para>
+
+      <programlisting><code>helloworld := (Java classForName:'jv. demos.helloworld_1.core.HelloWorld') new</code>.</programlisting>
+
+      <para>The second line invokes the <code>
+          <methodname>greet()</methodname>
+        </code> method. You may also invoke the <code>
+          <methodname>greet(String)</methodname>
+        </code> method as simply as:</para>
+
+      <programlisting><code>helloworld greet: 'Haya'</code>.</programlisting>
+
+      <para>Now let's define an application startup class:</para>
+
+      <programlisting>StandaloneStartup subclass:#HelloWorldStartup
+        instanceVariableNames:''
+        classVariableNames:''
+        poolDictionaries:''
+        category:'Hello World'</programlisting>
+
+      <para>And it's <code>
+          <methodname>#main:</methodname>
+        </code> method - this is the application entry point:</para>
+
+      <programlisting>main:argv
+    | helloworld |
+    JavaVM booted ifFalse:[
+        JavaVM boot.
+    ].
+    helloworld := JAVA jv demos helloworld_1 core HelloWorld new.
+    helloworld greet.
+    Smalltalk isStandAloneApp ifTrue:[
+        Smalltalk exit: 0
+    ].</programlisting>
+
+      <itemizedlist>
+        <listitem>
+          <para>First, the STX:LIBJAVA has to be initialized. We do it
+          conditionally only if it's not already. Strictly speaking, this is
+          not necessary as when a standalone application starts., STX:LIBJAVA
+          is not initialized, however, doing so allows to test the <code>
+              <methodname>#main:</methodname>
+            </code>method from running IDE.</para>
+        </listitem>
+
+        <listitem>
+          <para>Second, load the Java class <code>
+              <classname>jv.demos.helloworld_1.core.HelloWorld</classname>
+            </code>and invoke its <code>
+              <methodname>greet()</methodname>
+            </code>method.</para>
+        </listitem>
+
+        <listitem>
+          <para>Third, exit the application. We do it conditionally for the
+          very same reason - you don't want your Smalltalk IDE to terminate
+          when testing the <code>
+              <methodname>#main:</methodname>
+            </code>method.</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>Don't forget to move class <code>
+          <classname>HelloWorldStartup</classname>
+        </code> to package <package>jv:demos/helloworld_1</package> (menu
+      <menuchoice>
+          <guimenuitem>Class</guimenuitem>
+
+          <guimenuitem>Move</guimenuitem>
+
+          <guimenuitem>To Package</guimenuitem>
+        </menuchoice>).</para>
+    </section>
+
+    <section>
+      <title>Commiting project</title>
+
+      <para>The initialal code has been developed so now it's time to commit
+      it to Mercurial repository. If you're not familiar with Mercurial under
+      Smalltalk/X, you may want to read <ulink
+      url="http://swing.fit.cvut.cz/projects/stx/doc/online/english/help/HG/">stx:libscm
+      User Guide</ulink>. In the following text, let's assume the Mercurial
+      repository for the package is located at
+      <filename>/home/user/SmalltalkXProjects/jv/demos/helloworld_1</filename>
+      (or <filename>C:\Users\user\SmalltalkXProjects\jv\demos\helloworld_1 on
+      Windows</filename>)</para>
+
+      <para>To commit the package, switch browser to package mode (menu
+      <menuchoice>
+          <guimenuitem>View</guimenuitem>
+
+          <guimenuitem>Package</guimenuitem>
+        </menuchoice>) and commit (menu <menuchoice>
+          <guimenuitem>Package</guimenuitem>
+
+          <guimenuitem>Mercurial+</guimenuitem>
+
+          <guimenuitem>Checkin...</guimenuitem>
+        </menuchoice>).</para>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/stx_screenshot_017.png"/>
+        </imageobject>
+
+        <caption>
+          <para>Commiting package from Smalltalk/x class browser</para>
+        </caption>
+      </mediaobject>
+
+      <para>If the menu item <guimenuitem>Mercurial+</guimenuitem> does not
+      show the text "<guilabel>(default)</guilabel>" then something is wrong
+      with the Mercurial setup - check <ulink
+      url="http://swing.fit.cvut.cz/projects/stx/doc/online/english/help/HG/">stx:libscm
+      User Guide</ulink>.</para>
+
+      <para>Once the commit dialog appears, fill in the commit message and
+      click to <guibutton>Commit</guibutton> button.</para>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/stx_screenshot_018.png"/>
+        </imageobject>
+
+        <caption>
+          <para>Commit dialog to commit a package</para>
+        </caption>
+      </mediaobject>
+
+      <para>Now the code has been commited to the repository. Let's check it
+      from command line: </para>
+
+      <programlisting>$ <command>cd /home/user/SmalltalkXProjects/jv/demos/helloworld_1</command>
+$ <command>hg log</command>
+<computeroutput>changeset:   0:2fc9b3286e10
+tag:         tip
+user:        Jan Vrany &lt;jan.vrany@fit.cvut.cz&gt;
+date:        Sun Jun 14 08:14:54 2015 +0100
+summary:     First shot on a cool "Hello World!" app
+</computeroutput>
+$
+</programlisting>
+    </section>
+
+    <section>
+      <title>Loading Hello World package</title>
+
+      <para>Before loading the package into freshly started Smalltalk/X IDE
+      you have to <emphasis>manually update</emphasis> Mercurial working copy
+      to desired revision. When a package is commited from Smalltalk/X, the
+      working copy in Smalltalk/X package path is not updated to the commited
+      revision<footnote>
+          <para>The main reason is that for binary-compiled classes the
+          sources are not loaded in the memory but loaded from the .st files
+          found in package path on demand. A method contains only offset into
+          this file. Of the file is changed the offset changes and therefore
+          the source shown in the browser will be wrong. To take safe side,
+          <ulink
+          url="https://bitbucket.org/janvrany/stx-libscm">stx:libscm</ulink>
+          (Mercurial) never updates the working copy. This may change in a
+          future.</para>
+        </footnote>. So you have to update the working copy by hand:</para>
+
+      <para><programlisting>$ <command>cd /home/user/SmalltalkXProjects/jv/demos/helloworld_1</command>
+$ <command>hg up</command>
+<computeroutput>17 files updated, 0 files merged, 0 files removed, 0 files unresolved</computeroutput>
+$
+</programlisting>Now the working copy should be updated to just-commited
+      revision. To load the package back into freshly started Smalltalk/X IDE,
+      load the package as usual: </para>
+
+      <programlisting>Smalltalk loadPackage: 'jv:demos/helloworld_1'.</programlisting>
+
+      <para>If there's no error while loading (there should not be), you may
+      want to try whether it works as expected. Evaluate:</para>
+
+      <programlisting>HelloWorldStartup main
+</programlisting>
+
+      <para>You should see text "Hello world!" in Transcript window. You
+      should be able to see <code>
+          <classname>jv.demos.helloworld_1.core.HelloWorld</classname>
+        </code> class in a system browser window. Now you can change classes
+      further and once done with it, commit and load it back using the same
+      process. </para>
+    </section>
+
+    <section>
+      <title>Topics not covered</title>
+
+      <itemizedlist>
+        <listitem>
+          <para><emphasis>Adding Java libraries (.jar) into a Smalltalk
+          package</emphasis>. In short, you have to create
+          <filename>ivy.xml</filename> file for the <ulink
+          url="http://ant.apache.org/ivy/"> Apache Ivy</ulink>dependency
+          manager. You may take a file from STX:LIBJAVA and modify it to fit
+          your needs: <ulink
+          url="https://bitbucket.org/janvrany/stx-libjava/src/tip/libs/java/ivy.xml?at=default">https://bitbucket.org/janvrany/stx-libjava/src/tip/libs/java/ivy.xml?at=default</ulink></para>
+        </listitem>
+
+        <listitem>
+          <para><emphasis>Packaging Smalltalk/X application with Java
+          code</emphasis>. The RuntimePackager has not yet been fixed to
+          support Java code. </para>
+        </listitem>
+      </itemizedlist>
+    </section>
+  </section>
+
+  <section id="sec-programming">
+    <title>Programming with Java</title>
+
+    <?dbhtml filename="java-programming.html"?>
+
+    <section>
+      <title>Structure of the mixed Smalltalk/Java package</title>
+
+      <para>Within Smalltalk/X package all Java code lives in subdirectory
+      named <filename>
+          <filename>java</filename>
+        </filename>, which itself contains various directories and
+      files.</para>
+
+      <itemizedlist>
+        <listitem>
+          <para><filename>build.xml</filename> - this is an Ant build file
+          used to compile Java code when building the application. This file
+          is never overwritten by any of the STX:LIBJAVA tools and thus can be
+          edited freely by hand. You may put all customization there. You
+          should import <filename>build.auto.xml</filename> into
+          <filename>build.xml</filename> to include all (generated)
+          dependencies and common targets.</para>
+        </listitem>
+
+        <listitem>
+          <para><filename>build.auto.xml</filename> - this is a fragment of an
+          Ant build file that is automatically generated (and overwritten)
+          upon commit from Smalltalk/X and should not be edited by hand
+          (changes will be lost after next commit). This file contains
+          generated dependencies and includes common targets (defined in
+          <filename>stx/libjava/build.common.xml</filename>)</para>
+        </listitem>
+
+        <listitem>
+          <para><filename>ivy.xml</filename> - this file may contain
+          dependency definitions for <ulink
+          url="http://ant.apache.org/ivy/">Apache Ivy</ulink> dependency
+          manager. This is the prefered way to manage dependencies on
+          third-party Java libraries.</para>
+        </listitem>
+
+        <listitem>
+          <para><filename>src</filename> - this directory contains Java source
+          files in directory structure as required by Java.</para>
+        </listitem>
+
+        <listitem>
+          <para><filename>libs</filename> - this directory contains all Java
+          libraries (as .jar files) required by that package. Except of
+          special cases, .jar files are not (should not) be commited in the
+          repository but rather managed by <ulink
+          url="http://ant.apache.org/ivy/">Apache Ivy</ulink> dependency
+          manager.</para>
+        </listitem>
+
+        <listitem>
+          <para><filename>libs-src</filename> - this directory may contain
+          source .jars for libraries in <filename>libs</filename> directory.
+          As for <filename>libs</filename>, sources are not (should not) be
+          commited in the respository but rather managed by Ivy.</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+  </section>
+
+  <section>
+    <title>Tools</title>
+
+    <?dbhtml filename="java-tools.html"?>
+
+    <para>To be written...</para>
+  </section>
+
+  <section>
+    <title>Legal Info</title>
+
+    <?dbhtml filename="java-legal.html"?>
+
+    <formalpara>
+      <title>Copyright</title>
+
+      <para/>
+    </formalpara>
+
+    <programlisting>COPYRIGHT (c) 1996-2015 by Claus Gittinger
+
+New code and modifications done at SWING Research Group [1]:
+
+COPYRIGHT (c) 2010-2015 by Jan Vrany, Jan Kurs, Marcel Hlopko
+COPYRIGHT (c) 2014-2015 by Tomas Heger.
+
+        SWING Research Group, Czech Technical University in Prague
+
+ This software is furnished under a license and may be used
+ only in accordance with the terms of that license and with the
+ inclusion of the above copyright notice. This software may not
+ be provided or otherwise made available to, or used by, any
+ other person.  No title to or ownership of the software is
+ hereby transferred.
+
+ [1] Code written at SWING Research Group contains a signature
+     of one of the above copright owners. For exact set of such code,
+     see the differences between this version and version stx:libjava
+     as of 1.9.2010</programlisting>
+
+    <formalpara>
+      <title>Restricted Use</title>
+
+      <para>As we provide these classes for no additional charge, we request
+      that any changes/modifications &amp; enhancements made to them be
+      returned to us (in source), to be reintegrated into future versions.
+      This code is NOT public domain code, but provided for free with the
+      Smalltalk/X system. You are not allowed to sell this code or any
+      application built around this code unless special agreements are set up.
+      However, you are allowed to use this tool for your own
+      applications.</para>
+    </formalpara>
+
+    <formalpara>
+      <title>No Warranty</title>
+
+      <para>Java support is provided AS-IS without any warranty
+      whatsoever.</para>
+    </formalpara>
+  </section>
+</article>

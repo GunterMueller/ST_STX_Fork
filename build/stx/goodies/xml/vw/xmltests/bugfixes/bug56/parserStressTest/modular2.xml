@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+   this emulatates a "modular" dtd like xhtml-1.1.
+   exercises code that handles IGNORE and INCLUDE 
+   conditional sections.
+   
+   same as modular1, but we override the default 
+   INCLUDE to an IGNORE
+   -->
+<!DOCTYPE html SYSTEM "fake-modular.dtd" [
+    <!ENTITY % Modular.module "IGNORE" >
+]>
+<html>
+    <head>
+        <title>Title</title>
+        <meta content="asdf" />
+    </head>
+    <body>
+
+        <h1>Heading Level 1</h1>
+
+        <p>Notice we disabled the Modular.* stuff,
+            so no &lt;modular:xxx&gt; for now.</p>
+
+    </body>
+</html>

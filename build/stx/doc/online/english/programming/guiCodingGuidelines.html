@@ -1,0 +1,411 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - GUI Coding Guidelines</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="codingStyle.html">     <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html"> <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="classicBugs.html">      <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+
+<H1>GUI Coding Guidelines</H1>
+
+<H2>Contents</H2>
+
+<UL>
+<LI><A NAME="I_INTRODUCTION"          HREF="#INTRODUCTION">Introduction & Motivation</A>
+<LI><A NAME="I_LAYOUT"                HREF="#LAYOUT">Layout</A>
+<LI><A NAME="I_LABELSIZES"            HREF="#LABELSIZES">Label Sizes</A>
+<LI><A NAME="I_INITIALSIZES"          HREF="#INITIALSIZES">Initial Size of Dialogs</A>
+</UL>
+<P>
+
+
+<H2><A NAME="INTRODUCTION" HREF="#I_INTRODUCTION">Introduction & Motivation</A></H2>
+
+This document describes mandatory rules for UI coding.
+These are obligatory for new code.
+<P>
+In order to provide a consistent look & feel to ST/X users,
+it is mandatory that UI components (widgets, windows, tools)
+follow common guidelines. Especially for new users, it is
+very inconvenient, if the layout and/or position of common
+controls or the naming of operations is non consistent.
+<P>
+In the past, a lot of code (especially from third parties)
+has appeared, in which the personal preferences of the programmer
+affected the graphical appearance, and it takes a lot of work
+to fix such issues later.
+This document shall prevent this as much as possible in the future.
+
+
+<H2><A NAME="OLDCODE" HREF="#I_OLDCODE">Old Code</A></H2>
+
+There may be old code in the system which does not in part or fully follow
+those rules. This is not an excuse for new code to not follow those rules.
+If you come along old code which does not follow this guideline,
+it should be changed, if it can be done with reasonable effort and you have nothing else to do.
+
+<H2><A NAME="TYPING" HREF="#I_TYPING">Typing</A></H2>
+
+Please care for proper english typing both in UI widget texts (labels, buttons, etc.)
+AND in the program. Typing errors in the program (especially in message names)
+make it *very* hard to find senders/implementors
+unless the searching programmer knows the typo.
+<P>For example: method names like "removeContaines"
+(instead of "removeContainers") makes it almost impossible for someone to find all manipulations
+of "containers" by searching for "*container*".
+
+<H2><A NAME="PERFORMANCE" HREF="#I_PERFORMANCE">Performance / User Response</A></H2>
+
+<H3>Awoid the following:</H3>
+<UL>
+<LI>Do not perform expensive initializations in one of the following methods of a
+subclass of ApplicationModel or
+View:
+<UL><LI>initialize</LI><LI>postBuildWith:</LI><LI>postOpenWith:</LI>
+</UL>
+These lead to slow startup times. For example, the smallLint package instantiates
+its parseRules in the codeView's initialize method. This instantiation involves
+a lot of parsing (of all of the rules' parse trees) and may easily take a few seconds.
+<br>First, this parsing should not be done over and over.
+<br>Second, it should be done when needed, not when the view is created.
+<br>Third, it should be done by a background process, so that the view comes up quickly.
+<P>
+
+<LI>Do not perform expensive operations in the redraw methods
+<br>Do not invoke file operations (like getting modification time, creation time, owner names etc. of files)
+in a list- or menu item's redraw. If the underlying drive is a local one, this may seem to
+be fast, und unnoticable. But if it is a network drive (especially a windows-shared drive),
+these operations may take a very long time, and even block (freeze) the UI for a while.
+It is very bad for the user if he has to wait seconds (or even minutes) only
+for a list of filenames to be redrawn.
+<P>
+
+<LI>Do not perform expensive operations in a menu constructor
+<br>Do not perform expensive disk operations in a menu's setup.
+If there are items to be disabled/enabled, do so asynchronously before,
+and set a valueHolder. Probe again, when the menu function is finally invoked,
+not when the menu item is created/drawn.
+It is very bad for the user if he has to wait seconds for a popup menu to appear.
+</UL>
+
+
+<H3>Ensure that your algorithms scale</H3>
+Not only test your app with a small number of data elements;
+also test it with bigger amounts of data.
+<p>
+For example, a list of MP3 files may be shown fast if it contains 100 music files,
+but how does it behave if there are 100000?
+<P>
+This error seems to be very common - even in many TV sets and Satelite receivers with
+network support, users have to wait minutes to get their lists shown
+<P>
+<B>As a concrete real-world example of a very bad UI:</B>
+<br>I have to wait minutes on my brand new Samsung TV's builtin
+mp3 player, which gets its playlists from a networked storage device
+because I do have 100000 mp3's there.
+The builtin software is just plain stupidly programmed: when ever I navigate back from
+a subfolder to its parent, it scrolls back to the beginning, closes all open subfolders
+and starts to read the list from the network drive again.
+Whenever I stop playing a song, to navigate back to the playlist, it rereads the whole list (from the nework),
+closes the folders, ...
+<P>
+The whole Samsung's builtin MP3 player is therefore completely useless
+(and was obviously written by a total beginner)
+<P>
+<H3>Cache the data!</H3>
+<br>If the user has to switch between lists, make sure that you cache the previous one,
+so he does not have to wait again, when returning back to a previous view/list/directory.
+A bad example is again my Samsung TV, which reloads the complete 10000 title list from the cloud server,
+after I look at the details of a song. This can easily take up to 15seconds!
+
+<H3>Remember where the User came from</H3>
+<br>Wheb navigating in a tree, and the user returns back from a sub-application,
+dialog, play program or editor, scroll to the previous position in a long list,
+and reopen folders to the state they were before. Do not return to the top of a list,
+if the list can get longer than 20 items.
+Again, the Samsung TV shows how not to program a UI.
+
+<H3>Ensure that your UI scales</H3>
+Again the TV set: clicking on a remote control through a list of 50 items in a
+list of music titles may be ok, but who wants to scroll through 10000 items?
+And because it does not remember the previous scroll position,
+I have to start over at the top of the list, after a title's details have been shown!
+Think of quick navigation, search functions, remember previous entered search strings etc.
+<P>
+Looking at how bad some UIs are, makes me believe that the programmers
+(or the product managers) actually never ever tried their product before deploying.
+
+
+<H3>Give feedback</H3>
+Always show at least a busy cursor, if the app is busy. If possible and useful,
+show a progress bar. Never ever remember mouse- or keyboard clicks, during a
+long running operation: the user might think that the previous click was not
+working and may try again instead of waiting. If the new click is already recorded,
+it may later be associated to a function (button) which was not anticipated.
+<P>
+Again, one of my TV apps is a good example: the maxdome UI does not give any feedback,
+and some clicks take tens of seconds for the UI to react. If during that time I click on
+the remote again, that click may (after 20 seconds) be associated to a back buctton,
+which appears after that long pause. And I am back, and have to start again.
+
+<H2><A NAME="LAYOUT" HREF="#I_LAYOUT">Layout</A></H2>
+
+<H3><A NAME="GENERAL" HREF="#I_GENERAL">General</A></H3>
+
+The layout of widgets within an application or dialog should be logical and
+estetically pleasant. Elements must be grouped logically and consistent with the
+way the rest of the system is organized.
+
+<H3><A NAME="OKCANCEL" HREF="#I_OKCANCEL">OK - Cancel Buttons in a Dialog</A></H3>
+
+All dialogs must have at least a cancel button.
+Buttons must be in a horizontal panel at the bottom.
+All such panels MUST have the following attributes:
+
+<H4>Button Order</H4>
+(in the UI spec): OK button(s) at right, Cancel at left.
+Set the "reverse order if OK is at left" flag.
+<P>
+If there are multiple OK-like or Cancel-like buttons (like "OK for all", "Cancel for all"),
+the "most-positive" OK-Button is at the far right, the most negative "Cancel" at the far left".
+I.e. a "CancelAll" is leftmost, then a "Cancel", then "OK", then "OK for All".
+<P>
+Reason: This, together with the "reverse order if OK is at left" flag
+ensures that the buttons will appear in the windowing system's natural order.
+(i.e. it cares for differences between windows, linux and OSX, by reversing the order
+if and only if the underlying window system requires this).
+The "reverse order if OK is at left" flag is interpreted by the panel widget,
+and it will do exactly what it says.
+<P>
+Without this setup, you application will look wrong on at least one of the above mentioned
+operating systems.
+
+<H4>Height & Position</H4>
+30 pixels at the bottom of the dialog
+<P>
+Reason: have a common look and enough height for larger fonts (Xft).
+
+<H4>Layout</H4>
+Use the new #okCancel layout.
+This will dynamically be mapped to either #fitSpace or #rightMax, depending on the
+native window systems natural look.
+<P>
+Reason: have a common look which looks "natural" on each window system platform.
+If future or other systems use any special layout, we can easily change the
+horizontal panel class to whatever is needed. (for example, to maxCenter or similar).
+<p>
+
+<H4>Flags</H4>
+OSX-resizeH (leaves space for any window manager resize handle)
+<P>
+Reason: some window systems (OSX) place a resize handle over the lower right edge area of
+EVERY top window. The OSX-resizeH flag changes the layout so that this area is unused by the widget,
+by giving the widget (in this case: panel) a -16 right offset.
+The flag is ignored if running on windows or linux.
+Thus, we get a good looking box on all systems.
+No other solution is allowed here, as it will always look bad on either system.
+
+<H4>You MAY NOT</H4>
+<UL>
+<LI>use explicit background or foreground colors; neither for panel nor for the buttons.
+<BR>
+Reason: see below
+<p>
+
+<LI>use explicit fonts
+<BR>
+Reason: see below
+<p>
+
+<LI>place buttons outside a panel (i.e. use explicit positioning)
+<BR>
+Reason: see above
+</UL>
+
+<H3><A NAME="COLORS" HREF="#I_COLORS">Non-Standard (explicit) Colors</A></H3>
+
+You MAY NOT:
+<UL>
+<LI>add extra bars, panels, progress indicators etc. with extra highlighting colors.
+<br>
+Reason: the app/dialog looks ugly and unprofessional, if different colors are
+used at different places. Also, what you think is a neat look may seem ugly to others.
+If you really think, that you cannot live without such extra colors,
+read a styleSheet entry (but please with a reasonable, hierarchical name, to avoid conflicts),
+and use that. Then, you can define your personal color style in your own personal
+stylesheet file.
+<p>
+
+<LI>use alert colors (red, orange) for non drastic operations / indicators / messages.
+<BR>
+Reason: overuse of alert colors for non severe information distracts the user.
+</UL>
+
+<H3><A NAME="FONTS" HREF="#I_FONTS">Non-Standard (explicit) Fonts</A></H3>
+
+You MAY NOT:
+<UL>
+<LI>use explicit fonts
+<br>
+Reason: the app/dialog looks ugly and unprofessional, if different fonts are
+used at different places. Also, the overall look cannot be changed by styleSheets then,
+if the user has different preferences. If you think that the default font setting is
+insufficient, add a stylesheet entry ("app.widget.font") and allow the user to
+customize it.
+</UL>
+
+<H3><A NAME="LEVEL_AND_BORDER" HREF="#I_LEVEL_AND_BORDER">3D-Level and Borders</A></H3>
+
+You SHALL AVOID:
+<UL>
+<LI>set the 3D level or borderwidth of widgets
+<br>
+Reason: the app/dialog may look very ugly if the view style is changed
+(and there will certainly a windows9 sooner or later, which looks different from what
+you think is pleasant now).
+The trend in general is going away from the 90's motif influenced overuse
+of 3D levels.
+</UL>
+
+
+<H2><A NAME="TOOLTIPS" HREF="#I_TOOLTIPS">Tooltips</A></H2>
+
+You MUST:
+<UL>
+<LI>Define tooltips for all components. Boxes with label and actor-widgets may use a common tooltip.
+<br>
+Reason: It is *very* expensive to add tooltips afterwards - especially if someone else
+has to first figure out what a widget/field's function actually is.
+<P>
+Tooltips should be keyed and indirected via a helpSpec method (i.e. define an activehelpKey
+in the widget, and an english translation in a helpspec). Then add reanslations
+for other languages to the resource files.
+<P>
+For long texts, you may omit the entry in the help spec, and instead use somethinh
+like "APPNAME_HELP" as activeHelpKey and provide a translation for that
+in the resource file. Do this only for long texts,
+because this will not be self contained (work without resource file).
+In general, an application should present a useful english UI, if no resource translation is present.
+</UL>
+
+You MAY NOT:
+<UL>
+<LI>Define tooltip strings with embedded newlines. You must use "\" if the strings gets too long.
+<br>
+Reason: Otherwise no translation is possible via resource files,
+and other languages may need more or less text lines (i.e. have a different number of
+embedded "\"-characters for line breaks.
+</UL>
+
+<H2><A NAME="OSXPREPS" HREF="#I_OSXPREPS">Prepare for OSX</A></H2>
+
+As already mentioned above, OSX needs a 16x16 pisel area at the lower right of
+every top window. It will unconditionally draw its resize handle over that area.
+So we better make sure, that nothing useful is located there.
+<P>
+This affects mostly three situations:
+<UL>
+<LI>Dialog boxes which have a button panel there
+<LI>Application windows which have an info panel there
+<LI>Text or Graphic applications without info panel, which have a scrollable window there.
+</UL>
+The first two of the above MUST set the "OSX-resizeH" flag (in the UI-painter's layout).
+So the panel will get a right inset of 16 pixels.
+<P>
+The other should set the "OSX-resizeV" flag of its scrollable view,
+which passes this flag down to its vertical scrollbar.
+So the scrollbar will get a vertical inset of 16 pixels.
+This scheme currently only works if the vertical scrollbar is at least 16 pixels wide.
+
+<P>
+Notice: do NOT hardcode an inset at the lower right - if you do so, you UI will look
+ugly on non-OSX systems. The above mentioned flag will dynamically use an inset of
+either 16 pixels (on OSX) or zero, if on non-OSX.
+
+
+<H2><A NAME="LABELSIZES" HREF="#I_LABELSIZES">Sizes of Labels (and Buttons)</A></H2>
+
+<H3>Be prepared for longer labels in other languages</H3>
+
+Always add some 25-30% in size to the english text.
+Other languages (German and more so French) usually are a bit more redundant
+and therefore require more space than english.
+
+<H3>Be prepared for font size differences</H3>
+
+The windows fonts are a bit denser than the corresponding Linux fonts.
+Add another 20% when designing the UI in windows.
+
+<H3>Let the layout be computed dynamically</H3>
+If possible, place buttons in a large enough Panel,
+let the buttons compute their size and the panel arrange them.
+In many cases, a *Max* layout looks better. This lets the panel
+compute the size of the widest button and resize the others to that size.
+
+<H3>Put multiple, vertical arranged elements into a VPanel</H3>
+This allows for each element to become larger, in case the user chooses a bigger font.
+
+<H2>Test it!</H2>
+There is no automatic unit test for "Has a pleasing look".
+So try your UI under windows and linux.
+Also, change the font settings to a (say 20pt) font and see if it looks ok.
+
+
+<H2><A NAME="INITIALSIZES" HREF="#I_INITIALSIZES">Initial Size of Dialogs</A></H2>
+
+<H3>Avoid Fixed Extents or Small MaxSize Limits</H3>
+
+Many real world dialogs have a fixed size (or way too small max size).
+Especially the native Windows UI (from Microsoft) often presents boxes - even list selection
+boxes - with a too small extent. Small listboxes are especially inconvenient - why would
+any end-user like a 4-line list, on a 30 inch display?
+
+
+<H3>Reflect your own use of the UI</H3>
+
+Watch your own behavior - if a dialogs regularily comes up
+too small and the first thing you do is to resize it,
+make it a bit larger right from the start.
+<P>
+This applies especially to selection-in-list views inside a dialog.
+There is no reason to make the list only (say 4) lines high, if the
+overall dialog is only taking up 1/5 of the screen height.
+Unless the list is actually only showing a very small number of items.
+
+<H3>Remember the last size</H3>
+Many apps and dialogs remember their size-on-close in a class variable.
+And come up with this default size the next time.
+That is a very convenient behavior and you should also implement it.
+(it is now done on the AppModel-level automatically for you,
+if the user has checked so in his preferences).
+But for some hand-crafted ad-hoq dialogs, you have to do it manually.
+
+<H2>Variable Panels</H2>
+
+If there are multiple lists and/or a list and text-editor in a dialog/app,
+always put them into variable panel. Think what a good initial fraction
+might be. The UI painter saves the fraction at construction time as
+default to be used when the app is opened - so always go into the
+test-geometry mode, adjust for a nice initial fraction and save it.
+
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 2014 Claus Gittinger Development &amp; Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.14 $ $Date: 2017-08-30 20:36:13 $
+</BODY>
+</HTML>

@@ -1,0 +1,10 @@
+*.STH
+*.@@@
+objbc
+objmingw
+ntLibInit.c
+*.c
+*.sc
+*.SC
+*.res
+testFile

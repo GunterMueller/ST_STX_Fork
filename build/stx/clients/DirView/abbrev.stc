@@ -1,0 +1,7 @@
+Demos::ArchiveView ArchiveView stx:clients/DirView 'demos-DirectoryView'
+Demos::DirectoryViewObject DirVObj stx:clients/DirView 'demos-DirectoryView'
+Demos::DirectoryObject DirectoryObject stx:clients/DirView 'demos-DirectoryView'
+Demos::DirectoryView DirectoryView stx:clients/DirView 'demos-DirectoryView'
+Demos::FileObject FileObject stx:clients/DirView 'demos-DirectoryView'
+Demos::ToolObject ToolObject stx:clients/DirView 'demos-ToolView'
+Demos::ToolView ToolView stx:clients/DirView 'demos-ToolView'

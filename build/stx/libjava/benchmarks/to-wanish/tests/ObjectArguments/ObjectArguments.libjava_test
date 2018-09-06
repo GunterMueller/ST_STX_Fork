@@ -1,0 +1,9 @@
+inst := JAVA ObjectArguments new.
+
+duration := Time millisecondsToRun: [
+	1 to: n do:[:idx|
+		inst doSmth: inst.	
+	].
+].
+
+Transcript showCR: 'EXECUTION TIME: ' , duration printString.

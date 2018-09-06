@@ -1,0 +1,35 @@
+/* XPM */
+static char *msdos_small_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"18 18 10 1",
+/* colors */
+"a c black",
+"b c red",
+"c c #800000",
+"d c #000080",
+"e c #808000",
+"f c #0000FF",
+"g c #808080",
+"h c yellow",
+"i c #A0A0A4",
+"j c none",
+/* pixels */
+"jjjjjjjjjjjjjjjjjj",
+"jjaaajjaaaaaaaajjj",
+"jjaiajagiaagaaiajj",
+"jjaggaaiiaaaaaaajj",
+"jjaagagaiaaaagajjj",
+"jjaaaggaiaaajaiajj",
+"jjaaagaaiaagaggajj",
+"jaccccadddaeeeaajj",
+"jabbbcdffdehhhheaj",
+"jabccafaaahadaeeaj",
+"jabcaddccahafaaajj",
+"jabcjddccjaafeeajj",
+"jabcjddccjaafahhaj",
+"jabcaacbaaheaaehaj",
+"jabbbbbaddehhhheaj",
+"jabccccaddaeeeeaaj",
+"jaaaaaaaaaaaaaaajj",
+"jjjjjjjjjjjjjjjjjj",
+};

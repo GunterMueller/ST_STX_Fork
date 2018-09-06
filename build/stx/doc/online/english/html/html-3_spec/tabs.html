@@ -1,0 +1,93 @@
+<title>Horizontal Tabs</title>
+<h1>Horizontal Tabs</h1>
+
+<B>Permitted Context:</B> %text<BR>
+<B>Content Model:</B> Empty!
+
+<P>The TAB element can be used when you want fine control over the
+horizontal positioning. The TAB element is used with the <b>&lt;tab
+id=<i>name</i>&gt;</b> attribute to define named tab stops.
+Subsequently, you can use the TAB element with the <b>&lt;tab
+to=<i>name</i>&gt;</b> attribute to move to the previously defined tab
+stop. This approach avoids the need to know the font metrics in
+advance. The TAB element, together with style sheets, allows conversion
+software to preserve layout information when importing documents
+created with conventional word processing software.
+
+<p>For example:
+
+<pre>&lt;p&gt;&lt;b&gt;noct&lt;tab id=t1&gt;ambulant&lt;/b&gt; - walking at night&lt;br&gt;
+&lt;tab to=t1&gt;(from Latin: &lt;i&gt;nox noctis&lt;/i&gt; night + &lt;i&gt;ambulare&lt;/i&gt; walk)</pre>
+
+<p>which is rendered as:
+
+<pre><b>noct<tab id=t1>ambulant</b> - walking at night
+    (from Latin: <i>nox noctis</i> night + <i>ambulare</i> walk)
+</pre>
+
+<p>The tab stop name (<i>t1</i> in the example) should be unique within the
+current document and composed from an initial letter followed by
+letters, digits or hyphens.
+
+<p>Sometimes, you want to make the remainder of the line flush right while
+leaving the earlier words unmoved. This is possible with the <i>align</i>
+attribute. For example:
+
+<pre>Left part of line&lt;tab align=right&gt;and right part of line.</pre>
+
+<p>which is rendered as:
+
+<pre>Left part of line                               and right part of line.</pre>
+
+<H3>Permitted Attributes</h3>
+
+<DL>
+<DT>ID <DD>An SGML identifier used to name a new tab stop at the current position.
+The scope of the tab stop is the rest of the document.
+
+<DT>INDENT <DD>Specifies the number of en units before the tab stop.
+The en is a typographical unit equal to half the point size. It allows
+authors to control the leading indent before text, e.g. in poetry, one
+might use: &lt;TAB INDENT=6&gt; to indent six en units at the start of
+a line. The INDENT attribute is not meaningful when combined with the
+TO attribute.
+
+<DT>TO <DD>Specifies a previously defined tab stop (see ID attribute).
+
+<DT>ALIGN <DD>Lines are usually rendered according to the alignment
+option for the enclosing paragraph element. The ALIGN attribute can be
+used to explicitly specify the horizontal alignment:<BR><BR>
+
+<dl> <dt>align=left <dd>Following text starts immediately after the
+designated tab stop (the default).
+
+<dt>align=center <dd>Following text up to next tab or line break is
+centered on the designated tab stop. If the TO attribute is missing, it
+centers the text between the current left and right margins.
+
+<dt>align=right <dd>Following text up to the next tab or line break is
+rendered flush right to the designated tab stop. If the TO attribute is
+missing, it renders the text flush right against the current right
+margin.
+
+<dt>align=decimal <dd>The following text is searched for the first
+occurrence of the character representing the decimal point. The text up
+to the next tab or line break is then aligned such that the decimal point
+starts at the designated tab stop. If the TO attribute is missing, the
+tab element is treated as a single space character.
+</dl>
+
+<DT>DP <DD>This specifies the character to be used for the decimal
+point with the ALIGN attribute, e.g. dp="." (the default) or dp=",".
+The default may be altered by the language context, as set by the LANG
+attribute on enclosing elements.
+</DL>
+
+<P><B>Note:</B> if the specified alignment and tab stop would cause text
+to overlap preceding text, then the tab element may be treated as a
+single space character.
+
+<P><I>How should the above be rewritten to work with languages which are
+rendered from right to left? What about lines with mixed directions?</I>
+
+<!--NewPage-->

@@ -1,0 +1,11 @@
+These pixmaps were copied from a freeware CD.
+I used them as test-data for the xpm-image reader -
+you may (or likely will not) find some useful for your applications.
+
+If you want to use one of these icons, we recommend that you load them
+into the ImageEditor, and then save it into a METHOD (or into an iconlibrary class).
+That assures that your application is independent of any change here and also
+makes installation of your class/app easier.
+
+Late note: this has now been done, and file icons are no longer used by ST/X
+(i.e. all icons are in the executable, for easier deployment and packaging)

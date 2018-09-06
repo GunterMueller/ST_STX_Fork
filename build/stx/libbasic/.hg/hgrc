@@ -1,0 +1,8 @@
+[phases]
+publish = false
+
+[paths]
+canonical = https://bitbucket.org/janvrany/stx-libbasic
+staging = https://bitbucket.org/janvrany/stx-libbasic
+default = https://bitbucket.org/janvrany/stx-libbasic
+

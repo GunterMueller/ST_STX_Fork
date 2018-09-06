@@ -1,0 +1,326 @@
+<?xml version="1.0"?> 
+<!DOCTYPE article PUBLIC
+    "-//OASIS//DTD DocBook XML V4.3//EN"
+    "/usr/share/xml/docbook/schema/dtd/4.3/docbookx.dtd" [
+    <!ENTITY loggia "<emphasis>Loggia</emphasis>">
+]>
+<article>
+  <articleinfo>
+    <title>Loggia</title>
+    <subtitle>A logging framework for Smalltalk</subtitle>
+    <author>
+      <firstname>Martin</firstname>
+      <surname>Dvořák</surname>
+      <email>martin.dvorak@e-fractal.cz</email>
+    </author>
+  </articleinfo>
+
+  <section id="idea">
+    <title>The idea behind</title>
+    <para>
+      This section describes the ideas that led us to create &loggia; the way
+      as it's created.
+    </para>
+    <para>
+      The main idea of &loggia; has been taken from BSD syslog, which is
+      commonly used on almost all Unix-based operating systems for logging
+      all the system messages.
+      Syslog is simply configured from one place, all processes that wish to
+      log something ask syslog and syslog performs given actions on the
+      message.
+      The idea has been slightly modified to increase log messages usability
+      when they are stored in memory.
+    </para>
+    <para>
+      When some process wishes to log some message, it just sends the message
+      to syslog and doesn't care for where the message will go.
+      Destination may be a file or a remote machine or the message will be
+      discarded as the user doesn't want to see this type of messages, or
+      anything.
+    </para>
+    <para>
+      The originating process is not required to implement any kind of logging
+      facilities and to provide some configuration for them, all that is needed
+      is to implement an interface to the system logger.
+    </para>
+    <section id="transports">
+      <title>Transports</title>
+      <para>
+	The system as a whole (read: the whole Smalltalk image) has several
+	configured <emphasis>transports</emphasis>.
+	Each transport serves as a target for any number of
+	<link linkend="logmessage"><emphasis>log messages</emphasis></link>.
+	Transports should be known globally because (as we will show later on)
+	one transport can be used by various <link linkend="severities">
+	facilities</link> and even transports.
+      </para>
+      <para>
+	When a message enters the logging mechanism and it should be tranported
+	somewhere, an appropriate transport is chosen (we will explain this
+	magic later) and the message is passed to it.
+      </para>
+    </section>
+    <section id="facilities">
+      <title>Facilities</title>
+      <para>
+	When there is a global logging mechanism, one would like to quickly
+	find out from where a particular message came from.
+	Moreover, we would like to do different things with messages coming
+	from different parts of the system.
+	For example, when debugging some part of the system, you would like to
+	see debugging messages from it but with debugging messages from other
+	parts suppressed.
+      </para>
+      <para>
+	When using some email subsystem, there should always be
+	something called <emphasis>mail</emphasis> in the system, no matter
+	which of the email subsystem implementations is currently used.
+      </para>
+      <para>
+	The system of <emphasis>facilities</emphasis> solve this problem, each
+	part of the system, each (possibly autonomous) subsystem has a common
+	name under which it sends log messages.
+	When all email subsystems use the same name, the logging mechanism can
+	be configured to do something with messages that have something to do
+	with emails and the user doesn't need to change the configuration.
+      </para>
+    </section>
+    <section id="severities">
+      <title>Severities</title>
+      <para>
+	Not all messages from each of the subsystem are fatal, nor are all of
+	them just garbage used only for debugging.
+	So each facility defines a list of <emphasis>severities</emphasis>.
+	Each severity knows a transport where messages with this severity
+	should be sent.
+      </para>
+      <para>
+	For example with the above mentioned email subsystem, debugging
+	messages are presented to the developer as well as warnings.
+	In a production environment, debugging messages are simply discarded
+	(using appropriate transport) and warnings are stored into a file.
+	Whole this change is only a modification of the logging mechanism
+	configuration.
+      </para>
+      <para>
+	And how these three things work together?
+	When a log message enters the system and all it's properties and
+	information are collected, the facility from where the message came
+	is found.
+	This facility is asked for transport that should be used for messages
+	of the message's severity.
+	When the transport is known, the message is sent to it for processing.
+      </para>
+    </section>
+  </section>
+
+  <section id="usage">
+    <title>Usage</title>
+    <para>
+      This section describes how the &loggia; logging framework may be used,
+      how it's configured and what are it's capabilities.
+    </para>
+    <section id="configuration">
+      <title>Configuration</title>
+      <para>
+	The first thing one wishes to do is to configure &loggia; in some way
+	so that not all of the messages are simply written to
+	<classname>Transcript</classname>, which is the default behavior.
+      </para>
+      <para>
+	Find the &loggia; visual configuration tool, it should be accessible
+	from system settings.
+	In the current implementation for
+	<ulink url="http://www.exept.de">Smalltalk/X</ulink> it is accessible
+	via the launcher's settings menu.
+	If it's not present in the settings, find and open the
+	<classname>LoggiaUI</classname> class.
+      </para>
+      <para>
+	The window is divided into two parts.
+	In the first one, there is facilities' configuration, where new
+	facilities can be added, new severities for them and transports can
+	be assigned to them.
+	In the second part there is the global transports configuration, where
+	transports can be added and configured for various purposes.
+      </para>
+    </section>
+    <section id="logging">
+      <title>Logging</title>
+      <para>
+	When everything is ready and your application is about to be too
+	complex to debug manually, time for &loggia; has come.
+	All you must do in your application is to log the message you wish
+	will help you tracing the code.
+	The main class, to which log requests are sent is called
+	<classname>Logger</classname>, it has several methods for creating
+	a log message.
+      </para>
+      <variablelist>
+	<varlistentry>
+	  <term><methodname>log: messageString</methodname></term>
+	  <listitem>
+	    <para>
+	      This message takes one string as an argument, creating a
+	      <link linkend="logmessage">log message</link> with the string as
+	      a message.
+	      The created message will use some default severity, currently
+	      it uses <emphasis>warn</emphasis>.
+	    </para>
+	    <para>
+	      This is not the recommended way to log, it takes additional
+	      overhead to resolve the originator.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><methodname>log: messageString at: severitySymbol</methodname></term>
+	  <listitem>
+	    <para>
+	      This takes the message string and a severity symbol at which the
+	      message should be logged.
+	      If the severity is not known to the chosen facility (see below
+	      how facilities are resolved), some default severity, currently
+	      it uses <emphasis>warn</emphasis>.
+	    </para>
+	    <para>
+	      This is not the recommended way to log, it takes additional
+	      overhead to resolve the originator.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><methodname>log: messageString at: severitySymbol for: originatorObject</methodname></term>
+	  <listitem>
+	    <para>
+	      This creates a <link linkend="logmessage">log message</link> as
+	      described for previous messages.
+	      In addition, an originator is set, this should be the object that
+	      is responsible for generating the message of which should be
+	      known as the source of the message.
+	      It will usually be <varname>self</varname>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><methodname>log: messageString at: severitySymbol for: originatorObject with: attachmentObject</methodname></term>
+	  <listitem>
+	    <para>
+	      This creates a <link linkend="logmessage">log message</link> as
+	      the above method and adds an attachment to it.
+	      Attachment can be any object (use a collection if more are
+	      needed) that should be known as the cause of the message, the
+	      object that the originator is currently working with or something
+	      that helps the developer with debugging the code.
+	      Attachments are extremely useful when log messages are kept in
+	      memory, they can be inspected and furter explored.
+	    </para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+      <para>
+	And now how facilites are resolved.
+	In the current version the originator must implement the method
+	<methodname>logFacility</methodname>, which returns a symbol that will
+	be used as the log message target facility.
+	If it does not implement this method or the facility it answers is not
+	known, some default facility is used (it is currently named
+	<emphasis>system</emphasis>).
+      </para>
+      <para>
+	As for severities, there are some system ones when requested severities
+	are not known or when the system needs to log some message.
+	Currently, these severities are system ones and cannot be removed:
+	<emphasis>debug</emphasis>, <emphasis>info</emphasis> and
+	<emphasis>warn</emphasis>.
+	All severities as they are created log their message to the
+	<classname>Transcript</classname>.
+      </para>
+    </section>
+    <section id="logmessage">
+      <title>Log Message</title>
+      <para>
+	<classname>LogMessage</classname> is an object that holds all the
+	log information for one user log request.
+	A separate object is needed as the message is not only the string but
+	it contains various additional attributes:
+      </para>
+      <variablelist>
+	<varlistentry>
+	  <term>message</term>
+	  <listitem>
+	    <para>
+	      Message holds the text as given by the user, which represents
+	      the information.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>originator</term>
+	  <listitem>
+	    <para>
+	      Originator is the object that created the message or which
+	      should be known as the one who is responsible for creating it.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>attachment</term>
+	  <listitem>
+	    <para>
+	      Attachment is an object that is attached to the message as an
+	      additional information.
+	      It is intended for debuging purposes and may be used for better
+	      describing the problem.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>process</term>
+	  <listitem>
+	    <para>
+	      Process holds the <emphasis>id</emphasis> and the name of the
+	      process that created the message.
+	      This should help debugging in multi-threaded environment.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>timestamp</term>
+	  <listitem>
+	    <para>
+	      Each message should have a timestamp associated with it to
+	      know when the log message has been created.
+	    </para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    </section>
+  </section>
+
+  <section id="basetransports">
+    <title>Base distribution transports</title>
+    <para>
+      This section describes each of the transports that are part of the base
+      &loggia; distribution.
+      It's intended to be used as a reference for those transports and to
+      introduce what is possible when a developer chooses to write his own.
+    </para>
+    <para>
+      As time passes, this description may become a little obsolete as the
+      transports are improved as they are used.
+      In such case please refer to the code, there should be only little
+      differences between the code and this documentation.
+    </para>
+  </section>
+
+  <section id="implementation">
+    <title>Implementation</title>
+    <para>
+      This section provides information for developers who wish to understand
+      and modify the &loggia; logging framework or to write their own
+      transports.
+    </para>
+  </section>
+
+</article>

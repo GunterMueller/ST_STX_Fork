@@ -1,0 +1,17 @@
+/.cvsignore/1.2/Wed Jun  5 09:22:52 2013//
+/BaseCouchDBIntegrationTestCase.st/1.1/Thu Apr  4 14:40:37 2013//
+/BaseCouchDBTest.st/1.1/Thu Apr  4 14:40:50 2013//
+/CouchDBIntegrationTestCase.st/1.1/Thu Apr  4 14:40:59 2013//
+/CouchDBTest.st/1.2/Wed Apr 17 18:47:34 2013//
+/CouchViewServerTest.st/1.1/Thu Apr  4 14:40:54 2013//
+/Make.proto/1.1/Thu Apr  4 14:41:06 2013//
+/Make.spec/1.1/Thu Apr  4 14:41:03 2013//
+/abbrev.stc/1.1/Thu Apr  4 14:41:14 2013//
+/bc.mak/1.1/Thu Apr  4 14:41:11 2013//
+/bmake.bat/1.1/Thu Apr  4 14:41:18 2013//
+/libInit.cc/1.1/Thu Apr  4 14:41:34 2013//
+/mingwmake.bat/1.1/Thu Apr  4 14:41:27 2013//
+/stx_libdb_nosql_couchDB_tests.st/1.2/Thu Apr  4 14:41:36 2013//
+/tests.rc/1.1/Thu Apr  4 14:41:30 2013//
+/vcmake.bat/1.1/Thu Apr  4 14:41:21 2013//
+D

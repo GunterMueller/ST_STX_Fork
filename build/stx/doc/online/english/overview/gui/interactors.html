@@ -1,0 +1,183 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X GUI classes - Interactors</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="view.html"> <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html#I_COLLECTIONS"> <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="menus.html"> <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<P>
+The most heavily used interactor components are:
+<UL>
+<LI> <A HREF="#BUTTON" NAME="I_BUTTON">Button</A>
+<LI> <A HREF="#TOGGLE" NAME="I_TOGGLE">Toggle</A>
+<LI> <A HREF="#CHECKTOGGLE" NAME="I_CHECKTOGGLE">CheckToggle</A>
+<LI> <A HREF="#CHECKBOX" NAME="I_CHECKBOX">CheckBox</A>
+<LI> <A HREF="#RADIOBUTTON" NAME="I_RADIOBUTTON">RadioButton</A>
+<LI> <A HREF="#SCROLLBAR" NAME="I_SCROLLBAR">ScrollBar</A>
+</UL>
+
+
+
+<H2><a href="#I_BUTTON" NAME="BUTTON">Button</a></H2>
+<P>
+The simplest push button. They may have either a string or image
+as buttonlabel. When pressed, they either perform a predefined action
+(action block) or send a change message to a model.
+
+<P>
+Typical uses:
+<UL>
+<LI> using an action block:
+<A TYPE="example">
+<CODE><PRE>
+    |top button|
+
+    top := StandardSystemView new.
+    top extent:100@100.
+
+    button := Button label:'press me'.
+    button origin:0.0@0.0 corner:1.0@1.0.
+    button action:[Transcript showCR:'hello world'].
+
+    top addSubView:button.
+    top open.
+</PRE></CODE>
+</A>
+
+<LI> with a model:
+<A TYPE="example">
+<CODE><PRE>
+    |top button|
+
+    top := StandardSystemView new.
+    top extent:100@100.
+
+    button := Button label:'press me'.
+    button origin:0.0@0.0 corner:1.0@1.0.
+    button model:Transcript; changeMessage:#flash.
+
+    top addSubView:button.
+    top open.
+</PRE></CODE>
+</A>
+</UL>
+
+<H2>ArrowButton</H2>
+<P>
+These are typically used as components of a scrollBar.
+
+<H2><a HREF="#I_TOGGLE" NAME="TOGGLE">Toggle</a></H2>
+<P>
+An on/off switch. These are like buttons, but toggle their
+state  when clicked. Like buttons, they can be used with action blocks
+or alternatively with a model.
+<P>
+Typical use:
+<UL>
+<LI> with an action block:
+<A TYPE="example">
+<CODE><PRE>
+    |top toggle|
+
+    top := StandardSystemView new.
+    top extent:100@100.
+
+    toggle := Toggle label:'press me'.
+    toggle origin:0.0@0.0 corner:1.0@1.0.
+    toggle action:[:state | Transcript showCR:'toggles state is: ' , state printString].
+
+    top addSubView:toggle.
+    top open.
+</PRE></CODE>
+</A>
+</UL>
+
+
+<H2><a HREF="#I_CHECKTOGGLE" NAME="CHECKTOGGLE">CheckToggle</a></H2>
+<P>
+like above, with a check-mark. They are seldom used alone; instead,
+these are commonly found as a component in a checkBox.
+
+
+
+<H2><a HREF="#I_CHECKBOX" NAME="CHECKBOX">CheckBox</a></H2>
+<P>
+combines a checkToggle with a label. Protocolwise, they behave much like
+toggles.
+<UL>
+<LI> with an action block:
+<A TYPE="example">
+<CODE><PRE>
+    |top toggle|
+
+    top := StandardSystemView new.
+    top extent:100@100.
+
+    toggle := CheckBox label:'press me'.
+    toggle origin:0.0@0.0 corner:1.0@1.0.
+    toggle action:[:state | Transcript showCR:'toggles state is: ' , state printString].
+
+    top addSubView:toggle.
+    top open.
+</PRE></CODE>
+</A>
+</UL>
+
+
+
+
+<H2><a HREF="#I_RADIOBUTTON" NAME="RADIOBUTTON">RadioButton</a></H2>
+<P>
+Like toggles, but these never turn themself off when clicked again.
+These are typically placed in a so called <VAR>RadioButtonGroup</VAR>,
+in which buttons turn off each other.
+
+
+
+<H2><a HREF="#I_SCROLLBAR" NAME="SCROLLBAR">Scrollers, ScrollBars and Sliders</a></H2>
+These are typically used as components of scrollable views.
+Except for sliders, these are seldom used isolated. Like buttons,
+these can be used either with an actionBlock or a changeMessage to its
+mdel (passing the scrollbars position as argument). A sliders value range
+defaults to 0..100, but can be changed as appropriate.
+<P>
+<UL>
+<LI> slider with action block:
+<A TYPE="example">
+<CODE><PRE>
+    |top slider|
+
+    top := StandardSystemView new.
+    top extent:100@100.
+
+    slider := HorizontalSlider new.
+    slider start:200 stop:400.
+    slider thumbOrigin:300.
+    slider action:[:value | Transcript showCR:'sliders value state is: ' , value rounded printString].
+
+    top addSubView:slider.
+    top open.
+</PRE></CODE>
+</A>
+</UL>
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif">
+Copyright © 1995 Claus Gittinger Development & Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.2 $ $Date: 2016-01-21 16:22:39 $
+</BODY>
+</HTML>

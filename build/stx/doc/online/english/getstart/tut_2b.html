@@ -1,0 +1,472 @@
+<HTML>
+<HEAD>
+<TITLE>Tutorial - Playing with Objects and Classes</TITLE>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="tut_2.html"> <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="tutorial.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="tut_3.html"> <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+
+
+
+<H1><A NAME="PLAYING_WITH_OBJECTS">Playing with Objects and Classes</A></H1>
+
+In the following chapters we use the Pen class, which simulates a pen drawing on
+a surface.
+<BR>
+Making use of this class has two advantages:
+first, it is very simple and thus easy to understand,
+second and even more important, it gives a graphical feedback of what we do and is therefore
+pure fun!
+
+<H2><A NAME="DRAWING_WITH_PENS">Drawing with a Pen</A></H2>
+
+Pens are objects that can draw onto a drawing surface,
+such as a view (window) on the screen.
+<BR>
+Let us first create both, a view and a pen, and assign them to workspace variables.
+This way we can later refer to them by name in any workspace.
+In Smalltalk, variables have to be declared before use,
+to help the programmer in detecting misspellings.
+This rule also applies to immediate evaluations in a workspace.
+
+<P>
+Let us declare these two variables now.
+First, open a Workspace via the Launcher's menu or by evaluating:
+<A HREF="../misc/onlyInSTX.html"
+   ACTION="doit: WorkspaceApplication open"
+   INFO="Click to open a Workspace Window">
+<CODE><PRE>
+   WorkspaceApplication open
+</PRE></CODE>
+</A>
+
+and create a variable named "<CODE>myPen</CODE>" by selecting the "<VAR>Add Workspace Variable</VAR>"
+menu item:
+<BR>
+<IMG SRC="WorkspaceVariable1.gif">
+<BR>
+
+enter "myPen" into the appearing name dialog.
+<BR>Repeat this procedure for a "<CODE>myView</CODE>" workspace variable.
+<P>
+Alternatively, you can change the workspaces settings, to automatically declare
+<B>all</B> unknown variables as workspace variables.
+Be aware that this opens the door to a bunch of strange errors when a variable's name
+is misspelled.
+Go to the "<VAR>Workspace</VAR>"-"<VAR>Settings</VAR>" menu for this.
+
+<P>
+Next, we must ensure that the Pen-class is present; it will be used in the
+following examples.
+For this, evalute "<CODE>Smalltalk loadPackage:'stx:goodies'</CODE>" in the workpace.
+
+<P>
+Then, evaluate the following code (in this or any other workspace):
+<A HREF="../misc/onlyInSTX.html"
+   ACTION="doit:
+Workspace addWorkspaceVariable:'myView'.
+Workspace addWorkspaceVariable:'myPen'.
+WorkspaceApplication openWith:'| view |
+
+myView := View new.
+myView width: 200.
+myView height: 200.
+myView open.
+
+myPen := Pen in:myView.
+
+' "
+   INFO="Click to open a Workspace with this code">
+<CODE><PRE>
+    | view |
+
+    myView := View new.
+    myView width: 200.
+    myView height: 200.
+    myView open.
+
+    myPen := Pen in: myView.
+</PRE></CODE>
+
+</A>
+
+This creates and opens up another view (referred to by the name "myView").
+In addition, it also creates a pen-instance and makes the workspace variable "myPen" refer to it.
+<P>
+A pen's internal state consists (among others) of its current drawing position on the
+canvas, the drawing direction and an up/down state.
+<BR>
+Pens understand a bunch of useful messages, among them are:
+<BLOCKQUOTE><DL>
+<DT><B>home</B>
+<DD>positions the pen at the center of the window and sets its drawing direction to "east"
+(i.e. left-to-right)
+<P>
+<DT><B>north</B>
+<DD>changes the pen's drawing direction to "north" (i.e. up)
+<P>
+<DT><B>turn:</B>&nbsp;<VAR>degrees</VAR>
+<DD>makes the pen turn clockwise the given number of degrees
+<P>
+<DT><B>down</B>
+<DD>places the pen onto its drawing canvas (i.e. followup moves will leave a drawing on the canvas)
+<P>
+<DT><B>up</B>
+<DD>lifts the pen from its drawing canvas (i.e. followup moves will NOT draw on the canvas)
+<P>
+<DT><B>go:</B>&nbsp;<VAR>distance</VAR>
+<DD>makes the pen move forward along its drawing direction the given number of pixels
+<P>
+<DT><B>fillColor:</B>&nbsp;<VAR>aColorObject</VAR>
+<DD>changes the pen's drawing color
+<P>
+</DL></BLOCKQUOTE>
+<BR>
+Views understand hundreds of useful messages (there is a whole
+<A HREF="../programming/viewintro.html">chapter</A> on that in the documentation).
+For now, we only need to know a single message:
+<BLOCKQUOTE><DL>
+<DT><B>clear</B>
+<DD>clears the window
+</DL></BLOCKQUOTE>
+<BR>
+The clear message is useful to remove any of the pen's previous drawings.
+<P>
+
+To make the pen draw a triangle, evaluate:
+<A HREF="../misc/onlyInSTX.html"
+   TYPE="example"
+   INFO="Click to execute this code">
+<CODE><PRE>
+    myPen home.
+
+    myPen go: 50.
+    myPen turn: 120.
+    myPen go: 50.
+    myPen turn: 120.
+    myPen go: 50.
+    myPen turn: 120.
+</PRE></CODE>
+</A>
+
+You get colored triangles with:
+<A HREF="../misc/onlyInSTX.html"
+   TYPE="example"
+   INFO="Click to execute this code">
+<CODE><PRE>
+    myView clear.
+    myPen home.
+    myPen fillColor: (Color red).
+
+    myPen go: 50.
+    myPen turn: 120.
+    myPen go: 50.
+    myPen turn: 120.
+    myPen go: 50.
+    myPen turn: 120.
+
+    myPen fillColor: (Color black).
+</PRE></CODE>
+</A>
+
+
+to make it draw a nice picture, try (and understand):
+<A HREF="../misc/onlyInSTX.html"
+   TYPE="example"
+   INFO="Click to execute this code">
+<CODE><PRE>
+    myView clear.
+    myPen home.
+    18 timesRepeat: [
+	myPen go: 50.
+	myPen turn: 120.
+	myPen go: 50.
+	myPen turn: 120.
+	myPen go: 50.
+	myPen turn: 120.
+
+	myPen turn:20.
+    ]
+</PRE></CODE>
+</A>
+(notice the use of a block here, and the extra turn after the triangle has been draw).
+<P>
+
+Another nice picture (which also shows a good use of blocks) is generated by:
+<A HREF="../misc/onlyInSTX.html"
+   TYPE="example"
+   INFO="Click to execute this code">
+<CODE><PRE>
+    |rect|
+
+    rect := [:side | 4 timesRepeat:[ myPen go:side; turn:90 ] ].
+
+    myView clear.
+    myPen home.
+
+    36 timesRepeat: [
+	rect value:60.
+	myPen turn:10.
+    ]
+</PRE></CODE>
+</A>
+
+
+
+<H2><A NAME="INSPECTING_A_PEN">Looking into our Pen</A></H2>
+
+Occasionally, you may want to look inside an object - either for
+education, to understand what information is held privately within an object,
+or to find a bug, when wrong values are computed or held by an object.
+<P>
+To inspect the internals of an object, we use a so called <DFN>Inspector</DFN>,
+which can be opened by sending the object to be inspect an "<CODE>inspect</CODE>"-message.
+<BR>
+Try:
+<A HREF="../misc/onlyInSTX.html"
+   TYPE="example"
+   INFO="Click to execute this code">
+<CODE><PRE>
+    myPen inspect.
+</PRE></CODE>
+</A>
+
+You see (scroll down the left list if you don't)
+that the pen keeps information about its current position
+("<VAR>locationX</VAR>" and "<VAR>locationY</VAR>") and its drawing direction ("<VAR>direction</VAR>").
+For now, ignore the other values.
+<P>
+Clicking on such an <VAR>instance variable</VAR>.
+The inspector shows the variable's value
+in the right so called <VAR>code-</VAR> or <VAR>value pane</VAR>.
+<P>
+It is also possible to interactively send messages to the inspected object
+from within the inspector.
+By entering the message expression into the code pane,
+and evaluating it (using "<VAR>doIt</VAR>") just like in a workspace.
+<BR>
+Within the inspector, the inspected object is referred to by the
+pseudo-name "<VAR>self</VAR>";
+Therefore, we cne send messages to the inspected object,
+even if no global- or workspace-variable refers to it.
+<P>
+As an excercise, let the pen draw something using self-messages from within an inspector.
+
+
+
+<H2><A NAME="BROWSING_A_PEN">Browsing Pen's Protocol</A></H2>
+
+To see all messages that our pen understands,
+we can open a so called <DFN>Browser</DFN> on its class.
+A browser is a powerful tool,
+both to find your way through the system (browsing) and to create or modify
+classes.
+<P>
+Browsers operate on the class(es) as they are present in your running system
+ - in contrast to other so called IDEs, which operate on a classes source code as
+contained in a file.
+Changes done in a browser take effect immediately and are immediately available.
+There is no need to leave the system, recompile or restart the program for such changes.
+<P>
+There are many ways to open up a browser:
+<BLOCKQUOTE>
+<DL>
+<DT>- via the Launcher
+<DD>by pressing the browser icon or selecting the "<VAR>SystemBrowser</VAR>" item in the
+classes menu.
+
+<P>
+<DT>- via a Workspace
+<DD>by selecting an expression's text and then applying
+the "<VAR>others</VAR>"-"<VAR>browseIt</VAR>" popup-menu function
+
+<P>
+<DT>- via an Inspector
+<DD>the menu also provides a "<VAR>browseIt</VAR>" popup-menu function
+to browse the selected private variable's class
+
+<P>
+<DT>- by evaluating an expression
+<DD>the browser can also be opened programatically.
+Either by sending the "<CODE>browse</CODE>" message to a class
+or by sending an "<CODE>open</CODE>"-message to the browser-class itself.
+</DL>
+</BLOCKQUOTE>
+
+You can also browse any objects class by simply sending it a "<CODE>browse</CODE>" message.
+Thus, to browse your pen's class, try:
+<A HREF="../misc/onlyInSTX.html"
+   TYPE="example"
+   INFO="Click to execute this code">
+<CODE><PRE>
+    myPen browse.
+</PRE></CODE>
+</A>
+
+Browsers are explained in detail in the <A HREF="../tools/TOP.html">"Programming Tools"</A> section of
+this online document.
+For now, lets just find the Pen-class (use the "<VAR>Find-Class</VAR>" menu function in the browser's tool menu)
+and have a look at the Pen classes full protocol
+(select "<VAR>*all*</VAR>" in the protocol list, which is the second right list in the browser's upper area).
+<P>
+Excercises:
+<BR>
+<OL>
+<LI>Open a browser and find the Pen class.
+<LI>Can you find the implementations of the "<CODE>go:</CODE>" and "<CODE>turn</CODE>"-messages
+(in the Pen class) we used before ?
+<LI>With the help of the browser, have a look into the implementation and see what is going on there.
+<LI>Find and try (in a workspace) the spiral- and mandala-messages.
+</OL>
+
+
+
+
+<H2><A NAME="ADDING_A_NEW_METHED">Adding a new Method to the Pen Class</A></H2>
+
+Let's assume, that we often have to draw triangles with our pen,
+and become bored of writing the above piece of code again and again.
+<BR>
+We want that pens understand a "<CODE>triangle</CODE>"-message so that we can write:
+<CODE><PRE>
+    myPen triangle.
+</PRE></CODE>
+and have the pen draw a triangle with sides of 50 pixel length.
+<BR>
+In order to teach Pens this new trick, perform the following steps:
+<OL>
+<LI>Open a browser and navigate to the Pen class.
+<LI>make sure you have the "instance"-toggle selected (this is explained later).
+<LI>select the protocol "geometric designs" in the second-right-top-pane.
+</OL>
+Now, your browser window should look like:
+<P>
+<IMG SRC="BrowsePen1.gif">
+<P>
+In the text-area at the bottm, replace the shown text with the
+code for the triangle-method, as:
+<A TYPE="copyexample"><CODE><PRE>
+    triangle
+	self go: 50.
+	self turn: 120.
+	self go: 50.
+	self turn: 120.
+	self go: 50.
+	self turn: 120.
+</PRE></CODE></A>
+The syntax is very simple: the first line defines the name of the new method (the selector),
+the rest are the statements to be evaluated, when a triangle message arrives at a pen.
+In this case, a bunch of messages is sent to the receiver-pen itself.
+<P>
+After you typed in (or copy-pasted) the text into the browser,
+
+<IMG SRC="BrowsePen2.gif">
+<P>
+install that new method, by selecting the "<VAR>accept</VAR>" item of the
+text-areas popup-menu. You can type in any garbage you like, or even use the
+code pane as a scratchpad workspace. What counts is the contents when
+the "<VAR>accept</VAR>" is performed.
+<P>
+After the <VAR>accept</VAR>, the browser will update its views to reflect the change - especially,
+you will see colorization and other markings
+in the class- and method lists. These indicate changes done to the system,
+and are described in more detail in the
+<A HREF="../tools/newbrowser/intro.html#ICONS">
+System Browser's Documentation</A>.
+Also notice, that the browser displays your code with some colorization.
+Finally, if you want the browser to pretty-print your code
+(that is: to indent it in a way to reflect the control flow),
+press the browser's "<VAR>PrettyPrint</VAR>" button.
+It is found in the upper tool-panel, beside the breakpoint traffic lights.
+
+
+<P>
+Now, try to send this new message to our old friend, "<VAR>myPen</VAR>" by evaluating (in a workspace):
+<A HREF="../misc/onlyInSTX.html"
+   TYPE="example"
+   INFO="Click to execute this code">
+<CODE><PRE>
+    myPen triangle
+</PRE></CODE>
+</A>
+Notice, that the pen class has been changed for a living object - we did not have
+to shutdown and restart any program.
+The existing pen instance learned the new message while being alive !
+<br>(Sorry to get so excited, but that is what makes
+an
+integrated development environment really "integrated")
+<P>
+Not only new code can be added this way. If you select any existing method, change it and
+finally <VAR>accept</VAR> it.
+
+
+<P>
+Excercises:
+<OL>
+<LI>Add another <CODE>Pen</CODE>-method named "<CODE>triangle:</CODE>" (with colon),
+which takes a single argument and draws a triangle with sides of that length.
+<LI>Once the above "<CODE>triangle:</CODE>" method works, change the older
+"<CODE>triangle</CODE>"-method (without colon) to invoke that new method.
+Such an action is called "refactoring" and is very common when working in Smalltalk.
+The goal is to have an algorithm or piece of code only once in the system.
+Avoiding such redundancy helps in the maintainability of a program.
+<LI>Add methods to draw squares and other geometric figures.
+<LI>Refactor your code by writing a central method
+(which takes the number of sides and side-length as arguments)
+and use that one as common-code helper for squares, triangles, rectangles etc.
+</OL>
+
+
+
+<P>
+
+
+<P>
+<DL><DT>Footnotes:<DD>
+<DT><A NAME="INTEGRATED_FN1" HREF="#BACK_INTEGRATED_FN1">(*)</A>
+<DD>Integrated Environment:
+<BR>
+In ancient times, this term meant that the programming environment
+was part of the executed program and vice versa.
+The first integrated programming environments were provided by Lisp
+and Smalltalk systems.
+<BR>
+Nowadays, by the help of a herd of marketing jerks,
+the meaning of "IDE" degenerated to:
+"a set of tools that can be started by a common launcher or are bundled together
+into one single top window". Many of those IDEs still call external compilers, linkers
+or even debuggers.
+<P>
+From the Smalltalk perspective, these systems are not "integrated" at all,
+and would be called "sophisticated launchers" instead.
+</DL>
+
+
+
+
+
+<P>
+<HR>
+Continue in <A HREF="tut_3.html">"Creating new Classes"</A>.
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif" ALT="[stx-logo]">
+<BR>Copyright &copy; Claus Gittinger Development & Consulting
+<BR>Copyright &copy; eXept Software AG
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.15 $ $Date: 2016-11-04 03:47:06 $
+
+</BODY>
+</HTML>

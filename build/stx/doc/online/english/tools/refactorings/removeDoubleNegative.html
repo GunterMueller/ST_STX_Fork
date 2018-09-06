@@ -1,0 +1,48 @@
+<html><head><title>Refactoring: 
+Remove Double Negative</title></head><body>
+<H1>
+Remove Double Negative</H1>
+<P><B> Refactoring contributed by 
+	
+<I><A href="mailto:ashley.frieze@phoretix.com">Ashley Frieze</A></I> and Martin Fowler </B></P>
+<P><I><CENTER>
+You have a double negative conditional.
+</CENTER></I></P>
+<P><B><CENTER>
+Make it a single positive conditional</CENTER></B></P>
+
+<PRE>
+ if ( !item.isNotFound() )
+</PRE><P><CENTER><IMG SRC="arrow.gif"/></CENTER></P>
+<PRE>
+ if ( item.isFound() )
+</PRE>
+<h2>Motivation</h2>
+<P>
+Double negatives are often frowned on by mavens of natural language. Often this frowning is inappropriate - certainly in English the double negative has its uses.
+</P>
+<P>
+But that is not true in programming. There double negatives are just plain confusing. So kill them on sight.
+</P>
+
+
+
+<h2>Mechanics</h2><UL>
+<LI>If you don't have a method with the opposite sense, create one. The body can just call the original (you can fix that later).</LI>
+<LI>Compile</LI>
+<LI>Replace each double negative with a call to the new function</LI>
+<LI>Compile and test after each replace</LI>
+<LI>If the negative form of the method isn't used elsewhere, use <A href="inlineMethod.html">Inline Method</A> to inline it into the positive form</LI>
+<LI>If you do need both forms, consider moving the body of the negative form over to the positive and reversing its sense, and then have the negative method call the positive one.</LI>
+<LI>Consider using Substitute Algorithm if the positive form is difficult to understand.</LI>
+
+
+
+
+
+</UL>
+
+
+
+
+<P /><P /><P><CENTER><A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A></CENTER></P></body></html>

@@ -1,0 +1,9 @@
+*.log
+config.h
+config.status
+config.cache
+ctags
+*.tds
+ctags.exe
+respfile
+makefile

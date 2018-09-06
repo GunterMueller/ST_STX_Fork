@@ -1,0 +1,49 @@
+a Draw program (90 % finished)
+
+Its not finished and might have bugs ....
+
+start with:
+
+	DrawTool open
+or:
+	DrawTool openOn:aFilename
+
+(will be autoloaded)
+
+This is a really nice demo and should be finished,
+however it is not meant as a product, but as
+an example. So accept (or fix) bugs :-)
+
+DrawTool was one of the very first ST/X demo apps;
+therefore you may find some code which should be
+rewritten for better coding style or to make better use
+of functionality which was not available at those old days.
+
+You may think that there is no need for 
+'yet another draw program' (and you are definitely
+right when saying this). However, many users found
+this a good framework to start with when building their
+own graphical editor applications. You can either create
+your own subclass(es) of ObjectView and copy methods from here.
+Or you can subclass DrawView/DrawTool and add/remove 
+functionality. One typical application was a Form-editor
+to allow users to customize frame and titles in a printed form
+sheet - you may find other applications for it.
+
+Also, since the ObjectView is used by many as a
+base for their applications, this is also a good
+test application for this class.
+
+Things todo:
+ - add printing support
+ - add better color handling (a color mixer for example)
+ - add document import (mac draw, fig etc.)
+ - add document output in various formats
+ - add more elements (Arcs, Arrows etc)
+
+
+NO WARRANTY
+This is a demo client or goody. If it works, use it for
+your application, subclass it or extract code from it.
+If it does not work as expected, fix it and return the
+changes to cg@ssw.de. Thanks.

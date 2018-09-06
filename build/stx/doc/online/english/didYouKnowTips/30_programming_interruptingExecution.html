@@ -1,0 +1,71 @@
+<HTML>
+  <HEAD>
+    <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+    <TITLE>Interrupting a Running Program</Title>
+  </HEAD>
+  <BODY>
+A running program can be interrupted in various ways:
+<H3>Interrupting</H3>
+Pressing the "<KBD>Interrupt</KBD>"-key ("<KBD>Untbr</KBD>" on german keyboards)
+in a window will interrupt that window's process and open a debugger on it.
+For those used to Squeak or Visualworks Smalltalk systems, the
+"<KBD>Alt-.</KBD>" (alt-period) and "<KBD>Ctrl-.</KBD>" key-combinations
+also show this behavior.
+<P>
+Leave the debugger, either by proceeding, aborting or terminating.
+<UL>
+<LI>proceed
+<BR>The interrupted process will continue where it was interrupted.
+<P>
+<LI>abort
+<BR>The interrupted process will be sent the Abort-signal. This signal is cought
+in every window-processes event loop and also in a workspaces doIt-evaluator.
+Thus, this usually gets you out of a faulty computation and brings you back into the
+command processor.
+<P>
+<LI>terminate
+<BR>The interrupted process will be terminated. If the process is a window-handling process,
+the corresponding window will typically be closed due to the processes cleanup actions:
+Occasionally, the window stays open (in case there is a bug in the processes unwind actions, and
+the cleanup cannot be performed correctly). If this happens, close the window using the launcher's
+<NOBR>"<I>Window</I>"</NOBR> - <NOBR>"<I>Close</I>"</NOBR> menu function.
+</UL>
+<P>
+More information on the debugger is found in the
+<A HREF="../getstart/tut_1.html#DEBUGGER">tutorial</A>
+and in the
+<A HREF="../tools/debugger/TOP.html#DEBUGGER">debugger's documentation</A>.
+
+<P>
+<H3>Aborting</H3>
+Pressing the "<KBD>CTRL-Interrupt</KBD>" ("<KBD>CTRL-Untbr</KBD>" on german keyboards)
+will abort the running process. This is the same as an interrupt followed by aborting in the debugger.
+The process receives the Abort-signal and is thrown back into its main event loop
+(or doIt command-loop, if it is a workspace).
+
+<P>
+<H3>Interrupting on the Console</H3>
+A runaway non-GUI process can be interrupted by pressing "<KBD>CTRL-C</KBD>" on the
+console (xterm) window. However, ST/X must have been started with a console window
+beforehand ("stx.com" vs. "stx.exe").
+
+<P>
+<H3>Using the Process Monitor</H3>
+If you have a access to a
+<A HREF="../tools/misc/TOP.html#PROCESSMONITOR">process monitor window</A>
+(or you can open one in the launcher),
+you can also interrupt, stop, abort or terminate any other process from there.
+
+<P>
+<H3>Breakpointing</H3>
+If you have a access to another browser window (or you can open one in the launcher),
+you can also place a breakpoint on a method which is known to be called by your runaway
+program. I.e. you don't need to stop a program for a breakpoint to become active.
+However, this only works if ou have any idea on what the runaway process is going to
+do.
+
+
+
+
+  </BODY>
+</HTML>

@@ -1,0 +1,104 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - PDF Library</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="smartcard.html">   <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">       <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="swiftLibrary.html"> <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>PDF Library</H1>
+
+<H2>Contents</H2>
+<UL>
+ <LI><A HREF="#INTRO"           NAME="I_INTRO">Introduction</A>
+ <LI><A HREF="#MOTIVATION"      NAME="I_MOTIVATION">Motivation and Features</A>
+ <LI><A HREF="#LIB_BASIC"       NAME="I_LIB_BASIC">Framework Overview</A>
+</UL>
+
+
+<H2><A HREF="#I_INTRO" NAME="INTRO">Introduction</A></H2>
+  The PDF library framework, generates PDF documents directly from the ST/X system,
+without the use of any other software.
+<br>
+  This can also be used as the basis of custom PDF applications.
+  In addition, you can use this as a PDF printer plugin for existing programms,
+  or to generate reports and documentation in a professional way.
+
+
+<H2><A HREF="#I_MOTIVATION" NAME="MOTIVATION">Motivation and Features</A></H2>
+
+This framework was written due to a need for PDF report generation in eXpecco.
+In a first try, puplic available java tools where used.
+Although these did generate acceptable PDF documents, all of the available tools
+were both very slow AND required huge amounts of memory (in addition to the need to
+provide and support an installable java runtime environment).
+<P>
+
+    Advantages of the ST/X PDF library compared to other PDF generation schemes
+(based on java) are:<br>
+<UL TYPE="arrow">
+<LI>The PDF-generation is very fast!
+<P>Comparisons to other PDF systems (made via a simple text document):
+  <UL>
+  <LI> 10 times faster as XSL-FO (Apache) transformation <br>
+  <LI> 6 times faster as iText (JAVA PDF library)<br><br>
+  </UL>
+<P>
+<LI> Small memory footage
+<BR>all of the Java solutions were not able to generate documents with thousands
+(not even hundreds) of pages without a need for huge amounts of memory.
+For example, the Java based report generator was not able to generate eXpecco test-reports
+with more than 50 pages. And even that required roughly half a gigabyte of memory.
+<br>
+The smalltalk PDF library does all this with almost no additional memory need.
+<P>
+
+<LI> Easy to expand existing features or add new customized features<br>
+<P>
+<LI> Simple interface to plug into other Smalltalk components
+</UL>
+    <br><br>
+
+
+<H2><A HREF="#I_LIB_BASIC" NAME="LIB_BASIC">Framework Overview</A></H2>
+
+On the low level, you can control the layout and look of every individual character you write to the PDF document.
+The PDF library is able to parse and care for font metric information;
+thus allowing for proper adjustment of text and tables.
+<BR>
+On a higher level, easy to use wrappers provide easy generation of Tables, Images etc.
+<P>
+Parameters which can be controlled are (among others):
+<UL>
+<LI> color
+<LI> bg color
+<LI> underline
+<LI> alignment
+<LI> table colspan
+<LI> border color
+<LI> ...many more...
+</UL>
+
+<H2>Licensing</H2>
+This addOn package is licensed separately from the base ST/X system.
+<BR>
+Please contact eXept for further details, license information & pricing.
+<P>
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 2006 eXept Software AG, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.6 $ $Date: 2016-07-11 09:24:05 $
+</BODY>
+</HTML>

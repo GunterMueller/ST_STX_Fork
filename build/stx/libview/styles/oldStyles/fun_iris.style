@@ -1,0 +1,80 @@
+; View defaultStyle:#'fun_iris' 
+;
+; like iris, but with different viewbackground
+; not really useful - test in selections and labels should be made
+; brighter (but a nice demo)
+;
+; notice, that the light- and dark brown shadow colors are computed from the bitmaps;
+; if you replace them by some (say reddish) image, they will change too.
+;
+; $Header: /cvs/stx/stx/libview/styles/oldStyles/fun_iris.style,v 1.11 2000-08-16 14:27:26 ca Exp $
+;
+
+#include 'iris.style'
+
+comment  'Fun style.\Like ''iris'', with rock-solid viewbackground.\May be too dark on some VGA displays'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Wie ''iris'', mit steinhartem, solidem Hintergrund.\\Erscheint auf vielen VGA Monitoren zu dunkel'
+#endif
+
+#viewBackground             (Smalltalk imageFromFileNamed:'bitmaps/granite.tiff' inPackage:'stx:libwidg3') 
+viewBackground              (Smalltalk imageFromFileNamed:'bitmaps/granite_small.tiff' inPackage:'stx:libwidg3')
+lightColor                  Color grey:66
+
+brightGrey                  Color grey:90
+disabledGrey                Color grey:66
+
+; foregroundColor             Color grey:80
+foregroundColor             =brightGrey
+
+brightYellow                Color yellow lightened
+
+wooden                      (Smalltalk imageFromFileNamed:'bitmaps/wood2H.tiff' inPackage:'stx:libwidg3')
+averageColor                =wooden averageColorIn:(0@0 corner:9@9)
+darkWood                    =averageColor darkened
+lightWood                   =averageColor lightened
+
+textViewBackground           Color red:100 green:90 blue:90  "a bit redish"
+text.backgroundColor          =textViewBackground
+
+label.foregroundColor         Color white
+
+button.foregroundColor          Color black
+button.backgroundColor          =wooden
+button.activeBackgroundColor    =lightWood
+button.enteredBackgroundColor   =lightWood
+button.disabledForegroundColor  =disabledGrey
+button.shadowColor              =darkWood
+button.lightColor               =lightWood
+button.halfShadowColor          =darkWood
+
+noteBook.foregroundColor        =brightGrey
+noteBook.activeForegroundColor  =brightYellow
+framedBox.foregroundColor       =brightGrey
+
+toggle.activeBackgroundColor    =lightWood
+toggle.activeLevel              -2
+
+checkToggle.checkColor           Color white
+checkBox.labelForegroundColor    Color white
+checkToggle.activeBackgroundColor =wooden
+
+menu.foregroundColor              =brightGrey
+menu.hilightForegroundColor       =brightYellow
+menu.hilightBackgroundColor       =viewBackground
+menu.disabledForegroundColor      =disabledGrey
+
+selection.foregroundColor         =brightGrey
+selection.hilightForegroundColor  =brightYellow
+selection.hilightBackgroundColor  =viewBackground
+
+; ruler.foregroundColor             =brightYellow
+
+scroller.thumbColor              =wooden
+scroller.thumbShadowColor        =darkWood
+scroller.thumbLightColor         =lightWood
+scroller.thumbHalfShadowColor    =darkWood
+scroller.ghostColor              =darkWood
+scroller.thumbEnteredColor       =lightWood
+

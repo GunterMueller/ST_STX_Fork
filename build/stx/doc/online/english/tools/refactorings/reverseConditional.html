@@ -1,0 +1,40 @@
+<html><head><title>Refactoring: 
+Reverse Conditional</title></head><body>
+<H1>
+Reverse Conditional</H1>
+<P><B> Refactoring contributed by 
+	
+<I><A href="http://www.math.grin.edu/~murphyw">Bill Murphy</A></I> and Martin Fowler </B></P>
+<P><I><CENTER>
+You have a conditional that would be easier to understand if you reversed its sense.
+</CENTER></I></P>
+<P><B><CENTER>
+Reverse the sense of the conditional and reorder the conditional's clauses.
+</CENTER></B></P>
+
+<PRE>
+ if ( !isSummer( date ) )
+  charge = winterCharge( quantity );
+ else
+  charge = summerCharge( quantity );
+</PRE><P><CENTER><IMG SRC="arrow.gif"/></CENTER></P>
+<PRE>
+ if ( isSummer( date ) )
+  charge = summerCharge( quantity );
+ else
+  charge = winterCharge( quantity );
+</PRE>
+<h2>Motivation</h2>
+<P>
+Often conditionals can be phrased in way that makes them hard to read. This is particularly the case when they have a not in front of them. If the conditional only has a "then" clause and no "else" clause, this is reasonable. However if the conditional has both clauses, then you might as well reverse the conditional.</P>
+
+<h2>Mechanics</h2><UL>
+<LI>Remove negative from conditional.</LI>
+<LI>Switch clauses</LI>
+<LI>Compile and test.</LI>
+</UL>
+
+
+
+
+<P /><P /><P><CENTER><A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A></CENTER></P></body></html>

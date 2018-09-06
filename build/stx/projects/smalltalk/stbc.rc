@@ -1,0 +1,77 @@
+"/ Encoding: iso8859-1
+"/
+"/ $Header$
+"/
+"/ MIMEType: application/x-smalltalk-source
+"/
+"/ ST/X startup command file:
+"/
+"/ bytecode compiler frontend for smalltalk
+"/ usage: stbc file.st
+"/
+"/ creates file.cls, which can be binary loaded.
+"/
+"/ Notice:
+"/   this is an experiment to provide a tool which looks like javac;
+"/   stbc is actually not used in the current system.
+"/   (the same functionality is provided by the browsers fileOut-binary function)
+"/
+"/ By the way - this is an example for a headless application.
+
+"/ load the files, save binary versions
+
+|args readOnly|
+
+ObjectMemory infoPrinting: false.
+"/ObjectMemory debugPrinting: true.
+Object infoPrinting: false.
+Smalltalk silentLoading:true.
+
+Compiler stcCompilation:#never.
+Compiler warnSTXSpecials:false.
+Compiler warnings:false.
+
+[
+    readOnly := false.
+    args := Smalltalk commandLineArguments.
+    args do:[:arg |
+	|inFile outFile baseName className class|
+
+	arg = '-r' ifTrue:[
+	    readOnly := true
+	].
+	(arg startsWith:'-') ifFalse:[
+	    inFile := arg asFilename.
+	    ('stbc [info]: loading ' , inFile name , ' ...') errorPrintCR.
+	    Object errorSignal handle:[:ex |
+		'stbc [error]: error while loading: ' errorPrint. ex errorString errorPrintCR.
+	    ] do:[
+		Smalltalk fileIn:inFile name.
+	    ].
+	    ('stbc [info]: loaded ' , inFile name) errorPrintCR.
+
+	    readOnly ifFalse:[
+		baseName := inFile withoutSuffix.
+		className := baseName baseName.
+		outFile := baseName withSuffix:'cls'.
+
+		className := Smalltalk classNameForFile:className.
+		class := Smalltalk classNamed:className.
+		class notNil ifTrue:[
+		    ('stbc [info]: saving ' , class name , ' into ', outFile pathName, ' ...') errorPrintCR.
+		    class binaryFileOutWithSourceMode:#reference as:outFile.
+		] ifFalse:[
+		    ('stbc [error]: no class for ' , className) errorPrintCR
+		].
+	    ].
+	    readOnly := false.
+	]
+    ].
+] on:UserInterruptSignal do:[:ex|
+    ('stbc [error]: aborted by user') errorPrintCR.
+    Smalltalk exit.
+].
+!
+('stbc [info]: done') errorPrintCR.
+Smalltalk exit.
+!

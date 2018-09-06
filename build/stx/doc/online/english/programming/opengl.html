@@ -1,0 +1,101 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - OpenGL interface</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="namespaces.html">     <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="tdv.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>OpenGL interface</H1>
+
+<H2>Overview</H2>
+
+This goody implements protocol to interface to the openGL 3D graphics
+library. Although similar to GL, this differs in its function syntax
+and provides much more functionality; especially, light sources, textures etc.
+
+<P>
+The openGL interface may be used both with a true GL library,
+or with the freely available GL replacement MESA.
+
+
+<H2>Documentation</H2>
+Use the source - Luke.
+
+<H2>Examples</H2>
+In order to execute openGL examples, you first have to make certain, that
+the GL libraries is installed on your system (libGL.so, libGLU.so)
+or the Mesa libraries (libMesaGL.so, libMesaGLU.so) are installed along
+your LD_LIBRARY_PATH.
+<BR>
+Second, make certain that the openGL interface classes have been compiled
+and linked against the proper GL libraries.
+(see the Makefile and README in $(TOP)/libopengl).
+<P>
+File-in the openGL classLibrary ($(TOP)/libopengl/libopengl.so).
+<BR>
+<CODE><PRE>
+    Smalltalk fileIn:'.../libopengl/libopengl.so'
+</PRE></CODE>
+or use the FileBrowser's fileIn menu action.
+<P>
+FileIn the example(s):
+<CODE><PRE>
+    Smalltalk fileIn:'.../clients/GLDemos/GLMoreCubesDemo.st'.
+</PRE></CODE>
+or:
+<CODE><PRE>
+    Smalltalk fileIn:'.../clients/GLDemos/GLBlendingDemo.st'.
+</PRE></CODE>
+or use the FileBrowser's fileIn menu action.
+
+<P>
+Open the example:
+<CODE><PRE>
+    GLMoreCubesDemo open
+</PRE></CODE>
+or:
+<CODE><PRE>
+    GLBlendingDemo open
+</PRE></CODE>
+or double-click on the class in the systemBrowser..
+
+<H2>Licensing</H2>
+This addOn package is part of the base ST/X system, and
+<BR>the copyright is held by eXept Software AG.
+<BR>
+You are free to use it under the conditions of your
+ST/X licence
+<BR>(i.e. commercial vs. non-commercial).
+
+
+<H2>No Warranty</H2>
+This goody is provided AS-IS without any warranty whatsoever.
+
+
+
+<H2>Origin/Authors</H2>
+Authors:
+<BR>
+Thomas Zwick (eXept)
+<BR>
+Pierre Schwarz (eXept)
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.5 $
+</BODY>
+</HTML>

@@ -1,0 +1,27 @@
+/* XPM */
+static char *smiley_frown2_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"15 15 5 1",
+/* colors */
+"a c black",
+"b c magenta",
+"c c #CE00FF",
+"d c #FF00CE",
+"e c none",
+/* pixels */
+"eeeeaaaaaaaeeee",
+"eeeabbbbbbbaeee",
+"eeabbbbbbbbbaee",
+"eabbaabbbaabdae",
+"eabbaabbbaabdae",
+"abbbcbbbbbbbdda",
+"abbbcbbbbbbbdda",
+"abbbbbbbbbbbdda",
+"abbbbbbbbbbbdda",
+"abbbbbbbbbbbdda",
+"eabbbaaaaabbdae",
+"eabbabbbbbabdae",
+"eeabbbbbbbbbaee",
+"eeeabbbbbbbaeee",
+"eeeeaaaaaaaeeee",
+};

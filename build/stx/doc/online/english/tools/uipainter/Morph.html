@@ -1,0 +1,105 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+   <TITLE>Geometric Components</TITLE>
+</HEAD>
+<BODY>
+<A HREF="TOP.html#TABLEOFTHEWIDGETS" NOPRINT><IMG SRC="../../../icons/DocsUpArrow.gif" ALT="Table of the Widgets" NOSAVE HEIGHT=30 WIDTH=30></A>
+<BR>&nbsp;
+<HR ALIGN=LEFT WIDTH="100%">
+
+<H1><FONT SIZE=+4>Geometric Components</FONT></H1>
+
+<IMG SRC="../../../pictures/GUIPainterWidgetMorphs.gif" ALT="[A Picture of some Morphs]" NOSAVE HEIGHT=24 WIDTH=207>
+<P>Class: <TT>ArcMorph</TT>, <TT>RectangleMorph</TT>, ...
+<BR>Spec Class: <TT>ArcMorphSpec</TT>, <TT>RectangleMorphSpec</TT>, ...
+
+<P>These components are lightweight elements in a GUI; they are not derived from the View class,
+but instead from the much more lightweight VisualPart hierarchy. This means, that they do not
+create a true window in the graphic system. Instead, these are drawn and handled by their container.
+<P>
+Being non-Views, these cannot be identified as separate objects from the outside.
+This affects any event recorder or window-tree exploring tools (external to Smalltalk).
+<P>
+Also, these are drawn into the containing view, instead of having their own view.
+This means, that they are always clipped by any view which lies inside such a components
+area. These components cannot be made to cover any other view.
+<P>
+
+All of these components behave similar; their look can be controlled either by providing static
+values for the colors and attributes, or by providing them dynamically through channels
+(i.e. valueHolders as provided by aspect methods from the application).
+
+<HR ALIGN=LEFT WIDTH="100%">
+
+<H3>The <I>Basics</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>ID</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Unique symbolic name (ID) of the box.&nbsp;</B>&nbsp;
+<BR>This ID can be used by the application to access the widget
+<br>&nbsp;via <TT>"builder>>componentAt:#ID"</TT>.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Line</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE> <B>Controls if a frame-line is to be drawn</B> with the line-color.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Line Color</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE> <B>The line-color</B> (if line is true).</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Line Width</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE> <B>The line-width</B> (if line is true).</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Line Style</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE> <B>The line-style</B> (if line is true).
+<BR>&nbsp;If provided via a channel, the value must be one of the
+<BR>&nbsp;symbols: #solid, #dashed or #dotted</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Fill</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE> <B>Controls if the object should be filled</B> with the fill-color </TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Fill Color</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE> <B>The fill-color</B> (if fill is true).</TD>
+</TR>
+
+</TABLE>
+
+
+<H3>The <I>Morph</I> Section:</H3>
+
+Defines aspect selectors for all of the previous attributes. Thus, an application can control
+any of the above attribute dynamically via a valueHolder.
+
+
+<H3>The <I>Help</I> Section:</H3>
+
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="HelpTool.html">Using the Help Tool</A>"
+
+<H3>The <I>Layout</I> Section:</H3>
+
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="LayoutTool.html">The Layout of the Widgets</A>"
+
+<P>
+<HR>
+
+<P><IMG SRC="../../../icons/stx.gif" ALT="[stx-logo]" NOSAVE NOPRINT HEIGHT=48 WIDTH=47 ALIGN=CENTER>
+<BR><TT>Copyright &copy; 1998 eXept Software AG, all rights reserved</TT>
+<BR>
+<HR>
+</BODY>
+</HTML>

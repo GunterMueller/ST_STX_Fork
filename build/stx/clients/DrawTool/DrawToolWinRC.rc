@@ -1,0 +1,45 @@
+//
+// DO NOT EDIT
+// automagically generated from the projectDefinition: stx_clients_DrawTool.
+//
+#define IDR_MAINFRAME                   128
+
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+
+
+
+VS_VERSION_INFO VERSIONINFO
+  FILEVERSION     5,3,1,3
+  PRODUCTVERSION  5,3,1,1
+//  FILEFLAGSMASK 0x3fL
+#if (__BORLANDC__)
+  FILEFLAGSMASK   VS_FF_DEBUG | VS_FF_PRERELEASE
+  FILEFLAGS       VS_FF_PRERELEASE | VS_FF_SPECIALBUILD
+  FILEOS          VOS_NT_WINDOWS32
+  FILETYPE        VFT_DLL
+  FILESUBTYPE     VS_USER_DEFINED
+#endif
+
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904E4"
+    BEGIN
+      VALUE "CompanyName", "eXept Software AG\0"
+      VALUE "FileDescription", "Smalltalk/X Application Application\0"
+      VALUE "FileVersion", "5.3.1.3\0"
+//      VALUE "OriginalFilename", "DAPASX.EXE\0"
+      VALUE "InternalName", "DrawTool\0"
+      VALUE "LegalCopyright", "Copyright Claus Gittinger 1988-2006\nCopyright eXept Software AG 1998-2006\0"
+      VALUE "ProductName", "Smalltalk/X\0"
+      VALUE "ProductVersion", "5.3.1.1\0"
+      VALUE "ProductDate", "Fri, 22 Sep 2006 11:08:02 GMT\0"
+    END
+  END
+
+  BLOCK "VarFileInfo"
+  BEGIN                               //  Language   |    Translation
+    VALUE "Translation", 0x409, 0x4E4 // U.S. English, Windows Multilingual
+  END
+END

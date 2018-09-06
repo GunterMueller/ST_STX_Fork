@@ -1,0 +1,7 @@
+sample comfiguration files for unixODBC.
+
+On my system (SUSE linux), these should go to 
+	/usr/local/etc/odbc.ini
+and
+	/usr/local/etc/odbcinst.ini
+respectively.

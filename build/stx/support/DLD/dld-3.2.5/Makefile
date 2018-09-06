@@ -1,0 +1,135 @@
+ARCHIVE = libdld.a
+LIBS = dld.o find_exec.o define.o get_func.o get_symbol.o \
+	list_undef.o mk_dummy.o ref.o ul_file.o ul_symbol.o \
+	remove.o error.o
+INCLUDES = dld.h defs.h
+
+prefix = /usr/local/
+exec_prefix = $(prefix)/
+libdir = $(exec_prefix)lib/
+infodir = $(prefix)info/
+includedir = $(prefix)include/
+
+CC= gcc
+CFLAGS = -O6 -I.
+
+all:	${ARCHIVE}
+
+install:	$(ARCHIVE) dld.info
+	-cp libdld.a $(libdir)
+	-cp dld.info $(infodir)
+	-cp dld.h $(includedir)
+
+info:	dld.texinfo
+	makeinfo dld.texinfo
+
+libdld.a: ${LIBS} ${INCLUDES}
+	rm -f libdld.a
+	ar q libdld.a ${LIBS}
+	ranlib libdld.a
+
+clean:
+	-rm -f ${ARCHIVE} *.o
+	cd test; make clean
+
+check:	all
+	cd test; make all
+
+.c.o:
+	${CC} -c ${CFLAGS} $*.c
+
+cfiles= define.c defs.h dld.c dld.h error.c find_exec.c get_func.c \
+	get_symbol.c list_undef.c mk_dummy.c ref.c remove.c \
+	ul_file.c ul_symbol.c
+
+TAGS:
+tags:	$(cfiles)
+	etags $(cfiles)
+
+#			  DISTRIBUTION STUFF
+
+THISDIR = $(HOME)/dld
+
+allfiles = README dld-3.2.5.lsm COPYING ChangeLog TODO Makefile $(cfiles)
+
+tfiles = EXPECTED-OUTPUT Makefile SAMPLE_INPUT add1.c call_add1.c \
+	add2.c call_add2.c chain1.c chain2.c chain3.c get-sym.c \
+	hello.c list-undefined.c main.c need.c overlay.c print_arg.c \
+	print_global.c read-a.out.c reload-test.c reload-test.s \
+	reload.c remove.c simple.c test-define.c
+
+dist:	dld-src.tar.gz dld-bin.tar.gz
+	mv -f dld-src.tar.*z ~/dist/
+	mv -f dld-bin.tar.*z ~/dist/
+	cp -f dld*.lsm ~/dist/
+tar.gz:	dld-src.tar.gz
+dld-src.tar.gz:	dld-src.tar
+	-rm -f dld-src.tar.*z
+	gzip dld-src.tar
+	chmod 664 dld-src.tar.*z
+tar.Z:	dld-src.tar.Z
+dld-src.tar.Z:	dld-src.tar
+	-rm -f dld-src.tar.Z
+	compress dld-src.tar
+	chmod 664 dld-src.tar.Z
+shar.Z:	dld.shar.Z
+dld.shar.Z:	dld.shar
+	-rm -f dld.shar.Z
+	compress dld.shar
+	chmod 664 dld.shar.Z
+
+tar:	dld-src.tar
+dld-src.tar:	temp/dld
+	cd temp; tar cohf ../dld-src.tar dld
+	chmod 664 dld-src.tar
+shar:	dld.shar
+dld.shar:	temp/dld
+	cd temp; shar dld >../dld.shar
+	chmod 664 dld.shar
+dclshar:	dld.com
+com:	dld.com
+dld.com:	temp/dld
+	cd temp; dclshar dld >../dld.com
+	chmod 664 dld.com
+zip:	dld.zip
+dld.zip:	temp/dld
+	cd temp; zip -ru ../dld.zip dld
+	chmod 664 dld.zip
+pubzip:	temp/dld
+	cd temp; zip -ru ~/pub/dld.zip dld
+	chmod 664 ~/pub/dld.zip
+
+dld-bin.tar.gz:	dld-bin.tar
+	-rm -f dld-bin.tar.*z
+	gzip dld-bin.tar
+	chmod 664 dld-bin.tar.*z
+dld-bin.tar:	 $(libdir)libdld.a $(infodir)dld.info $(includedir)dld.h
+	cd $(prefix); tar cohf dld-bin.tar include/dld.h \
+		lib/libdld.a info/dld.info src/dld/COPYING src/dld/README
+	cd $(prefix); chmod 664 dld-bin.tar
+	mv $(prefix)/dld-bin.tar ./
+
+temp/dld:	$(allfiles)
+	-rm -rf temp
+	mkdir temp
+	mkdir temp/dld
+	ln $(allfiles) dld.texinfo temp/dld
+	mkdir temp/dld/test
+	cd test; ln $(tfiles) ../temp/dld/test
+
+diffs:	pubdiffs
+pubdiffs:	temp/dld
+	mv temp/dld temp/ndld
+	cd temp;unzip ~/pub/dld.zip
+	-rm -f dld.pat
+	-diff -rc temp/dld temp/ndld > dld.pat
+	-rm -rf temp
+	ls -l dld.pat
+
+distdiffs:	temp/dld
+	mv temp/dld temp/ndld
+	cd temp;zcat ~/dist/dld*.tar.gz | tar xvf -
+	-rm -f dld.pat
+	-diff -rc temp/dld temp/ndld > dld.pat
+	-rm -rf temp
+	ls -l dld.pat

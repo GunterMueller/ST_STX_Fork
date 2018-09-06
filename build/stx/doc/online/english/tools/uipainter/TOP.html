@@ -1,0 +1,938 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+   <META NAME="Author" CONTENT="Thomas Zwick, eXept software AG, Germany">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.04 [en] (X11; I; Linux 2.0.30 i586) [Netscape]">
+   <TITLE>Using the GUI Painter</TITLE>
+</HEAD>
+<BODY>
+<A HREF="../TOP.html" NOPRINT><IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]" NOSAVE HEIGHT=30 WIDTH=30></A>
+<A HREF="MenuEditor.html" NOPRINT><IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]" NOSAVE HEIGHT=30 WIDTH=30></A>
+<BR>&nbsp;
+<HR ALIGN=LEFT WIDTH="100%">
+
+<H1><FONT SIZE=+4>Using the GUI Painter</FONT></H1>
+
+<H2>Index</H2>
+
+<UL>
+<LI><A NAME="I_INTRO" HREF="#INTRO">Introduction</A></LI>
+
+<LI><A NAME="I_START" HREF="#START">Starting the GUI Painter</A></LI>
+
+<LI><A HREF="#DESCRIPTION">Description of a Window Application</A></LI>
+
+<UL>
+<LI><A HREF="#WHERETOCREATETHECLASS">Where to Create the Application Class</A></LI>
+
+<LI><A HREF="#THEWIDGETSANDHOWDOTHEYWORK">Widgets and How they Work</A></LI>
+
+<UL>
+<LI><A HREF="#TABLEOFTHEWIDGETS">Table of the Widgets</A></LI>
+<UL>
+  <LI><A HREF="#TABLEOFTHEWIDGETS">Button Widgets</A></LI>
+  <LI><A HREF="#TABLEOFTHEWIDGETS">Menu Widgets</A></LI>
+  <LI><A HREF="#TABLEOFTHEWIDGETS">Text Widgets</A></LI>
+  <LI><A HREF="#TABLEOFTHEWIDGETS">List Widgets</A></LI>
+  <LI><A HREF="#TABLEOFTHEWIDGETS">Grouping Widgets</A></LI>
+  <LI><A HREF="#TABLEOFTHEWIDGETS">Geometric</A></LI>
+  <LI><A HREF="#TABLEOFTHEWIDGETS">Misc Widgets</A></LI>
+</UL>
+
+<LI>
+<A HREF="#COMMONATTRIBUTES">Common Attributes</A></LI>
+<UL>
+  <LI><A HREF="#THEIDOFTHEWIDGETS">The ID</A></LI>
+  <LI><A HREF="#THECOLOROFTHEWIDGETS">The Color(s)</A></LI>
+  <LI><A HREF="#THEFONTSTYLEOFTHEWIDGETS">The Font Style</A></LI>
+  <LI><A HREF="#THEHELPTOOLOFTHEWIDGETS">The Help Tool</A></LI>
+  <LI><A HREF="LayoutTool.html">The Layout</A></LI>
+</UL>
+
+</UL>
+
+<LI><A HREF="#HOWTOHOLDTHEDATA">How to Hold the Data</A></LI>
+
+<LI><A HREF="#HOWTOACCESSWIDGETS">How and Where to Access Other Attributes</A></LI>
+
+<LI><A HREF="#HOWTOGETINFORMED">How to Get Informed When an Aspect Changes</A></LI>
+
+<LI><A HREF="#HOWTOCLEANUP">How to Cleanup and Shutdown the Application</A></LI>
+
+<LI><A HREF="#HOWTOSUBAPPS">How to Embed SubApplications</A></LI>
+
+<LI><A HREF="#HOWTOSUBAPPS">How to Embed Other Views</A></LI>
+
+<LI><A HREF="#HOWTOUSEDIALOGS">How to Create a GUI-Dialog Without an Extra Class</A></LI>
+</UL>
+
+
+<LI>
+<A HREF="Functions.html">Functions of the GUI Painter</A></LI>
+<UL>
+<LI>
+<A HREF="Functions.html#BASICSFUNCTIONSOFTHEGUIPAINTER">Basic Functions</A></LI>
+
+<LI>
+<A HREF="Functions.html#FILEFUNCTIONSOFTHEGUIPAINTER">File Functions</A></LI>
+
+<LI>
+<A HREF="Functions.html#EDITFUNCTIONSOFTHEGUIPAINTER">Edit Function</A></LI>
+
+<LI>
+<A HREF="Functions.html#ALIGNFUNCTIONSOFTHEGUIPAINTER">Align Functions</A></LI>
+
+<LI>
+<A HREF="Functions.html#MISCFUNCTIONSOFTHEGUIPAINTER">Misc Functions</A></LI>
+</UL>
+
+<LI>
+<A HREF="Examples.html">Examples</A></LI>
+
+<UL>
+<LI>
+<A HREF="Examples.html#ASIMPLEEXAMPLE">A Simple Example</A></LI>
+
+<LI>
+<A HREF="Examples.html#ANADVANCEDEXAMPLE">An Advanced Example</A></LI>
+
+<LI>
+<A HREF="Examples.html#HINTS">Hints &amp; Recommendations</A></LI>
+</UL>
+</UL>
+
+<HR WIDTH="100%">
+
+<H2><A NAME="INTRO"></A>Introduction</H2>
+
+The <U>G</U>raphical <U>U</U>ser <U>I</U>nterface (GUI-) Painter of <I>ST/X</I>
+is a complete tool for the interactive creation of user interfaces.
+All functions which required to create user interfaces are combined in the GUI Painter.
+User interfaces are assembled by dragging window components (widgets) from a
+so called gallery window and dropping them into a so called canvas window.
+Then, either by using the mouse or by editing position values,
+widgets can be sized and moved to the desired boundaries and positions
+within the canvas window.
+Finally, the model (data) attributes are defined by creating aspect accessing methods.
+
+<P>
+While editing an interface, the GUI Painter holds all attribute values
+of the application window and their containing widgets. This collection
+of attribute values fully represents a definition of the window application
+and is called <DFN>window specification</DFN> or <DFN>window spec</DFN> for short.
+<BR>
+Window specs are stored in the application by generating a method,
+which when invoked, returns the spec as a literalArray.
+That method is typically called "windowSpec" and found in the
+"interface specs" category.
+<BR>
+A literalArray is an array object from which the original (spec-) object can be
+reconstructed. Structure-wise, literalArrays are very similar to XML.
+However, in contrast to XML, they are not text-based, but an array
+of symbolic, numeric and string constants (i.e. literals).
+As such, they are much easier (and faster) to parse and process than XML would be.
+<BR>
+When the application is started, a windowBuilder reads that specification and
+creates a hierarchy of widgets as specified therein.
+<P>
+Notice, that the application can already be started and tested while being constructed
+in the UI-Painter - even if the application's specification or code are only incompletely
+defined.
+Typically, widget placement and programming of behavior are done incrementally and
+interleaved while a GUI application is being developed.
+At any time during the edit process, it is possible to see what has been defined so far
+by simply clicking on the start-application icon in the UI-Painter.
+<P>
+As the windowSpec remains part of the application and provides all required
+information for the UI-Painter, interfaces can be re-edited
+and modified at any time later, by openig an UI-Painter on a window spec.
+(double-click on a window-spec-method in the browser).
+
+<P><FONT COLOR="#000000">The format of the <I>ST/X's</I> window</FONT>
+specification are designed to be upward compatible from <I>VisualWorks
+*</I> - this means that existing window specifications should work in the
+<I>ST/X</I> environment. (We depend on user feedback through verbal descriptions
+or existing specifications to validate and maintain this upward compatibility
+- you are welcome to send a note or your window resource methods for validation,
+when encountering incompatible specifications... .) Since <I>ST/X's</I>
+views contain more attributes, their specifications may or may not be backward
+compatible.
+<BR>&nbsp;
+
+<P><I>* VisualWorks</I> is a trademark of ObjectShare, Inc.
+
+<HR ALIGN=LEFT WIDTH="100%">
+
+<H2><A NAME="START"></A>Starting the GUI Painter</H2>
+
+There are 3 ways to start the GUI Painter:
+<OL>
+<LI>
+by clicking on the
+<IMG SRC="../../../pictures/GUIPainterButton.gif" ALT="The Start Button of the GUI Painter"
+	HSPACE=4 NOSAVE HEIGHT=38 WIDTH=38 ALIGN="top">
+-button
+or
+by selecting the "<I>Tools/GUI Painter</I>"-menu item of the launcher
+</LI>
+<P>
+
+<LI>
+by double-clicking
+on a resource method (marked by &nbsp;<IMG SRC="../../../pictures/CanvasIcon.gif" ALT="An icon representing a canvas resource method" NOSAVE HEIGHT=11 WIDTH=13>)
+containing a window spec
+in a <A HREF="../sbrowser/TOP.html">System Browser</A>
+</LI>
+<P>
+
+<LI>
+by evaluating one of</LI>
+
+<BR><TT>&nbsp;&nbsp;&nbsp; UIPainter open</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp; UIPainter openOnClass:</TT><I>anApplicationClass</I>
+<TT>andSelector:<I>aWindowSpecSelector</I></TT>
+</OL>
+
+<BR>After startup, the GUI Painter appears with 3 windows as shown in
+next figures:
+
+<P><IMG SRC="../../../pictures/GUIPainterCanvas.gif" ALT="The Canvas Window of the GUI Painter" NOSAVE HEIGHT=326 WIDTH=310>
+<BR>The canvas window (here with grid enabled) for assembling your widgets.
+
+
+<P><IMG SRC="../../../pictures/GUIPainterGallery.gif" ALT="The Gallery Window of the GUI Painter" NOSAVE HEIGHT=309 WIDTH=531>
+<BR>The gallery window containing widgets to be dragged into the canvas
+
+<P><IMG SRC="../../../pictures/GUIPainter.gif" ALT="The Control Window of the GUI Painter" NOSAVE HEIGHT=524 WIDTH=577>
+<BR>The window for controlling the widgets, geometry and attributes
+<BR>&nbsp;
+
+<UL>
+<LI>
+<B><FONT SIZE=+1>The canvas window</FONT></B></LI>
+
+<BR>This presents a window of how your final application will look like.
+It is also the target of drop actions, when more widgets are added. Finally,
+it allows direct manipulation of the size and position of widgets.
+<BR>&nbsp;
+<LI>
+<B><FONT SIZE=+1>The gallery window</FONT></B></LI>
+
+<BR>This window contains a gallery of templates of the widgets. Widgets
+can be dragged from this window into the canvas window. The gallery window
+was itself built using the GUI Painter. So, it is easy to add your own widgets
+or templates for common uses in a project.
+<BR>&nbsp;
+<LI>
+<B><FONT SIZE=+1>The control window</FONT></B></LI>
+
+<BR>This window provides a central controlling of the editing widgets by:
+<BR>&nbsp;
+<UL>
+<LI>
+<B>A tree list on the left side</B></LI>
+
+<BR>The widgets are shown as tree items in a hierarchical order. The saving
+(in the resource method of the window spec) and the display of the
+widget items is done in that order. This order affects the focus-tabbing-sequence and
+the redraw behavior in case widgets are overlapping or stacked ontop of each other.
+<BR>
+Notice, that this tree-view can also be used as a drop-target for widgets
+dragged from the galley.
+<BR>&nbsp;
+<LI>
+<B>A property canvas on the right side</B></LI>
+
+<BR>By selecting a widget item in the tree list the corresponding editing
+panes are shown.
+<BR>&nbsp;
+<LI>
+<B>A menu and a tool bar at the top</B></LI>
+
+<BR>Here, all functions of the GUI Painter can be accessed, for example,
+the selected widget can be changed in its hierarchical order or position.
+<BR>&nbsp;
+<LI>
+<B>An info bar at the bottom</B></LI>
+
+<BR>If you move with the mouse cursor over the attribute fields of the
+widgets, this field shows a (more or less) useful help text.
+A more detailed widget-documentation
+can be opened by pressing the help button [?] in the tool bar.</UL>
+</UL>
+
+<HR ALIGN=LEFT WIDTH="100%">
+
+<H2><A NAME="DESCRIPTION"></A>Description of a Window Application</H2>
+
+<H3><A NAME="WHERETOCREATETHECLASS"></A>Where to Create the Application Class</H3>
+
+The class of your window application should be a direct or indirect subclass
+of <TT>ApplicationModel</TT>, in order to inherit the required
+mechanisms for startup and release.
+The GUI Painter generates (at least) one resource method
+for the window specification, which by default is called
+<TT>#windowSpec</TT>.
+
+<P>
+Window spec methods can also be useful outside the
+<TT>ApplicationModel</TT> hierarchy.
+This is useful for example, to open a constructed dialog or popupMenu.
+<BR>
+However, in this case, the builder must be provided with additional
+aspect-binding information (typically provided in a dictionary).
+<BR>
+Examples for this kind of use can be found by searching for senders of
+<CODE><PRE>
+    openFor:interfaceSpec:withBindings:
+</PRE></CODE>
+or
+<CODE><PRE>
+    openDialogInterface:withBindings:
+</PRE></CODE>
+and similar messages.
+
+
+<P>
+When your application is opened, it fetches this specification (by sending
+<TT>"self windowSpec"</TT>, and passes the spec to its window-builder.
+The builder recursively walks throughout the definition,
+and creates corresponding widgets on the fly.
+<BR>
+As widgets are built, named widgets are placed into a dictionary,
+and can later be accessed by the application via
+<CODE><PRE>
+    self builder componentAt:<VAR>nameOfTheComponent</VAR>
+</PRE></CODE>
+where <VAR>nameOfTheComponent</VAR> is the nameKey as specified in the
+UI-Painter.
+
+<H3><A NAME="THEWIDGETSANDHOWDOTHEYWORK"></A>Widgets and How they Work</H3>
+
+The widgets of <I>ST/X</I> consist of 2 basic objects:
+<UL>
+<LI>
+<B>The view object </B>- responsible for visualization and receiving of
+user events</LI>
+
+<LI>
+<B>The specification object</B> - responsible for reading the corresponding
+part in the window specification and for initializing the views behavior and
+attributes (model)</LI>
+</UL>
+The view objects (or short views) are instances of view classes which are
+subclasses of the abstract superclass <TT>View</TT> or <TT>SimpleView</TT>.
+Views do have a model, while SimpleViews do not; SimpleViews are typically
+used for geometry wrappers, such as frames, boxes, separators etc.
+<BR>
+Each widget
+has a specification class which inherits from <TT>UISpecification</TT>.
+The specification objects (or short specs) are temporarily created during the
+startup phase of the application.
+
+<P>For portability <I>ST/X</I> does not use native widgets of the underlying
+operating system. Most of a widget's appearance is read from a so called
+<DFN>style sheet</DFN>, which is a textfile
+found in the "libview/styles" subdirectory.
+You are free to design your own user interface by copying an existing style-file and modifying
+it as appropriate.
+For more details see chapter "<A HREF="../../custom/TOP.html#VIEWSTYLE">Changing
+the view style appearance</A>" in the "Configuration &amp; Customization"-document.
+Some visual attributes of the widgets (font style, colors, borders) can
+also be defined individually in the GUI Painter.
+
+<H4><A NAME="TABLEOFTHEWIDGETS"></A><FONT SIZE=+1>Gallery of Widgets</FONT></H4>
+
+<TABLE BORDER CELLPADDING=3 WIDTH="80%" BGCOLOR="#FFFFFF" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+    <TH BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1>Button Widgets</FONT></B></TH>
+    <TH BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1>Menu Widgets</FONT></B></TH>
+    <TH BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1>Text Widgets</FONT></B></TH>
+    <TH BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1>List & Tree<BR>Widgets</FONT></B></TH>
+    <TH BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1>Grouping Widgets</FONT></B></TH>
+    <TH BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1>Geometric</FONT></B></TH>
+    <TH BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1>Misc Widgets</FONT></B></TH>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+    <TD ALIGN=LEFT VALIGN=TOP NOSAVE><A HREF="Button.html">Button</A></TD>
+    <TD><A HREF="ToolBar.html">Tool Bar</A></TD>
+    <TD><A HREF="Label.html">Label</A></TD>
+    <TD><A HREF="List.html">List</A></TD>
+    <TD><A HREF="Box.html">Box</A></TD>
+    <TD><A HREF="Morph.html">Arc</A></TD>
+    <TD><A HREF="ArbitraryComponent.html">Arbitr. Component</A></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+    <TD NOSAVE><A HREF="ModelButton.html">Model Button</A></TD>
+    <TD><A HREF="PopUpList.html">PopUp List</A></TD>
+    <TD><A HREF="EntryField.html">Entry Field</A></TD>
+    <TD><A HREF="Table.html">Table</A></TD>
+    <TD><A HREF="FramedBox.html">Framed Box</A></TD>
+    <TD><A HREF="Morph.html">Rectangle</A></TD>
+    <TD><A HREF="SubSpecification.html">SubSpecification</A></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+    <TD NOSAVE><A HREF="ArrowButton.html">Arrow Button</A></TD>
+    <TD><A HREF="ComboList.html">Combo List</A></TD>
+    <TD><A HREF="TextEditor.html">Text Editor</A></TD>
+    <TD><A HREF="TreeList.html">Tree List</A></TD>
+    <TD><A HREF="HorizontalPanel.html">Horizontal Panel</A></TD>
+    <TD><A HREF="Morph.html">Arrow</A></TD>
+    <TD><A HREF="SubCanvas.html">SubCanvas</A></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+    <TD NOSAVE><A HREF="RadioButton.html">Radio Button</A></TD>
+    <TD><A HREF="ComboBox.html">Combo Box</A></TD>
+    <TD><A HREF="HTMLBrowser.html">HTML Browser</A></TD>
+    <TD><A HREF="FileTreeList.html">File Tree List</A></TD>
+    <TD><A HREF="VerticalPanel.html">Vertical Panel</A></TD>
+    <TD><A HREF="Morph.html">Polygon</A></TD>
+    <TD><A HREF="Slider.html">Slider</A></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+    <TD NOSAVE><A HREF="UpDownButton.html">UpDown Button</A></TD>
+    <TD><A HREF="ExtendedComboBox.html">Ext. ComboBox</A></TD>
+    <TD></TD>
+    <TD><A HREF="NewListTree.html">New List/Tree</A></TD>
+    <TD><A HREF="AreaPanel.html">Area Panel</A></TD>
+    <TD><A HREF="Morph.html">Image</A></TD>
+    <TD><A HREF="ThumbWheel.html">Thumb Wheel</A></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+    <TD NOSAVE><A HREF="Toggle.html">Toggle</A></TD>
+    <TD><A HREF="TabHeader.html">Tab Header</A></TD>
+    <TD><A HREF="Label.html"></A></TD>
+    <TD></TD>
+    <TD><A HREF="VariableHorizontalPanel.html">Var. Horiz. Panel</A></TD>
+    <TD></TD>
+    <TD><A HREF="ProgressIndicator.html">Progress Indicator</A></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+    <TD NOSAVE><A HREF="CheckBox.html">Check Box</A></TD>
+    <TD><A HREF="NoteBook.html">Note Book</A></TD>
+    <TD></TD>
+    <TD></TD>
+    <TD><A HREF="VariableVerticalPanel.html">Var. Vert. Panel</A></TD>
+    <TD></TD>
+    <TD><A HREF="Separator.html">Separator</A></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+    <TD NOSAVE><A HREF="CheckToggle.html">Check Toggle</A></TD>
+    <TD><A HREF="Gallery.html">Gallery</A></TD>
+    <TD></TD>
+    <TD></TD>
+    <TD></TD>
+    <TD></TD>
+    <TD><A HREF="Region.html">Region</A></TD>
+</TR>
+
+<TR>
+</TR>
+
+<TR>
+<TD><A HREF="WindowSpec.html">Application Window (canvas)</A></TD>
+</TR>
+</TABLE>
+
+<H3><A NAME="COMMONATTRIBUTES"></A>Common Attributes</H3>
+
+<P>Besides the individual attributes of the widgets there are some common
+attributes:
+
+<H4><A NAME="THEIDOFTHEWIDGETS"></A>ID (Key)</H4>
+
+Each widget has an ID.
+When an application is started, the windowBuilder uses these IDs as key
+to remember widgets in a dictionary,
+which can be accessed via an instance variable of the builder.
+<BR>
+This allows programatic access to components within the
+application, by sending the
+<CODE><PRE>
+    self builder componentAt:<VAR>aKey</VAR>
+</PRE></CODE>
+message, passing a widget's ID as argument,
+<BR>
+The GUI Painter automatically generates a unique default ID for each widget,
+which consists of the widgets name concatenated with a sequence number.
+
+<P>Do not worry about the names of the view and specification classes of
+the widgets. The class naming has historical reasons (for
+portability to VW).
+To avoid using 'complicated' names for the widgets,
+user friendly names are used in this documentation and  within the UIPainter.
+
+<H4><A NAME="THEFONTSTYLEOFTHEWIDGETS"></A>Font</H4>
+
+For all text-displaying widgets,
+an appropriate font style can be chosen from a font panel:
+
+<P><IMG SRC="../../../pictures/GUIPainterFontMenu.gif" ALT="A View of a Font Panel" NOSAVE HEIGHT=27 WIDTH=216>
+
+<P>It offers a palette of common styles.
+This palette can be modified in the class <TT>FontMenu</TT>.
+After selecting the check toggle, an own font style can be chosen by selecting one of the <I>Family/Face/Style/Size</I>
+buttons.
+<BR>
+If the check toggle is left off,
+the default font (from the viewStyle sheet) will be used (which we recommend).
+
+<H4><A NAME="THECOLOROFTHEWIDGETS"></A><B>Color(s)</B></H4>
+
+For many widgets a foreground, background or other color
+can be defined. The colors can be chosen from a color panel:
+
+<P><IMG SRC="../../../pictures/GUIPainterColorMenu.gif" ALT="A View of a Color Panel" NOSAVE HEIGHT=24 WIDTH=225>
+
+<P>It offers a palette of often used standard colors in addition to
+a mixer, which offers arbitrary colors to be specified.
+After selecting the check
+toggle, an own color can be chosen by selecting the desired colored button.
+If the check toggle is left off, the widgets default colors (from the style sheet) are used,
+which is recommended.
+<BR>&nbsp;
+
+
+<H4><A NAME="THEHELPTOOLOFTHEWIDGETS"></A>The Help Tool</H4>
+
+For each widget a help key plus a help text can be defined in the "<I>Help</I>"-section
+of the control window. For more information read the document:
+"<A HREF="HelpTool.html">Using the Help Tool</A>".
+<BR>&nbsp;
+
+<H4>
+<A NAME="THELAYOUTOFTHEWIDGETS"></A><B>Layout</B></H4>
+For each widget there are layout types for the boundaries of the widget
+which can be selected and changed. For more information read the document:
+"<A HREF="LayoutTool.html">The Layout of the Widgets</A>".
+<BR>&nbsp;
+<BR>&nbsp;
+
+<HR ALIGN=LEFT WIDTH="100%">
+
+<H2><A NAME="HOWTOHOLDTHEDATA"></A>How to Hold the Data</H2>
+
+An application's data is typically held in so called <DFN>value-model objects</DFN>.
+Conceptually, a valueModel consist of a cell that refers to some other object
+(a string, array or list, for example) and a collection of dependents that are
+to be notified whenever the reference changes.
+<BR>
+There exists a whole hierarchy of valueModels which all provide the
+same external interface (<CODE>value</CODE> as getter and <CODE>value:</CODE> as
+setter message) but behave different internally.
+<BR>
+The simplest one of them is <CODE>ValueHolder</CODE>,
+which actually implements the previously described behavior directly.
+There are valueModels that compute their value (<CODE>BlockValue</CODE>) while
+others refer to other objects and implement a facade, by translating setter/getter
+messages into other access messages towards the other objects (<CODE>AspectAdaptor</CODE>).
+<BR>
+All of them have in common that their dependents get informed whenever the
+value (whether being real or computed) changes.
+<P>
+The dependent widget(s) on the other hand decide whether and
+how to update (and redraw) whenever their contents (text, image, color etc.) which
+is represented by valueholders' values changes.
+
+<P>
+Be aware that most widgets do internally provide both direct interfaces for
+setting attributes and contents
+(messages such as <CODE>foreground:</CODE>,<CODE>background:</CODE>, <CODE>label:</CODE>
+or <CODE>contents:</CODE>)
+and indirect interfaces via valueModels (<CODE>model:</CODE>, <CODE>listHolder:</CODE>,
+<CODE>labelHolder:</CODE>, <CODE>foregroundChannel:</CODE> etc).
+<BR>
+The direct interface maybe somewhat easier for very simple user interfaces, but
+does not scale when applications become more complicated.
+<BR>
+For example, consider the case that a number of widgets has to be enabled, disabled
+or needs a color change depending on some criteria.
+When using a direct interface, a message has to be sent to each widget in order to
+affect its state - and, if more widgets are added later,
+those sending places need to be maintained and updated.
+<BR>
+When using valueModels, only a single valueHolder needs to be given a new value and many
+widgets may react on this change.
+<P>
+ValueModels are also much more convenient when multiple views present the same
+data on different display screens or use different rendering algorithms.
+
+<P>During startup, the windowBuilder acquires value holders from the application
+by sending it a corresponding message.
+These messages are called <DFN>aspect messages</DFN>.
+<BR>
+For each model (or value holder), your application should provide a corresponding aspect method.
+As applications may be defined hierarchical (by embedding applications or by opening
+sub-applicaitons as dialogs),
+the builder uses a sequence of possible aspect providers which are asked in sequence for
+an aspect.
+These are in order:
+<OL>
+<LI>the application</LI>
+<LI>the class of the application</LI>
+<LI>the <TT>masterAppliaction</TT> (an instance variable of the class <TT>ApplicationModel</TT>)</LI>
+<LI>the class of the <TT>masterAppliaction</TT></LI>
+<LI>the <TT>masterAppliaction</TT> of the <TT>masterAppliaction</TT></LI>
+<LI>and so on - until <TT>masterAppliaction</TT> is found to be nil</LI>
+</OL>
+
+As multiple widgets may ask the application for the same aspect,
+it is the responsibility of the application to keep track of
+which valueHolder is used for which aspect.
+This can be done either by
+<UL>
+<LI>keeping the aspect in an instance variable
+<LI>keeping track in a dictionary
+</UL>
+
+The builder fetches models via the
+<TT>aspectFor:</TT><VAR>aModelKey</VAR>-method, which (by default - if not redefined in
+your application) itself sends a <VAR>aModelKey</VAR>-message to itself
+(i.e. <CODE>perform:</CODE><VAR>aModelKey</VAR>)
+<P>
+So, application programmers may either provide individual access methods for each
+aspect, or redefine a single <CODE>aspectFor:</CODE> method.
+(which could return aspects from a dictionary which is setup in the
+applications initialize method).
+<BR>
+In some situations, this may be more elegant,
+especially to avoid implementing many tiny accessing methods (see the examples).
+
+<P>The whole framework heavily depends on the model-view design pattern,
+so you should know and understand the <TT>Model</TT> class and especially
+the <TT>ValueHolder</TT> classes.
+
+<P>The following figure summarizes these relations:
+<BR><IMG SRC="../../../pictures/GUIPainterModelViewDesign.gif" NOSAVE HEIGHT=435 WIDTH=511>
+
+<P>The picture is not completely correct, in that the aspect access (from
+the instance of the class <TT>UIBuilder</TT>) is actually via your application
+- however, most applications use the fallBack via the <I>"bindings"</I>
+dictionary which is provided by the class <TT>ApplicationModel</TT>; therefore,
+the figure gives a picture of the typical setup.
+<BR>&nbsp;
+<BR>For more details of value holders see document "<A HREF="../../programming/vmodels.html">Understanding
+and Using ValueModels</A>".
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>
+
+Notice that the <CODE>value</CODE>-message which is used to access a valueModels
+value was choosen by intent: it is also understood by blocks and arbitrary other
+objects (which return themself).
+Therefore, readonly aspects (which never change) can also be represented by
+constants or blocks.
+For example, your application is free to return a string as (constant) aspect.
+
+
+
+<H2><A NAME="HOWTOACCESSWIDGETS"></A>How and Where to Access Other Attributes</H2>
+
+Most widgets internally provide more attributes or more control over
+their behavior as accessible via the GUI painter.
+<BR>
+For example, a button can be setup with individual press-
+and release-actions, many widgets provide for more color attributes
+and so on.
+<P>
+These attributes must be modified programatically - either during
+startup of the application (i.e. right before the window is made visible)
+or dynamically as a result of other activities.
+<P>
+During startup, a number of hook-methods are invoked, which can be redefined
+by the programmer.
+These hooks (i.e. messages sent to the application) are:
+
+<UL>
+<LI><TT>initialize</TT>
+<BR>
+Is invoked right after the application instance has been created.
+If redefined, do <B>never forget</B> to send a "<CODE>super initialize</CODE>",
+in order to perform all other required initializations.
+<BR>
+There have been no widgets built at the time #initialize is invoked.
+<P>
+Also, be aware, that <CODE>initialize</CODE> is invoked in the context of the process (thread)
+which starts your application - not in the application's own thread (which is started shortly after
+that).
+This may have an affect on error handling, thread priorities etc.
+In order to avoid blocking the opening thread for too long,
+no long time consuming activities should be done in this initialization code.
+
+
+<P>
+<LI><TT>postBuildWith:</TT><I>aBuilder</I>
+<BR>
+This is invoked after the window (with all widgets) has been built,
+but before the window is finally opened.
+Your application program may change attributes without visibile irritation.
+<BR>
+This is also a good place to open files, database connections or other
+configuration files.
+<P>
+This message is also sent by the creating thread - not by the application's own
+thread (which is not yet created at this time).
+
+<P>
+<LI><TT>preOpenWith:</TT><I>aBuilder</I>
+<BR>
+is invoked right before your application window is opened.
+<P>
+This message is sent from within the application's own thread.
+Any long-time computations or blocking API calls do NOT affect the
+thread which created the application.
+
+<P>
+<LI><TT>postOpenWith:</TT><I>aBuilder</I>
+<BR>
+is invoked after your application window has been opened.
+A change of any visibile attribute may lead to visible effects on the screen.
+<P>
+This message is sent from within the application's own thread.
+Any long-time computations or blocking API calls do NOT affect the
+thread which created the application.
+<BR>
+However, the application-window is already open and will not react
+to external events, while any time consuming activities are performed
+herein.
+</UL>
+
+An example for a <TT>#postBuildWith:</TT> method is shown below.
+That method defines a buttons active colors (which are not otherwise
+accessible via the GUI painter).
+<BR>
+Notice, that the button widget is accessed by name-ID - the name-ID as
+defined in the widgets <I>'Basic'</I> section:
+<PRE>
+    postBuildWith:aBuilder
+	|myButton|
+
+	"/ fetch a widget by its ID
+	myButton := aBuilder componentAt:#myButton.
+	myButton activeForegroundColor:Color red.
+	myButton activeBackgroundColor:Color yellow.
+</PRE>
+
+
+<H2><A NAME="HOWTOGETINFORMED"></A>How to Get Informed When an Aspect Changes</H2>
+
+Although the GUI painter allows for a callBack to be specified for many
+widgets' actions, there are some which cannot be specified directly,
+but may be of interest to your application code.
+<BR>
+For all valueHolder aspects, an interest can be setup in the aspect
+method. For example, consider an instance variable named 'myAspect',
+which is used as aspect for some widget; your application may
+want to be informed whenever the value changes (for example, due to some
+widget interaction). To set up such a behavior, use the following code:
+<PRE>
+    myAspect
+	myAspect isNil ifTrue:[
+	    myAspect := ValueHolder new.
+	    myAspect onChangeSend:#myAspectChanged to:self.
+	].
+	^ myAspect
+</PRE>
+ the above example arranges for the <TT>#myAspectChanged</TT> method
+to be invoked whenever the value in <TT>myAspect</TT> changes
+(due to some widget interaction or however).
+<P>
+Notice, that this is functionally the same setup as arranged when a callBack
+is installed in the GUI painter.
+
+
+
+<H2><A NAME="HOWTOCLEANUP"></A>How to Cleanup and Shutdown the Application</H2>
+
+To close down your application,
+use the (inherited) method <TT>#closeRequest</TT>.
+<BR>
+This method should be invoked by either a menu item, or a close-Button.
+<BR>
+It will also be automatically invoked if you close the window via the
+window-manager (i.e. you clock on the close-Icon in the windowFrame).
+<P>
+Normally, there is no need to redefine this method, unless you want to
+let the user confirm the close (for example, if there is any unsaved data);
+in this case, redefine the <TT>#closeRequest</TT> method as follows:
+<PRE>
+    closeRequest
+	self hasAnyUnsavedData ifTrue:[
+	    (self confirm:'Close without saving ?') ifFalse:[
+		^ self
+	    ]
+	].
+	super closeRequest
+</PRE>
+The above method suppresses the window-closing
+if there is unsaved data, and the user does not confirm the dialog
+with 'OK'.
+<P>
+This inherited <TT>closeRequest</TT> method simply invokes the
+<TT>closeDownViews</TT> method, which does a hard-shutdown.
+You are not supposed to redefined <TT>closeDownViews</TT> - but you may
+of course invoke it if you want your application to shutDown without
+a closeRequest.
+
+
+<H2><A NAME="HOWTOSUBAPPS"></A>How to Embed SubApplications</H2>
+
+Applications can be nested - that means, that a GUI as created
+with the builder can be used as a building block for other applications.
+<BR>
+There are two ways to reuse a windowSpec:
+<UL>
+
+<LI>embed the interface definition only (<A HREF="SubSpecification.html">SubSpecification</A>)
+<BR>This means, that some other window spec defines which widgets are
+embedded; there is no extra applicationModel instance, and all aspects
+are provided by the main application.
+<BR>
+Aspect-wise, this is like a macro, which is expanded into the outer
+application; all aspects are provided by the application.
+<BR>
+This is useful to provide a common geometry layout, and to make
+development and maintenance of complicated interfaces easier.
+
+<P>
+<LI>embed another application and provide aspects for it (<A HREF="SubCanvas.html">SubCanvas</A>)
+<BR>This embeds another windowSpec AND creates another applicationModel
+instance. The other applicationModel gets the outer application as
+<TT>masterApplication</TT>.
+Aspects are first resolved by the subApplication, then by the masterApplication.
+</UL>
+
+
+<H2><A NAME="HOWTOSUBAPPS"></A>How to Embed Other Views</H2>
+
+The UI painter knows about (some of) the attributes
+of the most commong widget types,
+and presents them in the attributes tabs.
+However, many other widget types (subclasses of View)
+exist, which are used less often and
+are not supported by corresponding ui specifications.
+
+Such widgets are included as <A HREF="ArbitraryComponent.html">"Arbitrary Component"</A> in the
+specification and their attributes must be set manually,
+either in a postBuild method, or by referencing the widget
+by name (builder componentAt:id).
+
+
+<H2><A NAME="HOWTOUSEDIALOGS"></A>How to Create a GUI-Dialog Without an Extra Class</H2>
+
+Often, simple to medium-complex dialogs are required,
+for which either none of the standard dialogs (see common dialogs in the
+<CODE>DialogBox</CODE>-class)
+fits, or which need a component layout, that makes programatic construction
+(via <CODE>#addComponent:</CODE>) difficult, ugly or impossible.
+<P>
+If you do not want to add extra classes for this kind
+of dialog, you can still use the GUIPainter and windowSpec framework.
+<P>
+First, construct the dialogs window spec using the GUIPainter,
+and save it as some class method of your application.
+<BR>
+The code to open the dialog (in your application) should be written as:
+<PRE><CODE>
+	...
+	bindings := IdentityDictionar new.
+	for eachAspect do:[:aspect |
+	    bindings at:#aspectSymbol put:theAspectHolder
+	].
+	(SimpleDialog
+	    openDialogInterfaceSpec:(self class specSelectorsName)
+	    withBindings:bindings)
+	ifTrue:[
+	    ...
+	].
+	...
+</CODE></PRE>
+i.e. provide all bindings as required by the GUI-dialog in a
+single dictionary.
+<BR>
+Missing aspect bindings will be trated as non-existing, and usually
+defaulted to nil.
+<BR>
+There is no need for every binding to be a valueHolder;
+lists or string-valued aspects my also be provided as-is
+(unless they change during the dialogs lifetime).
+<BR>
+Also, blocks may be provided, to add dynamic behavior
+(thanks to blocks and any object responding to the #value messages)
+<P>
+Notice, that in the above case can be used in any context - even if the
+invoking object hs no relationship to the ApplicationModel framework.
+<BR>
+If the dialog is to be opened from within an applicationModel instance,
+you should use the following:
+<CODE><PRE>
+	(self
+	    openDialogInterfaceSpec:(self class specSelectorsName)
+	    withBindings:bindings)
+</PRE></CODE>
+or, shorter:
+<CODE><PRE>
+	(self
+	    openDialogInterface:#specSelectorsName
+	    withBindings:bindings)
+</PRE></CODE>
+In this case, the opened dialog gets the onvoking application as its
+"masterApplication", which means that missing aspects (in the bindings dictionary)
+and resources be requested from your application as a fallBack.
+<P>
+The <CODE>#openDialog*:</CODE> family of methods all return the value
+of the acceptChannel (which need not be provided in the bindings dictionary,
+since it is added by SimpleDialog).
+<BR>
+Therefore, the code in the <CODE>ifTrue:</CODE> clause is evaluated
+if the dialog was closed with an OK button.
+<P>
+In seldom cases, a postBuild action is required, to fix things before
+the interface is opened (for example, to change certain widget attributes,
+which are not controllable via the windowSpec).
+<BR>
+To arrange for this callback, use the following code as a guide:
+<CODE><PRE>
+	...
+	bindings := IdentityDictionar new.
+	...
+	dialog := SimpleDialog new.
+	dialog postBuildBlock:[:builder | .... do whatEver is required ...].
+	dialog
+	    openFor:self "or nil"
+	    spec:(self class specSelectorsName)
+	    withBindings:bindings)
+	ifTrue:[
+	    ...
+	].
+	...
+</PRE></CODE>
+corresponding hook-blocks can be installed as preBuild and postOpen actions.
+<BR>(pretty similar to the #postBuildWith: and #postOpenWith: methods which
+are invoked for regular applications.)
+<P>
+For concrete examples in the system, look for senders of "open*withBindings"
+or references to the SimpleDialog class.
+<HR>
+
+Please proceed reading the
+"<A HREF="Functions.html">Functions of the GUI Painter</A>"
+and
+"<A HREF="Examples.html">Examples</A></LI>" documents.
+
+
+
+<P><IMG SRC="../../../icons/stx.gif" NOSAVE HEIGHT=48 WIDTH=47>
+Copyright &copy; 1998 eXept Software AG, all rights reserved
+<BR>
+<HR><TT>Doc $Revision: 1.65 $ $Date: 2017-07-13 10:04:43 $</TT>
+</BODY>
+</HTML>

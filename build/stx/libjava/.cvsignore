@@ -1,0 +1,14 @@
+*.H
+*.STH
+objbc
+objvc
+objmingw
+objlc
+ntLibInit.c
+.listOfSTfiles
+makefile
+*.res
+*.RES
+*.sc
+*.@@@
+*.c

@@ -1,0 +1,13 @@
+<!ENTITY % gj.namespace "http://localhost/fake-gj" >
+<!ENTITY % gj.xmlns.decl " xmlns:gj CDATA #FIXED '%gj.namespace;' " >
+<!ELEMENT gj:p (#PCDATA | gj:em )* >
+<!ATTLIST gj:p %gj.xmlns.decl; >
+<!ELEMENT gj:em (#PCDATA) >
+<!ATTLIST gj:em %gj.xmlns.decl; >
+
+<!ENTITY % block.mix " | gj:p " >
+
+<!ENTITY % fake-xhtml SYSTEM "fake-xhtml.dtd" >
+%fake-xhtml;
+
+<!ENTITY gj.namespace "%gj.namespace;" >

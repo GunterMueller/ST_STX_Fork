@@ -1,0 +1,8 @@
+During Smalltalk/X IDE startup, all .rc files in this directory
+are filed-in (in lexicographic order). This directory is meant
+to provide and easy and extensible way to add your own startup scripts.
+
+First two letters of a .rc file name should be digits
+(defining the order).
+
+$Header$

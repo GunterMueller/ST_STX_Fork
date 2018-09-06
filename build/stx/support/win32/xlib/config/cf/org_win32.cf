@@ -1,0 +1,67 @@
+XCOMM platform:  $XConsortium: Win32.cf,v 1.38 94/04/01 19:58:56 kaleb Exp $
+
+#define OSName			Microsoft Windows NT 3.1
+XCOMM operating system:  OSName
+#define OSMajorVersion		3
+#define OSMinorVersion		1
+
+#define BootstrapCFlags		-DWIN32
+#ifdef _M_IX86
+#define CpuDefines -D_X86_
+#endif
+/* brain-damaged windows headers will not compile with -Za */
+#define StandardDefines -DWIN32 -D_DLL -D_MT -D__STDC__ CpuDefines
+#define DefaultCCOptions -nologo -batch -G4 -W2
+#define DebuggableCDebugFlags -Zi
+#define ThreadedX		YES
+#define CpCmd copy
+#define LnCmd copy
+#define MvCmd ren
+#define RmCmd del
+/* if you do not have deltree, substitute rd /s and suffer the prompts */
+#define RmTreeCmd deltree /y
+#define CcCmd cl
+#define HasCplusplus		YES
+#define CplusplusCmd cl
+#define PreProcessCmd CcCmd -nologo -batch -EP
+#define CppCmd  CcCmd -nologo -batch -E
+#define PatheticCpp		YES
+#define ArCmdBase lib32
+#define ArCmd ArCmdBase
+#define CplusplusCmd cl
+#define MkdirHierCmd mkdir
+#define InstallCmd copy
+#define InstPgmFlags /**/
+#define InstBinFlags /**/
+#define InstUidFlags /**/
+#define InstLibFlags /**/
+#define InstIncFlags /**/
+#define InstManFlags /**/
+#define InstDatFlags /**/
+#define InstallFlags /**/
+#define ExtraLibraries crtdll.lib kernel32.lib wsock32.lib
+#define MakeCmd nmake -nologo
+#define LdCmd link32
+#define MathLibrary
+#define HasSymLinks		NO
+#define HasPutenv		YES
+#define Osuf obj
+#define BuildServer		NO
+#define ConnectionFlags		-DTCPCONN
+#define StdIncDir /mstools/h
+#define LdPreLib /**/
+#define LdPostLib /**/
+#ifndef UseInstalled
+#define ImakeCmd $(IMAKESRC:/=\)\imake
+#define DependCmd $(DEPENDSRC:/=\)\makedepend
+#endif
+#define FilesToClean *.bak *.obj *.lib make.log
+#define ShLibDir $(BINDIR)
+
+#define XFileSearchPathBase Concat4($(LIBDIR)/;L/;T/;N;C,;S:$(LIBDIR)/;l/;T/;N;C,;S:$(LIBDIR)/;T/;N;C,;S:$(LIBDIR)/;L/;T/;N;S:$(LIBDIR)/;l/;T/;N;S:$(LIBDIR)/;T/;N;S)
+
+#define BuildFonts		NO
+#define BuildFresco		NO
+#define XawI18nDefines		-DHAS_WCHAR_H
+
+#include <Win32.rules>

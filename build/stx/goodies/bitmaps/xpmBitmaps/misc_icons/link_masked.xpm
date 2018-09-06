@@ -1,0 +1,21 @@
+/* XPM */
+static char *link_masked_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"11 11 3 1",
+/* colors */
+"a c black",
+"b c #7F7F7F",
+"c c none",
+/* pixels */
+"bbbbbbbbbbb",
+"bcccccccccb",
+"bcccaaaaccb",
+"bccccaaaccb",
+"bcccaaaaccb",
+"bccaaacaccb",
+"bccaacccccb",
+"bccaccccccb",
+"bcccacccccb",
+"bcccccccccb",
+"bbbbbbbbbbb",
+};

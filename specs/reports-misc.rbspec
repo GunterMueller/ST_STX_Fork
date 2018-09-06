@@ -1,0 +1,144 @@
+# This file contains various test projects
+
+project :'stx:libscm/git:reports' do
+  import :'stx:jv-branch:for-reports-only'
+
+
+  repository :'jv-branch:public'
+
+  package 'stx:libscm/common', :test => true, :lint => true, :link => false
+  package 'stx:libscm/git', :test => true, :lint => true, :link => false
+
+end
+
+project :'stx:libscm/mercurial:reports' do
+  import :'stx:jv-branch:for-reports-only'
+
+  repository :'jv-branch:public'
+  package 'stx:libscm'
+  package 'stx:libscm/common',    :link => false, :lint => true
+  package 'stx:libscm/mercurial', :link => false, :lint => true
+
+  tasks do
+    task :'test:post' => REPORT_DIR do
+	   setup = ''
+       if ENV['STX_LIBSCM_MERCURIAL_HG_VERSION'] != nil then
+	     hgversion = ENV['STX_LIBSCM_MERCURIAL_HG_VERSION']
+		 hgroot = ENV['STX_LIBSCM_MERCURIAL_HG_VERSIONS_ROOT']
+		 if hgroot == nil then
+		   raise Exception.new("STX_LIBSCM_MERCURIAL_HG_VERSION defined but not STX_LIBSCM_MERCURIAL_HG_VERSIONS_ROOT!")
+		 end
+		 hgdir = File.join(hgroot, hgversion)
+		 if win32?
+		   hgexe = "python #{hgroot}\\#{hgversion}\\Python27\\Scripts\\hg"
+		 else
+		   hgexe = File.join(hgroot, hgversion, 'usr', 'local', 'bin' , 'hg')
+		 end
+		 setup = "-S \"Class tryLocalSourceFirst: true. UserPreferences current hgCommand:'#{hgexe}'\""
+	   end
+
+       run_report(project.application, [ 'stx:libscm/mercurial' ], 'Builder::TestReport', setup, '--coverage  -I stx:libscm/common')
+	end
+  end
+
+end
+
+project :'stx:libscm/mercurial:reports:6.2.2' do
+  import :'stx:repositories'
+  import :'stx:6.2.2'
+
+  repository :'jv-branch:public'
+  package 'stx:libscm'
+  package 'stx:libscm/common',    :link => false#, :test => true, :lint => true, :coverage => true # Coverage not suypported in 6.2.2
+  package 'stx:libscm/mercurial', :link => false, :test => true, :lint => true#, :coverage => true
+
+  # Little hack to enforce package compilation
+  tasks do
+    task :'compile:post' => [ :'stx:libscm/common' , :'stx:libscm/mercurial' ]
+  end
+
+end
+
+project :'stx:goodies/petitparser:reports' do
+  import :'stx:jv-branch:for-reports-only'
+
+  package 'stx:goodies/petitparser', :link => false, :test => true, :lint => true, :coverage => true
+  package 'stx:goodies/petitparser/analyzer', :link => false, :test => true, :lint => true, :coverage => true
+  package 'stx:goodies/petitparser/compiler/tests', :link => false, :test => true, :lint => true, :coverage => true
+  package 'stx:goodies/petitparser/parsers/smalltalk/tests', :link => false, :test => true, :lint => true, :coverage => true
+  package 'stx:goodies/petitparser/parsers/java', :link => false, :test => true, :lint => true, :coverage => true
+
+end
+
+project :'stx:regression' do
+  import :'stx:jv-branch:for-reports-only'
+
+  package 'stx:goodies/regression', :repository => :'jv-branch:public', :branch => 'jv', :test => true
+  package 'stx:libview/tests', :test => true
+  
+end
+
+project :'stx:goodies/refactoryBrowser/lint:reports' do
+  import :'stx:jv-branch:for-reports-only'
+  package "stx:goodies/refactoryBrowser/lint", :test => true, :lint =>  true
+end
+
+project :'stx:libsvn2:reports' do
+  import :'stx:jv-branch:for-reports-only'
+
+  # Manual checkouter, since libsvn2 is in libsvn repository...
+  checkouter = Proc.new do | pkg, build_dir |
+    base = project.repository(pkg.repository).url
+    repo = 'stx/libsvn'
+    wc = build_dir / pkg.directory
+    FileUtils.mkdir_p(File.dirname(wc))
+    if not system "svn co #{base}/#{repo}#{pkg.branch} #{wc}"
+      error "Cannot checkout stx:libsvn2"
+    end
+  end
+
+  package "stx:libsvn2",
+    :repository => :swing,
+    :branch => '/branches/libsvn2',
+    :checkout => checkouter,
+    :test => true, :lint => true, :link => false
+
+  tasks do
+    task 'stx:projects/smalltalk' => 'stx:libsvn2'
+    task 'stx:libsvn2' => 'stx:libbasic'
+  end
+
+end
+
+project :'stx:goodies/smallsense:reports' do
+  import :'stx:jv-branch:for-reports-only'
+  package "stx:goodies/smallsense", :test => true, :lint => true, :coverage => true
+end
+
+project :'stx:goodies/sunit:reports' do
+  import :'stx:jv-branch:for-reports-only'
+  package "stx:goodies/sunit", :test => true, :lint => true, :coverage => true
+end
+
+
+
+project :'jv:calipel:s:reports' do
+  import :'stx:jv-branch:for-reports-only'
+
+  package 'jv:calipel', :repository => :'jv-branch:public'
+  package "jv:calipel/s", :link => false
+  package "jv:calipel/s/stx", :link => false
+  package "jv:calipel/s/tests", :test => true, :lint => true, :link => false
+
+  tasks do
+    task 'stx:projects/smalltalk' => 'jv:calipel/s'
+    task 'stx:projects/smalltalk' => 'jv:calipel/s/stx'
+    task 'jv:calipel/s' => 'stx:libbasic'
+    task 'jv:calipel/s/stx' => 'stx:libbasic'
+  end
+end
+
+
+
+
+

@@ -1,0 +1,32 @@
+/* XPM */
+static char *menu_colorFont_16x16_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 9 1",
+/* colors */
+"a c white",
+"b c red",
+"c c black",
+"d c yellow",
+"e c #800080",
+"f c magenta",
+"g c cyan",
+"h c #C0C0C0",
+"i c none",
+/* pixels */
+"iiiiiiicccciiiii",
+"iiiiiccdadacciii",
+"iiiicadahchadcii",
+"iiicahchcfcdadci",
+"iiicdcechchhchdc",
+"iiicahchadachcac",
+"iiicdadadadhchdc",
+"iiiicccdadhchdac",
+"iiiciichchcbcadc",
+"iiiciihcgchchdci",
+"iicccichchdadaci",
+"iicicicdadadccii",
+"iccccciccccciiii",
+"iciiiciiiiiiiiii",
+"ccciccciiiiiiiii",
+"iiiiiiiiiiiiiiii",
+};

@@ -1,0 +1,4 @@
+modulesDir := Filename homeDirectory / '.smalltalk' / 'binary-modules'.
+modulesDir asFilename exists ifFalse:[modulesDir asFilename makeDirectory].
+Compiler stcModulePath:modulesDir.
+

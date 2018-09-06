@@ -1,0 +1,140 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+   <META NAME="Author" CONTENT="Thomas Zwick, eXept software AG, Germany">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.04 [en] (X11; I; Linux 2.0.30 i586) [Netscape]">
+   <TITLE>The ProgressIndicator Widgets</TITLE>
+</HEAD>
+<BODY>
+<A HREF="ThumbWheel.html" NOPRINT><IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="The ThumbWheel Widget" NOSAVE HEIGHT=30 WIDTH=30></A>
+<A HREF="TOP.html#TABLEOFTHEWIDGETS" NOPRINT><IMG SRC="../../../icons/DocsUpArrow.gif" ALT="Table of the Widgets" NOSAVE HEIGHT=30 WIDTH=30></A>
+<A HREF="Separator.html" NOPRINT><IMG SRC="../../../icons/DocsRightArrow.gif" ALT="The Separator Widget" NOSAVE HEIGHT=30 WIDTH=30></A>
+<BR>&nbsp;
+<BR>
+<HR ALIGN=LEFT WIDTH="100%">
+<H1>
+<FONT SIZE=+4>The ProgressIndicator Widgets</FONT></H1>
+<IMG SRC="../../../pictures/GUIPainterWidgetProgressIndicator.gif" ALT="A View of a ProgrsssIndicator Widget" NOSAVE HEIGHT=25 WIDTH=129>
+<IMG SRC="../../../pictures/GUIPainterWidgetRoundProgressIndicator.gif" ALT="A View of a RoundProgrsssIndicator Widget" NOSAVE HEIGHT=25 WIDTH=129>
+<BR>View Class: <TT>ProgressIndicator</TT> / <TT>RoundProgressIndicator</TT>
+<BR>Spec Class: <TT>ProgressIndicatorSpec</TT> / <TT>RoundProgressIndicatorSpec</TT>
+<P>
+
+For VW compatibility, these can also be referred to
+as ProgressWidget and ProgressWidgetSpec (i.e. there are global aliases
+for them).
+
+
+<H3>
+
+<HR ALIGN=LEFT WIDTH="100%"></H3>
+
+<H3>
+The <I>Basics</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>ID</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Unique symbolic name (ID) of the widget.&nbsp;</B>&nbsp;
+<BR>This ID can be used by the application to access the widget
+via <TT>"builder>>componentAt:ID"</TT>.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Model</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for the model,
+holding the indicators value (0..100).
+<BR>Usually a <TT><A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance.</TD>
+</TR>
+
+</TABLE>
+
+
+
+&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Details</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Font</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the font style of the indicators's
+percentage display.</B>&nbsp;
+<BR>After selecting the check toggle the font style can be chosen by selecting
+one of the Family/Face/Style/Size buttons. If no font style is selected,
+the widget takes its default font style from the style sheet.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>FG-Color</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the foreground color of the slider.</B>&nbsp;
+<BR>After selecting the check toggle the foreground color can be chosen
+by selecting the desired colored button. If no color&nbsp; is selected,
+the widget takes its default foreground color from the style sheet.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>BG-Color</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the background color of the slider.</B>&nbsp;
+<BR>After selecting the check toggle the background color can be chosen
+by selecting the desired colored button. If no color&nbsp; is selected,
+the widget takes its default background color from the style sheet.</TD>
+</TR>
+
+<TR NOSAVE>
+<TD><B>Show Percentage</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off the display of the percentage.</B></TD>
+</TR>
+
+<TR NOSAVE>
+<TD><B>Initially Invisible</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the widget is initially
+invisible.</B></TD>
+</TR>
+
+
+
+</TABLE>
+
+
+
+
+
+
+
+
+
+<TT>*&nbsp; = ValueHolder, AspectAdaptor, BufferedValueHolder, RangeAdaptor,
+TriggerValue</TT>
+<BR><TT>** = true, false</TT>
+
+<P>&nbsp;
+<H3>
+The <I>Help</I> Section:</H3>
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="HelpTool.html">Using the Help Tool</A>"
+<BR>&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Layout</I> Section:</H3>
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="LayoutTool.html">The Layout of the Widgets</A>"
+<BR>&nbsp;
+
+<P>
+<HR>
+
+<P><IMG SRC="../../../icons/stx.gif" ALT="[stx-logo]" NOSAVE NOPRINT HEIGHT=48 WIDTH=47 ALIGN=CENTER>
+<BR><TT>Copyright &copy; 1998 eXept Software AG, all rights reserved</TT>
+<BR>
+<HR>
+</BODY>
+</HTML>
+
+
+

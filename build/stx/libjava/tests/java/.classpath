@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" output="classloader-tests-classes/bin" path="classloader-tests-classes/src"/>
+	<classpathentry kind="src" output="bin-tests-INVOKEX" path="src-tests-INVOKEX"/>
+	<classpathentry excluding="**/*.java" kind="src" output="bin-tests-INVOKEX-missing-methods" path="src-tests-INVOKEX-missing-methods"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/stx.libjava"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/stx.libjava.libs"/>
+	<classpathentry kind="lib" path="/stx.libjava.libs/libs/log4j-1.2.17.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

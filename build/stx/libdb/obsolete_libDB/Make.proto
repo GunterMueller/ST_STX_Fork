@@ -1,0 +1,98 @@
+# $Header: /cvs/stx/stx/libdb/obsolete_libDB/Make.proto,v 1.13 2003-12-16 18:15:28 cg Exp $
+#
+# --- Automatically created Make.proto
+
+TOP=../..
+SUBDIRS=
+
+
+# ***************************** modify the next line ***
+LIBNAME=obsolete_libDB
+MODULE=libdb
+PACKAGE=stx:$(MODULE)/$(LIBNAME)
+LIB_BASE=$(LIBDB_BASE)
+NM_LIB_BASE=LIBDB_BASE
+
+#
+# define this to be the top of your msql directory
+#
+MSQLDIR=$(TOP)/support/msql/msql-1.0.14
+
+# define this to the top of you msql installation
+# directory (the directory you entered when when setting up msql)
+#
+# stupid - the following must come from a configuration
+# file ... for now, it has to be changed here for
+# your particular architecture.
+
+MSQLTARGETDIR=$(MSQLDIR)/msql-1.0.14/targets/Linux-2.0.13-i586
+
+MSQL_INCLUDE_DIR=$(MSQLTARGETDIR)/msql
+MSQL_LIB_DIR=$(MSQLTARGETDIR)/lib
+
+#MSQL_INCLUDE_DIR=/usr/local/include
+#MSQL_LIB_DIR=/usr/local/lib
+
+LIBMSQL=$(MSQL_LIB_DIR)/libmsql.a
+
+#
+# specify that libsmql is to be linked to libDB
+# right here (so a dynamic classLib-load loads all
+# required msql functions automatically)
+#
+LD_OBJ_LIBS=$(LIBMSQL)
+
+# ***************************** modify the next line ***
+STCLOCALOPT='-package=$(PACKAGE)' -I$(MSQL_INCLUDE_DIR)
+STCOPT=+optspace2 -warnNonStandard
+
+
+RCSSOURCES=*.st Make.proto
+
+EXTRA_TARGTES=
+
+all:: testMSQLInstalled testLIBMSQLInstalled classLibRule
+
+OBJS=  \
+	 ODBCInterface.$(O) \
+	 ODBCInterfaceMSQL.$(O) \
+	 ODBCDataSource.$(O)
+
+testMSQLInstalled:
+	@if [ -f $(MSQL_INCLUDE_DIR)/msql.h ]; then \
+	    echo "msql seems to be installed"; \
+	else \
+	    echo "*****************************************************"; \
+	    echo "You must first install the msql stuff in support/msql"; \
+	    echo "before trying to compile the ST/X interface to it."; \
+	    echo " "; \
+	    echo "MSQL_INCLUDE_DIR in this Make.proto file must be set"; \
+	    echo "to the directories name where include files are found."; \
+	    echo "*****************************************************"; \
+	    exit 1; \
+	fi
+
+testLIBMSQLInstalled:
+	@if [ -f $(LIBMSQL) ]; then \
+	    echo "msql library seems to be installed"; \
+	else \
+	    echo "*****************************************************"; \
+	    echo "You must first install the msql stuff in support/msql"; \
+	    echo "before trying to compile the ST/X interface to it."; \
+	    echo " "; \
+	    echo "LIBMSQL in this Make.proto file must be set to the"; \
+	    echo "directories name where the libmsql is found."; \
+	    echo "*****************************************************"; \
+	    exit 1; \
+	fi
+
+cleanjunk::
+
+clean::
+	@-rm -f *.H
+
+clobber::
+	@-rm -f *.o
+
+# BEGINMAKEDEPEND --- do not remove this line; make depend needs it
+# ENDMAKEDEPEND --- do not remove this line

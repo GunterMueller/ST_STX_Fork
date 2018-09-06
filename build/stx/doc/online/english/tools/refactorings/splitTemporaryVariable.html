@@ -1,0 +1,31 @@
+<html><head><title>Refactoring: 
+Split Temporary Variable</title></head><body>
+
+
+<H1>
+Split Temporary Variable</H1>
+<P><I><CENTER>
+You have a temporary variable assigned to more than once, but is not a loop variable nor a collecting temporary variable.</CENTER></I></P>
+<P><B><CENTER>
+Make a separate temporary variable for each assignment. </CENTER></B></P>
+<PRE>
+		double temp = 2 * (_height + _width);
+		System.out.println (temp);
+		temp = _height * _width;
+		System.out.println (temp);
+
+</PRE><P><CENTER><IMG SRC="arrow.gif"/></CENTER></P>
+<PRE>
+		final double perimeter = 2 * (_height + _width);
+		System.out.println (perimeter);
+		final double area = _height * _width;
+		System.out.println (area);
+
+</PRE>
+
+
+<P>For more information see page 
+	<font color="#FF0000">128</font>
+	of <I>Refactoring</I></P>
+
+<P /><P /><P><CENTER><A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A></CENTER></P></body></html>

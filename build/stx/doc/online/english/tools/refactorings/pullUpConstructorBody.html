@@ -1,0 +1,42 @@
+<html><head><title>Refactoring: 
+
+
+
+Pull Up Constructor Body</title></head><body>
+
+
+<H1>
+
+
+
+Pull Up Constructor Body</H1>
+<P><I><CENTER>
+
+You have constructors on subclasses with mostly
+identical bodies.</CENTER></I></P>
+<P><B><CENTER>
+
+Create a superclass constructor; call this from the
+subclass methods.</CENTER></B></P>
+<PRE>
+class Manager extends Employee...
+	public Manager (String name, String id, int grade) {
+		_name = name;
+		_id = id;
+		_grade = grade;
+	}
+</PRE><P><CENTER><IMG SRC="arrow.gif"/></CENTER></P>
+<PRE>
+	public Manager (String name, String id, int grade) {
+		super (name, id);
+		_grade = grade;
+	}
+</PRE>
+
+
+
+<P>For more information see page 
+	<font color="#FF0000">325</font>
+	of <I>Refactoring</I></P>
+
+<P /><P /><P><CENTER><A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A></CENTER></P></body></html>

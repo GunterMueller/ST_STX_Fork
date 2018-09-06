@@ -1,0 +1,33 @@
+#(
+	'TDVObject.st'
+	'DisplayListUtilities.st'
+	'NormalVectorUtilities.st'
+	'TextUtilities.st'
+	'DataViewer.st'
+	'DataViewer3D.st'
+	'DataRenderer.st'
+	'DataRenderer3D.st'
+	'AbstractComponent.st'
+	'DrawableComponent.st'
+	'AxisStandard.st'
+	'MatrixText.st'
+	'FrameStandard.st'
+	'PlaneStandard.st'
+	'SeparatorPlane.st'
+	'DrawWithVertexArray.st'
+	'LabelForZAxis.st'
+	'Data.st'
+	'MatrixData.st'
+	'ApplicationMatrix3D.st'
+).
+
+files size > 0 ifTrue:[
+  files do:[:f|
+    f asFilename exists ifTrue:[
+	Smalltalk fileIn:f.
+    ] ifFalse:[
+	Smalltalk fileIn:('source/' , f)
+    ]
+  ].
+].
+

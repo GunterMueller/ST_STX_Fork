@@ -1,0 +1,18 @@
+; View defaultStyle:#'informatik' 
+;
+; example for a very small change 
+; - like iris style, but slightly brighter
+;
+
+#include 'iris.style'
+
+comment  'like `iris'';\\with brighter colors (better on some VGAs)'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Wie `iris'' Stil mit helleren Farben\(besser auf vielen VGA Monitoren).'
+#endif
+
+viewGrey                        Color grey:80
+viewBackground                  =viewGrey
+scroller.thumbColor              =viewGrey
+; textSelection.backgroundColor    Color grey:80

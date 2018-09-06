@@ -1,0 +1,17 @@
+
+2013-05-23 11:54:47 +0100
+              Test        JVM   JVM (int)      STX-S      STX-J   STX-J (int)    STX-J2S       Ruby
+          Ackerman          5         N/A        264         38           N/A        N/A       1757
+               Ary         69         N/A       7549       2097           N/A        N/A      13404
+              Hash          8         N/A          4        471           N/A        N/A          8
+            Strcat        180         N/A        559        552           N/A        N/A        500
+           Native1          2         N/A        N/A         23           N/A        N/A        N/A
+            Groovy         56         N/A        N/A        201           N/A        N/A        N/A
+             Saxon        109         N/A        N/A        224           N/A        N/A        N/A
+  MethodInvocation          0         N/A      10472       1862           N/A      12333      36849
+PrimitiveArguments          0         N/A       2157        410           N/A       2453        N/A
+   ObjectArguments          0         N/A       2161        407           N/A       2484        N/A
+  WrappedArguments        295         N/A       2164       4226           N/A       7141        N/A
+OverloadedMethods2         30         N/A      13965       5450           N/A      39552        N/A
+ OverloadedMethods          0         N/A       5599        824           N/A       7750        N/A
+--

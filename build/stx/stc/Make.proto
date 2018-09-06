@@ -1,0 +1,466 @@
+#
+# ---- no need to modify anything below ---------------------------
+# $Header$
+
+STC_OPT=-g
+STC_WARNFLAGS=-Wno-implicit-function-declaration -Wno-implicit-int -Wno-switch
+
+TOP=..
+SUBDIRS=
+
+#INSTALLPROGS=stc demostc
+INSTALLPROGS=stc
+
+NOAUTOLOAD=1
+SUPPRESS_LOCAL_ABBREVS="yes"
+
+DELIVERSOURCES=Make.proto stc*.h $(INTERN_H) symbols.stc.seed
+DELIVERMISC=Makefile .dir.info
+#DELIVERBINARIES=stc demostc
+DELIVERBINARIES=stc
+
+#STC_TARGETS=stc demostc
+STC_TARGETS=stc
+
+SRCS = parse.y scan.l stcmain.c utils.c abbrev.c fast.c global.c   \
+       codemthd.c codeblk.c codecls.c codeobj.c codeexpr.c         \
+       codebytes.c codecntl.c optmethod.c optblock.c optexpr.c     \
+       scanexpr.c sha1.c scm.o
+
+HDR =  stcIntern.h stc.h version.h
+
+DEPOBJS = PARSE SCAN STCMAIN UTILS ABBREV             \
+	  FAST GLOBAL                                      \
+	  CODEMTHD CODEBLK CODECLS CODEOBJ CODEEXPR        \
+	  CODEBYTES CODECNTL OPTMETHOD OPTBLOCK OPTEXPR    \
+	  SCANEXPR sha1.o scm.$(O)
+
+OBJS = parse.$(O) scan.$(O) stcmain.$(O) utils.$(O) abbrev.$(O)           \
+       fast.$(O) global.$(O)                                              \
+       codemthd.$(O) codeblk.$(O) codecls.$(O) codeobj.$(O) codeexpr.$(O) \
+       codebytes.$(O) codecntl.$(O) optmethod.$(O) optblock.$(O) optexpr.$(O) \
+       scanexpr.$(O) sha1.$(O) scm.$(O)
+
+D_OBJS = parse.$(O) d_scan.$(O) d_stcmain.$(O) utils.$(O) abbrev.$(O)           \
+       fast.$(O) global.$(O)                                              \
+       codemthd.$(O) codeblk.$(O) d_codecls.$(O) d_codeobj.$(O) codeexpr.$(O) \
+       codebytes.$(O) codecntl.$(O) optmethod.$(O) optblock.$(O) optexpr.$(O) \
+       scanexpr.$(O) sha1.$(O)
+
+all::   doAll
+	@-if [ -f parse.y ]; then \
+	    $(MAKE) ntparse.c ntscan.c nttokens.h; \
+	fi
+
+doAll::
+	@-if [ -f parse.y ]; then \
+	    $(MAKE) stx-config.h stcVMoffsets.h $(STC_TARGETS) OPT="$(STC_OPT)"; \
+	fi
+	$(MAKE) includeFiles OPT="$(STC_OPT)"
+
+autoconf: autoconf.c
+	$(CC) $(CFLAGS) -o autoconf autoconf.c $(MATHLIB)
+
+genOffsets:     genOffsets.c stcVMdata.h
+	$(CC) $(CFLAGS) -o genOffsets genOffsets.c
+
+stx-config.h: stx-config.sh
+	./stx-config.sh
+
+stcVMoffsets.h: stc.h stcVMdata.h
+	if [ ! -x ./genOffsets ]; then $(MAKE) genOffsets; fi
+	./genOffsets > stcVMoffsets.h
+
+D_SCAN:
+	@if [ -f scan.l ]; then             \
+	    $(MAKE) OPT="$(STC_OPT)" STC_CC="$(STC_CC)" STC_CFLAGS="$(STC_CFLAGS)" CC="$(CC)" d_scan.$(O); \
+	fi
+
+D_CODECLS:
+	@if [ -f codecls.c ]; then             \
+	    $(MAKE) OPT="$(STC_OPT)" STC_CC="$(STC_CC)" STC_CFLAGS="$(STC_CFLAGS)" CC="$(CC)" d_codecls.$(O); \
+	fi
+
+D_STCMAIN:
+	@if [ -f stcmain.c ]; then            \
+	    $(MAKE) OPT="$(STC_OPT)" STC_CC="$(STC_CC)" STC_CFLAGS="$(STC_CFLAGS)" CC="$(CC)" d_stcmain.$(O); \
+	fi
+
+D_CODEOBJ:
+	@if [ -f codeobj.c ]; then            \
+	    $(MAKE) OPT="$(STC_OPT)" STC_CC="$(STC_CC)" STC_CFLAGS="$(STC_CFLAGS)" CC="$(CC)" d_codeobj.$(O); \
+	fi
+
+d_codecls.o:    codecls.c defs.h stc.h stcIntern.h $(INTERN_H) version.h global.h
+	@-rm -f codecls.o
+	$(MAKE) OPT="$(STC_OPT)" CC="$(CC)" STC_CC="$(STC_CC)" codecls.o STC_CFLAGS="$(STC_CFLAGS)" CFLAGS="$(CFLAGS) -DDEMO_STC"
+	mv codecls.o d_codecls.o
+
+d_stcmain.o:    stcmain.c defs.h stc.h stcIntern.h $(INTERN_H) version.h global.h
+	@-rm -f stcmain.o
+	$(MAKE) OPT="$(STC_OPT)" CC="$(CC)" STC_CC="$(STC_CC)" STC_CFLAGS="$(STC_CFLAGS)" stcmain.o CFLAGS="$(CFLAGS) -DDEMO_STC"
+	mv stcmain.o d_stcmain.o
+
+d_codeobj.o:    codeobj.c defs.h stc.h stcIntern.h $(INTERN_H) global.h
+	@-rm -f codeobj.o
+	$(MAKE) OPT="$(STC_OPT)" CC="$(CC)" STC_CC="$(STC_CC)" STC_CFLAGS="$(STC_CFLAGS)" codeobj.o CFLAGS="$(CFLAGS) -DDEMO_STC"
+	mv codeobj.o d_codeobj.o
+
+d_scan.o:       scan.c scan.l defs.h stc.h stcIntern.h $(INTERN_H) global.h
+	$(MAKE) OPT="$(STC_OPT)" scan.c
+	@-rm -f scan.o
+	$(MAKE) OPT="$(STC_OPT)" CC="$(CC)" SRC_CC="$(STC_CC)" STC_CFLAGS="$(STC_CFLAGS)" scan.o CFLAGS="$(CFLAGS) -DDEMO_STC"
+	mv scan.o d_scan.o
+
+stc:        $(DEPOBJS)
+	@if [ -f stcmain.$(O) ]; then \
+	    echo "linking stc ..."; \
+	    echo $(STC_LD) $(STC_LDFLAGS) -o stc $(OBJS) $(STC_LEXLIB) $(MATHLIB); \
+	    $(STC_LD) $(STC_LDFLAGS) -o stc $(OBJS) $(STC_LEXLIB) $(MATHLIB); \
+	else \
+	    echo "no remake of stc (this is a binary distribution)"; \
+	fi
+	@-echo $(STRIP) stc > /dev/null
+	@$(MAKE) cleanTempFiles
+
+debugstc:
+	-rm stc
+	$(MAKE) STRIP=echo stc
+
+demostc::       D_CODECLS D_STCMAIN D_CODEOBJ PARSE D_SCAN $(DEPOBJS)
+	@-if [ -f d_stcmain.$(O) ]; then \
+	    echo "linking demostc ..."; \
+	    $(STC_LD) $(LDFLAGS) -o demostc $(D_OBJS) $(STC_LEXLIB) $(MATHLIB); \
+	else \
+	    echo "no make of demostc (this is a binary distribution)"; \
+	fi
+	@-$(STRIP) demostc > /dev/null
+	@$(MAKE) cleanTempFiles
+
+nstc:       $(DEPOBJS)
+	$(STC_LD) $(LDFLAGS) -o nstc $(OBJS) $(STC_LEXLIB) $(MATHLIB)
+	$(MAKE) cleanTempFiles
+
+CODEMTHD:
+	@if [ -f codemthd.c ]; then          \
+	    $(MAKE) OPT="$(STC_OPT)" STC_CC="$(STC_CC)" STC_CFLAGS="$(STC_CFLAGS)" CC="$(CC)" codemthd.$(O); \
+	fi
+
+CODEBLK:
+	@if [ -f codeblk.c ]; then           \
+	    $(MAKE) OPT="$(STC_OPT)" STC_CC="$(STC_CC)" STC_CFLAGS="$(STC_CFLAGS)" CC="$(CC)" codeblk.$(O);            \
+	fi
+
+CODECLS:
+	@if [ -f codecls.c ]; then           \
+	    $(MAKE) OPT="$(STC_OPT)" STC_CC="$(STC_CC)" STC_CFLAGS="$(STC_CFLAGS)" CC="$(CC)" codecls.$(O);            \
+	fi
+
+CODEOBJ:
+	@if [ -f codeobj.c ]; then           \
+	    $(MAKE) OPT="$(STC_OPT)" STC_CC="$(STC_CC)" STC_CFLAGS="$(STC_CFLAGS)" CC="$(CC)" codeobj.$(O);            \
+	fi
+
+CODEEXPR:
+	@if [ -f codeexpr.c ]; then          \
+	    $(MAKE) OPT="$(STC_OPT)" STC_CC="$(STC_CC)" STC_CFLAGS="$(STC_CFLAGS)" CC="$(CC)" codeexpr.$(O);           \
+	fi
+
+CODEBYTES:
+	@if [ -f codebytes.c ]; then          \
+	    $(MAKE) OPT="$(STC_OPT)" STC_CC="$(STC_CC)" STC_CFLAGS="$(STC_CFLAGS)" CC="$(CC)" codebytes.$(O);           \
+	fi
+
+CODECNTL:
+	@if [ -f codecntl.c ]; then          \
+	    $(MAKE) OPT="$(STC_OPT)" STC_CC="$(STC_CC)" STC_CFLAGS="$(STC_CFLAGS)" CC="$(CC)" codecntl.$(O);           \
+	fi
+
+PARSE:
+	@if [ -f parse.y ]; then             \
+	    $(MAKE) OPT="$(STC_OPT)" STC_CC="$(STC_CC)" STC_CFLAGS="$(STC_CFLAGS)" CC="$(CC)" parse.$(O);              \
+	fi
+
+SCAN:
+	@if [ -f scan.l ]; then              \
+	    $(MAKE) OPT="$(STC_OPT)" STC_CC="$(STC_CC)" STC_CFLAGS="$(STC_CFLAGS)" CC="$(CC)" scan.$(O);               \
+	fi
+
+STCMAIN:
+	@if [ -f stcmain.c ]; then \
+	    $(MAKE) OPT="$(STC_OPT)" STC_CC="$(STC_CC)" STC_CFLAGS="$(STC_CFLAGS)" CC="$(CC)" stcmain.$(O); \
+	fi
+
+UTILS:
+	@if [ -f utils.c ]; then \
+	    $(MAKE) OPT="$(STC_OPT)" STC_CC="$(STC_CC)" STC_CFLAGS="$(STC_CFLAGS)" CC="$(CC)" utils.$(O); \
+	fi
+
+ABBREV:
+	@if [ -f abbrev.c ]; then \
+	    $(MAKE) OPT="$(STC_OPT)" STC_CC="$(STC_CC)" STC_CFLAGS="$(STC_CFLAGS)" CC="$(CC)" abbrev.$(O); \
+	fi
+
+FAST:
+	@if [ -f fast.c ]; then \
+	    $(MAKE) OPT="$(STC_OPT)" STC_CC="$(STC_CC)" STC_CFLAGS="$(STC_CFLAGS)" CC="$(CC)" fast.$(O); \
+	fi
+
+GLOBAL:
+	@if [ -f global.c ]; then \
+	    $(MAKE) OPT="$(STC_OPT)" STC_CC="$(STC_CC)" STC_CFLAGS="$(STC_CFLAGS)" CC="$(CC)" global.$(O); \
+	fi
+
+OPTMETHOD:
+	@if [ -f optmethod.c ]; then \
+	    $(MAKE) OPT="$(STC_OPT)" STC_CC="$(STC_CC)" STC_CFLAGS="$(STC_CFLAGS)" CC="$(CC)" optmethod.$(O); \
+	fi
+
+OPTBLOCK:
+	@if [ -f optblock.c ]; then \
+	    $(MAKE) OPT="$(STC_OPT)" STC_CC="$(STC_CC)" STC_CFLAGS="$(STC_CFLAGS)" CC="$(CC)" optblock.$(O); \
+	fi
+
+OPTEXPR:
+	@if [ -f optexpr.c ]; then \
+	    $(MAKE) OPT="$(STC_OPT)" STC_CC="$(STC_CC)" STC_CFLAGS="$(STC_CFLAGS)" CC="$(CC)" optexpr.$(O); \
+	fi
+
+SCANEXPR:
+	@if [ -f scanexpr.c ]; then \
+	    $(MAKE) OPT="$(STC_OPT)" STC_CC="$(STC_CC)" STC_CFLAGS="$(STC_CFLAGS)" CC="$(CC)" scanexpr.$(O); \
+	fi
+
+.c.o:
+	$(STC_CC) $(STC_CFLAGS) $(STC_OPT) $(STC_WARNFLAGS) -c $*.c
+
+#
+# the patching below is req'd to:
+# - fix most lexer's small static lineBuffer and state-table size
+# - remove #ident lines (not supported on some systems)
+# - fix hpux bug (not initializing static data to zero ?)
+#
+fixLexer:       lex.yy.c
+	sed -e '/#ident/d' \
+	    -e '/^#define YY_BUF_SIZE/s/^.*$$/#define YY_BUF_SIZE (16384*4)/' \
+	    -e '/^static YY_BUFFER_STATE yy_current_buffer;$$/s/;/=0;/' < lex.yy.c >scan.c
+
+#
+# the patching below is required to fix a bug
+# with hpux10 (not initializing static data to zero ?)
+#
+scan.c:         scan.l
+	$(LEX) $(LEX_FLAGS) scan.l
+	$(MAKE) fixLexer
+
+scan.o:         defs.h tokens.h scan.c
+	$(STC_CC) $(STC_CFLAGS) $(STC_OPT) -DYYLMAX=65536 -c scan.c
+
+parser:
+	@if (bison --version >/dev/null); then \
+	    $(MAKE) parse.c YACC=bison; \
+	else \
+	    $(MAKE) parse.c YACC=yacc; \
+	fi
+
+scanner:
+	@if (flex --version >/dev/null); then \
+	    $(MAKE) scan.c LEX=flex; \
+	else \
+	    $(MAKE) scan.c LEX=lex; \
+	fi
+
+parse.c:        parse.y
+	@rm -f y.tab.c y.tab.h parse.tab.c parse.tab.h
+	$(YACC) -d parse.y
+	@-if [ -f parse.tab.c ]; then \
+	    mv parse.tab.c y.tab.c; \
+	fi
+	@-if [ -f parse.tab.h ]; then \
+	    mv parse.tab.h y.tab.h; \
+	fi
+	sed '/#ident/d' < y.tab.c > parse.c
+
+y.tab.h:        y.tab.c
+
+#parse.o:       defs.h parse.c tokens.h
+
+parse.o:        defs.h parse.c
+	$(STC_CC) $(STC_CFLAGS) $(STC_OPT) $(STC_WARNFLAGS) -c parse.c
+	-sh -c "if cmp -s tokens.h y.tab.h; then \
+		   echo ; \
+		else \
+		   mv y.tab.h tokens.h; \
+		fi"
+
+tokens.h:       parse.y
+	@if [ -f parse.y ]; then                 \
+	     $(MAKE) OPT="$(STC_OPT)" STC_CC="$(STC_CC)" STC_CFLAGS="$(STC_CFLAGS)" CC="$(CC)" parse.o;         \
+	fi
+
+ntparse.c:      parse.y
+	$(MAKE) parse.c
+	mv parse.c ntparse.c
+
+ntscan.c:       scan.l
+	$(MAKE) scan.c
+	mv scan.c ntscan.c
+
+nttokens.h:     parse.y
+	@rm -f y.tab.c y.tab.h parse.tab.c parse.tab.h
+	$(YACC) -d parse.y
+	@-if [ -f parse.tab.c ]; then \
+	    mv parse.tab.c y.tab.c; \
+	fi
+	@-if [ -f parse.tab.h ]; then \
+	    mv parse.tab.h y.tab.h; \
+	fi
+	mv y.tab.h nttokens.h
+
+showconf:
+	$(MAKE) showconf.$(O) STC_CC="$(STC_CC)" STC_CFLAGS="$(STC_CFLAGS)" CC=$(STC_CC)
+	$(STC_CC) -o showconf showconf.$(O)
+
+$(OBJS):        defs.h
+
+codemthd.o:     codemthd.c stc.h stcIntern.h global.h
+codecls.o:      codecls.c stc.h stcIntern.h version.h global.h
+stcmain.o:      stcmain.c stc.h version.h global.h $(INTERN_H)
+fast.o:         fast.c stcIntern.h global.h
+codeblk.o:      codeblk.c stcIntern.h global.h
+codemthd.o:     codemthd.c stcIntern.h global.h
+codeexpr.o:     codeexpr.c stcIntern.h global.h
+codecntl.o:     codecntl.c global.h
+global.o:       global.c global.h
+
+codemthd.o codeblk.o: stcVMoffsets.h
+
+d_codemthd.o d_codeblk.o: stcVMoffsets.h
+
+copyIfChanged: $(FILE)
+	@-if [ -f $(INCLUDE)/$(FILE) ]; then                    \
+	    sh -c "if cmp -s $(FILE) $(INCLUDE)/$(FILE); then   \
+		echo $(FILE) unchanged > /dev/null ;            \
+	    else                                                \
+		echo $(FILE) CHANGED ;                          \
+		cp $(FILE) $(INCLUDE)/$(FILE) ;                 \
+	    fi";                                                \
+	else                                                    \
+	    cp $(FILE) $(INCLUDE)/$(FILE) ;                     \
+	fi
+
+includeFiles:   $(INCLUDE) $(INCLUDE)/symbols.stc
+	@$(MAKE) copyIfChanged FILE=stx-config.h
+	@$(MAKE) copyIfChanged FILE=stc.h
+	@$(MAKE) copyIfChanged FILE=stcVMdata.h
+	@$(MAKE) copyIfChanged FILE=stcVMoffsets.h
+	@$(MAKE) copyIfChanged FILE=stcIntern.h
+	@$(MAKE) copyIfChanged FILE=stxTypeMacros.h
+	@$(MAKE) copyIfChanged FILE=stxAsmMacros.h
+	@$(MAKE) copyIfChanged FILE=$(INTERN_H)
+	@$(MAKE) copyIfChanged FILE=stxOSDefs.h
+	@$(MAKE) copyIfChanged FILE=stxNames.h
+	@$(MAKE) copyIfChanged FILE=thinlocks.h
+	@for i in $(CPU_INTERN_H); \
+	do \
+	  $(MAKE) copyIfChanged FILE=$$i; \
+	done
+
+$(INCLUDE)/symbols.stc:
+	@echo "seeding symbols.stc from stc/symbols.stc.seed ..."; \
+	test -f $@ || cp symbols.stc.seed $@
+
+$(INCLUDE)/stc.h:       $(INCLUDE) stc.h
+	@$(MAKE) copyIfChanged FILE=stc.h
+
+$(INCLUDE)/stx-config.h:       $(INCLUDE) stx-config.h
+	@$(MAKE) copyIfChanged FILE=stx-config.h
+
+
+$(INCLUDE)/stcVMdata.h: $(INCLUDE) stcVMdata.h
+	@$(MAKE) copyIfChanged FILE=stcVMdata.h
+
+$(INCLUDE)/stcVMoffsets.h: $(INCLUDE) stcVMoffsets.h
+	@$(MAKE) copyIfChanged FILE=stcVMoffsets.h
+
+$(INCLUDE)/stxTypeMacros.h: $(INCLUDE) stxTypeMacros.h
+	@$(MAKE) copyIfChanged FILE=stxTypeMacros.h
+
+$(INCLUDE)/stxAsmMacros.h: $(INCLUDE) stxAsmMacros.h
+	@$(MAKE) copyIfChanged FILE=stxAsmMacros.h
+
+$(INCLUDE)/stxOSDefs.h: $(INCLUDE) stxOSDefs.h
+	@$(MAKE) copyIfChanged FILE=stxOSDefs.h
+
+$(INCLUDE)/stxNames.h: $(INCLUDE) stxNames.h
+	@$(MAKE) copyIfChanged FILE=stxNames.h
+
+$(INCLUDE)/stcIntern.h:    $(INCLUDE) stcIntern.h $(INTERN_H)
+	@$(MAKE) copyIfChanged FILE=stcIntern.h
+	@$(MAKE) copyIfChanged FILE=$(INTERN_H)
+
+$(INCLUDE)/$(INTERN_H).h:    $(INCLUDE) stcIntern.h $(INTERN_H)
+	@$(MAKE) copyIfChanged FILE=$(INTERN_H)
+
+$(INCLUDE)/cpu_i386.h:    cpu_i386.h
+	@$(MAKE) copyIfChanged FILE=cpu_i386.h
+
+$(INCLUDE)/cpu_x86_64.h:    cpu_x86_64.h
+	@$(MAKE) copyIfChanged FILE=cpu_x86_64.h
+
+$(INCLUDE)/cpu_sparc.h:   cpu_sparc.h
+	@$(MAKE) copyIfChanged FILE=cpu_sparc.h
+
+$(INCLUDE)/cpu_hppa.h:   cpu_hppa.h
+	@$(MAKE) copyIfChanged FILE=cpu_hppa.h
+
+$(INCLUDE)/cpu_alpha.h:   cpu_alpha.h
+	@$(MAKE) copyIfChanged FILE=cpu_alpha.h
+
+$(INCLUDE):
+	test -d $@ || mkdir $@
+
+cleanTempFiles::
+	@-rm -f core scan.t lex.yy.c y.tab.c y.output y.tab.h sta00*
+
+cleanjunk::
+	@-rm -f a.out ttt.o y.tab.c lex.yy.c y.tab.h scan.c scan.t parse.c
+	@-rm -f y.output parse.tab.c parse.tab.h nstc genOffsets sta00*
+
+clean::
+	@-rm -f a.out tokens.h y.tab.c lex.yy.c y.tab.h scan.c scan.t parse.c \
+	       yacc.acts yacc.debug yacc.tmp y.output \
+	       parse.tab.c parse.tab.h nstc autoconf showconf \
+	       stcVMoffsets.h genOffsets sta00*
+	@-if [ -f parse.y ]; then \
+	    rm -f *.o; \
+	else \
+	    echo "will not remove objs - no sources to recompile."; \
+	fi
+
+clobber::
+	@-rm -f a.out tokens.h y.tab.c lex.yy.c y.tab.h \
+	       scan.c scan.t parse.c \
+	       ntscan.c ntparse.c nttokens.h \
+	       yacc.acts yacc.debug yacc.tmp y.output \
+	       parse.tab.c parse.tab.h showconf autoconf nstc  \
+	       stcVMoffsets.h genOffsets sta00* stx-config.h
+	@-if [ -f parse.y ]; then \
+	    rm -f stc stcVMoffsets.h ; \
+	else \
+	    echo "will not remove stc - no sources to recompile."; \
+	fi
+
+gtags: GPATH GRTAGS GSYMS GTAGS
+
+GPATH GRTAGS GSYMS GTAGS: $(SRCS)
+	@if which global; then \
+		if [ -f GTAGS ]; then \
+			echo "Updating tags"; \
+			global -u; \
+		else \
+			echo "Generating tags"; \
+			gtags; \
+			global -u;
+		fi \
+	fi

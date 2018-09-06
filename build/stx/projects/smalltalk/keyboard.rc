@@ -1,0 +1,20 @@
+"*
+ * Encoding: iso8859-1
+ *
+ * $Header$
+ *
+ * MIMEType: application/x-smalltalk-source
+ *
+ * ST/X startup configuration file:
+ *
+ * This file used to define keyboard mapping. Mappings have been moved to
+ * 
+ *    DeviceWorkstation class>>defaultKeyboardMapDefinition
+ *
+ * Eventually, this file will vanish. 
+ * 
+ * Put all your customizations to some `rc.d` file and or to your private
+ * startup script. 
+ *"
+
+Smalltalk fileIn:'keyboardMacros.rc'.

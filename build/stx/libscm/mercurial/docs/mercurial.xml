@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter>
+  <chapterinfo>
+    <author>
+      <firstname>Jan</firstname>
+
+      <surname>Vraný</surname>
+
+      <email>jan.vrany[AT]fit.cvut.cz</email>
+    </author>
+  </chapterinfo>
+
+  <title>Using Mercurial with Smalltalk/X</title>
+
+  <para>This chapter describes how to use Mercurial with Smalltalk/X. By its
+  nature, this document is, and always be incomplete a not up-to-date. Please
+  report inconsistencies to the autor, preferably using bug tracker (see <xref
+  linkend="sec-bugreporting"/> for details).</para>
+
+  <section>
+    <?dbhtml filename="tutorial.html"?>
+
+    <title>Step-by-Step Example</title>
+
+    <abstract>
+      <para>Short tutorial describes how to use Mercurial within Smalltalk/X
+      environment for the impatient.</para>
+    </abstract>
+
+    <para>Thorough this tutorial, we will use a fictious package
+    <code>jv:hg_tutorial</code>.</para>
+
+    <section>
+      <title>Setting up a Mercurial Repository</title>
+
+      <para>Create or clone your repository in your so-called
+      <emphasis>package path</emphasis> as usual. Like in Java, package
+      sources must be located in directory whose name matches a package name.
+      For package <package>named jv:hg_tutorial</package> the directory would
+      be <filename>jv/hg_tutorial</filename>, for paclkage
+      <package>stx:goodies/sunit</package> it would be
+      <filename>stx/goodies/sunit</filename>. To check content of your package
+      path, inspect:</para>
+
+      <programlisting>Smalltalk packagePath</programlisting>
+
+      <para>You may add your own directories to a Smalltalk/X package path by
+      evaluating</para>
+
+      <programlisting>Smalltalk packagePath add: 'C:\path\to\your\packages'.</programlisting>
+
+      <para>To make it permanent, add the above snippet to your user startup
+      script
+      (<filename><envar>%USERPROFILE%</envar>\.smalltalk\p_<envar>%USERNAME%</envar>.rc</filename>
+      on Windows,
+      <filename><envar>${HOME}</envar>/.smalltalk/p_<envar>${USER}</envar>.rc</filename>
+      on UNIX.).</para>
+
+      <para>So, let's create an empty mercurial repository in
+      <filename>C:\Users\jv\.smalltalk\packages</filename> (a default location
+      for user packages):</para>
+
+      <programlisting>cd \Users\jv\.smalltalk\packages
+mkdir jv
+hg init jv\hg_tutorial
+</programlisting>
+
+      <para>If there is already a repository, just clone it like:</para>
+
+      <para><programlisting>cd \Users\jv\.smalltalk\packages
+mkdir jv
+hg clone https://bitbucket.org/janvrany/jv-hg_tutorial jv\hg_tutorial
+</programlisting></para>
+    </section>
+
+    <section>
+      <title>Setting up Smalltalk/X to use Mercurial Repository</title>
+
+      <para>Second step is to configure your Smalltalk/X IDE to use Mercurial
+      for your packages. Open settings (in <ulink
+      url="http://swing.fit.cvut.cz/projects/stx/doc/online/english/tools/misc/TOP.html#LAUNCHER">Launcher</ulink>
+      select <menuchoice>
+          <guimenuitem>System</guimenuitem>
+
+          <guimenuitem>Settings</guimenuitem>
+        </menuchoice>, go to <guilabel>Source Code Management</guilabel> and
+      press <guibutton>Add...</guibutton> to add a new package mapping. Enter
+      a package name (<package>jv:hg_tutorial</package>) and select
+      <guimenuitem>Mercurial+</guimenuitem> as source code manager. Don't
+      forget to apply and save your settings.</para>
+
+      <note>
+        <para>Make sure you have selected <guilabel>Mercurial+</guilabel> and
+        not <guilabel>Mercurial</guilabel> (without plus and the end),
+        Mercurial without plus refer to and older attempt to build a Mercurial
+        integration which was never finished and probably will vanish
+        soon.</para>
+      </note>
+
+      <figure>
+        <title>Configuring Smalltalk/X to use Mercurial for given
+        package</title>
+
+        <screenshot>
+          <screeninfo>A source</screeninfo>
+
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="images/settings-configure-per-package-repo.PNG"/>
+            </imageobject>
+          </mediaobject>
+        </screenshot>
+      </figure>
+
+      <para>A source code manager for given package is searched by matching
+      package if match patter against the actual package name from top to
+      bottom. First matching is used. You may want to test your setting; to do
+      so, just press <guibutton>Test</guibutton> button to open test
+      tool.</para>
+
+      <note>
+        <para>Do not forget to tick Show in Menus checkbox in
+        Mercurial-specific settings, otherwise menu items for working with
+        Mercurial won't be shown. Refer to for <xref
+        linkend="sec-settings"/>details.</para>
+      </note>
+
+      <figure>
+        <title>A test tool to check your source code management
+        settings</title>
+
+        <screenshot>
+          <screeninfo/>
+
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="images/settings-test-per-package-repo.PNG"/>
+            </imageobject>
+          </mediaobject>
+        </screenshot>
+      </figure>
+    </section>
+
+    <section>
+      <title>Commiting Changes</title>
+
+      <para/>
+
+      <figure>
+        <title>Commiting Modified Package to a Mercurial Repository</title>
+
+        <screenshot>
+          <screeninfo/>
+
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="images/ss-commit-menu.png"/>
+            </imageobject>
+          </mediaobject>
+        </screenshot>
+      </figure>
+    </section>
+  </section>
+
+  <section id="sec-settings">
+    <?dbhtml filename="settings.html"?>
+
+    <title>Setting Up Mercurial</title>
+
+    <para>There is a little to configure on Mercurial in Smalltalk/X.
+    Mercurial repositories are automatically detected in your
+    <emphasis>package path</emphasis> and all repository-specific settings
+    like push/pull urls are read right from the repository and its
+    configuration.</para>
+
+    <para><xref linkend="ss-settings"/> show settings dialog for
+    Mercurial.</para>
+
+    <variablelist>
+      <varlistentry>
+        <term><guilabel>Show in Menus</guilabel></term>
+
+        <listitem>
+          <para>When checked, Mercurial-related menus are shown in tools like
+          class browser or file browser. If unchecked, menus are not visible
+          (and thus does not pollute your menus if Mercurial is not at all
+          used). If you plan to use Mercurial, check this on.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><guilabel>'hg' command</guilabel></term>
+
+        <listitem>
+          <para>Path to a hg command line client. If left empty, Mercurial
+          executable is searched in standard places. Press
+          <guibutton>Test</guibutton> to check whether specified or
+          autodetected command line client matches versions supported by
+          Smalltalk/X Mercurial library.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>Use shared repositories (EXPERIMENTAL)</term>
+
+        <listitem>
+          <para>When checked, temporary working copy for commit is not a clone
+          of work-tree directory (as created by <command>hg clone</command>
+          command) but rather shared (as created by <command>hg
+          share</command>). This is required to enable commit amending.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><guilabel>Automatically push changes to upstream
+        repository</guilabel></term>
+
+        <listitem>
+          <para>When checked, changes are automatically pushed to a default
+          upstream repository on each commit. Although this is not
+          recommended, it may be used to support a workflow similar to
+          centralized source code management systems such as CVS or
+          SVN.</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+
+    <note>
+      <para>Also, make sure that you have selected either
+      <guilabel>Inline</guilabel> or <guilabel>Compat</guilabel> menu layout
+      in system browser settings (in settings dialog, go to <menuchoice>
+          <guimenuitem>Tools</guimenuitem>
+
+          <guimenuitem>System Browser</guimenuitem>
+        </menuchoice>.</para>
+    </note>
+
+    <figure id="ss-settings">
+      <title>Mercurial Settings Dialog</title>
+
+      <screenshot>
+        <screeninfo/>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/hg-settings.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+  </section>
+
+  <section id="sec-troubleshooting">
+    <?dbhtml filename="troubleshooting.html"?>
+
+    <title>Troubleshooting</title>
+
+    <para>Mercurial support is still in development phase. Therefore it might
+    not work as expected, some features may be missing, mehere might be
+    bugs.</para>
+
+    <section>
+      <title id="sec-bugreporting">Bug reporting</title>
+
+      <para>Please report all bugs to <ulink
+      url="https://bitbucket.org/janvrany/stx-libscm/issues?status=new&amp;status=open">https://bitbucket.org/janvrany/stx-libscm/issues?status=new&amp;status=open</ulink>, 
+      You may want to read <ulink url="https://swing.fit.cvut.cz/projects/stx-jv/wiki/HowToReportBug">how to report a bug</ulink>
+      with all necessary information. All bug reports are welcome.</para>
+      <para/>
+    </section>
+  </section>
+</chapter>

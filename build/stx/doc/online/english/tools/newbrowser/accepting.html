@@ -1,0 +1,228 @@
+<HEAD>
+<TITLE>Using the New System Browser - Accepting & Recompilation</TITLE>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="menu3.html"> <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">  <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="refactorings.html"> <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H2><A NAME="CODE_EDITING" HREF="TOP.html#I_ACCEPTING">Code Editing</A></H2>
+
+The code editor is modeless.
+It does not matter how text came into the codeview
+(i.e. if you typed it from scratch, copy-pasted existing code into it or
+modified any already shown code).
+Whenever you "accept" (use the menu function "accept" or the keyboard shortcut),
+depending on the current context, either a class- or a method-change is performed.
+It is therefore legal and common to select an existing method and use that as a base
+for new code. If you modify the method's name before accepting,
+a new method will be installed, and the old one is unaffected.
+Thus, whether an existing method is changed or a new one is added
+is determined at the time you "accept" - not when you select a method.
+<P>
+This means, that to rename a method, you'd have to select it,
+edit the code, accept the new definition, reselect the old one,
+verify that the old method is no longer called or change the callers as
+required and finally remove it (via the menu).
+<br>Or you can use the method list's "Rename" menu function, which does all of
+the above for you, including the rewrite of any caller.
+
+
+<H2><A NAME="INTELLIGENT_EDITING" HREF="TOP.html#I_INTELLIGENT_EDITING">Intelligent Editing</A></H2>
+The editor supports <VAR>code completion</VAR> (via the "<KBD>CTRL-Space</KBD>" key combination)
+and <VAR>snippet expansion</VAR> (via "<KBD>ALT-Space</KBD>").
+<P>
+The system's settings dialog also allows for "Completion as you type" to
+be enabled. Then, a little floating menu showing possible completions will
+appear automatically, as you type.
+If any of the suggested completions makes sense, you should either click on the entry in the list,
+or select it by navigating with CTRL-Cursor keys and pressing return on the selection.
+We choose to use CTRL- as a modifier, as it turned out to be a bit confusing
+if the normal cursor keys lead to completions.
+<P>
+Also many rewrite and refactoring functions are found on the codeview popup menu
+(especially: the code menu, which is reached quickly by pressing the "<KBD>Shift</KBD>" key while clicking).
+
+<H2><A NAME="SYNTAX_HIGHLIGHTING" HREF="TOP.html#I_SYNTAX_HIGHLIGHTING">Syntax Highlighting</A></H2>
+By default, text is syntax-highlighted according to the current class's programming language
+(currently, Smalltalk, JavaScript or Ruby are supported).
+The syntax colors and emphasis can be customized via the Launcher's settings dialog ("<I>System</I>"-"<I>Settings</I>"-"<I>Tools</I>"-"<I>Editor</I>"-"<I>Syntax Colors</I>").
+
+<H2><A NAME="REFACTORINGS" HREF="TOP.html#I_SYNTAX_HIGHLIGHTING">Refactorings and Lint Checks</A></H2>
+Many rewrite and refactoring functions are found in the codeview's popup menu
+(especially: the code menu, which is reached quickly by pressing the "<KBD>Shift</KBD>" key while clicking).
+Notice that the code view's menu only shows refactorings which are applicable to
+a single method's code. More sophisticated class or package refactorings are found in
+the corresponding main menus.
+<P>
+If enabled in the settings,
+a background code checker (called "<I>SmallLint</I>" will constantly look over your shoulder
+and give little warning notifiers in the left line number area.
+Move the mouse over the icon to see a short summary of what it thinks,
+or click on the warning icon to see more detail.
+Some of those may even include an offer to rewrite the code for you.
+
+<H2><A NAME="BREAKPOINTS" HREF="TOP.html#I_ACCEPTING">Statement Level Break- and Tracepoints</A></H2>
+
+Starting with vsn6.2, the new code view also shows line numbers and
+allows for break- and trace-points to be set/cleared by double-clicking in the line number area.
+It also gives you quick implementor/sender navigation
+(press "<KBD>Alt-LeftMouseButton</KBD>" and "<KBD>Alt-RightMouseButton</KBD>"
+while the mouse is over a message selector).
+<P>
+The new code editor is still considered somewhat experimental;
+and can be disabled via the launcher's
+"<VAR>Tools</VAR>"-"<VAR>Code Editor 2</VAR>" settings menu.
+
+
+<H2><A NAME="ACCEPTING" HREF="TOP.html#I_ACCEPTING">Accepting</A></H2>
+
+  Performing <CODE>"accept"</CODE> in the code view (we say <CITE>``accepting''</CITE>)
+  will behave different, depending on the last action in one of the list views.
+  In general, <CITE>accepting</CITE> always affects the aspect shown in the code view.
+<BR>
+  This means that <VAR>accept</VAR> will:
+
+<UL>
+<LI>change the class comment
+<BR>
+after you selected <CODE>"comment"</CODE> in the class menu
+<P>
+<LI>change the class definition
+<BR>
+after you changed classes, selected <CODE>"new class"</CODE>
+or selected <CODE>"definition"</CODE> in the class menu.
+<P>
+<LI>change the classes class-instance-vars
+<BR>
+after selecting <CODE>"class instvars"</CODE>
+<P>
+<LI>change a methods definition (i.e. compile it)
+<BR>
+after changing methods or selecting <CODE>"new method"</CODE> in the method menu.
+</UL>
+<P>
+The one exception is the full class browser: <VAR>accept</VAR> may affect all of the
+above, since it rereads all of the text shown in the codeview (actually a filein).
+
+<P>
+  Unless your changed code has been <VAR>accepted</VAR>, no changes are made to the actual
+  method or class. If you want to change your mind, and go back to the original
+  (actually: the last <VAR>accept</VAR>) version after editing for a while, simple click
+  on the method (in the methodlist) after a method change or the class
+(in the classList) after a definition change.
+<P>
+In addition, the new browser keeps a history of the last few changes made,
+and allows undo via the <I>operations</I> menu.
+
+
+<H2><A NAME="CHANGESINANOTHERBROWSER" HREF="TOP.html#I_CHANGESINANOTHERBROWSER">Reacting to Changes Made in Other Browsers</A></H2>
+
+If a method being shown is changed by some other part of the system (another browser, a fileIn,
+or a repository update made in another browser),
+the displayed source code will be automatically updated,
+UNLESS you have modified the code.
+<BR>
+In this case, the modified text will still be shown, but emphasized with a red color,
+to visualize the fact, that the shown code is not up-to-date.
+
+
+
+<H2><A NAME="RECOMPILATION" HREF="#I_RECOMPILATION">Recompilation after a Class Change</A></H2>
+
+  Changing a classes instance- or classInstance variable definition may require a
+  recompilation of some or all methods (also often in subclasses).
+This recompilation is required, because in the bytecode,
+named instance variables are accessed via
+their index - thus, without recompilation,
+old methods code would refer to wrong instvar slots.
+<BR>
+  Smalltalk tries to recompile only the minimum set of methods, but still, this
+  recompilation may take some time.
+<P>
+  Notice, that when you add or remove instance variables to/from a class description
+  and <VAR>accept</VAR>, the system will actually create a
+  <STRONG>new class</STRONG> instead of changing
+  the old one, and recompile the original methods in the context of
+  the new definition.
+  The same is done on the class side, if class instance variables are added or removed.
+<P>
+  The original class is still physically around, but no longer accessible by name.
+  It is called an anonymous class and has a category of <CODE>"obsolete"</CODE>.
+<BR>
+  The reason for doing this is that existing instances of the class still need their valid
+  class for proper operation (which is the old one, NOT the new one); keep in mind that
+  all specification (i.e. number of instance variables etc.) and protocol (i.e. the list of
+  selectors) are defined in an object's class - therefore, old instances would be in big trouble
+  without a valid class, once they receive a message.
+<P>
+  After such a change, the old (anonymous) class is no longer editable by the
+  systemBrowser. The following scenario should give you more insight on this:
+<BLOCKQUOTE>
+    consider a view class of yours,
+    of which an instance exists and is visible on the screen
+<P>
+    now you add an instance variable <CODE>"foo"</CODE> to its class description
+<P>
+    this creates a new class (with the original name), and removes the
+    old one from the name tables; the old class is still around but not
+    reachable by the old name. However, if you inspect that class, it will
+    show its old name and a category of <CODE>"obsolete</CODE>.
+<P>
+    Old instances are therefore no longer affected by any changes in the browser,
+    thus any changes will only make sense for new instances.
+</BLOCKQUOTE>
+<H3>Why is this so ?</H3>
+
+  There are basically 2 other possible solutions to handling this situation:
+
+<OL>
+<LI>do not allow a class definition change as long as there are instances
+<BR>
+       this would make it impossible, to change things like ScrollBars, TextViews
+	 and almost any other class in the system.
+<P>
+<LI>convert instances
+<BR>
+this means that existing instances have to either get
+       new fields added (which default value ?) or instance variables removed.
+<P>
+    This is possible, and is actually done by many other Smalltalk
+    systems. The drawback is that the system has to perform a "<CODE>#become:</CODE>"
+    on all existing instances and derived instances, which may be very slow.
+<BR>
+    ST/X may offer this mechanism in a later release as an option.
+</OL>
+<P>
+Notice:
+<BLOCKQUOTE>
+    Occasionally, it happens that browsers do not correctly update after such
+    a definition change (i.e. a class definition is changed in one browser, but
+    other browser(s) continue to show the old, obsolete class).
+<BR>
+    You will notice this when adding new methods, which do not show up in other
+    browsers.
+<BR>
+    To prevent confusion, it is a good idea to use the <CODE>"update"</CODE> menu function of
+    other browsers - or start a new browser if you are in doubt.
+<BR>
+    This is definitely a bug in ST/X and will be fixed.
+</BLOCKQUOTE>
+
+<HR>
+<A HREF="refactorings.html">Next: Refactorings</A>
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif" ALT="[stx logo]">
+Copyright &copy; 2000 eXept Software AG, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+<HR>
+Doc $Revision: 1.21 $ $Date: 2016-01-27 17:47:46 $
+
+</BODY>
+</HTML>

@@ -1,0 +1,26 @@
+/* XPM */
+static char *menu_erase_16x16_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 3 1",
+/* colors */
+"a c black",
+"b c white",
+"c c none",
+/* pixels */
+"cccccccccccccccc",
+"ccaaacccccccccac",
+"ccaaaaccccccaacc",
+"cccaaaaccccaaccc",
+"cccccaaaccaacccc",
+"ccccccaaaaaccccc",
+"cccccccaaacccccc",
+"ccccccaaaaaccccc",
+"cccccaaaccaacccc",
+"ccccaaaccccaaccc",
+"cccaaaccccccaccc",
+"ccaaaacccccccacc",
+"ccaaaccccccccccc",
+"cccaccccccccccac",
+"cccccccccccccccc",
+"cccccccccccccccc",
+};

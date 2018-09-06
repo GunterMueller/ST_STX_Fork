@@ -1,0 +1,32 @@
+/* XPM */
+static char *india_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 20 5 1",
+/* colors */
+"a c orange",
+"b c white",
+"c c #008000",
+"d c black",
+"e c #0000ff",
+/* pixels */
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"bbbbbbbbbbbbbbddddbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbdeeeeeedbbbbbbbbbbbb",
+"bbbbbbbbbbbdeeeeeeeedbbbbbbbbbbb",
+"bbbbbbbbbbbdeeeddeeedbbbbbbbbbbb",
+"bbbbbbbbbbbdeeeeeeeedbbbbbbbbbbb",
+"bbbbbbbbbbbbdeeeeeedbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbddddbbbbbbbbbbbbbb",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+};

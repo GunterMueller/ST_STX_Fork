@@ -1,0 +1,231 @@
+; View defaultStyle:#expecco
+;
+; $Header$
+
+name                            #expecco
+
+ToolbarIconLibrary              ?(Smalltalk at:#VistaToolbarIconLibrary) ? (Smalltalk at:#XPToolbarIconLibrary) ? GenericToolbarIconLibrary
+useQuestForHelp                 false
+
+;
+; unfinished
+;
+
+;
+; notice: the values below
+; are not used when running under native Windows
+; (uses system-settings values then)
+;
+#if Screen current hasGreyscales
+
+selectionBlue                   (Color red:20.0 green:60.0 blue:100.0) exactOrNearestOn:(Screen current)
+
+viewGrey                        (Color grey:95)  exactOrNearestOn:(Screen current)
+viewLightGrey                   Color white
+lightColor                      Color white
+halfShadowColor                 (Color grey:80) exactOrNearestOn:(Screen current)
+halfLightColor                  =viewGrey
+shadowColor                     (Color grey:60) exactOrNearestOn:(Screen current)
+
+#else
+
+selectionBlue                   Color black
+viewGrey                        Color white
+viewLightGrey                   Color white
+lightColor                      Color grey:50
+shadowColor                     Color black
+
+#endif
+
+#if Screen current platformName = 'xWIN32'
+
+selectionBlue                   [Screen current getSystemColor:#'COLOR_HIGHLIGHT']
+menu.backgroundColor            [Screen current getSystemColor:#'COLOR_MENU'     ]
+menu.foregroundColor            [Screen current getSystemColor:#'COLOR_MENUTEXT' ]
+; viewGrey                        [Screen current getSystemColor:#'COLOR_BTNFACE'  ]
+; lightenedViewGrey               [(Screen current getSystemColor:#'COLOR_BTNFACE') lightened ]
+; darkenedViewGrey                [(Screen current getSystemColor:#'COLOR_BTNFACE') darkened ]
+#else
+lightenedViewGrey               Color redByte:240 greenByte:240 blueByte:240
+darkenedViewGrey                Color redByte:150 greenByte:150 blueByte:150
+#endif
+
+viewGrey                        (Color rgbValue:16rAEBDC8)
+lightenedViewGrey               =viewGrey lightened
+darkenedViewGrey                =viewGrey darkened
+
+#include 'mswindows95.common'
+
+viewGrey                        Color rgbValue:16r5E7B92
+
+name                            #winVista
+
+comment                 'expecco style'
+previewFileName         'viewStyleSample_winvista.png'
+
+#if (Language == #german) or:[Language == #de]
+comment  'expecco Stil'
+#endif
+
+#if (Language == #french) or:[Language == #fr]
+comment  'style pour expecco'
+#endif
+
+menu.enteredLevel               0
+; menu.buttonEnteredLevel         2   "/ sigh - does not work
+
+;; enable this, when old menuView cares for it also
+;; menu.itemMargin                          1
+menu.selectionFollowsMouse                  true
+menu.enteredBackgroundColor                 =menu.hilightBackgroundColor
+menu.enteredForegroundColor                 =menu.hilightForegroundColor
+menu.iconIndicationOn.bitmapFile            'CheckOn_xp.xpm'
+menu.iconIndicationOff.bitmapFile           'CheckOff_xp.xpm'
+menu.iconRadioOn.bitmap                     (VistaToolbarIconLibrary radioOn12x12Icon)
+menu.iconRadioOff.bitmap                    (VistaToolbarIconLibrary radioOff12x12Icon)
+menu.iconDisabledIndicationOn.bitmapFile    'CheckOn_disabled_xp.xpm'
+menu.iconDisabledIndicationOff.bitmapFile   'CheckOff_disabled_xp.xpm'
+menu.iconDisabledRadioOn.bitmap             (VistaToolbarIconLibrary radioOnDisabled12x12Icon)
+menu.iconDisabledRadioOff.bitmap            (VistaToolbarIconLibrary radioOffDisabled12x12Icon)
+
+;button.edgeStyle                       #soft
+;button.activeLevel                     -1
+;button.passiveLevel                    3
+;button.enteredBackgroundColor          [ (Screen current getSystemColor:#'COLOR_BTNFACE') lightened ]
+
+comboView.downForm                      [VistaToolbarIconLibrary scrollDownOffIcon]
+comboView.disabledDownForm              [VistaToolbarIconLibrary scrollDownOffIcon]
+comboView.enteredDownForm               [VistaToolbarIconLibrary scrollDownOffEntered2Icon]
+comboView.activeDownForm                [VistaToolbarIconLibrary scrollDownActiveIcon]
+; comboView.downFormFile                  'ComboDn_xp.xpm'.
+; comboView.disabledDownFormFile          'ComboDn_disabled_xp.xpm'.
+; comboView.activeDownFormFile            'ComboDn_active_xp.xpm'.
+; comboView.enteredDownFormFile           'ComboDn_entered_xp.xpm'.
+comboView.button.activeLevel            0
+comboView.button.passiveLevel           0
+comboView.button.activeBackgroundColor  =viewGrey
+; comboView.button.activeBackgroundColor  (Color white)
+; comboView.button.backgroundColor        (Color white)
+; comboView.level                         0
+
+; selection.highlightEnterItem       true         "/ underline-highlight item under cursor
+
+scroller.viewBackground          (Color redByte:16rEF greenByte:16rEF blueByte:16rEF)
+scroller.thumbColor              (Color redByte:192 greenByte:192 blueByte:192)
+"/ scroller.thumbLightColor         (Color redByte:16rCF greenByte:16rDD blueByte:16rFD)
+scroller.thumbLightColor         (Color redByte:238 greenByte:244 blueByte:254)
+scroller.thumbShadowColor        (Color redByte:16r83 greenByte:16r9E blueByte:16rD8)
+scroller.thumbEnteredColor       (Color red:64 green:75 blue:98)
+scroller.thumbActiveColor        (Color red:42 green:76 blue:91)
+scroller.thumbLevel              0
+scroller.thumbInset              1
+; scroller.thumbFrameColor         Color white "/ (Color redByte:175 greenByte:190 blueByte:240) darkened
+scroller.thumbFrameColor         (Color redByte:192 greenByte:192 blueByte:192)
+; scroller.thumbFrameColor2        (Color redByte:16rEF greenByte:16rEF blueByte:16rEF)
+scroller.thumbEdgeStyle          #edged
+scroller.NTallyMarks             4
+scroller.tallyLevel              1
+scroller.tallyInset              6
+scroller.tallyDistance           2
+scroller.snapBackDistance        100
+scroller.minThumbSize            16
+
+scroller.vista3DStyle           true
+
+miniScroller.size               3     "/ in millimeters
+
+
+arrowButton.upForm                  [VistaToolbarIconLibrary scrollUpOffIcon]
+arrowButton.enteredUpForm           [VistaToolbarIconLibrary scrollUpOffEntered2Icon]
+arrowButton.activeUpForm            [VistaToolbarIconLibrary scrollUpActiveIcon]
+arrowButton.disabledUpForm          [VistaToolbarIconLibrary scrollUpOffIcon]
+
+arrowButton.downForm                [VistaToolbarIconLibrary scrollDownOffIcon]
+arrowButton.enteredDownForm         [VistaToolbarIconLibrary scrollDownOffEntered2Icon]
+arrowButton.activeDownForm          [VistaToolbarIconLibrary scrollDownActiveIcon]
+arrowButton.disabledDownForm        [VistaToolbarIconLibrary scrollDownOffIcon]
+
+arrowButton.leftForm                [VistaToolbarIconLibrary scrollLeftOffIcon]
+arrowButton.enteredLeftForm         [VistaToolbarIconLibrary scrollLeftOffEntered2Icon]
+arrowButton.activeLeftForm          [VistaToolbarIconLibrary scrollLeftActiveIcon]
+arrowButton.disabledLeftForm        [VistaToolbarIconLibrary scrollLeftOffIcon]
+
+arrowButton.rightForm               [VistaToolbarIconLibrary scrollRightOffIcon]
+arrowButton.enteredRightForm        [VistaToolbarIconLibrary scrollRightOffEntered2Icon]
+arrowButton.activeRightForm         [VistaToolbarIconLibrary scrollRightActiveIcon]
+arrowButton.disabledRightForm       [VistaToolbarIconLibrary scrollRightOffIcon]
+
+
+arrowButton.leftFormFile          'ScrollLt.xp.xpm'
+arrowButton.enteredLeftFormFile   'ScrollLt_entered.xp.xpm'
+arrowButton.activeLeftFormFile    'ScrollLt_active.xp.xpm'
+arrowButton.disabledLeftFormFile  'ScrollLt_disabled.xp.xpm'
+
+arrowButton.rightFormFile         'ScrollRt.xp.xpm'
+arrowButton.enteredRightFormFile  'ScrollRt_entered.xp.xpm'
+arrowButton.activeRightFormFile   'ScrollRt_active.xp.xpm'
+arrowButton.disabledRightFormFile 'ScrollRt_disabled.xp.xpm'
+
+arrowButton.passiveLevel          0
+arrowButton.activeLevel           0
+arrowButton.backgroundColor       =scroller.viewBackground
+arrowButton.activeBackgroundColor =scroller.viewBackground
+
+noteBook.backgroundColor          =lightenedViewGrey
+noteBook.activeBackgroundColor    =viewBackground
+noteBook.foregroundColor          Color black
+noteBook.lightColor               =darkenedViewGrey
+noteBook.shadowColor              =darkenedViewGrey
+noteBook.passiveBackgroundColor   =lightenedViewGrey
+
+checkToggle.bitmapFile            'CheckOn10_xp.xpm'
+radioButton.passiveImage          [VistaToolbarIconLibrary radioOff12x12Icon]
+radioButton.activeImage           [VistaToolbarIconLibrary radioOn12x12Icon]
+radioButton.enteredPassiveImage   [VistaToolbarIconLibrary radioOffEntered12x12Icon]
+radioButton.enteredActiveImage    [VistaToolbarIconLibrary radioOnEntered12x12Icon]
+radioButton.disabledPassiveImage  [VistaToolbarIconLibrary radioOffDisabled12x12Icon]
+radioButton.disabledActiveImage   [VistaToolbarIconLibrary radioOnDisabled12x12Icon]
+checkToggle.disabledActiveImage   [VistaToolbarIconLibrary checkToggleOnDisabledIcon]
+checkToggle.disabledPassiveImage  [VistaToolbarIconLibrary checkToggleOffDisabledIcon]
+checkToggle.activeImage           [VistaToolbarIconLibrary checkToggleOnIcon]
+checkToggle.passiveImage          [VistaToolbarIconLibrary checkToggleOffIcon]
+checkToggle.enteredPassiveImage   [VistaToolbarIconLibrary checkToggleOffEnteredIcon]
+checkToggle.enteredActiveImage    [VistaToolbarIconLibrary checkToggleOnEnteredIcon]
+checkToggle.activeLevel           0
+checkToggle.passiveLevel          0
+checkToggle.disabledBackgroundColor     =viewGrey
+checkToggle.backgroundColor             =viewGrey
+checkToggle.activeBackgroundColor       =viewGrey
+
+menu.iconIndicationOn             [VistaToolbarIconLibrary checkToggleOnIcon]
+menu.iconIndicationOff            [VistaToolbarIconLibrary checkToggleOffIcon]
+menu.iconDisabledIndicationOn     [VistaToolbarIconLibrary checkToggleOffDisabledIcon]
+menu.iconDisabledIndicationOff    [VistaToolbarIconLibrary checkToggleOffIcon]
+
+noteBook.activeTabMarkerColor       (Color red:100 green:78 blue:23)
+
+popup.borderColor                   (Color grey:50)
+popup.borderWidth                   1
+editField.level                     0
+editField.borderWidth               1
+editField.borderColor               (Color redByte:175 greenByte:190 blueByte:240)
+
+; does not work
+; comboView.level                   0
+; comboView.borderWidth             1
+; comboView.borderColor             (Color redByte:175 greenByte:190 blueByte:240)
+
+; label.foregroundColor             (Color redByte:0 greenByte:70 blueByte:213)
+; button.foregroundColor            (Color black)
+; radioButton.foregroundColor       (Color black)
+; checkBox.labelForegroundColor     (Color black)
+
+; noteBook.foregroundColor          (Color redByte:0 greenByte:70 blueByte:213)
+framedBox.foregroundColor         (Color redByte:0 greenByte:70 blueByte:213)
+
+variablePanel.handleLevel       0
+
+infoBox.iconFile                'bitmaps/Information_XP.xpm'
+warningBox.iconFile             'bitmaps/Warning_XP.xpm'
+requestBox.iconFile             'bitmaps/Request_XP.xpm'
+errorBox.iconFile               'bitmaps/Error_XP.xpm'

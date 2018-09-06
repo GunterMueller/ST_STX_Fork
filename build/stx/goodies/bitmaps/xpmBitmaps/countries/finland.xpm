@@ -1,0 +1,29 @@
+/* XPM */
+static char *finland_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 20 2 1",
+/* colors */
+"a c white",
+"b c #0000ff",
+/* pixels */
+"aaaaaaaaaabbbbaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaabbbbaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaabbbbaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaabbbbaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaabbbbaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaabbbbaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaabbbbaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaabbbbaaaaaaaaaaaaaaaaaa",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"aaaaaaaaaabbbbaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaabbbbaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaabbbbaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaabbbbaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaabbbbaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaabbbbaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaabbbbaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaabbbbaaaaaaaaaaaaaaaaaa",
+};

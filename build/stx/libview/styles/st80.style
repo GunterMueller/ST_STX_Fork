@@ -1,0 +1,150 @@
+; View defaultStyle:#st80
+;
+; simulation of the old st80 style - looks somewhat like os2
+;
+; $Header: /cvs/stx/stx/libview/styles/st80.style,v 1.28 2004-09-27 08:28:21 stefan Exp $
+
+comment  'old `ST80'' 3D look alike'
+
+#if (Language == #german) or:[Language == #de]
+comment  'An früheres `ST-80'' angelehnt'
+#endif
+#if (Language == #french) or:[Language == #fr]
+comment  'Comme `ST-80'''
+#endif
+
+name            #st80
+
+;
+; take a smaller font on VGA displays
+;
+
+#if Screen current width <= 800
+; take smaller fonts on VGA screens
+font               Font family:'courier' face:'medium' style:'roman' size:10
+variableBoldFont   Font family:'helvetica' face:'medium' style:'roman' size:10
+boldFont           Font family:'helvetica' face:'bold' style:'roman' size:10
+#else
+variableFont       Font family:'helvetica' face:'medium' style:'roman' size:12
+variableBoldFont   Font family:'helvetica' face:'bold' style:'roman' size:12
+#endif
+
+selectionFont      =variableFont
+labelFont          =selectionFont
+
+#if Screen current hasGreyscales
+is3D                            true
+borderWidth                     0
+viewGrey                         Color grey:80
+darkerGrey                       Color grey:60
+
+selection.hilightForegroundColor Color black
+selection.hilightBackgroundColor =darkerGrey
+selection.hilightFrameColor      Color black
+#else
+viewGrey                         Color white
+lightColor                       Color grey:50
+borderWidth               1
+#endif
+
+#if Screen current platformName = 'WIN32'
+viewGrey           [Screen current getSystemColor:#'COLOR_BTNFACE']
+darkerGrey         Color grey:50
+#endif
+
+viewBackground                   =viewGrey
+
+variablePanel.barHeightMM        2
+
+scrolledView.level               1
+scrolledView.margin              1
+
+scrollBar.position               #right
+; scrollBar.hiding                 true               "/ automatic hiding of useless scrollBars
+
+scrollBar.buttonPositions        #around
+scrollBar.level                  0
+scrollBar.elementSpacing         0
+scrollBar.spacing                0
+; scrollBar.neverMini              true
+scrollBar.buttonImageMargin      0
+
+scroller.level                   1
+scroller.viewBackground          =viewGrey
+scroller.thumbColor              Color black
+scroller.thumbFrameColor         nil
+scroller.thumbLevel              0
+scroller.thumbInset              3
+scroller.middleButtonJump        true   "middle button jumps to click position"
+miniScroller.size                2.5  "/ millimeter
+
+textCursor.type                   #solidCaret
+textCursor.backgroundColor        Color black
+textCursor.noFocusForegroundColor Color grey
+
+#if Screen current hasColors
+#text.selectionBackgroundColor     Color green
+#text.selectionForegroundColor     Color black
+text.selectionBackgroundColor      =darkerGrey
+text.selectionForegroundColor      Color black
+#else
+# if Screen current hasGreyscales
+text.selectionBackgroundColor     =viewGrey "Color grey"
+text.selectionForegroundColor     Color black
+# endif
+#endif
+text.st80Selections               true
+
+
+popup.borderWidth                 1
+
+arrowButton.style                 #st80
+arrowButton.activeForegroundColor Color white
+; button.activeForegroundColor      Color white
+button.activeBackgroundColor      Color grey
+
+checkToggle.activeBackgroundColor =viewGrey
+
+radioButton.style                 #round2D
+
+menu.font                         =variableBoldFont
+menu.viewBackground               Color white
+menu.foregroundColor              Color black
+menu.backgroundColor              Color white
+menu.hilightForegroundColor       =menu.backgroundColor
+menu.hilightBackgroundColor       =menu.foregroundColor
+menu.highlightLevel               0
+menu.separatingLineLevel          0
+menu.separatingLineInset          0
+
+pullDownMenu.font                 =variableBoldFont
+pullDownMenu.viewBackground       =viewGrey
+;; pullDownMenu.level               0
+pullDownMenu.level                1
+pullDownMenu.hilightLevel         -1
+pullDownMenu.hilightBackgroundColor  Color grey
+pullDownMenu.separatingLines         false
+
+#if Screen current hasGrayscales not
+html.anchorUnderline                true
+html.anchorForegroundColor          Color black
+html.backgroundColor                Color white
+html.activeAnchorForegroundColor    Color black
+html.activeAnchorBackgroundColor    =html.backgroundColor
+html.visitedAnchorForegroundColor   Color black
+html.exampleAnchorForegroundColor   Color black
+#endif
+
+TextView.st80Selections            true
+
+comboView.level                    -1
+
+#if Screen current platformName = 'WIN32'
+
+viewBackgroundColor              [Screen current getSystemColor:#'COLOR_MENU'          ]
+menu.backgroundColor             [Screen current getSystemColor:#'COLOR_MENU'          ]
+menu.foregroundColor             [Screen current getSystemColor:#'COLOR_MENUTEXT'      ]
+pullDownMenu.backgroundColor     =menu.backgroundColor
+button.backgroundColor           [Screen current getSystemColor:#'COLOR_BTNFACE'       ]
+
+#endif

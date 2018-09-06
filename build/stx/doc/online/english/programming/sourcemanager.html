@@ -1,0 +1,342 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Sourcecode &amp; Revision Management (General)</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="appProgramming.html"> <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">       <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="sourcemanager_cvs.html">  <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Sourcecode &amp; Revision Management (General)</H1>
+
+<H2>Contents</H2>
+
+<UL>
+  <LI><A HREF="#INTRO" NAME="I_INTRO">Introduction</A>
+  <LI><A HREF="#CHOOSING" NAME="I_CHOOSING">Choosing a Sourcecode Management Scheme</A>
+  <UL>
+    <LI><A HREF="#CVS" NAME="I_CVS">CVS</A>
+    <LI><A HREF="#SVN" NAME="I_SVN">Subversion</A>
+    <LI><A HREF="#P4" NAME="I_P4">Perforce</A>
+    <LI><A HREF="#Git" NAME="I_Git">Git</A>
+    <LI><A HREF="#Mercurial" NAME="I_Mercurial">Mercurial (hg, Kiln)</A>
+    <LI><A HREF="#MONTICELLO" NAME="I_MONTICELLO">Monticello</A>
+    <LI><A HREF="#STORE" NAME="I_STORE">STORE</A>
+    <LI><A HREF="#FILES_AND_DBS" NAME="I_FILES_AND_DBS">Files and Databases</A>
+  </UL>
+  <LI><A HREF="#SETUP" NAME="I_SETUP">Setting up the Sourcecode Management</A>
+</UL>
+
+
+<A NAME="INTRO" HREF="#I_INTRO"><H2>Introduction</A></H2>
+
+<CITE>ST/X</CITE> includes interface classes
+and browser support which allow Smalltalk classes to be managed by
+file or database based
+sourcecode revision management systems, such as CVS, SVN (subversion) or P4 (perforce).
+<P>
+Also, mixed configurations are possible, in which different class packages are
+located in different repositories. This is especially useful when accessing
+exept's ST/X master repository (which is a CVS repository),
+while at the same time, local package sources are to be stored in another (local) repository.
+
+<A NAME="CHOOSING" HREF="#I_CHOOSING"><H2>Choosing a Sourcecode Management Scheme</A></H2>
+
+Currently, the source code management (SCM) scheme which is best integrated into ST/X
+is CVS. All files for the whole build and deployment process can be generated and checked into
+CVS from within the ST/X system browser. This allows for completely unattented builds to be
+done automatically, by systems similar to jenkins (hudson), or batch/shell scripts.
+<P>
+However, the choice of which SCM scheme to use may also
+depend on the existing infrastructure.
+If your company uses SVN or Perforce to package and build products, this may be a good choice for
+ST/X projects as well.
+<P>
+The following table lists the currently supported SCM schemes and their pros and cons:
+
+<TABLE BORDER>
+<TR>
+  <TH>Name</TH> <TH>Description</TH> <TH>Pro &amp; Con</TH>
+</TR>
+
+<TR>
+  <TD>CVS</TD>
+    <TD>Concurrent<br>Source Code Management System</TD>
+    <TD>+local and remote operation
+	<br>+best integration
+	<br>+supports file based command line operation
+	<br>+fully automated build
+<p>
+	<br>-slow if remote and slow connection
+	<br>-class renaming troublesome
+	<br>-class moving troublesome
+	<br>-no branch support (*)
+	<br>-requires central server
+    </TD>
+</TR>
+
+<TR>
+  <TD>SVN</TD> <TD>Subversion<br>Source Code Manager</TD>
+    <TD>+local and remote operation
+	<br>+good integration
+	<br>+supports file based command line operation
+	<br>+almost fully automated build
+<P>
+	<br>-requires central server
+    </TD>
+</TR>
+
+<TR>
+  <TD>P4</TD> <TD>Perforce P4<br>Source Code Manager</TD>
+    <TD>+local and remote operation
+	<br>+supports file based command line operation
+<P>
+	<br>-commercial; requires license
+    </TD>
+</TR>
+
+<TR>
+  <TD>Git</TD> <TD>Git Source Code Manager</TD>
+    <TD>+local and remote operation
+	<br>+supports file based command line operation
+	<br>+good support for offline changes
+<P>
+	<br>-unfinished; highly experimental (*)
+    </TD>
+</TR>
+
+<TR>
+  <TD>Mercurial</TD> <TD>Mercurial (hg)<br>Source Code Manager</TD>
+    <TD>+local and remote operation
+	<br>+supports file based command line operation
+	<br>+good support for offline changes
+<P>
+	<br>-unfinished; highly experimental (*)
+    </TD>
+</TR>
+
+<TR>
+  <TD>Monticello</TD> <TD>Monticello Packaging System<br>Squeak Source Repository</TD>
+    <TD>+local and remote operation
+	<br>+standard in Smalltalk
+	<br>+support in Squeak, VW and V'Age
+	<br>+good support for offline changes
+<P>
+	<br>-only for code interchange
+	<br>-no file based command line operation
+	<br>-no build support
+	<br>-unfinished; highly experimental (*)
+    </TD>
+</TR>
+
+<TR>
+  <TD>STORE</TD> <TD>STORE DB<br>Cincom/VisualWorks Source Reporitory</TD>
+    <TD>+local and remote operation
+	<br>+standard in VW
+<P>
+	<br>-only for code interchange
+	<br>-no file based command line operation
+	<br>-no build support
+	<br>-new database format is not supported (*)
+    </TD>
+</TR>
+
+<TR>
+  <TD>Filebased</TD> <TD>Dummy SCM<br>using the Local Filesystem</TD>
+    <TD>+fast
+	<br>+standalone: no installation required
+<P>
+	<br>-only for small "one-man" projects
+	<br>-only local operation
+	<br>-no branch support (*)
+	<br>-limited build support
+    </TD>
+</TR>
+
+<TR>
+  <TD>DBbased</TD> <TD>Dummy SCM<br>using a Local Database</TD>
+    <TD>+fast
+	<br>+standalone: no installation required (uses SQlite)
+	<br>+remote: uses ODBC to access server
+<P>
+	<br>-only for small projects
+	<br>-only local operation
+	<br>-no branch support (*)
+	<br>-limited build support
+    </TD>
+</TR>
+
+</TABLE>
+(*): some cons are not resulting from limitations of the SCM scheme itself,
+but the interface implemented by ST/X classes.
+
+<A NAME="CVS" HREF="#I_CVS"><H3>CVS</A></H3>
+
+CVS is a file based source code revisioning system.
+This is the main scheme used by exept itself for the ST/X repository.
+It is best integrated into both the browser and the automated build process
+(the reason is simply due to the fact
+that CVS has been around for a long time,
+and we have spent a lot of
+time integrating it into ST/X.
+Not because we think that CVS is the best SCM around, which it is definitely not!).
+Classes and packages can be checked in/out from the browser, compared against older versions,
+and checked out as a whole tree (including make and build files) for automatic builds.
+On the command line,
+builds only require a "cvs checkout" followed by "make".
+Therefore, integration into automated build servers (such as jenkins) is trivial.
+
+More info in <A HREF="sourcemanager_cvs.html">CVS Sourcecode Manager</A>
+and <A HREF="../other/cvs.html">CVS Introduction</A>.
+
+
+
+<A NAME="SVN" HREF="#I_SVN"><H3>SVN (Subversion)</A></H3>
+
+SVN is a file based source code revisioning system.
+ST/X support for this scheme was developed and mainly used by students of the University of Prague
+to manage and build their projects.
+It is well integrated into both the browser's and their automated build process.
+Classes and packages can be checked in/out from the browser, compared against older versions,
+and checked out as a whole tree (including make and build files) for automatic builds.
+Builds only require an "svn checkout" followed by "make".
+Integration into automated build servers (such as jenkins) is trivial.
+
+More info in <A HREF="sourcemanager_svn.html">SVN Sourcecode Manager</A> (to be written).
+
+
+
+
+<A NAME="P4" HREF="#I_P4"><H3>Perforce P4</A></H3>
+
+P4 is a file based source code revisioning system.
+ST/X support for this scheme was developed, maintained and used by one of our major ST/X customers.
+The P4 interface is avaliable royalty free. However, P4 itself is a commercial product
+which must be licensed separately.
+It is integrated into the browser's and their automated build process.
+Classes and packages can be checked in/out from the browser, compared against older versions,
+and checked out as a whole tree (including make and build files) for automatic builds.
+Builds only require a "perforce checkout" followed by "make".
+
+More info in <A HREF="sourcemanager_p4.html">P4 Sourcecode Manager</A> (to be written).
+
+
+
+<A NAME="Git" HREF="#I_Git"><H3>Git</A></H3>
+
+Git is a file based source code revisioning system which supports multiple repositories
+and convenient merge operations to resynchronize after offline work.
+Support for Git is currently in an early experimental development phase.
+More info in <A HREF="sourcemanager_git.html">Git Sourcecode Manager</A> (to be written).
+
+
+
+<A NAME="Mercurial" HREF="#I_Mercurial"><H3>Mercurial (hg, kiln)</A></H3>
+
+Mercurial (hg) is a file based source code revisioning system which supports multiple repositories
+and convenient merge operations to resynchronize after offline work.
+Support for Mercurial is currently in an advanced development phase,
+and eXept plans to migrate from CVS to Mercurial.
+However, there are still some rough edges,
+which require actions on the command line.
+Currently, Mercurial
+is used for some subprojects and the experience flows back into the UI improvement process.
+More info in <A HREF="sourcemanager_hg.html">Mercurial Sourcecode Manager</A> (to be written).
+
+
+
+
+<A NAME="Monticello" HREF="#I_Monticello"><H3>Monticello</A></H3>
+
+Monticello is the main scheme used in the Squeak Smalltalk community to package, deploy and distribute
+source code. Monticello packages are technically zip archives which wrap
+a package's source together with a binary dump of the package plus some meta information.
+The ST/X monticello adaption can only be used for code interchange - ST/X can both read and
+write monticello packages (including the binary dump). Packages generated by ST/X may optionally include build support
+files (for stc-compilation), which are ignored when loaded into a non ST/X system.
+However, it does not support any automated build process - you have to manually unwrap the
+package files into the appropriate target directory
+and execute make (bmake / mingwmake) there from a command line shell.
+
+
+
+<A NAME="STORE" HREF="#I_STORE"><H3>STORE Database</A></H3>
+
+STORE is the main scheme used in the VisualWorks Smalltalk community to package, deploy and distribute
+source code. STORE uses centralized databases,
+which are accessed via ODBC, MySQL or Postgres.
+The ST/X STORE adaption can only be used for code import.
+Neither export, nor any build support is provided.
+<P>
+Due to the fact that Cincom has recently changed the DB-scheme, the current version of the STORE
+manager may fail to access a remote STORE database.
+<P>
+The STORE source code manager is an unsupported, experimental goody.
+It may require extra work to make it fullfill your particular needs -
+especially an adaption to the new database scheme needs to be done.
+
+
+
+<A NAME="FILES_AND_DBS" HREF="#I_FILES_AND_DBS"><H3>File- and DB-Based Dummy SCMs</A></H3>
+
+These two managers are provided as toy/demonstration frameworks.
+They can be used for versioning of small,
+local one-man projects only.
+They may be useful for simple versioning if no CVS or SVN installation is possible
+or wanted.
+They can also be used as a guide to how interfaces to other SCM schemes are implemented.
+<P>
+Finally, they can be used temporarily,
+when working offline
+and the main repository (such as CVS) is not accessible.
+
+<A NAME="SETUP" HREF="#I_SETUP"><H2>Setting up the Sourcecode Management</A></H2>
+
+Use the laucher's "Source Code Management" setup dialog
+to define the source code management scheme
+on a per-module base.
+Every class is assigned to a package identifier,
+which actually consists of a path name into a repository
+directory (similar to a URL).
+The first specifies both the top-level
+directory AND the SCM-scheme to be used.
+<P>
+Therefore, a packageID like "<CODE>stx:goodies/webServer</CODE>"
+specifies that the file's path is
+"<CODE>stx/goodies/webServer</CODE>" inside the "<CODE>stx</CODE>" module.
+<P>
+ST/X uses a mapping scheme, in which different
+repositories can be assigned to different modules.
+In the settings dialog,
+you can define on a per-module basis,
+which source code scheme should be used.
+<P>
+As a first try, specify that the Filebased or DB-(database) manager should be used
+for the "demo" module.
+Then, create a class and change its package to "demo:myFirstDemoProject".
+<P>
+Notice, that the browser will offer additional menu items in its
+source-code-management menus.
+
+-- more to be written --
+
+
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 2012 eXept Software AG, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.47 $ $Date: 2018-02-19 13:12:07 $
+</BODY>
+</HTML>

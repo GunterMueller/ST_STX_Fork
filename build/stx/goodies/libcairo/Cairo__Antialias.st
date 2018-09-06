@@ -1,0 +1,65 @@
+"{ Package: 'stx:goodies/libcairo' }"
+
+"{ NameSpace: Cairo }"
+
+SharedPool subclass:#Antialias
+	instanceVariableNames:''
+	classVariableNames:'CAIRO_ANTIALIAS_DEFAULT CAIRO_ANTIALIAS_NONE CAIRO_ANTIALIAS_GRAY
+		CAIRO_ANTIALIAS_SUBPIXEL CAIRO_ANTIALIAS_FAST
+		CAIRO_ANTIALIAS_GOOD CAIRO_ANTIALIAS_BEST'
+	poolDictionaries:''
+	category:'Cairo-Constants'
+!
+
+!Antialias class methodsFor:'initialization'!
+
+initialize
+
+    CAIRO_ANTIALIAS_DEFAULT := 0.
+    CAIRO_ANTIALIAS_NONE := 1.
+    CAIRO_ANTIALIAS_GRAY := 2.
+    CAIRO_ANTIALIAS_SUBPIXEL := 3.
+    CAIRO_ANTIALIAS_FAST := 4.
+    CAIRO_ANTIALIAS_GOOD := 5.
+    CAIRO_ANTIALIAS_BEST := 6.
+! !
+
+!Antialias class methodsFor:'constants'!
+
+CAIRO_ANTIALIAS_BEST
+
+    ^CAIRO_ANTIALIAS_BEST
+!
+
+CAIRO_ANTIALIAS_DEFAULT
+
+    ^CAIRO_ANTIALIAS_DEFAULT
+!
+
+CAIRO_ANTIALIAS_FAST
+
+    ^CAIRO_ANTIALIAS_FAST
+!
+
+CAIRO_ANTIALIAS_GOOD
+
+    ^CAIRO_ANTIALIAS_GOOD
+!
+
+CAIRO_ANTIALIAS_GRAY
+
+    ^CAIRO_ANTIALIAS_GRAY
+!
+
+CAIRO_ANTIALIAS_NONE
+
+    ^CAIRO_ANTIALIAS_NONE
+!
+
+CAIRO_ANTIALIAS_SUBPIXEL
+
+    ^CAIRO_ANTIALIAS_SUBPIXEL
+! !
+
+
+Antialias initialize!

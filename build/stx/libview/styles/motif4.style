@@ -1,0 +1,32 @@
+; View defaultStyle:#motif4 
+;
+; another example for a tiny modification - 
+; motif style, but buttons highlight bluish
+;
+; $Header: /cvs/stx/stx/libview/styles/motif4.style,v 1.4 1997-11-02 19:48:59 cg Exp $
+
+#include 'motif.style'
+
+comment  'like `motif'' style;\\with blueish active buttons'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Wie `motif'', blau'
+#endif
+#if (Language == #french) or:[Language == #fr]
+comment  'Comme `motif'', très bleu'
+#endif
+
+button.activeBackgroundColor      Color red:50 green:50 blue:100
+
+checkToggle.bitmapFile           nil
+checkToggle.style                #fatcross
+checkToggle.activeLevel          -1
+checkToggle.passiveLevel         -1
+checkToggle.borderWidth          0
+checkToggle.activeBackgroundColor Color white
+checkToggle.backgroundColor       Color white
+
+
+scroller.ghostFrameColor         nil
+scroller.ghostColor              Color grey:25 
+scroller.ghostLevel              -1

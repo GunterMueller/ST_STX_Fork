@@ -1,0 +1,7 @@
+LIBRARY         regression
+DESCRIPTION     'regression tests'
+CODE            PRELOAD MOVEABLE DISCARDABLE
+SEGMENTS
+    INITCODE PRELOAD DISCARDABLE
+EXPORTS
+    __regression_Init     @1

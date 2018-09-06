@@ -1,0 +1,8 @@
+<root>
+  <subelement>
+    <mandatory />
+    <mandatory />
+    <optional/>
+  </subelement>
+  
+</root>

@@ -1,0 +1,16 @@
+Here, you find demos related to more tricky C-Function interfacing,
+demonstrating the use of callBacks and timers.
+(i.e. non-direct function calling)
+
+
+The classes contained here must be stc-compiled;
+you cannot simply fileIn the source.
+
+before loading, execute:
+	make CTimer.o
+	(on ELF-based systems:
+	    make CTimer.o; make CTimer.so)
+
+then,
+fileIn the resulting class object file.
+

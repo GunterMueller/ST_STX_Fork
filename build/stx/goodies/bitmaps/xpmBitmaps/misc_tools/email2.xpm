@@ -1,0 +1,32 @@
+/* XPM */
+static char *email2_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"22 22 3 1",
+/* colors */
+"a c white",
+"b c black",
+"c c none",
+/* pixels */
+"cccccccccccccccccccccc",
+"cccccccccccccccccccccc",
+"cccccccccccccccccccccc",
+"cccccccccccccccccccccc",
+"bbbbbbbbbbbbbbbbbbbbcc",
+"baaaaaaaaaaaaaaaaaabbc",
+"baaaaaaaaaaaabbbbaabbc",
+"baaaaaaaaaaaabbabaabbc",
+"baaaaaaaaaaaabbbbaabbc",
+"baaaaaaaaaaaabbbbaabbc",
+"baaaaaaaaaaaaaaaaaabbc",
+"baaaaaaaaaaaaaaaaaabbc",
+"baaaaaabbbbbbbbbbaabbc",
+"baaaaaaaaabaaababaabbc",
+"baaaaaaaaaaaaaaaaaabbc",
+"baaaaaaaaabbbbbbbaabbc",
+"baaaaaaaaaaabababaabbc",
+"baaaaaaaaaaaaaaaaaabbc",
+"bbbbbbbbbbbbbbbbbbbbbc",
+"cbbbbbbbbbbbbbbbbbbbbc",
+"cccccccccccccccccccccc",
+"cccccccccccccccccccccc",
+};

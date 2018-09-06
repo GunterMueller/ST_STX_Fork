@@ -1,0 +1,123 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X GUI classes - Layout views</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="menus.html"> <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html#I_COLLECTIONS">     <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="lists.html"> <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<P>
+The most frequently used layout views are:
+<UL>
+<LI> <A HREF="#LABEL" NAME="I_LABEL">Label</A>
+<LI> <A HREF="#PANELS" NAME="I_PANELS">PanelView, HorizontalPanelView and VerticalPanelView</A>
+<LI> <A HREF="#VARPANELS" NAME="I_VARPANELS">VariablePanel, VariableHorizontalPanel & VariableVerticalPanel</A>
+</UL>
+
+<H2><a name="LABEL" HREF="#I_LABEL">Label</a></H2>
+<P>
+The simplest layout view - all it does is displaying a string or image
+label in its boundary. You can arrange for the label to be displayed
+centered, left or right adjusted.
+<BR>
+Also, the label can scale its image (even bitmaps !) to make them fit exactly.
+
+
+
+<H2><a name="PANELS" HREF="#I_PANELS">PanelView, HorizontalPanelView and VerticalPanelView</a></H2>
+<P>
+Layout views (Geometry managers) are provided to manage a group
+of other views. For example, a horizontalPanel arranges for its
+components to to be aligned in a row.
+<BR>
+Various layout strategies are available for common situations
+(<VAR>left-to-right</VAR>, <VAR>centered</VAR>, <VAR>spread equally</VAR> or
+<VAR>filling</VAR>).
+<P>
+Typical uses:
+<UL>
+<LI> default layout:
+<A TYPE="example">
+<CODE><PRE>
+    |top panel|
+
+    top := StandardSystemView new.
+    top extent:200@100.
+
+    panel := HorizontalPanelView
+		     origin:0.0@0.0
+		     corner:1.0@1.0
+		     in:top.
+    panel addSubView:(Button label:'one').
+    panel addSubView:(Button label:'two').
+    panel addSubView:(Button label:'three').
+
+    top open.
+</PRE></CODE>
+</A>
+<LI>  right adjusted:
+<A TYPE="example">
+<CODE><PRE>
+    |top panel|
+
+    top := StandardSystemView new.
+    top extent:200@100.
+
+    panel := HorizontalPanelView
+		     origin:0.0@0.0
+		     corner:1.0@1.0
+		     in:top.
+    panel addSubView:(Button label:'one').
+    panel addSubView:(Button label:'two').
+    panel addSubView:(Button label:'three').
+    panel horizontalLayout:#right.
+    top open.
+</PRE></CODE>
+</A>
+<LI> fitting adjusted:
+<A TYPE="example">
+<CODE><PRE>
+    |top panel|
+
+    top := StandardSystemView new.
+    top extent:200@100.
+
+    panel := HorizontalPanelView
+		     origin:0.0@0.0
+		     corner:1.0@1.0
+		     in:top.
+    panel addSubView:(Button label:'one').
+    panel addSubView:(Button label:'two').
+    panel addSubView:(Button label:'three').
+    panel horizontalLayout:#fit.
+    top open.
+</PRE></CODE>
+</A>
+</UL>
+
+
+<H2><a name="VARPANELS" HREF="#I_VARPANELS">VariablePanel, VariableHorizontalPanel & VariableVerticalPanel</a></H2>
+<P>
+Variable panels allow an interactive change of the relative size ratios.
+For example, the browser's top list and bottom contents views are usually placed into
+a variableVerticalPanel.
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif">
+Copyright © 1995 Claus Gittinger Development & Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.3 $ $Date: 2016-01-21 16:22:39 $
+</BODY>
+</HTML>

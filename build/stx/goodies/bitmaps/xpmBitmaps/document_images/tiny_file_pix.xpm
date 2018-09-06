@@ -1,0 +1,30 @@
+/* XPM */
+static char *tiny_file_pix_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 7 1",
+/* colors */
+"a c black",
+"b c #008b00",
+"c c #853e26",
+"d c #00cd00",
+"e c #add8e6",
+"f c black",
+"g c none",
+/* pixels */
+"gggggggggggggggg",
+"gggggggggggggggg",
+"gggggggggggggggg",
+"aaaaaaaaaaaaaagg",
+"aeeeeeeeeeeeeagg",
+"aeeeeeddddeeeagg",
+"aeeeeddddddeeagg",
+"aeeeeeddddeeeagg",
+"aeeeeeeceeeeeagg",
+"aeeeeeeceeeeeagg",
+"abbebbbcbbeeeagg",
+"abbbbbbbbbbbbagg",
+"aaaaaaaaaaaaaagg",
+"gggggggggggggggg",
+"gggggggggggggggg",
+"gggggggggggggggg",
+};

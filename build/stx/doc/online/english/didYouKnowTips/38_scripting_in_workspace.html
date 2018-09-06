@@ -1,0 +1,47 @@
+<HTML>
+  <HEAD>
+    <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+    <TITLE>Scripting in a Workspace</Title>
+  </HEAD>
+  <BODY>
+
+Smalltalk Workspaces are also a very good environment for scripting.
+<br>As an inspiration, here is an example of a typical task:
+<p>
+I had to find all window-spec methods, which defined a maximum window size
+(which, by the way, is a bad thing to specify, and the task was to remove those).
+The following script did the job of finding them:
+<CODE><PRE>
+    |sel l|
+    l := List new.
+    sel := #windowSpec.
+
+    (Smalltalk allImplementorsOf:sel) do:[:cls |
+	|mthd specArray spec|
+	mthd := cls compiledMethodAt:sel.
+	(mthd hasResource:#canvas) ifTrue:[
+	    specArray := mthd valueWithReceiver:nil arguments:nil.
+	    spec := specArray decodeAsLiteralArray.
+	    spec window max notNil ifTrue:[
+		l add:mthd
+	    ].
+	]
+    ].
+    SystemBrowser browseMethods:l.
+</PRE></CODE>
+actually by second thought, the following script does the same and is much easier to understand:
+<CODE><PRE>
+    SystemBrowser
+	browseMethodsWhere:[:mthd |
+	    mthd selector == #windowSpec
+	    and:[ (mthd hasResource:#canvas)
+	    and:[ |specArray spec|
+		  specArray := mthd valueWithReceiver:nil arguments:nil.
+		  spec := specArray decodeAsLiteralArray.
+		  spec window max notNil ]]
+	]
+	title:'Specs with max-window size'.
+</PRE></CODE>
+
+  </BODY>
+</HTML>

@@ -1,0 +1,38 @@
+/* XPM */
+static char *small_filter_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"20 20 11 1",
+/* colors */
+"a c white",
+"b c black",
+"c c #3F3F5F",
+"d c #7F5F3F",
+"e c #FFDF3F",
+"f c #FFFF9F",
+"g c #7F7F3F",
+"h c #DF9F3F",
+"i c #BFBFBF",
+"j c #DFDFBF",
+"k c none",
+/* pixels */
+"kkkkkkkkkkkkkkkkkkkk",
+"kkkkkkkkkkkkkkkkkkkk",
+"kkkkkkkbikkckkkkkkkk",
+"kkiiiiicbikckkkkkkkk",
+"kkbbbbbbbbkckkkkkkkk",
+"kkiiiiicbkkckgkkkkkk",
+"kkkkkkkbikkckggkkkkk",
+"kkkkkkkkkkkjkgfgkkkk",
+"kkkkggggggggggefgkkk",
+"kkkkgeeeeeeeeeeehdkk",
+"kkkkgdddddddddehdkkk",
+"kkkkkkkkkkkjkdhdkkkk",
+"kkkkkkkbikkckddkkkkk",
+"kkiiiiicbikckdkkkkkk",
+"kkbbbbbbbbkckkkkkkkk",
+"kkiiiiicbikckkkkkkkk",
+"kkkkkkkbikkckkkkkkkk",
+"kkkkkkkkkkkkkkkkkkkk",
+"kkkkkkkkkkkkkkkkkkkk",
+"kkkkkkkkkkkkkkkkkkkk",
+};

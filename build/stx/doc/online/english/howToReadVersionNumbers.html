@@ -1,0 +1,83 @@
+<HTML>
+
+<HEAD>
+<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<TITLE>Smalltalk/X Online Documentation - How to Read Version Numbers</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="TOP.html" INFO="Back to documentation's main page" > <IMG SRC="../icons/DocsUpArrow.gif" ALT="[up]"></A>
+
+<H2>How to Read Version Numbers</H2>
+<P>
+
+<H3>ST/X version Numbers</H3>
+For the packaged Smalltalk/X, a 4-part version numbering scheme is used:
+<PRE>
+    major.minor.revision.release
+</PRE>
+
+<H3>Major</H3>
+The major number is only incremented if a class of the base-system has changed such that
+old binary classes (i.e. compiled linrary-dll's) are no longer binary compatible and must be recompiled.
+Typically this happens, when an instance variable is added to a class like "View", which has many
+subclasses. We therefore try hard to avoid this.
+<BR>
+We also increment the major number, if source incompatibilities are to be expected with
+respect to previous versions,
+which means that as a developer, you will likely have to change your code.
+<P>
+The last major number increase was when the stream protocols default positioning was changed
+from 1- to 0-based indexing.
+
+<H3>Minor</H3>
+
+The minor number is incremented for every publication which contains major new features,
+such as a new tool or a new communication framework.
+It is also incremented for minor incompatibilities,
+which affect only tools or other subsets of the base system
+(but usually do not affect other applications).
+
+<H3>Revision</H3>
+The revision number is incremented for minor new features or bug fixes.
+
+<H3>Release</H3>
+The release number is only used internally within exept (it is actually the build number
+which is automatically generated from jenkins).
+
+
+<H3>Class Version Numbers ("version" Methods)</H3>
+The version number provides the version from which the binary was last built.
+It is usually a copy of the "version_CVS" number, iff the binary was checked out and
+built from the CVS repository. We are in the process of migrating to another SCM
+(Source Code Management) system (Mercurial), so these might change in the near future.
+
+<H3>CVS Class Version Numbers ("version_CVS" Methods)</H3>
+These version numbers are generated and used by CVS. We only use the default 2-part scheme,
+where the first major number is never incremented. Occasionally, a class temporarily may get a 3-part number,
+when it is part of a branch in the modification history.
+Such branch versions do not make it into a public release, though.
+
+<H3>Other Class Version Numbers ("version_XXX" Methods)</H3>
+These are used to track version info for other SCM (Source Code Management) systems which
+are in use at eXept. Currently you may occasionally find SVN, Mercurial and Monticello numbers.
+For feedback and error reporting, please ignore those and always provide us with
+either the "version" info, which reflects the version from which the binary was compiled.
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../icons/stx.gif" ALT="[stx-logo]">
+<BR>
+Copyright © 2008 eXept Software AG, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+</BODY>
+<HR>
+Doc $Revision: 1.7 $ $Date: 2016-11-04 00:18:58 $
+</BODY>
+</HTML>

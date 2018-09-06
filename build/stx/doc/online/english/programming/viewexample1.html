@@ -1,0 +1,2366 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - A Programming Example</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="stxstyleguide.html">    <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">          <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="viewtricks.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>A Complete Programming Example</H1>
+
+<H2>Contents</H2>
+<UL>
+ <LI><A HREF="#MOTIVATION" NAME="I_MOTIVATION">Motivation</A>
+ <LI><A HREF="#TASK" NAME="I_TASK">Definition of the programming task</A>
+ <LI><A HREF="#SETUPVIEWS" NAME="I_SETUPVIEWS">Setting up the browser's window</A>
+ <LI><A HREF="#SETUPMODELS" NAME="I_SETUPMODELS">Setting up models</A>
+ <LI><A HREF="#CLASSLIST" NAME="I_CLASSLIST">Getting the classList</A>
+ <LI><A HREF="#METHODLIST" NAME="I_METHODLIST">Getting the methodList</A>
+ <LI><A HREF="#SOURCECODE" NAME="I_SOURCECODE">Getting the methods source</A>
+ <LI><A HREF="#ACCEPTING" NAME="I_ACCEPTING">Accepting changed methods</A>
+ <LI><A HREF="#BELLS" NAME="I_BELLS">Little bells & whistles</A>
+ <LI><A HREF="#CLOSEVALIDATION" NAME="I_CLOSEVALIDATION">Intercepting window close</A>
+ <LI><A HREF="#MENUS" NAME="I_MENUS">Adding a PopupMenu</A>
+ <LI><A HREF="#INTERNATIONALIZATION" NAME="I_INTERNATIONALIZATION">Prepare for international use</A>
+ <LI><A HREF="#SUMMARY" NAME="I_SUMMARY">The final code</A>
+</UL>
+
+
+<H2><A HREF="#I_MOTIVATION" NAME="MOTIVATION">Motivation</A></H2>
+
+<HR>
+<B>Attention:</B>
+<BR>
+This example does not make use of the new GUI Painter Tools.
+<BR>
+A corresponding example using the GUI Painter will be added soon ...
+<HR>
+
+This document shows how a typical (simple) browser application
+can be implemented. Its code may be useful as a framework to start with
+for other browser-like applications.
+<P>
+The browser's operation and UI is typical for a large number of applications:
+from simple telephone or address lists, to data base management utilities.
+<BR>
+In Smalltalk, the SystemBrowser, FileBrowser and ChangesBrowser are
+all of this type.
+<P>
+In the following, we will develop that application as a step-by-step
+tutorial. Instead of presenting the complete and finished program,
+we will go through all (redesign & change) steps.
+<BR>
+We will even go through all <CITE>little design errors</CITE>, which
+may you may encounter while developping applications.
+<BR>
+You will see that things are fixed pretty fast ...
+<P>
+Of course, for more complex applications, a design phase should be
+done, instead of ad-hoc hacking ;-)
+<BR>
+However, the thing below is simple enough as a one or two hour programming
+project - so lets jump right into it ....
+
+
+
+<H2><A HREF="#I_TASK" NAME="TASK">Definition of the programming task</A></H2>
+
+The browser application is meant as an example, with some functionality
+of the real class browser, but stripped down heavily to keep the example
+simple.
+<P>
+The browser's topView shall be divided into an upper panel, which contains a
+classList and a methodList.
+The classList presents the names of all classes in the system,
+the methodList shows the selected classes methods.
+<BR>
+Once selected, a methods sourcecode will be shown in the lower part of
+the panel (the so called <CITE>codeView</CITE>).
+<BR>
+The codeView shall offer a popUpMenu with the usual <CITE>copy-cut-paste</CITE>
+and an additional <CITE>accept</CITE> item, to compile and install the changed
+methods text.
+
+
+
+<H2><A HREF="#I_SETUPVIEWS" NAME="SETUPVIEWS">Setting up the browser's window</A></H2>
+
+Lets start by defining the browser's class and a method to setup the
+topView with its subviews.
+<BR>
+In order to reuse existing code as much as possible, lets define
+the browser as a subclass of <CODE>ApplicationModel</CODE>,
+which provides a framework for this type of application:
+<CODE><PRE>
+    ApplicationModel subclass:#SimpleBrowser
+	    instanceVariableNames:''
+	    classVariableNames:''
+	    poolDictionaries:''
+	    category:'Demos-Tutorial'
+</PRE></CODE>
+
+<FORM ACTION="../misc/onlyInSTX.html"
+      METHOD="DOIT |
+	Class withoutUpdatingChangesDo:[
+	    ApplicationModel subclass:#SimpleBrowser
+		    instanceVariableNames:''
+		    classVariableNames:''
+		    poolDictionaries:''
+		    category:'Demos-Tutorial'.
+	].
+
+	SimpleBrowser class
+	    compile:
+'documentation
+' , Character doubleQuote asString , '
+    this is a simple browser example
+
+    up to now, it does nothing;
+' , Character doubleQuote asString , '
+'
+		      classified:'documentation' logged:false.
+
+	SystemBrowser browseClass:SimpleBrowser.
+      ">
+
+Press:<INPUT TYPE="submit" VALUE="here"> to add the above definition to your system
+and open a browser on it.
+
+</FORM>
+
+
+<P>
+<CODE>ApplicationModel</CODE> expects that its subclasses implement a method
+named <CODE>openInterface</CODE> to create and setup the application's window.
+<BR>
+Lets define it as:
+<CODE><PRE>
+    openInterface
+	"sent by my superclass to open up my interface
+	 (i.e. SimpleBrowser open - openInterface)"
+
+	|topView|
+
+	topView := StandardSystemView new.
+	topView label:'Simple Browser'.
+	topView application:self.
+
+	self setupSubviewsIn:topView.
+
+	topView open.
+
+	"
+	 SimpleBrowser open
+	"
+</PRE></CODE>
+Explanations:
+<UL>
+<LI>only the top window is created here, the subview setup is
+done into the <CODE>setupSubviewsIn:</CODE> method. This separation is useful,
+to allow for the application to be executed as a subview within some other applications view
+(only to be flexible in future - who knows ...).
+<P>
+<LI>The topView creation and label definition should be self explaining.
+<P>
+<LI>The line:
+<CODE><PRE>
+       topView application:self.
+</PRE></CODE>
+tells the topView what its underlying application is. Although this is currently
+not needed in our example (things work perfectly without it),
+it will be useful when the
+topView is closed later: if it has been given an application, THAT one gets a notification
+first, and the application can decide if termination is really to be done.
+(useful for example, to check if some code has been modified and not yet saved).
+</UL>
+
+
+<P>
+The <CODE>setupSubviewsIn:</CODE> method creates the panels and adds the two
+<CODE>SelectionInListViews</CODE> in the upper part, and a <CODE>CodeView</CODE> in
+the bottom half. Its implementation is straight forward:
+<CODE><PRE>
+    setupSubviewsIn:topView
+	"create the panels with the selectionInListViews and the codeView"
+
+	|outerPanel upperPanel
+	 classListView methodListView
+	 scrollingView1 scrollingView2 scrollingView3|
+
+	"
+	 create the panels ...
+	"
+	outerPanel := VariableVerticalPanel new.
+	topView
+	    addSubView:outerPanel
+	    in:(0.0 @ 0.0 corner:1.0 @ 1.0).
+
+	upperPanel := VariableHorizontalPanel new
+	outerPanel
+	    addSubView:upperPanel
+	    in:(0.0 @ 0.0 corner:1.0 @ 0.3).
+
+	"
+	 the classListView is a scrollable SelectionInListView ...
+	"
+	scrollingView1 := HVScrollableView miniScrollerH:true.
+	upperPanel
+	    addSubView:scrollingView1
+	    in:(0.0 @ 0.0 corner:0.5 @ 1.0).
+
+	classListView := SelectionInListView new.
+	scrollingView1 scrolledView:classListView.
+
+	"
+	 the methodListView also ...
+	"
+	scrollingView2 := HVScrollableView miniScrollerH:true.
+	upperPanel
+	    addSubView:scrollingView2
+	    in:(0.5 @ 0.0 corner:1.0 @ 1.0).
+
+	methodListView := SelectionInListView new.
+	scrollingView2 scrolledView:methodListView.
+
+	"
+	 the codeView is a scrollable CodeView ...
+	"
+	scrollingView3 := HVScrollableView miniScrollerH:true.
+	outerPanel
+	    addSubView:scrollingView3
+	    in:(0.0 @ 0.3 corner:1.0 @ 1.0).
+
+	codeView := CodeView new.
+	scrollingView3 scrolledView:codeView.
+</PRE></CODE>
+the above code can be written a bit more compact, by using compound instance
+creation methods instead of individual access methods.
+Beginners may prefer the above - once you get used to the system
+you probably find the code below more readable (use whichever you prefer):
+<CODE><PRE>
+    setupSubviewsIn:topView
+	"create the panels with the selectionInListViews and the codeView"
+
+	|outerPanel upperPanel
+	 classListView methodListView codeView
+	 scrollHelper|
+
+	"
+	 create the panels ...
+	"
+	outerPanel := VariableVerticalPanel
+			    origin:0.0 @ 0.0 corner:1.0 @ 1.0
+			    in:topView.
+
+	upperPanel := VariableHorizontalPanel
+			    origin:0.0 @ 0.0 corner:1.0 @ 0.3
+			    in:outerPanel.
+
+	"
+	 the classListView is a scrollable SelectionInListView ...
+	"
+	scrollHelper := HVScrollableView
+			    for:SelectionInListView
+			    miniScrollerH:true
+			    origin:0.0 @0.0 corner:0.5 @ 1.0
+			    in:upperPanel.
+	classListView := scrollHelper scrolledView.
+
+	"
+	 the methodListView also ...
+	"
+	scrollHelper := HVScrollableView
+			    for:SelectionInListView
+			    miniScrollerH:true
+			    origin:0.5 @0.0 corner:1.0 @ 1.0
+			    in:upperPanel.
+	methodListView := scrollHelper scrolledView.
+
+	"
+	 the codeView is a scrollable CodeView ...
+	"
+	scrollHelper := HVScrollableView
+			    for:CodeView
+			    miniScrollerH:true
+			    origin:0.0 @0.3 corner:1.0 @ 1.0
+			    in:outerPanel.
+	codeView := scrollHelper scrolledView.
+</PRE></CODE>
+
+<FORM ACTION="../misc/onlyInSTX.html"
+      METHOD="DOIT |
+	SimpleBrowser
+	    compile:
+'openInterface
+    ' , Character doubleQuote asString , 'sent by my superclass to open up my interface
+     (i.e. SimpleBrowser - openInterface)' , Character doubleQuote asString , '
+
+    |topView|
+
+    topView := StandardSystemView new.
+    topView label:''Simple Browser''.
+    topView application:self.
+
+    self setupSubviewsIn:topView.
+
+    topView open.
+
+    ' , Character doubleQuote asString , '
+     SimpleBrowser open
+    ' , Character doubleQuote asString , '
+'
+	    classified:'startup' logged:false.
+
+
+	SimpleBrowser
+	    compile:
+'setupSubviewsIn:topView
+    ' , Character doubleQuote asString , 'create the panels with the selectionInListViews and the codeView' , Character doubleQuote asString , '
+
+    |outerPanel upperPanel
+     classListView methodListView codeView
+     scrollHelper|
+
+    ' , Character doubleQuote asString , '
+     create the panels ...
+    ' , Character doubleQuote asString , '
+    outerPanel := VariableVerticalPanel
+			origin:0.0 @ 0.0 corner:1.0 @ 1.0
+			in:topView.
+
+    upperPanel := VariableHorizontalPanel
+			origin:0.0 @ 0.0 corner:1.0 @ 0.3
+			in:outerPanel.
+
+    ' , Character doubleQuote asString , '
+     the classListView is a scrollable SelectionInListView ...
+    ' , Character doubleQuote asString , '
+    scrollHelper := HVScrollableView
+			for:SelectionInListView
+			miniScrollerH:true
+			origin:0.0 @0.0 corner:0.5 @ 1.0
+			in:upperPanel.
+    classListView := scrollHelper scrolledView.
+
+    ' , Character doubleQuote asString , '
+     the methodListView also ...
+    ' , Character doubleQuote asString , '
+    scrollHelper := HVScrollableView
+			for:SelectionInListView
+			miniScrollerH:true
+			origin:0.5 @0.0 corner:1.0 @ 1.0
+			in:upperPanel.
+    methodListView := scrollHelper scrolledView.
+
+    ' , Character doubleQuote asString , '
+     the codeView is a scrollable CodeView ...
+    ' , Character doubleQuote asString , '
+    scrollHelper := HVScrollableView
+			for:CodeView
+			miniScrollerH:true
+			origin:0.0 @0.3 corner:1.0 @ 1.0
+			in:outerPanel.
+    codeView := scrollHelper scrolledView.
+'
+		      classified:'setup - subviews' logged:false.
+
+	SimpleBrowser class
+	    compile:
+'documentation
+' , Character doubleQuote asString , '
+    this is a simple browser example
+
+    up to now, it does its view setup.
+    So opening an empty (no-operation) browser is possible.
+' , Character doubleQuote asString , '
+'
+		      classified:'documentation' logged:false.
+
+      ">
+
+Press:<INPUT TYPE="submit" VALUE="here"> to add the above methods to the SimpleBrowser class.
+
+</FORM>
+
+Explanations:
+<UL>
+<LI>that code, although a bit boring, is pretty straight forward:
+first, an outer (variable-) panel is created with two subviews.
+These separate the overall window area into upper (top 30%) and
+lower (bottom 70%) areas.
+<BR>
+<LI>The upper subview is another (variable horizontal-) panel, to hold
+the classList and methodList (each taking 50% of the width).
+<BR>
+<LI>The listviews are wrapped by scrollableViews, which are responsible for
+creation and manegement of the scrollbars.
+<BR>
+<LI>Finally, a codeview is created, again wrapped for scrolling.
+<BR>
+<LI>The only speciality is with the scrollableViews, which are defined
+to use miniScrollers for horizontal scrolling (instead of full-sized scrollbars).
+These take up less screen space, since we expect that horizontal scrolling
+is a much less frequent operation than vertical scrolling.
+</UL>
+<P>
+
+So far, so good; with this code, all view setup is finished.
+(once the window builder is finished & released, you will be able to
+ create the above by <CITE>painting</CITE> the user interface ...
+<BR>
+ ... however, its usually the smallest part of the application anyway.
+ The real challenge comes when we have to define the interaction.)
+<P>
+We can give it a first try with:
+<A TYPE="example">
+<CODE><PRE>
+    SimpleBrowser open
+</PRE></CODE>
+</A>
+(of course, all views are empty. But the layout should be ok.
+ Try resizing the view or to change the relative sizes.)
+
+
+
+<H2><A HREF="#I_SETUPMODELS" NAME="SETUPMODELS">Setting up models</A></H2>
+
+Our next task is to fill the listViews with some information.
+For the classList, we have to ask the system for a list of all classes in
+the system, generate a collection of names, and pass it to the classList.
+<BR>
+Once a selection is made, the same has to be done for methods found in
+the selected class and the list must be passed to the methodListView.
+<P>
+There are two possible mechanisms to use:
+<UL>
+<LI>explicitely setting the listViews contents
+(by sending it a <CODE>#list:</CODE> message),
+and asking the listView for a (callback) notification when
+the selection changes.
+<BR>
+Via this callBack, the listView is hard-connected to the application.
+<BR>
+This is called the <CITE>callBack</CITE> mechanism.
+<P>
+<LI>putting the list of names into a SelectionInList object,
+and use that as a model for the listView. The model will notify
+all of its dependents about a change.
+<BR>
+The listViews only know about
+their model; the connection to the application is indirect, via the dependency
+mechanism.
+<BR>
+This is called the <CITE>Model-View</CITE> mechanism.
+</UL>
+
+If you are used to Xtoolkit or Windows programming, the first approach
+may be more natural to you - the set up is somewhat easier to understand,
+but less flexible (as we will see in a minute).
+<P>
+The second approach is more flexible, if more views
+(or in general: <CITE>observers</CITE>) are involved:
+<BR>
+Consider the case that some other object is interested in a selection change
+(for example, to give some hint in an explainer view, to automatically
+search for senders/implementers etc.). With the first approach, you now
+have a problem since your callback has to know about all others interested
+in the selection and forward that information. Again, all those forwarding
+has to be hardcoded in our application - i.e. the application has to <CITE>know</CITE>
+about those others. This is probably not a very object oriented setup.
+<P>
+With the second approach, the other observer simply defines itself as
+another dependent of the model - and will automatically get the notification.
+Our application needs no knowledge whatsoever about those others.
+<P>
+(you will find background information in this in some text about
+ the <CITE>observer pattern</CITE>)
+<P>
+<CITE>Smalltalk/X</CITE> supports both mechanisms, since there are
+applications where a simple action callback is easier to write down and
+the flexibility is not needed (simple buttons, for example).
+<P>
+Enough background explanation - we will use the model setup here.
+<P>
+Lets add code, to create the required models, arrange for a notification to
+be sent to our application upon change, and give them
+to the listViews.
+<BR>
+Since we will have to have access to those models from
+multiple parts of our application (and we have to keep them for the lifetime of
+our view), we keep references to them in instance variables.
+<BR>
+Therefore, we start by changing the classes definition to:
+<CODE><PRE>
+    ApplicationModel subclass:#SimpleBrowser
+	    instanceVariableNames:'classListModel
+				   methodListModel'
+	    classVariableNames:''
+	    poolDictionaries:''
+	    category:'Demos-Tutorial'
+</PRE></CODE>
+
+<FORM ACTION="../misc/onlyInSTX.html"
+      METHOD="DOIT |
+	Class withoutUpdatingChangesDo:[
+	    ApplicationModel subclass:#SimpleBrowser
+		    instanceVariableNames:'classListModel methodListModel'
+		    classVariableNames:''
+		    poolDictionaries:''
+		    category:'Demos-Tutorial'.
+	]
+      ">
+
+Press:<INPUT TYPE="submit" VALUE="here"> to change the definition in your system.
+</FORM>
+
+Then, we change the <CODE>#setupSubviewsIn:</CODE>-method,
+by adding code to create the models. The natural model for a SelectionInListView
+is an instance of <CODE>SelectionInList</CODE>. Those internally keep
+the list (i.e. the items) and the index of the selected item.
+Their dependents are notified when either changes.
+
+<CODE><PRE>
+    ...
+
+    "
+     create the selectionInList models and stuff them into the listViews
+    "
+    classListModel := SelectionInList new.
+    methodListModel := SelectionInList new.
+
+    classListView model:classListModel.
+    methodListView model:methodListModel.
+
+    ...
+</PRE></CODE>
+and tell those models, to notify us (the application) whenever something
+changes. There are basically two ways to be notified:
+<UL>
+<LI>via an <CODE>#update:...</CODE> message
+<BR>
+if we simply make our application a dependent of the model (with <CODE>#addDependent:</CODE>,
+we will be notified via an <CODE>#update:with:from:</CODE> message.
+<BR>
+This is useful, if multiple changes are to be handled by a single method.
+The update method has to figure out itself which object changed (the changedObject)
+and how it changed (the aspect of the change).
+<P>
+<LI>via a direct message send
+<BR>
+arrangements for this are setup with <CODE>#onChangeSend:to:</CODE>,
+and we can pass it the name of the message we can to be sent later.
+<BR>
+This is useful, to direct the update right into an update method,
+and there is nothing more to figure out (i.e. we already know what the
+changed object is and how it changed).
+</UL>
+In our application, the second mechanism is easier to use:
+
+<CODE><PRE>
+    ...
+
+    "
+     let me know if something changes
+    "
+    classListModel onChangeSend:#classListChange to:self.
+    methodListModel onChangeSend:#methodListChange to:self.
+    ...
+</PRE></CODE>
+
+[For the curious]:
+The alternative code using a general update is:
+<CODE><PRE>
+    ...
+    classListModel addDependent:self.
+    methodListModel addDependent:self.
+    ...
+</PRE></CODE>
+and the update method would be:
+<CODE><PRE>
+    update:someAspect with:someArgument from:changedObject
+	changedObject == classListModel ifTrue:[
+	    self classListChange
+	] ifFalse:[
+	    changedObject == methodListModel ifTrue:[
+		self methodListChange
+	    ]
+	]
+</PRE></CODE>
+[end curiosity]
+<P>
+
+
+The two methods which get called on change are defined as dummies for now.
+We will later come back and fill them with useful code:
+<CODE><PRE>
+    classListChange
+	"dummy for now"
+</PRE></CODE>
+and:
+<CODE><PRE>
+    methodListChange
+	"dummy for now"
+</PRE></CODE>
+The models which we used above are instances of <CODE>SelectionInList</CODE>.
+These keep track a list and a selection index and will send out
+change notifications when EITHER the list changes OR the
+selection changes.
+<BR>
+Actually, we are only interested in selection changes;
+so we better setup things to only get selection change messages.
+This can be done by accessing the models underlying selectionHolder:
+(actually a SelectionInList object has no such thing physically -
+ it really keeps the selections index internally.
+ However, when asked for a selectionHolder, it return something which
+ simulates a model holding the selection instead of the index.
+<BR>
+ Since we think truly object oriented, we can ignore this fact
+ and don't care about that here ;-)
+<CODE><PRE>
+    ...
+
+    "
+     let me know if something changes
+    "
+    classListModel selectionHolder onChangeSend:#classListChange to:self.
+    methodListModel selectionHolder onChangeSend:#methodListChange to:self.
+    ...
+</PRE></CODE>
+Without this, our change methods would be called even when
+the lists are changed - and the change methods had to figure out if
+it was a list change or a selection change (remember this for your
+next project - it is sometimes useful, too).
+
+
+
+<FORM ACTION="../misc/onlyInSTX.html"
+      METHOD="DOIT |
+	SimpleBrowser
+	    compile:
+'setupSubviewsIn:topView
+    ' , Character doubleQuote asString , 'create the panels with the selectionInListViews and the codeView' , Character doubleQuote asString , '
+
+    |outerPanel upperPanel
+     classListView methodListView codeView
+     scrollHelper|
+
+    ' , Character doubleQuote asString , '
+     create the panels ...
+    ' , Character doubleQuote asString , '
+    outerPanel := VariableVerticalPanel
+			origin:0.0 @ 0.0 corner:1.0 @ 1.0
+			in:topView.
+
+    upperPanel := VariableHorizontalPanel
+			origin:0.0 @ 0.0 corner:1.0 @ 0.3
+			in:outerPanel.
+
+    ' , Character doubleQuote asString , '
+     the classListView is a scrollable SelectionInListView ...
+    ' , Character doubleQuote asString , '
+    scrollHelper := HVScrollableView
+			for:SelectionInListView
+			miniScrollerH:true
+			origin:0.0 @0.0 corner:0.5 @ 1.0
+			in:upperPanel.
+    classListView := scrollHelper scrolledView.
+
+    ' , Character doubleQuote asString , '
+     the methodListView also ...
+    ' , Character doubleQuote asString , '
+    scrollHelper := HVScrollableView
+			for:SelectionInListView
+			miniScrollerH:true
+			origin:0.5 @0.0 corner:1.0 @ 1.0
+			in:upperPanel.
+    methodListView := scrollHelper scrolledView.
+
+    ' , Character doubleQuote asString , '
+     the codeView is a scrollable CodeView ...
+    ' , Character doubleQuote asString , '
+    scrollHelper := HVScrollableView
+			for:CodeView
+			miniScrollerH:true
+			origin:0.0 @0.3 corner:1.0 @ 1.0
+			in:outerPanel.
+    codeView := scrollHelper scrolledView.
+
+
+    ' , Character doubleQuote asString , '
+     create the selectionInList models and stuff them into the listViews
+    ' , Character doubleQuote asString , '
+    classListModel := SelectionInList new.
+    methodListModel := SelectionInList new.
+
+    classListView model:classListModel.
+    methodListView model:methodListModel.
+
+    ' , Character doubleQuote asString , '
+     let me know if something changes
+    ' , Character doubleQuote asString , '
+    classListModel selectionHolder onChangeSend:#classListChange to:self.
+    methodListModel selectionHolder onChangeSend:#methodListChange to:self.
+
+'
+		      classified:'setup - subviews' logged:false.
+
+	SimpleBrowser
+	    compile:
+'classListChange
+    ' , Character doubleQuote asString , 'dummy for now' , Character doubleQuote asString , '
+'
+		      classified:'change notifications' logged:false.
+
+	SimpleBrowser
+	    compile:
+'methodListChange
+    ' , Character doubleQuote asString , 'dummy for now' , Character doubleQuote asString , '
+'
+		      classified:'change notifications' logged:false.
+      ">
+
+Press:<INPUT TYPE="submit" VALUE="here"> to change the method in your system.
+</FORM>
+
+
+
+<H2><A HREF="#I_CLASSLIST" NAME="CLASSLIST">Getting the classList</A></H2>
+
+We are now ready to show the list of class names in the classListView.
+<BR>
+First, ask the system for a collection of all classes,
+then collect their nameStrings and finally, give this string collection to
+the classListModel.
+<BR>
+We perform this in an extra method, called <CITE>updateClassList</CODE>:
+
+<CODE><PRE>
+    updateClassList
+	"update the classList"
+
+	|collectionOfClasses collectionOfNames|
+
+	"
+	 get classes ...
+	 - since `Smalltalk allClasses' may return an unordered collection,
+	   convert it into something which is orderer.
+	   That is needed to allow sorting later.
+	   `Smalltalk allClasses' only promises to return 'some'
+	   collection (actually it returns a Set).
+	"
+	collectionOfClasses := Smalltalk allClasses asOrderedCollection.
+
+	"
+	 collect names ...
+	"
+	collectionOfNames := collectionOfClasses
+				collect:[:aClass | aClass name].
+
+	"
+	 sort them ...
+	"
+	collectionOfNames := collectionOfNames sort.
+
+	"
+	 and pass them to the classListModel
+	"
+	classListModel list:collectionOfNames
+</PRE></CODE>
+of course, you can write things more compact (;-):
+<CODE><PRE>
+    updateClassList
+	"update the classList"
+
+	classListModel
+	    list:(Smalltalk allClasses asOrderedCollection
+		    collect:[:aClass | aClass name]) sort
+</PRE></CODE>
+Now the big question: when do we have to call for this method ?
+<BR>
+Definitely, when our browser starts up.
+<BR>
+However, it would be nice to update the list also whenever a
+class has been added or removed by some other browser.
+<BR>
+We are lucky, since <CODE>Smalltalk</CODE> sends change notifications,
+whenever classes are added or removed. Therefore, we add our application
+as a dependent of <CODE>Smalltalk</CODE> (in the setup method)
+and get automatic update for free:
+<CODE><PRE>
+	...
+	Smalltalk onChangeSend:#updateClassList to:self
+	...
+</PRE></CODE>
+finally, we need an explicit send to the update method
+when the application is started. Lets add the
+follwoing to our <CODE>openInterface</CODE> method:
+<CODE><PRE>
+	...
+	self updateClassList.
+	...
+</PRE></CODE>
+
+Its now probably enough additional code in the <CODE>setupSubviewsIn:</CODE>
+method, to justify its separation into two methods;
+we extract the whole model setup stuff into an extra method:
+<BR>
+(mhmh - should have done this right away ...):
+<CODE><PRE>
+    setupSubviewsIn:topView
+	"create the panels with the selectionInListViews and the codeView"
+
+	|outerPanel upperPanel
+	 classListView methodListView codeView
+	 scrollHelper|
+
+	"
+	 create the panels ...
+	"
+	outerPanel := VariableVerticalPanel
+			    origin:0.0 @ 0.0 corner:1.0 @ 1.0
+			    in:topView.
+
+	upperPanel := VariableHorizontalPanel
+			    origin:0.0 @ 0.0 corner:1.0 @ 0.3
+			    in:outerPanel.
+
+
+	"
+	 the classListView is a scrollable SelectionInListView ...
+	"
+	scrollHelper := HVScrollableView
+			    for:SelectionInListView
+			    miniScrollerH:true
+			    origin:0.0 @0.0 corner:0.5 @ 1.0
+			    in:upperPanel.
+	classListView := scrollHelper scrolledView.
+	classListView model:classListModel.
+
+
+	"
+	 the methodListView also ...
+	"
+	scrollHelper := HVScrollableView
+			    for:SelectionInListView
+			    miniScrollerH:true
+			    origin:0.5 @0.0 corner:1.0 @ 1.0
+			    in:upperPanel.
+	methodListView := scrollHelper scrolledView.
+	methodListView model:methodListModel.
+
+	"
+	 the codeView is a scrollable CodeView ...
+	"
+	scrollHelper := HVScrollableView
+			    for:CodeView
+			    miniScrollerH:true
+			    origin:0.0 @0.3 corner:1.0 @ 1.0
+			    in:outerPanel.
+	codeView := scrollHelper scrolledView.
+
+</PRE></CODE>
+and another method which only cares for the models:
+<CODE><PRE>
+    setupModels
+	"create the models"
+
+
+	"
+	 create the selectionInList models and stuff them into the listViews
+	"
+	classListModel := SelectionInList new.
+	methodListModel := SelectionInList new.
+
+	"
+	 let me know if something changes
+	"
+	classListModel selectionHolder onChangeSend:#classListChange to:self.
+	methodListModel selectionHolder onChangeSend:#methodListChange to:self.
+
+
+	"
+	 let me know if classes are added or removed
+	"
+	Smalltalk onChangeSend:#updateClassList to:self.
+
+	"
+	 update the classList now and here
+	"
+	self updateClassList.
+</PRE></CODE>
+finally, a call for <CODE>setupModels</CODE> is added to <CODE>openInterface</CODE>.
+Of course, this has to be done before the views are setup (which expect
+the models to be already created).
+
+
+<FORM ACTION="../misc/onlyInSTX.html"
+      METHOD="DOIT |
+	SimpleBrowser
+	    compile:
+'setupSubviewsIn:topView
+    ' , Character doubleQuote asString , 'create the panels with the selectionInListViews and the codeView' , Character doubleQuote asString , '
+
+    |outerPanel upperPanel
+     classListView methodListView codeView
+     scrollHelper|
+
+    ' , Character doubleQuote asString , '
+     create the panels ...
+    ' , Character doubleQuote asString , '
+    outerPanel := VariableVerticalPanel
+			origin:0.0 @ 0.0 corner:1.0 @ 1.0
+			in:topView.
+
+    upperPanel := VariableHorizontalPanel
+			origin:0.0 @ 0.0 corner:1.0 @ 0.3
+			in:outerPanel.
+
+    ' , Character doubleQuote asString , '
+     the classListView is a scrollable SelectionInListView ...
+    ' , Character doubleQuote asString , '
+    scrollHelper := HVScrollableView
+			for:SelectionInListView
+			miniScrollerH:true
+			origin:0.0 @0.0 corner:0.5 @ 1.0
+			in:upperPanel.
+    classListView := scrollHelper scrolledView.
+    classListView model:classListModel.
+
+    ' , Character doubleQuote asString , '
+     the methodListView also ...
+    ' , Character doubleQuote asString , '
+    scrollHelper := HVScrollableView
+			for:SelectionInListView
+			miniScrollerH:true
+			origin:0.5 @0.0 corner:1.0 @ 1.0
+			in:upperPanel.
+    methodListView := scrollHelper scrolledView.
+    methodListView model:methodListModel.
+
+    ' , Character doubleQuote asString , '
+     the codeView is a scrollable CodeView ...
+    ' , Character doubleQuote asString , '
+    scrollHelper := HVScrollableView
+			for:CodeView
+			miniScrollerH:true
+			origin:0.0 @0.3 corner:1.0 @ 1.0
+			in:outerPanel.
+    codeView := scrollHelper scrolledView.
+
+
+'
+		      classified:'setup - subviews' logged:false.
+
+	SimpleBrowser
+	    compile:
+'setupModels
+    ' , Character doubleQuote asString , 'create the models' , Character doubleQuote asString , '
+
+
+    ' , Character doubleQuote asString , '
+     create the selectionInList models and stuff them into the listViews
+    ' , Character doubleQuote asString , '
+    classListModel := SelectionInList new.
+    methodListModel := SelectionInList new.
+
+    ' , Character doubleQuote asString , '
+     let me know if something changes
+    ' , Character doubleQuote asString , '
+    classListModel selectionHolder onChangeSend:#classListChange to:self.
+    methodListModel selectionHolder onChangeSend:#methodListChange to:self.
+
+
+    ' , Character doubleQuote asString , '
+     let me know if classes are added or removed
+    ' , Character doubleQuote asString , '
+    Smalltalk onChangeSend:#updateClassList to:self.
+
+    ' , Character doubleQuote asString , '
+     update the classList now and here
+    ' , Character doubleQuote asString , '
+    self updateClassList.
+
+'
+		      classified:'setup - models' logged:false.
+
+	SimpleBrowser
+	    compile:
+'updateClassList
+    ' , Character doubleQuote asString , 'update the classList' , Character doubleQuote asString , '
+
+    classListModel
+	list:(Smalltalk allClasses asOrderedCollection
+		collect:[:aClass | aClass name]) sort
+'
+		      classified:'updating' logged:false.
+
+
+	SimpleBrowser
+	    compile:
+'openInterface
+    ' , Character doubleQuote asString , 'sent by my superclass to open up my interface
+     (i.e. SimpleBrowser - openInterface)' , Character doubleQuote asString , '
+
+    |topView|
+
+    topView := StandardSystemView new.
+    topView label:''Simple Browser''.
+    topView application:self.
+
+    self setupModels.
+    self setupSubviewsIn:topView.
+
+    topView open.
+
+    ' , Character doubleQuote asString , '
+     SimpleBrowser open
+    ' , Character doubleQuote asString , '
+'
+	    classified:'startup' logged:false.
+
+	SimpleBrowser class
+	    compile:
+'documentation
+' , Character doubleQuote asString , '
+    this is a simple browser example
+
+    up to now, it can show the list of classes in the system.
+' , Character doubleQuote asString , '
+'
+		      classified:'documentation' logged:false.
+
+      ">
+
+Press:<INPUT TYPE="submit" VALUE="here"> to add the above changes to your system.
+</FORM>
+
+Now, reopen a new simpleBrowser to verify that the classes are shown correctly.
+Of course, nothing happens in this browser when a class is selected.
+<A TYPE="example">
+<CODE><PRE>
+    SimpleBrowser open
+</PRE></CODE>
+</A>
+
+<H2><A HREF="#I_METHODLIST" NAME="METHODLIST">Getting the methodList</A></H2>
+
+Next, we have to show the selected classes methods,
+whenever the classSelection changes.
+<BR>
+For that, it is useful to keep references to the currently selected class
+and method in instance variables; therefore, we change the classes definition to:
+<CODE><PRE>
+    ApplicationModel subclass:#SimpleBrowser
+	    instanceVariableNames:'classListModel
+				   methodListModel
+				   currentClass
+				   currentMethod'
+	    classVariableNames:''
+	    poolDictionaries:''
+	    category:'Demos-Tutorial'
+</PRE></CODE>
+
+and modify our dummy <CODE>#classListChange</CODE> method
+(which already gets
+called) to remember the class and update the methodList:
+<CODE><PRE>
+    classListChange
+	"the class selection has changed"
+
+	|selection|
+
+	selection := classListModel selection.
+	selection notNil ifTrue:[
+	    currentClass := Smalltalk classNamed:selection.
+	    self updateMethodList
+	]
+</PRE></CODE>
+and define the methodList update method as:
+
+<CODE><PRE>
+    updateMethodList
+	"update the methodList"
+
+	|dict selectors|
+
+	dict := currentClass methodDictionary.
+	selectors := OrderedCollection new.
+	dict keysAndValuesDo:[:selector :method | selectors add:selector].
+	methodListModel list:(selectors sort)
+</PRE></CODE>
+
+<FORM ACTION="../misc/onlyInSTX.html"
+      METHOD="DOIT |
+	Class withoutUpdatingChangesDo:[
+	    ApplicationModel subclass:#SimpleBrowser
+		    instanceVariableNames:'classListModel
+					   methodListModel
+					   currentClass
+					   currentMethod'
+		    classVariableNames:''
+		    poolDictionaries:''
+		    category:'Demos-Tutorial'.
+	].
+
+	SimpleBrowser
+	    compile:
+'classListChange
+    ' , Character doubleQuote asString , 'the class selection has changed' , Character doubleQuote asString , '
+
+    |selection|
+
+    selection := classListModel selection.
+    selection notNil ifTrue:[
+	currentClass := Smalltalk classNamed:selection.
+	self updateMethodList
+    ]
+'
+		      classified:'change notifications' logged:false.
+
+	SimpleBrowser
+	    compile:
+'updateMethodList
+    ' , Character doubleQuote asString , 'update the methodList' , Character doubleQuote asString , '
+
+    |dict selectors|
+
+    dict := currentClass methodDictionary.
+    selectors := OrderedCollection new.
+    dict keysAndValuesDo:[:selector :method | selectors add:selector].
+    methodListModel list:(selectors sort)
+'
+		      classified:'updating' logged:false.
+
+	SimpleBrowser class
+	    compile:
+'documentation
+' , Character doubleQuote asString , '
+    this is a simple browser example
+
+    now, it can show the list of classes in the system,
+    and show a selected classes methods.
+' , Character doubleQuote asString , '
+'
+		      classified:'documentation' logged:false.
+
+      ">
+
+Press:<INPUT TYPE="submit" VALUE="here"> to add the above changes to your system.
+</FORM>
+
+
+Again, reopen a new simpleBrowser to verify that things work correctly.
+<A TYPE="example">
+<CODE><PRE>
+    SimpleBrowser open
+</PRE></CODE>
+</A>
+
+
+
+<H2><A HREF="#I_SOURCECODE" NAME="SOURCECODE">Getting the methods source</A></H2>
+
+Finally, the same procedure for the methods sourceCode:
+
+<CODE><PRE>
+    methodListChange
+	"the method selection has changed"
+
+	|selection|
+
+	selection := methodListModel selection.
+	selection notNil ifTrue:[
+	    currentMethod := currentClass compiledMethodAt:selection asSymbol.
+	    self updateCodeView
+	]
+</PRE></CODE>
+and add a method to show the methods source:
+
+<CODE><PRE>
+    updateCodeView
+	"update the methodList"
+
+	codeView contents:(currentMethod source)
+</PRE></CODE>
+oops - we don't have <CITE>codeView</CITE> at hand here.
+We either have to use a model again, or keep codeView in another instance
+variable. Lets keep codeView in an instance variable:
+<CODE><PRE>
+    ApplicationModel subclass:#SimpleBrowser
+	    instanceVariableNames:'classListModel
+				   methodListModel
+				   currentClass
+				   currentMethod
+				   codeView'
+	    classVariableNames:''
+	    poolDictionaries:''
+	    category:'Demos-Tutorial'
+</PRE></CODE>
+and remove the local variable with the same name in the <CODE>#setupSubviewsIn:</CODE> method.
+
+<FORM ACTION="../misc/onlyInSTX.html"
+      METHOD="DOIT |
+	Class withoutUpdatingChangesDo:[
+	    ApplicationModel subclass:#SimpleBrowser
+		    instanceVariableNames:'classListModel
+					   methodListModel
+					   currentClass
+					   currentMethod
+					   codeView'
+		    classVariableNames:''
+		    poolDictionaries:''
+		    category:'Demos-Tutorial'.
+	].
+
+	SimpleBrowser
+	    compile:
+'methodListChange
+    ' , Character doubleQuote asString , 'the method selection has changed' , Character doubleQuote asString , '
+
+    |selection|
+
+    selection := methodListModel selection.
+    selection notNil ifTrue:[
+	currentMethod := currentClass compiledMethodAt:selection asSymbol.
+	self updateCodeView
+    ]
+'
+		      classified:'change notifications' logged:false.
+
+	SimpleBrowser
+	    compile:
+'updateCodeView
+    ' , Character doubleQuote asString , 'update the methodList' , Character doubleQuote asString , '
+
+    codeView contents:(currentMethod source)
+'
+		      classified:'updating' logged:false.
+
+	SimpleBrowser
+	    compile:
+'setupSubviewsIn:topView
+    ' , Character doubleQuote asString , 'create the panels with the selectionInListViews and the codeView' , Character doubleQuote asString , '
+
+    |outerPanel upperPanel
+     classListView methodListView scrollHelper|
+
+    ' , Character doubleQuote asString , '
+     create the panels ...
+    ' , Character doubleQuote asString , '
+    outerPanel := VariableVerticalPanel
+			origin:0.0 @ 0.0 corner:1.0 @ 1.0
+			in:topView.
+
+    upperPanel := VariableHorizontalPanel
+			origin:0.0 @ 0.0 corner:1.0 @ 0.3
+			in:outerPanel.
+
+    ' , Character doubleQuote asString , '
+     the classListView is a scrollable SelectionInListView ...
+    ' , Character doubleQuote asString , '
+    scrollHelper := HVScrollableView
+			for:SelectionInListView
+			miniScrollerH:true
+			origin:0.0 @0.0 corner:0.5 @ 1.0
+			in:upperPanel.
+    classListView := scrollHelper scrolledView.
+    classListView model:classListModel.
+
+    ' , Character doubleQuote asString , '
+     the methodListView also ...
+    ' , Character doubleQuote asString , '
+    scrollHelper := HVScrollableView
+			for:SelectionInListView
+			miniScrollerH:true
+			origin:0.5 @0.0 corner:1.0 @ 1.0
+			in:upperPanel.
+    methodListView := scrollHelper scrolledView.
+    methodListView model:methodListModel.
+
+    ' , Character doubleQuote asString , '
+     the codeView is a scrollable CodeView ...
+    ' , Character doubleQuote asString , '
+    scrollHelper := HVScrollableView
+			for:CodeView
+			miniScrollerH:true
+			origin:0.0 @0.3 corner:1.0 @ 1.0
+			in:outerPanel.
+    codeView := scrollHelper scrolledView.
+'
+		      classified:'setup - subviews' logged:false.
+
+	SimpleBrowser class
+	    compile:
+'documentation
+' , Character doubleQuote asString , '
+    this is a simple browser example
+
+    now, it can show the list of classes in the system,
+    and show a selected classes methods. If a method is
+    selected, the code is shown in the lower codeView.
+' , Character doubleQuote asString , '
+'
+		      classified:'documentation' logged:false.
+
+      ">
+
+Press:<INPUT TYPE="submit" VALUE="here"> to add the above changes to your system.
+</FORM>
+
+That completes most of our browser - we can now look at methods and
+see the sourceCode.
+<BR>
+Try it again:
+<A TYPE="example">
+<CODE><PRE>
+    SimpleBrowser open
+</PRE></CODE>
+</A>
+
+
+
+<H2><A HREF="#I_ACCEPTING" NAME="ACCEPTING">Accepting changed methods</A></H2>
+
+The next thing that is required is some accept mechanism:
+the selected method should be recompiled when the codeView <CITE>accepts</CITE>
+(either via its menu, or by a shortkey).
+<P>
+To support this, codeViews provide a hook:
+<BR>
+you can give it a block which it evaluates on accept.
+<BR>
+(codeViews can also be used with a model - in that case, the model gets
+ an <CITE>#accept</CITE> notification).
+<P>
+The changes are straight forward: define the acceptAction when the
+codeView is updated. This block will be evaluated by the codeView,
+passing a collection of strings (the text lines of its contents) as argument.
+<BR>
+Since the compiler expects a single string, we have to send <CODE>#asString</CODE>
+to this string collection. Notice, that we cannot pass any useful method
+category to the compiler - our browser is too dumb for that.
+
+<CODE><PRE>
+    updateCodeView
+	"update the methodList and set the acceptAction"
+
+	codeView contents:(currentMethod source).
+	codeView acceptAction:[:theCode |
+			currentClass
+				compile:theCode asString
+				classified:'no category'
+		]
+</PRE></CODE>
+
+Be careful: only modify test-classes with this browser, since it
+does not keep track of any method categories. All accepted methods
+will get a dummy category - after all, this is only a simple demo.
+<BR>
+To have something to play with, we should define some dummy classes.
+
+<FORM ACTION="../misc/onlyInSTX.html"
+      METHOD="DOIT |
+
+	Class withoutUpdatingChangesDo:[
+	    Object subclass:#'AAA_DummyClass1'
+		    instanceVariableNames:''
+		    classVariableNames:''
+		    poolDictionaries:''
+		    category:'Demos-Tutorial'.
+
+	    Object subclass:#'AAA_DummyClass2'
+		    instanceVariableNames:''
+		    classVariableNames:''
+		    poolDictionaries:''
+		    category:'Demos-Tutorial'.
+
+	    Object subclass:#'AAA_DummyClass3'
+		    instanceVariableNames:''
+		    classVariableNames:''
+		    poolDictionaries:''
+		    category:'Demos-Tutorial'.
+	].
+
+	AAA_DummyClass1
+	    compile:
+'dummyMethod1
+    ' , Character doubleQuote asString , 'something to play with' , Character doubleQuote asString , '
+'
+		      classified:'dummy methods' logged:false.
+
+	AAA_DummyClass1
+	    compile:
+'dummyMethod2
+    ' , Character doubleQuote asString , 'something to play with' , Character doubleQuote asString , '
+'
+		      classified:'dummy methods' logged:false.
+
+	AAA_DummyClass2
+	    compile:
+'dummyMethod1
+    ' , Character doubleQuote asString , 'something to play with' , Character doubleQuote asString , '
+'
+		      classified:'dummy methods' logged:false.
+
+	AAA_DummyClass3
+	    compile:
+'dummyMethod1
+    ' , Character doubleQuote asString , 'something to play with' , Character doubleQuote asString , '
+'
+		      classified:'dummy methods' logged:false.
+
+
+	SimpleBrowser
+	    compile:
+'updateCodeView
+    ' , Character doubleQuote asString , 'update the methodList and set the acceptAction' , Character doubleQuote asString , '
+
+    codeView contents:(currentMethod source).
+    codeView acceptAction:[:theCode |
+		    currentClass
+			    compile:theCode asString
+			    classified:''no category''
+	    ]
+'
+		      classified:'updating' logged:false.
+
+	SimpleBrowser class
+	    compile:
+'documentation
+' , Character doubleQuote asString , '
+    this is a simple browser example
+
+    now, it can show the list of classes in the system,
+    and show a selected classes methods. If a method is
+    selected, the code is shown in the lower codeView.
+    Changed methods can be accepted and are recompiled.
+' , Character doubleQuote asString , '
+'
+		      classified:'documentation' logged:false.
+      ">
+
+Press:<INPUT TYPE="submit" VALUE="here"> to add the above change
+and some dummy classes to your system.
+</FORM>
+
+
+<H2><A HREF="#I_BELLS" NAME="BELLS">Little bells & whistles</A></H2>
+
+If you try to accept a faulty method in the above browser,
+no error highlighting appears. The reason is simply that the compiler
+does not know about the codeView. The compiler is prepared to
+forward any error or warning messages to some object (which has to
+implement messages like <CODE>#error:position:to:asWarning:</CODE>
+to highlight that text fragment). Luckily, codeViews do understand
+those messages (thats what differenciates them from editTextViews),
+so we simply pass it as the <CODE>notifying:</CODE> argument to the
+compiler:
+<CODE><PRE>
+	codeView acceptAction:[:theCode |
+		Compiler
+		    compile:theCode asString
+		    forClass:currentClass
+		    inCategory:'no category'
+		    notifying:codeView.
+		]
+</PRE></CODE>
+this calls for the compiler directly - instead of asking the method
+to recompile itself.
+
+<P>
+Also, we like some visible feedBack while compiling.
+A good idea is to show a busy cursor during the compile:
+<CODE><PRE>
+	codeView acceptAction:[:theCode |
+	    codeView topView withCursor:(Cursor wait)
+	    do:[
+		Compiler
+		    compile:theCode asString
+		    forClass:currentClass
+		    inCategory:'no category'
+		    notifying:codeView.
+	     ]
+	]
+</PRE></CODE>
+The <CODE>#withCursor:do:</CODE> evaluates a block and shows some cursor
+in the meanwhile. If sent to a topView, it will change the cursor of all
+its subviews (you could also change the codeViews cursor only).
+<BR>
+Since we don't have the topView at hand
+(could also be changed to an instance variable), the above code
+simply asks the codeView for its topView. That works just as well.
+
+
+
+
+<H2><A HREF="#I_CLOSEVALIDATION" NAME="CLOSEVALIDATION">Intercepting window close</A></H2>
+
+As described above, telling the topView about the application object
+allows it to intercept various window events, and decide locally how
+things are to be handled. For example, the closing of the topView
+(via the windowManager) will result in a <CODE>#closeRequest</CODE>
+message to be sent to the application.
+<BR>
+The default implementation (in the <CODE>ApplicationModel</CODE> class
+shuts down the topView. However, in out application we want
+to check if the codeViews contents has been modified - and a confirmation
+dialog should be displayed.
+<P>
+The code to do this is straight forward:
+<CODE><PRE>
+    closeRequest
+	"sent if the topView is about to be closed"
+
+	codeView modified ifTrue:[
+	    (self confirm:'text has not been accepted\\Close anyway ?' withCRs)
+	    ifFalse:[
+		^ self
+	    ]
+	].
+	super closeRequest
+</PRE></CODE>
+If the text has not been modified or the user confirms, we simply
+call for the original <CODE>closeRequest</CODE>s action to be performed
+(which really closes the view).
+<P>
+To reset the modified status of the text, we should tell the codeView
+in our acceptAction that its text is no longer considered being modified:
+<CODE><PRE>
+updateCodeView
+    "update the methodList and set the acceptAction"
+
+    codeView contents:(currentMethod source).
+    codeView acceptAction:[:theCode |
+	codeView topView withCursor:(Cursor wait)
+	do:[
+	    Compiler
+		compile:theCode asString
+		forClass:currentClass
+		inCategory:''no category''
+		notifying:codeView.
+
+	    codeView modified:false
+	 ]
+    ]
+</PRE></CODE>
+
+
+<FORM ACTION="../misc/onlyInSTX.html"
+      METHOD="DOIT |
+
+	SimpleBrowser
+	    compile:
+'closeRequest
+    ' , Character doubleQuote asString , 'sent if the topView is about to be closed' , Character doubleQuote asString , '
+
+    codeView modified ifTrue:[
+	(self confirm:''text has not been accepted\\Close anyway ?'' withCRs)
+	ifFalse:[
+	    ^ self
+	]
+    ].
+    super closeRequest
+'
+		     classified:'closing the application' logged:false.
+
+	SimpleBrowser
+	    compile:
+'updateCodeView
+    ' , Character doubleQuote asString , 'update the methodList and set the acceptAction' , Character doubleQuote asString , '
+
+    codeView contents:(currentMethod source).
+    codeView acceptAction:[:theCode |
+	codeView topView withCursor:(Cursor wait)
+	do:[
+	    Compiler
+		compile:theCode asString
+		forClass:currentClass
+		inCategory:''no category''
+		notifying:codeView.
+
+	    codeView modified:false
+	 ]
+    ]
+'
+		      classified:'updating' logged:false.
+      ">
+
+Press:<INPUT TYPE="submit" VALUE="here"> for these changes.
+</FORM>
+
+
+
+
+<H2><A HREF="#I_MENUS" NAME="MENUS">Adding a PopupMenu</A></H2>
+
+As a final addition, lets add a popupMenu to the methodList.
+Here, we would like to be able to search for senders and implementors
+of some message.
+<P>
+As you may have already read in the tutorial, there are two possibilities
+for menus: <CITE>static menus</CITE> and <CITE>dynamic menus</CITE>.
+<BR>
+We will use a dynamic menu because those are typically the more flexible
+choice.
+<P>
+Before we start to code, we need some background info on menus:
+<UL>
+<LI>first, if a view has a model, it expects the model to provide
+the menu by default. Since our selectionInListModels do not know
+anything about menus, they are probably no good candidates as menuProviders.
+<BR>
+We can tell the selectionInListView that the menu is provided by someone
+els (our application in this case) and also, with which message the menu is
+to be acquired:
+<CODE><PRE>
+    methodListView menuHolder:self;
+		   menuMessage:#methodMenu.
+</PRE></CODE>
+<P>
+<LI>second, the same is true for the execution of the menu messages:
+<BR>
+by default, the menu messages are also sent to the model - in our case the
+selectionInLists. This can be changed by:
+<CODE><PRE>
+    methodListView menuPerformer:self.
+</PRE></CODE>
+</UL>
+So we add the above to our view setup and add the <CODE>#methodMenu</CODE>
+method, which has to return the popUpMenu:
+<CODE><PRE>
+    methodMenu
+	"return a menu for the methodListView"
+
+	^ PopUpMenu
+		labels:#('senders' 'implementors')
+		selectors:#(#browseSenders #browseImplementors)
+</PRE></CODE>
+finally, we need corresponding methods to start the search:
+<CODE><PRE>
+    browseSenders
+	"dummy for now"
+</PRE></CODE>
+and:
+<CODE><PRE>
+    browseImplementors
+	"dummy for now"
+</PRE></CODE>
+
+<FORM ACTION="../misc/onlyInSTX.html"
+      METHOD="DOIT |
+
+	SimpleBrowser
+	    compile:
+'methodMenu
+    ' , Character doubleQuote asString , 'return a menu for the methodListView' , Character doubleQuote asString , '
+
+    ^ PopUpMenu
+	    labels:#(''senders'' ''implementors'')
+	    selectors:#(#browseSenders #browseImplementors)
+'
+		      classified:'method menu' logged:false.
+
+	SimpleBrowser
+	    compile:
+'browseSenders
+    ' , Character doubleQuote asString , 'dummy for now' , Character doubleQuote asString , '
+'
+		      classified:'method menu' logged:false.
+
+	SimpleBrowser
+	    compile:
+'browseImplementors
+    ' , Character doubleQuote asString , 'dummy for now' , Character doubleQuote asString , '
+'
+		      classified:'method menu' logged:false.
+
+	SimpleBrowser
+	    compile:
+'setupSubviewsIn:topView
+    ' , Character doubleQuote asString , 'create the panels with the selectionInListViews and the codeView' , Character doubleQuote asString , '
+
+    |outerPanel upperPanel
+     classListView methodListView scrollHelper|
+
+    ' , Character doubleQuote asString , '
+     create the panels ...
+    ' , Character doubleQuote asString , '
+    outerPanel := VariableVerticalPanel
+			origin:0.0 @ 0.0 corner:1.0 @ 1.0
+			in:topView.
+
+    upperPanel := VariableHorizontalPanel
+			origin:0.0 @ 0.0 corner:1.0 @ 0.3
+			in:outerPanel.
+
+    ' , Character doubleQuote asString , '
+     the classListView is a scrollable SelectionInListView ...
+    ' , Character doubleQuote asString , '
+    scrollHelper := HVScrollableView
+			for:SelectionInListView
+			miniScrollerH:true
+			origin:0.0 @0.0 corner:0.5 @ 1.0
+			in:upperPanel.
+    classListView := scrollHelper scrolledView.
+    classListView model:classListModel.
+
+    ' , Character doubleQuote asString , '
+     the methodListView also ...
+    ' , Character doubleQuote asString , '
+    scrollHelper := HVScrollableView
+			for:SelectionInListView
+			miniScrollerH:true
+			origin:0.5 @0.0 corner:1.0 @ 1.0
+			in:upperPanel.
+    methodListView := scrollHelper scrolledView.
+    methodListView model:methodListModel.
+
+    ' , Character doubleQuote asString , '
+     setup for its menu ...
+    ' , Character doubleQuote asString , '
+    methodListView menuHolder:self;
+		   menuMessage:#methodMenu;
+		   menuPerformer:self.
+
+    ' , Character doubleQuote asString , '
+     the codeView is a scrollable CodeView ...
+    ' , Character doubleQuote asString , '
+    scrollHelper := HVScrollableView
+			for:CodeView
+			miniScrollerH:true
+			origin:0.0 @0.3 corner:1.0 @ 1.0
+			in:outerPanel.
+    codeView := scrollHelper scrolledView.
+'
+		      classified:'setup - subviews' logged:false.
+	SimpleBrowser class
+	    compile:
+'documentation
+' , Character doubleQuote asString , '
+    this is a simple browser example
+
+    It can show the list of classes in the system,
+    and show a selected classes methods. If a method is
+    selected, the code is shown in the lower codeView.
+    Changed methods can be accepted and are recompiled.
+
+    The methodList provides a popupMenu for senders and
+    implementors.
+
+' , Character doubleQuote asString , '
+'
+		      classified:'documentation' logged:false.
+      ">
+
+Press:<INPUT TYPE="submit" VALUE="here"> for these changes.
+</FORM>
+You have to reopen a new demo-browser; the old one did not
+execute the changed setup method.
+<A TYPE="example">
+<CODE><PRE>
+    SimpleBrowser open
+</PRE></CODE>
+</A>
+
+To complete our project, here is the code to start browsing:
+<BR>
+(to keep things simple, we open up standard browsers here ...
+ ... to not make things too simple, we search for senders/implementors
+ here - although there are standard startup messages for this found in
+ the SystemBrowser class)
+<P>
+You should know your collection classes' protocol to understand
+what is going on below ...
+... agian, notice that we show a wait cursor - the search can take
+a second or two.
+
+<CODE><PRE>
+    browseSenders
+	"ask for a selector and open a browser on its senders"
+
+	|selector senders|
+
+	selector := Dialog request:'selector:'.
+	self withCursor:(Cursor wait) do:[
+	    selector isNil ifTrue:[^ self]. "/ cancel pressed
+	    selector := selector asSymbol.  "/ got a string - need a symbol
+
+	    senders := OrderedCollection new.
+	    Smalltalk allClasses do:[:aClass |
+		aClass methodDictionary do:[:aMethod |
+		    (aMethod sends:selector) ifTrue:[
+			senders add:aMethod
+		    ]
+		]
+	    ].
+
+	    senders isEmpty ifTrue:[
+		self information:'no senders'
+	    ] ifFalse:[
+		SystemBrowser
+		    browseMethods:senders
+		    title:('senders of ' , selector)
+	    ]
+	]
+</PRE></CODE>
+and:
+<CODE><PRE>
+    browseImplementors
+	"ask for a selector and open a browser on its implementors"
+
+	|selector classes implementors|
+
+	selector := Dialog request:'selector:'.
+	self withCursor:(Cursor wait) do:[
+	    selector isNil ifTrue:[^ self]. "/ cancel pressed
+	    selector := selector asSymbol.  "/ got a string - need a symbol
+
+	    classes := Smalltalk allClasses
+			    select:[:aClass | aClass implements:selector].
+	    implementors := classes
+			    collect:[:aClass | aClass compiledMethodAt:selector].
+
+	    implementors isEmpty ifTrue:[
+		self information:'no implementors'
+	    ] ifFalse:[
+		SystemBrowser
+		    browseMethods:implementors
+		    title:('implementors of ' , selector)
+	    ]
+	]
+</PRE></CODE>
+
+<FORM ACTION="../misc/onlyInSTX.html"
+      METHOD="DOIT |
+
+	SimpleBrowser
+	    compile:
+'browseSenders
+    ' , Character doubleQuote asString , 'ask for a selector and open a browser on its senders' , Character doubleQuote asString , '
+
+    |selector senders|
+
+    selector := Dialog request:''selector:''.
+    self withCursor:(Cursor wait) do:[
+	selector isNil ifTrue:[^ self]. ' , Character doubleQuote asString , '/ cancel pressed
+	selector := selector asSymbol.  ' , Character doubleQuote asString , '/ got a string - need a symbol
+
+	senders := OrderedCollection new.
+	Smalltalk allClasses do:[:aClass |
+	    aClass methodDictionary do:[:aMethod |
+		(aMethod sends:selector) ifTrue:[
+		    senders add:aMethod
+		]
+	    ]
+	].
+
+	senders isEmpty ifTrue:[
+	    self information:''no senders''
+	] ifFalse:[
+	    SystemBrowser
+		browseMethods:senders
+		title:(''senders of '' , selector)
+	]
+    ]
+'
+		      classified:'method menu' logged:false.
+
+	SimpleBrowser
+	    compile:
+'browseImplementors
+    ' , Character doubleQuote asString , 'ask for a selector and open a browser on its implementors' , Character doubleQuote asString , '
+
+    |selector classes implementors|
+
+    selector := Dialog request:''selector:''.
+    self withCursor:(Cursor wait) do:[
+	selector isNil ifTrue:[^ self]. ' , Character doubleQuote asString , '/ cancel pressed
+	selector := selector asSymbol.  ' , Character doubleQuote asString , '/ got a string - need a symbol
+
+	classes := Smalltalk allClasses
+			select:[:aClass | aClass implements:selector].
+	implementors := classes
+			collect:[:aClass | aClass compiledMethodAt:selector].
+
+	implementors isEmpty ifTrue:[
+	    self information:''no implementors''
+	] ifFalse:[
+	    SystemBrowser
+		browseMethods:implementors
+		title:(''implementors of '' , selector)
+	]
+    ]
+'
+		      classified:'method menu' logged:false.
+      ">
+
+Press:<INPUT TYPE="submit" VALUE="here"> for these changes to be installed.
+</FORM>
+
+
+<FORM ACTION="../misc/onlyInSTX.html"
+      METHOD="DOIT |
+	  Class withoutUpdatingChangesDo:[
+		ErrorSignal ignoreIn:[
+		    Smalltalk removeClass:AAA_DummyClass1.
+		    Smalltalk removeClass:AAA_DummyClass2.
+		    Smalltalk removeClass:AAA_DummyClass3.
+		    Smalltalk removeClass:SimpleBrowser
+		].
+
+	  ]
+      ">
+
+While performing the above tutorial, some classes were added to the system;
+press
+Press:<INPUT TYPE="submit" VALUE="here">
+ to remove them:
+</FORM>
+
+
+
+
+
+<H2><A HREF="#I_INTERNATIONALIZATION" NAME="INTERNATIONALIZATION">Prepare for international use</A></H2>
+
+You should write all of your applications to be prepared for
+use with other languages - i.e. for all strings to come from the
+resource files instead of hardcoding them.
+<BR>
+Although we do this here as a final step, you better get used to writing
+the code for internationalization right from the start.
+<P>
+In <CITE>Smalltalk/X</CITE>, every subclass of <CODE>View</CODE> and
+<CODE>ApplicationModel</CODE> inherits the resource file handling,
+and the classes initialization methods read the resourceFiles during
+startup or when the language is changed (for example, in the launcher).
+<P>
+Thus, all we have to do is to use translated strings, wherever language specific
+strings are present; mostly, these are window titles,
+menu strings and button labels.
+<P>
+For a description of how resources are accessed and how resourceFiles work,
+see <A HREF="appProgramming.html#NATIONAL">
+Information for application programmers</A>.
+<P>
+To use resources, replace:
+<CODE><PRE>
+	'someString'
+</PRE></CODE>
+with:
+<CODE><PRE>
+	(resources string:'someString')
+</PRE></CODE>
+and:
+<CODE><PRE>
+	#('string1' 'string2' ... 'stringN')
+</PRE></CODE>
+with:
+<CODE><PRE>
+	(resources array:#('string1' 'string2' ... 'stringN') )
+</PRE></CODE>
+If a message or string involves a variables printString, as in:
+<CODE><PRE>
+	'there are ' , n printString , ' methods'
+</PRE></CODE>
+replace it with:
+<CODE><PRE>
+	(resources string:'there are %1 methods' with:n)
+</PRE></CODE>
+(notice, that this expansion automatically sends <CODE>#printString</CODE> to
+ the item - so the code using resources may be even easier to read and
+ understand).
+<P>
+Be aware, that a sentences order may be different in other languages;
+so you better translate the full sentence with all arguments instead of
+concatenating individually translated parts.
+<BR>
+As an example, the english:
+
+<CODE><PRE>
+    'do you really want to delete &lt;fileName>'
+</PRE></CODE>
+
+is to be translated into german:
+
+<CODE><PRE>
+    'wollen Sie &lt;fileName> wirklich l&ouml;schen'
+</PRE></CODE>
+
+which is impossible, if you create messages by concatenation:
+
+<CODE><PRE>
+    (resources string:'do you really want to delete ') , fileName
+</PRE></CODE>
+
+So, better translate it via:
+
+<CODE><PRE>
+    (resources string:'do you really want to delete %1') with: fileName
+</PRE></CODE>
+
+and provide a translation in the resourceFile:
+
+<CODE><PRE>
+    'do you really want to delete %1 ?'  'wollen Sie %1 wirklich l&ouml;schen ?'
+</PRE></CODE>
+
+
+
+<P>
+Using resources, our menu method becomes:
+<CODE><PRE>
+    methodMenu
+	"return a menu for the methodListView"
+
+	^ PopUpMenu
+		labels:(resources array:#('senders' 'implementors'))
+		selectors:#(#browseSenders #browseImplementors)
+</PRE></CODE>
+and the dialogBox opening becomes:
+<CODE><PRE>
+    ...
+    selector := Dialog request:(resources string:'selector:').
+    ...
+</PRE></CODE>
+
+
+
+
+
+
+<H2><A HREF="#I_SUMMARY" NAME="SUMMARY">The final code</A></H2>
+
+For all of you, who are reading this on paper or an external html reader,
+here is the final code, en-bloque, in fileOut format.
+<BR>
+You will also find it in the file: <CODE>"clients/Demos/SimpleBrowser.st"</CODE>.
+<CODE><PRE>
+
+'From Smalltalk/X, Version:2.10.9 on 20-apr-1996 at 3:47:32 pm'                 !
+
+ApplicationModel subclass:#SimpleBrowser
+	instanceVariableNames:'classListModel methodListModel currentClass currentMethod
+		codeView'
+	classVariableNames:''
+	poolDictionaries:''
+	category:'Demos-Tutorial'
+!
+
+!SimpleBrowser class methodsFor:'documentation'!
+
+documentation
+"
+    this is a simple browser example
+
+    It can show the list of classes in the system,
+    and show a selected classes methods. If a method is
+    selected, the code is shown in the lower codeView.
+    Changed methods can be accepted and are recompiled.
+
+    The methodList provides a popupMenu for senders and
+    implementors.
+
+"
+! !
+
+!SimpleBrowser methodsFor:'change notifications'!
+
+classListChange
+    "the class selection has changed"
+
+    |selection|
+
+    selection := classListModel selection.
+    selection notNil ifTrue:[
+	currentClass := Smalltalk classNamed:selection.
+	self updateMethodList
+    ]
+!
+
+methodListChange
+    "the method selection has changed"
+
+    |selection|
+
+    selection := methodListModel selection.
+    selection notNil ifTrue:[
+	currentMethod := currentClass compiledMethodAt:selection asSymbol.
+	self updateCodeView
+    ]
+! !
+
+!SimpleBrowser methodsFor:'method menu'!
+
+browseImplementors
+    "ask for a selector and open a browser on its implementors"
+
+    |selector classes implementors|
+
+    selector := Dialog request:(resources string:'selector:').
+    self withCursor:(Cursor wait) do:[
+	selector isNil ifTrue:[^ self]. "/ cancel pressed
+	selector := selector asSymbol.  "/ got a string - need a symbol
+
+	classes := Smalltalk allClasses
+			select:[:aClass | aClass implements:selector].
+	implementors := classes
+			collect:[:aClass | aClass compiledMethodAt:selector].
+
+	implementors isEmpty ifTrue:[
+	    self information:(resources string:'no implementors')
+	] ifFalse:[
+	    SystemBrowser
+		browseMethods:implementors
+		title:((resources string:'implementors of %1' with:selector))
+	]
+    ]
+!
+
+browseSenders
+    "ask for a selector and open a browser on its senders"
+
+    |selector senders|
+
+    selector := Dialog request:(resources string:'selector:').
+    self withCursor:(Cursor wait) do:[
+	selector isNil ifTrue:[^ self]. "/ cancel pressed
+	selector := selector asSymbol.  "/ got a string - need a symbol
+
+	senders := OrderedCollection new.
+	Smalltalk allClasses do:[:aClass |
+	    aClass methodDictionary do:[:aMethod |
+		(aMethod sends:selector) ifTrue:[
+		    senders add:aMethod
+		]
+	    ]
+	].
+
+	senders isEmpty ifTrue:[
+	    self information:(resources string:'no senders')
+	] ifFalse:[
+	    SystemBrowser
+		browseMethods:senders
+		title:((resources string:'senders of %1' with:selector))
+	]
+    ]
+!
+
+methodMenu
+    "return a menu for the methodListView"
+
+    ^ PopUpMenu
+	    labels:(resources array:#('senders' 'implementors'))
+	    selectors:#(#browseSenders #browseImplementors)
+! !
+
+!SimpleBrowser methodsFor:'setup - models'!
+
+setupModels
+    "create the models"
+
+
+    "
+     create the selectionInList models and stuff them into the listViews
+    "
+    classListModel := SelectionInList new.
+    methodListModel := SelectionInList new.
+
+    "
+     let me know if something changes
+    "
+    classListModel selectionHolder onChangeSend:#classListChange to:self.
+    methodListModel selectionHolder onChangeSend:#methodListChange to:self.
+
+
+    "
+     let me know if classes are added or removed
+    "
+    Smalltalk onChangeSend:#updateClassList to:self.
+
+    "
+     update the classList now and here
+    "
+    self updateClassList.
+
+! !
+
+!SimpleBrowser methodsFor:'setup - subviews'!
+
+setupSubviewsIn:topView
+    "create the panels with the selectionInListViews and the codeView"
+
+    |outerPanel upperPanel
+     classListView methodListView scrollHelper|
+
+    "
+     create the panels ...
+    "
+    outerPanel := VariableVerticalPanel
+			origin:0.0 @ 0.0 corner:1.0 @ 1.0
+			in:topView.
+
+    upperPanel := VariableHorizontalPanel
+			origin:0.0 @ 0.0 corner:1.0 @ 0.3
+			in:outerPanel.
+
+    "
+     the classListView is a scrollable SelectionInListView ...
+    "
+    scrollHelper := HVScrollableView
+			for:SelectionInListView
+			miniScrollerH:true
+			origin:0.0 @0.0 corner:0.5 @ 1.0
+			in:upperPanel.
+    classListView := scrollHelper scrolledView.
+    classListView model:classListModel.
+
+    "
+     the methodListView also ...
+    "
+    scrollHelper := HVScrollableView
+			for:SelectionInListView
+			miniScrollerH:true
+			origin:0.5 @0.0 corner:1.0 @ 1.0
+			in:upperPanel.
+    methodListView := scrollHelper scrolledView.
+    methodListView model:methodListModel.
+
+    "
+     setup for its menu ...
+    "
+    methodListView menuHolder:self;
+		   menuMessage:#methodMenu;
+		   menuPerformer:self.
+
+    "
+     the codeView is a scrollable CodeView ...
+    "
+    scrollHelper := HVScrollableView
+			for:CodeView
+			miniScrollerH:true
+			origin:0.0 @0.3 corner:1.0 @ 1.0
+			in:outerPanel.
+    codeView := scrollHelper scrolledView.
+! !
+
+!SimpleBrowser methodsFor:'startup'!
+
+openInterface
+    "sent by my superclass to open up my interface
+     (i.e. SimpleBrowser - openInterface)"
+
+    |topView|
+
+    topView := StandardSystemView new.
+    topView label:(resources string:'Simple Browser').
+    topView application:self.
+
+    self setupModels.
+    self setupSubviewsIn:topView.
+
+    topView open.
+
+    "
+     SimpleBrowser open
+    "
+! !
+
+!SimpleBrowser methodsFor:'updating'!
+
+updateClassList
+    "update the classList"
+
+    classListModel
+	list:(Smalltalk allClasses asOrderedCollection
+		collect:[:aClass | aClass name]) sort
+!
+
+updateCodeView
+    "update the methodList and set the acceptAction"
+
+    codeView contents:(currentMethod source).
+    codeView acceptAction:[:theCode |
+	codeView topView withCursor:(Cursor wait)
+	do:[
+	    Compiler
+		compile:theCode asString
+		forClass:currentClass
+		inCategory:'no category'
+		notifying:codeView.
+	 ]
+    ]
+!
+
+updateMethodList
+    "update the methodList"
+
+    |dict selectors|
+
+    dict := currentClass methodDictionary.
+    selectors := OrderedCollection new.
+    dict keysAndValuesDo:[:selector :method | selectors add:selector].
+    methodListModel list:(selectors sort)
+! !
+
+
+</PRE></CODE>
+
+And, an example resource file "<CODE>SimpleBrowser.rs</CODE>",
+containing german and french translations.
+<BR>
+You can add more languages at any time - there is
+no need to recompile or even edit the code.
+<CODE><PRE>
+;
+; SimpleBrowser.rs
+;
+
+#if Language == #german
+'Simple Browser'           'Einfacher Browser'
+'senders'                  'Sender'
+'implementors'             'Implementierungen'
+'senders of %1'            'Sender von %1'
+'no senders'               'keine Sender'
+'selector:'                'Selektor:'
+'implementors of %1'       'Implementierungen von %1'
+'no implementors'          'keine Implementierung'
+#endif
+
+;
+; (well, my french is too bad ... please excuse)
+;
+
+#if Language == #french
+'Simple Browser'           'guestionnaire simple'
+'senders'                  '&eacute;metteurs'
+'implementors'             'r&eacute;alisations'
+'senders of %1'            '&eacute;metteurs de %1'
+'no senders'               'pas des &eacute;metteurs'
+'selector:'                'selecteur:'
+'implementors of %1'       'r&eacute;alisations de %1'
+'no implementors'          'pas des r&eacute;alisations'
+#endif
+
+</PRE></CODE>
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 1995 Claus Gittinger Development &amp; Consulting, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.26 $ $Date: 2016-07-18 11:53:49 $
+
+</BODY>
+</HTML>

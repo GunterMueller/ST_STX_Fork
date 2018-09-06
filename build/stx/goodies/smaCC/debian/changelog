@@ -1,0 +1,37 @@
+smalltalkx-pkg-smacc (20090816svn) smalltalk; urgency=low
+
+  * Updated to revision 12 (vranyj1, Sun Aug 16 19:09:03 CEST 2009)
+
+ -- Jan Vrany <janfrog@bruxa>  Thu, 20 Aug 2009 10:00:08 +0200
+
+smalltalkx-pkg-smacc (20090812svn) smalltalk; urgency=low
+
+  * Updated to revision 11 (vranyj1, Wed Aug 12 11:23:35 CEST 2009)
+
+ -- Jan Vrany <janfrog@bruxa>  Thu, 13 Aug 2009 16:36:40 +0200
+
+smalltalkx-pkg-smacc (20081118svn) smalltalk; urgency=low
+
+  * Updated to revision 6 (vranyj1, Tue Nov 18 20:09:05 CET 2008)
+
+ -- Jan Vrany <janfrog@bruxa>  Thu, 13 Aug 2009 16:35:52 +0200
+
+smalltalkx-pkg-smacc (20090217svn) smalltalk; urgency=low
+
+  * Update to new filesystem layout
+
+ -- Jan Vrany <janfrog@bruxa>  Tue, 17 Feb 2009 17:17:36 +0100
+
+smalltalkx-pkg-smacc (20081118) unstable testing stable; urgency=low
+
+  * Updated to r6
+
+ -- Jan Vrany <vranyj1@fel.cvut.cz>  Tue, 18 Nov 2008 20:11:28 +0100
+
+smalltalkx-pkg-smacc (20080923) unstable testing stable; urgency=low
+
+  * Initial release
+
+ -- Jan Vrany <vranyj1@fel.cvut.cz>  Tue, 23 Sep 2008 09:30:00 +0200
+
+

@@ -1,0 +1,124 @@
+<title>Paragraphs</title> <h1>Paragraphs</h1>
+
+<B>Permitted Context:</B> %Body.Content, %flow, %block<BR>
+<B>Content Model:</B> %text
+
+<p>The &lt;P&gt; element is used to define a paragraph. The exact
+rendering (indentation, leading etc.) is not defined and may be a
+function of other tags, style sheets, etc. The ALIGN attribute can be
+used to explicitly specify the horizontal alignment. Paragraph elements
+have the same content model as headers, that is text and character
+level markup, such as character emphasis, inline images, form fields
+and math.
+
+<p>Example:
+
+<pre>&lt;H1&gt;The heading precedes the first paragraph&lt;/H1&gt;
+&lt;P&gt;Here is the text of the first paragraph. &lt;P&gt;and this is
+the text of the second paragraph.</PRE>
+
+<p>The text up to the next &lt;p&gt; element is treated as being part of
+the current paragraph. This is an example of how SGML allows certain end
+tags like &lt;/p&gt; to be left out where they can be inferred from the context.
+
+<h3>Word Wrapping</h3>
+
+User agents are free to wrap lines at whitespace characters so as to
+ensure lines fit within the current window size. Use the <B>&amp;nbsp;</B>
+entity for the non-breaking space character, when you want
+to make sure that a line isn't broken! Alternatively, use the NOWRAP
+attribute to disable word wrapping and the &lt;BR&gt; element to force
+line breaks where desired.
+
+<P><I>Netscape includes two tags: &lt;NOBR&gt;...&lt;/NOBR&gt;, and
+&lt;WBR&gt;. The former turns off wordwrapping between the start and
+end NOBR tag, while WBR is for the rare case when you want to specify
+where to break the line if needed. Should HTML 3.0 provide an
+equivalent mechanism to WBR, (either a tag or an entity)?</I>
+
+<p><b>Note:</b> Do not use empty paragraphs to add white space around
+headings, lists or other elements. White space is added by the
+rendering software.
+
+<H3>Permitted Attributes</h3>
+
+<DL> <DT>ID <DD>An SGML identifier used as the target for hypertext
+links or for naming particular elements in associated style sheets.
+Identifiers are NAME tokens and must be unique within the scope of the
+current document.
+
+<DT>LANG <DD>This is one of the ISO standard language abbreviations,
+e.g. "en.uk" for the variation of English spoken in the United Kingdom.
+It can be used by parsers to select language specific choices for
+quotation marks, ligatures and hypenation rules etc. The language
+attribute is composed from the two letter language code from ISO 639,
+optionally followed by a period and a two letter country code from ISO
+3166.
+
+<DT>CLASS <DD>This a space separated list of SGML NAME tokens and is
+used to subclass tag names. For instance, &lt;P CLASS=abstract&gt;
+defines a paragraph that acts as an abstract. By convention, the class
+names are interpreted hierarchically, with the most general class on
+the left and the most specific on the right, where classes are
+separated by a period. The CLASS attribute is most commonly used to
+attach a different style to some element, but it is recommended that
+where practical class names should be picked on the basis of the
+element's semantics, as this will permit other uses, such as
+restricting search through documents by matching on element class
+names. The  conventions for choosing class names are outside the scope
+of this specification.
+
+<DT>ALIGN <DD>Paragraphs are usually rendered flush left. The ALIGN
+attribute can be used to explicitly specify the horizontal
+alignment:<BR><BR>
+
+<dl> <dt>align=left <dd>The paragraph is rendered flush left (the
+default).
+
+<dt>align=center <dd>The paragraph is centered.
+
+<dt>align=right <dd>The paragraph is rendered flush right.
+
+<dt>align=justify <dd>Text lines are justified where practical,
+otherwise this gives the same effect as the default <tt>align=left</tt>
+setting.</dl>
+
+<p>For example:
+
+<PRE>&lt;p align=center&gt;This is a centered paragraph.
+&lt;p align=right&gt;and this is a flush right paragraph.</PRE>
+
+<DT>CLEAR <DD>This attribute is common to all block-like elements. When
+text flows around a figure or table in the margin, you sometimes want
+to start an element like a header, paragraph or list below the figure
+rather than alongside it. The CLEAR attribute allows you to move down
+unconditionally:<BR><BR>
+
+<DL>
+<DT>clear=left<DD>move down until left margin is clear
+<DT>clear=right<DD>move down until right margin is clear
+<DT>clear=all<DD>move down until both margins are clear
+</DL>
+
+<P>Alternatively, you can decide to place the element alongside the
+figure just so long as there is enough room. The minimum width needed
+is specified as:</P>
+
+<DL>
+<DT>clear="40 en"<DD>move down until there is at least 40 en units free
+<DT>clear="100 pixels"<DD>move down until there is at least 100 pixels
+free
+</DL>
+
+<P>The style sheet (or browser defaults) may provide default minimum
+widths for each class of block-like elements.
+
+<DT>NOWRAP <DD>The NOWRAP attribute is used when you don't want the
+browser to automatically wrap lines. You can then explicitly specify
+line breaks in paragraphs using the BR element. For example:
+
+<PRE>&lt;p nowrap&gt;This paragraph has wordwrap turned off&lt;br&gt;
+and the BR element is used for explicit line breaks</PRE>
+
+</DL>
+<!--NewPage-->

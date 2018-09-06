@@ -1,0 +1,8 @@
+[phases]
+publish = false
+
+[paths]
+canonical = https://bitbucket.org/janvrany/stx-libtool2
+staging = https://bitbucket.org/janvrany/stx-libtool2
+default = https://bitbucket.org/janvrany/stx-libtool2
+

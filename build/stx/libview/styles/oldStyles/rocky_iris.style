@@ -1,0 +1,42 @@
+; View defaultStyle:#'rocky_iris' 
+;
+; rock solid windows (flintstones ?)
+; fun style; like iris, but with different view background
+; needs some rework to make text readable in selectionInListViews
+; and menus.
+;
+; $Header: /cvs/stx/stx/libview/styles/oldStyles/rocky_iris.style,v 1.4 2000-08-16 14:24:30 ca Exp $
+
+#include 'iris.style'
+
+comment  'Fun style. Like `iris'' - with rock solid views'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Wie `iris'' - mit beinhartem Hintergrund.'
+#endif
+
+; shadowColor                 Color black
+; lightColor                  Color lightGrey
+
+viewBackground                     (Image fromFile:'../../doc/online/english/Marble4.gif') 
+menuBackground                     =viewBackground
+selection.backgroundColor           =viewBackground
+; selection.disabledForegroundColor   Color grey:15     "/ default grey is invisible on granite
+selection.hilightBackgroundColor      Color black
+; selection.hilightForegroundColor    Color white
+
+menu.backgroundColor                =viewBackground
+; menu.disabledForegroundColor        Color grey:15     "/ default grey is invisible on granite
+; menu.hilightForegroundColor         Color white
+
+wooden                              (Smalltalk imageFromFileNamed:'bitmaps/wood2H.tiff' inPackage:'stx:libwidg3')
+scroller.viewBackground             =viewBackground
+
+button.activeForegroundColor        Color white
+button.activeBackgroundColor        Color black
+
+; variablePanel.handleColor           =lightColor
+
+popup.borderWidth       1
+popupMenu.borderWidth       1
+

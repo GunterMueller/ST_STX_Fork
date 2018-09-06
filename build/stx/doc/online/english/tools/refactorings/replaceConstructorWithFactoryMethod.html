@@ -1,0 +1,83 @@
+<html>
+<head>
+<title>Refactoring: 
+
+
+
+Replace Constructor with Factory Method</title>
+</head>
+<body>
+
+
+<H1>
+
+
+
+Replace Constructor with Factory Method</H1>
+<P>
+<I>
+<CENTER>
+
+You want to do more than simple construction when
+you create an object.</CENTER>
+</I>
+</P>
+<P>
+<B>
+<CENTER>
+
+Replace the constructor with a factory method.</CENTER>
+</B>
+</P>
+
+<PRE>
+	Employee (int type) {
+		_type = type;
+	}
+</PRE>
+<P>
+<CENTER>
+<IMG SRC="arrow.gif"></CENTER>
+</P>
+<PRE>
+	static Employee create(int type) {
+		return new Employee(type);
+	}
+</PRE>
+
+
+<P>For more information see page 
+	<font color="#FF0000">304</font>
+	of <I>Refactoring</I>
+</P>
+<h2>Additional Comments</h2>
+<P>Dimitri Paltchoun pointed out that as well as using Class.forName() and a string for a client to specify the created class, you can also use the class object itself. This would lead you to method like
+</P>
+<PRE>
+  static Employee create(Class c){
+    try{
+      return (Employee)c.newInstance();
+    }catch(Exception e){
+      throw new IllegalException("Unable to instantiate" +c);
+   }
+  }
+</PRE>
+<P>This would be called from this code
+</P>
+<PRE>
+   Employee.create(Engineer.class);
+</PRE>
+
+
+
+<P>
+</P>
+<P>
+</P>
+<P>
+<CENTER>
+<A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A>
+</CENTER>
+</P>
+</body>
+</html>

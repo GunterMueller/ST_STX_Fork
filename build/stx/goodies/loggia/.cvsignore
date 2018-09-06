@@ -1,0 +1,8 @@
+*.c
+*.H
+*.sth
+*.res
+objbc
+objmingw
+objvc
+

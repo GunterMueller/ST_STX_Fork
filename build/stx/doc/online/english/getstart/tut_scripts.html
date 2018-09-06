@@ -1,0 +1,137 @@
+<HTML>
+<HEAD>
+<TITLE>Tutorial - Useful Scripts for Workspaces</TITLE>
+</HEAD>
+
+<BODY>
+
+<A HREF="tut_1.html#I_USEFUL_SCRIPTS">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]" NOPRINT></A>
+
+<H2>Math</H2>
+
+Remember, that you can click on the code to execute it.
+
+<P>
+<HR>
+<P>
+
+<H3>Well, the obligatory factorial example</H3>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    100 factorial
+</PRE></CODE></A>
+
+<P>
+<HR>
+<P>
+
+<H3>An interest rate calculator</H3>
+<A type="example" SHOWRESULT INFO="Execute the example"><CODE><PRE>
+    |initialAmount sep|
+
+    initialAmount := 100 asFixedPoint:2.
+    sep := '+---+'.
+    1 to:20 do:[:year | sep := sep , '-------+'].
+    Transcript showCR:sep.
+    sep := '|   |'.
+    1 to:20 do:[:year | sep := sep , '   %1  |' bindWith:(year printStringLeftPaddedTo:2)].
+    Transcript showCR:sep.
+    sep := '+---+'.
+    1 to:20 do:[:year | sep := sep , '-------+'].
+    Transcript showCR:sep.
+
+    #(0.01 0.02 0.03 0.04 0.05 0.06 0.07 0.08 0.09 0.10 0.20) do:[:percentF |
+	|percent|
+	percent := percentF asFixedPoint:2.
+	Transcript show: '|'.
+	Transcript show: ((percent * 100) asInteger printStringLeftPaddedTo:2); show: '%'.
+	Transcript show: '|'.
+	1 to:20 do:[:years |
+	    |amount|
+	    amount := initialAmount * ((1 + percent) raisedTo:years).
+	    Transcript show: (amount printStringLeftPaddedTo:7).
+	    Transcript show: '|'.
+	].
+	Transcript cr.
+	Transcript showCR:sep.
+    ].
+</PRE></CODE></A>
+BTW, this should tell you, why you should never lend money for more than a (say) 7% interest rate,
+and that CEOs promising a continued return on capital of 20% over many years are criminal liars  ;-)
+<BR>
+And, after 2008, we should add negative rates to the above table as well.
+
+<P>
+<HR>
+<P>
+
+<H3>Replacing a string in all files recursively down a directory hierarchy</H3>
+
+the following example is only a template.
+<BR>Copy it to a workspace, replace '&lt;&lt;top-directory-name-here&gt;&gt;',
+ '&lt;&lt;search&gt;&gt;',
+ '&lt;&lt;original&gt;&gt;'
+<BR>and '&lt;&lt;replacement&gt;&gt;'
+with appropriate strings. It will recursively scan find all files under a top-directory,
+search for lines containing a search string, and replace a given string by another there.
+<BR>
+I used it the last time, when I had to edit 1000 files to change a CVS-package id.
+<P>
+
+<A type="example" INFO="Copy this to a workspace (right-click)"><CODE><PRE>
+    |topDir|
+
+    topDir := '&lt;&lt;top-directory-name-here&gt;&gt;' asFilename.
+    topDir recursiveDirectoryContentsDo:[:eachFile |
+	|fn newContents|
+
+	fn := topDir construct:eachFile.
+	fn isDirectory ifFalse:[
+	    newContents := fn contents
+			collect:[:eachLine |
+			    (eachLine includesString:'&lt;&lt;search&gt;&gt;') ifTrue:[
+				eachLine copyReplaceString:'&lt;&lt;original&gt;&gt;' with:'&lt;&lt;replacement&gt;&gt;'
+			    ] ifFalse:[
+				eachLine
+			    ]
+			].
+	    fn contents:newContents
+	].
+    ].
+</PRE></CODE></A>
+
+
+
+
+
+
+<P>
+<HR>
+<P>
+
+
+
+<P>
+<P>
+... I will add some of my secrets here soon ...
+<P>
+
+
+<P>
+<HR>
+Back to "<A HREF="tut_1.html#I_USEFUL_SCRIPTS">Using Workspaces</A>".
+<HR>
+
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif" ALT="[stx-logo]">
+<BR>Copyright &copy; Claus Gittinger Development & Consulting
+<BR>Copyright &copy; eXept Software AG
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.7 $ $Date: 2013-05-27 08:46:37 $
+
+</BODY>
+</HTML>

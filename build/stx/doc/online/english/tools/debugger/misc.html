@@ -1,0 +1,143 @@
+<HEAD>
+<TITLE>Using the Debugger - misc</TITLE>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="wrappedMethods.html"> <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="next"></A>
+<A NOPRINT HREF="TOP.html"> <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="up"></A>
+
+
+<H2><A NAME="ACCEPTING" HREF="TOP.html#I_ACCEPTING">Accepting in the Debugger</A></H2>
+
+You can make changes to the selected method while being in the debugger.
+When accepting, a new method is created and installed in the receiver's
+class as usual. It will be executed when the corresponding message
+is sent the next time to the receiver.
+<P>
+However, when you proceed or single step,
+the original method which was active when the debugger entered
+and which is still in the calling chain, is resumed.
+Therefore, it is best to resend, restart or abort the execution.
+Please read the chapter on "Restarting / Returning",
+for more information on effect and limitations in those functions.
+<P>
+The debugger will show an indicator ("<I>Showing Original</I>" vs. "<I>Showing current Version</I>")
+to remind you about which version of the code you are looking at, after a code change.
+
+
+<H2><A NAME="MINIDEBUGGER" HREF="TOP.html#I_MINIDEBUGGER">The MiniDebugger</A></H2>
+
+  The MiniDebugger is a stripped down version of the Debugger,
+  which does not offer a graphical user interface,
+  but is controlled by entering commands to the (x-)terminal or console window,
+  in which <CITE>ST/X</CITE> was started
+<A NAME = "BACKNOTE1" HREF = "#NOTE1">(*)</A>.
+<P>
+  The MiniDebugger is entered
+  either if  a severe error happens within the Debugger itself,
+  or if you are running a standalone Smalltalk application without a graphical debugger
+  or without graphical classes at all,
+  or if an error is encountered in
+<A HREF="../../getstart/TOP.html#SCRIPTING">scripting mode</A>.
+Of course, in any case, any debugger is entered by an
+<A HREF="misc/onlyInSTX2.html#EXAMPLES" ACTION="html:HTMLDocGenerator htmlDocOf:NoHandlerError backRef:'tools/debugger/misc.html'">
+emergency exception handler</A>. So you could always define your
+own action to be called for any unhandled exception.
+In most deployed end-user apps, a handler showing a warning box
+would probably be installed.
+
+<P>
+  To get a list of available miniDebugger commands, type
+<KBD>"?"</KBD> (question-mark) at its prompt.
+<P>
+  The most useful miniDebugger commands are:
+<DL>
+<DT><CODE>'c'</CODE>
+<DD>continue  (same as corresponding debugger function)
+<P>
+
+<DT><CODE>'a'</CODE>
+<DD>abort     (same as corresponding debugger function)
+<P>
+
+<DT><CODE>'T'</CODE>
+<DD>terminate the process.
+Be careful to not terminate the event dispatcher or scheduler.
+<P>
+
+<DT><CODE>'p'</CODE> (lower case)
+<DD>print walkback. This shows the context chain in a format
+similar to what is shown in the graphical debugger.
+<P>
+
+<DT><CODE>'P'</CODE> (upper case)
+<DD>print processes. This outputs a list of known processes
+with their process ids and names.
+<P>
+
+<DT><CODE>'U'</CODE> and <CODE>'D'</CODE>(both upper case)
+<DD>removes all method- and statement breakpoints from the system.
+Useful, if you are cought in a debugger loop, after placing a
+breakpoint in a heavily used system- or redraw method.
+<P>
+
+<DT><CODE>'x'</CODE>
+<DD>exit smalltalk. This exits the system immediately, without asking
+any questions. Think about issuing an 'S' or 'C' command before doing that.
+<P>
+
+<DT><CODE>'I'</CODE>
+<DD>enter a line-by-line emergency interpreter.
+Leave the interpreter by entering an empty line.
+<P>
+
+<DT><CODE>'C'</CODE>
+<DD>save the changes made during this session to a separate changefile.
+This changefile can be reapplied or investigated once you restarted
+ST/X. Of course, the regular changefile will also contain these changes,
+but also all intermediate one's, which may now be obsolete.
+So the file saved here contains a condensed
+set of changed methods. This is the same function that is also provided by the
+Launcher's "<I>Save Session Changes</I>" menu function.
+<P>
+
+<DT><CODE>'S'</CODE>
+<DD>save an emergency image into the file "crash.img".
+Depending on how corrupted the current state of the system is,
+this image may or may not be able to be restarted.
+In most cases, it is worth a try.
+But think about issuing a 'C' command in addition.
+<P>
+Even if the saved image is not restartable, it may still be investigated
+via the "<I>Snapshot Image Browser</I>", which can be opened via the Launcher's menu.
+From within that, it should be possible to fileOut relevant classes and
+reload/browse them after a fresh start.
+</DL>
+<P>
+
+<H3>Hint: Emergency Repair in the Minidebugger</H3>
+If you really messed up the system by accepting bad code in a critical part of the system
+(for example: the event handling or process scheduling mechanism),
+it is sometimes possible to repair this in a minidebugger
+by recompiling the bad method.
+For this, enter a line-by-line interpreter ("I"-command),
+and type:
+<CODE><PRE>
+    &lt;className&gt; compile:'&lt;nameOfMethodWithArguments&gt;
+	...
+	fixed code here
+	...
+    '
+</PRE></CODE>
+
+
+<H3>Footnotes</H3>
+<A NAME = "NOTE1" HREF = "#BACKNOTE1">(*)</A>
+Under the Windows operating system, the MiniDebugger is only available if you started
+   the console-version "<CODE>stx.com</CODE>" - not the non-console version: "<CODE>stx.exe</CODE>".
+
+<HR>
+Doc $Revision: 1.14 $ $Date: 2016-01-21 16:22:40 $
+
+</BODY>
+</HTML>

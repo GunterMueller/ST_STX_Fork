@@ -1,0 +1,26 @@
+
+!IF "$(STATIC_MESA)" == "1"
+!ERROR lib.$(LIBBASE) : This file require STATIC_MESA be set to 0.
+!ENDIF
+
+LIBCOMMENTS=Requires S3DTKW.DLL Runtime for S3/Virge.
+
+!INCLUDE .\rules\lib.mesagl.core
+
+USE_CRTDLL=1
+
+SRCALT2=.\$(MESAROOT)\src\S3
+SRCALT3=.\$(MESAROOT)\src\OSmesa
+
+DEFFILE = res\s3mesagl32.def
+RCFILE  = res\s3mesagl32.rc
+
+CPPOPTS = $(CPPOPTS) /DS3 /DS3_SILENT /DBUILD_GL32
+
+SRCFILES = $(MESA_CORE)\
+	S3mesa.c S3wgl.c\
+	OSmesa.c
+
+DLLLIBS = ddraw.lib s3dtkw.lib
+DLLBASE = OpenGL32
+OBJDIR_R = $(MESAROOT)\lib\S3

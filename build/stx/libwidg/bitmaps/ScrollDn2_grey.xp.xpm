@@ -1,0 +1,32 @@
+/* XPM */
+static char *ScrollDn2_grey.xp_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 15 10 1",
+/* colors */
+"a c #BBBBBB",
+"b c #595959",
+"c c #DCDCDC",
+"d c #F0F0F0",
+"e c #CECECE",
+"f c #C0C0C0",
+"g c #E1E1E1",
+"h c #C9C9C9",
+"i c #D3D3D3",
+"j c none",
+/* pixels */
+"dddddddddddddddd",
+"dgieeffffffffacd",
+"dieeeefffffffffd",
+"deeeeeeffffffffd",
+"deeeeffffffffffd",
+"dheefbfffffbfffd",
+"dfefbbbfffbbbffd",
+"dffffbbbfbbbfffd",
+"dfffffbbbbbffffd",
+"dffffffbbbfffffd",
+"daffffffbffffffd",
+"dafffffffffffffd",
+"dafffffffffffffd",
+"dcffffffffffffcd",
+"dddddddddddddddd",
+};

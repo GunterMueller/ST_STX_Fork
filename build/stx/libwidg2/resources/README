@@ -1,0 +1,2 @@
+Notice: starting with ST/X vsn 5.5.1, all resource strings are being
+	concentrated into a single catalog (libview/resources/<LANG>.rs)

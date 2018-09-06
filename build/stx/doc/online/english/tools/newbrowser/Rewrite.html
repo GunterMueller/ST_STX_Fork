@@ -1,0 +1,315 @@
+<HTML>
+
+<HEAD>
+
+<TITLE>Rewrite Rule Editor</TITLE>
+
+<META NAME="GENERATOR" CONTENT="Internet Assistant for Microsoft Word 2.0z">
+</HEAD>
+
+<BODY>
+
+<H1><CENTER>Rewrite Rule Editor </CENTER></H1>
+
+<HR>
+
+<P>
+The rewrite rule editor allows you to create search and replace
+patterns that work at the methods structural level. Unlike simple
+string matching these patterns work at the parse tree level. This
+allows you to transform your code very rapidly.
+<HR>
+
+<P>
+The best way to learn how to use the rewrite rule editor is by
+an example. This section gives an example of how to convert <CODE>at:ifAbsent:</CODE>
+messages into <CODE>at:ifAbsentPut:</CODE> messages. In VisualWorks
+2.5 an <CODE>at:ifAbsentPut:</CODE> method was defined so that
+code that was once written as:<br>
+<pre>   aDictionary at: key ifAbsent: [aDictionary at: key put: value]</pre>
+<P>
+can now be written as:
+<pre>   aDictionary at: key ifAbsentPut: [value]</pre>
+<P>
+Since the <CODE>at:ifAbsentPut:</CODE> variant more quickly describes
+what is occurring we would like to transform all occurrences of
+the old <CODE>at:ifAbsent:</CODE> variant to use the new <CODE>at:ifAbsentPut:</CODE>.
+<P>
+The first step in creating a rewrite rule is to select a piece
+of code that you wish to transform and then select &quot;rewrite&#133;&quot;
+from the browser's menu. This will open a window with the selected
+text in the &quot;Search for:&quot; pane. You can also select
+the &quot;Rewrite tool&quot; from the ENVY pulldown menu.
+<P>
+<CENTER><IMG SRC="../../../pictures/rb_rewrite.gif" ALT="[Fig: Rewrite editor picture]"></CENTER>
+<P>
+The top pane of the editor is used to enter the pattern to search
+for. The bottom text pane is used to enter the pattern that will
+replace the found search pattern. The &quot;Methods&#133;&quot;
+push button allows you to select which classes to look at when
+transforming the code. It opens a class selection dialog:
+<P>
+<CENTER><IMG SRC="../../../pictures/rb_environment-dialog.gif" ALT="[Fig: Class selection dialog]"></CENTER>
+<P>
+You will select which classes to inspect by using the pop-up menus
+on the category and class lists. Only classes with checks by them
+are selected (not the highlighted classes).
+<P>
+The &quot;Find&quot; button on the rewrite rule editor searches
+the selected classes for occurrences of the &quot;Search for:&quot;
+pattern, and the &quot;Replace&quot; button both searches and
+then transforms the occurrences of the &quot;Search for:&quot;
+pattern. After transforming the code, it opens an inspector on
+the methods so that you can confirm that it executed correctly
+before accepting the methods.
+<P>
+The next step in the <CODE>at:ifAbsent:</CODE> example is to convert
+all of the varying parts of the patterns into meta-variables.
+Each meta-variable must begin with a ` character. Immediately
+following the ` character, other character can be entered to specify
+what type of node this meta-variable can match. After all the
+special character have been entered, you must then enter a valid
+variable name. The special characters currently supported are
+listed in the following table:
+<P>
+<TABLE BORDER="1">
+<TR><TD VALIGN="TOP" WIDTH=85><CENTER><B>Character</B></CENTER>
+</TD><TD VALIGN="TOP" WIDTH=90><CENTER><B>Type</B></CENTER></TD><TD VALIGN="TOP" WIDTH=306><CENTER><B>Comment</B></CENTER>
+</TD><TD VALIGN="TOP" WIDTH=306><CENTER><B>Examples</B></CENTER>
+</TD></TR>
+
+<TR><TD VALIGN="TOP" WIDTH=85><CENTER><CODE>`</CODE></CENTER>
+</TD><TD VALIGN="TOP" WIDTH=90>recurse into</TD><TD VALIGN="TOP" WIDTH=306>whenever a match is found, look inside this matched node for more matches
+</TD><TD VALIGN="TOP" WIDTH=306>&quot;<CODE>``@object foo</CODE>&quot; &#173; matches foo sent to any object, plus for each match found look for more matches in the <CODE>``@object</CODE> part 
+</TD></TR>
+
+<TR><TD VALIGN="TOP" WIDTH=85><CENTER><CODE>@</CODE></CENTER>
+</TD><TD VALIGN="TOP" WIDTH=90>list</TD><TD VALIGN="TOP" WIDTH=306>when applied to a variable node, this will match a literal, variable, or a sequence of messages sent to a literal or variable
+<P>
+when applied to a keyword in a message, it will match a list of keyword messages (i.e., any message send)
+<P>
+when applied with a statement character, it will match a list of statements
+</TD><TD VALIGN="TOP" WIDTH=306>&quot;<CODE>| `@Temps | &#133;</CODE>&quot; &#173; matches list of temps
+<P>
+&quot;<CODE>`@.Statements</CODE>&quot; &#173; matches list of statements
+<P>
+&quot;<CODE>`@object</CODE>&quot; &#173; matches any message node, literal node or block node
+<P>
+&quot;<CODE>foo `@message: `@args</CODE>&quot; &#173; matches any message sent to <CODE>foo</CODE>
+</TD></TR>
+
+<TR><TD VALIGN="TOP" WIDTH=85><CENTER><CODE>.</CODE></CENTER>
+</TD><TD VALIGN="TOP" WIDTH=90>statement</TD><TD VALIGN="TOP" WIDTH=306>matches a statement in a sequence node
+</TD><TD VALIGN="TOP" WIDTH=306>&quot;<CODE>`.Statement</CODE>&quot; &#173; matches a single statement
+</TD></TR>
+
+<TR><TD VALIGN="TOP" WIDTH=85><CENTER><CODE>#</CODE></CENTER>
+</TD><TD VALIGN="TOP" WIDTH=90>literal</TD><TD VALIGN="TOP" WIDTH=306>matches only literal objects
+</TD><TD VALIGN="TOP" WIDTH=306>&quot;<CODE>`#literal</CODE>&quot; &#173; matches any literal (<CODE>#()</CODE>, <CODE>#foo</CODE>, <CODE>1</CODE>, etc.)
+</TD></TR>
+
+</TABLE>
+
+<P>
+When matching a statement or statements, you will need to match
+a whole sequence node that includes both the temporaries in that
+sequence node as well as the other statement nodes. 
+<P>
+For the <CODE>at:ifAbsent:</CODE> example, we need to make meta-variables
+for the dictionary, key, and the object added to dictionary, since
+these are the only parts that can vary. Since all of these objects
+can be a single variable or a sequence of messages sent to a variable,
+we need to use the @ character in their names. Also, since we
+should look for more matches inside each node, we also need to
+use the ` character. This results in the ``@ prefix added to each
+name (the first ` signifies a meta-variable). Using this prefix
+we can enter the search rule:
+<pre>   ``@aDictionary at: ``@key 
+		ifAbsent: [``@aDictionary at: ``@key put: ``@value]</pre>
+<P>
+Now you might want to check that you have enter the pattern correctly.
+After selecting the &quot;Methods&#133;&quot; to look at, you
+can &quot;Find&quot; all methods that match the pattern. This
+will open a browser on the methods that match the pattern. If
+you get a message that appears in the search pane, then you probably
+have an error in your formula. Correct it and rerun the &quot;Find&quot;
+command.
+<P>
+After looking at the found methods, you might notice that not
+all variants are present. In particular, there are some variants
+of the <CODE>at:ifAbsent:</CODE> message that have temporary variables
+and other statements in the <CODE>ifAbsent:</CODE> block. For
+example, a method such as:
+<PRE>
+	aDictionary at: key 
+		ifAbsent: 
+			[self doSomeWorkHere.
+			aDictionary at: key put: value]</pre>
+
+is not found since the <CODE>doSomeWorkHere</CODE> message send
+doesn't match anything. 
+<P>
+We need to extend our &quot;Search for:&quot; pattern to include
+other statements in <CODE>ifAbsent:</CODE> block. In addition
+to other statements, we should also allow for temporary variable
+definitions. We then modify our pattern to be:
+<pre>   ``@aDictionary at: ``@key
+		ifAbsent:
+			[| `@Temps |
+			``@.Statements.
+			``@aDictionary at: ``@key put: ``@value]</pre>
+<P>
+We match a list of temporaries with the `@Temps, and a list of
+statements using &quot;``@.Statements&quot;. Since we do not need
+to recurse into the temporaries we don't need the extra ` character.
+We then rerun the &quot;Find&quot; command, and see that we are
+finding all of the methods.
+<P>
+Now we're ready to enter the replace pattern. We just need to
+enter the pattern that will replace the found pattern. For the
+<CODE>at:ifAbsent:</CODE> example, we can enter a pattern such
+as:
+<P>
+<pre>   ``@aDictionary at: ``@key 
+		ifAbsentPut: 
+			[| `@Temps |
+			``@.Statements.
+			``@value]</pre>
+<P>
+Whenever you enter a meta-variable in the replace pattern, this
+means to copy the value from the found expression and put it in
+the replaced tree. (<STRONG>Note:</STRONG> all meta-variables
+used in the replace pattern must also be defined in the search
+pattern)
+<P>
+After entering the replace pattern, we perform the &quot;Replace&quot;
+option. This opens a window on the possible replacements. It does
+not immediately compile the replacement, but instead opens a window
+for you to review/remove the changes before compiling them:
+<P>
+<CENTER><IMG SRC="../../../pictures/rb_builder-inspector.gif" ALT="[Fig: Methods to change]"></CENTER>
+<P>
+From this window you will be able to compile single method changes,
+compile all changes, and remove &quot;faulty&quot; changes.
+<P>
+Congratulations, you have just converted all of the old <CODE>at:ifAbsent:</CODE>
+messages to their new <CODE>at:ifAbsentPut:</CODE> variants.
+<HR>
+
+<H2>Other examples:</H2>
+
+<P>
+Here are several other examples. They are not fully explained,
+but it is hoped that they will help answer any questions you may
+have.
+<P>
+<TABLE BORDER="1">
+<TR><TD WIDTH=307><CENTER><B>Search for</B></CENTER></TD><TD WIDTH=300><CENTER><B>Replace with</B></CENTER>
+</TD><TD WIDTH=576><CENTER><B>Explanation</B></CENTER></TD></TR>
+
+<TR><TD VALIGN="TOP" WIDTH=307>
+<pre>| `@Temps |
+``@.Statements.
+``@Boolean ifTrue: [^false].
+^true</pre>
+</TD><TD VALIGN="TOP" WIDTH=300>
+<pre>| `@Temps |
+``@.Statements.
+^``@Boolean not</pre>
+</TD><TD VALIGN="TOP" WIDTH=576>Return the value of the boolean negated, instead of using a conditional to return the opposite value.
+</TD></TR>
+
+<TR><TD VALIGN="TOP" WIDTH=307><pre>``@object not ifTrue: ``@block</pre>
+</TD><TD VALIGN="TOP" WIDTH=300><pre>``@object ifFalse: ``@block</pre></TD><TD VALIGN="TOP" WIDTH=576>Eliminate an unnecessary not message.
+</TD></TR>
+
+<TR><TD VALIGN="TOP" WIDTH=307>
+<pre>| `@Temps |
+``@.Statements1.
+``@Boolean 
+     ifTrue: 
+	[`@.TrueStatements.
+	`.Statement]
+     ifFalse: 
+	[`@.FalseStatements.
+	`.Statement].
+``@.Statements2</pre>
+</TD><TD VALIGN="TOP" WIDTH=300>
+<pre>| `@Temps |
+``@.Statements1.
+``@Boolean 
+     ifTrue: [`@.TrueStatements]
+     ifFalse: [`@.FalseStatements]
+`.Statement.
+``@.Statements2</pre>
+</TD><TD VALIGN="TOP" WIDTH=576>Move the same statement that ends both the true and false blocks outside the blocks.
+</TD></TR>
+
+<TR><TD VALIGN="TOP" WIDTH=307>
+<pre>`@methodName: `@methodArgs
+     | `@Temps |
+     `@Condition ifTrue: 
+	[`.Stmt1.
+	`.Stmt2.
+	`@.Statements]</pre>
+</TD><TD VALIGN="TOP" WIDTH=300>
+<pre>`@methodName: `@methodArgs
+     | `@Temps |
+     `@Condition ifFalse: [^self].
+     `.Stmt1.
+     `.Stmt2.
+     `@.Statements</pre>
+</TD><TD VALIGN="TOP" WIDTH=576>Eliminate ifTrue: guard clauses. With this rule you'll need to check the &quot;Method&quot; check box. This signifies that we are matching the whole method, and not its parts.
+</TD></TR>
+
+</TABLE>
+
+<HR>
+
+<H2>Limitations: </H2>
+
+<P>
+The rewrite rule editor is a very powerful system that can be
+used to change a lot of code quickly. As a result, it is also
+somewhat dangerous since it can &quot;change a lot of code quickly.&quot;
+Here are some limitations of the current system as well as some
+hints on creating good rewrite rules:
+<UL>
+<LI>You can enter some rules that create new sources that cannot
+be compiled. This happens when you are searching for a variable
+and replacing it with a non-variable object. For example, if you
+are trying to replace references to the variable &quot;<CODE>object</CODE>&quot;
+to send the message &quot;<CODE>self getObject</CODE>&quot;, you
+will transform code such as an assignment &quot;<CODE>object :=
+aVariable</CODE>&quot; into &quot;<CODE>self getObject := aVariable</CODE>&quot;
+which obviously will not compile. Currently, the only way around
+this limitation is to use the rewrite engine directly without
+the interface. This way you can specify other rules that will
+eliminate the false matches.
+<LI>It is best to enter rules that do not change the receiver
+of a message if it could be part of a cascaded message. For example,
+if you entered a rule such as &quot;<CODE>``@aStream print: ``@anObject</CODE>&quot;
+-&gt; &quot;<CODE>``@anObject printOn: ``@aStream</CODE>&quot;,
+this will cause problems with a statement such as &quot;<CODE>readStream
+print: anObject; cr</CODE>&quot; since you are changing the receiver
+of the cascaded message.
+<LI>Since the rules only look at the names, you can change code
+that shouldn't be changed. For example, if we have another class
+that defines the <CODE>at:ifAbsent:</CODE> message, but not the
+<CODE>at:ifAbsentPut:</CODE> variant, then our rewrite rule about
+would break all uses of this other class since it is only going
+by the message name <CODE>at:ifAbsent:</CODE> not the type of
+the object that receives the message. 
+</UL>
+
+<HR>
+
+<P>
+<EM>Comments or suggestions can be sent to <A href="mailto:brant@cs.uiuc.edu,droberts@cs.uiuc.edu"><I>brant@cs.uiuc.edu</I></A>
+and <A href="mailto:brant@cs.uiuc.edu,droberts@cs.uiuc.edu"><I>droberts@cs.uiuc.edu</I></A>.
+<BR>
+Last updated on 23-Feb-97.</P><BR>
+</EM>
+</BODY>
+
+</HTML>

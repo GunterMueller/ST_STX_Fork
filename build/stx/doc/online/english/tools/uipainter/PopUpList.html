@@ -1,0 +1,189 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+   <META NAME="Author" CONTENT="Thomas Zwick, eXept software AG, Germany">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.04 [en] (X11; I; Linux 2.0.30 i586) [Netscape]">
+   <TITLE>The PopUp List Widget</TITLE>
+</HEAD>
+<BODY>
+<A HREF="ToolBar.html" NOPRINT><IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="The Tool Bar Widget" NOSAVE HEIGHT=30 WIDTH=30></A><A HREF="TOP.html#TABLEOFTHEWIDGETS" NOPRINT><IMG SRC="../../../icons/DocsUpArrow.gif" ALT="Table of the Widgets" NOSAVE HEIGHT=30 WIDTH=30></A><A HREF="ComboList.html" NOPRINT><IMG SRC="../../../icons/DocsRightArrow.gif" ALT="The Combo List Widget" NOSAVE HEIGHT=30 WIDTH=30></A>
+<BR>&nbsp;
+<HR ALIGN=LEFT WIDTH="100%">
+<H1>
+<FONT SIZE=+4>The PopUp List Widget</FONT></H1>
+<IMG SRC="../../../pictures/GUIPainterWidgetPopUpList.gif" ALT="A View of a PopUp List Widget" NOSAVE HEIGHT=23 WIDTH=126>
+<P>View Class: <TT>PopUpList</TT>
+<BR>Spec Class: <TT>PopUpListSpec</TT>
+
+<P>The <B>PopUp List Widget </B>is used to provide always displayed selection
+on a list. The list is only displayed, if the widget's view is selected
+(the list pops up). The selected item stay displayed as the current selection.
+<BR>&nbsp;
+<BR>&nbsp;
+<H3>
+
+<HR ALIGN=LEFT WIDTH="100%"></H3>
+
+<H3>
+The <I>Basics</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>ID</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Unique symbolic name (ID) of the popup
+list.</B>&nbsp;
+<BR>This ID can be used by the application to access the widget
+via <TT>"builder>>componentAt:#ID"</TT>.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Model</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for the selection
+(and list) of the popup list.</B>&nbsp;
+<BR>It should return a&nbsp;
+
+<P><TT>&nbsp;&nbsp;&nbsp; - String</TT> instance (only for static behavior)&nbsp;
+<BR><TT>&nbsp;&nbsp;&nbsp; - <A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance with a <TT>String</TT> instance<TT>&nbsp;</TT>&nbsp;
+<BR><TT>&nbsp;&nbsp;&nbsp; - SelectionInList</TT> instance with a <TT>Array</TT>
+instance (and optional with an initial selection index)&nbsp;
+
+<P>whereby the <TT>String</TT> instance can also be replaced by a <TT>Text</TT>
+instance.&nbsp;
+
+<P>The last model also provides the popup list with a list. In this case,
+it is not necessary to define an extra aspect for the list.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>List</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for holding
+the list of the popup list.</B>&nbsp;
+<BR>It should return a&nbsp;
+
+<P><TT>&nbsp;&nbsp;&nbsp; - Array</TT> instance (only for static behavior)&nbsp;
+<BR><TT>&nbsp;&nbsp;&nbsp; - List</TT> instance&nbsp;
+<BR><TT>&nbsp;&nbsp;&nbsp; - <A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance with a <TT>Array</TT> instance&nbsp;
+
+<P>whereby the <TT>Array</TT> instance can also be replaced by an <TT>OrderedCollection</TT>
+instance or by a <TT>SortedCollection</TT> instance.&nbsp;
+
+<P>They contain the items of the popup list as <TT>String</TT> instances,
+<TT>Text</TT> instances, or as <TT>LabelAndIcon</TT> instances.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Index</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the value model of the
+selection (model) is provided by the current list index of the item.</B>&nbsp;
+<BR>If not turned on, the item itself is set in the value model.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Default</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Default label.</B>&nbsp;
+<BR>It is used, if nothing is selected.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Details</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Font</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the font style of the popup list.</B>&nbsp;
+<BR>After selecting the check toggle the font style can be chosen by selecting
+one of the Family/Face/Style/Size buttons. If no font style is selected,
+the popup list takes its default font style from the style sheet.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Resize For Label&nbsp;</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the popup list resizes
+its layout for a changed label string.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Initially Disabled</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the popup list is initially
+disabled.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Initially Invisible</B></TD>
+<TD ALIGN=LEFT VALIGN=TOP BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that
+the popup list is initially invisible.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Can Tab</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the popup list can be
+reached by tabbing.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Show Handle</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>If on, a menu handle is displayed.</B></TD>
+</TR>
+
+
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Channels</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Enable</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for en-/disabling
+the popup list.</B>&nbsp;
+<BR>It should return a&nbsp;
+
+<P>&nbsp;&nbsp;&nbsp; - <TT>Boolean</TT> instance** (only for static behavior)&nbsp;
+<BR>&nbsp;&nbsp;&nbsp; - <TT><A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance with a <TT>Boolean</TT> instance**&nbsp;
+
+<P>A value model is used to provide a dynamically changing of the ability
+of the popup list.</TD>
+</TR>
+</TABLE>
+<TT>*&nbsp; = ValueHolder, AspectAdaptor, BufferedValueHolder, RangeAdaptor,
+TriggerValue</TT>
+<BR><TT>** = true, false</TT>
+
+<P>&nbsp;
+<H3>
+The <I>Help</I> Section:</H3>
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="HelpTool.html">Using the Help Tool</A>"
+<BR>&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Layout</I> Section:</H3>
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="LayoutTool.html">The Layout of the Widgets</A>"
+<BR>&nbsp;
+<BR>&nbsp;
+
+<P>
+<HR>
+
+<P><IMG SRC="../../../icons/stx.gif" ALT="[stx-logo]" NOSAVE NOPRINT HEIGHT=48 WIDTH=47 ALIGN=CENTER>
+<BR><TT>Copyright &copy; 1998 eXept Software AG, all rights reserved</TT>
+<BR>
+<HR>
+</BODY>
+</HTML>

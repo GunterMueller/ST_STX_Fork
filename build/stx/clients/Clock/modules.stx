@@ -1,0 +1,19 @@
+# $Header: /cvs/stx/stx/clients/Clock/modules.stx,v 1.1 2006-08-24 15:07:15 cg Exp $
+#
+# DO NOT EDIT 
+# automagically generated from the projectDefinition: stx_clients_Clock.
+#
+# Warning: once you modify this file, do not rerun
+# stmkmp or projectDefinition-build again - otherwise, your changes are lost.
+#
+# This file is (currently) only used with win-95 / win-NT versions of STX.
+# It lists the dll's which are to be loaded at startup time.
+#
+# All classes loaded at startup time will be present as precompiled classes.
+# Others will be autoloaded.
+#
+libstx_libbasic
+WinWorkstation
+XWorkstation
+
+

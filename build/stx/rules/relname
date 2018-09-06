@@ -1,0 +1,60 @@
+#!/bin/sh
+#
+# usage: relname TOP <optional-dirname-command> <optional-rightstr-command>
+#
+# optional-*-command is for systems which have no dirname
+# or where expr does not support substr.
+# (i.e. SYSV)
+#
+
+here=`pwd`
+rel=""
+t=$1
+
+if [ "$2" = "" ]
+then
+    dirnm=dirname
+else
+    dirnm=$2
+fi
+
+if [ "$3" = "" ]
+then
+    rightstr="expr substr"
+else
+    rightstr=$3
+fi
+
+while true
+do
+    case $t in
+	../*)
+	    if [ "$rel" = "" ]
+		then
+		    rel=`basename $here`
+		else
+		    rel=`basename $here`"/"$rel
+		fi
+	    here=`$dirnm $here`
+	    t=`$rightstr $t 4 999`
+	    ;;
+
+	..)
+	    if [ "$rel" = "" ]
+		then
+		    rel=`basename $here`
+		else
+		    rel=`basename $here`"/"$rel
+		fi
+	    here=`$dirnm $here`
+	    t=`$rightstr $t 4 999`
+	    echo $rel
+	    exit 0
+	    ;;
+
+	*)
+	    echo $rel
+	    exit 0
+    esac
+done
+

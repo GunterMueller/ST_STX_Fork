@@ -1,0 +1,8 @@
+[phases]
+publish = false
+
+[paths]
+canonical = https://bitbucket.org/janvrany/stx-projects-smalltalk
+staging = https://bitbucket.org/janvrany/stx-projects-smalltalk
+default = https://bitbucket.org/janvrany/stx-projects-smalltalk
+

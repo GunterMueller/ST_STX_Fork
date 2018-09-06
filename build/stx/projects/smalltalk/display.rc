@@ -1,0 +1,352 @@
+"*
+ * Encoding: iso8859-1
+ *
+ * $Header$
+ * MIMEType: application/x-smalltalk-source
+ *
+ * ST/X startup display configuration file:
+ *   display related configuration:
+ *     first do some common setup, then try to figure out
+ *     the kind of display and find a
+ *     display specific initialization file.
+ *
+ * DO NOT add site specific things here
+ * - use your own d_xxx.rc file instead
+ *   where xxx stands for your displays hostname(s)
+ *"
+!
+"*
+ * to define extensions for image files (i.e. extension-to-readerClass mappings).
+ * You can define your own (and additional) readers below
+ *"
+|rdr|
+
+MIMETypes notNil ifTrue:[
+
+    "/ rdr := Smalltalk at:#XXXReader ifAbsent:nil.
+    "/ rdr notNil ifTrue:[
+    "/    MIMETypes defineImageType:'video/x-XXX' suffix:'XXX' reader:rdr.
+    "/ ].
+].
+!
+
+"*
+ * find out, on what type of display we run
+ * (boy, they should have added this to the x-protocol)
+ *
+ * then, look for a file named 'd_<displayname>.rc' and file it in
+ *"
+
+|displayDevice displayVar display displayType s|
+
+displayDevice := Display  "Screen current".
+displayDevice notNil ifTrue:[
+  (displayDevice platformName = 'WIN32') ifTrue:[
+    "running on a local windows display"
+    display := OperatingSystem getHostName.
+  ] ifFalse:[
+    displayVar := displayDevice displayName.
+    displayVar notNil ifTrue:[
+	"/ figure out the hostname of the display,
+	"/ to read d_<hostname>.rc
+
+	((displayVar startsWith:':')
+	 or:[(displayVar startsWith:'unix:')
+	 or:[(displayVar startsWith:'shm:')
+	 or:[(displayVar startsWith:'/tmp/')]]]) ifTrue:[
+	    "running on a local display"
+	    display := OperatingSystem getHostName.
+	] ifFalse:[
+	    [(displayVar size > 1) and:[displayVar last isDigit]] whileTrue:[
+		displayVar := displayVar copyButLast:1.
+	    ].
+	    ((displayVar size > 1) and:[displayVar last == $.]) ifTrue:[
+		displayVar := displayVar copyButLast:1.
+		[(displayVar size > 1) and:[displayVar last isDigit]] whileTrue:[
+		    displayVar := displayVar copyButLast:1.
+		].
+	    ].
+	    ((displayVar size > 1) and:[displayVar last == $:]) ifTrue:[
+		display := displayVar copyButLast:1
+	    ]
+	].
+    ].
+  ].
+].
+
+display isNil ifTrue:[
+    'display.rc [warning]: cannot determine display I am running on' errorPrintCR.
+    ^ self.
+] ifFalse:[
+    "
+     if there is a corresponding file d_<displayName>.rc ...
+     thats the one to take.
+    "
+    s := Smalltalk systemFileStreamFor:('d_' , display , '.rc').
+    s notNil ifTrue:[
+	displayType := display.
+	s close.
+    ].
+].
+
+displayType isNil ifTrue:[
+    "
+     if no host specific info,
+     take the display vendor information,
+     to read d_<vendor>.rc
+    "
+
+    "
+     if the X-server gives some info,
+     take that as a base
+    "
+    |serverVendor|
+
+    serverVendor := displayDevice serverVendor ? ''.
+
+    (serverVendor startsWith:'The XFree86 Project')
+    ifTrue:[
+	displayType := 'xfree'
+    ].
+    (serverVendor startsWith:'The X.Org Foundation')
+    ifTrue:[
+	displayType := 'xorg'.
+	OperatingSystem getOSType == #osx ifTrue:[
+	    displayType := #osx
+	]
+    ].
+    (serverVendor startsWith:'Pexus Systems, Inc')
+    ifTrue:[
+	displayType := 'xdeep32'
+    ].
+    (serverVendor startsWith:'Silicon Graphics')
+    ifTrue:[
+	displayType := 'iris'
+    ].
+    (serverVendor startsWith:'International Business Machines')
+    ifTrue:[
+	displayType := 'aix'
+    ].
+    (serverVendor startsWith:'DECWINDOWS Digital Equipment')
+    ifTrue:[
+	displayType := 'dec'
+    ].
+    (serverVendor startsWith:'Hummingbird Communications')
+    ifTrue:[
+	displayType := 'exceed'
+    ].
+    (serverVendor startsWith:'Hewlett-Packard Company')
+    ifTrue:[
+	displayType := 'hpux'
+    ].
+    (serverVendor startsWith:'AT&T Laboratories Cambridge')
+    ifTrue:[
+	displayType := 'vnc'
+    ].
+].
+
+displayType isNil ifTrue:[
+    "
+     just an example - stuff can also be hardwired here ...
+    "
+    display notNil ifTrue:[
+	"
+	 if, in your organization, all displays are of the same type,
+	 you can use something like:
+	"
+"/        OperatingSystem getDomainName = '<yourDomain>.de' ifTrue:[
+"/            displayType := 'myDisplayType'
+"/        ].
+
+	"
+	 if, in your organization, the display type can
+	 be deduced from the hostname,
+	 use something like:
+	 (take the exept code below as a guide ...)
+	"
+"/        OperatingSystem getDomainName = 'exept.de' ifTrue:[
+"/            (display startsWith:'clam') ifTrue:[
+"/                displayType := 'next'
+"/            ].
+"/            (display startsWith:'porty') ifTrue:[
+"/                displayType := 'portable'
+"/            ].
+"/            (display startsWith:'blue') ifTrue:[
+"/                displayType := 'iris'
+"/            ].
+"/            (display startsWith:'sun') ifTrue:[
+"/                displayType := 'sun'
+"/            ].
+"/            (display startsWith:'sol') ifTrue:[
+"/                displayType := 'sun'
+"/            ].
+"/            (display startsWith:'hp') ifTrue:[
+"/                displayType := 'hpux'
+"/            ].
+"/        ].
+     ].
+].
+
+displayType isNil ifTrue:[
+    "
+     final fallback: use local hosts name, if display is the local one;
+     otherwise, use the type of display
+
+     the used name is one of:
+	d_hostName.rc
+     for local display;
+     or:
+	d_X11.rc
+	d_WIN32.rc
+     for remote display.
+    "
+    display = OperatingSystem getHostName ifTrue:[
+	displayType := OperatingSystem getSystemType.
+    ] ifFalse:[
+	displayType := displayDevice platformName.
+    ]
+].
+
+"now, if the above mess found something, we have it in displayType;
+ fileIn d_<displayType>.rc.
+ If we are running on the default display, do it only if
+ the displayType changed (e.g. image restart on another display)."
+
+displayType notNil ifTrue:[
+    ((Smalltalk at:#'_ImageDisplayName') ~= displayType
+      or:[displayDevice ~~ Screen default]) ifTrue:[
+
+	"/
+	"/ mouse-button translation
+	"/
+	"/ (currently, allowed are 1,2,.. , #paste, #wheelFwd and #wheelBwd)
+	"/ 1      - button1; used to select (i.e. left button)
+	"/ 2      - button2; pops up a menu (i.e. middle button)
+	"/ #paste    - paste the clipBoard contents
+	"/ #wheelFwd - simulates a mouseWheel forward motion (hp displays)
+	"/ #wheelBwd - simulates a mouseWheel backward motion (hp displays)
+	"/
+	"/ the following line puts paste onto the right button (as in xterm):
+	"/
+	"/ Screen current buttonTranslation:#(1 2 #paste 4 5 6 7).
+
+	"/
+	"/ while that one puts the pop-up menu both on the middle and right buttons:
+	"/
+	displayDevice buttonTranslation:#(1 2 2 #wheelFwd #wheelBwd 6 7).
+	displayDevice platformName == #X11 ifTrue:[
+	    displayDevice buttonTranslation:#(1 #paste 2 #wheelFwd #wheelBwd 6 7).
+	].
+
+	"/
+	"/ lefthanders can use:
+	"/
+	"/ displayDevice buttonTranslation:#(2 2 1 #wheelFwd #wheelBwd 6 7).
+
+	"/ common keyboard setup;
+	"/ might be changed later by a display-specific
+	"/ rc file (especially, d_windows does this)
+
+	"/ 'display.rc [info]: reading ''keyboard.rc''...' infoPrintCR.
+	Smalltalk fileIn:'keyboard.rc'.
+
+	Smalltalk isStandAloneApp ifFalse:[
+	    ('display.rc [info]: ') infoPrint.
+	    (Smalltalk getSystemFileName:('d_' , displayType , '.rc')) isNil ifTrue:[
+		'trying' infoPrint.
+	    ] ifFalse:[
+		'reading' infoPrint.
+	    ].
+	    (' display setup ''d_' , displayType , '.rc''...') infoPrintCR.
+	].
+
+	Smalltalk fileIn:('d_' , displayType , '.rc')
+    ].
+
+    "If we are running on the default display, remember current setting for possible
+     image restart"
+    displayDevice == Screen default ifTrue:[
+	Smalltalk at:#'_ImageDisplayName' put:displayType.
+    ].
+]
+!
+
+"*
+ * now, this is a nice one:
+ *
+ * if we are running on the default display and the image was saved
+ * on a different type of display, ask the user,
+ * if he/she'd like to have the style changed.
+ *"
+|currentScreen|
+
+currentScreen := Screen current.
+(currentScreen notNil and:[ currentScreen == Screen default]) ifTrue:[
+    |depthChange colorChange greyChange reconfigure|
+
+    depthChange := false.
+    colorChange := false.
+    greyChange := false.
+
+    (Smalltalk includesKey:#'_ImageDisplayDepth') ifTrue:[
+	depthChange := ((Smalltalk at:#'_ImageDisplayDepth') ~~ currentScreen depth)
+    ].
+    (Smalltalk includesKey:#'_ImageDisplayHasColor') ifTrue:[
+	colorChange := ((Smalltalk at:#'_ImageDisplayHasColors') ~~ currentScreen hasColors)
+    ].
+    (Smalltalk includesKey:#'_ImageDisplayHasGreyscales') ifTrue:[
+	greyChange := ((Smalltalk at:#'_ImageDisplayHasGreyscales') ~~ currentScreen hasGreyscales)
+    ].
+    (depthChange or:[colorChange or:[greyChange]]) ifTrue:[
+	reconfigure := self confirm:'Display capabilities have changed
+
+    Do you want to reconfigure the view style ?'.
+
+	reconfigure ifTrue:[
+	    Screen current knownViews do:[:aView |
+		aView notNil ifTrue:[
+		    aView reinitStyle.
+		]
+	    ].
+	].
+    ].
+
+    Smalltalk at:#'_ImageDisplayDepth' put:currentScreen depth.
+    Smalltalk at:#'_ImageDisplayHasColors' put:currentScreen hasColors.
+    Smalltalk at:#'_ImageDisplayHasGreyscales' put:currentScreen hasGreyscales.
+]
+!
+
+"/
+"/ set a default style, if not been set by rc-file
+"/ this is set according the system we are running on.
+"/ Notice: normally, the below is not needed, since the style
+"/         is always set by the d_xxx.rc file.
+"/         Except, when the d_xxx.rc is not present.
+"/
+
+|type wm style|
+
+View defaultStyle isNil ifTrue:[
+    style := #mswindows8.
+"/    type := OperatingSystem getSystemType.
+"/    type = 'next' ifTrue:[
+"/      style := #next
+"/    ].
+"/    type = 'iris' ifTrue:[
+"/      style := #iris
+"/    ].
+"/    type = 'os2' ifTrue:[
+"/      style := #os2
+"/    ].
+"/    type = 'win32' ifTrue:[
+"/      (OperatingSystem isVistaLike) ifFalse:[
+"/          style := #mswindows8.
+"/      ].
+"/    ].
+    View defaultStyle:style.
+    View readStyleSheetAndUpdateAllStyleCaches.
+    'display.rc [info]: no style set - default to ' infoPrint. style infoPrintCR.
+
+]
+!

@@ -1,0 +1,87 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Postgres Database Interface</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="goody_postgres.html">     <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="cparser.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Thrift IDL Support</H1>
+
+<H2>Overview</H2>
+
+The "stx:goodies/thrift" package implements the low level transport and RPC
+interface to comunicate with applications based on the thrift (apache.org)
+framework. This allows to perform RPC calls and communicate with applications
+like the Cassandra Database and others.
+<P>
+
+
+<H2>Documentation</H2>
+see the README files in 'goodies/thrift'.
+<BR>
+Use the source - Luke.
+
+
+<H2>Release Notes</H2>
+The original gen-st package as found in the apache repository contains
+a number of bugs and limitations, which have been fixed in this package.
+<UL>
+<LI>thrift.exe - the generated code (aka. when creating foo.st from foo.thrift) has some minor bugs in it (refers to oprot in read methods,
+flushes oprot in read methods, has squeak dependencies hardwired into it).
+<LI>thrift.st - does not support the current standard FramedTransport. I.e. it was useless with todays thrift apps, as
+the old SimpleTransport is no longer supported by any server.
+</UL>
+
+To fix these, the corresonding generator code (in c-plusplus) needs to be rewritten
+and also parameters/flags should be added to it to allow for different Smalltalk dialects to
+be supported.
+<P>
+As we do not like C++, a post-processor was written, which takes the original thrift
+output and rewrites the ST code to fit our needs.
+<BR>
+
+<H2>Additional Protocol Support</H2>
+The package has beed changed to allow for the transport to be specified in the
+client creation message. Also, a TFramedTransport was added, which is now the default.
+Support for the CompactProtocol is being developed but currently unfinished.
+
+<H2>Usage Example</H2>
+To generate the interface client from a "foo.thrift" IDL description, perform the
+following steps:
+<OL>
+<LI>load the thrift package into ST/X (i.e. "<CODE>Smalltalk loadPackage:'stx:goodies/thrift'</CODE>").
+<LI>download the thrift compiler (thrift.exe) from apache.org.
+<LI>execute "thrift.exe foo.thrift"
+<LI>fileIn the resulting st file ("gen-st/foo.st"). This should give you a class called "FooClient".
+<LI>in a workspace, execute the post-processor: "<CODE>ThriftFixup fixupClass:FooClient</CODE>"
+<LI>done
+</OL>
+
+
+<H2>No Warranty</H2>
+This goody is provided AS-IS without any warranty whatsoever.
+
+
+
+<H2>Origin/Authors</H2>
+Claus Gittinger
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.2 $
+</BODY>
+</HTML>

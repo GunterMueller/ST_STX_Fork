@@ -1,0 +1,65 @@
+"*
+ * Encoding: iso8859-1
+ *
+ * $Header$
+ *
+ * MIMEType: application/x-smalltalk-source
+ *
+ * ST/X startup configuration file:
+ * display configuration - sun
+ *
+ * If your display is the above, create a symbolic link
+ * d_<hostname-of-display>.rc -> d_sun.rc
+ *
+ *"
+
+"/
+"/ the following helps to avoid the annoying click
+"/ on newly opened windows ...
+"/
+StandardSystemView takeFocusWhenMapped:true.
+
+
+"*
+ * view style - uncomment the one you like
+ *"
+
+"/ actually, openwin-style is not finished yet
+"/ you may prefer #iris, #motif
+
+View defaultStyle:#mswindowsXP.
+"/ View defaultStyle:#openwin.
+"/ View defaultStyle:#iris.
+"/ View defaultStyle:#motif.
+!
+
+"
+ define suns left-function keys
+ (this really should be done by xmodmap/server)
+"
+|map|
+
+map := Display keyboardMap.
+
+map bindValue:#Find  to:#F19.
+map bindValue:#Cut   to:#F20.
+map bindValue:#Paste to:#F18.
+map bindValue:#Open  to:#F17.
+map bindValue:#Copy  to:#F16.
+map bindValue:#Undo  to:#F14.
+map bindValue:#Props to:#F13.
+map bindValue:#Again to:#F12.
+map bindValue:#Prior to:#F29.
+map bindValue:#Next  to:#F35.
+map bindValue:#Home  to:#F27.
+map bindValue:#End   to:#R13.
+
+"/ a kludge: some Xservers send #Delete for both the backspace
+"/ and the Delete key. In this case, we use the Backspace function
+"/ for both keys. If your Xserver does not do this (it should not)
+"/ remove or comment the following 'bindValue:#BackSpace'-line:
+"/
+
+map bindValue:#BackSpace     to:#Delete.
+
+!

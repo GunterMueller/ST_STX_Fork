@@ -1,0 +1,36 @@
+ciao ! hola ! salut ! hallo ! чао ! 你好 ! davs ! ողջույն !
+здрависване ! dobrý den ! γειά ! हलो ! halló ! やあ !
+안녕 ! Roj baş ! salve ! saluton ! नमस्कार !
+hei ! χαιρε ! cześć ! bună ziua ! zdravo ! здраво ! hej ! kumustá !
+สวัสดี ! merhaba ! привiт ! olá !
+
+encoding: utf8
+  Sollten im obigen Text Zeichen fehlen oder falsch dargestellt werden,
+  so ändern Sie bitte die Voreinstellung des Zeichensatzes so,
+  dass ein ISO10646-1 (i.e. Unicode) Zeichensatz als Default-Zeichensatz eingestellt ist.
+  Diese Voreinstellung findet sich im "System" -> "Einstellungen"-Dialog des Launchers,
+  unter dem Unterpunkt "Fensterstil"->"Zeichensätze".
+
+  Der Zeichensatz eines einzelnen Fensters kann über den Menupunkt
+  "Weitere"->"Zeichensatz" des PopUp-Menus eines Textfensters ausgewählt werden.
+
+  Hinweis:
+	diese Einstellung ist nur dann relevant, wenn Sie nicht-lateinische Zeichen
+	darzustellen haben - insbesondere Sprachen aus dem fernen- und mittleren Osten.
+	Smalltalk/X kann auch ohne Unicode-Zeichensatz ausgeführt werden
+	- allerdings werden dann fehlende Zeichen falsch dargestellt.
+
+  Hinweis für MS-Windows-XP Anwender:
+	Möglicherweise müssen Sie zusätzliche Sprachpakete installieren
+	(insbesondere Zeichensätze) um alle Zeichen korrekt dargestellt zu erhalten.
+
+Beispiele:
+
+Umlaute: äöüÄÖÜß
+Akzentzeichen: éèêåÅ
+Sonderzeichen: €
+Kyrillisch: русский язык
+Griechisch: Ελληνικά
+Mathematisch: ∀∆√∫≠≤≥⌐⌠⌡
+Japanisch: 日本語
+Chinesisch: 欢迎光临

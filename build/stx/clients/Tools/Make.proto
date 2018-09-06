@@ -1,0 +1,25 @@
+## $Header: /cvs/stx/stx/clients/Tools/Make.proto,v 1.4 1999-12-01 15:29:48 cg Exp $
+#
+
+TOP=../..
+MODULE=stx
+MODULE_DIR=clients/Tools
+PACKAGE=$(MODULE):$(MODULE_DIR)
+
+RCSSOURCES=Make.proto *.st
+LINKSOURCES=Make.proto *.st
+
+#
+# subdirs where sources are found
+#
+ALLSUBDIRS=
+
+#
+# subdirs where binaries are made
+#
+SUBDIRS=
+
+all::   
+
+# BEGINMAKEDEPEND
+# ENDMAKEDEPEND

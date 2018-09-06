@@ -1,0 +1,22 @@
+"*
+ * Encoding: iso8859-1
+ *
+ * $Header$
+ *
+ * MIMEType: application/x-smalltalk-source
+ *
+ * ST/X startup configuration file - for sun solaris OS.
+ *
+ * DONT add site specific things here - use your own h_xxx.rc file instead
+ * where xxx stands for your hostname(s)
+ *"
+
+"/
+"/ right now, you should have gcc (or egcs) installed
+"/ we do not support the expensive sun C-compiler.
+"/
+
+Smalltalk wasStartedFromImage ifFalse:[
+    ParserFlags ccCompilationOptions:'-O -fPIC'
+].
+!

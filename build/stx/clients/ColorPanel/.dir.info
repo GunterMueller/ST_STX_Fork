@@ -1,0 +1,20 @@
+This goody is not yet finished.
+It is a first attempt to implement a Color entry dialog.
+However, due to its (stupid) implementation, startup time
+is way to long, since it tries to allocate many (dithered)
+colors. It should be rewritten, to use a smarter color allocation
+algorithm.
+Beside that, its a nice demo of Sliders and subclasses of Sliders
+(with changed viewBackground).
+
+Try:
+	ColorPanel new open
+
+or (the individual components):
+
+	ColorWheel new open
+
+	RGBPanel new open
+
+	HLSPanel new open
+

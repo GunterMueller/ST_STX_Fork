@@ -1,0 +1,195 @@
+<TITLE>HTML Math</TITLE>
+<H1>HTML Math</H1>
+
+<B>Permitted Context:</B> %text<BR>
+<B>Content Model:</B> %math
+
+<P>The &lt;MATH&gt; element is used to include math expressions in the
+current line. HTML math is powerful enough to describe the range of
+math expressions you can create in common word processing packages, as
+well as being suitable for rendering to speech. When rendering to fixed
+pitch text-only media, simple text graphics can be used for math
+symbols such as the integration sign, while other symbols can be rendered
+using their entity names. The SGML SHORTREF capability is used to
+provide abbreviations for hidden brackets, subscripts and superscripts.
+
+<P>The design of HTML math owes a lot to LaTeX's math mode, which has
+been found to be effective for a wide variety of mathematical
+typesetting. Where practical, HTML math uses tag names matching LaTeX
+commands, e.g. ATOP, CHOOSE and SQRT act in the same way as their LaTeX
+namesakes. Of course, SGML and LaTeX have quite different syntactical
+conventions. As a result, HTML math uses the ISO entity names for
+symbols rather than the TeX names. In LaTeX, the character command ^
+sets the next character as an exponent, while the character command _
+sets it as an index. If the exponent or index contains more than one
+character then the group of characters must be enclosed in curly
+brackets { }. This syntax is inappropriate for SGML, so HTML math
+instead treats _ and ^ as shortref characters for the SUB and SUP
+elements which are used for indices and exponents, respectively.
+
+<P><I>I can't find the ISO entity names for the _ and ^ chararacters!</i>
+
+<P>HTML math has been designed to be both concise and comparatively easy
+to read. In practice, formulae will be a little longer than in LaTeX,
+but much shorter than with other math proposals for SGML, for instance
+EuroMath or ISO 12083. This simplification has been achieved through
+the power of the BOX element, which replaces many elements in other
+proposals, as well as the simple conventions for binding the SUB and
+SUP elements and their use as generic raising and lowering operators.
+HTML math differentiates terms e.g. binary operators, variables,
+constants, integral signs, delimiters and so on. This simplifies
+rendering and reflects the assumptions adopted by LaTeX. It further
+allows the same raising and lowering operators to be used for many
+different roles according to the term they apply to. HTML math doesn't
+provide direct support for multi-line equations, as this can be
+effectively handled by combining math with the TABLE element.
+
+<P>Example - the integral from <em>a</em> to <em>b</em> of <em>f(x)</em>
+over <em>1+x</em>
+
+<pre>    &lt;MATH&gt;&amp;int;_a_^b^{f(x)&lt;over&gt;1+x} dx&lt;/MATH&gt;</pre>
+
+<p>which can be rendered on a fixed pitch text-only medium as:
+
+<pre>         b
+         /   f(x)
+         | ------- dx
+         /  1 + x
+         a</pre>
+
+<P>The example uses { and } as shortrefs for &lt;BOX&gt; and
+&lt;/BOX&gt; respectively. This is used for invisible brackets,
+stretchy delimiters and integral signs, and placing one thing over
+another. The shortref characters "_" and "^" are used for subscripts
+and superscripts respectively.
+
+<P>HTML math follows general practice in mathematical typesetting by
+rendering functions, numbers and other constants in an upright font,
+while variables are rendered in an italic font. You can set particular
+terms in a bold face, and for chemical formulae, you can force the use
+of an upright font. Limits for symbols like the integral and summation
+signs are placed directly above (below) the symbol or to the immediate
+right depending on the symbol.
+
+
+<P>Spacing between constants, variables and operators is determined
+automatically. Additional spacing can be inserted with entities such as
+<tt>&amp;thinsp;</tt> <tt>&amp;sp;</tt> and <tt>&amp;quadsp;</tt>. 
+White space in the markup is used only to delimit adjacent variables or
+constants. You don't need spaces before or after binary operators or
+other special symbols, as these are recognised by the HTML math
+tokeniser. White space can be useful, though, for increased legibility
+while authoring.<BR> <I>I need to check on the ISO entity names for
+spacing!</i>
+
+<h3>Math Markup</h3>
+
+<P>The following elements are permitted within MATH elements:
+
+<DL>
+<DT><A HREF="mathbox.html">BOX</A>
+<DD>Used for hidden brackets, stretchy delimiters, and placing
+one expression over another (e.g. numerators and denominators).
+<DT><A HREF="mathscripts.html">SUB, SUP</A>
+<DD>Subscripts and superscripts. Also used for limits.
+<DT><A HREF="above.html">ABOVE</A>
+<DD>Used to draw an arrow, line or symbol above an expression.
+<DT><A HREF="below.html">BELOW</A>
+<DD>Used to draw an arrow, line or symbol below an expression.
+<DT><A HREF="vectors.html">VEC, BAR, DOT, DDOT, HAT, TILDE</A>
+<DD>These are convenience tags for common accents as an alternative to
+using ABOVE.
+<DT><A HREF="roots.html#sqrt">SQRT</A>, <A HREF="roots.html#root">ROOT</A>
+<DD>For square roots and other roots of an expression.
+<DT><A HREF="arrays.html">ARRAY</A>
+<DD>For matrices and other kinds of arrays.
+<DT><A HREF="mathtext.html">TEXT</A>
+<DD>Used to include a short piece of text within a math element, and
+often combined with SUB or SUP elements.
+<DT><A HREF="mathface.html">B, T, BT</A>
+<DD>These elements are used override the default rendering. <B>B</B>
+renders the enclosed expression in an bold face. <B>T</B> designates a
+term to be rendered in an upright font, while <B>BT</B> designates a term
+to be rendered in a bold upright font. The class attribute can be used to
+describe the kind of term, e.g. vector, tensor, or matrix.
+</DT>
+</DL>
+
+<H3>HTML Math Entities</h3>
+
+<UL>
+<LI><a href="functions.html">Functions</a>
+<LI><a href="operators.html">Operators</a>
+<LI><a href=ellipsis.html">Continuation dots</a>
+<LI><a href="greek.html">Greek letters</a>
+<LI><a href="Relations.html">Relations</a>
+<LI><a href="arrows.html">Accents, arrows and pointers</a>
+<LI><a href=delimiters.html">Delimiters</a>
+<LI><a href="symbols.html">Other symbols.</a>
+<LI><a href="spacing.html">Spacing entities.</a>
+</UL>
+
+<h3>Rendering HTML Math</h3>
+
+<P>The expression is rendered in three steps:
+
+<OL>
+<LI>The first step recursively parses expressions building up a matching
+hierarchy of data structures (with bounding boxes) corresponding to
+sequences of nested expressions. The math tokeniser needs to be able to
+distinguish constants, variables, functions, operators, delimiters, and
+special symbols such as integrals, which can take limits and may be
+stretchy.
+<LI>The next step sets the size of the innermost expressions based on
+the size of available fonts. If possible subscript and superscript
+expressions should be set in a smaller font. The size and relative
+positioning of neighboring and enclosing expressions is then propagated
+up the hierarchy from the innermost outwards, as the procedure stack
+formed in step (1) unwinds.
+<LI>The final step is to render the hierarchy of expressions to the
+output medium. This is now straight forward as all the positioning and
+sizes of special symbols and text strings are now fixed.
+ </OL>
+
+<P><B>Note:</B> In practice, only a limited range of font sizes are
+suitable, as a result, deeply nested expressions like continued fractions
+can't use ever smaller fonts. This is simply handled by a parameter to
+the <i>ParseExpression</i> routine that sets the font size to be used for
+that expression. ParseExpression is called recursively for nested expressions
+and uses the next smaller font until it bottoms out with the smallest
+font available. The size parameter corresponds to an enumeration of the
+available font sizes.
+
+<H3>Permitted Attributes</h3>
+
+<DL> <DT>ID <DD>An SGML identifier used as the target for hypertext
+links or for naming particular elements in associated style sheets.
+Identifiers are NAME tokens and must be unique within the scope of the
+current document.
+
+<DT>CLASS <DD>This a space separated list of SGML NAME tokens and is
+used to subclass tag names. By convention, the class names are
+interpreted hierarchically, with the most general class on the left and
+the most specific on the right, where classes are separated by a
+period. 
+
+<P>For the MATH element, CLASS can be used to describe the kind of math
+expression involved. This can be used to alter the way formulae are
+rendered, and to support exporting the expression to symbolic
+math software. The class "chem" is useful for chemical formulae which
+use an upright font for variables rather than the default italic font.
+For example:
+
+<pre>    &lt;math class=chem&gt; Fe_2_^2+^Cr_2_O_4_&lt;/math&gt;</pre>
+
+<pre>                        2+
+which is rendered as  Fe  Cr  O
+                        2   2  4</pre>
+
+<P>Otherwise, the conventions for choosing class names are outside the
+scope of this specification.
+
+<DT>BOX <DD>The presence of this attribute causes the user agent to draw
+a rectangular box around the formulae.
+</DL>
+<!--NewPage-->

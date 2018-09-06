@@ -1,0 +1,94 @@
+"{ Package: 'stx:goodies/communication/ssdp' }"
+
+"{ NameSpace: Smalltalk }"
+
+SSDPMessage subclass:#SSDPDiscoveryReply
+	instanceVariableNames:'location serverInfo discoveryTime maxAge'
+	classVariableNames:''
+	poolDictionaries:''
+	category:'Net-Communication-SSDP-Core'
+!
+
+SSDPDiscoveryReply comment:'This message is sent by a server directly to the requesting socket when a client  requests the available services of a certain type.'
+!
+
+
+!SSDPDiscoveryReply class methodsFor:'testing'!
+
+represents: aDatagram
+	"Discovery responses must always have status 200 OK"
+	^aDatagram beginsWith: 'HTTP/1.1 200 OK'
+	
+! !
+
+!SSDPDiscoveryReply methodsFor:'accessing'!
+
+discoveryTime
+	^discoveryTime
+!
+
+location
+	^location
+!
+
+maxAge
+	^maxAge
+!
+
+serverInfo
+	^serverInfo
+! !
+
+!SSDPDiscoveryReply methodsFor:'conversion'!
+
+asService
+	^SSDPService new merge: self
+! !
+
+!SSDPDiscoveryReply methodsFor:'handling'!
+
+serviceChangeIn: aCache
+
+	^aCache updateServiceFor: self
+! !
+
+!SSDPDiscoveryReply methodsFor:'initialize - release'!
+
+initializeFrom: aDatagram 
+	| response headers cacheParams |
+	response := ZnResponse readFrom: aDatagram readStream.
+	"If the response was not 200 OK, we are required to disregard it"
+	response code = 200 ifFalse: [ ^nil ].
+	headers := response headers.
+	"Obligatory SSDP fields"
+	serviceType :=  headers at: 'St'.
+	uniqueServiceName :=  headers at: 'Usn'.
+	"Common SSDP fields"
+	serverInfo :=  headers at: 'Server' ifAbsent: nil.
+	location :=  headers at: 'Location' ifAbsent: nil.
+	"Cache control fields"
+		"Mark:We always use time on local machine rather than value of Date header field.
+		This is more consistent with the cache update logic (which compares with local time,
+		and saves us having to deal with converting from a string representation of DateAndTime"
+	discoveryTime := DateAndTime now.
+	
+	cacheParams :=  ( headers at: 'Cache-control' ifAbsent: ['']) splitOn: ',' .
+	"Squeak Number >> #asDuration gives nanoseconds, not seconds, so set duration as seconds explicitly"
+	maxAge := Duration seconds: ( (cacheParams detect: [:one | one beginsWith: 'max-age'] ifNone: '0') splitOn: '=') last trim asNumber.
+	
+
+
+	
+	
+! !
+
+!SSDPDiscoveryReply class methodsFor:'documentation'!
+
+version
+    ^ '$Header: /cvs/stx/stx/goodies/communication/ssdp/SSDPDiscoveryReply.st,v 1.2 2018-05-14 20:26:39 cg Exp $'
+!
+
+version_CVS
+    ^ '$Header: /cvs/stx/stx/goodies/communication/ssdp/SSDPDiscoveryReply.st,v 1.2 2018-05-14 20:26:39 cg Exp $'
+! !
+

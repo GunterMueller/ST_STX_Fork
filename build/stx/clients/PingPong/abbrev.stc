@@ -1,0 +1,6 @@
+Games::PingPongBall PingPongBall stx:clients/PingPong 'games-PingPong' 0
+Games::PingPongComputerPlayer PingPongComputerPlayer stx:clients/PingPong 'games-PingPong' 0
+Games::PingPongGame PingPongGame stx:clients/PingPong 'games-PingPong' 0
+Games::PingPongObject PingPongObject stx:clients/PingPong 'games-PingPong' 0
+Games::PingPongPlayer PingPongPlayer stx:clients/PingPong 'games-PingPong' 0
+Games::PingPongView PingPongView stx:clients/PingPong 'games-PingPong' 0

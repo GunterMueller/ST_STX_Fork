@@ -1,0 +1,43 @@
+<html><head><title>Refactoring: 
+
+
+
+Replace Conditional with Polymorphism</title></head><body>
+
+
+<H1>
+
+
+
+Replace Conditional with Polymorphism</H1>
+<P><I><CENTER>
+
+You have a conditional that chooses different behavior depending on the type of an object.</CENTER></I></P>
+<P><B><CENTER>
+
+Move each leg of the conditional to an overriding method in a subclass. Make the original method abstract.</CENTER></B></P>
+
+<PRE>
+	double getSpeed() {
+		switch (_type) {
+			case EUROPEAN:
+				return getBaseSpeed();
+			case AFRICAN:
+				return getBaseSpeed() - getLoadFactor() * _numberOfCoconuts;
+			case NORWEIGIAN_BLUE:
+				return (_isNailed) ? 0 : getBaseSpeed(_voltage);
+		}
+		throw new RuntimeException ("Should be unreachable");
+	}
+</PRE><P><CENTER><IMG SRC="arrow.gif"/></CENTER></P>
+
+<CENTER><IMG SRC="repCondWithPoly.gif"/></CENTER>
+
+
+
+
+<P>For more information see page 
+	<font color="#FF0000">255</font>
+	of <I>Refactoring</I></P>
+
+<P /><P /><P><CENTER><A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A></CENTER></P></body></html>

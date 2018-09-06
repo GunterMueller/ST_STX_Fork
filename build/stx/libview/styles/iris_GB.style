@@ -1,0 +1,182 @@
+; View defaultStyle:#'iris_GB' 
+;
+; modified silicon graphics style - from a customer.
+; This modifies the iris style for brownish colors,
+; to make the ST/X views fit nicely into an existing
+; application.
+;
+; $Header: /cvs/stx/stx/libview/styles/iris_GB.style,v 1.7 2002-08-19 16:26:47 cg Exp $
+
+comment  'Silicon graphics'' Iris look alike; brownish colors'
+
+#if (Language == #german) or:[Language == #de]
+comment  'An Silicon Graphics Iris angelehnter Stil; braune Farben'
+#endif
+
+#if (Language == #french) or:[Language == #fr]
+comment  'Un style qui résemble Silicon Graphics Irix; couleurs differentes'
+#endif
+
+is3D                            true
+name                            #iris_GB
+
+gbBrown                         Color red:82 green:70 blue:54
+gbBrownActive                   Color red:90 green:70 blue:54 
+
+#if Screen current hasGreyscales
+viewGrey                        =gbBrown
+#else
+viewGrey                        Color white
+lightColor                      Color grey:50
+#endif
+borderWidth                     0
+viewBackground                  =viewGrey
+
+popup.shadow                     true
+popup.level                      2     
+popup.borderWidth                1     
+
+textFont                        Font family:'courier' size:12 
+textLightColor                  =viewGrey
+
+#if Screen current hasColors   
+text.selectionForegroundColor    Color black
+text.selectionBackgroundColor    Color green
+#endif
+
+textCursor.foregroundColor       Color black
+#if Screen current hasColors
+textCursor.backgroundColor       Color red
+#else
+textCursor.backgroundColor       Color black
+#endif
+
+#if (Screen current hasColors and:[Screen current depth > 4])
+transcript.foregroundColor       Color black
+transcript.backgroundColor       =viewGrey
+transcript.cursorForegroundColor =transcriptBackgroundColor
+transcript.cursorBackgroundColor Color green
+#else
+transcript.foregroundColor       Color white
+transcript.backgroundColor       Color black
+transcript.cursorForegroundColor =transcriptBackgroundColor 
+transcript.cursorBackgroundColor =transcriptForegroundColor
+#endif
+
+#if Screen current hasColors   
+; editField.backgroundColor           Color name:'wheat'
+editField.backgroundColor           Color name:'wheat'
+editField.selectionBackgroundColor  Color white
+pullDownMenu.hilightForegroundColor Color black.
+pullDownMenu.hilightBackgroundColor Color name:'wheat'.
+editField.selectionForegroundColor  Color black
+#endif
+
+#if (Font family:'screen' face:'bold' style:'roman' size:16) existsOn:Screen current
+editField.font                   Font family:'screen' face:'bold' style:'roman' size:16
+#else
+editField.font                   Font family:'courier' face:'medium' style:'roman' size:12
+#endif
+
+variableFont                    Font family:'helvetica' face:'medium' style:'roman' size:12
+selectionFont                   =variableFont
+labelFont                       =variableFont
+
+#if Screen current hasColors   
+toggle.showLamp                  true
+toggle.lampColor                 Color yellow
+checkToggle.checkColor           Color red
+checkToggle.bitmapFile           'CheckOnColor.xpm'
+checkToggle.labelOverMargin      true
+
+radioButton.showLamp             false
+radioButton.style                #iris
+radioButton.backgroundColor        =viewGrey
+radioButton.activeBackgroundColor  =viewGrey
+#endif
+
+scroller.level                   -1
+scroller.thumbLevel              3
+scroller.thumbColor              =viewGrey
+#if Screen current hasGreyscales
+scroller.thumbEnteredColor       Color veryLightGrey
+#endif
+scroller.thumbEdgeStyle          #soft
+scroller.NTallyMarks             3
+scroller.tallyLevel              1
+scroller.ghostColor              Color grey:50
+scroller.ghostLevel              -1
+#if Screen current hasGreyscales not
+scroller.viewBackground          Color white
+#endif
+
+slider.NTallyMarks               1
+slider.tallyLevel                1
+
+button.edgeStyle                 #soft
+button.activeLevel               -1
+button.passiveLevel              3
+button.disabledForegroundColor   Color grey
+#if Screen current hasGreyscales
+button.enteredBackgroundColor    =gbBrownActive
+button.activeBackgroundColor     Color name:'wheat'
+button.activeForegroundColor     Color black
+#else
+button.enteredBackgroundColor    Color white
+button.activeForegroundColor     Color white
+button.activeBackgroundColor     Color black
+#endif
+
+#if OperatingSystem getOSType = 'irix'
+menu.font                        Font family:'helvetica' face:'bold' style:'oblique' size:10
+#else
+menu.font                        Font family:'helvetica' face:'bold' style:'roman' size:12
+#endif
+
+menu.hilightBackgroundColor      Color white
+menu.hilightLevel                1
+; menuShowAccelerators            false
+#if Screen current hasColors   
+menu.checkColor                  Color red
+#endif
+
+pullDownMenu.font                =menuFont
+pullDownMenu.level               1
+pullDownMenu.hilightLevel        2
+pullDownMenu.edgeStyle           #soft
+
+variablePanel.handleColor        Color darkGrey
+#if Screen current hasGreyscales
+variablePanel.handleEnteredColor Color veryLightGrey
+#endif
+
+
+activeHelp.backgroundColor         Color yellow lightened
+activeHelp.borderWidth           2
+
+
+toolBarColorUserContext1          #gbBrown  
+toolBarColorUserContext2          #indianRed  
+toolBarColorUserContext3          #gbBrown  
+toolBarColorUserContext4          #gbBrown  
+toolBarColorUserContext5          #gbBrown  
+toolBarColorUserContext6          #gbBrown  
+toolBarColorUserContext7          #gbBrown  
+toolBarColorUserContext8          #gbBrown  
+toolBarColorUserContext9          #gbBrown  
+toolBarColorUserContext10         #gbBrown  
+
+fillColor                         #bisque
+highLightColor                    #gbBrownActive
+
+;html.backgroundColor             =gbBrown
+html.fontSize                    14
+html.printFontSize               14
+html.backgroundColor                =gbBrownActive
+;html.anchorForegroundColor          Color blue darkened
+;html.activeAnchorForegroundColor    Color red
+;html.activeAnchorBackgroundColor    =htmlBackgroundColor
+;html.visitedAnchorForegroundColor   Color red:30 green:0 blue:80
+;html.exampleAnchorForegroundColor   Color red:40 green:0 blue:0
+;html.anchorUnderline                false
+

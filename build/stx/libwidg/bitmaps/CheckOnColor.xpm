@@ -1,0 +1,26 @@
+/* XPM */
+static char *CheckOnColor_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 3 1",
+/* colors */
+". c none",
+"* c black",
+"b c red",
+/* pixels */
+"............bbbb",
+"...........bbbbb",
+"..........bbbb*.",
+".........bbbb*..",
+"........bbbb*...",
+".......bbbb*....",
+".......bbbb*....",
+"bb....bbbb*.....",
+"bbb...bbbb*.....",
+".bbbbbbbb*......",
+"..bbbbbbb*......",
+"...bbbbbb*......",
+"....bbbb*.......",
+"....bbb*........",
+".....bb*........",
+".....bb*........",
+};

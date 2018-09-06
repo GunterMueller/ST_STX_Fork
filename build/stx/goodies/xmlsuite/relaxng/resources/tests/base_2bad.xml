@@ -1,0 +1,11 @@
+<addressbook>
+ <group>
+  <name value="characters, not integer"/><!-- <empty/> -->
+ </group>
+ <group>
+  <name/>
+  	
+  <content/>
+  <endcontent />
+ </group>
+</addressbook>

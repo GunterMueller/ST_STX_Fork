@@ -1,0 +1,17 @@
+; View defaultStyle:#mswindowsXP_oldIcons
+;
+; $Header: /cvs/stx/stx/libview/styles/mswindowsXP.style,v 1.25 2004/10/26 15:44:01 cg Exp $
+
+#include 'mswindowsXP.style'
+
+ToolbarIconLibrary              GenericToolbarIconLibrary
+
+comment  'winXP lookalike with traditional Icons'
+
+#if (Language == #german) or:[Language == #de]
+comment  'an MS WindowsXP angelehnter Stil mit traditionellen Sinnbildern'
+#endif
+
+#if (Language == #french) or:[Language == #fr]
+comment  'Un style qui résemble MS WindowsXP avec des icons traditionelles'
+#endif

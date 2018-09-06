@@ -1,0 +1,40 @@
+# $Header: /cvs/stx/stx/clients/TicTacToe/Make.proto,v 1.6 2016-01-14 14:49:09 mawalch Exp $
+
+# -------------- no need to change anything below ----------
+
+TOP=../..
+MODULE=stx
+MODULE_DIR=clients/TicTacToe
+PACKAGE=$(MODULE):$(MODULE_DIR)
+SUBDIRS=
+RCSSOURCES=*.st Make.proto
+
+STCOPT=$(CLIENT_STCOPT)
+# OPT=-DSTATISTIC
+# DBG=-DDEBUG
+
+LIBNAME=tictactoe
+
+STARTUP_CLASS=TicTacToe
+STARTUP_SELECTOR="start"
+
+PROGS      = TicTacToe
+
+all::       $(PROGS)
+
+TicTacToe:  main.o obj autoClassInit $(EXTRALIBS)
+	    $(LD) -s $(ST_LDFLAG) $(LDFLAGS) -o tetris \
+		  $(CRT0) main.o classList.o \
+		  tetris$(OBJNAME) \
+		  $(LIBBASICOBJ) $(LIBVIEWOBJ) $(LIBWIDGOBJ) $(LIBCOMPOBJ) \
+		  $(LIBRUNDIR)/hidata.o $(LIBRUN) \
+		  $(MATHLIB) $(EXTRALIBS) $(SYSLIBS) $(CRTN)
+	    @-rm -f main.o
+
+OBJS =      \
+	    TicTacToe.o
+
+objs::  $(OBJS)
+
+# BEGINMAKEDEPEND
+# ENDMAKEDEPEND

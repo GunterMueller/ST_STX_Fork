@@ -1,0 +1,211 @@
+
+Thu Nov 01 21:42:31 +0000 2012
+              Test   JVM   STX-S   STX-J   STX-J2S
+OverloadedMethods2     2     860    8820      1239
+   ObjectArguments     1   10732     561      3892
+  WrappedArguments     2      10     755     12261
+             Saxon   182     N/A    1584       N/A
+              Hash    12      10    5922       N/A
+               Ary   112    9372    4322       N/A
+            Strcat   541    1166    6038       N/A
+PrimitiveArguments     0   11039     627      2961
+ OverloadedMethods     0    3647     149      1012
+  MethodInvocation     0   49395    2766       N/A
+            Groovy    79     N/A    1972       N/A
+--
+
+Fri Nov 02 09:21:29 +0000 2012
+              Test   JVM   STX-S   STX-J   STX-J2S
+PrimitiveArguments     0   10925     607      3207
+            Strcat   587    1253    6175       N/A
+            Groovy    78     N/A    2248       N/A
+ OverloadedMethods     0    3671     158      1255
+              Hash    42      12    6514       N/A
+               Ary   106    9271    4419       N/A
+  WrappedArguments     2      11     979     13976
+  MethodInvocation     0   51014    2872       N/A
+OverloadedMethods2     1     889   11094      1458
+             Saxon   277     N/A    1800       N/A
+   ObjectArguments     0   10637     581      6648
+--
+
+Fri Nov 02 10:22:12 +0000 2012
+              Test   JVM   STX-S   STX-J   STX-J2S
+OverloadedMethods2     1      90   13065      1521
+  WrappedArguments     1       0    1199     22810
+   ObjectArguments     0     790     556      6839
+               Ary   106    2613    4353       N/A
+PrimitiveArguments     0     765     606      2679
+            Groovy    79     N/A    3164       N/A
+             Saxon   148     N/A    2015       N/A
+            Strcat   516    1109    5976       N/A
+  MethodInvocation     0    3482    2794       N/A
+ OverloadedMethods     0     182     158      1498
+              Hash    11       9    6492       N/A
+--
+
+Sun Nov 04 12:55:24 +0000 2012
+              Test   JVM   STX-S   STX-J   STX-J2S
+          Ackerman    10      66      69       N/A
+   ObjectArguments     0     775     562      7820
+  WrappedArguments     1       1      12     12330
+            Strcat   524     956    6136       N/A
+PrimitiveArguments     0     769     619      3419
+OverloadedMethods2     1     101     134      1621
+  MethodInvocation     0    3562    2929       N/A
+              Hash    11      10    6151       N/A
+             Saxon   153     N/A    1359       N/A
+            Groovy    79     N/A    1732       N/A
+               Ary   123    3187    4356       N/A
+ OverloadedMethods     0     217     219      1322
+--
+
+Mon Nov 05 00:40:04 +0000 2012
+              Test   JVM   STX-S   STX-J   STX-J2S
+  MethodInvocation     0    3879    3196      9205
+ OverloadedMethods     0     257     173       626
+          Ackerman    10      79      80       N/A
+            Strcat   563    1065    6706       N/A
+             Saxon   273     N/A    1624       N/A
+   ObjectArguments     0     852     662      2006
+              Hash    17      11    6202       N/A
+            Groovy   152     N/A    2061       N/A
+               Ary   128    2809    4903       N/A
+  WrappedArguments     1       1      15         2
+PrimitiveArguments     0     877     673      2008
+OverloadedMethods2     8     526    1508      1401
+--
+
+Tue Nov 06 01:02:30 +0000 2012
+              Test   JVM   STX-S   STX-J   STX-J2S
+  MethodInvocation     0    3466    3229      7895
+               Ary   107    2525    4443       N/A
+ OverloadedMethods     0    2205    1509      5445
+              Hash    11       9    5494       N/A
+          Ackerman    10      65      68       N/A
+   ObjectArguments     0     738     645      1665
+            Strcat   501     958    1196       N/A
+             Saxon   156     N/A    1239       N/A
+OverloadedMethods2    46    4353   13663     12310
+            Groovy    79     N/A    1809       N/A
+  WrappedArguments   797     743   11103      1674
+PrimitiveArguments     0     744     694      1686
+--
+
+Tue Nov 06 09:22:37 +0000 2012
+              Test   JVM   STX-S   STX-J   STX-J2S
+OverloadedMethods2    50    4325   13853     12338
+ OverloadedMethods     1    2227    1508      5578
+   ObjectArguments     0     737     643      1652
+PrimitiveArguments     0     744     696      1674
+  WrappedArguments   794     743   10203      1670
+             Saxon   179     N/A    1254       N/A
+               Ary   106    2528    4443       N/A
+  MethodInvocation     0    3470    3225      7899
+              Hash    22      10    5867       N/A
+            Groovy    79     N/A    1797       N/A
+          Ackerman    10      65      68       N/A
+            Strcat   522     947    1199       N/A
+--
+
+Tue Nov 06 12:22:39 +0000 2012
+              Test   JVM   STX-S   STX-J   STX-J2S
+               Ary   110    2533    4517       N/A
+            Strcat   579     953    1312       N/A
+PrimitiveArguments     0     759     743      1774
+OverloadedMethods2    47    4469   14052     12137
+  MethodInvocation     0    3689    3691      8927
+             Saxon   267     N/A    1390       N/A
+ OverloadedMethods     1    2263    1515      5561
+  WrappedArguments   819     772   12302      1926
+   ObjectArguments     0     748     647      1774
+              Hash    36      11    5670       N/A
+          Ackerman    10      64      69       N/A
+            Groovy    97     N/A    1806       N/A
+--
+
+Tue Nov 06 13:45:40 +0000 2012
+              Test        JVM      STX-S      STX-J    STX-J2S
+ OverloadedMethods          0       2233       1511       5583
+  MethodInvocation          0       3485       3243       8056
+PrimitiveArguments          0        746        699       1736
+   ObjectArguments          0        738        645       1755
+          Ackerman          9         64         68        N/A
+  WrappedArguments        790        746       9888       1722
+             Saxon        157        N/A       1240        N/A
+              Hash         10          9       5606        N/A
+            Groovy         79        N/A       1788        N/A
+               Ary        106       2654       4363        N/A
+            Strcat        531        951       1317        N/A
+OverloadedMethods2         46       4362      13576      12069
+--
+
+Tue Nov 06 15:27:41 +0000 2012
+              Test        JVM      STX-S      STX-J    STX-J2S
+               Ary        120       2766       4900        N/A
+          Ackerman          9         74         78        N/A
+             Saxon        154        N/A       1359        N/A
+   ObjectArguments          0        838        714       1991
+              Hash         18         10       1038        N/A
+OverloadedMethods2         50       4991      14534      13705
+PrimitiveArguments          0        844        761       1961
+            Groovy        116        N/A       1948        N/A
+ OverloadedMethods          0       2506       1732       6215
+  WrappedArguments        798        845      12393       1975
+            Strcat        587       1031       1420        N/A
+  MethodInvocation          0       3893       3779       9203
+--
+
+Tue Nov 06 17:26:37 +0000 2012
+              Test        JVM      STX-S      STX-J    STX-J2S
+          Ackerman         10         72         78        N/A
+               Ary        124       3742       7912        N/A
+              Hash         23         10       1140        N/A
+            Strcat        831       1360       1718        N/A
+            Groovy        150        N/A       2891        N/A
+             Saxon        320        N/A       1861        N/A
+  MethodInvocation          0       5421       4933      12561
+PrimitiveArguments          0        912        845       2797
+   ObjectArguments          0       1023        711       2792
+  WrappedArguments       1116        877      16475       2334
+OverloadedMethods2         69       6887      21053      19688
+ OverloadedMethods          0       3141       2460       8391
+--
+
+2013-05-01 18:16:24 +0100
+              Test        JVM   JVM (int)      STX-S      STX-J   STX-J (int)    STX-J2S
+          Ackerman          5          62         50         38           N/A        N/A
+               Ary         49        1290       1438       2320         21114        N/A
+              Hash          6          32          3        548           225        N/A
+            Strcat        171         895        964       4601         15631        N/A
+           Native1          2          25        N/A         25           196        N/A
+            Groovy         55          60        N/A        666           873        N/A
+             Saxon        112         125        N/A        929          1359        N/A
+  MethodInvocation          0       12021       2075       1520         65543       4071
+PrimitiveArguments          0        2233        528        336         16533        882
+   ObjectArguments          0        2394        490        304         16009        883
+  WrappedArguments        308       12089        526       4239         97960       5583
+OverloadedMethods2         31       29994       2340       5655        150319      52764
+ OverloadedMethods          0        9400       1132        758         39878       3128
+--
+
+2013-05-23 10:41:30 +0100
+Test   JVM   JVM (int)   STX-S   STX-J   STX-J (int)   STX-J2S   Ruby
+--
+
+2013-05-23 11:54:47 +0100
+              Test        JVM   JVM (int)      STX-S      STX-J   STX-J (int)    STX-J2S       Ruby
+          Ackerman          5         N/A        264         38           N/A        N/A       1757
+               Ary         69         N/A       7549       2097           N/A        N/A      13404
+              Hash          8         N/A          4        471           N/A        N/A          8
+            Strcat        180         N/A        559        552           N/A        N/A        500
+           Native1          2         N/A        N/A         23           N/A        N/A        N/A
+            Groovy         56         N/A        N/A        201           N/A        N/A        N/A
+             Saxon        109         N/A        N/A        224           N/A        N/A        N/A
+  MethodInvocation          0         N/A      10472       1862           N/A      12333      36849
+PrimitiveArguments          0         N/A       2157        410           N/A       2453        N/A
+   ObjectArguments          0         N/A       2161        407           N/A       2484        N/A
+  WrappedArguments        295         N/A       2164       4226           N/A       7141        N/A
+OverloadedMethods2         30         N/A      13965       5450           N/A      39552        N/A
+ OverloadedMethods          0         N/A       5599        824           N/A       7750        N/A
+--

@@ -1,0 +1,131 @@
+<html>
+<head>
+<title>Refactoring: 
+Extract Package</title>
+</head>
+<body>
+<H1>
+Extract Package</H1>
+<P>
+<B> Refactoring contributed by 
+	
+Gerard M. Davison </B>
+</P>
+<P>
+<I>
+<CENTER>
+A package either has too many classes to be easily understandable or it suffers from the 'Promiscuous packages' smell.
+</CENTER>
+</I>
+</P>
+<P>
+<B>
+<CENTER>
+Extract a sub package depending on their gross dependencies or usages.
+</CENTER>
+</B>
+</P>
+
+<PRE>
+<PRE>
+
+interface org.davison.data.DataProvider
+class org.davison.data.DataFactory
+
+// Database classes
+
+class org.davison.data.JDBCProvider
+class org.davison.data.JDBCHelper
+class org.davison.data.JDBCUtils
+
+
+
+</PRE>
+</PRE>
+<P>
+<CENTER>
+<IMG SRC="arrow.gif"></CENTER>
+</P>
+<PRE>
+
+
+interface org.davison.data.DataProvider
+class org.davison.data.DataFactory
+
+// Database classes
+
+class org.davison.data.jdbc.JDBCProvider
+class org.davison.data.jdbc.JDBCHelper
+class org.davison.data.jdbc.JDBCUtils
+
+
+
+</PRE>
+<h2>Motivation</h2>
+
+<P>
+Dependencies will eventually cause problem in projects of any size, so it make sense to start refactoring sooner rather than later in order to make it clear which part of the code uses what. 
+</P>
+<P>
+This sort of change can make the code more flexible. For example if you are writing a UI tool and then decide a command line variant is required. Then unless the code is properly structured you will have trouble re-using certain components. Packaging is one way of making dependencies explicit.
+</P>
+<P>
+This refactoring can be useful when a package becomes too large to be easily understood. For example in a diagrammer framework you might like to extra sub packages for important groups such as 'shapes'; 'ui' and 'printing'. This makes it easier to identify the use of a class by its implied association in a package.
+</P>
+<P>
+The structure produced here is also one that is recommeneded for use with the Abstract Factory pattern. Indeed this is how the example I have provided is structured.
+</P>
+
+
+<h2>Mechanics</h2>
+<UL>
+<LI>Work out groupings for your classes. Where required use the<A href="extractSuperclass.html">
+
+
+
+Extract Superclass</A>  to pull together any generic code first.</LI>
+<LI>Create the new package and perform  <A href="moveClass.html">
+Move Class</A> for each file that needs to be moved. It is often efficient to move groups of classes at once.</LI>
+<LI>Compile the code in the parent package and retest. The code in the sperate package will have been tested as part of the <A href="moveClass.html">
+Move Class</A> refactoring.</LI>
+<LI>The refactorings at this point can be considered complete.</LI>
+<LI>You might like to convert the code in the factory to using dynamic class loading by using the <A href="convertStaticToDynamicConstruction.html">
+Convert Static to Dynamic Construction</A>. This would enable selective inclusion of sub-packages depending on the build environment.</LI>
+</UL>
+<h2>Example</h2>
+<UL>
+
+<P>
+There are no code examples as most of the work in done in <A href="moveClass.html">
+Move Class</A>.
+</P>
+
+
+</UL>
+
+<h2>Additional Comments</h2>
+<P>The way I've done this is to move all the classes in one go. (I'm prepared to take the big step first here since all the errors can be found with compiling.) 
+</P>
+<P>I ensure the original package is dependent on the extracted package but the extracted package is independent of the original. Once I've done the move I compile the original package. The errors here can be fixed with import statements in the offending classes. I fix these errors until the original package compiles
+</P>
+<P>Then I work on the extracted package. This may compile fine, the problem lies if you have a class in the extracted package referring to a class in the original package. I move it back if I can. If not I use <A href="extractInterface.html">
+
+
+
+Extract Interface</A> to create an interface which captures the way the classes in the extracted pacakge refer to the original class. I then place the extracted interface in the extracted package.
+</P>
+<P>
+<I>--Martin Fowler</I>
+</P>
+
+<P>
+</P>
+<P>
+</P>
+<P>
+<CENTER>
+<A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A>
+</CENTER>
+</P>
+</body>
+</html>

@@ -1,0 +1,9 @@
+LIBRARY         libjava
+DESCRIPTION     'AddOn library for ST/X'
+CODE            EXECUTE READ SHARED
+DATA            READ WRITE
+SECTIONS
+    INITCODE READ EXECUTE SHARED
+    INITDATA READ WRITE
+EXPORTS
+    _libjava_Init

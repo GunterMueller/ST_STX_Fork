@@ -1,0 +1,55 @@
+<HTML>
+  <HEAD>
+    <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+    <TITLE>Macro Recording</Title>
+  </HEAD>
+  <BODY>
+
+The text-editor has a simple but very useful macro recording/execution functionality.
+By pressing the <KBD>"Learn"</KBD>- (<KBD>"CTRL-F2"</KBD>) key,
+every edit operation is recorded as you type it in.
+This recording continues until you press the <KBD>"Learn"</KBD>- (<KBD>"CTRL-F2"</KBD>) key again.
+<P>
+The recorded actions can be executed again, by pressing the <KBD>"Execute-Macro"</KBD> (<KBD>"ALT-F2"</KBD>) key.
+<P>
+Using this capture/replay functionality is highly useful to perform edit-tasks,
+which consist of repeated insertions, deletions, etc. on a number of lines.
+For example, if you have multiple lines, say:
+<CODE><PRE>
+1 a
+2 b
+3 c
+...
+</PRE></CODE>
+and you want to indent each, and place parenthesis around each pair (for example, to make it an array literal),
+the editing can be done very quickly by using a macro:
+<OL>
+<LI>Move the cursor in front of the first "1"-character of the first line
+<LI>Press <KBD>"CTRL-F2"</KBD> to start "learning"
+<LI>Press a number of spaces to indent (or press F10 to indent the line)
+<LI>Press <KBD>"("</KBD> to insert the left parenthesis
+<LI>Press <KBD>"CTRL-e"</KBD> (or <KBD>"END"</KBD>)to move the cursor to the line-end
+<LI>Press <KBD>")"</KBD> to add the right parenthesis
+<LI>Press <KBD>"CTRL-RETURN"</KBD> to move to the beginning of the next line without inserting a line break
+<LI>Finally, press <KBD>"CTRL-F2"</KBD> to stop "learning"
+</OL>
+It is very useful to have the cursor positioned correctly for the next repetion
+at the end of the recording (i.e. right before the character, where the macro is to be executed the
+next time). If this is the case, you will not have to move the cursor manually for the next execution
+(in the example above, step #7 does this).
+<BR>
+Now, press <KBD>ALT-F2</KBD> for every line that has to be processed by your macro.
+You can also skip lines, and apply the macro at some other place in the text, by moving the cursor
+in between macro executions.
+You can also perform any other operation (such as loading another file in the file browser) in between
+macro executions. The macro will be remembered until the view is either closed,
+or another macro is learned.
+They are meant to be used to speed up one-time operations. If there is a function which
+is used often, we recommend to define it in your "<CODE>keyboard.rc</CODE>" file,
+and place it onto a function-Key.
+
+<BR>
+Macros are not shared between text views.
+
+  </BODY>
+</HTML>

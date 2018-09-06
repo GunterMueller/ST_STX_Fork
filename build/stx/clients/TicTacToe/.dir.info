@@ -1,0 +1,30 @@
+TicTacToe here is provided as an example to learn something;
+(not that I think its too exciting of a game ;-)
+
+For didactic reasons, there are two versions:
+
+	TicTacToe	= an old, all-in-one version
+
+	TicTacToeView
+	TicTacToeGame
+	TicTacToePlayer = a better structured version, which
+			  offers more flexibility
+			  (dual display, multiuser version)
+
+The first version is an all-in-one-class version; the second
+has separated responsibilities for displaying, managing the game and playing
+into three classes.
+
+For the beginner, the second version may be less easy to understand, 
+since the connection between model and view are less obvious 
+(most is done via change-messages).
+
+Especially for multi-display applications, this example provides a cute 
+starting point (someone willing to rewrite xconq in st/x ?).
+
+To start:
+
+    TicTacToe	open		(old version)
+
+    TicTacToeGame open		(new version)
+    TicTacToeGame open2UserGame

@@ -1,0 +1,17 @@
+# $Header: /cvs/stx/stx/doc/coding/Make.proto,v 1.10 1999-12-23 17:03:07 cg Exp $
+#
+
+#--------- no need to modify anything below -------
+
+TOP=../..
+MODULE=stx
+MODULE_DIR=doc/coding
+PACKAGE=$(MODULE):$(MODULE_DIR)
+SUPPRESS_INSTALL_RESOURCES="yes"
+
+#ALLSUBDIRS=libfoo_example libfoo2_example
+ALLSUBDIRS=cCallBack cModules
+INSTALL_SUBDIRS=
+
+STCLOCALOPT='-package=demos-(stx:doc/coding)' -H. -varPrefix=$(LIBNAME) $(STUBFLAGS)
+RCSSOURCES=Make.proto *.st resources/*.rs

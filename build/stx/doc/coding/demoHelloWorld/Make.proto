@@ -1,0 +1,232 @@
+# $Header: /cvs/stx/stx/doc/coding/demoHelloWorld/Make.proto,v 1.1 2016-10-11 00:09:00 cg Exp $
+#
+# automagically generated from the projectDefinition: stx_doc_coding_demoHelloWorld.
+#
+# -------------- no need to change anything below ----------
+#
+# This makefile generates some standalone demo applications
+#
+#    make
+#       generates hello
+#
+
+TOP=../../..
+INCLUDE_TOP=$(TOP)/..
+
+# set to a dummy file name (like FORCE=@@@FORCE-BUILD@@@) to force the build of prereq packages
+FORCE=
+.PHONY: $(FORCE)
+
+PACKAGE=stx:doc/coding/demoHelloWorld
+SUBDIRS=
+SUPPRESS_LOCAL_ABBREVS="yes"
+NOAUTOLOAD=1
+NOSUBAUTOLOAD=1
+
+LOCALINCLUDES= -I$(INCLUDE_TOP)/stx/libbasic
+LOCALDEFINES=
+GLOBALDEFINES=
+MAIN_DEFINES=-DIGNORE_IMAGE -DNO_DISPLAY
+
+RCSSOURCES=Make.proto *.st
+LINKSOURCES=Make.proto *.st
+
+DELIVERBINARIES=
+
+APPNAME=libstx_doc_coding_demoHelloWorld
+LIBNAME=libstx_doc_coding_demoHelloWorld
+STCLOCALOPT='-package=$(PACKAGE)' -I. -headerDir=. $(LOCALINCLUDES) $(STCLOCALOPTIMIZATIONS) $(STCWARNINGS) $(LOCALDEFINES) -headerDir=.  -varPrefix=$(LIBNAME)
+
+
+# ********** OPTIONAL: MODIFY the next line ***
+# additional C-libraries that should be pre-linked with the class-objects
+LD_OBJ_LIBS=
+LOCAL_SHARED_LIBS=
+
+
+# ********** OPTIONAL: MODIFY the next line ***
+# additional C targets or libraries should be added below
+LOCAL_EXTRA_TARGETS=
+
+OBJS= $(COMMON_OBJS) $(UNIX_OBJS)
+
+
+
+
+
+LIBLIST = $(REQUIRED_LIBS)
+
+# required libs:
+#
+
+REQUIRED_LIBS= libstx_libbasic \
+ libstx_libcomp \
+
+
+REQUIRED_LIBOBJS= ../../../libbasic/libstx_libbasic$(O_EXT) \
+ ../../../libcomp/libstx_libcomp$(O_EXT) \
+
+
+REQUIRED_LINK_LIBOBJS= libstx_libbasic$(O_EXT) \
+ libstx_libcomp$(O_EXT) \
+
+
+REQUIRED_SUPPORT_DIRS=RESOURCEFILES
+
+SUBPROJECT_LIBS=
+
+
+target: ALL
+
+all::   prereq ALL_NP
+
+# like ALL, but not prereqs
+ALL_NP:: exe $(SUBPROJECT_LIBS) $(REQUIRED_SUPPORT_DIRS) $(SETUP_RULE)
+
+exe:    hello registerApplication
+
+hello: $(APP_DIRS_TO_MAKE) $(APP_LIBOBJS) $(REQUIRED_LIBOBJS) $(OBJS)
+	$(MAKE) link_hello
+
+
+link_hello:
+	$(MAKE) NON_GUI_APPLICATION \
+		    TARGET=hello \
+		    APPLICATION_CLASSES="$(COMMON_CLASSES) $(UNIX_CLASSES)" \
+		    APPLICATION_OBJS="$(OBJS)" \
+		    APPLICATION_LIBLIST="$(REQUIRED_LIBS)" \
+		    APPLICATION_LIBOBJS="$(REQUIRED_LIBOBJS)" \
+		    APPLICATION_LINK_LIBOBJS="$(REQUIRED_LINK_LIBOBJS)" \
+		    STARTUP_CLASS="HelloWorld" \
+		    STARTUP_SELECTOR="start" \
+		    MAIN_DEFINES="-DIGNORE_IMAGE -DNO_DISPLAY"
+
+# build all mandatory prerequisite packages (containing superclasses) for this package
+prereq:
+	$(MAKE) FORCE=@@@FORCE-BUILD@@@ $(REQUIRED_LIBOBJS)
+
+#
+# a self installable delivery
+#
+
+#
+# for linux, this uses autopackage
+# (SETUP_RULE is set to setup_linux)
+setup_linux:
+	@if test -d autopackage; then \
+	    makepackage; \
+	else \
+	    echo "Error: missing autopackage directory"; \
+	    exit 1; \
+	fi
+        
+# backward compatible fallback
+setup::
+	@if test -d autopackage; then \
+	    makepackage; \
+	else \
+	    echo "Error: make setup not yet available in this unix"; \
+	    exit 1; \
+	fi
+
+
+#
+# for mac, a pkg is generated
+# (SETUP_RULE is set to setup_macosx)
+#
+setup_macosx:   "Hello_World_in_Smalltalk_X_pkg"
+	-rm "Hello_World_in_Smalltalk_X.pkg"
+	pkgbuild --identifier "stx.doc.coding.demoHelloWorld" --version "7.1.0.0" --root Hello_World_in_Smalltalk_X_pkg "Hello_World_in_Smalltalk_X.pkg"
+
+app: "Hello_World_in_Smalltalk_X_pkg"
+
+"Hello_World_in_Smalltalk_X_pkg": $(SUBPROJECT_LIBS) $(REQUIRED_SUPPORT_DIRS) 
+	-rm -rf "Hello_World_in_Smalltalk_X_pkg"
+	-mkdir "Hello_World_in_Smalltalk_X_pkg"
+	-mkdir "Hello_World_in_Smalltalk_X_pkg/opt"
+	-mkdir "Hello_World_in_Smalltalk_X_pkg/opt/local"
+	-mkdir "Hello_World_in_Smalltalk_X_pkg/opt/local/bin"
+	cp "hello" "Hello_World_in_Smalltalk_X_pkg/opt/local/bin/"
+
+
+
+SOURCEFILES: hello_SOURCES \
+	stx_SOURCES
+
+
+
+
+RESOURCEFILES: hello_RESOURCES hello_BITMAPS  \
+	stx_RESOURCES stx_STYLES stx_BITMAPS
+
+
+hello_RESOURCES: 
+	mkdir -p resources/stx/doc/coding/demoHelloWorld
+	-cp ../resources/*.rs ../resources/*.style resources/stx/doc/coding/demoHelloWorld/..
+
+hello_BITMAPS: 
+	mkdir -p resources/stx/doc/coding/demoHelloWorld/bitmaps
+	-cp *.ico *.gif *.png resources/stx/doc/coding/demoHelloWorld/bitmaps
+
+
+stx_RESOURCES: \
+	libbasic_RESOURCES
+
+stx_STYLES: 
+
+stx_BITMAPS:
+
+libbasic_RESOURCES: 
+	mkdir -p resources/stx/libbasic
+	-cp $(TOP)/libbasic/resources/*.* resources/stx/libbasic
+
+
+libstx_libbasic.so: ../../../libbasic/libstx_libbasic.so
+	ln -sf ../../../libbasic/libstx_libbasic.so .
+
+../../../libbasic/libstx_libbasic.so: ../../../libbasic/makefile $(FORCE)
+	@if [ -f "../../../libbasic/.NOSOURCE" ]; then \
+	    echo "skip make in ../../../libbasic (no source)"; \
+	else \
+	    cd ../../../libbasic && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "; \
+	fi
+
+../../../libbasic/makefile: ../../../libbasic/Make.proto
+	$(TOP)/rules/stmkmf --cd ../../../libbasic
+
+libstx_libcomp.so: ../../../libcomp/libstx_libcomp.so
+	ln -sf ../../../libcomp/libstx_libcomp.so .
+
+../../../libcomp/libstx_libcomp.so: ../../../libcomp/makefile $(FORCE)
+	@if [ -f "../../../libcomp/.NOSOURCE" ]; then \
+	    echo "skip make in ../../../libcomp (no source)"; \
+	else \
+	    cd ../../../libcomp && $(MAKE) "CFLAGS_LOCAL=$(GLOBALDEFINES) "; \
+	fi
+
+../../../libcomp/makefile: ../../../libcomp/Make.proto
+	$(TOP)/rules/stmkmf --cd ../../../libcomp
+
+
+
+
+
+
+
+
+
+
+
+
+
+clean::
+	-rm -f *.so hello.$(O)
+
+clobber:: clean
+	-rm -f hello *.img *.sav
+
+# BEGINMAKEDEPEND --- do not remove this line; make depend needs it
+$(OUTDIR)HelloWorld.$(O) HelloWorld.$(C) HelloWorld.$(H): HelloWorld.st $(INCLUDE_TOP)/stx/libbasic/Object.$(H) $(INCLUDE_TOP)/stx/libbasic/StandaloneStartup.$(H) $(INCLUDE_TOP)/stx/libbasic/StandaloneStartupHeadless.$(H) $(STCHDR)
+$(OUTDIR)stx_doc_coding_demoHelloWorld.$(O) stx_doc_coding_demoHelloWorld.$(C) stx_doc_coding_demoHelloWorld.$(H): stx_doc_coding_demoHelloWorld.st $(INCLUDE_TOP)/stx/libbasic/ApplicationDefinition.$(H) $(INCLUDE_TOP)/stx/libbasic/Object.$(H) $(INCLUDE_TOP)/stx/libbasic/ProjectDefinition.$(H) $(STCHDR)
+
+# ENDMAKEDEPEND --- do not remove this line

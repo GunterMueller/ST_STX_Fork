@@ -1,0 +1,37 @@
+# $Header: /cvs/stx/stx/clients/Tetris/Make.proto,v 1.10 1999-12-01 15:29:45 cg Exp $
+#
+# -------------- no need to change anything below ----------
+
+TOP=../..
+MODULE=stx
+MODULE_DIR=clients/Tetris
+PACKAGE=$(MODULE):$(MODULE_DIR)
+SUBDIRS=
+RCSSOURCES=*.st Make.proto bitmaps/*.xbm
+
+STCOPT=$(CLIENT_STCOPT)
+# OPT=-DSTATISTIC
+# DBG=-DDEBUG
+
+LIBNAME=tetris
+
+STARTUP_CLASS=Tetris
+STARTUP_SELECTOR="start"
+
+PROGS      = Tetris
+
+all::       $(PROGS)
+
+Tetris:     main.o obj autoClassInit $(EXTRALIBS)
+	    $(LD) -s $(ST_LDFLAG) $(LDFLAGS) -o tetris \
+		  $(CRT0) main.o classList.o \
+		  tetris$(OBJNAME) \
+		  $(LIBBASICOBJ) $(LIBVIEWOBJ) $(LIBWIDGOBJ) $(LIBCOMPOBJ) \
+		  $(LIBRUNDIR)/hidata.o $(LIBRUN) \
+		  $(MATHLIB) $(EXTRALIBS) $(SYSLIBS) $(CRTN)
+	    @-rm -f main.o
+
+OBJS = Tetris.o
+
+# BEGINMAKEDEPEND
+# ENDMAKEDEPEND

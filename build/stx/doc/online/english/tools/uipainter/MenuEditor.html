@@ -1,0 +1,966 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+   <META NAME="Author" CONTENT="Thomas Zwick, eXept software AG, Germany">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.04 [en] (X11; I; Linux 2.0.30 i586) [Netscape]">
+   <TITLE>Using the Menu Editor</TITLE>
+</HEAD>
+<BODY>
+<A HREF="TOP.html" NOPRINT><IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="Using the GUI Painter" NOSAVE HEIGHT=30 WIDTH=30></A><A HREF="../TOP.html" NOPRINT><IMG SRC="../../../icons/DocsUpArrow.gif" ALT="Programming Tools" NOSAVE HEIGHT=30 WIDTH=30></A><A HREF="ImageEditor.html" NOPRINT><IMG SRC="../../../icons/DocsRightArrow.gif" ALT="Using the Image Editor" NOSAVE HEIGHT=30 WIDTH=30></A>
+<BR>&nbsp;
+<HR ALIGN=LEFT WIDTH="100%">
+<H1>
+<FONT SIZE=+4>Using the Menu Editor</FONT></H1>
+
+<H2>Index</H2>
+
+<UL>
+<LI>
+<A HREF="#INTRO">Introduction</A></LI>
+
+<LI>
+<A HREF="#START">Starting the Menu Editor</A></LI>
+
+<LI>
+<A HREF="#MENUSTRUCTURE">Menu Structure</A></LI>
+
+<LI>
+<A HREF="#TOOLBAR">Functions of the Menu Editor</A></LI>
+
+<LI>
+<A HREF="#SPEC">Description of the Menu</A></LI>
+
+<LI>
+<A HREF="#RECENT">Recent Changes</A></LI>
+</UL>
+&nbsp;
+
+<HR ALIGN=LEFT WIDTH="100%">
+
+<H2><A NAME="INTRO"></A>Introduction</H2>
+The <I>ST/X</I> Menu Editor allows you to build hierarchical menu structures for:
+<UL>
+<LI>
+Window Applications (menu bars)</LI>
+
+<LI>
+Widgets (popup menus)</LI>
+
+<LI>
+Tool Bars</LI>
+</UL>
+For each of them, components are defined in the Menu Editor using the same mechanism and operations.
+
+<P>The Menu Editor generates a resource method which contains and returns
+the menu specification.
+This method is typically created
+in the <I>menu specs</I>-category of the class protocol.
+It returns a symbolic representation (literal array) of the menu components and their behavior.
+The menu resource methods are invoked by the <TT>UIBuilder</TT>
+when the application's window is created for those widgets which define a menu aspect.
+<P>
+Of course, menu-specifications can also be converted to a real menu programmatically;
+by sending the <CODE>#decodeAsLiteralArray</CODE>-message to the spec (as returned by a spec method),
+a corresponding menu object is retrieved.
+
+
+<H2><A NAME="START"></A>Starting the Menu Editor</H2>
+There are multiple ways to start a Menu Editor:
+<UL>
+<LI>
+by clicking on the
+<IMG SRC="../../../pictures/MenuEditorButton.gif" ALT="The Start Button of the Menu Editor" HSPACE=4 NOSAVE ALIGN=TOP>-button,
+or by selecting the "<I>Tools</I>"-"<I>Menu Editor</I> item of the launcher's menu.
+</LI>
+<P>
+
+<LI>
+by pressing the <I>Menu</I>-button in the <I>Basics</I>-section in the
+<A HREF="TOP.html">GUI Builder</A>.
+This functionality is available for the main-window (to define the application's pull-down window)
+and for all those widgets which provide support for a popup menu (textViews, for example).
+</LI>
+<P>
+
+<LI>
+in a <A HREF="../sbrowser/TOP.html">System Browser</A>, by double-clicking
+on a resource method which contains a menu specification.
+These methods are marked with a
+<IMG SRC="../../../pictures/MenuIcon.gif" ALT="An icon representing a menu resource method" NOSAVE HEIGHT=11 WIDTH=13>&nbsp;icon.
+</LI>
+<P>
+
+<LI>
+by evaluating one of the following Smalltalk expressions:
+<BR>
+
+<BR>&nbsp;&nbsp;
+<TT>MenuEditor open</TT>
+<BR>&nbsp;&nbsp;
+<TT>MenuEditor openOnClass:</TT><I>anApplicationClass</I> <TT>andSelector:</TT><I>aMenuSelector</I>
+</LI>
+
+</UL>
+&nbsp;After startup, a Menu Editor appears as shown in next figure:
+
+<P><IMG SRC="../../../pictures/MenuEditor.gif" ALT="A View of a Menu Editor" NOSAVE HEIGHT=430 WIDTH=590>
+<BR>&nbsp;
+
+
+<H2><A NAME="MENUSTRUCTURE"></A>Menu Structure</H2>
+
+Menus consist of a hierarchical collection of MenuItems,
+which can be regular menu items, separators and submenus.
+<BR>
+Submenus can be either defined directly inside a menu definition,
+or indirectly, by referring to another menu specification (so called linked-menus).
+<BR>
+The attributes of these menu components are described in more detail below.
+
+
+<H2><A NAME="TOOLBAR"></A>Functions of the Menu Editor</H2>
+The Menu Editor offers all functions for loading, saving, and modifying
+menu specifications. The basic functions can be accessed both by the menu
+and the tool bar. The basic functions are as follows:
+<BR>&nbsp;
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFFFFF" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP BGCOLOR="#FFCC00" NOSAVE>
+<TD NOSAVE><B><FONT SIZE=+1>Menu</FONT></B></TD>
+<TD><B><FONT SIZE=+1>Button</FONT></B></TD>
+<TD><B><FONT SIZE=+1>Description</FONT></B></TD>
+</TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>File/Load</I></TD>
+<TD><IMG SRC="../../../pictures/LoadButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+<TD>Opens a dialog to load a menu spec from a class.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>File/Save</I></TD>
+<TD><IMG SRC="../../../pictures/SaveButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+<TD>Saves the current menu spec <BR>and (if modified) also saves the help spec.&nbsp;</TD>
+</TR>
+
+<TR NOSAVE>
+<TD COLSPAN="3" NOSAVE></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Edit/Cut</I></TD>
+<TD><IMG SRC="../../../pictures/CutButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+<TD>Cuts the selected item(s) and places it/them into clipboard.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Edit/Copy</I></TD>
+<TD><IMG SRC="../../../pictures/CopyButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+<TD NOSAVE>Copies the selected item(s) to the clipboard.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Edit/Paste</I></TD>
+<TD><IMG SRC="../../../pictures/PasteButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+<TD>Pastes the contents of the clipboard.</TD>
+</TR>
+
+
+<TR NOSAVE>
+<TD COLSPAN="3" NOSAVE></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Edit/Move Up</I></TD>
+<TD><IMG SRC="../../../pictures/MoveUpButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+<TD>Moves the selected item one step up<BR>(towards the top of the menu).&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Edit/Move Down</I></TD>
+<TD><IMG SRC="../../../pictures/MoveDownButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+<TD>Moves the selected item one step down<BR>(towards the end of the menu).&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Edit/Move Into Next</I></TD>
+<TD><IMG SRC="../../../pictures/MoveDownRightButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+<TD>Moves the selected item into the next item
+<BR>(which must be a submenu).&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Edit/Move Into Previous</I></TD>
+<TD><IMG SRC="../../../pictures/MoveUpRightButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+<TD>Moves the selected item into the previous item
+<BR>(which must be a submenu).&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Edit/Move Out</I></TD>
+<TD><IMG SRC="../../../pictures/MoveLeftDownButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+<TD>Moves the selected item out of its submenu
+<BR>(i.e. into the parent menu).&nbsp;</TD>
+</TR>
+
+
+<TR NOSAVE>
+<TD COLSPAN="3" NOSAVE></TD>
+</TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Add/<A HREF="#SEPARATOR">Separator</A></I></TD>
+<TD><IMG SRC="../../../pictures/MenuEditorAddSeparatorButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+<TD>Adds a new menu separator.&nbsp;</TD>
+</TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Add/<A HREF="#MENUITEM">Menu Item</A></I></TD>
+<TD><IMG SRC="../../../pictures/MenuEditorAddMenuItemButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+<TD>Adds a new regular menu item.
+<BR>The items action will be performed when the
+<BR>item is activated
+<BR>(can be defined to activate on press or release).&nbsp;</TD>
+</TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Add/<A HREF="#SLICE">Slice</A></I></TD>
+<TD><IMG SRC="../../../pictures/MenuEditorAddSliceButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+<TD>Adds a menu slice.
+<BR>A slice is a partial menu and embedded (sliced-into) the menu.
+<BR>(In contrast to submenus, slices are embedded right into the current menu
+instead of popping up a submenu).&nbsp;</TD>
+</TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Add/<A HREF="#SUBMENU">Submenu</A></I></TD>
+<TD><IMG SRC="../../../pictures/MenuEditorAddSubmenuButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+<TD>Adds a new submenu.
+<BR>The submenus definition will be embedded
+<BR>in the edited menu spec.&nbsp;</TD>
+</TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Add/<A HREF="#LINKED_SUBMENU">Linked Submenu</A></I></TD>
+<TD><IMG SRC="../../../pictures/MenuEditorAddLinkedSubmenuButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+<TD>Adds a new linked submenu.
+<BR>The submenus definition will be requested dynamically
+<BR>from the application, by sending a
+<BR>configured message.&nbsp;</TD>
+</TR>
+
+
+<TR NOSAVE>
+<TD COLSPAN="3" NOSAVE></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Add/<A HREF="#DELAYED_SUBMENU">Delayed Submenu</A></I></TD>
+<TD><IMG SRC="../../../pictures/MenuEditorAddDelayedMenuButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+<TD>Adds a delayed submenu under the current selected item.
+<BR>Delayed menus have both an action and a submenu.
+<BR>If pressed only for a short time, the action
+<BR>will be preformed. If the mouse button is held
+<BR>down for a longer time, a menu will appear.&nbsp;</TD>
+</TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Add/<A HREF="#DELAYED_LINKED_SUBMENU">Delayed Linked Submenu</A></I></TD>
+<TD><IMG SRC="../../../pictures/MenuEditorAddDelayedLinkedMenuButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+<TD>Adds a delayed linked submenu under the current selected item.
+<BR>This is typically used for "back-in-history" type of menus.&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<BR>&nbsp;
+<BR>Further, there are functions from the menu:
+<BR>&nbsp;
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFFFFF" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1><I>File</I> Menu</FONT></B></TD>
+<TD BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1>Description</FONT></B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>File/New</I></TD>
+<TD>Creates a new empty menu spec.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>File/Load</I></TD>
+<TD>Opens a dialog to load a menu spec from a class.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>File/Save As</I></TD>
+<TD>Opens a dialog to save
+<BR>the current menu spec.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>File/Pick A Menu...</I></TD>
+<TD>Lets the user pick a menus definition from an existing menu
+<BR>as present on the screen.
+<BR>Changes the cursor to a cross-hair-cursor to indicate that
+<BR>the user should click on a menu.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>File/Show Menu Spec</I></TD>
+<TD>Displays the current menu spec in a textView
+<BR>(for debugging purposes).</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>File/Browse Class</I></TD>
+<TD>Opens a System Browser on the class which contains
+<BR>the edited menu spec.</TD>
+</TR>
+
+<TR>
+<TD><I>File/Exit</I></TD>
+<TD>Exits the Menu Editor.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+
+
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFFFFF" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1><I>Test</I> Menu</FONT></B></TD>
+<TD BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1>Description</FONT></B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD ALIGN=LEFT VALIGN=TOP NOSAVE><I>Test/...</I></TD>
+<TD NOSAVE>Shows a menu preview of the current menu spec.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFFFFF" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1><I>History</I> Menu</FONT></B></TD>
+<TD BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1>Description</FONT></B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>History/...</I></TD>
+<TD>Switch to a previously edited menu spec.&nbsp;</TD>
+</TR>
+
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+
+
+<BR>The editing of properties of the menu components is described in the
+next chapter.
+<BR>&nbsp;
+
+
+<H2><A NAME="SPEC"></A>Description of the Menu</H2>
+
+<P>After creating or loading of a menu specification the menu and its components
+are displayed in the tree view on the left side of the Menu Editor. The
+root item of the tree represents the menu itself. This single item is always
+shown, even if no menu is loaded. The only purpose of this item is to hold
+the menu spec selector. This selector must also be defined as the menu
+selector of the corresponding component in the GUI Painter.
+<BR>If the item is selected, the user is able to configure the selector
+of the menu under which the generated menu spec is saved.
+<BR>
+<BR>
+&nbsp;The basic menu components from which a menu can be constructed are:
+
+<UL>
+<LI>
+<B><FONT SIZE=+1><A NAME="MENUITEM">Menu Item with an action:</A></FONT></B></LI>
+
+<P>The main attribute of a this item is its action selector; this specifies
+the name of a method (in your application) which is invoked when the item
+is selected.
+
+<BR>&nbsp;
+<BR>Basic Properties:
+<BR>&nbsp;
+<TABLE BORDER WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Name Key</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE>Unique identifier of the item (optional).&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Label</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE>Label of the item.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Action</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE>The name (i.e. selector) of the method which
+is invoked when the item is selected.&nbsp;
+<BR>Typically, the selector specifies a zero-argument method name.&nbsp;
+<BR>However, if the selector is for a one-argument method, the argument
+passed is:&nbsp;
+<BR>- the 'argument' fields value (see below) if not empty&nbsp;
+<BR>- otherwise, the boolean toggle state, if the item has an indication.&nbsp;
+<BR>- otherwise, the menu item itself.&nbsp;</TD>
+<BR>If the selector is for a two-argument message, the views controller
+<BR>is passed as second argument, if the view has a controller;
+<BR>otherwise, the view itself is passed.
+<BR>2-arg selectors are supported for VisualWorks compatibility, and normally not used in ST/X.
+</TR>
+
+<TR NOSAVE>
+<TD><B>Argument</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE>An argument passed to above selector, if the selector
+is for a 1-arg message.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Indication</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE>If defined, the menu item is displayed as
+a check toggle.&nbsp;
+<BR>Typically, the name of a method (in your application) is specified
+here, which returns a <TT>Boolean</TT> instance or a boolean <TT>ValueHolder</TT>.&nbsp;
+<BR>However, it is also possible to place a boolean <TT>ValueHolder</TT>
+or a <TT>Block</TT> which returns a <TT>Boolean</TT> instance into the
+applications aspect bindings directory (instead of defining a method).&nbsp;
+<P>
+Choice and Indication are mutually exclusive.
+</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Choice</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE>If defined, the menu item is displayed as
+a radio button.&nbsp;
+<BR>Typically, the name of a method (in your application) is specified
+here, which returns a <TT>ValueHolder</TT>.&nbsp;
+<P>
+Choice and Indication are mutually exclusive.
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Value</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE>Defines the choice-value, if the item was
+defined as a choice item (i.e. the choice field is non-empty).
+
+<BR>This is the value which is placed into the choice value holder, whenever
+the item is selected.
+</TR>
+
+</TABLE>
+<TABLE BORDER WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Translate Label</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE>Turns on/off translation behavior of the label
+via the application classes resource file (i.e. national strings).&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Is Button</B></TD>
+
+<TD ALIGN=LEFT VALIGN=TOP BGCOLOR="#FFFFFF" NOSAVE>If on, the item is displayed
+as a button; if off, it is displayed as a normal menu item. Setting this
+flag for all items results in a menu which looks like a button panel (as
+in the launcher).&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Trigger On Down</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE>The item's action is performed on mouse button pressed;
+<BR>the default is on button release.
+</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Hide after Activation</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE>If on, the menu hides itself (i.e. closes) when
+the item is activated.
+<BR>
+If off, it remains open.
+<BR>
+Turing it off only makes sense with checkBox and radioButton items;
+<BR>
+(i.e. with non-empty indication or choice aspects)</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>BusyCursor while active</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE>If on, a wait-cursor is shown in the
+<BR>
+application while the items action is performing.
+</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Send to Originating Widget</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE>If on, the action-message is sent to the originating widget; if off (the default),
+it is sent to the application.
+<BR>This is useful if an application sets an explicit menu for a TextEditor or InputField widget, and wants
+the widget to deal with (some of) its own text editing functions; for example, the copy/cut/paste messages
+are usually better handled directly by the widget instead of routing them through the application.
+</TD>
+</TR>
+
+
+</TABLE>
+&nbsp;
+<UL><B>&nbsp;</B></UL>
+Detailed Properties:
+<BR>&nbsp;
+<TABLE BORDER WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Accelerator</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE>Shortkey to select the menu item from the
+keyboard.&nbsp;
+<BR>Typically something like <I>Cmdx</I> or <I>Ctrlx</I> is defined here.
+</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Enabled</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE>A boolean <TT>ValueHolder</TT> to enable/disable
+the menu item.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Visibility</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE>A boolean <TT>ValueHolder</TT> which controls
+the visibility of the menu item.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Aux Value</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE>An arbitrary value, which is stored in the item,
+<BR>and can be used to mark labels or pass additional information.
+<BR>Can only be extracted programatically
+<BR>(i.e. by scanning the menus items)</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Start Group</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE>Indicates whether this item starts a new item
+group. Currently, the only supported group attribute is <I>right</I>, which
+places this item group towards the right border of the menu.&nbsp;
+<BR>Additional group properties are planned in the future.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Access Character Position</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE>Index of the access character position of
+the textual label (optional).&nbsp;
+<BR>This character will be underlined.&nbsp;
+<BR>WARNING:
+<BR>If labels are translated (to national variants), the usefulness of
+this field is very limited.&nbsp;
+<BR>Therefore, we recommend leaving this field blank,
+<BR>and using an ampersand character in the items label instead.</TD>
+<BR>This attribute is provided for VW-compatibility.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Font</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE>Set a specific font to the item. On default
+the font derives from the style sheet.
+.&nbsp;</TD>
+</TR>
+
+</TABLE>
+&nbsp;
+<UL>&nbsp;</UL>
+Image Properties:
+<BR>&nbsp;
+<TABLE BORDER WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Retriever</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE>Typically, the class implementing the image
+resource method.&nbsp;
+<BR>If no class is given,&nbsp; the current application class will be asked
+for the image.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Selector</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE>Selector of the method returning the image.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Image &amp; Label</B>&nbsp;</TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE>Turns on/off displaying both image and textual
+label.&nbsp;</TD>
+</TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Image Editor</B>&nbsp;</TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE>Opens an Image Editor on the current Image.&nbsp;</TD>
+</TR>
+
+</TABLE>
+&nbsp;
+<UL>&nbsp;</UL>
+Help Properties:
+
+<P>assigne a specific help text found under a key to the item.
+<BR>For more information see document:"<A HREF="HelpTool.html">Using the Help Tool</A>"
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<LI>
+<B><FONT SIZE=+1><A NAME="SEPARATOR">Separator:</A></FONT></B></LI>
+
+<P>Separators are used to structure a menu into group.
+
+<P>Basic Properties:
+<BR>&nbsp;
+<TABLE BORDER WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Separator</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE>List of valid separators. There are currently
+3 types of separators available:
+<BR>blanks, single lines and double lines.</TD>
+</TR>
+
+<TR NOSAVE>
+<TD NOSAVE><B>Visibility</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE>A boolean <TT>ValueHolder</TT> which controls
+the visibility of the separator.&nbsp;</TD>
+</TR>
+
+<TR NOSAVE>
+<TD NOSAVE><B>Start Group</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE>Specify start of right-aligned item group.
+<BR>-> see Menu Item.&nbsp;</TD>
+</TR>
+
+</TABLE>
+&nbsp;
+<UL>&nbsp;</UL>
+&nbsp;
+
+<LI>
+<B><FONT SIZE=+1><A NAME="SUBMENU">Submenu:</A></FONT></B></LI>
+
+<P>Submenus are fixed containers holding other menu items.
+
+<P>Basic Properties:
+<BR>&nbsp;
+<TABLE BORDER WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Name Key</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE>Unique identifier of the submenu (optional).
+<BR>-> see Menu Item.&nbsp;</TD>
+</TR>
+
+<TR NOSAVE>
+<TD NOSAVE><B>Label</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE>Label of the submenu.
+<BR>-> see Menu Item.&nbsp;</TD>
+</TR>
+
+</TABLE>
+<TABLE BORDER WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR NOSAVE>
+<TD><B>Translate Label</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE>Turns on/off translation behavior of the label.
+<BR>-> see Menu Item.&nbsp;</TD>
+</TR>
+
+<TR NOSAVE>
+<TD><B>Is Button</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE>Turns on/off displaying as a button.
+<BR>-> see Menu Item.&nbsp;</TD>
+</TR>
+
+
+<TR NOSAVE>
+<TD><B>Has Horizontal Layout</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE>If on, the submenu organizes its items horizontal
+<BR>insteat of vertical (the default).
+</TR>
+
+</TABLE>
+&nbsp;
+<UL>&nbsp;</UL>
+Detailed Properties:
+<BR>&nbsp;
+<UL>-> see menu item
+<BR>&nbsp;</UL>
+Image Properties:
+<BR>&nbsp;
+<UL>-> see menu item
+<BR>&nbsp;</UL>
+Help Properties:
+<BR>&nbsp;
+<UL>-> see menu item</UL>
+</UL>
+
+<UL>&nbsp;
+<LI>
+<B><FONT SIZE=+1><A NAME="LINKED_SUBMENU">Linked Submenu:</A></FONT></B></LI>
+
+
+<P>To avoid very large menu specifications, linked submenus can be used
+to embed submenus provided by other menu resource methods or value holders.
+Using linked submenus, it is possible to build a menu by assembling a base
+menu frame with reusable submenu building blocks.
+
+<P>Basic Properties:
+<BR>&nbsp;
+<TABLE BORDER WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Name Key</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE>Unique identifier of the linked submenu (optional).
+<BR>-> see Menu Item.&nbsp;</TD>
+</TR>
+
+<TR NOSAVE>
+<TD NOSAVE><B>Label</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE>Label of the linked submenu.
+<BR>-> see Menu Item.&nbsp;</TD>
+</TR>
+
+
+<TR NOSAVE>
+<TD NOSAVE><B>Menu</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE>A selector or a <TT>ValueHolder</TT> instance
+providing the submenu to be
+<BR>opened if the item is selected.&nbsp;</TD>
+</TR>
+
+<TR NOSAVE>
+<TD><B>Argument</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE>An optional argument which is passed with
+the above menu selector&nbsp;
+<BR>(selector must be for a one-argument method).&nbsp;</TD>
+</TR>
+
+</TABLE>
+<TABLE BORDER WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+
+<TR NOSAVE>
+<TD><B>Translate Label</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE>Turns on/off translation behavior of the label.
+<BR>-> see Menu Item.&nbsp;</TD>
+</TR>
+
+<TR NOSAVE>
+<TD><B>Is Button</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE>Turns on/off displaying as a button.
+<BR>-> see Menu Item.&nbsp;</TD>
+</TR>
+
+
+<TR NOSAVE>
+<TD><B>Has Horizontal Layout</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE>If on, the submenu organizes its items horizontal
+<BR>insteat of vertical (the default).
+</TR>
+
+
+<TR NOSAVE>
+<TD><B>Do not destroy linked Menu</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE>
+If on, the submenu will only be acquired once from the application.
+<BR>When closed, the linked submenu will be remembered and reused,
+<BR>when the linked submenu is to be opened later.
+<BR>The default is to ask the application whenever the submenu is selected.
+<BR>Turning this on (i.e. remembering the menu) is useful, if the creation
+<BR>of the menu is time- or resource consuming.
+<BR>It should be turned off, of the submenus items are created dynamically
+(for example, a history menu).
+</TR>
+
+</TABLE>
+&nbsp;
+<UL>&nbsp;</UL>
+Detailed Properties:
+<BR>&nbsp;
+<UL>-> see menu item
+<BR>&nbsp;</UL>
+Image Properties:
+<BR>&nbsp;
+<UL>-> see menu item
+<BR>&nbsp;</UL>
+Help Properties:
+<BR>&nbsp;
+<UL>-> see menu item</UL>
+</UL>
+
+
+
+
+
+<UL>&nbsp;
+<LI>
+<B><FONT SIZE=+1><A NAME="DELAYED_SUBMENU">Delayed Submenu:</A></FONT></B></LI>
+
+<P>A submenu which is assigned to an item with an user defined action.
+If the item is selected by a mouse click, a timer is started. If the timer expires before
+the button is released, the action assigned to the item is performed. Otherwise
+the delayed submenu will be opened.
+
+<P>Basic Properties:
+<BR>&nbsp;
+<TABLE BORDER WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR NOSAVE>
+<TD><B>Has Horizontal Layout</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE>If on, the submenu organizes its items horizontal
+<BR>insteat of vertical (the default).
+</TR>
+
+</TABLE>
+&nbsp;
+</UL>
+
+
+
+<UL>&nbsp;
+<LI>
+<B><FONT SIZE=+1><A NAME="DELAYED_LINKED_SUBMENU">Delayed Linked Submenu:</A></FONT></B></LI>
+
+
+<P>A linked submenu which is assigned to an item with an user defined action.
+If the item is selected by a mouse click, a timer is started. If the timer expires before
+the button is released, the action assigned to the item is performed. Otherwise
+the delayed submenu will be opened.
+
+<P>Basic Properties:
+<BR>&nbsp;
+<TABLE BORDER WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR NOSAVE>
+<TD NOSAVE><B>Menu</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE>A selector or a <TT>ValueHolder</TT> instance
+providing the submenu to be
+<BR>opened if the item is selected.&nbsp;</TD>
+</TR>
+
+
+</TABLE>
+<TABLE BORDER WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR NOSAVE>
+<TD><B>Has Horizontal Layout</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE>If on, the submenu organizes its items horizontal
+<BR>insteat of vertical (the default).
+</TR>
+
+<TR NOSAVE>
+<TD><B>Do not destroy linked Menu</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE>If on, the submenu will not be destroyed after the first time
+<BR>get from the application.
+<BR>The default is to ask every time the item is selected the application
+<BR>for the submenu.
+</TR>
+
+</TABLE>
+&nbsp;
+</UL>
+
+
+<UL>&nbsp;
+<LI>
+<B><FONT SIZE=+1><A NAME="SLICE">Menu-Slice:</A></FONT></B></LI>
+
+
+<P>A menu slice is defined similar to a linked menu,
+by defining a retrieval path for another menu specification.
+However, in contrast to linked menus, the items of a menu slice
+are added to the current menu (sliced into) whereas a submenu
+defines a popUp-menu.
+<BR>
+Using menu-slices, it is possible to build a menu by assembling a
+menu from reusable building blocks and avoids duplication of code (menu-dfinitions).
+
+<P>Basic Properties:
+<BR>&nbsp;
+<TABLE BORDER WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Name Key</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE>Unique identifier of the slice (optional).
+<BR>-> see Menu Item.&nbsp;</TD>
+</TR>
+
+<TR NOSAVE>
+<TD NOSAVE><B>Menu</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE>A selector or a <TT>ValueHolder</TT> instance
+providing the slice containing items which are
+<BR>added to the menu at the slice-items position.&nbsp;</TD>
+</TR>
+
+<TR NOSAVE>
+<TD><B>Argument</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE>An optional argument which is passed with
+the above menu selector&nbsp;
+<BR>(selector must be for a one-argument method).&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+</UL>
+
+
+<H2><A NAME="RECENT"></A>Recent Changes</H2>
+
+<UL>
+<LI>5.2.3
+<BR>
+Added support for Menu-Slices.
+</LI>
+<P>
+<LI>rel4.1.5
+<BR>
+Added "send to originating widget" option.
+<BR>
+Added support for delayed menus (i.e. pull-down menu if pressed for a while).
+</LI>
+
+</UL>
+
+
+<HR>
+
+<P><IMG SRC="../../../icons/stx.gif" ALT="[stx-logo]" NOSAVE NOPRINT HEIGHT=48 WIDTH=47 ALIGN=CENTER>
+<BR><TT>Copyright &copy; 1998 eXept Software AG, all rights reserved</TT>
+<BR>
+<HR>
+</BODY>
+</HTML>

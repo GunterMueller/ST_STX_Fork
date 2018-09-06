@@ -1,0 +1,161 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - XML-RPC</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="goody_soap.html">     <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="goody_sixx.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>XML-RPC</H1>
+
+<H2>Overview</H2>
+
+XML-RPC is a very lightweight,
+XML based protocol for remote procedure calls in a distributed environment.
+<BR>
+Implementations are available for a wide range of programming languages
+and operating system configurations, which makes this protocol ideal for interprocess communication.
+
+
+<H2>Documentation</H2>
+Information on XML-RPC itself is found on <A HREF="http://www.xmlrpc.com/spec">"http://www.xmlrpc.com/spec"</A>.
+
+
+<h2>XML-RPC Client</h2>
+<p>To communicate with a remote XML-RPC service, first create a proxy object with:
+<CODE><PRE>
+    proxy := XMLRPC::XMLRPCProxy withUrl:<VAR>&lt;url&gt;</VAR>
+</PRE></CODE>
+where &lt;url&gt; is the services' http-url. Typically something like
+"http://bleu.west.spy.net/geo/RPC2" or "http://www.xmlrpc.com/RPC2".
+<P>
+Once created, a call is performed with:
+<CODE><PRE>
+    retVal := proxy invokeMethod:<VAR>&lt;nameOfMethod&gt;</VAR> withArgs:<VAR>&lt;arrayOfArgs&gt;</VAR>.
+</PRE></CODE>
+For calls without arguments you can also use "<CODE>invokeMethod:<VAR>&lt;nameOfMethod&gt;</VAR></CODE>".
+<P>
+XML-RPC only supports a limited set of supported datatypes both as argument and as return value.
+These are:
+<UL>
+<LI>Integers (in the 32bit range, -2147483648 .. 2147483647)
+<LI>Booleans (true, false)
+<LI>Floats (actually: C-doubles)
+<LI>Strings
+<LI>Arrays (of any of the supported types)
+<LI>Dictionaries (with string-keys and values being any of the supported types)
+</UL>
+If required, convert arguments or return values to an array or a dictionary.
+
+
+<h2>Concrete Example: JIRA XML-RPC Client</h2>
+
+As a concrete example, here is how to login to a local JIRA server and create an issue
+via XML.RPC:
+
+<CODE><PRE>
+    |jira issue sessionKey|
+
+    jira := XMLRPC::XMLRPCProxy withUrl:'http://localhost:8081/rpc/xmlrpc'.
+    sessionKey := jira invokeMethod:'jira1.login' with:<VAR>userName</VAR> with:<VAR>password</VAR>.
+
+    issue := Dictionary new
+		at:'project' put:'<VAR>projectKey</VAR>';
+		at:'type' put:1;
+		at:'summary' put:'Issue created via XMLRPC';
+		at:'assignee' put:'<VAR>responsibleUserName</VAR>';
+		at:'description' put:'Created with an ST/X client';
+		yourself.
+
+    jira invokeMethod:'jira1.createIssue' with:sessionKey with:issue.
+    jira invokeMethod:'jira1.logout' with:sessionKey.
+</PRE></CODE>
+
+
+<H2>XML-RPC Server</H2>
+
+To provide an XML-RPC service, an HTTPServer must first be configured and running;
+for example with:
+<CODE><PRE>
+    httpServer := HTTPServer serverOnPort:8080.
+</PRE></CODE>
+then, an XML-RPC service has to be instantiated for that server:
+<CODE><PRE>
+    xmlrpcService := XMLRPC::XMLRPCService new.
+    xmlrpcService linkName:'/xmlrpc'.
+    xmlrpcService registerServiceOn:httpServer.
+</PRE></CODE>
+To support the XML-RPC introspection interface
+(listMethods, methodHelp and methodSignature), use:
+<CODE><PRE>
+    xmlrpcService enableIntrospectionProtocol.
+</PRE></CODE>
+
+
+Finally, you must register the methods which can be called.
+For example, to arrange for
+the rpc-message "<CODE>demo.foo</CODE>" with a string argument to be attached to the
+"<CODE>DemoClass foo:</CODE>"-method,
+execute the following setup:
+<CODE><PRE>
+    xmlrpcService
+	registerMethod: 'demo.foo'
+	help:'Invoke the foo method of the Demo class'
+	signature:#('string' 'string')
+	receiver: DemoClass
+	selector: #foo:
+</PRE></CODE>
+Assuming, that the foo: methods code is:
+<CODE><PRE>
+    foo: params
+	|arg|
+
+	arg := params first.
+	^ arg asUppercase
+</PRE></CODE>
+
+Of course, a common strategy would be to subclass XMLRPCService,
+and perform the above registration in its <CODE>#initialize</CODE> method.
+
+
+<H3>Arguments to a called server method</H3>
+The params argument responds to the <CODE>at:</CODE> and <CODE>size</CODE> messages
+and can therefore used like an argument-vector. However, it also provides a reference to the
+original HTTP-request (via the <CODE>request</CODE> method).
+This information might be used for authentication or statistics.
+
+
+<H3>Using the Introspection Protocol to Query a Server's Interface</H3>
+
+If the introspection interface is enabled, a client can explore an ST/X XML-RPC service's
+interface as in:
+<CODE><PRE>
+    server := XMLRPC::XMLRPCProxy withUrl:'http://localhost:8081/rpc/xmlrpc'.
+    (server invokeMethod:'system.listMethods') do:[:eachMethodName |
+	Transcript showCR:eachMethodName.
+	Transcript showCR:((server invokeMethod:'system.methodHelp' with:eachMethodName).
+    ].
+</PRE></CODE>
+
+<H2>No Warranty</H2>
+This goody is provided AS-IS without any warranty whatsoever.
+
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 2010 eXept Software AG
+
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.5 $
+</BODY>
+</HTML>

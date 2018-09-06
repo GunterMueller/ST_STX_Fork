@@ -1,0 +1,94 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Help - HTTPServer - Authorization Settings</Title>
+</HEAD>
+
+<BODY>
+<A HREF="index.html">Back to HTTPServer Main Index</A>
+<P>
+
+<H2><A NAME="INDEX">Authorization Settings Help Index</A></H2>
+
+<UL>
+<LI><A HREF="#ALLOWED_METHODS">Allowed Authentication Methods</A>
+<LI><A HREF="#REALMS">Realms</A>
+<LI><A HREF="#USERS">Users</A>
+<LI><A HREF="#AUTHENTICATION">Authentication</A>
+<LI><A HREF="#STANALONE">Standalone WebServer</A>
+</UL>
+
+<HR>
+
+<H2><A NAME="ALLOWED_METHODS" HREF="#INDEX">Allowed Authentication Methods</A></H2>
+
+The ST/X-HTTPServer provides the following authorization methods:
+<UL>
+<LI>Basic
+<LI>Digest
+</UL>
+See rfc 2617 for details.
+<P>
+
+    Check the boxes for the authentication methods you want to allow.
+<BR>
+    Most of the web browsers support both BASIC and DIGEST authentication methods,
+    and when given a choice, should choose the more secure DIGEST scheme.
+<BR>
+    Please uncheck BASIC, if you want to ensure that the BASIC authentication method is not used.
+    It is highly unsecure, as passwords are transmitted unencrypted over the internet.
+    (i.e. man in the middle can listen and catch you password.)
+<BR>
+    Therefore, it is recommended, that this is disabled if any of your services is
+    security relevant
+<BR>
+    Actually, this should probably be an attribute of the service and/or
+    the realm, and may be changed in future versions.
+
+
+<H2><A NAME="REALMS" HREF="#INDEX">Realms</A></H2>
+
+    The realm defines the protection space (i.e. access group).
+    You can have multiple users in a realm.
+
+
+<H2><A NAME="USERS" HREF="#INDEX">Users</A></H2>
+
+    To add users to the selected realm (access group).
+
+
+
+<H2><A NAME="AUTHENTICATION" HREF="#INDEX">Authentication</A></H2>
+
+    If a service was registered with a realm, only authorized users are allowed to
+    access that service.
+<BR>
+    If no realm was specified, ANY user can (without authentication) access the service.
+<BR>
+    There is one exception to this:
+<BR>
+    The MaintenanceService, without realm will ONLY allow access from the local host.
+    I.e. it always requires a realm for remote access.
+<BR>
+    If you want to allow remote access to the MaintenanceService,
+    select a realm and do not forget to add a user to this realm.
+
+
+<H2><A NAME="STANALONE" HREF="#INDEX">Standalone WebServer</A></H2>
+
+Read the
+<A HREF="standaloneApplication.html">"standalone application documentation"</A> on how to setup authentication
+for the standalone webserver.
+
+<HR>
+<P>
+<P>
+Copyright &copy; 2003 eXept Software AG, all rights reserved
+<P>
+<P>
+
+<HR>
+Doc $Revision: 1.4 $ $Date: 1997/08/07 15:06:09 $
+
+</BODY>
+</HTML>

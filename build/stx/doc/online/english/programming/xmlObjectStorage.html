@@ -1,0 +1,115 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - XML Object Storage</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="goody_xml.html">     <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="goody_soap.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>XML Object Storage</H1>
+
+<H2>Contents</H2>
+<UL>
+ <LI><A HREF="#INTRO" NAME="I_INTRO">Introduction</A>
+ <LI><A HREF="#DEFAULTSTORE" NAME="I_DEFAULTSTORE">Default Storage Format</A>
+ <LI><A HREF="#OTHERFORMATS" NAME="I_OTHERFORMATS">Other XML Schemas</A>
+</UL>
+
+
+<H2><A HREF="#I_INTRO" NAME="INTRO">Introduction</A></H2>
+This document will teach you how to store and retrieve objects on/from an external medium
+in XML format.
+<P>
+Smalltalk offers various ways to store and retrieve objects to/from the external world.
+For textual storage of non-recursive objects, you can also use the well-known
+<CODE>#storeOn:</CODE> / <CODE>#readFrom:</CODE> methods.
+For a very compact binary encoding of arbitrary object hierarchies (can be recursive),
+you would use <CODE>#storeBinaryOn:</CODE> / <CODE>#readBinaryFrom:</CODE>.
+<P>
+Both of the above are described in <A HREF="binaryStore.html">"Binary Object Storage"</A>.
+
+<P>
+XML storage as described here allows for other XML tools to interact more easily with
+Smalltalk storage files.
+
+
+<H2><A HREF="#I_DEFAULTSTORE" NAME="DEFAULTSTORE">Default Storage Format</A></H2>
+
+The default format is already impleemnted and supported for all objects.
+SO, to make your objects persistent, you don't have to write any code.
+However, the resulting storage format (the dtd) is pretty much streamlined towards Smalltalk,
+and reading/writing it from non-smalltalk systems may be a bit harder.
+
+<P>
+The scheme writes all named and indexed instance variables.
+Unassigned slots (nil-valued) are skipped.
+<BR>
+For example:
+<A TYPE="example">
+<CODE><PRE>
+    |myObject outStream|
+
+    myObject := Array with:'hello world'
+		      with:1.2345
+		      with:#(1 2 3 4 5)
+		      with:('ne' -> #one)
+		      with:nil.
+    myObject at:5 put:myObject.
+
+    outStream := 'data.xml' asFilename writeStream.
+
+    (XMLStandardCoder on:outStream) nextPut:myObject.
+
+    outStream close.
+</PRE></CODE>
+</A>
+generates a datafile containing a representation of the stored array.
+<P>
+From this, the object can be reconstructed:
+<A TYPE="example">
+<CODE><PRE>
+    |restoredObject|
+
+    restoredObject := (XMLStandardDecoder on:('data.xml' asFilename readStream)) next.
+    restoredObject inspect.
+</PRE></CODE>
+</A>
+
+
+
+<H2><A HREF="#I_OTHERFORMATS" NAME="OTHERFORMATS">Other XML Schemas</A></H2>
+
+At the time of writing, support for other formats can be implemented by
+one of two strategies:
+<ul><li>by subclassing the XMLParser for reading
+<li>by first reading a regular DOM (using the XML parser), and writing a visitor,
+which converts this DOM into normal objects.
+</ul>
+Of course, specific xml-writer methods are required independent of how the reader is
+implemented.
+<p>
+We are working on a scheme which is both easy to use and flexible enough to support a wide
+range of formats.
+<P>
+[... expect more to come soon...]
+
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 2008 eXept Software AG
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.5 $ $Date: 2015-02-26 23:35:07 $
+</BODY>
+</HTML>

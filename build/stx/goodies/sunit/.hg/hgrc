@@ -1,0 +1,8 @@
+[phases]
+publish = false
+
+[paths]
+canonical = https://bitbucket.org/janvrany/stx-goodies-sunit
+staging = https://bitbucket.org/janvrany/stx-goodies-sunit
+default = https://bitbucket.org/janvrany/stx-goodies-sunit
+

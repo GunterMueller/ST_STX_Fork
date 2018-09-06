@@ -1,0 +1,30 @@
+/* XPM */
+static char *romania_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 20 3 1",
+/* colors */
+"a c #084098",
+"b c #F8FC00",
+"c c #F80000",
+/* pixels */
+"aaaaaaaaaabbbbbbbbbbbccccccccccc",
+"aaaaaaaaaabbbbbbbbbbbccccccccccc",
+"aaaaaaaaaabbbbbbbbbbbccccccccccc",
+"aaaaaaaaaabbbbbbbbbbbccccccccccc",
+"aaaaaaaaaabbbbbbbbbbbccccccccccc",
+"aaaaaaaaaabbbbbbbbbbbccccccccccc",
+"aaaaaaaaaabbbbbbbbbbbccccccccccc",
+"aaaaaaaaaabbbbbbbbbbbccccccccccc",
+"aaaaaaaaaabbbbbbbbbbbccccccccccc",
+"aaaaaaaaaabbbbbbbbbbbccccccccccc",
+"aaaaaaaaaabbbbbbbbbbbccccccccccc",
+"aaaaaaaaaabbbbbbbbbbbccccccccccc",
+"aaaaaaaaaabbbbbbbbbbbccccccccccc",
+"aaaaaaaaaabbbbbbbbbbbccccccccccc",
+"aaaaaaaaaabbbbbbbbbbbccccccccccc",
+"aaaaaaaaaabbbbbbbbbbbccccccccccc",
+"aaaaaaaaaabbbbbbbbbbbccccccccccc",
+"aaaaaaaaaabbbbbbbbbbbccccccccccc",
+"aaaaaaaaaabbbbbbbbbbbccccccccccc",
+"aaaaaaaaaabbbbbbbbbbbccccccccccc",
+};

@@ -1,0 +1,11 @@
+LIBRARY         libwidg
+DESCRIPTION     'Smalltalk/X Widget Classes'
+VERSION         3.5
+CODE            EXECUTE READ 
+DATA            READ WRITE
+SECTIONS
+    INITCODE    READ EXECUTE 
+    INITDATA    READ WRITE
+    RODATA      READ SHARED
+EXPORTS 
+    _libwidg_Init       @1

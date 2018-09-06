@@ -1,0 +1,26 @@
+/* XPM */
+static char *tiny_addOn_locked_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 3 1",
+/* colors */
+"a c black",
+"b c red",
+"c c none",
+/* pixels */
+"cccccccccccccccc",
+"cbbccccccccccbbc",
+"ccbbccccccccbbcc",
+"cccbbccccccbbccc",
+"ccccbbccccbbcccc",
+"cccccbbccbbccccc",
+"ccccccbbbbcccccc",
+"cccccccbbccccccc",
+"ccccccbbbbcccccc",
+"cccccbbccbbccccc",
+"ccccbbccccbbcccc",
+"cccbbccccccbbccc",
+"ccbbccccccccbbcc",
+"cbbccccccccccbbc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+};

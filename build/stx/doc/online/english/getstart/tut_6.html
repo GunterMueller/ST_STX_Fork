@@ -1,0 +1,93 @@
+<HTML>
+<HEAD>
+<TITLE>Tutorial - Recovering from a Crash</TITLE>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="tut_4.html"> <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="tutorial.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="tut_7.html"> <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1><A NAME="RECOVERING_FROM_A_CRASH">Recovering from a Crash</A></H1>
+
+In order to get confidence in the way Smalltalk works, you should try the following
+right now !
+<P>
+Lets assume, that you messed up the system. This can be done by changing one of
+the elementary system classes (for example, by adding buggy code)
+or by removing some heavily required component (for example, by nilling a global),
+or when you "enhance" a heavily used component such as the scrollbar or the text editor.
+<P>
+Lets also assume, that you forgot to save a snapshot image recently.
+This means, that you either have no snapshot at all, or the existing snapshot is old
+(typically, a few hours).
+<P>
+To recover from such a situation, you have to start <CITE>ST/X</CITE> (with the newest
+snapshot available) and then reapply individual changes
+(up to, but excluding any of the "bad ones") via the ChangesBrowser.
+<P>
+To try this in the real world, perform the following steps:
+<UL>
+<LI>Save a snapshot (Launchers save button)
+<P>
+<LI>Add some good stuff (create a class, add a few methods) in a browser
+<P>
+<LI>Add a crashing bug to ST/X;
+<BR>
+for example, redefine the <CODE>new:</CODE>-method
+of the <CODE>Array</CODE> class as follows:
+<CODE><PRE>
+    new:anInteger
+	^ 'not an array at all'
+</PRE></CODE>
+this means: redefine the instance creation of the <CODE>Array</CODE> class to return a constant
+string instead. <B>This will definitely crash ST/X within the next few milliseconds,
+as the Array class is one of the most central classes in the system</B>.
+<P>
+
+<LI>After the crash, restart ST/X (it will come up using the last snapshot, or fresh, if there is none)
+<P>
+
+<LI>open a ChangesBrowser via the launcher.
+<P>
+
+<LI>You should see the above changes at the end of the list.
+Reapply them changes individually - but exclude the last, bad change.
+<P>
+
+<LI>save the current state (the good state) as a new snapshot
+<P>
+
+<LI>continue to work
+</UL>
+We did the above, to give you a good and warn feeling of safety,
+your work is not lost, even if ST/X crashes within a coding session.
+However, how often does such a situation arise in the real world ?
+<BR>
+The answer is: very very seldom. Over the years, the system has become quite
+mature, even with respect to severe errors. Systems typically run for weeks or
+months with heavy coding going on. If you keep away from system classes (such as
+Array or all of the GUI classes which the system itself uses), you can easily
+live for a very long time in an image.
+
+<HR>
+Continue in <A HREF="tut_7.html">"Deploying an Application"</A>.
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif" ALT="[stx-logo]">
+<BR>Copyright &copy; Claus Gittinger Development & Consulting
+<BR>Copyright &copy; eXept Software AG
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.7 $ $Date: 2013-03-24 20:36:39 $
+
+</BODY>
+</HTML>

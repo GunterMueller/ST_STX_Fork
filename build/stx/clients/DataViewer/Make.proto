@@ -1,0 +1,18 @@
+# $Header: /cvs/stx/stx/clients/DataViewer/Make.proto,v 1.8 2004-11-23 21:09:54 cg Exp $
+#
+# -------------- no need to change anything below ----------
+
+TOP=../..
+SUBDIRS=
+
+STCLOCALOPTIMIZATIONS=+optinline +inlineNew
+INITCODESEPFLAG=$(SEPINITCODE)
+STCLOCALOPT=$(STCLOCALOPTIMIZATIONS) -H. '-package=$(PACKAGE)' -Zlibdataviewer $(INITCODESEPFLAG)
+
+all:: classLibRule
+
+clean::
+	rm -f *.o
+
+# BEGINMAKEDEPEND
+# ENDMAKEDEPEND

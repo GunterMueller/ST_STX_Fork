@@ -1,0 +1,29 @@
+/* XPM */
+static char *esperanto_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 20 2 1",
+/* colors */
+"a c #00CC00",
+"b c white",
+/* pixels */
+"bbbbbbbbbbbbaaaaaaaaaaaaaaaaaaaa",
+"bbbbbaabbbbbaaaaaaaaaaaaaaaaaaaa",
+"bbbbbaabbbbbaaaaaaaaaaaaaaaaaaaa",
+"bbaaaaaaaabbaaaaaaaaaaaaaaaaaaaa",
+"bbbaaaaaabbbaaaaaaaaaaaaaaaaaaaa",
+"bbbbaaaabbbbaaaaaaaaaaaaaaaaaaaa",
+"bbbaaaaaabbbaaaaaaaaaaaaaaaaaaaa",
+"bbbabbbbabbbaaaaaaaaaaaaaaaaaaaa",
+"bbbbbbbbbbbbaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+};

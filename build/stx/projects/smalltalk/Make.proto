@@ -1,0 +1,1055 @@
+#
+# $Header$
+#
+# ATTENTION: this Make.proto is still maintained manually.
+# i.e. not generated from the ApplicationDefinition
+#
+# -------------- no need to change anything below ----------
+#
+# This makefile generatfes the smalltalk executable itself;
+# it can be invoked as:
+#
+#    make
+#       generates a standard smalltalk, and sets up symbolic links
+#       for local execution.
+#
+#    make smalltalk
+#       generates a standard smalltalk executable only
+#
+#    make smalltalk ADDITIONAL_OBJS=<list of object files> \
+#                   ADDITIONAL_CLASSES=<list of class names>
+#       generates a customized executable, containing additional
+#       class (list of classes) which are to be found in the object
+#       files (list of object files).
+#       Example:
+#           make smalltalk ADDITIONAL_OBJS=Foo.o ADDITIONAL_CLASSES=Foo
+#
+# No longer maintained (make could fail):
+#
+#    make stx_static (ELF based systems only):
+#       generates a smalltalk with statically linked
+#       class libs. (still uses dynamic unix libraries)
+#
+#    make stx_fullstatic (ELF based systems only):
+#       generates a fully statically linked smalltalk
+#       (even system libs are linked in)
+#
+
+TOP=../..
+SUBDIRS=
+SUPPRESS_LOCAL_ABBREVS="yes"
+#
+# these are installed when installing their
+# package dir ...
+#
+SUPPRESS_INSTALL_BITMAPS="yes"
+SUPPRESS_INSTALL_RESOURCES="yes"
+
+INSTALLBIN_DIR=$(INSTALLBASE)/bin
+INSTALLLIB_DIR=$(INSTALLBASE)/lib
+
+RCSSOURCES=*.rc patches Make.proto
+LINKSOURCES=*.rc patches Make.proto
+
+DELIVERBINARIES=stx
+
+#
+# other definitions to use for things compiled here
+#
+LOCALDEFS=-DDEBUG
+#ST_LDFLAG=
+
+# st files found here wont go into the global abbrev list
+SUPPRESS_LOCAL_ABBREVS=1
+
+#
+# this defines where the show starts
+#
+STARTUP_CLASS="Smalltalk"
+STARTUP_SELECTOR="start"
+
+#
+# including your own private lib in the make process and executable:
+#
+# for example, if you have a libprivate directory,
+# where libprivate.obj is built, and that one should be included,
+# add lines as below to your configuration/.../defines file:
+#    PRIVATEOBJ=$(TOP)/libprivate/libprivate.obj
+#    PRIVATE_SO=$(TOP)/libprivate/libprivate.so
+#    PRIVATELIBS=libprivate
+
+# This defines which library packages are linked in.
+# See COMMON/defines for what those XXX_LIB etc. are
+#
+# MINI_LIB        = libbasic, libcomp $(PRIVATELIBS)
+# FUNDAMENTAL_LIB = above PLUS libview, libwidg
+# DEVELOP_LIB     = above PLUS libtool refactoring
+# STANDARD_LIB    = above PLUS libwidg2, libdbase
+# EXTENDED_LIB    = above PLUS libwidg3
+
+CLASSLIBDIRS    =   $(STANDARD_DIR) $(PRIVATE_CLASSLIBDIRS) $(ARCH_CLASSLIBDIRS)
+LIBOBJS         =   $(STANDARD_LIB) $(PRIVATE_OBJS)
+LINK_LIBOBJS    =   $(LINK_STANDARD_LIB) $(PRIVATE_OBJS)
+STATIC_LIBOBJS  =   $(STATIC_STANDARD_LIB) $(PRIVATE_OBJS)
+LIBLIST         =   $(STANDARD_LIST) $(PRIVATE_LIBS)
+
+# WORKSTAT1       =   XWorkstation
+# WORKSTAT2       =   GLXWorkstation
+
+# now in libview
+# EXTRA_UI_CLASSES=   $(WORKSTAT1) $(WORKSTAT2)
+
+#EXTRA_UI_OBJ=\
+#        $(OPTIONAL_XWORKSTATION_OBJ)   \
+#        $(OPTIONAL_GLXWORKSTATION_OBJ)
+#
+#STATIC_EXTRA_UI_OBJ=\
+#        $(STATIC_OPTIONAL_XWORKSTATION_OBJ) \
+#        $(STATIC_OPTIONAL_GLXWORKSTATION_OBJ)
+#
+#EXTRA_LINK_UI_OBJ=\
+#        $(OPTIONAL_LINK_XWORKSTATION_OBJ)   \
+#        $(OPTIONAL_LINK_GLXWORKSTATION_OBJ)
+
+OPTIONAL_LIBGL_TARGET   =   $(LIB_GL_TARGET)
+OPTIONAL_GL_LIB         =   $(LIB_GL)
+OPTIONAL_LINK_GL_LIB    =   $(LINK_LIB_GL)
+
+
+# ---------------------- end additional stuff --------------------
+INCLUDE_TOP=$(TOP)/..
+LOCALINCLUDES= -I$(INCLUDE_TOP)/stx/goodies/refactoryBrowser/helpers -I$(INCLUDE_TOP)/stx/libwidg3 -I$(INCLUDE_TOP)/stx/libbasic -I$(INCLUDE_TOP)/stx/libjavascript -I$(INCLUDE_TOP)/stx/goodies/refactoryBrowser/parser -I$(INCLUDE_TOP)/stx/goodies/refactoryBrowser/refactoring -I$(INCLUDE_TOP)/stx/libwidg -I$(INCLUDE_TOP)/stx/libview2 -I$(INCLUDE_TOP)/stx/libbasic2 -I$(INCLUDE_TOP)/stx/libview -I$(INCLUDE_TOP)/stx/libhtml -I$(INCLUDE_TOP)/stx/libtool -I$(INCLUDE_TOP)/stx/libtool2 -I$(INCLUDE_TOP)/stx/libcomp -I$(INCLUDE_TOP)/stx/goodies/refactoryBrowser/changes -I$(INCLUDE_TOP)/stx/goodies/refactoryBrowser/browser -I$(INCLUDE_TOP)/stx/goodies/refactoryBrowser/lint -I$(INCLUDE_TOP)/stx/libboss -I$(INCLUDE_TOP)/stx/libwidg2 -I$(INCLUDE_TOP)/stx/libbasic3 -I$(INCLUDE_TOP)/stx/libui
+
+#
+# default target: create the TARGET (usually smalltalk)
+#
+all::   $(TARGET)$(TARGET_RULE_EXTENSION) symlinks
+	@-if [ "$(ALSO_MAKE_STATIC_TARGET)" = "1" ]; then \
+	    mv stx stx_dynamic; \
+	    $(MAKE) stx_fullstatic; \
+	fi
+
+#
+# same, force recreation of link-directories
+#
+allNew: $(TARGET)$(TARGET_RULE_EXTENSION) misc
+	@-if [ "$(ALSO_MAKE_STATIC_TARGET)" = "1" ]; then \
+	    mv stx stx_dynamic; \
+	    $(MAKE) stx_fullstatic; \
+	fi
+
+#
+# create symbolic links to sources, resources etc.
+# normally (on an end-user system) these should go into usr/local/lib/smalltalk
+#
+symlinks:   includeLink misc
+
+#
+# the standard smalltalk executable:
+# basic classes + view & widgets + tools + persistency
+#
+smalltalk:: $(TARGET)$(TARGET_RULE_EXTENSION)
+
+#
+# a specialized mySmalltalk with additional class(es) and additional
+# C-library builtIn
+#
+MY_ADDITIONAL_OBJECTS=Foo.$(O)
+MY_ADDITIONAL_CLASSES=Foo
+MY_ADDITIONAL_LIBS=$(TOP)/../myClasses/libFoo.a
+
+mySmalltalk: $(COMMON_OBJS) $(MY_ADDITIONAL_OBJECTS)
+	@echo "making special smalltalk ..."
+	@$(MAKE) linkTarget \
+		LIBOBJS="$(LIBOBJS) $(EXTRA_UI_OBJ)" \
+		LINK_OBJS="$(LINK_OBJS)" \
+		LINK_LIBOBJS="$(LINK_LIBOBJS) $(EXTRA_LINK_UI_OBJ)" \
+		LINK_LIBRUN="$(LINK_LIBRUN)" \
+		LIBRUN="$(LIBRUN)" \
+		ADDITIONAL_OBJS="$(COMMON_OBJS) $(MY_ADDITIONAL_OBJECTS)" \
+		ADDITIONAL_CLASSES="$(COMMON_CLASSES) $(MY_ADDITIONAL_CLASSES)" \
+		ADDITIONAL_LIBS=$(MY_ADDITIONAL_LIBS) \
+		LIBLIST="$(LIBLIST)"
+	@$(MAKE) removeLinkLibs
+
+#
+# by default, the TARGET rule calls for one of the
+# rules below. Which one is controlled by the
+# architecture-specific definition file.
+#
+$(TARGET)_shared: $(COMMON_OBJS)
+	@echo "making shared library linked smalltalk ..."
+	echo EXTRA_LINK_UI_OBJ = $(EXTRA_LINK_UI_OBJ)
+	$(MAKE) linkTarget \
+		LIBOBJS="$(LIBOBJS) $(EXTRA_UI_OBJ)" \
+		LINK_LIBOBJS="$(LINK_LIBOBJS) $(EXTRA_LINK_UI_OBJ)" \
+		LINK_LIBRUN=$(LINK_LIBRUN) \
+		LIBRUN=$(LIBRUN) \
+		ADDITIONAL_OBJS="$(COMMON_OBJS) $(ADDITIONAL_OBJS)" \
+		ADDITIONAL_CLASSES="$(COMMON_CLASSES) $(ADDITIONAL_CLASSES)" \
+		LIBLIST="$(LIBLIST) $(EXTRA_UI_CLASSES)"
+
+$(TARGET)_static: $(COMMON_OBJS) $(STATIC_LIBRUN)
+	@echo "making statically linked smalltalk ..."
+	@$(MAKE) linkTarget \
+		rebaseLibsRule=$(rebaseLibsRule_static) \
+		LIBOBJS="" \
+		LINK_OBJS="$(STATIC_OBJS) $(STATIC_EXTRA_UI_OBJ)" \
+		LINK_LIBOBJS="$(STATIC_LIBOBJS) $(STATIC_EXTRA_UI_OBJ)" \
+		LINK_LIBRUN="$(STATIC_LIBRUN)" \
+		LIBRUN="$(STATIC_LIBRUN)" \
+		ADDITIONAL_OBJS="$(COMMON_OBJS) $(STATIC_ADDITIONAL_OBJS)" \
+		ADDITIONAL_CLASSES="$(COMMON_CLASSES) $(STATIC_ADDITIONAL_CLASSES)" \
+		EXTRA_LIBS="$(STATIC_EXTRA_LIBS)" \
+		LIBLIST="$(LIBLIST) $(EXTRA_UI_CLASSES)"
+	@$(MAKE) removeLinkLibs
+
+$(TARGET)_fullstatic: $(COMMON_OBJS) $(STATIC_LIBRUN)
+	if [ -f $(LIBRUNDIR)/librun.a ]; then \
+	    echo "librun.a already made."; \
+	else \
+	    cd $(LIBRUNDIR) && $(MAKE) librun.a; \
+	fi
+	@echo "making full statically linked smalltalk ..."
+	@$(MAKE) linkTarget \
+		LIBOBJS="" \
+		LINK_OBJS="$(STATIC_OBJS) $(STATIC_EXTRA_UI_OBJ)" \
+		LINK_LIBOBJS="$(STATIC_LIBOBJS) $(STATIC_EXTRA_UI_OBJ)" \
+		LINK_LIBRUN="$(STATIC_LIBRUN)" \
+		LIBRUN="$(STATIC_LIBRUN)" \
+		ADDITIONAL_OBJS="$(COMMON_OBJS) $(STATIC_ADDITIONAL_OBJS)" \
+		ADDITIONAL_CLASSES="$(COMMON_CLASSES) $(STATIC_ADDITIONAL_CLASSES)" \
+		LIBLIST="$(LIBLIST) $(EXTRA_UI_CLASSES)" \
+		MATHLIB="$(STATIC_MATHLIB)" \
+		EXTRA_LIBS="$(STATIC_EXTRA_LIBS)" \
+		SYSLIBS="$(STATIC_SYSLIBS)"
+
+	@$(MAKE) removeLinkLibs
+
+AIX_SHARED_LIBOBJS= \
+	$(LIBBASICDIR)/libstx_libbasic.so \
+	$(LIBCOMPDIR)/libstx_libcomp.so \
+	$(LIBVIEWDIR)/libstx_libview.so \
+	$(LIBVIEW2DIR)/libstx_libview2.so \
+	$(LIBWIDGDIR)/libstx_libwidg.so \
+	$(LIBTOOLDIR)/libstx_libtool.so \
+	$(LIBBASIC2DIR)/libstx_libbasic2.so \
+	$(LIBBASIC3DIR)/libstx_libbasic3.so \
+	$(LIBHTMLDIR)/libstx_libhtml.so \
+	$(LIBWIDG2DIR)/libstx_libwidg2.so \
+	$(PERSDIR)/libstx_libdbase.so
+
+aix:
+	    @echo "making shared library linked smalltalk for aix ..."
+	    @$(MAKE) linkTarget \
+		LIBOBJS="$(AIX_SHARED_LIBOBJS)" \
+		EXTRA_OBJ="$(EXTRA_OBJ)" \
+		EXTRA_LINK_OBJ="$(EXTRA_LINK_OBJ)" \
+		LIBLIST="$(LIBLIST)" \
+		LINK_LIBRUN=$(LINK_LIBDIR)librun.so \
+		LIBRUN=$(LIBRUNDIR)/librun.so
+
+aix_librun_only:
+	    @echo "making partial shared library linked smalltalk ..."
+	    @$(MAKE) linkTarget LIBRUN=$(LIBRUNDIR)/librun.so
+
+forceStatic:
+	    (cd $(LIBBASICDIR) ; $(MAKE) libbasicInit.o)
+	    -rm -f $(LIBBASICDIR)/libbasic.o
+	    $(MAKE) linkTarget LIBRUN="$(LIBRUNDIR)/*.o" LIBBASIC="$(LIBBASICDIR)/*.o"
+
+$(LIBVIEWDIR)/XWorkstation.o:
+	cd $(LIBVIEWDIR) && $(MAKE) XWorkstation.o
+
+$(LIBVIEWDIR)/XWorkstation.so:
+	cd $(LIBVIEWDIR) && $(MAKE) XWorkstation.so
+
+$(LIBVIEWDIR)/GLXWorkstation.o:
+	cd $(LIBVIEWDIR) && $(MAKE) GLXWorkstation.o
+
+$(LIBVIEWDIR)/GLXWorkstation.so:
+	cd $(LIBVIEWDIR) && $(MAKE) GLXWorkstation.so
+
+
+#
+# dont want these ttt-tempfile abbrevs to be included ...
+#
+abbrev.stc::
+	    @-rm -f ttt*.*
+
+#
+# currently, abbrev,stc must be made cross
+#
+ntAbbrev.stc: include/abbrev.stc
+	cp include/abbrev.stc ntAbbrev.stc
+
+#
+# dont want local abbrevs to be included ...
+#
+collectAbbrev::
+	    @-rm -f abbrev.stc
+	    @-if [ "$(SUPPRESS_ABBREVS)" = "" ]; then \
+	      if [ -d include ]; then \
+		if [ ! -f include/abbrev.stc ]; then \
+		    (cd include; $(LNS) ../$(INCLUDE)/abbrev.stc . );   \
+		fi; \
+	      fi;   \
+	    fi
+
+collectAutoload::
+	    @-rm -f autoloadList.stc
+	    @-if [ -d include ]; then \
+		if [ ! -f include/autoloadList.stc ]; then \
+		    (cd include; $(LNS) ../$(INCLUDE)/autoloadList.stc . ); \
+		fi;                                                             \
+	    fi
+
+classes::
+	    test -d classes || mkdir classes
+	    -for i in source/*.st; do \
+		stcomp -i stcomp.img $$i; \
+	    done
+
+include:    includeLink
+
+misc:       examples
+
+examples:
+	    test -d examples || mkdir examples examples/3D
+	    -cd examples/3D && $(LNS) ../../$(TOP)/clients/GLdemos/*.data . 2>/dev/null
+
+#
+# clean out intermediate chunk
+#
+cleanjunk::
+	    @-rm -f a.out SymbolTable ttt main.c
+	    @-rm -f classList.c fclassList.c nxclassList.c basicclassList.c
+	    @-rm -f betaclassList.c miniList.c tinyList.c
+	    @-rm -f modulList.stc modulList.c modulList.o
+	    @-rm -f pers* pers2 data data2 data.boss tetris.scores
+
+cleanlinks:
+	    @-rm -rf source bitmaps binaries resources examples include
+
+#
+# clean out all that is not needed to run smalltalk
+#
+clean::
+	    @-rm -f a.out SymbolTable ttt main.c
+	    @-rm -f modulList.stc modulList.c modulList.o
+	    @-rm -f classList.stc classList.c classList.o
+	    @-rm -f fclassList.stc fclassList.c
+	    @-rm -f nxclassList.stc nxclassList.c
+	    @-rm -f basicclassList.stc basicclassList.c
+	    @-rm -f betaclassList.stc betaclassList.c
+	    @-rm -f miniList.stc miniList.c
+	    @-rm -f tinyList.stc tinyList.c
+	    @-rm -f pers pers2 data data2 data.boss tetris.scores
+	    @-rm -f st.img st2.img st.img.sav errorOutput
+	    @-rm -f .stx*.mem
+	    @-rm -rf modules stxtmp*
+
+#
+# clean out all that can be regenerated
+#
+clobber::
+	    @$(MAKE) removeLinkLibs
+	    @-rm -f modulList.stc modulList.c modulList.o
+	    @-rm -rf resources source bitmaps include examples lib
+	    @-rm -f stx st.img st.img.sav st.sav
+	    @-rm -f main.o
+	    @-rm -rf modules
+	    @-rm -rf package
+	    @-rm -rf stxtmp_*
+
+main.o::    $(INCLUDE)/stc.h $(INCLUDE)/stcIntern.h Make.proto
+
+installProgsIf:: $(INSTALLBIN_DIR)
+	@-echo "installing smalltalk..."
+	$(INSTALL_SCRIPT_CMD) smalltalk $(INSTALLBIN_DIR)
+	@-echo "installing stx..."
+	$(INSTALL_BIN_CMD) stx $(INSTALLBIN_DIR)
+	-strip $(INSTALLBIN_DIR)/stx
+
+installAux:: installRCScripts
+
+installRCScripts::
+	@-echo "installing rc scripts..."
+	$(INSTALL_AUX_CMD) *.rc $(INSTALLLIB_DIR)
+	$(INSTALL_AUX_CMD) *.xpm $(INSTALLLIB_DIR)
+
+###################################################################
+#
+# packaging for deployment
+# DEPLOY_PACKAGE is (currently) one of "dmg", "tgz"
+# and coming from the arch-specific configuration file
+#
+deploy:
+	$(MAKE) deploy_$(DEPLOY_PACKAGE)
+
+################### begin mac specific #################
+# creates /tmp/stx.dmg
+#
+DMG_TMP=/tmp/stx_dmg
+
+deploy_dmg:
+	$(MAKE) newDMG
+	$(MAKE) hdUtil
+
+newDMG:
+	rm -rf $(DMG_TMP)
+	$(MAKE) $(DMG_TMP)
+
+hdUtil:
+	-rm -f stx.dmg /tmp/stx.dmg
+	(cd /tmp ; hdiutil create -fs HFSX -layout SPUD "stx.dmg" -srcfolder "$(DMG_TMP)" -format UDRW -volname "stx" -quiet)
+	@-sync
+	@-sleep 2
+	$(MAKE) dmg_mount_script
+	hdiutil convert "/tmp/stx.dmg" -format UDZO -imagekey zlib-level=9 -o "/tmp/stx_cmpr.dmg"
+	@-rm /tmp/stx.dmg
+	@-mv /tmp/stx_cmpr.dmg /tmp/stx.dmg
+
+dmg:    $(DMG_TMP)
+
+$(DMG_TMP):
+	-mkdir "$(DMG_TMP)"
+	(pushd "$(DMG_TMP)"; ln -s /Applications ./Applications; popd)
+	cp "../../README" "$(DMG_TMP)"/README.txt
+	cp "../../README.macosx" "$(DMG_TMP)"/README_macosx.txt
+	sed "s/..\/icons/.background/" < "../../doc/online/english/LICENCE_FREE_STX.html" > "$(DMG_TMP)"/LICENCE_STX.html
+	-mkdir "$(DMG_TMP)"/.background
+	cp "../../doc/online/icons/exeptLogo.gif" "$(DMG_TMP)"/.background/exeptLogo.gif
+	cp "banner8_lightMsg.png" "$(DMG_TMP)"/.background/banner.png
+	cp "../../COPYRIGHT" "$(DMG_TMP)"/COPYRIGHT.txt
+	-mkdir "$(DMG_TMP)"/stx.app
+	-mkdir "$(DMG_TMP)"/stx.app/Contents
+	cp deploySupport/osx_Info.plist "$(DMG_TMP)"/stx.app/Contents/Info.plist
+	-mkdir "$(DMG_TMP)"/stx.app/Contents/MacOS
+	$(MAKE) dmgSTXPackages
+	$(MAKE) dmgBINContents
+	$(MAKE) patchLicenceInResources
+
+patchLicenceInResources:
+	LC_ALL=C sed "s/LICENCE_STX/LICENCE_FREE_STX/" < "../../libview/resources/resources.rs" > "$(DMG_TMP)"/stx.app/Packages/stx/libview/resources/resources.rs
+	LC_ALL=C sed "s/LICENCE_STX/LICENCE_FREE_STX/" < "../../libview/resources/de.rs" > "$(DMG_TMP)"/stx.app/Packages/stx/libview/resources/de.rs
+
+# tell the Finder to resize the window, set the background,
+#  change the icon size, place the icons in the right position, etc.
+dmg_mount_script:
+	@-hdiutil detach /Volumes/stx
+	@-hdiutil detach /Volumes/stx
+	@-sync
+	hdiutil attach -readwrite -noverify /tmp/stx.dmg
+	@-sync
+	@-sleep 3
+	@-(cat ../../rules/macosx_osascript.script | osascript)
+	hdiutil detach /Volumes/stx
+	@-sync
+
+#
+# the actual executable and its binaries
+#
+dmgBINContents:
+	(cd "$(DMG_TMP)"/stx.app/Contents/MacOS ; ln -s ../../Packages/stx/projects/smalltalk/stx .)
+#        (cd "$(DMG_TMP)"/stx.app/Contents/MacOS ; ln -s ../../Packages/stx/projects/smalltalk/*.so .)
+#        (cd "$(DMG_TMP)"/stx.app/Contents/MacOS ; ln -s ../../Packages/stx/projects/smalltalk/*.stc .)
+#        (cd "$(DMG_TMP)"/stx.app/Contents/MacOS ; ln -s ../../Packages/stx/projects/smalltalk/*.stx .)
+#        (cd "$(DMG_TMP)"/stx.app/Contents/MacOS ; ln -s ../../Packages/stx/projects/smalltalk/*.rc .)
+#        (cd "$(DMG_TMP)"/stx.app/Contents/MacOS ; ln -s ../../Packages/stx/projects/smalltalk/patches .)
+#        (cd "$(DMG_TMP)"/stx.app/Contents/MacOS ; ln -s ../../Packages/stx/projects/smalltalk/stxPatches .)
+#        (cd "$(DMG_TMP)"/stx.app/Contents/MacOS ; ln -s ../../Packages/stx/projects/smalltalk/rc.d .)
+#        -cp -r resources "$(DMG_TMP)"/stx.app/Contents/MacOS/.
+
+#
+# sources and all other package stuff
+#
+dmgSTXPackages: "$(DMG_TMP)/stx.app/Packages"
+
+"$(DMG_TMP)/stx.app/Packages":
+	@-mkdir "$(DMG_TMP)"
+	@-mkdir "$(DMG_TMP)/stx.app"
+	@-mkdir "$(DMG_TMP)/stx.app/Packages"
+	@-rm -f stx.dmg
+	-cp -r $(TOP)/../stx "$(DMG_TMP)/stx.app/Packages/."
+	$(MAKE) clean_dmg
+
+clean_dmg:
+	$(MAKE) cleanTemporaryDeploymentHierarchy TMP_TOP="$(DMG_TMP)/stx.app/Packages"
+
+# (ongoing work)
+# install the binaries and required headers into a user-private framework
+#
+VSN=`cat $(TOP)/RELEASE`
+FRAMEWORK_DST=~/Library/Frameworks/SmalltalkX.framework
+OSX_LIBS=$(STANDARD_RELDIR)
+
+# see http://bomutils.dyndns.org/tutorial.html
+
+PKG_TMP=/tmp/stx_pkg
+
+tmp_pkg: linkLibs
+	@-rm -rf $(PKG_TMP)
+	@-mkdir $(PKG_TMP)
+	# @-mkdir $(PKG_TMP)/flat
+	# @-mkdir $(PKG_TMP)/flat/base.pkg
+	# @-mkdir $(PKG_TMP)/flat/Resources
+	# @-mkdir $(PKG_TMP)/flat/Resources/en.lproj
+	# @-cp banner8.png $(PKG_TMP)/flat/Resources/en.lproj/background.png
+	# @-cp $(TOP)/README $(PKG_TMP)/flat/Resources/en.lproj/
+	# @-cp $(TOP)/README.macosx $(PKG_TMP)/flat/Resources/en.lproj/
+	# @-cp $(TOP)/COPYRIGHT $(PKG_TMP)/flat/Resources/en.lproj/
+	@-mkdir $(PKG_TMP)/root
+	@-mkdir $(PKG_TMP)/root/Library
+	@-mkdir $(PKG_TMP)/root/Library/Frameworks
+	@-mkdir $(PKG_TMP)/root/Library/Frameworks/SmalltalkX.framework
+	$(MAKE) osx_install FRAMEWORK_DST=$(PKG_TMP)/root/Library/Frameworks/SmalltalkX.framework
+	pkgbuild --identifier stx.base --version $(VSN) --root $(PKG_TMP)/root SmalltalkX_Runtime_$(VSN).pkg
+
+	$(MAKE) osx_installHeaders FRAMEWORK_DST=$(PKG_TMP)/root/Library/Frameworks/SmalltalkX.framework
+	pkgbuild --identifier stx.base.headers --version $(VSN) --root $(PKG_TMP)/root SmalltalkX_Headers_$(VSN).pkg
+
+	$(MAKE) osx_installSource FRAMEWORK_DST=$(PKG_TMP)/root/Library/Frameworks/SmalltalkX.framework
+	pkgbuild --identifier stx.base.source --version $(VSN) --root $(PKG_TMP)/root SmalltalkX_Source_$(VSN).pkg
+
+	$(MAKE) osx_installDocumentation FRAMEWORK_DST=$(PKG_TMP)/root/Library/Frameworks/SmalltalkX.framework
+	pkgbuild --identifier stx.base.documentation --version $(VSN) --root $(PKG_TMP)/root SmalltalkX_Documentation_$(VSN).pkg
+
+	productbuild --package SmalltalkX_Runtime_$(VSN).pkg \
+		     --package SmalltalkX_Headers_$(VSN).pkg \
+		     --package SmalltalkX_Source_$(VSN).pkg \
+		     --package SmalltalkX_Documentation_$(VSN).pkg \
+		     SmalltalkX$(VSN).pkg
+	# see https://developer.apple.com/library/content/documentation/DeveloperTools/Reference/DistributionDefinitionRef/Chapters/Distribution_XML_Ref.html
+	rm -rf SmalltalkX$(VSN)_pkg
+	pkgutil --expand SmalltalkX$(VSN).pkg SmalltalkX$(VSN)_pkg
+	cp SmalltalkX$(VSN)_pkg/Distribution Distribution.extracted
+	cp deploySupport/osx_Distribution SmalltalkX$(VSN)_pkg/Distribution
+	mkdir SmalltalkX$(VSN)_pkg/Resources
+	mkdir SmalltalkX$(VSN)_pkg/Resources/en.lproj
+	mkdir SmalltalkX$(VSN)_pkg/Resources/de.lproj
+	# mkdir SmalltalkX$(VSN)_pkg/Resources/icons
+	# (cd SmalltalkX$(VSN)_pkg/Resources ; ln -s en.lproj english)
+	# (cd SmalltalkX$(VSN)_pkg/Resources ; ln -s de.lproj german)
+	cp banner8_light.png SmalltalkX$(VSN)_pkg/Resources/en.lproj/background.png
+	cp banner8_light.png SmalltalkX$(VSN)_pkg/Resources/de.lproj/background.png
+	# cp $(TOP)/doc/online/icons/exeptLogo.gif SmalltalkX$(VSN)_pkg/Resources/icons/
+	cp $(TOP)/doc/online/english/LICENCE_FREE_STX.html SmalltalkX$(VSN)_pkg/Resources/en.lproj/LICENCE_FREE_STX.html
+	cp $(TOP)/doc/online/english/LICENCE_STX.html SmalltalkX$(VSN)_pkg/Resources/en.lproj/LICENCE_STX.html
+	cp $(TOP)/doc/online/german/LICENCE_FREE_STX.html SmalltalkX$(VSN)_pkg/Resources/de.lproj/LICENCE_FREE_STX.html
+	cp $(TOP)/doc/online/german/LICENCE_STX.html SmalltalkX$(VSN)_pkg/Resources/de.lproj/LICENCE_STX.html
+	rm SmalltalkX$(VSN).pkg
+	pkgutil --flatten SmalltalkX$(VSN)_pkg SmalltalkX$(VSN).pkg
+	@echo "package generated as SmalltalkX$(VSN).pkg"
+
+#        echo "  <?xml version=\"1.0\" encoding=\"utf-8\"?>" >> $(PKG_TMP)/flat/Distribution
+#        echo "  <installer-gui-script minSpecVersion=\"1\">" >> $(PKG_TMP)/flat/Distribution
+#        echo "      <title>Smalltalk/X 7.1.0</title>" >> $(PKG_TMP)/flat/Distribution
+#        echo "      <options customize=\"never\" allow-external-scripts=\"no\"/>" >> $(PKG_TMP)/flat/Distribution
+#        echo "      <domains enable_anywhere=\"true\"/>" >> $(PKG_TMP)/flat/Distribution
+#        echo "      <installation-check script=\"install_check();\"/>" >> $(PKG_TMP)/flat/Distribution
+#        echo "      <script><![CDATA[" >> $(PKG_TMP)/flat/Distribution
+#        echo "  function install_check() {" >> $(PKG_TMP)/flat/Distribution
+#        echo "    if(!(system.compareVersions(system.version.ProductVersion,'10.5') >= 0)) {" >> $(PKG_TMP)/flat/Distribution
+#        echo "      my.result.title = 'Failure';" >> $(PKG_TMP)/flat/Distribution
+#        echo "      my.result.message = 'You need at least Mac OS X 10.5 to install stx.';" >> $(PKG_TMP)/flat/Distribution
+#        echo "      my.result.type = 'Fatal';" >> $(PKG_TMP)/flat/Distribution
+#        echo "      return false;" >> $(PKG_TMP)/flat/Distribution
+#        echo "    }" >> $(PKG_TMP)/flat/Distribution
+#        echo "    return true;" >> $(PKG_TMP)/flat/Distribution
+#        echo "  }" >> $(PKG_TMP)/flat/Distribution
+#        echo "      ]]></script>" >> $(PKG_TMP)/flat/Distribution
+#        echo "      <background file=\"background.png\" mime-type=\"image/png\" alignment=\"bottomleft\" scaling=\"none\"/>" >> $(PKG_TMP)/flat/Distribution
+#        echo "      <license file=\"COPYRIGHT\" mime-type=\"text/plain\"/>" >> $(PKG_TMP)/flat/Distribution
+#        echo "      <welcome file=\"README\" mime-type=\"text/plain\"/>" >> $(PKG_TMP)/flat/Distribution
+#        echo "      <choices-outline>" >> $(PKG_TMP)/flat/Distribution
+#        echo "          <line choice=\"choice1\"/>" >> $(PKG_TMP)/flat/Distribution
+#        echo "      </choices-outline>" >> $(PKG_TMP)/flat/Distribution
+#        echo "      <choice id=\"choice1\" title=\"base\">" >> $(PKG_TMP)/flat/Distribution
+#        echo "          <pkg-ref id=\"com.exept.stx.base.pkg\"/>" >> $(PKG_TMP)/flat/Distribution
+#        echo "      </choice>" >> $(PKG_TMP)/flat/Distribution
+#        echo "      <pkg-ref id=\"com.exept.stx.base.pkg\" installKBytes=\""`cat $(PKG_TMP)/diskUsage`"\" version=\"7.1.0\" auth=\"Root\">#base.pkg</pkg-ref>" >> $(PKG_TMP)/flat/Distribution
+#        echo "  </installer-script>" >> $(PKG_TMP)/flat/Distribution
+#        rm $(PKG_TMP)/diskUsage $(PKG_TMP)/numFiles
+#        ( cd $(PKG_TMP)/flat && xar --compression none -cf "/tmp/stx7.1.0Installer.pkg" * )
+
+#
+# installs stx base system in user's local Library folder
+#
+osx_localInstall:
+	$(MAKE) osx_install FRAMEWORK_DST=~/Library/Frameworks/SmalltalkX.framework
+
+#
+# installs stx base system in the system's Library folder
+#
+osx_systemInstall:
+	$(MAKE) osx_install FRAMEWORK_DST=/Library/Frameworks/SmalltalkX.framework
+
+#
+# installs stx base system in $(FRAMEWORK_DST) folder
+#
+osx_install:
+	$(MAKE) osx_installFramework
+	@echo "Installing Version "$(VSN)" in "$(FRAMEWORK_DST)
+	@-if [ ! -d $(FRAMEWORK_DST) ]; then \
+	    mkdir $(FRAMEWORK_DST); \
+	fi
+	@-if [ ! -d $(FRAMEWORK_DST)/Versions ]; then \
+	    mkdir $(FRAMEWORK_DST)/Versions; \
+	fi
+	cp -R tmp_framework/Versions/$(VSN) $(FRAMEWORK_DST)/Versions/
+	@-rm $(FRAMEWORK_DST)/Versions/Current
+	@-echo $(VSN) > /tmp/stx_vsn
+	@(cd $(FRAMEWORK_DST)/Versions; ln -s `cat /tmp/stx_vsn` Current)
+	@-rm /tmp/stx_vsn
+	@-rm -f $(FRAMEWORK_DST)/Headers
+	@(cd $(FRAMEWORK_DST); ln -s Versions/Current/Headers Headers)
+	@-rm -f $(FRAMEWORK_DST)/Sources
+	@(cd $(FRAMEWORK_DST); ln -s Versions/Current/Sources Sources)
+	@-rm -f $(FRAMEWORK_DST)/Documentation
+	@(cd $(FRAMEWORK_DST); ln -s Versions/Current/Documentation Documentation)
+	@-rm -f $(FRAMEWORK_DST)/Libraries
+	@(cd $(FRAMEWORK_DST); ln -s Versions/Current/Libraries Libraries)
+	@-rm -f $(FRAMEWORK_DST)/Resources
+	@(cd $(FRAMEWORK_DST); ln -s Versions/Current/Resources Resources)
+
+osx_installFramework:
+	@-rm -rf tmp_framework
+	@-mkdir tmp_framework
+	@-mkdir tmp_framework/Versions
+	@-mkdir tmp_framework/Versions/$(VSN)
+	@-mkdir tmp_framework/Versions/$(VSN)/Resources
+	@-mkdir tmp_framework/Versions/$(VSN)/Libraries
+	-cp *.so tmp_framework/Versions/$(VSN)/Libraries
+	-for i in $(OSX_LIBS); do \
+	    if [ -d ../../$$i/resources ]; then \
+		mkdir tmp_framework/Versions/$(VSN)/Resources/$$i; \
+		cp ../../$$i/resources/*.rs tmp_framework/Versions/$(VSN)/Resources/$$i/; \
+	    fi;                                                             \
+	done
+
+osx_installHeaders:
+	$(MAKE) osx_installFrameworkHeaders
+	@echo "Installing Headers for Version "$(VSN)" in "$(FRAMEWORK_DST)
+	@-if [ ! -d $(FRAMEWORK_DST) ]; then \
+	    mkdir $(FRAMEWORK_DST); \
+	fi
+	@-if [ ! -d $(FRAMEWORK_DST)/Versions ]; then \
+	    mkdir $(FRAMEWORK_DST)/Versions; \
+	fi
+	cp -R tmp_framework/Versions/$(VSN) $(FRAMEWORK_DST)/Versions/
+
+osx_installFrameworkHeaders:
+	@-rm -rf tmp_framework
+	@-mkdir tmp_framework
+	@-mkdir tmp_framework/Versions
+	@-mkdir tmp_framework/Versions/$(VSN)
+	@-mkdir tmp_framework/Versions/$(VSN)/Headers
+	-for i in $(OSX_LIBS); do \
+	    mkdir tmp_framework/Versions/$(VSN)/Headers/$$i; \
+	    cp ../../$$i/*.H tmp_framework/Versions/$(VSN)/Headers/$$i/; \
+	done
+
+osx_installSource:
+	$(MAKE) osx_installFrameworkSource
+	@echo "Installing Sources for Version "$(VSN)" in "$(FRAMEWORK_DST)
+	@-if [ ! -d $(FRAMEWORK_DST) ]; then \
+	    mkdir $(FRAMEWORK_DST); \
+	fi
+	@-if [ ! -d $(FRAMEWORK_DST)/Versions ]; then \
+	    mkdir $(FRAMEWORK_DST)/Versions; \
+	fi
+	cp -R tmp_framework/Versions/$(VSN) $(FRAMEWORK_DST)/Versions/
+
+osx_installFrameworkSource:
+	@-rm -rf tmp_framework
+	@-mkdir tmp_framework
+	@-mkdir tmp_framework/Versions
+	@-mkdir tmp_framework/Versions/$(VSN)
+	@-mkdir tmp_framework/Versions/$(VSN)/Sources
+	-for i in $(OSX_LIBS); do \
+	    mkdir tmp_framework/Versions/$(VSN)/Sources/$$i; \
+	    cp ../../$$i/*.st tmp_framework/Versions/$(VSN)/Sources/$$i/; \
+	done
+
+osx_installDocumentation:
+	$(MAKE) osx_installFrameworkDocumentation
+	@echo "Installing Documentation for Version "$(VSN)" in "$(FRAMEWORK_DST)
+	@-if [ ! -d $(FRAMEWORK_DST) ]; then \
+	    mkdir $(FRAMEWORK_DST); \
+	fi
+	@-if [ ! -d $(FRAMEWORK_DST)/Versions ]; then \
+	    mkdir $(FRAMEWORK_DST)/Versions; \
+	fi
+	cp -R tmp_framework/Versions/$(VSN) $(FRAMEWORK_DST)/Versions/
+
+osx_installFrameworkDocumentation:
+	@-rm -rf tmp_framework
+	@-mkdir tmp_framework
+	@-mkdir tmp_framework/Versions
+	@-mkdir tmp_framework/Versions/$(VSN)
+	@-mkdir tmp_framework/Versions/$(VSN)/Documentation
+	cp -R ../../doc/online "tmp_framework/Versions/$(VSN)/Documentation/"
+	@-find "tmp_framework/Versions/$(VSN)/Documentation/"  -name ".cvsignore" -exec rm -f {} \;
+	@-find "tmp_framework/Versions/$(VSN)/Documentation/"  -name "CVS" -exec rm -rf {} \;
+	@-find "tmp_framework/Versions/$(VSN)/Documentation/"  -name "NO*AUTO*" -exec rm -f {} \;
+	@-find "tmp_framework/Versions/$(VSN)/Documentation/"  -name "makefile" -exec rm -f {} \;
+	@-find "tmp_framework/Versions/$(VSN)/Documentation/"  -name "Make.*" -exec rm -f {} \;
+
+################### end of mac specific #################
+
+################### begin of tgz specific #################
+# creates /tmp/stx.tgz
+
+#
+# should work on all systems
+#
+TGZ_TMP=/tmp/stx_tgz
+
+deploy_tgz:
+	$(MAKE) newTGZ
+	$(MAKE) tarIt
+
+tarIt:
+	rm -f stx.tgz
+	(cd $(TGZ_TMP); tar cvfz /tmp/stx.tgz stx)
+
+newTGZ:
+	rm -rf $(TGZ_TMP)
+	$(MAKE) $(TGZ_TMP)
+
+$(TGZ_TMP):
+	@-mkdir "$(TGZ_TMP)"
+	-cp -r $(TOP)/../stx "$(TGZ_TMP)/."
+	$(MAKE) clean_tgz
+
+clean_tgz:
+	$(MAKE) cleanTemporaryDeploymentHierarchy TMP_TOP="$(TGZ_TMP)"
+
+################### end of tgz specific #################
+
+
+################### common #################
+#
+# all of the following depend on TMP_TOP to be set to "stx"
+# in a temporary copy of the whole work tree.
+# The tree below that will be cleaned from any leftover build files.
+# No hardcoding of any architecture specifics below, please.
+#
+FIND_PRINT=-print
+#FIND_PRINT=
+
+cleanTemporaryDeploymentHierarchy:
+	@-if [ "$TMP_TOP" = "" ]; then \
+	    exit 1; \
+	fi
+	$(MAKE) cleanMiscJunk             TMP_TOP=$(TMP_TOP)
+	$(MAKE) cleanNeverDeliveredStuff  TMP_TOP=$(TMP_TOP)
+	$(MAKE) cleanPackages             TMP_TOP=$(TMP_TOP)
+	$(MAKE) cleanUnfinished           TMP_TOP=$(TMP_TOP)
+	$(MAKE) cleanObsoleteStuff        TMP_TOP=$(TMP_TOP)
+#        $(MAKE) cleanObsoleteArchitectureSpecific TMP_TOP=$(TMP_TOP)
+	$(MAKE) cleanArchitectureSpecific TMP_TOP=$(TMP_TOP)
+
+cleanArchitectureSpecific:
+	$(MAKE) cleanStuffNotForArch_$(ARCH)  TMP_TOP=$(TMP_TOP)
+
+cleanStuffNotForArch_macosx:
+	$(MAKE) cleanWindowsSpecific TMP_TOP=$(TMP_TOP)
+	$(MAKE) cleanFreeBSDSpecific TMP_TOP=$(TMP_TOP)
+	$(MAKE) cleanLinuxSpecific TMP_TOP=$(TMP_TOP)
+	$(MAKE) cleanObsoleteArchitectureSpecific TMP_TOP=$(TMP_TOP)
+
+cleanStuffNotForArch_linux:
+	$(MAKE) cleanMacOSXSpecific TMP_TOP=$(TMP_TOP)
+	$(MAKE) cleanWindowsSpecific TMP_TOP=$(TMP_TOP)
+	$(MAKE) cleanFreeBSDSpecific TMP_TOP=$(TMP_TOP)
+	$(MAKE) cleanObsoleteArchitectureSpecific TMP_TOP=$(TMP_TOP)
+
+cleanStuffNotForArch_raspian:
+	$(MAKE) cleanMacOSXSpecific TMP_TOP=$(TMP_TOP)
+	$(MAKE) cleanWindowsSpecific TMP_TOP=$(TMP_TOP)
+	$(MAKE) cleanFreeBSDSpecific TMP_TOP=$(TMP_TOP)
+	$(MAKE) cleanObsoleteArchitectureSpecific TMP_TOP=$(TMP_TOP)
+
+cleanStuffNotForArch_win32:
+	$(MAKE) cleanMacOSXSpecific TMP_TOP=$(TMP_TOP)
+	$(MAKE) cleanFreeBSDSpecific TMP_TOP=$(TMP_TOP)
+	$(MAKE) cleanLinuxSpecific TMP_TOP=$(TMP_TOP)
+	$(MAKE) cleanObsoleteArchitectureSpecific TMP_TOP=$(TMP_TOP)
+
+cleanWindowsSpecific:
+	find "$(TMP_TOP)"/stx -name "*.mak" $(FIND_PRINT) -exec rm -f {} \;
+	find "$(TMP_TOP)"/stx -name "*.bat" $(FIND_PRINT) -exec rm -f {} \;
+	find "$(TMP_TOP)"/stx -name "nt.def" $(FIND_PRINT) -exec rm -f {} \;
+	rm -rf "$(TMP_TOP)"/stx/support/win32
+	rm -rf "$(TMP_TOP)"/stx/configurations/NT
+
+cleanMacOSXSpecific:
+	rm -rf "$(TMP_TOP)"/stx/libobjc
+
+cleanObsoleteArchitectureSpecific:
+	$(MAKE) cleanSunSpecific TMP_TOP=$(TMP_TOP)
+	$(MAKE) cleanSgiSpecific TMP_TOP=$(TMP_TOP)
+	$(MAKE) cleanNeXTSpecific TMP_TOP=$(TMP_TOP)
+	$(MAKE) cleanAixSpecific TMP_TOP=$(TMP_TOP)
+	$(MAKE) cleanDecSpecific TMP_TOP=$(TMP_TOP)
+	$(MAKE) cleanHpSpecific TMP_TOP=$(TMP_TOP)
+	$(MAKE) cleanMotorolaSpecific TMP_TOP=$(TMP_TOP)
+	$(MAKE) cleanQnxSpecific TMP_TOP=$(TMP_TOP)
+	$(MAKE) cleanUnixwareSpecific TMP_TOP=$(TMP_TOP)
+	$(MAKE) cleanLinuxAoutOnElfSpecific TMP_TOP=$(TMP_TOP)
+
+cleanLinuxAoutOnElfSpecific:
+	-rm -rf "$(TMP_TOP)"/stx/configurations/linux_a.out_onELF
+
+cleanLinuxSpecific:
+	-rm -rf "$(TMP_TOP)"/stx/configurations/linux
+	-rm -rf "$(TMP_TOP)"/stx/configurations/linux-*
+	-rm -rf "$(TMP_TOP)"/stx/support/autopackage.*
+
+cleanFreeBSDSpecific:
+	-rm -rf "$(TMP_TOP)"/stx/configurations/freeBSD
+
+cleanSunSpecific:
+	-rm -rf "$(TMP_TOP)"/stx/configurations/sun
+
+cleanSgiSpecific:
+	-rm -rf "$(TMP_TOP)"/stx/configurations/sgi
+
+cleanNeXTSpecific:
+	-rm -rf "$(TMP_TOP)"/stx/configurations/NeXT
+
+cleanAixSpecific:
+	-rm -rf "$(TMP_TOP)"/stx/configurations/aix
+
+cleanDecSpecific:
+	-rm -rf "$(TMP_TOP)"/stx/configurations/dec
+
+cleanHpSpecific:
+	-rm -rf "$(TMP_TOP)"/stx/configurations/hp
+
+cleanMotorolaSpecific:
+	-rm -rf "$(TMP_TOP)"/stx/configurations/motorola
+
+cleanQnxSpecific:
+	-rm -rf "$(TMP_TOP)"/stx/configurations/qnx
+
+cleanUnixwareSpecific:
+	-rm -rf "$(TMP_TOP)"/stx/configurations/unixware
+
+#
+# work in progress or not-yet-fully ported stuff
+#
+cleanUnfinished:
+	-rm -rf "$(TMP_TOP)"/stx/libobjc
+	-rm -rf "$(TMP_TOP)"/stx/libdb/nosql/ken
+	-rm -rf "$(TMP_TOP)"/stx/libdb/nosql/sedna
+	-rm -rf "$(TMP_TOP)"/stx/libdb/libopenDBX
+	-rm -rf "$(TMP_TOP)"/stx/goodies/roelTyper
+	-rm -rf "$(TMP_TOP)"/stx/goodies/raytracing
+	-rm -rf "$(TMP_TOP)"/stx/goodies/imageSegments
+	-rm -rf "$(TMP_TOP)"/stx/goodies/hotdraw
+	-rm -rf "$(TMP_TOP)"/stx/goodies/goods
+	-rm -rf "$(TMP_TOP)"/stx/goodies/gitocello
+	-rm -rf "$(TMP_TOP)"/stx/goodies/glorp0_4
+	-rm -rf "$(TMP_TOP)"/stx/goodies/constraints
+	-rm -rf "$(TMP_TOP)"/stx/goodies/cassovary
+	-find "$(TMP_TOP)"/stx -name "not_ported" $(FIND_PRINT) -exec rm -rf {} \;
+
+#
+# baby baby baby you're out of tiiiime...
+#
+cleanObsoleteStuff:
+	-rm -rf "$(TMP_TOP)"/stx/librt
+	-rm -rf "$(TMP_TOP)"/stx/libsnmp
+	-rm -rf "$(TMP_TOP)"/stx/goodies/stx
+	-rm -rf "$(TMP_TOP)"/stx/clients/AddrBook
+	-rm -rf "$(TMP_TOP)"/stx/clients/DirView
+	-rm -rf "$(TMP_TOP)"/stx/clients/DocTool
+	-rm -rf "$(TMP_TOP)"/stx/clients/MailTool
+	-rm -rf "$(TMP_TOP)"/stx/clients/NewsTool
+	-rm -rf "$(TMP_TOP)"/stx/liboracle8
+	-rm -rf "$(TMP_TOP)"/stx/support/DLD
+	-rm -rf "$(TMP_TOP)"/stx/support/unixware
+	-rm -rf "$(TMP_TOP)"/stx/support/db
+	-rm -rf "$(TMP_TOP)"/stx/projects/drawtool
+	-find "$(TMP_TOP)"/stx -name "obsolete" $(FIND_PRINT) -exec rm -rf {} \;
+	-find "$(TMP_TOP)"/stx -name "obsolete_*" $(FIND_PRINT) -exec rm -rf {} \;
+	-find "$(TMP_TOP)"/stx -name "*_old" $(FIND_PRINT) -exec rm -rf {} \;
+	-find "$(TMP_TOP)"/stx -name "*_old2" $(FIND_PRINT) -exec rm -rf {} \;
+	-find "$(TMP_TOP)"/stx -name "*.old" $(FIND_PRINT) -exec rm -rf {} \;
+
+#
+# stuff noone needs outside expet
+#
+cleanMiscJunk:
+	-rm -f "$(TMP_TOP)"/stx/Dockerfile
+	-rm -f "$(TMP_TOP)"/stx/Install.files
+	-rm -f "$(TMP_TOP)"/stx/update.sh
+	-rm -f "$(TMP_TOP)"/stx/TAGS
+	-rm -f "$(TMP_TOP)"/stx/goodies/*.zip
+	-rm -f "$(TMP_TOP)"/stx/mkisofs.exclude
+	-rm -rf "$(TMP_TOP)"/stx/support/des
+	-rm -rf "$(TMP_TOP)"/stx/support/ctags-3*
+	-rm -rf "$(TMP_TOP)"/stx/support/libjpeg-6*
+	-rm -f "$(TMP_TOP)"/stx/support/mk-selfinstall
+
+#
+# stuff we keep secret - that's live
+#
+cleanNeverDeliveredStuff:
+	mv "$(TMP_TOP)"/stx/librun/main.c "$(TMP_TOP)"/stx/librun/main_c
+	-mv "$(TMP_TOP)"/stx/librun/buildDate.h "$(TMP_TOP)"/stx/librun/buildDate_h
+	-mv "$(TMP_TOP)"/stx/librun/symbolAddress.h "$(TMP_TOP)"/stx/librun/symbolAddress_h
+	-mv "$(TMP_TOP)"/stx/librun/symbols.h "$(TMP_TOP)"/stx/librun/symbols_h
+	-mv "$(TMP_TOP)"/stx/librun/symlist.c "$(TMP_TOP)"/stx/librun/symlist_h
+	rm -f "$(TMP_TOP)"/stx/librun/*.c
+	rm -f "$(TMP_TOP)"/stx/librun/*.h
+	mv "$(TMP_TOP)"/stx/librun/main_c "$(TMP_TOP)"/stx/librun/main.c
+	-mv "$(TMP_TOP)"/stx/librun/buildDate_h "$(TMP_TOP)"/stx/librun/buildDate.h
+	-mv "$(TMP_TOP)"/stx/librun/symbolAddress_h "$(TMP_TOP)"/stx/librun/symbolAddress.h
+	-mv "$(TMP_TOP)"/stx/librun/symbols_h "$(TMP_TOP)"/stx/librun/symbols.h
+	-mv "$(TMP_TOP)"/stx/librun/symlist_c "$(TMP_TOP)"/stx/librun/symlist.c
+	rm -rf "$(TMP_TOP)"/stx/librun/doc
+	rm -rf "$(TMP_TOP)"/stx/librun/ieee754_support
+	rm -rf "$(TMP_TOP)"/stx/librun/libffi*
+	rm -rf "$(TMP_TOP)"/stx/librun/genDate*
+	-rm -rf "$(TMP_TOP)"/stx/librun/*.bpr
+	-rm -rf "$(TMP_TOP)"/stx/librun/*.BPR
+	-rm -rf "$(TMP_TOP)"/stx/librun/*.cpp
+	-rm -rf "$(TMP_TOP)"/stx/librun/*.dbg
+	-rm -rf "$(TMP_TOP)"/stx/librun/*.gdb
+	-rm -rf "$(TMP_TOP)"/stx/librun/*.s
+	-rm -rf "$(TMP_TOP)"/stx/librun/*.asm
+	-rm -rf "$(TMP_TOP)"/stx/librun/*.sln
+	-rm -rf "$(TMP_TOP)"/stx/librun/*.def
+	-rm -rf "$(TMP_TOP)"/stx/librun/*.exp
+	-rm -rf "$(TMP_TOP)"/stx/librun/*.rc
+	-rm -rf "$(TMP_TOP)"/stx/librun/*.vcproj
+	-rm -rf "$(TMP_TOP)"/stx/librun/*.vcExpress
+	rm -f "$(TMP_TOP)"/stx/stc/*.c
+	rm -f "$(TMP_TOP)"/stx/stc/*.y
+	rm -f "$(TMP_TOP)"/stx/stc/*.l
+	-rm -f "$(TMP_TOP)"/stx/stc/*.bpr
+	-rm -f "$(TMP_TOP)"/stx/stc/*.BPR
+	rm -f "$(TMP_TOP)"/stx/stc/global.h
+	rm -f "$(TMP_TOP)"/stx/stc/nttokens.h
+	rm -f "$(TMP_TOP)"/stx/stc/tokens.h
+	rm -f "$(TMP_TOP)"/stx/stc/sha1.h
+	-rm -f "$(TMP_TOP)"/stx/stc/*.cpp
+	-rm -f "$(TMP_TOP)"/stx/stc/*.sln
+	-rm -f "$(TMP_TOP)"/stx/stc/*.vcproj
+	-rm -f "$(TMP_TOP)"/stx/stc/*.depend
+	rm -f "$(TMP_TOP)"/stx/stc/defs.h
+	rm -rf "$(TMP_TOP)"/stx/stc/bin
+	rm -rf "$(TMP_TOP)"/stx/stc/obj
+	rm -f "$(TMP_TOP)"/stx/stc/tests/*.xc
+	rm -f "$(TMP_TOP)"/stx/stc/tests/*.c
+	-find "$(TMP_TOP)"/stx -name "not_delivered" $(FIND_PRINT) -exec rm -rf {} \;
+
+cleanPackages:
+#        (cd "$(TMP_TOP)"/stx ; make cleanjunk)
+	(cd "$(TMP_TOP)"/stx/stc/tests ; make clobber)
+	-rm -rf "$(TMP_TOP)"/stx/libjava.both
+	-rm -rf "$(TMP_TOP)"/stx/libjava.cvs
+	-rm -rf "$(TMP_TOP)"/stx/libjava.old
+	-rm -rf "$(TMP_TOP)"/stx/librun-*
+	-rm -rf "$(TMP_TOP)"/stx/librun_*
+	-rm -rf "$(TMP_TOP)"/stx/librun.*
+	-rm -rf "$(TMP_TOP)"/stx/stc/*.dSYM
+	-rm -rf "$(TMP_TOP)"/stx/stc/*/*.dSYM
+	-rm -rf "$(TMP_TOP)"/stx/stc/libfl
+	-rm -rf "$(TMP_TOP)"/stx/stc/tests/test[0-9]*
+	-rm -rf "$(TMP_TOP)"/stx/stc/tests/hw
+	-rm -rf "$(TMP_TOP)"/stx/stc/tests
+	-rm -rf "$(TMP_TOP)"/stx/libscm.cvs
+	-rm -rf "$(TMP_TOP)"/stx/libscm.hg
+	-rm -f "$(TMP_TOP)"/stx/libbasic*/[A-Z]*.c
+	-rm -f "$(TMP_TOP)"/stx/libboss/[A-Z]*.c
+	-rm -f "$(TMP_TOP)"/stx/libcomp/[A-Z]*.c
+	-rm -f "$(TMP_TOP)"/stx/libview*/[A-Z]*.c
+	-rm -f "$(TMP_TOP)"/stx/libwidg*/[A-Z]*.c
+	-rm -f "$(TMP_TOP)"/stx/libtool*/[A-Z]*.c
+	-rm -f "$(TMP_TOP)"/stx/libui/[A-Z]*.c
+	-rm -f "$(TMP_TOP)"/stx/libdb/[A-Z]*.c
+	-rm -f "$(TMP_TOP)"/stx/libdb/*/[A-Z]*.c
+	-rm -f "$(TMP_TOP)"/stx/libopengl/[A-Z]*.c
+	-rm -f "$(TMP_TOP)"/stx/goodies/chronos/[A-Z]*.c
+	-rm -f "$(TMP_TOP)"/stx/goodies/chronos/*/[A-Z]*.c
+	-rm -f "$(TMP_TOP)"/stx/goodies/*/i_[A-Z]*.c
+	-rm -rf "$(TMP_TOP)"/stx/monticello_packages
+	-rm -rf "$(TMP_TOP)"/stx/support/tools/splint-*
+	-rm -rf "$(TMP_TOP)"/stx/support/tools/cscope-*
+	-rm -rf "$(TMP_TOP)"/stx/support/xft
+	-rm -rf "$(TMP_TOP)"/stx/support/libjpeg
+	-rm -rf "$(TMP_TOP)"/stx/support/libjpeg-7
+	-rm -rf "$(TMP_TOP)"/stx/projects/tinytalk
+	-rm -rf "$(TMP_TOP)"/stx/projects/minitalk
+	-rm -rf "$(TMP_TOP)"/stx/projects/demoServer
+	-rm -rf "$(TMP_TOP)"/stx/projects/fileBrowser
+	-rm -rf "$(TMP_TOP)"/stx/projects/simpleFileBrowser
+	-rm -rf "$(TMP_TOP)"/stx/projects/smalltalk/package-cache
+	-rm -rf "$(TMP_TOP)"/stx/projects/smalltalk/modules
+	-rm -rf "$(TMP_TOP)"/stx/projects/smalltalk/stcTests
+	-rm -rf "$(TMP_TOP)"/stx/projects/smalltalk/crashdumps
+	-rm -rf "$(TMP_TOP)"/stx/projects/smalltalk/examples
+	-rm -rf "$(TMP_TOP)"/stx/projects/smalltalk/expeccoPatches
+	-rm -rf "$(TMP_TOP)"/stx/projects/smalltalk/.SandstoneDb
+	-rm -rf "$(TMP_TOP)"/stx/projects/smalltalk/changes_*
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/[A-Z]*.st
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/old_settings.stx
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/*.txt
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/*.uprj
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/*.js
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/evo*.wsp
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/*.html
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/*.log
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/*.png
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/data
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/out
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/err
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/outfile
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/ss
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/stbc.rc
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/*.bos
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/*.swf
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/*.sln
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/*.vcproj
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/*.vcxproj
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/*.tgz
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/*.dmg
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/*_dmg
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/*_tgz
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/X
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/ZZ
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/test*
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/*.extracted*
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/*.pkg*
+	-rm -rf "$(TMP_TOP)"/stx/projects/smalltalk/*_pkg*
+	-rm -rf "$(TMP_TOP)"/stx/projects/smalltalk/*_dmg*
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/*.jnk*
+	-rm -rf "$(TMP_TOP)"/stx/projects/smalltalk/tmp*
+	-rm -f "$(TMP_TOP)"/stx/projects/smalltalk/*.manifest
+	find "$(TMP_TOP)"/stx/projects -name "*.mcz" $(FIND_PRINT) -exec rm -f {} \;
+	find "$(TMP_TOP)"/stx/projects -name "*.sav" $(FIND_PRINT) -exec rm -f {} \;
+	find "$(TMP_TOP)"/stx/projects -name "*.img" $(FIND_PRINT) -exec rm -f {} \;
+	find "$(TMP_TOP)"/stx/projects -name "*.dmg" $(FIND_PRINT) -exec rm -f {} \;
+	find "$(TMP_TOP)"/stx/projects -name "*.chg" $(FIND_PRINT) -exec rm -f {} \;
+	find "$(TMP_TOP)"/stx/projects -name "*.dat" $(FIND_PRINT) -exec rm -f {} \;
+	find "$(TMP_TOP)"/stx -name "cscope.out" $(FIND_PRINT) -exec rm -f {} \;
+	find "$(TMP_TOP)"/stx -name "a.out" $(FIND_PRINT) -exec rm -f {} \;
+	find "$(TMP_TOP)"/stx -name ".stxgdb" $(FIND_PRINT) -exec rm -f {} \;
+	find "$(TMP_TOP)"/stx -name "*.o" $(FIND_PRINT) -exec rm -f {} \;
+	find "$(TMP_TOP)"/stx -name "*.st-e" $(FIND_PRINT) -exec rm -f {} \;
+	find "$(TMP_TOP)"/stx -name "*.bad" $(FIND_PRINT) -exec rm -f {} \;
+	find "$(TMP_TOP)"/stx -name "*.bak" $(FIND_PRINT) -exec rm -f {} \;
+	find "$(TMP_TOP)"/stx -name "*.sav" $(FIND_PRINT) -exec rm -f {} \;
+	find "$(TMP_TOP)"/stx -name "*.swp" $(FIND_PRINT) -exec rm -f {} \;
+	-find "$(TMP_TOP)"/stx -name "stxtmp_*" $(FIND_PRINT) -exec rm -f {} \;
+	-find "$(TMP_TOP)"/stx -name ".DS_Store" $(FIND_PRINT) -exec rm -f {} \;
+	-find "$(TMP_TOP)"/stx -name "CVS" $(FIND_PRINT) -exec rm -rf {} \;
+	-find "$(TMP_TOP)"/stx -name ".CVS" $(FIND_PRINT) -exec rm -rf {} \;
+	-find "$(TMP_TOP)"/stx -name ".hg" $(FIND_PRINT) -exec rm -rf {} \;
+	-find "$(TMP_TOP)"/stx -name "..hg" $(FIND_PRINT) -exec rm -rf {} \;
+	-find "$(TMP_TOP)"/stx -name ".#*" $(FIND_PRINT) -exec rm -rf {} \;

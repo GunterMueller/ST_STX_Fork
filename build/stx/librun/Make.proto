@@ -1,0 +1,380 @@
+# $Header$
+#
+
+# LOCALDEFS=
+# LOCALDEFS=-DDEBUG -DSUPERDEBUG
+# LOCALDEFS=-DDEBUG
+# LOCALDEFS=$(LIBRUN_LOCALDEFS) -DUSE_PTHREADS
+# LOCALDEFS=$(LIBRUN_LOCALDEFS) -Wno-int-to-void-pointer-cast -Wno-int-conversion -Wno-unused-variable -Wno-unused-label
+LOCALDEFS=$(LIBRUN_LOCALDEFS)
+
+#
+# to compile with efence, comment the last 3 lines here
+# get the efence (o-) files and recompile malloc.c
+#
+EFENCE_SRC=  efence.c efencePage.c efencePrint.c
+EFENCE_OBJS= efence.$(O) efencePage.$(O) efencePrint.$(O)
+USE_EFENCE=-DUSE_EFENCE -DEFENCE_DO_NOT_EXIT
+
+EFENCE_SRC=
+EFENCE_OBJS=
+USE_EFENCE=
+
+#--------- no need to modify anything below -------
+
+#
+# Set HAVE_SOURCES to `yes` if sources are present or
+# to 'no' if not (i.e., if this is a binary distribution
+# of `stx:librun`).
+#
+
+ifneq (,$(wildcard new.c))
+HAVE_SOURCES = yes
+else
+HAVE_SOURCES = no
+endif
+
+
+TOP=..
+SUBDIRS=
+
+LIBFFI_DIR=libffi-3.2.1
+LIBFFI_OBJS=$(LIBFFI_DIR)/$(BUILD_TARGET)/src/*.o $(LIBFFI_DIR)/$(BUILD_TARGET)/src/x86/*.o
+
+NOAUTOLOAD=1
+
+DELIVERSOURCES=main.c symlist.c Make.proto
+DELIVERMISC=Makefile .dir.info
+DELIVERBINARIES=librun.*
+
+STARTUP_CLASS=Smalltalk
+STARTUP_SELECTOR="start"
+
+INSTALLLIB_DIR=$(INSTALLBASE)/lib/lib
+
+
+CFLAGS_1=$(DBG) $(DEFS) $(COMMONDEFS) $(ARCHDEFS) $(OTHERDEFS) $(LOCALDEFS)
+OPT_1=$(CCCOMMONOPT) $(CCARCHCOMMONOPT) $(CCARCHOPT) $(CCCONFOPT)
+CFLAGS=-g -fdiagnostics-color=auto -fwrapv -Wall -W -Wno-unused-parameter -Wno-error=unused-variable -Wno-comment -Wno-error=comment -I$(INCLUDE) $(OS) $(LIBRUN_OPT) $(CFLAGS_1) $(OPT_1) $(USE_EFENCE) $(DEBUG_OPTIONS)
+CPPFLAGS=-I$(INCLUDE) $(OS) $(CFLAGS_1)
+
+#ASM =    asmhelp.$(O) codeproto.$(O)
+ASM =    asmhelp.$(O)
+
+STX_LIBRUN_OBJS = \
+	errhandler.$(O) init.$(O) classes.$(O) lookup.$(O) \
+	backtrace.$(O) new.$(O) \
+	send.$(O) process.$(O) stack.$(O) \
+	char.$(O) float.$(O) string.$(O) symbol.$(O) globals.$(O)  \
+	util.$(O) interrupt.$(O) statistic.$(O) interpret.$(O) \
+	jinterpret.$(O) mcompiler.$(O) memory.$(O) stxplugin.$(O) stxmain.$(O) \
+	hmm.$(O) debug.$(O) jsupport.$(O)
+
+BINARY_ONLY_OBJS = \
+	$(STX_LIBRUN_OBJS) \
+	$(LIBFFI_OBJS)
+
+
+SOURCE_OBJS = \
+	md5.$(O) symlist.$(O) malloc.$(O) \
+	$(EFENCE_OBJS) $(LIBRUN_MORE)
+
+DUMPIMAGE_OBJS = $(BINARY_ONLY_OBJS) $(SOURCE_OBJS)
+OBJS =           $(DUMPIMAGE_OBJS) snapshot.$(O)
+
+HDR  = $(INCLUDE)/stc.h $(INCLUDE)/stcIntern.h $(INCLUDE)/thinlocks.h $(CPUINTERN_H) hmm.h debug.h
+
+
+
+all::   $(INCLUDE)/md5.h $(INCLUDE)/mcompiler.h librun.$(A) librun.$(SO)
+
+Makefiles:: $(LIBFFI_DIR)/$(BUILD_TARGET)/Makefile
+
+$(LIBFFI_DIR)/$(BUILD_TARGET)/Makefile:
+	mkdir -p $(LIBFFI_DIR)/$(BUILD_TARGET)
+	cd $(LIBFFI_DIR)/$(BUILD_TARGET) && CFLAGS="$(CCCONFOPT) $(CCARCHOPT)" ../configure --target=$(BUILD_TARGET) 
+
+$(LIBFFI_OBJS): $(LIBFFI_DIR)/$(BUILD_TARGET)/Makefile
+	touch $(LIBFFI_DIR)/doc/libffi.info
+	cd $(LIBFFI_DIR)/$(BUILD_TARGET) && make MAKEFLAGS= MAKE=make
+	cp $(LIBFFI_DIR)/$(BUILD_TARGET)/include/*.h $(INCLUDE)
+
+clean::
+	if [ -d $(LIBFFI_DIR)/$(BUILD_TARGET) ]; then \
+	    $(MAKE) -C $(LIBFFI_DIR)/$(BUILD_TARGET) clean; \
+	fi
+
+clobber::
+	rm -rf $(LIBFFI_DIR)/$(BUILD_TARGET)
+
+g:
+	make LIBRUN_OPT=-g \
+		DEBUG_OPTIONS="-DCONSISTENCY_DEBUG -DCONSISTENCY_DEBUG2 -DLIFODEBUG -DLIFODEBUG2"
+
+linkOnly::
+	$(MAKE) $(SHAREDLIBRULE)
+
+archive::
+	$(MAKE) OPT="$(OPT)" $(LIBRUN_EXTRA_TARGETS) $(LIBRUNTARGET)
+
+objs::  $(OBJS)
+
+profiled:
+	$(MAKE) CFLAGS="$(CFLAGS) -pg"
+
+ccCheck:
+	$(MAKE) CFLAGS="$(CFLAGS) -W -Wall -pedantic"
+
+customize:      customize.o md5.o
+	$(LIBRUN_CC) -o customize customize.o md5.o
+
+dumpimage:  $(DUMP_IMAGEOBJS)
+	$(LIBRUN_CC) -o dumpimage -DDUMPING $(CFLAGS) snapshot.c $(DUMPIMAGE_OBJS)
+
+#
+# only clean objs, if sources are avail.
+# the following rule removes all objs, which can be reconstructed;
+# its not required if you have the source...
+#
+cleanOBJS:
+	for i in \
+		new init backtrace asmhelp char \
+		classes errhandler float globals interpret interrupt \
+		jinterpret lookup malloc mcompiler memory \
+		process stack send snapshot stxplugin \
+		statistic string symbol symlist util md5 stxmain \
+	; do \
+	    if [ -f $$i.c ] ; then \
+		rm -f $$i.$(O); \
+	    fi; \
+	done
+
+clean:: cleanOBJS
+	-rm -f asmhelp.s codeproto.s interpret.[Ss] *.timestamp
+	@-if [ -d VGL/vogl ]; then                               \
+	    cd VGL/vogl && rm -f drivers/*.o src/*.o;           \
+	fi
+	@-if [ -d $(DLD_REL_DIR) ]; then                         \
+	    cd $(DLD_REL_DIR) && rm -f *.o;                      \
+	fi
+
+CLOBBERED_OBJS=
+
+clobber:: clean
+	@-if [ -f new.c ]; then \
+	    rm -f *.o *.so *.a; \
+	else \
+	    echo "will not remove objs - no sources to recompile."; \
+	fi
+	rm -f $(INCLUDE)/md5.h $(INCLUDE)/mcompiler.h
+
+#
+# these rules allow recompilation of librun in
+# binary-only distributions
+#
+
+ifeq ($(HAVE_SOURCES),yes)
+send.o: send.c $(HDR)
+	$(CC) $(CFLAGS) -Werror $(CPPFLAGS) $(TARGET_ARCH) -o $@ -c $<
+
+backtrace.o: backtrace.c $(HDR)
+	$(CC) $(CFLAGS) -Werror $(CPPFLAGS) $(TARGET_ARCH) -o $@ -c $<
+
+stxmain.o: stxmain.c $(HDR)
+	$(CC) $(CFLAGS) -Werror $(CPPFLAGS) $(TARGET_ARCH) -o $@ -c $<
+
+errhandler.o: errhandler.c $(HDR)
+	$(CC) $(CFLAGS) -Werror $(CPPFLAGS) $(TARGET_ARCH) -o $@ -c $<
+
+jinterpret.o: jinterpret.c $(HDR) jsupport.h
+	$(CC) $(CFLAGS) -Werror $(CPPFLAGS) $(TARGET_ARCH) -o $@ -c $<
+
+jsupport.o: jsupport.c $(HDR) jsupport.h
+	$(CC) $(CFLAGS) -Werror $(CPPFLAGS) $(TARGET_ARCH) -o $@ -c $<
+
+util.o: util.c $(HDR)
+	$(CC) $(CFLAGS) -Werror $(CPPFLAGS) $(TARGET_ARCH) -o $@ -c $<
+
+hmm.o: hmm.c $(HDR)
+	$(CC) $(CFLAGS) -Werror $(CPPFLAGS) $(TARGET_ARCH) -o $@ -c $<
+
+debug.o: debug.c $(HDR)
+	$(CC) $(CFLAGS) -Werror $(CPPFLAGS) $(TARGET_ARCH) -o $@ -c $<
+
+char.o: char.c $(HDR)
+	$(CC) $(CFLAGS) -Werror $(CPPFLAGS) $(TARGET_ARCH) -o $@ -c $<
+
+
+%.o: %.c $(HDR)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -o $@ -c $<
+else
+$(OBJS): librun.$(A)
+	$(AR) x $< $@
+
+symlist.o: symlist.c symbols.h $(HDR)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -o $@ -c $<
+endif
+
+
+
+
+#
+# generate a symbols.h file from the symbols.stc file.
+#
+
+$(STC):
+	$(MAKE) -C $(DIRNAME)/stx
+
+symbols.h:  $(INCLUDE)/symbols.stc $(STC)
+	@echo "making symbols.h from $(INCLUDE)/symbols.stc ..."
+	$(STC) $(STCFLAGS) $(COMMONSYMBOLS) -extractSymbolH > symbols.h
+
+$(INCLUDE)/md5.h: md5.h
+	rm -f $(INCLUDE)/md5.h
+	ln -s ../librun/md5.h $(INCLUDE)/md5.h
+
+$(INCLUDE)/mcompiler.h: mcompiler.h
+	rm -f $(INCLUDE)/mcompiler.h
+	ln -s ../librun/mcompiler.h $(INCLUDE)/mcompiler.h
+
+
+ifeq ($(HAVE_SOURCES),yes)
+$(OBJS): $(HDR)
+
+lookup.$(O):    cache.h
+send.$(O):      cache.h
+new.$(O):       stxprocess.h $(CPUINTERN_H)
+process.$(O):   stxprocess.h $(CPUINTERN_H)
+stack.$(O):     stxprocess.h $(CPUINTERN_H)
+snapshot.$(O):  stxprocess.h
+symlist.$(O):   symbols.h
+interpret.$(O): bytecodes.h
+jinterpret.$(O): jbytecodes.h
+mcompiler.$(O): bytecodes.h $(CPUINTERN_H)
+classes.$(O):   $(INCLUDE)/stcVMdata.h md5.h
+globals.$(O):   $(INCLUDE)/stcVMdata.h
+new.$(O):       $(INCLUDE)/stcVMdata.h symbols.h
+snapshot.$(O):  $(INCLUDE)/stcVMdata.h
+asmhelp.$(O):   $(INCLUDE)/stcVMoffsets.h
+apithreads.$(O): apithreads.h
+endif
+
+
+librun.$(SO): $(OBJS)
+	$(LD) -shared $(LDFLAGS) -o $@ $^ $(LOCAL_SHARED_LIBS) $(EXTRA_SHARED_LIBS)
+
+ifeq ($(HAVE_SOURCES),yes)
+librun.$(A): $(OBJS)
+	$(AR) $(AR_LIB_FLAG) $@ $(OBJS)
+	$(RANLIB) $@
+endif
+
+
+# special: on some machines, some files may not be compiled with
+# -fomit-frame-pointer
+#
+ifeq ($(HAVE_SOURCES),yes)
+asmhelp.$(O):   asmhelp.c codeEntry.h
+		$(LIBRUN_CC) -D__ASSEMBLER__ $(CFLAGS) $(LIBRUN_ASM_CPP_OPT) -E asmhelp.c > asmhelp.t
+		sed "/^# /d" < asmhelp.t > asmhelp.s
+		$(AS_CC) -o asmhelp.$(O) $(CC_AS_OPT) $(ASFLAGS) $(AS_CC_CFLAG) asmhelp.s
+		-rm -f asmhelp.s asmhelp.t
+endif
+
+xasmhelp.$(O):   asmhelp.c codeEntry.h
+		/lib/cpp $(CPPFLAGS) -D__ASSEMBLER__ $(LIBRUN_ASM_CPP_OPT) < asmhelp.c >asmhelp.i
+		sed "/^# /d" < asmhelp.i > asmhelp.s
+		$(AS_CC) -o xasmhelp.$(O) $(CC_AS_OPT) $(ASFLAGS) $(AS_CC_CFLAG) xasmhelp.s
+		-rm -f asmhelp.s asmhelp.i
+
+codeproto.$(O): codeproto.c codeEntry.h
+		$(LIBRUN_CC) -D__ASSEMBLER__ $(CFLAGS) $(LIBRUN_ASM_CPP_OPT) -E codeproto.c > codeproto.t
+		sed "/^# /d" < codeproto.t > codeproto.s
+		$(AS_CC) -o codeproto.$(O) $(CC_AS_OPT) $(ASFLAGS) $(AS_CC_CFLAG) codeproto.s
+		-rm -f codeproto.s codeproto.t
+
+#
+# private
+#
+mc:
+	$(MAKE) mcompiler.o OPT="$(OPT) -DDEBUGGING" CC="$(CC)" LIBRUN_OPT="$(LIBRUN_OPT) -DDEBUGGING"
+	$(MAKE)
+
+dbg:
+	$(MAKE) LIBRUN_OPT="-ggdb3 $(OPT)" debug
+#       $(MAKE) LIBRUN_OPT="-ggdb3 $(OPT) -DDEBUGGING" debug
+
+#
+# remove files not to be delivered to the public,
+# but keep some needed files
+#
+
+rmSource:
+	@for f in $(DELIVERSOURCES); do echo $$f; done >__tmp
+	@ls *.c | grep -F -v -f __tmp | xargs rm -f
+	@rm -f __tmp
+
+#
+# Debugging
+#
+
+show-variables:
+	@echo 'OPT           = ' \"$(OPT)\"
+	@echo 'LIBRUN_OPT    = ' \"$(LIBRUN_OPT)\"
+	@echo 'DEBUG_OPTIONS = ' \"$(DEBUG_OPTIONS)\"
+
+
+help:
+	@cat doc/building.txt
+
+help-debug-options:
+	@less doc/DEBUG_OPTIONS.txt
+
+# If you change DEBUG_OPTIONS, please update it immediately in
+# doc/building.txt
+memory-corruption: memory-corruption-1
+
+memory-corruption-1:
+	$(MAKE) LIBRUN_OPT="-ggdb3 -O  -fno-stack-protector -fomit-frame-pointer -fPIC" \
+	     snapshot.o symbol.o
+	$(MAKE) LIBRUN_OPT="-ggdb3 -O0 -fno-stack-protector -fomit-frame-pointer -fPIC" \
+	     DEBUG_OPTIONS="-DCONSISTENCY_DEBUG -DSTORE_DEBUG -DDEBUG_MEMORY_CORRUPTION $(DEBUG_OPTIONS)"
+
+# If you change DEBUG_OPTIONS, please update it immediately in
+# doc/building.txt
+memory-corruption-2:
+	$(MAKE) LIBRUN_OPT="-ggdb3 -O  -fno-stack-protector -fomit-frame-pointer -fPIC" \
+	     snapshot.o symbol.o
+	$(MAKE) LIBRUN_OPT="-ggdb3 -O0 -fno-stack-protector -fomit-frame-pointer -fPIC" \
+	     DEBUG_OPTIONS="-DCONSISTENCY_DEBUG -DCONSISTENCY_DEBUG2 \
+			-DSTORE_DEBUG -DDEBUG_MEMORY_CORRUPTION $(DEBUG_OPTIONS)"
+
+
+# If you change DEBUG_OPTIONS, please update it immediately in
+# doc/building.txt
+memory-corruption-3:
+	$(MAKE) LIBRUN_OPT="-ggdb3 -O  -fno-stack-protector -fomit-frame-pointer -fPIC" \
+	     snapshot.o symbol.o
+	$(MAKE) LIBRUN_OPT="-ggdb3 -O0 -fno-stack-protector -fomit-frame-pointer -fPIC" \
+	     DEBUG_OPTIONS="-DCONSISTENCY_DEBUG -DCONSISTENCY_DEBUG2 \
+			-DSTORE_DEBUG -DDEBUG_MEMORY_CORRUPTION $(DEBUG_OPTIONS)"
+
+debugO0:
+	$(MAKE) LIBRUN_OPT="$(LIBRUN_OPT) -O0"
+
+ubsan:
+	$(MAKE) LIBRUN_OPT="$(LIBRUN_OPT) -fsanitize=undefined"
+	$(LIBRUN_CC) -shared $(LDFLAGS) -fsanitize=undefined -o librun$(SO_NAME) $(OBJS) $(LOCAL_SHARED_LIBS) $(EXTRA_SHARED_LIBS) -lubsan
+
+
+performance:
+	$(MAKE) DBG="-DDEBUG -DPERFORMANCE" LIBRUN_OPT="$(LIBRUN_OPT)"
+
+
+
+
+
+
+
+
+

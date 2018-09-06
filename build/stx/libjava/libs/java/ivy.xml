@@ -1,0 +1,104 @@
+<ivy-module version="2.0">
+    <info
+        organisation="SWING Research Group &amp; eXept Software A.G."
+        module="stx.libjava.tools"/>
+
+   <configurations>
+        <conf name="sources"  description="Source jars"/>
+        <conf name="binaries" description="Binary jars"/>
+    </configurations>
+
+    <dependencies>
+	<dependency
+    		org="org.hamcrest"
+    		name="hamcrest-library"
+    		rev="1.2.1"
+    		conf="binaries->default"/>
+    	<dependency
+    		org="org.hamcrest"
+    		name="hamcrest-library"
+    		rev="1.2.1"
+    		conf="sources->sources"/>
+
+
+	<!--
+	Apache Log4j 1.2
+
+	http://mvnrepository.com/artifact/log4j/log4j/1.2.17
+	-->
+	<dependency
+		org="log4j"
+		name="log4j"
+		rev="1.2.17"
+    	conf="binaries->default"/>
+	<dependency
+		org="log4j"
+		name="log4j"
+		rev="1.2.17"
+		conf="sources->sources"/>
+
+
+	<!--
+	Saxon a complete and conformant implementation of the XSLT 2.0,
+	XQuery 1.0, and XPath 2.0 Recommendations published on 23 January
+	2007 by W3C
+
+	http://mvnrepository.com/artifact/net.sourceforge.saxon/saxon/9.1.0.8
+	-->
+	<dependency
+		org="net.sourceforge.saxon"
+		name="saxon"
+		rev="9.1.0.8"
+    		conf="binaries->default"/>
+	<dependency
+		org="net.sourceforge.saxon"
+		name="saxon"
+		rev="9.1.0.8"
+		conf="sources->sources"/>
+
+	<!--
+	Apache POI - Java API To Access Microsoft Format Files
+
+	http://mvnrepository.com/artifact/org.apache.poi/poi/3.11
+	-->
+	<dependency
+		org="org.apache.poi"
+		name="poi"
+		rev="3.11"
+    		conf="binaries->default"/>
+	<dependency
+		org="org.apache.poi"
+		name="poi"
+		rev="3.11"
+		conf="sources->sources"/>
+	<!--
+	Apache POI - Java API To Access Microsoft Format Files
+
+	http://mvnrepository.com/artifact/org.apache.poi/poi-ooxml/3.11
+	-->
+	<dependency org="org.apache.poi" name="poi-ooxml" rev="3.11" conf="binaries->default"/>
+	<dependency org="org.apache.poi" name="poi-ooxml" rev="3.11" conf="sources->sources"/>
+
+
+	<!--
+    	This library provides a set of facilities to allow project
+	information to be manipulated in Java and .Net. MPXJ supports seven
+	data formats, Microsoft Project Exchange (MPX), Microsoft Project (
+	MPP,MPT), Microsoft Project Data Interchange (MSPDI XML), Microsoft
+	Project Database (MPD), Planner (XML), and Primavera (XER and
+	database). Artifact packed by Alexey Skorokhodov (alskor@gmail.com).
+
+	http://mvnrepository.com/artifact/net.sourceforge/mpxj/4.3.0
+    	-->
+	<dependency
+		org="net.sourceforge"
+		name="mpxj"
+		rev="4.3.0"
+    		conf="binaries->default"/>
+	<dependency
+		org="net.sourceforge"
+		name="mpxj"
+		rev="4.3.0"
+		conf="sources->sources"/>
+    </dependencies>
+</ivy-module>

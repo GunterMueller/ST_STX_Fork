@@ -1,0 +1,25 @@
+; View defaultStyle:#mswindows95_dolphin 
+;
+; $Header: /cvs/stx/stx/libview/styles/mswindows95_dolphin.style,v 1.2 2001-12-04 14:54:44 cg Exp $
+
+#include 'mswindows95.style'
+
+comment  'win95 lookalike with dolphin colors'
+
+"/ debugView.viewBackgroundColor        Color red lightened
+codeView.backgroundColor             Color yellow lightened lightened lightened lightened
+
+
+!UserPreferences default at:#methodSelectorColor put: Color blue.
+!UserPreferences default at:#selectorColor       put: Color blue.
+!UserPreferences default at:#selectorEmphasis    put: #normal.
+!UserPreferences default at:#commentColor        put: Color green darkened darkened.
+!UserPreferences default at:#constantColor       put: (Color red:100 green:0 blue:100) darkened.
+!UserPreferences default at:#symbolColor         put: (Color red:100 green:0 blue:100) darkened.
+
+!UserPreferences current at:#methodSelectorColor put: (UserPreferences default at:#methodSelectorColor).
+!UserPreferences current at:#selectorColor       put: (UserPreferences default at:#selectorColor).
+!UserPreferences current at:#selectorEmphasis    put: (UserPreferences default at:#selectorEmphasis).
+!UserPreferences current at:#commentColor        put: (UserPreferences default at:#commentColor).
+!UserPreferences current at:#constantColor       put: (UserPreferences default at:#constantColor).
+!UserPreferences current at:#symbolColor         put: (UserPreferences default at:#symbolColor).

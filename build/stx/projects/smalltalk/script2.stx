@@ -1,0 +1,7 @@
+#!stx --script
+"/
+"/ notice that you can open more tools from the workspace
+"/ (i.e. eval: NewLauncher open)
+"/
+Workspace open.
+'done' printCR.

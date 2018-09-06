@@ -1,0 +1,33 @@
+Freeware and support stuff used by ST/X (or for your convenience):
+
+subdirectories:
+
+    VGL                 a public domain GL simulation library
+			(used by GLXsupport.c and GLXWorkstation.st)
+
+    MESA                a free openGL simulation library
+			(will eventually replace all VGL stuff)
+
+    DLD                 optional gnu dld library
+
+    compface            face (de-)compression routines
+
+    des                 DES encryption/decryption support
+
+    libjpeg             jpg decompression software library
+			used by JPEGReader
+
+    msql                msql stuff 
+			(no longer distributed due to copyright reasons;
+			 -> get it from an ftp site)
+
+    pvm3                pvm library
+
+    video               collected movie stuff (not yet fully integrated)
+
+    cjk_support         chinese/japanese/korean support
+
+    tools               ctags tool
+
+    win32               windows support stuff
+

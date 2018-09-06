@@ -1,0 +1,14 @@
+The beginning of a Desktop.
+
+Its not finished and might have bugs ....
+
+start with:
+
+       DirectoryView start
+
+(will be autoloaded)
+
+
+It needs a configuration file named '.DeskTop.defs'
+in your home directory. You can copy the file 'sample.defs'
+from here and modify as you like.

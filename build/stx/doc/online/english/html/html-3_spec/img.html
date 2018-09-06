@@ -1,0 +1,121 @@
+<TITLE>The IMG (Image) Element</TITLE> <H1>The IMG (Image) Element</H1>
+
+<B>Permitted Context:</B> %text<BR>
+<B>Content Model:</B> Empty!
+
+<P>The &lt;IMG&gt; tag is used to incorporate in-line graphics
+(typically icons or small graphics) into an HTML document. This element
+is NOT intended for embedding other HTML text. For large figures with
+captions and text flow see <a href="figures.html">FIG element</a>.
+
+<P>Example:
+
+<pre>&lt;IMG SRC="tajmahal.gif" ALT="The Taj Mahal"&gt;</pre>
+
+<P> Browsers that cannot display in-line images ignore the IMG element
+unless it contains the ALT attribute. Note that some browsers can
+display (or print) linked graphics but not in-line graphics. If the
+graphic is essential, you may want to create a link to it rather than
+to put it in-line. If the graphic is essentially decorative, then IMG
+is appropriate.
+
+<DL>
+<H3>Permitted Attributes</h3>
+
+<DL> <DT>ID <DD>An SGML identifier used as the target for hypertext
+links or for naming particular elements in associated style sheets.
+Identifiers are NAME tokens and must be unique within the scope of the
+current document.
+
+<DT>LANG <DD>This is one of the ISO standard language abbreviations,
+e.g. "en.uk" for the variation of English spoken in the United Kingdom.
+It can be used by parsers to select language specific choices for
+quotation marks, ligatures and hypenation rules etc. The language
+attribute is composed from the two letter language code from ISO 639,
+optionally followed by a period and a two letter country code from ISO
+3166.
+
+<DT>CLASS <DD>This a space separated list of SGML NAME tokens and is
+used to subclass tag names. By convention, the class names are
+interpreted hierarchically, with the most general class on the left and
+the most specific on the right, where classes are separated by a
+period. The CLASS attribute is most commonly used to attach a different
+style to some element, but it is recommended that where practical class
+names should be picked on the basis of the element's semantics, as this
+will permit other uses, such as restricting search through documents by
+matching on element class names. The  conventions for choosing class
+names are outside the scope of this specification.
+
+<DT>SRC (Source) <DD>The SRC attribute specifies the URI for the image
+to be embedded. Its syntax is the same as that of the HREF attribute of
+the &lt;A&gt; tag. SRC is mandatory.
+
+<DT>MD <DD>Specifies a message digest or cryptographic checksum for the
+associated graphic specified by the SRC attribute. It is used when you
+want to be sure that the image is indeed the same one that the
+author intended, and hasn't been modified in any way. For instance,
+MD="md5:jV2OfH+nnXHU8bnkPAad/mSQlTDZ", which specifies an MD5 checksum
+encoded as a base64 character string. The MD attribute is generally
+allowed for all elements which support URI based links.
+
+<DT>WIDTH <DD>Optional suggested width for the image. By default, this
+is given in pixels.
+
+<DT>HEIGHT <DD>Optional suggested height for the image. By default, this
+is given in pixels.
+
+<DT>UNITS <DD>This optional attribute specifies the units for the width
+and height attributes. It is one of: <tt>units=pixels</tt> (the default)
+or <tt>units=en</tt> (half the point size).
+
+<DT>ALIGN <DD>Take values TOP or MIDDLE or BOTTOM, defining
+whether the top or middle or bottom of the graphic should be aligned
+with the baseline for the text line in which the IMG element appears.
+
+<P>With ALIGN=LEFT, the graphic will float down and over to the current
+left margin, and subsequent text will wrap around the right hand side of the
+graphic. Likewise for ALIGN=RIGHT, the graphic aligns with the current
+right margin and, and text wraps around the left. It is inappropriate to
+use this feature for larger graphics as these are best represented with
+the FIG element.
+
+<DT>ALT (Alternate text) <DD>Optional alternative text as an
+alternative to the graphics for display in text-only environments.
+The alt text can contain entities e.g. for accented characters or
+special symbols, but it can't contain markup. The latter is possible,
+however, with the FIG element.
+
+<DT>ISMAP <DD>An image map is a graphical map by which users can
+navigate transparently from one information resource to another. The
+ISMAP attribute identifies an image as an image map. The IMG element
+can then be used as part of the label for a hypertext link (see the
+anchor element). When the user clicks on the image the location clicked
+is sent to the server designated by the hypertext link.
+
+<P>For example:
+
+<pre>&lt;A HREF="http://machine/htbin/imagemap/sample"&gt;
+&lt;IMG SRC="sample.gif" ISMAP&gt;&lt;/A&gt;</pre>
+
+</DL>
+
+<P><B>Note:</B> There are drawbacks from having the server process
+clicks on images: the delay in getting feedback and the inability to
+change the pointer cursor on the fly as it moves over hotzones.
+Client-side processing of events is possible if one of the following
+applies:
+
+<ul>
+<li>The server may allow the image map to be downloaded and processed
+locally. This should work with legacy documents produced using earlier
+versions of HTML.
+
+<li>Using an image format that includes image hotzones as part of the
+file format.
+
+<li>The FIG element provides for client-side image maps as a unified part
+of the figure description. It offers a number of advantages over IMG,
+including captions, markup in alt text and text flow around figures.
+</ul>
+
+<!--NewPage-->

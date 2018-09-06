@@ -1,0 +1,8 @@
+# $Header: /archiv/stx/7.2/doc/online/RCS/Make.proto,v 1.1 1995/10/27 17:14:28 cg Exp $
+#
+
+#--------- no need to modify anything below -------
+
+TOP=../../../..
+
+RCSSOURCES=Make.proto *.html

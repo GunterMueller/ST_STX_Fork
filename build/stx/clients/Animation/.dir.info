@@ -1,0 +1,32 @@
+Here you find:
+
+	Animation       a walking man
+
+	GlobeDemo       rotating globe
+
+	RoundGlobe      same, with shaped window 
+			(if your Xserver / window manager supports them)
+
+
+All have a middle-button-menu for controls; they also react on
+keys:
+
+    'f' - faster
+    's' - slower
+    'q' - quit
+    'h' - halt
+    'g' - go
+
+start with:
+
+	Animation start
+
+	GlobeDemo start
+
+	RoundGlobe start
+
+(classes will be autoloaded)
+
+These programs where written before processes have been implemented
+in Smalltalk/X. Therefore, they use the timeout-block feature.
+They should be rewritten to fork a subprocess for animation.

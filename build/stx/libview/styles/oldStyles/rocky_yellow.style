@@ -1,0 +1,30 @@
+; View defaultStyle:#'rocky_yellow' 
+;
+; rock solid windows (flintstones ?)
+; fun style; like motif, but with different view background
+;
+; $Header: /cvs/stx/stx/libview/styles/oldStyles/rocky_yellow.style,v 1.5 2000-08-16 14:24:30 ca Exp $
+
+
+#include 'motif.style'
+
+comment  'Fun style. Like `motif''\with rock solid views and changed\selection color'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Wie `motif'' mit beinhartem Hintergrund.\Andere Farbe für Selektionen'
+#endif
+
+shadowColor                 Color black
+lightColor                  Color lightGrey
+
+#viewBackground                    (Smalltalk imageFromFileNamed:'bitmaps/granite.tiff' inPackage:'stx:libwidg3') 
+viewBackground                     (Smalltalk imageFromFileNamed:'bitmaps/granite_small.tiff' inPackage:'stx:libwidg3')
+menuBackground                     =viewBackground
+selectionBackgroundColor           =viewBackground
+selectionHilightBackgroundColor    =viewBackground
+selectionHilightForegroundColor    Color yellow
+menuBackgroundColor                =viewBackground
+
+scrollerViewBackground             =viewBackground
+buttonActiveBackgroundColor        =viewBackground
+buttonActiveForegroundColor        Color yellow

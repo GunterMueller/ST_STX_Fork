@@ -1,0 +1,31 @@
+/* XPM */
+static char *s_korea_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 20 4 1",
+/* colors */
+"a c black",
+"b c red",
+"c c #24238e",
+"d c white",
+/* pixels */
+"dddddddddddddddddddddddddddddddd",
+"dddddddddddddddddddddddddddddddd",
+"dddddddaddddddddddddddddaddddddd",
+"ddddddadaddddddddddddddadadddddd",
+"dddddadadaddddddddddddadaddddddd",
+"ddddadadaddddddddddddddddadadddd",
+"dddddadaddddddbbbbddddddadaddddd",
+"ddddddaddddddbbbbbbddddddadddddd",
+"ddddddddddddbbbbbbbbdddddddddddd",
+"ddddddddddcdbbbbbbbbbddddddddddd",
+"ddddddddddcdbbbdddddbddddddddddd",
+"ddddddddddcdddddcccdbddddddddddd",
+"ddddddddddcccccccccdbddddadddddd",
+"dddddadddddccccccccdddddadaddddd",
+"ddddadadddddccccccdddddddadadddd",
+"dddadadadddddccccdddddadddaddddd",
+"ddddadddaddddddddddddadadddddddd",
+"dddddadaddddddddddddddadaddddddd",
+"ddddddaddddddddddddddddadddddddd",
+"dddddddddddddddddddddddddddddddd",
+};

@@ -1,0 +1,1466 @@
+%start MainModule;
+
+MainModule :
+    Prolog QueryBody
+	{ 
+        AstMainModule new
+            prolog: '1' ;
+	        queryBody: '2' 
+    } ;
+
+Prolog:
+    PrologDeclarationClassA* PrologDeclarationClassB*
+	{ 
+        AstProlog new
+		    declarations: ('1' addAll: '2'; yourself) 
+    } ;
+
+PrologDeclarationClassA:
+    "import" "module" URILiteral ";"
+    { 
+        AstModuleImport new
+	        uri: '3' 
+    }	      	      
+    | "import" "module" "namespace" NCName "=" URILiteral ";"
+    {
+        AstModuleImport new
+	        prefix: '4';
+	        uri: '6' 
+    } ;
+
+PrologDeclarationClassB:
+    DefaultNamespaceDecl ";"
+	{ 
+        '1' 
+    }
+    | Setter ";"
+    {
+        '1'.
+    }
+    | NamespaceDecl ";"
+	{ 
+        '1' 
+    }
+    | FunctionDecl ";"
+    {
+        '1'
+    } ;
+
+DefaultNamespaceDecl:
+    "declare" "default" "element" "namespace" URILiteral
+	{ 
+        AstDefaultNamespaceDecl new
+	        uri: '5';
+	        type: #element 
+    }
+    | "declare" "default" "function" "namespace" URILiteral
+	{ 
+        AstDefaultNamespaceDecl new
+	        uri: '5';
+	        type: #function 
+    } ;
+
+NamespaceDecl:
+    "declare" "namespace" NCName "=" URILiteral 
+	{ 
+        AstNamespaceDecl new
+	        prefix: '3' ;
+	        nsuri: '5'  
+    } ;
+
+Setter:
+    BaseUriDecl
+    {
+        '1'.
+    } ;
+
+BaseUriDecl: 
+    "declare" "base-uri" URILiteral
+    {
+        AstBaseUriDecl new
+            value: '3'.
+    } ;
+
+BaseUriDecl2: 
+    "declare" "base-uri" URILiteral
+    {
+        AstBaseUriDecl new
+            value: '3'.
+    } ;
+
+URILiteral:
+    StringLiteral
+	{ '1' }
+    ;
+
+
+FunctionDecl:
+    "declare" "function" QName "(" ParamList ")" EnclosedExpr
+	{ 
+        AstFunctionDecl new
+	        name: '3';
+	        paramList: '5';
+	        body: '7'
+	} ;
+
+ParamList:
+    OneOrMoreParamList
+	{ '1' }
+    | EmptyParamList
+	{ '2' }
+    ;
+
+EmptyParamList:
+	{ #() }
+    ;
+
+OneOrMoreParamList:
+    ParamList "," Param
+	{ '1' add: '3' ; yourself }
+    | Param
+	{ OrderedCollection with:'1' }
+    ;
+
+Param:
+    "$" QName
+	{ AstParam new
+	    name: '2'  }
+    ;
+
+
+QueryBody :
+  Expr {
+    self informAboutRuleReduction:'QueryBody1'.
+    '1'.
+  };
+
+Expr :
+  ExprSingle {
+    self informAboutRuleReduction:'Expr1'.
+    '1'.
+  } |
+  ExprSingle "," Expr {
+    self informAboutRuleReduction:'Expr2'.
+    AstExpr new exprSingle: '1'; expr: '3'.
+  } ;
+
+ExprSingle :
+  FLWORExpr {
+    self informAboutRuleReduction:'ExprSingle1'.
+    '1'.
+  } |
+  QuantifiedExpr {
+    self informAboutRuleReduction:'ExprSingle2'.
+    '1'.
+  } |
+  IfExpr {
+    self informAboutRuleReduction:'ExprSingle3'.
+    '1'.
+  } |
+  OrExpr {
+    self informAboutRuleReduction:'ExprSingle4'.
+    '1'.
+  } |
+  DeleteExpr {
+    self informAboutRuleReduction:'ExprSingle5'.
+    '1'.
+  } |
+  RenameExpr {
+    self informAboutRuleReduction:'ExprSingle6'.
+    '1'.
+  } |
+  ReplaceExpr {
+    self informAboutRuleReduction:'ExprSingle7'.
+    '1'.
+  } |
+  InsertExpr {
+    self informAboutRuleReduction:'ExprSingle8'.
+    '1'.
+  } |  
+  TransformExpr {
+    self informAboutRuleReduction:'ExprSingle9'.
+    '1'. 
+  } ;
+
+FLWORExpr :
+  FLWORExpr_ForLet "return" ExprSingle {
+    self informAboutRuleReduction:'FLWORExpr1'.
+    AstFLWORExpr new flworExpr_ForLet: '1'; exprSingle: '3'.
+  } |
+  FLWORExpr_ForLet WhereClause "return" ExprSingle {
+    self informAboutRuleReduction:'FLWORExpr2'.
+    AstFLWORExpr new flworExpr_ForLet: '1'; whereClause: '2'; exprSingle: '4'.
+  } |
+  FLWORExpr_ForLet OrderByClause "return" ExprSingle {
+    self informAboutRuleReduction:'FLWORExpr3'.
+    AstFLWORExpr new flworExpr_ForLet: '1'; orderByClause: '2'; exprSingle: '4'.
+  } |
+  FLWORExpr_ForLet WhereClause OrderByClause "return" ExprSingle {
+    self informAboutRuleReduction:'FLWORExpr4'.
+    AstFLWORExpr new flworExpr_ForLet: '1'; whereClause: '2'; orderByClause: '3'; exprSingle: '5'.
+  } ;
+
+FLWORExpr_ForLet :
+  ForClause {
+    self informAboutRuleReduction:'FLWORExpr_ForLet1'.
+    '1'.
+  } |
+  LetClause {
+    self informAboutRuleReduction:'FLWORExpr_ForLet2'.
+    '1'.
+  } |
+  ForClause FLWORExpr_ForLet {
+    self informAboutRuleReduction:'FLWORExpr_ForLet3'.
+    AstFLWORExpr_ForLet new forClause: '1'; flworExpr_ForLet: '2'.
+  } |
+  LetClause FLWORExpr_ForLet {
+    self informAboutRuleReduction:'FLWORExpr_ForLet4'.
+    AstFLWORExpr_ForLet new letClause: '1'; flworExpr_ForLet: '2'.
+  } ;
+
+ForClause :
+  "for" ForClause_Impl {
+    self informAboutRuleReduction:'ForClause1'.
+    '2'.
+  } ;
+
+ForClause_Impl :
+  "$" VarName "in" ExprSingle {
+    self informAboutRuleReduction:'ForClause_Impl1'.
+    AstForClause new varName: '2'; exprSingle: '4'.
+  } |
+  "$" VarName "in" ExprSingle "," ForClause_Impl {
+    self informAboutRuleReduction:'ForClause_Impl2'.
+    AstForClause new varName: '2'; exprSingle: '4'; forClause: '6'.
+  } |
+  "$" VarName PositionalVar "in" ExprSingle {
+    self informAboutRuleReduction:'ForClause_Impl3'.
+    AstForClause new varName: '2'; positionalVar: '3'; exprSingle: '5'.
+  } |
+  "$" VarName PositionalVar "in" ExprSingle "," ForClause_Impl {
+    self informAboutRuleReduction:'ForClause_Impl4'.
+    AstForClause new varName: '2'; positionalVar: '3'; exprSingle: '5'; forClause: '7'.
+  } ;
+
+PositionalVar:
+  "at" "$" VarName {
+    self informAboutRuleReduction:'PositionalVar1'.
+    '3'.
+  } ;
+
+LetClause :
+  "let" LetClause_Impl {
+    self informAboutRuleReduction:'LetClause1'.
+    '2'.
+  } ;
+
+LetClause_Impl :
+  "$" VarName ":=" ExprSingle {
+    self informAboutRuleReduction:'LetClause_Impl1'.
+    AstLetClause new varName: '2'; exprSingle: '4'.
+  } |
+  "$" VarName ":=" ExprSingle "," LetClause_Impl {
+    self informAboutRuleReduction:'LetClause_Impl2'.
+    AstLetClause new varName: '2'; exprSingle: '4'; letClause: '6'.
+  } ;
+
+WhereClause :
+  "where" ExprSingle {
+    self informAboutRuleReduction:'WhereClause1'.
+    AstWhereClause new exprSingle: '2'.
+  } ;
+
+OrderByClause :
+  "order" "by" OrderSpecList {
+    self informAboutRuleReduction:'OrderByClause1'.
+    AstOrderByClause new isStable: false; orderSpecList: '3'.
+  } |
+  "stable" "order" "by" OrderSpecList {
+    self informAboutRuleReduction:'OrderByClause2'.
+    AstOrderByClause new isStable: true; orderSpecList: '4'.
+  } ;
+
+OrderSpecList :
+  OrderSpec {
+    self informAboutRuleReduction:'OrderSpecList1'.
+   '1'.
+  } |
+  OrderSpec "," OrderSpecList {
+    self informAboutRuleReduction:'OrderSpecList2'.
+    AstOrderSpecList new orderSpec: '1'; orderSpecList: '3'.
+  } ;
+
+OrderSpec :
+  ExprSingle {
+    self informAboutRuleReduction:'OrderSpec1'.
+    AstOrderSpec new exprSingle: '1'.
+  } |
+  ExprSingle OrderModifier {
+    self informAboutRuleReduction:'OrderSpec2'.
+    AstOrderSpec new exprSingle: '1'; orderModifier: '2'.
+  } ;
+
+OrderModifier :
+  OrderModifier_AscDesc {
+    self informAboutRuleReduction:'OrderModifier1'.
+    AstOrderModifier new ascDesc: '1'.
+  } |
+  OrderModifier_GreatestLeast {
+    self informAboutRuleReduction:'OrderModifier2'.
+    AstOrderModifier new greatestLeast: '1'.
+  } |
+  OrderModifier_AscDesc OrderModifier_GreatestLeast {
+    self informAboutRuleReduction:'OrderModifier3'.
+    AstOrderModifier new ascDesc: '1'; greatestLeast: '2'.
+  } ;
+
+OrderModifier_AscDesc:
+  "ascending" {
+    self informAboutRuleReduction:'OrderModifier_AscDesc1'.
+    ^#asc.
+  } |
+  "descending" {
+    self informAboutRuleReduction:'OrderModifier_AscDesc2'.
+    ^#desc.
+  } ;
+
+OrderModifier_GreatestLeast:
+  "empty" "greatest" {
+    self informAboutRuleReduction:'OrderModifier_GreatestLeast1'.
+    ^#greatest.
+  } |
+  "empty" "least" {
+    self informAboutRuleReduction:'OrderModifier_GreatestLeast2'.
+    ^#least.
+  } ;
+
+QuantifiedExpr :
+  "some" QuantifiedExpr_Impl "satisfies" ExprSingle {
+    self informAboutRuleReduction:'QuantifiedExpr1'.
+    AstQuantifiedExpr new someEvery: #some; quantifiedExpr_Impl: '2'; exprSingle: '4'.
+  } |
+  "every" QuantifiedExpr_Impl "satisfies" ExprSingle {
+    self informAboutRuleReduction:'QuantifiedExpr2'.
+    AstQuantifiedExpr new someEvery: #every; quantifiedExpr_Impl: '2'; exprSingle: '4'.
+  } ;
+
+QuantifiedExpr_Impl :
+  "$" VarName "in" ExprSingle {
+    self informAboutRuleReduction:'QuantifiedExpr_Impl1'.
+    AstQuantifiedExpr_Impl new varName: '2'; exprSingle: '4'.
+  } |
+  "$" VarName "in" ExprSingle "," QuantifiedExpr_Impl {
+    self informAboutRuleReduction:'QuantifiedExpr_Impl2'.
+    AstQuantifiedExpr_Impl new varName: '2'; exprSingle: '4'; quantifiedExpr_Impl: '6'.
+  } ;
+
+IfExpr :
+  "if" "(" Expr ")" "then" ExprSingle "else" ExprSingle {
+    self informAboutRuleReduction:'IfExpr1'.
+    AstIfExpr new expr: '3'; trueExprSingle: '6'; falseExprSingle: '8'.
+  } ;
+
+OrExpr :
+  AndExpr {
+    self informAboutRuleReduction:'OrExpr1'.
+    '1'.
+  } |
+  AndExpr "or" OrExpr {
+    self informAboutRuleReduction:'OrExpr2'.
+    AstOrExpr new andExpr: '1'; orExpr: '3'.
+  } ;
+
+AndExpr :
+  ComparisonExpr {
+    self informAboutRuleReduction:'AndExpr1'.
+    '1'.
+  } |
+  ComparisonExpr "and" AndExpr {
+    self informAboutRuleReduction:'AndExpr2'.
+    AstAndExpr new comparisonExpr: '1'; andExpr: '3'.
+  } ;
+
+ComparisonExpr :
+  RangeExpr {
+    self informAboutRuleReduction:'ComparisonExpr1'.
+    '1'.
+  } |
+  RangeExpr ValueComp RangeExpr {
+    self informAboutRuleReduction:'ComparisonExpr2'.
+    AstComparisonExpr new rangeExprLeft: '1'; valueComp: '2'; rangeExprRight: '3'.
+  } |
+  RangeExpr GeneralComp RangeExpr {
+    self informAboutRuleReduction:'ComparisonExpr3'.
+    AstComparisonExpr new rangeExprLeft: '1'; generalComp: '2'; rangeExprRight: '3'.
+  } |
+  RangeExpr NodeComp RangeExpr {
+    self informAboutRuleReduction:'ComparisonExpr4'.
+    AstComparisonExpr new rangeExprLeft: '1'; nodeComp: '2'; rangeExprRight: '3'.
+  } ;
+
+RangeExpr :
+  AdditiveExpr {
+    self informAboutRuleReduction:'RangeExpr1'.
+    '1'.
+  } |
+  AdditiveExpr "to" AdditiveExpr {
+    self informAboutRuleReduction:'RangeExpr2'.
+    AstRangeExpr new additiveExprFrom: '1'; additiveExprTo: '3'.
+  } ;
+
+AdditiveExpr :
+  MultiplicativeExpr {
+    self informAboutRuleReduction:'AdditiveExpr1'.
+    '1'.
+  } |
+  MultiplicativeExpr "+" AdditiveExpr {
+    self informAboutRuleReduction:'AdditiveExpr2'.
+    AstAdditiveExpr new multiplicativeExpr: '1'; operand: #plus; additiveExpr: '3'.
+  } |
+  MultiplicativeExpr "-" AdditiveExpr {
+    self informAboutRuleReduction:'AdditiveExpr3'.
+    AstAdditiveExpr new multiplicativeExpr: '1'; operand: #minus; additiveExpr: '3'.
+  } ;
+
+MultiplicativeExpr :
+  UnionExpr {
+    self informAboutRuleReduction:'MultiplicativeExpr1'.
+    '1'.
+  } |
+  UnionExpr "*" MultiplicativeExpr {
+    self informAboutRuleReduction:'MultiplicativeExpr2'.
+    AstMultiplicativeExpr new unionExpr: '1'; operand: #krat; multiplicativeExpr: '3'.
+  } |
+  UnionExpr "div" MultiplicativeExpr {
+    self informAboutRuleReduction:'MultiplicativeExpr3'.
+    AstMultiplicativeExpr new unionExpr: '1'; operand: #div; multiplicativeExpr: '3'.
+  } |
+  UnionExpr "idiv" MultiplicativeExpr {
+    self informAboutRuleReduction:'MultiplicativeExpr4'.
+    AstMultiplicativeExpr new unionExpr: '1'; operand: #idiv; multiplicativeExpr: '3'.
+  } |
+  UnionExpr "mod" MultiplicativeExpr {
+    self informAboutRuleReduction:'MultiplicativeExpr5'.
+    AstMultiplicativeExpr new unionExpr: '1'; operand: #mod; multiplicativeExpr: '3'.
+  } ;
+
+UnionExpr :
+  IntersectExceptExpr {
+    self informAboutRuleReduction:'UnionExpr1'.
+    '1'.
+  } |
+  IntersectExceptExpr "union" UnionExpr {
+    self informAboutRuleReduction:'UnionExpr2'.
+    AstUnionExpr new intersectExceptExpr: '1'; unionExpr: '3'.
+  } |
+  IntersectExceptExpr "|" UnionExpr {
+    self informAboutRuleReduction:'UnionExpr3'.
+    AstUnionExpr new intersectExceptExpr: '1'; unionExpr: '3'.
+  } ;
+
+IntersectExceptExpr :
+  InstanceOfExpr {
+    self informAboutRuleReduction:'IntersectExceptExpr1'.
+    '1'.
+  } |
+  InstanceOfExpr "intersect" IntersectExceptExpr {
+    self informAboutRuleReduction:'IntersectExceptExpr2'.
+    AstIntersectExceptExpr new unaryExpr: '1'; operand: #intersect; intersectExceptExpr: '3'.
+  } |
+  InstanceOfExpr "except" IntersectExceptExpr {
+    self informAboutRuleReduction:'IntersectExceptExpr3'.
+    AstIntersectExceptExpr new unaryExpr: '1'; operand: #except; intersectExceptExpr: '3'.
+  } ;
+
+InstanceOfExpr : 
+  CastableExpr {
+    self informAboutRuleReduction:'InstanceOfExpr1'.
+    '1'.
+  } |
+  CastableExpr "instance" "of" SequenceType {
+    self informAboutRuleReduction:'InstanceOfExpr2'.
+    AstInstanceOfExpr new treatExpr: '1'; sequenceType: '4'.
+  } ;
+
+CastableExpr :
+    CastExpr {
+        self informAboutRuleReduction:'CastableExpr1'.
+        '1'.
+    } |
+    CastExpr "castable" "as" SingleType {
+        self informAboutRuleReduction:'CastableExpr2'.
+        AstCastableExpr new castExpr: '1'; singleType: '4'.
+    } ;
+
+CastExpr:
+    UnaryExpr {
+        self informAboutRuleReduction:'CastExpr1'.
+        '1'.
+    } |
+    UnaryExpr "cast" "as" SingleType {
+        self informAboutRuleReduction:'CastExpr2'.
+        AstCastExpr new unaryExpr: '1'; singleType: '4'.
+    } ;
+
+SingleType :
+    AtomicType {
+        self informAboutRuleReduction:'SingleType1'.
+        AstSingleType new atomicType: '1'.
+    } |
+    AtomicType "?" {
+        self informAboutRuleReduction: 'SingleType2'.
+        AstSingleType new atomicType: '1'; occurenceIndicator: '?'.
+    } ;
+
+%left "+" "*";
+
+SequenceType :
+  "empty-sequence" "(" ")" {
+    self informAboutRuleReduction:'SequenceType1'.
+    AstSequenceType new withEmptySequence. 
+  } |
+  ItemType OccurrenceIndicator? {
+    "there is shift -reduce conflict in occurrence indicator nonterminal
+        symbols '*' and '+'. We use SmaCC ambigous grammar handling
+        to overcome this problem and keep the grammar as simple as
+        possible"
+
+    self informAboutRuleReduction:'SequenceType2'.
+    AstSequenceType new itemType: '1'; occurrenceIndicator: '2'.
+  } ;
+
+ItemType : 
+    "item" "(" ")" {
+        self informAboutRuleReduction:'ItemType1'.
+        AstItemType new itemTest: AstItemTypeItem new.
+    } |
+    KindTest {
+        self informAboutRuleReduction:'ItemType2'.
+        AstItemType new kindTest: '1'.
+    } |
+    AtomicType {
+        self informAboutRuleReduction:'ItemType3'.
+        AstItemType new atomicType: '1'.
+    } ;
+
+AtomicType : 
+    QName {
+        self informAboutRuleReduction:'AtomicType1'.
+        AstAtomicType new qName: '1'.
+    } ;
+
+OccurrenceIndicator :
+  "?" {
+    self informAboutRuleReduction:'OccurrenceIndicator1'.
+    AstZeroOrOneOccurrenceIndicator new.
+  } |
+  "*" {
+    self informAboutRuleReduction:'OccurrenceIndicator2'.
+    AstZeroOrMultipleOccurrenceIndicator new.
+  } |
+  "+" {
+    self informAboutRuleReduction:'OccurrenceIndicator3'.
+    AstOneOrMultipleOccurrenceIndicator new.
+  } ;
+
+UnaryExpr :
+  "-" UnaryExpr {
+    self informAboutRuleReduction:'UnaryExpr1'.
+    AstUnaryExpr new operand: #minus; unaryExpr: '2'.
+  } |
+  "+" UnaryExpr {
+    self informAboutRuleReduction:'UnaryExpr2'.
+    AstUnaryExpr new operand: #plus; unaryExpr: '2'.
+  } |
+  ValueExpr {
+   self informAboutRuleReduction:'UnaryExpr3'.
+   '1'.
+  } ;
+
+
+ValueExpr :
+  PathExpr {
+    self informAboutRuleReduction:'ValueExpr'.
+    '1'.
+  } ;
+
+GeneralComp :
+  "=" {
+    self informAboutRuleReduction:'GeneralComp1'.
+    ^#eqGeneral.
+  } |
+  "!=" {
+    self informAboutRuleReduction:'GeneralComp2'.
+    ^#neGeneral.
+  } |
+  "<" {
+    self informAboutRuleReduction:'GeneralComp3'.
+    ^#ltGeneral.
+  } |
+  "<=" {
+    self informAboutRuleReduction:'GeneralComp4'.
+    ^#leGeneral.
+  } |
+  ">" {
+    self informAboutRuleReduction:'GeneralComp5'.
+    ^#gtGeneral.
+  } |
+  ">=" {
+    self informAboutRuleReduction:'GeneralComp6'.
+    ^#geGeneral.
+  } ;
+
+ValueComp :
+  "eq" {
+    self informAboutRuleReduction:'ValueComp1'.
+    ^#eqValue.
+  } |
+  "ne" {
+    self informAboutRuleReduction:'ValueComp2'.
+    ^#neValue.
+  } |
+  "lt" {
+    self informAboutRuleReduction:'ValueComp3'.
+    ^#ltValue.
+  } |
+  "le" {
+    self informAboutRuleReduction:'ValueComp4'.
+    ^#leValue.
+  } |
+  "gt" {
+    self informAboutRuleReduction:'ValueComp5'.
+    ^#gtValue.
+  } |
+  "ge"{
+    self informAboutRuleReduction:'ValueComp6'.
+    ^#geValue.
+  } ;
+
+NodeComp :
+  "is" {
+    self informAboutRuleReduction:'NodeComp1'.
+    ^#is.
+  } |
+  "<<" {
+    self informAboutRuleReduction:'NodeComp2'.
+    ^#isLess.
+  } |
+  ">>" {
+    self informAboutRuleReduction:'NodeComp3'.
+    ^#isMore.
+  } ;
+
+PathExpr :
+	  "/" RelativePathExpr 
+	  	{
+		    self informAboutRuleReduction:'PathExpr2'.
+		    '2' absolute: true; yourself 
+ 		 } 
+	| "//" RelativePathExpr 
+		{
+		    self informAboutRuleReduction:'PathExpr3'.
+			'2'
+				addFirst:
+			    	(XPathLocationStep new
+			        	axis: XPathAxisDescendantOrSelf new;
+						nodeTest: XPathAnyKindTest new);
+				yourself		    
+		}	
+	| RelativePathExpr 
+		{
+		    self informAboutRuleReduction:'PathExpr4'.
+		    '1'.
+		}
+	;
+
+RelativePathExpr :
+	  StepExpr 
+	  	{
+		    self informAboutRuleReduction:'RelativePathExpr1'.
+    		XPathExpression with: '1'.
+		}    	
+	| RelativePathExpr "/" StepExpr  
+		{
+		    self informAboutRuleReduction:'RelativePathExpr2'.
+		    '1' add: '3'; yourself
+		}		  
+	| RelativePathExpr "//" StepExpr 
+		{
+		    self informAboutRuleReduction:'RelativePathExpr3'.
+		    '1'
+		    	add:
+		    		(XPathLocationStep new
+		    			axis: XPathAxisDescendantOrSelf new;
+		    			nodeTest: XPathAnyKindTest new);
+				add: '3';
+				yourself
+		}
+	;
+
+StepExpr :
+	  AxisStep 
+	  	{
+		    self informAboutRuleReduction:'StepExpr1'.
+		    '1'.
+		}		   
+	| FilterExpr 
+		{
+		    self informAboutRuleReduction:'StepExpr2'.
+		    '1'.
+		}		   
+	;
+
+AxisStep :
+  ForwardStep Predicate* {
+    self informAboutRuleReduction:'AxisStep2'.
+    '1' predicates: '2'; yourself
+  } |
+  ReverseStep Predicate* {
+    self informAboutRuleReduction:'AxisStep4'.
+    '1' predicates: '2'; yourself
+  } ;
+
+ForwardStep :
+	  ForwardAxis NodeTest
+		{
+    		self informAboutRuleReduction:'ForwardStep1'.
+			XPathLocationStep new
+				axis: '1';
+				nodeTest: '2';
+				yourself
+		} 
+	| AbbrevForwardStep 
+		{
+			self informAboutRuleReduction:'ForwardStep2'.
+			'1'
+  		} 
+  	;
+
+ForwardAxis :
+	  "child" "::" 
+	  	{
+  			self informAboutRuleReduction:'ForwardAxis1'.
+		    XPathAxisChild new
+		}	    
+	|  "descendant" "::" 
+		{
+		    self informAboutRuleReduction:'ForwardAxis2'.
+			XPathAxisDescendant new
+		}
+	| "attribute" "::"
+	  	{
+  			self informAboutRuleReduction:'ForwardAxis3'.
+		    XPathAxisAttribute new
+		}	    	
+	| "self" "::" 
+	  	{
+  			self informAboutRuleReduction:'ForwardAxis4'.
+		    XPathAxisSelf new
+		}	    	
+	| "descendant-or-self" "::"	
+	  	{
+  			self informAboutRuleReduction:'ForwardAxis5'.
+		    XPathAxisDescendantOrSelf new
+		}	    	
+	| "following-sibling" "::" 
+		{
+  			self informAboutRuleReduction:'ForwardAxis6'.
+		    XPathAxisFollowingSibling new
+		}	    	
+	| "following" "::" 
+		{
+  			self informAboutRuleReduction:'ForwardAxis7'.
+		    XPathAxisFollowing new
+		}	    	
+	;
+
+AbbrevForwardStep :
+	  "@" NodeTest 
+	  	{
+			self informAboutRuleReduction:'AbbrevForwardStep1'.
+			XPathLocationStep new
+				axis: XPathAxisAttribute new;
+				nodeTest: '2';
+				yourself
+		}			
+	| NodeTest
+	  	{
+			self informAboutRuleReduction:'AbbrevForwardStep2'.
+			XPathLocationStep new
+				setDefaultAxisFor: '1';
+				nodeTest: '1';
+				yourself
+		}			
+	;
+	
+ReverseStep :
+	  ReverseAxis NodeTest
+		{
+    		self informAboutRuleReduction:'ReverseStep1'.
+			XPathLocationStep new
+				axis: '1';
+				nodeTest: '2';
+				yourself
+		} 
+	| AbbrevReverseStep 
+		{
+			self informAboutRuleReduction:'ReverseStep2'.
+			'1'
+  		} 
+  	;
+
+ReverseAxis :
+	  "parent" "::" 
+	  	{
+  			self informAboutRuleReduction:'ReverseAxis1'.
+		    XPathAxisParent new
+		}	    
+	| "ancestor" "::" 
+	  	{
+  			self informAboutRuleReduction:'ReverseAxis2'.
+		    XPathAxisAncestor new
+		}
+	| "ancestor-or-self" "::" 
+	  	{
+  			self informAboutRuleReduction:'ReverseAxis3'.
+		    XPathAxisAncestorOrSelf new
+		}
+	| "preceding-sibling" "::" 
+	  	{
+  			self informAboutRuleReduction:'ReverseAxis4'.
+		    XPathAxisPrecedingSibling new
+		}
+	| "preceding" "::" 
+	  	{
+  			self informAboutRuleReduction:'ReverseAxis5'.
+		    XPathAxisPreceding new
+		}
+	;
+		
+AbbrevReverseStep :
+	".." 
+		{
+			XPathLocationStep new
+				axis: XPathAxisParent new;
+				nodeTest: XPathAnyKindTest new;
+				yourself
+		}
+	;
+
+NodeTest :
+	  NameTest
+		{
+	  	 	self informAboutRuleReduction:'NodeTest1'.
+		    '1'.
+		}
+	| KindTest 
+		{
+		    self informAboutRuleReduction:'NodeTest2'.
+		    '1'.
+		} 
+	;
+
+NameTest :
+	QName 
+		{
+			self informAboutRuleReduction:'NameTest1'.
+			XPathNameTest new qName: '1' content
+		}			
+	| "*" 
+		{
+			self informAboutRuleReduction:'NameTest1'.
+			XPathNameTest new prefix:'*'; localName:'*'
+		}			
+	| "*" ":" NCName 
+		{
+			self informAboutRuleReduction:'NameTest1'.
+			XPathNameTest new prefix:'*'; localName:'3' content
+		}			
+	;
+
+FilterExpr :
+	PrimaryExpr Predicate* 
+		{
+		    self informAboutRuleReduction:'FilterExpr2'.
+		    AstFilterExpr new primaryExpr: '1'; predicateList: '2'.
+		}
+	;
+
+
+Predicate :
+  "[" Expr "]" {
+    self informAboutRuleReduction:'Predicate1'.
+    XPathPredicate new expr: '2'.
+  } |
+  "[" "]" {
+    self informAboutRuleReduction:'Predicate2'.
+    XPathPredicate new
+  } ;
+
+PrimaryExpr :
+  Literal {
+    self informAboutRuleReduction:'PrimaryExpr1'.
+    '1'.
+  } |
+  VarRef {
+    self informAboutRuleReduction:'PrimaryExpr2'.
+    '1'.
+  } |
+  ParenthesizedExpr {
+    self informAboutRuleReduction:'PrimaryExpr3'.
+    '1'.
+  } |
+  ContextItemExpr {
+    self informAboutRuleReduction:'PrimaryExpr4'.
+    '1'.
+  } |
+  FunctionCall {
+    self informAboutRuleReduction:'PrimaryExpr5'.
+    '1'.
+  } |
+  Constructor {
+    self informAboutRuleReduction:'PrimaryExpr6'.
+    '1'.
+  } |
+  OrderedExpr {
+    self informAboutRuleReduction:'PrimaryExpr7'.
+    '1'.
+  } |
+  UnorderedExpr {
+    self informAboutRuleReduction:'PrimaryExpr8'.
+    '1'.
+  } ;
+
+Literal :
+  NumericLiteral {
+    self informAboutRuleReduction:'Literal1'.
+    '1'.
+  } |
+  StringLiteral {
+    self informAboutRuleReduction:'Literal2'.
+    '1'.
+  } ;
+
+NumericLiteral :
+  IntegerLiteral {
+    self informAboutRuleReduction:'NumericLiteral1'.
+    '1'.
+  } |
+  DecimalLiteral {
+    self informAboutRuleReduction:'NumericLiteral2'.
+    '1'.
+  } |
+  DoubleLiteral {
+    self informAboutRuleReduction:'NumericLiteral3'.
+    '1'.
+  } ;
+
+VarRef :
+  "$" VarName {
+    self informAboutRuleReduction:'VarRef1'.
+    AstVarRef new varName: '2'.
+  } ;
+
+VarName :
+  QName {
+    self informAboutRuleReduction:'VarName1'.
+    '1'.
+  };
+
+ParenthesizedExpr :
+  "(" ")" {
+    self informAboutRuleReduction:'ParenthesizedExpr1'.
+    AstParenthesizedExpr new.
+  } |
+  "(" Expr ")" {
+    self informAboutRuleReduction:'ParenthesizedExpr2'.
+    AstParenthesizedExpr new expr: '2'.
+  } ;
+
+ContextItemExpr :
+  "." {
+        self informAboutRuleReduction:'ContextItemExpr1'.
+        AstContextItemExpr new.
+  } ;
+
+OrderedExpr :
+  "ordered" "{" Expr "}" {
+    self informAboutRuleReduction:'OrderedExpr1'.
+    '3'.
+  } ;
+
+UnorderedExpr :
+  "unordered" "{" Expr "}" {
+    self informAboutRuleReduction:'UnorderedExpr1'.
+    '3'.
+  } ;
+
+FunctionCall :
+  QName "(" ")" {
+    self informAboutRuleReduction:'FunctionCall1'.
+    AstFunctionCall new qname: '1'.
+  } |
+  QName "(" FunctionParametersList ")" {
+    self informAboutRuleReduction:'FunctionCall2'.
+    AstFunctionCall new qname: '1'; functionParametersList: '3'.
+  } ;
+
+FunctionParametersList:
+    ExprSingle {
+	self informAboutRuleReduction:'FunctionParametersList1'.
+	AstFunctionParametersList new exprSingle: '1'.
+    } |
+    ExprSingle "," FunctionParametersList {
+	self informAboutRuleReduction:'FunctionParametersList2'.
+	AstFunctionParametersList new exprSingle: '1'; functionParametersList: '3'.
+    } ;
+
+Constructor :
+  DirectConstructor {
+    self informAboutRuleReduction:'Constructor1'.
+    '1'.
+  } |
+  ComputedConstructor {
+    self informAboutRuleReduction:'Constructor2'.
+    '1'.
+  } ;
+
+DirectConstructor :
+  DirElemConstructor {
+    self informAboutRuleReduction:'DirectConstructor1'.
+    '1'.
+  } ;
+
+DirElemConstructor :
+  "<" QName DirAttributeList "/>" {
+    self informAboutRuleReduction:'DirElemConstructor1'.
+    AstDirElemConstructor new qName: '2'; dirAttributeList: '3'.
+  } |
+  "<" QName DirAttributeList ">" DirElemContent* "</" QName ">" {
+    self informAboutRuleReduction:'DirElemConstructor2'.
+    AstDirElemConstructor new qName: '2'; dirAttributeList: '3'; dirElemContent: '5'.
+  } ;
+
+DirAttributeList :
+    DirAttributeListElem*
+    {
+        self informAboutRuleReduction:'DirAttributeList1'.
+        '1'
+    } 
+    ;
+
+DirAttributeListElem:
+   QName "=" DirAttributeValue
+   {
+        self informAboutRuleReduction:'DirAttributeListElem1'.
+        AstDirAttributeListElem new 
+            qName: '1'; 
+            dirAttributeValue: '3'.
+   }
+   ;
+
+DirAttributeValue :
+  StringLiteral {
+    self informAboutRuleReduction:'DirAttributeValue1'.
+    '1'.
+  } |
+  EnclosedExpr {
+    self informAboutRuleReduction:'DirAttributeValue2'.
+    '1'.
+  } ;
+
+DirElemContent :
+    DirectConstructor {
+        self informAboutRuleReduction:'DirElemContent1'.
+        AstDirElemContent new content: '1'.
+    } |
+    CommonContent {
+        self informAboutRuleReduction:'DirElemContent3'.
+        AstDirElemContent new content: '1'.
+    } | 
+    ElementContentChar {
+        self informAboutRuleReduction:'DirElemContent4'.
+        AstDirElemContent new content: '1'.
+    } ;
+
+DirElemContent2 :
+  DirectConstructor {
+    self informAboutRuleReduction:'DirElemContent1'.
+    AstDirElemContent new content: '1'.
+  } |
+  DirectConstructor DirElemContent {
+    self informAboutRuleReduction:'DirElemContent2'.
+    AstDirElemContent new content: '1'; dirElemContent: '2'.
+  } |
+  CommonContent {
+    self informAboutRuleReduction:'DirElemContent3'.
+    AstDirElemContent new content: '1'.
+  } |
+  CommonContent DirElemContent {
+    self informAboutRuleReduction:'DirElemContent4'.
+    AstDirElemContent new content: '1'; dirElemContent: '2'.
+  } ;
+
+ElementContentChar :
+    <element_content_char> {
+        self informAboutRuleReduction:'ElementContentChar1 -', ('1' asString).
+        AstElementContentChar new content: ('1' value).
+    } ; 
+
+CommonContent :
+    PredefinedEntityRef {
+        self informAboutRuleReduction:'CommonContent1'.
+        '1'.
+    } |
+    EnclosedExpr {
+        self informAboutRuleReduction:'CommonContent2'.
+        '1'.
+    } |
+    CharRef {
+        self informAboutRuleReduction:'CommonContent7'.
+        '1'.
+    } ;
+  
+CharRef : 
+    <char_ref> {
+        self informAboutRuleReduction:'CharRef1 -', ('1').
+        AstCharRef new content: ('1' value).
+    } ;
+
+
+CommonContent2 :
+  PredefinedEntityRef {
+    self informAboutRuleReduction:'CommonContent1'.
+    '1'.
+  } |
+  EnclosedExpr {
+    self informAboutRuleReduction:'CommonContent2'.
+    '1'.
+  } |
+  Literal {
+    self informAboutRuleReduction:'CommonContent3'.
+    '1'.
+  } |
+  NCName {
+    self informAboutRuleReduction:'CommonContent7'.
+    '1'.
+  } |
+  QName {
+    self informAboutRuleReduction:'CommonContent8'.
+    '1'.
+  } ;
+
+ComputedConstructor :
+  CompDocConstructor {
+    self informAboutRuleReduction:'ComputedConstructor1'.
+    '1'.
+  } |
+  CompElemConstructor {
+    self informAboutRuleReduction:'ComputedConstructor2'.
+    '1'.
+  } |
+  CompAttrConstructor {
+    self informAboutRuleReduction:'ComputedConstructor3'.
+    '1'.
+  } |
+  CompTextConstructor {
+    self informAboutRuleReduction:'ComputedConstructor4'.
+    '1'.
+  } ;
+
+CompDocConstructor :
+  "document" "{" Expr "}" {
+    self informAboutRuleReduction:'CompDocConstructor1'.
+    AstCompDocConstructor new expr: '3'.
+  } ;
+
+CompElemConstructor :
+  "element" QName "{" "}" {
+    self informAboutRuleReduction:'CompElemConstructor1'.
+    AstCompElemConstructor new qname: '2'.
+  } |
+  "element" QName "{" ContentExpr "}" {
+    self informAboutRuleReduction:'CompElemConstructor2'.
+    AstCompElemConstructor new qname: '2'; contentExpr: '4'.
+  } |
+  "element" "{" Expr "}" "{" "}" {
+    self informAboutRuleReduction:'CompElemConstructor3'.
+    AstCompElemConstructor new expr: '3'.
+  } |
+  "element" "{" Expr "}" "{" ContentExpr "}" {
+    self informAboutRuleReduction:'CompElemConstructor4'.
+    AstCompElemConstructor new expr: '3'; contentExpr: '6'.
+  } ;
+
+ContentExpr :
+  Expr {
+    self informAboutRuleReduction:'ContentExpr'.
+    '1'.
+  } ;
+
+CompAttrConstructor :
+  "attribute" QName "{" "}" {
+    self informAboutRuleReduction:'CompAttrConstructor1'.
+    AstCompAttrConstructor new qname: '2'.
+  } |
+  "attribute" QName "{" Expr "}" {
+    self informAboutRuleReduction:'CompAttrConstructor2'.
+    AstCompAttrConstructor new qname: '2'; contentExpr: '4'.
+  } |
+  "attribute" "{" Expr "}" "{" "}" {
+    self informAboutRuleReduction:'CompAttrConstructor3'.
+    AstCompAttrConstructor new expr: '3'.
+  } |
+  "attribute" "{" Expr "}" "{" Expr "}" {
+    self informAboutRuleReduction:'CompAttrConstructor4'.
+    AstCompAttrConstructor new expr: '3'; contentExpr: '6'.
+  } ;
+
+CompTextConstructor :
+  "text" "{" Expr "}" {
+    self informAboutRuleReduction:'CompTextConstructor1'.
+    AstCompTextConstructor new expr: '3'.
+  } ;
+
+KindTest :
+  DocumentTest {
+    self informAboutRuleReduction:'KindTest1'.
+    '1'.
+  } |
+  ElementTest {
+    self informAboutRuleReduction:'KindTest2'.
+    '1'.
+  } |
+  AttributeTest {
+    self informAboutRuleReduction:'KindTest3'.
+    '1'.
+  } |
+  TextTest {
+    self informAboutRuleReduction:'KindTest4'.
+    '1'.
+  } |
+  AnyKindTest {
+    self informAboutRuleReduction:'KindTest5'.
+    '1'.
+  }
+  | "comment" "(" ")"
+  	{ XPathCommentTest new }  	
+  | "processing-instruction" "(" ")"
+  	{ XPathProcessingInstructionTest new }
+  ;
+
+AnyKindTest :
+  "node" "(" ")" {
+    self informAboutRuleReduction:'AnyKindTest1'.
+    XPathAnyKindTest new
+  } ;
+
+DocumentTest :
+  "document-node" "(" ")" {
+    self informAboutRuleReduction:'DocumentTest1'.
+    XPathDocumentTest new.
+  } |
+  "document-node" "(" ElementTest ")" {
+    self informAboutRuleReduction:'DocumentTest2'.
+    XPathDocumentTest new elementTest: '3'.
+  } ;
+
+TextTest :
+  "text" "(" ")" {
+    self informAboutRuleReduction:'TextTest1'.
+    XPathTextTest new.
+  } ;
+  
+AttributeTest :
+  "attribute" "(" ")" {
+    self informAboutRuleReduction:'AttributeTest1'.
+    XPathAttributeTest new
+  } |
+  "attribute" "(" AttribNameOrWildcard ")" {
+    self informAboutRuleReduction:'AttributeTest2'.
+	XPathAttributeTest halt:'Not yet implemented. See grammar'
+  } ;
+
+AttribNameOrWildcard :
+  AttributeName {
+    self informAboutRuleReduction:'AttributeNameOrWildcard1'.
+    AstAttribNameOrWildcard new attributeName: '1'.
+  } |
+  "*" {
+    self informAboutRuleReduction:'AttributeNameOrWildcard2'.
+    AstAttribNameOrWildcard new.
+  } ;
+
+ElementTest :
+  "element" "(" ")" {
+    self informAboutRuleReduction:'ElementTest1'.
+    XPathElementTest new.
+  } |
+  "element" "(" ElementNameOrWildcard ")" {
+    self informAboutRuleReduction:'ElementTest2'.
+    XPathElementTest new elementName: '3'.
+  } ;
+
+ElementNameOrWildcard :
+  ElementName {
+    self informAboutRuleReduction:'ElementNameOrWildcard1'.
+    AstElementNameOrWildcard new elementName: '1'.
+  } |
+  "*" {
+    self informAboutRuleReduction:'ElementNameOrWildcard2'.
+    AstElementNameOrWildcard new.
+  } ;
+
+AttributeName :
+  QName {
+    self informAboutRuleReduction:'AttributeName1'.
+    '1'.
+  } ;
+
+ElementName :
+  QName {
+    self informAboutRuleReduction:'ElementName1'.
+    '1'.
+  } ;
+
+EnclosedExpr :
+  "{" Expr "}" {
+    self informAboutRuleReduction:'EnclosedExpr1'.
+    AstEnclosedExpr new expr: '2'.
+  } ;
+
+PredefinedEntityRef :
+  <predefined_entity_ref> {
+    self informAboutRuleReduction:'PredefinedEntityRef1 -', ('1' asString).
+    AstPredefinedEntityRef new content: ('1' value).
+  } ;
+
+QName :
+  <qname> {
+    self informAboutRuleReduction:'QName1 - ', ('1' asString).
+    AstQName new content: ('1' value).
+  } ;
+
+NCName :
+  <ncname> {
+    self informAboutRuleReduction:'NCName1 - ', ('1' asString).
+    AstNCName new content: ('1' value).
+  } ;
+
+StringLiteral :
+  <string_literal> {
+    self informAboutRuleReduction:'StringLiteral1 -', ('1' asString).
+    AstStringLiteral new content: ('1' value).
+  } ;
+
+IntegerLiteral :
+  <integer_literal> {
+    self informAboutRuleReduction:'IntegerLiteral1 -', ('1' asString).
+    AstIntegerLiteral new content: ('1' value).
+  } ;
+
+DecimalLiteral :
+  <decimal_literal> {
+    self informAboutRuleReduction:'DecimalLiteral1 -', ('1' asString).
+    AstDecimalLiteral new content: ('1' value).
+  } ;
+
+DoubleLiteral :
+  <double_literal> {
+    self informAboutRuleReduction:'DoubleLiteral1 -', ('1' asString).
+    AstDoubleLiteral new content: ('1' value).
+  } ;
+
+DeleteExpr :
+  "do" "delete" TargetExpr {
+    self informAboutRuleReduction:'DeleteExpr'.
+    (AstDeleteExpr new) targetExpr: '3'
+  };
+
+RenameExpr:
+  "do" "rename" TargetExpr "as" NewNameExpr {
+    self informAboutRuleReduction:'RenameExpr'.
+    (AstRenameExpr new) targetExpr: '3'; newNameExpr: '5'.
+  };
+
+ReplaceExpr :
+  "do" "replace" ReplaceClause {
+    self informAboutRuleReduction:'ReplaceExpr'.
+    '3'.
+  };
+
+ReplaceClause :
+  "value" "of" TargetExpr "with" ExprSingle {
+    self informAboutRuleReduction:'ReplaceValueOfClause'.
+    (AstReplaceValueOfExpr new) targetExpr: '3'; sourceExpr: '5'.
+  } |
+  TargetExpr "with" ExprSingle {
+    self informAboutRuleReduction:'ReplaceClause'.
+    (AstReplaceExpr new) targetExpr: '1'; sourceExpr: '3'.
+  };
+
+
+
+InsertExpr :
+  "do" "insert" InsertClause  {
+    self informAboutRuleReduction:'InsertExpr'.
+    '3'.
+  };
+
+InsertClause :
+  SourceExpr "into" TargetExpr {
+    self informAboutRuleReduction:'InsertIntoClause'.
+    (AstInsertIntoExpr new) targetExpr: '3'; sourceExpr: '1'.
+  } |
+  SourceExpr "as" "first" "into" TargetExpr {
+    self informAboutRuleReduction:'InsertAsFirstIntoClause'.
+    (AstInsertAsFirstIntoExpr new) targetExpr: '5'; sourceExpr: '1'.
+  } |
+  SourceExpr "as" "last" "into" TargetExpr {
+    self informAboutRuleReduction:'InsertAsLastIntoClause'.
+    (AstInsertAsLastIntoExpr new) targetExpr: '5'; sourceExpr: '1'.
+  } |
+  SourceExpr "after" TargetExpr {
+    self informAboutRuleReduction:'InsertAfterClause'.
+    (AstInsertAfterExpr new) targetExpr: '3'; sourceExpr: '1'.
+  } |
+  SourceExpr "before" TargetExpr {
+    self informAboutRuleReduction:'InsertBeforeClause'.
+    (AstInsertBeforeExpr new) targetExpr: '3'; sourceExpr: '1'.
+  };
+  
+TransformExpr:
+  "transform" "copy" TransformCopyClause "modify" ExprSingle "return" ExprSingle {
+    self informAboutRuleReduction:'TransformExpr'.
+    (AstTransformExpr new) transformCopyClause: '3'; modifyExpr: '5'; returnExpr: '7'.
+  };
+
+TransformCopyClause:
+	"$" VarName ":=" ExprSingle {
+	    self informAboutRuleReduction:'TransformCopyClause1'.
+	    (AstTransformCopyClause new) varName: '2'; exprSingle: '4'.
+  }|
+	"$" VarName ":=" ExprSingle "," TransformCopyClause {
+  		self informAboutRuleReduction:'TransformCopyClause2'.
+	    (AstTransformCopyClause new) varName: '2'; exprSingle: '4' ; transformCopyClause: '6'.
+  };
+
+
+TargetExpr :
+  ExprSingle{
+    self informAboutRuleReduction:'TargetExpr'.
+    '1'.
+  };
+
+SourceExpr :
+  ExprSingle{
+    self informAboutRuleReduction:'SourceExpr'.
+    '1'.
+  };
+
+
+NewNameExpr :
+  ExprSingle{
+    self informAboutRuleReduction:'NewNameExpr'.
+    '1'.
+  };

@@ -1,0 +1,48 @@
+project :'stx:libjava:reports-common' do
+  import :'stx:jv-branch:for-reports-only'
+end
+
+project :'stx:libjava:reports' do
+  import :'stx:libjava:reports-common'
+  package 'stx:libjava', :test => true#, :lint => true
+end
+
+project :'stx:libjava:mauve' do
+  import :'stx:libjava:reports-common'
+  package 'stx:libjava/tests/mauve', :test => true
+end
+
+project :'stx:libjava:experiments:reports' do
+  import :'stx:libjava:reports-common'
+  package 'stx:libjava/experiments', :test => true, :lint => true
+end
+
+
+project :'stx:libjava:tools:reports' do
+  import :'stx:libjava:reports-common'
+  package 'stx:libjava/tools', :test => true, :lint => true
+end
+
+
+project :'stx:libjava:benchmarks' do
+  import :'stx:libjava:reports-common'
+  tasks do
+    task :'test:post' do
+      chdir BUILD_DIR / 'stx' / 'libjava' / 'benchmarks' / 'java' do
+        if not system 'ant'
+          raise Exception.new("Running benchmarks failed")
+        end
+      end
+
+      chdir BUILD_DIR / 'stx' / 'libjava' / 'benchmarks'  do
+        if not system 'rake'
+          raise Exception.new("Running benchmarks failed")
+        end
+      end
+    end
+  end
+end
+
+
+
+

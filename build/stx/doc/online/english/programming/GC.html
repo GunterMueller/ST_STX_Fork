@@ -1,0 +1,879 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Garbage Collection</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="STspeed.html">      <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">          <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="finalization.html"> <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<PRE>
+				640K ought to be enough for anybody.
+
+				(Bill Gates 1981)
+</PRE>
+
+
+<H1><A NAME="INTRO"> Garbage Collection in General and in Smalltalk</A></H1>
+
+<H2>Contents</H2>
+
+<UL>
+  <LI><A HREF="#INTRO" NAME="I_INTRO">Introduction - what is GC</A>
+  <LI><A HREF="#DANGERS" NAME="I_DANGERS">Dangers of not using GC</A>
+  <LI><A HREF="#IMPLEMENTATIONS" NAME="I_IMPLEMENTATIONS">How can GC be Implemented</A>
+  <LI><A HREF="#ENEMIES" NAME="I_ENEMIES">What GC Enemies Suggest</A>
+  <LI><A HREF="#WORST" NAME="I_WORST">Worst Case Situations</A>
+  <LI><A HREF="#SUMMARY" NAME="I_SUMMARY">Conclusion</A>
+  <LI><A HREF="#APPENDIX" NAME="I_APPENDIX">Evaluation Code</A>
+</UL>
+
+  This document is meant for people who are not too familiar with
+  the concept of garbage collection (GC), and to prevent too much discussion
+  with people who think that garbage Collection is a slow, useless feature
+  which is not needed (i.e. radical C/C++ fans :-)
+<P>
+  I have collected some arguments (not my own ones) from literature and
+  discussions - both on the net and private ones.
+  Not being naive enough to believe that this religious war might end soon,
+  it may at least give some common ground on which to base discussions.
+<P>
+  Also, it shall prevent useless questions/flames etc. sent to my person
+  in the future.
+<P>
+  For those of you who know Smalltalk/GC, it may not give you any new
+  information - just skip & forget about it.
+<P>
+  Some of the stuff below may sound a bit drastic, cynic or whatever -
+  think of a big smily :-) after every such statement ...
+<P>
+Note: this paper was written 1995, when 32Mb was considered a huge amount of memory,
+and a Pentium 3 was considered a fast machine...
+Today, some of the numbers given below
+are outdated, but the central message of the paper is still valid.
+<P>
+Update note: also notice that now, 20years later, most of those "specialists" who
+were against garbage collection in the 90s are now happy Java users,
+and admit that they would not want to live without GC any more.
+Times are a' changing! (and it shows, the Lisp and Smalltalk fans were simply 20years ahead of the crowd.)
+
+<H2>Introduction: what is GC</H2>
+
+  Almost every programming system offers the programmer some functionality
+  to dynamically allocate storage in amounts not foreseen at coding time;
+  for example, Pascal offers a "new" operation, the C-libraries provide
+  a family of "malloc" functions, C++ provides "new" and Lisp the CONS, to
+  just name some.
+<P>
+  Except in the rare cases when those objects (not in the OO-sense) are
+  used and needed for the whole running time of the program, sooner or
+  later the storage used by them must be freed and given back to some
+  management facility - otherwise your program would continue to grow,
+  eating up tons of unused storage space.
+<P>
+  Although this is a bit of a simplification, programming systems can be
+  roughly divided into two classes:
+<UL>
+<LI>those that require the programmer to explicitly request for
+	the freeing of an unused storage area (i.e. by calling for a
+	"dispose", "free" or "destroy" operation);
+<P>
+<LI>those that find unused storage automatically and return the
+	storage to some free-memory management facility.
+	This is called "Garbage collection".
+</UL>
+
+<H2>What are the Arguments of GC Opponents</H2>
+
+  GC is too slow and not required by "<VAR>good programmers</VAR>"
+
+
+<H2><A NAME="DANGERS" HREF="#I_DANGERS">What are the Dangers of NOT doing GC</A></H2>
+
+  Simply saying:
+<BLOCKQUOTE>
+    many believe that it is almost impossible in a modest sized programming
+    project, to tell for sure when an object is no longer needed
+<P>
+    Some even state that it is impossible to create a large system,
+    which will not have memory leaks (without GC).
+</BLOCKQUOTE>
+  (large being something where many people work for years, creating code
+   with megabytes in size)
+<P>
+  Therefore (in practice) one of three situations arises:
+<UL>
+<LI>the programmer is very conservative, not freeing data when
+	   in doubt.
+<P>
+	   - this results in so called "memory leaks" and leads to
+	     ever growing storage needs.
+<P>
+	    take the X-window server or popular internet browsers (Firefox or IE)
+	    as example, which - even after years of development -
+	    are still known to contain some of these leaks.
+	    Also, many windowing toolkits (such as the motif library)
+	    suffer from this problem.
+<P>
+	    "Garbage collection" is typically done by terminating the
+	    program and restarting from scratch - this suggestion can
+	    even be found in a vendor's user manual (this is not a joke).
+<P>
+<LI>the programmer frees data, which is sometimes still referenced
+	   by other parts of the program.
+<P>
+	   - this may result in a variety of errors, from going totally
+	   unnoticed (if the data did not get overwritten in the meantime),
+	   to invalid data to total crashes of the program.
+	   It is also possible, that a program runs pretty well on one
+	   machine, but crashes badly on another - due to different reallocation
+	   strategies in the memory allocator. Or, that a simple change in the
+	   program makes a perfectly running program suddenly crash - as a
+	   consequence of some storage address changes.
+<P>
+<LI>people invent their own way of doing (half-) automatic GC
+	   (by using so called "smart pointers" or similar devices)
+<P>
+</UL>
+  My personal experience supports these arguments - I have heard of (and seen)
+  systems, where more than 100 people created a program which was almost
+  impossible to debug and where reference errors were almost impossible
+  to find in the end.
+  Finally these development groups typically throw away big parts,
+  invent some kind of GC and restrict
+  the use of the language by forbidding everything which originally made the used
+  programming language "so efficient". This means: overloading all assignment, pointer
+  and whatever stuff, wrapping pointers into envelopes, making each pointer
+  reference a virtual function call and eventually slowing down the execution to that of
+  interpreted basic :-)
+<P>
+  To make it clear:
+<BLOCKQUOTE>
+    I REALLY do NOT think (and do NOT want to give the impression) that all these
+    programmers are incapable of good programming
+     - every one of us has (and had) many errors of this kind
+     - even the very best gurus make those errors !!!
+</BLOCKQUOTE>
+  It is simply the complexity of big systems (especially when created by a big
+  group) which makes these errors appear again and again.
+<P>
+  When separate subsystems (libraries, especially: binary libraries) are involved,
+  things tend to become even harder, since it is often unclear (from the
+  specification and documentation) who is responsible for freeing of objects.
+<BLOCKQUOTE>
+  ((just think of a container-class, which keeps references to some other
+    objects; the question is, if the container should free its referred-to
+    objects when freed or leave this to the user of the container.
+    If left to the user, how does he know if other parts of the program do
+    not have references to those objects? How does the container know when
+    freeing those?
+<BR>
+    One typical 'solution' is to not keep references in those
+    containers, but keep copies of the objects there. This may solve the
+    above problems, but add additional overhead, since objects must now
+    be copied in and out of containers everywhere. Also, the copies in the
+    containers have to be kept in sync with any elements which were copied
+    out of the containers, which may be hard to do in some cases.
+<BR>
+    Another 'solution' is to add reference counting or other ad-hoc
+    GC mechanisms. But thats exactly what we are talking about here.
+    BTW: as we will see below, reference counting is not the best GC algorithm,
+    and certainly insufficient in many environments.))
+</BLOCKQUOTE>
+
+<H2><A NAME="IMPLEMENTATIONS" HREF="#I_IMPLEMENTATIONS">How can GC be Implemented</A></H2>
+
+  There are many strategies for doing GC, which will not be covered here
+  in much detail - there is a lot of literature
+<A HREF="#FN1" NAME="BACK_FN1">(*)</A>
+available in this area.
+<P>
+  The most well known and most often used strategies are:
+
+<UL>
+<LI>Mark & Sweep
+<BR>
+		in a first step, all traces to still reachable objects
+		are followed, marking all objects found on its way
+		(for example by setting a bit or putting them into a list).
+		Marking starts with some root objects (global variables),
+		and recursively visits over all reachable objects.
+<P>
+		Then a sweep is done over the whole memory, looking for
+		unmarked storage areas - these are put back onto some
+		free list or equivalent.
+<P>
+<LI>Reference Counting
+<BR>
+		each object keeps a count of references to it. Whenever
+		another object creates a reference to this object, its
+		count is incremented; whenever a reference is taken away,
+		the count is decremented.
+		An object can be freed without danger, when the count drops
+		to zero (but do not forget to decrement the counts of
+		all objects which were referenced by this freed object).
+<BR>
+		There are variations on this basic scheme - for example
+		delayed reference counting, or keeping the counts separate,
+		to prevent modifying memory pages.
+<P>
+<LI>Copying Collectors
+<BR>
+		Basically, these divide the whole object space into two
+		semispaces, allocating objects from one of them.
+		When collecting garbage, all still referenced objects are
+		copied from their semispace to the other, where the copy
+		starts with some root-objects (global variables) and continues
+		with copying objects referenced from already-copied objects.
+		All unreferenced objects will not be copied, leaving all
+		garbage in the original semispace.
+		After each such cycle, the roles of the two semispaces
+		are interchanged.
+		(the above being an oversimplification, there are some
+		 variants of this - Baker, Ballard, Lieberman, Ungar etc)
+</UL>
+
+Variations and mixed algorithms are also possible - for example,
+a combination of the mark & sweep and the generational collector
+can be designed, which avoids the sweeping phase, for the price of some additional
+pointer slots in every object.
+<P>
+
+<A NAME="FN1" HREF="#BACK_FN1">Literature:</A>
+<BR>
+For a more information on GC, read <CITE>``Garbage Collection Techniques''</CITE>
+by Paul R. Wilson, in <CITE>``ACM Computing Surveys''</CITE>,
+also found in the proceedings of the
+<CITE>``1992 International Workshop on Memory Management,
+Springer Lecture notes in C.S.''</CITE>
+<P>
+Note from the future: This paper was written in 1994 - a bunch of new
+things came into existence since then - most noteworth is the
+train algorithm, which allows for efficient garbage collection of the
+old space.
+
+
+<H2>Pros & Cons of the Techniques</H2>
+
+<UL>
+<LI>Mark & Sweep
+<P>
+    Most of the early GC implementations used the mark & sweep collection scheme,
+    which (I think) is responsible for many peoples opposition against GC.
+    The basic mark & sweep algorithm leads to a pause, making interaction with
+    the program impossible for a while. This disruptive pause becomes extreme,
+    if paging is involved in virtual memory systems (since all of the virtual
+    memory must be processed during the sweep phase, many page faults may occur
+    in systems where the real memory is smaller than the virtual memory need).
+<P>
+    Considering early Lisp systems (timesharing 20 users on a DEC20, running a
+    megabyte lisp program in 128-256 k real memory) you can imagine how long
+    these pauses could become. There are many references found in the literature
+    - describing pause times of seconds and even minutes.
+<P>
+    The cpu-time overhead created by mark & sweep (ignoring paging) is in the
+    range of 5% to 10%. If the time was not spent in one big pause, mark & sweep
+    would not be too bad (especially considering modern workstations, where
+    32Mb of memory are standard so paging is rare,
+    and a cpu-overhead of some % can be tolerated).
+<P>
+    Mark & sweep does not compress the memory - this means that even though enough
+    memory is available, it may not be usable for an allocation due to fragmentation.
+    However, variations of the basic algorithm exist, which compress memory during the
+    sweep phase or which add a third phase for compression.
+<P>
+<LI>Reference Counting
+<P>
+    At first look, reference counting seems to overcome those problems -
+    distributing the GC overhead over the execution time of the program.
+    However, reference counting too creates some overhead:
+<P><UL>
+<LI>first, for each pointer store, it needs two accesses - one to decrement
+	the count of the object referenced at first,
+	then to increment the count of the newly referenced object.
+<P>
+<LI>Beside the possible page fault, there are 4 memory references (i.e. two
+	read-modify-write cycles) involved. In addition, some checks for nil
+	pointers etc. are too required (care for integers or nil).
+<P>
+<LI>    Also, whenever a count drops to zero, the counts of all referenced
+	objects must be decremented - which may clear other counts (so called
+	recursive freeing) which also creates some cpu-time overhead.
+	If big structures are freed, noticeable pause times may occur as well
+	(think of a binary tree with 1 million elements, where the
+	 count of the anchor-node drops to zero ...).
+	To avoid this noticable pause, some reference counting systems delay
+	the recursive freeing or distribute it over time.
+<P>
+<LI>Finally, these operations have to be done when working with the objects,
+	NOT when collecting objects. In contrast to the mark&amp;sweep collector
+	(which references these objects only once during GC time), a program
+	may produce many (useless) countup/countdown operations while processing
+	data (just imagine a tree traversal). There are special workarounds to
+	partially avoid this problem; for example, by not counting references from
+	active contexts, but in general, many useless count operations are
+	to be expected.
+<P>
+<LI>    Like mark and sweep, reference counting does not solve the memory fragmentation problem.
+</UL>
+<P>
+    Measurements show, that counting allone may create a cpu-time overhead of some 15%
+    (remember: counter updates are required even when passing arguments to functions)
+    and another 5% for recursive freeing. These are average numbers, as
+    found in the literature. The actual overhead depends heavily on the
+    application and can vary from 0 to almost 50%.
+<P>
+    The real bad news with reference counting is that it is not sufficient.
+    Self-referencing objects, and objects containing reference cycles cannot be freed
+    by a reference counting GC. Thus there is still a need for another
+    GC technique, to get rid of those (usually: mark & sweep).
+    Alternatively, cycles could be broken
+    manually by the programmer - but that again leads to possible omissions and
+    therefore hard to find errors. Actually, asking the programmer to manually break those
+    cycles is as error prone as asking him to manually free objects.
+<P>
+    [[ At first, some might argue that cycles are relatively seldom used,
+       but this is NOT true !
+       Just consider the data structure for a window on the screen, containing
+       references to its subviews, which contain a reference to their parent view.
+       Voila: a cycle.
+       If modern programming techniques, AI, multiple lightweight processes etc.
+       are involved, even more indirect cycles can be expected,
+       especially in a language such as Smalltalk, which presents even stack
+       frames, processes and executable code as objects ... ]]
+<P>
+    [[ Literature notes that reference counting GC's in early Smalltalk systems
+       lead to some very obscure errors. These occured whenever a programmer
+       forgot to break up the MVC-cycle in their view closing code.
+       These cycles had to be broken 'manually', otherwise the counts had never
+       dropped to zero.]]
+<P>
+<LI>Copying Collectors
+<P>
+
+    Copying collectors are among the fastest available GC techniques, especially
+    generation scavenging (which uses a hierarchy of semispaces) is to date
+    unbeaten in its average low cpu-time overhead (to my knowledge).
+<P>
+    In generation scavenging, all memory is divided into separate areas for
+    generations of objects - all objects are first created in a relatively small
+    area called <VAR>newSpace</VAR>, <VAR>Eden</VAR> or similar.
+    When this area becomes full, a scavenge operation is performed on this area
+    only, which can be done relatively fast. Measurements showed, that usually
+    most of these new objects are no longer referenced, thus - since only the
+    living objects are investigated and copied - leads to short pause times for
+    this space (20ms to 50 ms), which can easily be hidden between two key
+    strokes or a file-access operation in timesharing systems (as in UNIX systems,
+    where a sync-operation may produce comparable delays from time to time).
+<P>
+    To avoid copying objects around forever, objects which survived these
+    scavenges for some time will be copied to another area (generation) called <VAR>oldSpace</VAR>.
+    This action is called <VAR>tenuring</VAR> (aging).
+<P>
+    Systems may have two or more of these spaces.
+<P>
+    Once an object has been moved into a higher generation, it will no longer
+    create any copying overhead in the younger generation. Of course, these
+    generations may fill up too, but this filling up occurs much less likely.
+    Some specialized collector is still required for the oldest generation;
+    typically, a background collector is used to find unused old objects.
+    (since this space fills up much slower, chances are good that the background
+    collector can keep up with the allocation rate.)
+<P>
+    Measurements show, that generation scavenging produces an overhead of some 3%
+    to 5% (read the ``worst case situations'' discussion below).
+<P>
+    Copying collectors offer the additional benefit, that cyclic references
+    are handled correctly, AND that the storage space is always compacted after
+    a GC.
+<P>
+    Interestingly, pause times are shorter if lots of garbage is reclaimed, and
+    longer if many objects survive.
+<P>
+    The disadvantage of the copying techniques is that they require an
+    additional amount of (unusable) memory, ranging from 50% for the basic Baker
+    algorithm, down to some 20% for Ungars generation scavenging.
+    This memory needs to be virtual only - it is only needed physically
+     while switching semispaces.
+     During program execution, the other semispace can be paged out.
+
+<P>
+<LI>Mixed Approaches
+<P>
+
+    Of course, the memory could be divided into areas which are collected with
+    different algorithms, for example, it is possible to use a copying collector
+    for young objects, and move objects into another area collected by mark &
+    sweep or reference counting.
+<P>
+    It is also possible use different algorithms for collecting depending on the state
+    of the memory. For example, <CITE>ST/X</CITE>'s memory management may choose
+    between a mark&amp;sweep or compressing collect;
+    depending on how fragmented the memory is at collect time.
+<P>
+    Finally, it makes sense, to decide upon the available amount of real
+    memory for which algorithm to choose. Copying collectors may show poor
+    performance, if memory is tight, and paging occurs during the collect.
+    In such a situation, it may be preferrable to use a mark and sweep
+    (or a shifting mark & sweep, which compacts memory in a third phase).
+
+<P>
+<LI>Incremental Algorithms
+<P>
+
+    Both mark & sweep and copying algorithms can be made incremental and run
+    in the background, at idle times or whenever another object gets allocated.
+    There are even algorithms for multi-CPU systems, where background collection
+    is done by a separate processor.
+    These incremental algorithms are useful as an additional strategy, to use the
+    cpu while nothing else can be done
+    - for example, in an interactive application, even with a fast typist, there
+    is a lot of cpu time available even between two key strokes (some 100ms),
+    which is enough time to do a scavenge operation or incrementally mark
+    and sweep some objects.
+<P>
+    Incremental algorithms are typically somewhat slower (since additional
+    synchronization and locking is required) than their non-incremental versions.
+    However, since they only run in the background, not disturbing the active
+    foreground process, this does not hurt.
+</UL>
+
+
+<H2><A NAME="ENEMIES" HREF="#I_ENEMIES">What GC Enemies Suggest</A></H2>
+
+  Interestingly, most GC opponents suggest a device called "smart pointer" (or
+  similar buzz-word) which is usually nothing other than a reference counting
+  garbage collector !!
+  This - as we have seen above is NOT the best solution to garbage collection
+<A HREF="#FN2" NAME="BACK_FN2">(*)</A>.
+<P>
+  Others use tools, which (more or less successful) find invalid references to
+  already freed objects and multiple freeing of the same object and so on.
+  To my knowledge, none of these is perfect and can make certain that all such
+  situations are handled:
+    - analysis of the source code is (theoretically) impossible,
+    - analysis of the executing process needs that every possible flow of control through the program
+      be executed (at least once) in every possible combination,
+      to detect all possible memory bugs. This is practically impossible - it may
+      require thousands of years to run through all possible combinations - even in
+      small programs.
+<P>
+  Also - in the strict sense, these check-runs have to be repeated for every
+  change in the program - whatever small this change was.
+<P>
+  I doubt that these are very useful for modest size applications, involving a
+  team of many programmers.  (not talking about toy programs here :-)
+<P>
+  There is finally a very radical, puristic group of GC enemies which simply
+  suggests the following:
+<P>
+  "if you cannot get your memory organized,
+   give up programming - since you are simply too dumb"
+<P>
+  (this is no joke; this statement really occurred in the comp.lang.c++ newsgroup)
+  Big smily here :-)
+
+<P>
+<A NAME="FN2" HREF="#BACK_FN2">(*)</A>
+Notes:
+<BLOCKQUOTE>
+There are other GC's possible; a new and relatively popular algorithm is the
+so called
+<VAR>conservative GC</VAR> which scans memory for things which "<VAR>look like pointer</VAR>"
+to track reachable objects.
+<BR>
+Since in C-like languages, objects may not be moved around, these collectors typically
+use a variant of the mark and sweep mechanism;
+however, faster schemes are possible and occassionally implemented
+(treatmill, non copying generation scavenging etc.)
+</BLOCKQUOTE>
+
+ <H2>What Type of GC do Smalltalks Use</H2>
+
+  Traditionally, the early versions used reference counting GC (ST-80 - I guess
+  up to V2.x), the newer ST-80 (OWST) versions use a combination of generation
+  scavenging for new objects and incremental mark and sweep augmented by a
+  compressor for the old objects.
+  I am walking on sandy ground here - not knowing for sure. This information is
+  based on what others told me...
+<P>
+  I do not know what ST/V and Enfin use.
+<P>
+  <CITE>ST/X</CITE> uses a modified generation scavenging scheme for new objects (with
+  adaptive aging) and three different algorithms to reclaim old objects:
+  a Baker-style copying compressor, an inplace compressor and a
+  stopping mark-and-sweep, all are started on demand.
+<BR>
+  There is also an incremental mark & sweep running over the old objects
+  at idle times or (optionally) as a low priority background process.
+<BR>
+  The implementation is prepared for and its planned to add a third intermediate
+  generation, and to replace the semispace Baker algorithm by some in-place
+  compressor. This compressor will be somewhat slower, but relaxing VM need.
+<P>
+  Oldspace collections happen very infrequent - if no special memory
+  needs arise, as when doing image processing/viewing, the system may run
+  forever without one. Especially with the incremental background collector running.
+<P>
+  For long running server applications, it may be a good idea to explicitely force
+  a compressing collect at times when the system is known to be idle or not heavily used.
+  For example, a watcher thread my trigger a GC every Sunday night at 2 o'clock in the morning.
+
+
+<H2><A NAME="WORST" HREF="#I_WORST">Worst Case Situations for Generational GC's and ST/X's GC in particular</A></H2>
+
+  For a fair discussion, some worst-case situations for generational GC's have
+  to be discussed in this paper.
+  In <CITE>ST/X</CITE> (and probably other systems using similar algorithms), there are two
+  situations, in which the GC gets into trouble, possibly leading to longer than the above
+  mentioned average pause times and/or GC overhead. The following will discuss these cases
+  and describe how <CITE>ST/X</CITE> tries to avoid them:
+<UL>
+<LI>all objects survive
+<BR>
+	especially, when building up big data structures (which are initially created
+	in <VAR>newSpace</VAR> but will survive for a long time) a scavenge operation will find
+	that the newspace is still full afterwards. Thus, the pause time will be about
+	the time it takes to copy all objects and more scavenges will occur soon
+	afterwards (until they are finally tenured into <VAR>oldSpace</VAR>).
+	By modifying the newSpaces size, you can control the maximum pause time (i.e. limit it
+	by the maximum number of bytes that are possibly copied). However, the fraction of
+	the copy overhead will become bigger when the <VAR>newSpace</VAR> is made smaller.
+<BR>
+	To honor this situation, <CITE>ST/X</CITE> uses adaptive aging: it will start to tenure
+	objects earlier to the <VAR>oldSpace</VAR> if a scavenge did not reclaim enough.
+	Vice versa (to avoid the early tenuring problem described below), it will keep
+	objects longer in <VAR>newSpace</VAR> if the fill grade is low after a scavenge.
+<P>
+	If the programmer knows that a permanent data structure is built,
+	hints can be given to storage system. Either by changing the tenuring age
+	or by directly allocating those objects in the <VAR>oldSpace</VAR>.
+<P>
+	Often, temporarily increasing the size of the newSpace to some big
+	amount (say 1 or 2 megabytes) gives a big improvement.
+<P>
+<LI>early tenuring
+<BR>
+	early tenuring means that objects are moved from a young generation
+	to an older generation - and become garbage soon afterwards.
+	(i.e. they live a little bit too long to be kept in the <VAR>newSpace</VAR>,
+	but are not really what we would call "permanent objects", in that they
+	die soon afterwards).
+<BR>
+	Early tenuring happens often if some operation requires a lot of
+	temporary data, which is unreferenced soon afterwards.
+<P>
+	Thus, reclamation of this space is now the responsibility of the oldspace
+	collector; which, for various reasons, is producing more cpu-time
+	overhead. Normally, the incremental GC can free this memory easily; however,
+	if the incremental GC cannot keep up with the oldspace allocation produced by tenuring,
+	the <VAR>oldSpace</VAR> will fill up finally, and a noticeable pause cannot be avoided
+	(when the <VAR>oldSpace</VAR> is reclaimed and/or compacted).
+<BR>
+	The adaptive aging does usually prevent this, but whenever big-chunks
+	of data are allocated, there is a danger of those being moved to the
+	oldspace early or, if the chunks size exceeds some limit, being
+	directly allocated in the oldspace.
+<P>
+	Temporarily increasing the size of the newSpace helps here as well.
+	For example, in a request-response-loop kinds of applications, such as
+	a webserver, it is wise to adjust the newspace size to provide enough space
+	to handle a single request. Then, the next scavenge will (at almost zero cost)
+	find that no objects survive and reclaim (at zero cost) the whole area.
+<P>
+<LI>olspace resizing
+<BR>
+	if the used memory is reaching the oldspace's size, a reallocation of
+	more oldspace is performed. On systems which support the mmap system call,
+	oldspace reallocation is done very fast and no noticeable pause occurs.
+<BR>
+	However, on systems which do not support this call, an oldspace compress
+	operation (which is also time consuming) has to be performed.
+	This situation is especially bad, if this occurs while the program
+	builds up some big data structure(s), and even more oldspace is needed
+	in the near future.
+<BR>
+	Since the automatic olspace increase is by some fixed amount (currently
+	256k), in the above situation, it would be better to increase the
+	oldspace by some bigger amount in the first place. (of course, the system
+	cannot know that at the time of the first increase).
+	The program can give a hint to the memory system, by asking for some
+	(bigger) amount of oldspace BEFORE starting to create the objects.
+	Thus, the reallocation is done in one big block instead of many small
+	ones.
+<P>
+	The last only applies to systems which do not provide a reasonable
+	mmap system call (i.e. Ultrix, RealIX and some other older SYSV3 based systems).
+</UL>
+
+<H2><A NAME="SUMMARY" HREF="#I_SUMMARY">Conclusion</A></H2>
+
+  There is no real argument against GC; except for some small percentage of added run
+  time overhead (true realtime applications, will be discussed in another paper).
+  With todays high performance computers, this is an adequate price to pay for the
+  added security, and - not to forget - the time savings of the programmer, who
+  would otherwise spend a lot of his/her time in the debugger, instead of doing
+  productive work.
+<P>
+  Of course, there are always special situations in which one algorithm performs
+  better than others - memory allocation patterns vary over different applications.
+  Generation scavenging provides the best average performance
+  over different allocation patterns.
+<P>
+  Or, to summarize (and estimate/simplify):
+<BLOCKQUOTE>
+  if a programmer spends 80% of his/her time debugging and testing code
+  (which is realistic),
+  and 50% of all errors are dangling pointer, bad free or other GC-avoidable bugs
+  (which is optimistic),
+  getting rid of those bugs rewards you with a development cost saving of 40%!
+</BLOCKQUOTE>
+  Now, those savings will pretty soon amortize the added cost of a 5% to 10%
+  faster CPU.
+<P>
+  The exact percentages may vary and not be correct in every situation,
+  but you see the point; don't you?
+
+
+
+<H2><A NAME="APPENDIX" HREF="#I_APPENDIX">Evaluation Code</A></H2>
+
+The following appendix provides some code examples and discusses the results
+of various source level "optimizations".
+<BR>
+Some of them are the result of internal discussion with friends and opponents of GC.
+<P>
+Example1:
+<BR>
+First we demonstrate a straight-forward algorithm to compute the N-th row of
+the pascal triangle; this is actually a functional problem, but the implementation
+given here allocates a lot of memory and is therefore a good example for memory management
+issues.
+<P>
+The pascal triangle looks like:
+<CODE><PRE>
+		1
+	      1   1
+	    1   2   1
+	  1   3   3   1
+	1   4   6   4   1
+	       ...
+</PRE></CODE>
+the N'th row can be computed recursively,
+by first computing the (N-1)'st row , and then
+adding up consecutive elements of that row,
+and both prepending and appending a 1 upFront and at the end.
+<BR>
+Here is a sample implementation: (Integer methods)
+<CODE><PRE>
+    pascal
+	"return the n'th row of the pascal triangle"
+
+	|pNMinus1 shL shR|
+
+	self == 1 ifTrue:[ ^ #( 1 ) ].
+
+	pNMinus1 := (self - 1) pascal.
+
+	shL := pNMinus1 , #(0).           "/ create:      1 n n n n n n n n 0
+	shR := #(0) , pNMinus1.           "/ create:      0 n n n n n n n n 1
+	^ shL with:shR
+	    collect:[:a :b | a + b].      "/ add them up  1 m m m m m m m m 1
+</PRE></CODE>
+The code above takes the N-1'st row and creates two temporary
+rows (shL and shR) which have a 0 upFront and at the end respectively.
+Then, these two are added column-wise, and the results are collected for
+the final result.
+<BR>
+The recursion ends of course with the first row, which is #(1) by definition.
+<P>
+How much memory is allocated along this ?
+<BR>
+For the N'th row, 3 new arrays of size N+1 are allocated;
+that means that the overall memory requirements to calculate pascal(N)
+is      (1+2+3+4+...+N) * 3  which is  N*N*(3/2).
+<BR>
+To compute pascal(10), 150 cells are allocated - roughly 600 bytes.
+<BR>To compute pascal(1000), 1.5mio cells are allocated - roughly 6Mb.
+<P>
+
+One might tend to think that memory allocation is responsible for the execution
+time, and optimize the code to get rid of (some) allocations.
+<BR>
+Here is slightly rewritten version, which allocates two new array per invocation
+(the comma operation also allocates a new array):
+<CODE><PRE>
+    pascal2
+	"return the n'th row of the pascal triangle"
+
+	|pNMinus1 prev|
+
+	self == 1 ifTrue:[ ^ #( 1 ) ].
+
+	pNMinus1 := (self - 1) pascal.
+
+	"/ add it up manually
+	prev := 0.
+	^ (pNMinus1 collect:[:el| |sum| sum := prev+el. prev := el. sum]) , #(1) .
+</PRE></CODE>
+this allocates  (1+2+3+4+...+N) * 2  cells which is N*N.
+<BR>
+i.e. to compute pascal(1000), 1.0mio cells are allocated - roughly 4.5Mb.
+<P>
+
+
+We can get rid of the extra allocation due to the comma concatenation,
+by avoiding a collect, and doing things manually
+(things becoming more and more obfuscated, though):
+<BR>
+Here is a version, which only allocates one new array per invocation:
+<CODE><PRE>
+pascal3
+    "return the n'th row of the pascal triangle"
+
+    |pNMinus1 newRow prev|
+
+    self == 1 ifTrue:[ ^ #( 1 ) ].
+
+    pNMinus1 := (self - 1) pascal.
+    newRow := Array new:(self + 1).
+
+    "/ add it up manually
+    prev := 0.
+    1 to:self-1 do:[:index |
+	|el|
+
+	el := pNMinus1 at:index.
+	sum := prev + el.
+	newRow at:index put:sum.
+	prev := el
+    ].
+    newRow at:self put:1.
+    ^ newRow.
+</PRE></CODE>
+
+this allocates  (1+2+3+4+...+N) cells which is N*N/2.
+<BR>
+i.e. to compute pascal(1000), 0.5 mio cells are allocated - roughly 2Mb.
+<P>
+Can we write a version which does not allocate anything at all ?
+<BR>
+Yes, we can. The following code preallocates an array and
+computes the result into it (recursive invocations use the same store
+for all the previous results):
+<BR>
+<CODE><PRE>
+pascalHelperInto:anArray
+    "write the n'th row of the pascal triangle into anArray.
+     Destructive version (overwrites elements in the array)"
+
+    |prev|
+
+    self == 1 ifTrue:[
+	anArray at:1 put:1.
+	^ anArray.
+    ].
+
+    (self - 1) pascalHelperInto:anArray.
+
+    prev := 0.
+    1 to:(self - 1) do:[:idx |
+	|el sum|
+
+	el := anArray at:idx.
+	sum := prev+el.
+	prev := el.
+	anArray at:idx put:sum.
+    ].
+    anArray at:self put:1.
+    ^ anArray
+
+pascal4
+    "return the n'th row of the pascal triangle"
+
+    ^ self pascalHelperInto:(Array new:self)
+</PRE></CODE>
+this last example only allocates N cells.
+<P>
+
+
+Execution times on 800Mhz Celeron notebook:
+<TABLE BORDER>
+  <TR>
+  <TD> program </TD> <TD> time in ms (5 runs) </TD>
+  </TR>
+
+  <TR>
+  <TD> pascal </TD> <TD> 1197 </TD> <TD> 1188 </TD> <TD> 1181 </TD> <TD> 1180 </TD> <TD> 1181 </TD>
+  </TR>
+
+  <TR>
+  <TD> pascal2</TD> <TD> 1176 </TD> <TD> 1189 </TD> <TD> 1199 </TD> <TD> 1177 </TD> <TD> 1186 </TD>
+  </TR>
+
+  <TR>
+  <TD> pascal3</TD> <TD> 1276 </TD> <TD> 1253 </TD> <TD> 1220 </TD> <TD> 1223 </TD> <TD> 1222 </TD>
+  </TR>
+
+  <TR>
+  <TD> pascal4</TD> <TD> 826 </TD> <TD> 822 </TD> <TD> 847 </TD> <TD> 833 </TD> <TD> 945 </TD>
+  </TR>
+
+</TABLE>
+<P>
+Summary:
+<P>
+The above execution times are very interesting; our "optimized" versions pascal2 and pascal3
+are not at all faster - pascal3 is actually slower, due to the fact that the comma
+and collect operations are probably highly performant
+(even the author was surprized and expected a few percent of speedup).
+<BR>
+The only real speedup comes with pascal4, which does no allocation at all - but for the price
+of a much less intuitive program.
+<BR>
+This means, that all of the memory allocations and garbage collections only accounted for
+roughly 20-30% in this particular example.
+<P>
+It is left to the reader to decide if this is worth the trouble of writing complicated
+code like pascal4.
+<P>
+It is also left to the reader, to reimplement this example on C, C++, Java or any other
+system and compare the results.
+<BR>
+but please: with correct results; as a quick check,
+the sum of the 1000'th row elements is
+<CODE><PRE>
+   (1000 pascal) inject:0 into:[:acc :el | acc + el]
+</PRE></CODE>
+which is:
+<CODE><PRE>
+    535754303593133660474212524530000905280702405852766803721875194
+    185175525562468061246599189407847929063797336458776573412593572
+    642846157021799228878734928740196728388741211549271053730253118
+    557093897709107652323749179097063369938377958277197303853145728
+    5598238843271083830214915826312193418602834034688
+</PRE></CODE>
+
+<P>
+And - also look at how long it takes you to write, test and measure the examples. If it takes
+more than half an hour, you might be using the wrong programming language ;-)
+
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 1995 Claus Gittinger Development &amp; Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.27 $ $Date: 2018-02-19 14:06:32 $
+</BODY>
+</HTML>

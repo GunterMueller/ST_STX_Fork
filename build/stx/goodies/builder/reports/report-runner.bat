@@ -1,0 +1,1 @@
+call %~dp0\..\..\..\projects\smalltalk\stx -Mold:64000 -I --abortOnSEGV  --execute %~dp0\report-runner.st %*

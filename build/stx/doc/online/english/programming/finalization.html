@@ -1,0 +1,264 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Finalization</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="GC.html">         <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">        <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="viewintro.html">  <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Object Finalization</H1>
+
+<H2>Introduction</H2>
+
+Normally, the runtime system of <CITE>Smalltalk/X</CITE>
+(and of all other Smalltalk implementations, of course)
+performs garbage collection
+on its own. There is no need for the programmer to free objects;
+typically, the program does not even get any notification when objects are
+freed.
+<BR>
+Objects which are no longer reachable by any other reachable object are
+automatically returned to the free memory pool
+(see <A HREF="GC.html">``garbage collection''</a>).
+<BR>
+However, for some classes, cleanup actions are needed whenever an instance dies.
+<BR>
+Examples are:
+<UL>
+<LI> <CODE>FileStreams</CODE>, <CODE>Sockets</CODE> etc.
+<BR>
+where the underlying file must be closed when the smalltalk object is no
+longer referenced.
+<P>
+<LI> X-resources such as <CODE>Color</CODE>, <CODE>Font</CODE>,
+<CODE>View</CODE>
+<BR>
+where the underlying X-resource must be freed once the object becomes
+inaccessible.
+<P>
+<LI> Shared objects in distributed systems
+<BR>
+where some partner program must be told about the object being no longer in use.
+<P>
+<LI> Database objects in distributed systems
+<BR>
+where some database records/objects should be unlocked or reorganizations
+may be required.
+</UL>
+In general, all objects which somehow represent or refer to external resources
+(i.e. operatingSystem or shared-object) need some cleanup
+action to release that external resource.
+This can be done either manually by the programmer or automatically
+by the runtime system.
+<P>
+For the programmer, it is much easier (and less error prone) to use the
+finalization mechanism, instead of doing the housekeeping herself.
+Just think of a bitmap image with a local colormap;
+how would you
+know who else in the system uses those colors and when they can be freed
+without danger ?
+<P>
+  To support object finalization, <CITE>Smalltalk/X</CITE> includes
+the <CODE>WeakArray</CODE> class, which provides a low level
+mechanism and <CODE>Registry</CODE> which offers a more
+programmer friendly higher level interface.
+
+<H2>WeakArray: the low level mechanism</H2>
+
+Instances of
+<A HREF="../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:WeakArray backRef:'finalization.html'">
+<CODE>WeakArray</CODE>
+</A>
+are arrays which do not prevent their elements from being garbage
+collected. This means that the reference from the WeakArray to an object does not
+count as a reference with respect to garbage collection.
+In other words: the garbage collector will consider an object as being free
+if either no references or only references from WeakArrays to that object
+exist.
+Whenever such an object is found,
+the object is returned to the free memory pool as usual.
+and the entry in the WeakArray is set to 0 (zero).
+Finally, the garbage collector will inform all dependents of the WeakArray
+about the change.
+<P>
+Using this basic mechanism for object finalization is straightforward:
+<BLOCKQUOTE>
+keep the relevant information (such as fileDescriptor, window handle etc.)
+in another array,
+<BR>
+and references to the corresponding smalltalk object
+in a WeakArray.
+<BR>
+Whenever the WeakArray informs its dependents about some object
+being reclaimed, scan it (in your <CODE>#update:with:from</CODE> method)
+for zero entries and free the corresponding
+resource as stored in the other array
+(i.e. close the file, free the window handle etc.).
+</BLOCKQUOTE>
+(Notice, that a HandleRegistry is better suited
+for this concrete application.)
+<P>
+  Another use of WeakArrays is with caching; for example, you can keep
+  some recently used data in a WeakArray, reusing it if present.
+<BR>
+  The cache will be automatically 'flushed' by the garbage collector in
+  regular intervals. (a concrete example is found in the
+  <CODE>Method &#187; source</CODE>
+  method, which keeps the recently used sourcefile open for a while.)
+
+
+
+<H2>Registry and HandleRegistry: programmer-friendly mechanisms</H2>
+
+Since WeakArrays are a bit complicated to use, two other classes
+called
+<A HREF="../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:Registry backRef:'finalization.html'">
+<CODE>Registry</CODE>
+</A>
+and
+<A HREF="../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:HandleRegistry backRef:'finalization.html'">
+<CODE>HandleRegistry</CODE>
+</A>
+are provided.
+<BR>
+These internally perform the above operations to keep track of
+reclaimed objects; thus you don't have to care for all those details.
+However, a registry keeps executors (which are shallow copies of the original objects)
+in the other array, and sends a notification to this copy.
+<BR>
+A handleRegistry associates a handle with an object (as described above)
+and sends a change notification to its dependents, passing the original handle
+as change parameter.
+
+<A HREF="../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:Registry backRef:'finalization.html'">
+<H3>Registry</H3>
+</A>
+
+Registries are perfect if some object knows by itself how to perform
+cleanup; the programmer can code as if the original object received
+the destroy notification and program as follows:
+<BLOCKQUOTE>
+  The object which wants to do some finalization actions
+  should be <VAR>registered</VAR> in a registry,
+and will later (at finalization time) receive a
+  <CODE>#finalize</CODE>-message.
+<BR>
+In this method, perform cleanup as required.
+For example, close an underlying file by doing <CODE>"self closeFile"</CODE>.
+</BLOCKQUOTE>
+
+Technically, we cannot send messages to the original object,
+since that object is already gone at that time.
+Instead, the executor created by the registry will receive the
+<CODE>#finalize</CODE> message.
+Since the executor has the same contents as the original
+(especially: fileDescriptors
+and window handles), its <CODE>#finalize</CODE> method can be written as if it
+was the original.
+<P>
+Lets summarize what is needed for proper finalization:
+<UL>
+<LI>create a registry (usually done in the classes <CODE>#initialize</CODE>
+method)
+<P>
+<LI>add each instance that should be finalized to the registry.
+<BR> Typically, the registry is kept in a class variable; do not use globals.
+<P>
+<LI>define a <CODE>#finalize</CODE> method for cleanup.
+<BR>
+this method can be written as if the receiver was the original object,
+and do whatever is needed
+to free any underlying operating system resources.
+</UL>
+You should keep in mind, that the executor receiving the <CODE>#finalize</CODE>
+message is a shallow copy, not the original (that has already been garbage collected!).
+Although in most cases, this is transparent, there are situations where it does
+make a difference: when keeping objects in
+identitySets or identityDictionaries, which compare for identity instead
+of equality. The executor will of course never be identical,
+but can be made equal to the original.
+<P>
+  Since creating a shallow copy may be expensive (especially for big or
+  heavily used objects), the copy is created using a slighly different
+  copy method: <CODE>#executor</CODE>.
+<BR>
+The default implementation for this (in <CODE>Object</CODE>)
+simply sends <CODE>#shallowCopy</CODE>.
+<BR>
+You may want to redefine this method in your class - especially
+if you do not need all instance variables at finalization time.
+<BR>
+For example, the <CODE>Cursor</CODE> classes <CODE>#finalize</CODE> method
+will only need the cursors resource-id - therefore, a special
+<CODE>#executor</CODE> has been defined, which creates a
+lightweight copy with only the id being copied.
+<P>
+Classes with many instance variables may avoid to create big finalization
+objects by returning a small placeHolder object (handle-holder), which
+does not use up as much memory as the original
+<P>
+
+<A HREF="../misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:HandleRegistry backRef:'finalization.html'">
+<H3>HandleRegistry</H3>
+</A>
+
+HandleRegistries are very useful if some other object wants to keep
+track of living objects and perform cleanup actions, which the
+other objects cannot do itself.
+<BR>
+A typical example is a communication system, which handles an
+IPC connection for multiple lightweight processes, and wants to be informed
+if any of them dies, to close the corresponding connection.
+<BR>
+In this setup, a HandleRegistry would assign an IPC-channel ID for each
+process and inform the watcher if any process dies.
+(an alternaitive is to define a subclass of process, which does the cleanup
+in its finalization method - but that seems to be an ugly kludge).
+
+To use a handleRegistry, the following steps are required:
+<UL>
+<LI>create the registry (usually in the classes <CODE>#initialize</CODE> method)
+<P>
+<LI>make yourself be a dependent of the registry
+<P>
+<LI>register each object with an associated handle by
+sending it a <CODE>#register:as:</CODE> message.
+<P>
+<LI>define an <CODE>#update:with:from:</CODE> method for cleanup.
+<BR>
+this method gets the handle as <VAR>with</VAR> argument, and the registry
+as <VAR>from</VAR> argument.
+In this method, do whatever cleanup (i.e. file close) is required,
+based on the handle.
+</UL>
+
+<P>
+
+  See example uses in <CODE>Form</CODE>, <CODE>Cursor</CODE>, <CODE>Color</CODE>,
+<CODE>Font</CODE> or <CODE>ExternalStream</CODE> for how
+  registries are used,
+and the implementation of <CODE>Registry</CODE> for more protocol information.
+
+<BR>
+In addition, you will find
+more examples in the file: <CODE>"doc/coding/Registry-examples.st"</CODE>.
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 1995 Claus Gittinger Development &amp; Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.20 $ $Date: 2016-11-05 17:38:36 $
+</BODY>
+</HTML>

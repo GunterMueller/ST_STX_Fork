@@ -1,0 +1,38 @@
+ciao ! hola ! salut ! hallo ! чао ! 你好 ! davs ! ողջույն !
+здрависване ! dobrý den ! γειά ! हलो ! halló ! やあ !
+안녕 ! Roj baş ! salve ! saluton ! नमस्कार !
+hei ! χαιρε ! cześć ! bună ziua ! zdravo ! здраво ! hej ! kumustá !
+สวัสดี ! merhaba ! привiт ! olá !
+
+encoding: utf8
+  If there are any characters missing or looking strange in your language
+  in the above text, make sure you have an iso10646-1 (i.e. unicode) font
+  containing the required glyphs on your system and change the corresponding
+  font setting (Text-Font).
+  You will find this setting in the Launcher's "System" -> "Settings"-Dialog,
+  under the "Viewstyle" -> "Fonts" tab.
+
+  You can change the font of this view via the "More" -> "Font..." item
+  of this view's popUpMenu (right click).
+
+  Notice:
+	this setting is only relevant, if you intent to use non-latin
+	character sets, and especially far- and middle-eastern languages.
+	Smalltalk/X does not require a unicode-font for its operation;
+	however, missing characters will then be drawn using a replacement glyph.
+
+  Notice to MS-Windows-XP Users:
+	You may need to install additional language sets
+	(especially complete fonts) in order to see all character
+	glyphs correctly.
+
+Samples:
+
+diaresis: äöüÄÖÜß
+accent: éèêåÅ
+special: €
+cyrillic: русский язык
+greek: Ελληνικά
+math: ∀∆√∫≠≤≥⌐⌠⌡
+japanese: 日本語
+Chinesisch: 欢迎光临

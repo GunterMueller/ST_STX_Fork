@@ -1,0 +1,75 @@
+"*
+ * Encoding: iso8859-1
+ *
+ * $Header$
+ *
+ * ST/X startup configuration file:
+ *
+ * DON'T add site specific things here - use your own h_xxx.rc file instead
+ * where xxx stands for your hostname(s)
+ *
+ * startup configuration for host specific stuff -
+ * looks for a system specific h_sysType.rc init file and loads it.
+ * looks for a host specific h_hostName.rc init file and loads it.
+ *"
+!
+|sysType host domain s conf includes incDir|
+
+sysType := OperatingSystem getSystemType.
+
+"------------------------------------------------------------------------"
+"/ printer setup
+"/ Notice that this setup may be changed by an OS-specific h_xxx file
+"/
+"/ only reset the printer setting, if restarted
+"/ on another host.
+
+host := OperatingSystem getHostName.
+(Smalltalk at:#'_ImageHostName') ~= host ifTrue:[
+    sysType = 'win32' ifTrue:[
+	Printer := Smalltalk at:#WinPrinterStream.
+    ] ifFalse:[
+	Printer := Smalltalk at:#PostscriptPrinterStream.
+    ].
+].
+
+
+"/
+"/ try systemType-specific setup
+"/ h_<osType>.rc
+"/
+(Smalltalk at:#'_ImageOSTypeName') ~= sysType ifTrue:[
+    ('host.rc [info]: ') infoPrint.
+
+    "/ ('trying host setup h_' , sysType , '.rc...') infoPrintCR.
+    s := Smalltalk systemFileStreamFor:('h_' , sysType , '.rc').
+    s notNil ifTrue:[
+	('reading host setup h_' , sysType , '.rc...') infoPrintCR.
+	s fileIn.
+	s close.
+    ].
+    Smalltalk at:#'_ImageOSTypeName' put:sysType.
+].
+
+"/
+"/ try host-specific setup
+"/ h_<hostname>.rc
+"/
+host isNil ifTrue:[
+    'host.rc [warning]: cannot determine host I am running on' errorPrintCR.
+] ifFalse:[
+    "if there is a corresponding file ..."
+
+    (Smalltalk at:#'_ImageHostName') ~= host ifTrue:[
+	"/ ('host.rc [info]: trying host setup h_' , host , '.rc...') infoPrintCR.
+
+	s := Smalltalk systemFileStreamFor:('h_' , host , '.rc').
+	s notNil ifTrue:[
+	    ('host.rc [info]: reading host setup h_' , host , '.rc...') infoPrintCR.
+	    s fileIn.
+	    s close.
+	].
+	Smalltalk at:#'_ImageHostName' put:host.
+    ]
+].
+!

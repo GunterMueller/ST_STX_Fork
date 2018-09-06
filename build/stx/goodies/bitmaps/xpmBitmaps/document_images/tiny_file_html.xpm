@@ -1,0 +1,31 @@
+/* XPM */
+static char *tiny_file_html_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 8 1",
+/* colors */
+"a c black",
+"b c white",
+"c c #808000",
+"d c #008080",
+"e c #0A6EE6",
+"f c #A0A000",
+"g c #808080",
+"h c none",
+/* pixels */
+"hhhhhhhhhhhhhhhh",
+"aaaaaaaaaahhhhhh",
+"abbbbbbbabahhhhh",
+"abbbbbbbabbahhhh",
+"abbbbbbbaaaaahhh",
+"abbeeeeeabbbahhh",
+"abggfceeccbbahhh",
+"acccfceffcabahhh",
+"acccgeeffcahahhh",
+"eefffeecfecaahhh",
+"aeffceeccfeaahhh",
+"aeffeefccfeaahhh",
+"heefeeffcfeahhhh",
+"haeeeeeefdahhhhh",
+"hhaaeeeeaahhhhhh",
+"hhhhaaaahhhhhhhh",
+};

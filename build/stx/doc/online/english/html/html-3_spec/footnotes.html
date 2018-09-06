@@ -1,0 +1,63 @@
+<title>Footnotes</title>
+<h1>Footnotes</h1>
+
+<B>Permitted Context:</B> %body.content, %flow, %block<BR>
+<B>Content Model:</B> %body.content
+
+<p>The FN element is designed for footnotes, and when practical,
+rendered as pop-up notes.
+
+<P>Example:
+
+<p>&lt;DL&gt;<BR>
+&lt;DT&gt;<b>Hamlet</b>: &lt;DD&gt;You should not have believed me, for
+virtue cannot so &lt;a href="#fn1"&gt;inoculate&lt;/a&gt;
+our old stock but we shall &lt;a href="#fn2"&gt;relish of it&lt;/a&gt;.
+I loved you not.<BR><BR>
+
+&lt;DT&gt;<b>Ophelia</b>: &lt;DD&gt; I was the more deceived.<BR><BR>
+
+&lt;DT&gt;<b>Hamlet</b>: &lt;DD&gt;Get thee to a nunnery. Why wouldst
+thou be a breeder of sinners? I am myself &lt;a href="#fn2"&gt;indifferent
+honest&lt;/a&gt; ...<BR>
+&lt;/DL&gt;
+
+
+<P>&lt;fn id=fn1&gt;&lt;i&gt;inoculate&lt;/i&gt; - graft&lt;/fn&gt;<BR>
+&lt;fn id=fn2&gt;&lt;i&gt;relish of it&lt;/i&gt; - smack of it (our old
+sinful nature)&lt;/fn&gt;<BR>
+&lt;fn id=fn3&gt;&lt;i&gt;indifferent honest&lt;/i&gt; - moderately
+virtuous&lt;/fn&gt;
+
+<P><B>Note:</B> If %html.recommended is active, the HTML 3.0 DTD expects
+you to enclose plain text in a block element such as &lt;P&gt;
+e.g.<BR><BR>
+&lt;FN ID=fn23&gt;&lt;P&gt;A simple footnote&lt;/FN&gt;
+
+<H3>Permitted Attributes</h3>
+
+<DL> <DT>ID <DD>An SGML identifier used as the target for hypertext
+links or for naming particular elements in associated style sheets.
+Identifiers are NAME tokens and must be unique within the scope of the
+current document.
+
+<DT>LANG <DD>This is one of the ISO standard language abbreviations,
+e.g. "en.uk" for the variation of English spoken in the United Kingdom.
+It can be used by parsers to select language specific choices for
+quotation marks, ligatures and hypenation rules etc. The language
+attribute is composed from the two letter language code from ISO 639,
+optionally followed by a period and a two letter country code from ISO
+3166.
+
+<DT>CLASS <DD>This a space separated list of SGML NAME tokens and is
+used to subclass tag names. By convention,
+the class names are interpreted hierarchically, with the most general
+class on the left and the most specific on the right, where classes are
+separated by a period. The CLASS attribute is most commonly used to
+attach a different style to some element, but it is recommended that
+where practical class names should be picked on the basis of the
+element's semantics, as this will permit other uses, such as
+restricting search through documents by matching on element class
+names. The  conventions for choosing class names are outside the scope
+of this specification.
+</DL> <!--NewPage-->

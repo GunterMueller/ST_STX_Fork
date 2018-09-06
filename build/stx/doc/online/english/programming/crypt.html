@@ -1,0 +1,109 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Cryptographic Library</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="osi_cmis.html">     <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="smartcard.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Cryptographic Library</H1>
+
+<H2>Introduction</H2>
+
+This package consists of a set of smalltalk classes which implement
+various cryptographic functions; especially, hashing, encryption, decryption,
+random number generation, certificate handling and public key ring file parsing.
+<P>
+In addition, a sub-package implementing the SSL protocol (completely in Smalltalk,
+not using any C-code, and therefore immune to buffer overruns) is also available.
+
+<H2>Supported Hash Algorithms</H2>
+The cryptographic library includes implementations of the following
+hash algorithms:
+<UL>
+<LI>HMAC
+<LI>LMHash
+<LI>MD2, MD4 and MD5
+<LI>MDC-2 (*1)
+<LI>RipeMD160, RipeMD128
+<LI>SHA1, SHA224, SHA256, SHA384 & SHA512
+<!-- <LI>SKEIN512 -->
+<LI>SquareModN
+<LI>UnixCrypt
+<LI>Whirlpool
+</UL>
+
+<H2>Supported Encryption/Decryption Algorithms</H2>
+The cryptographic library includes implementations of the following
+crypt algorithms:
+<UL>
+<LI>Blowfish
+<LI>Carmellia
+<LI>CipherSaber
+<LI>DES
+<LI>GOST
+<LI>IDEA (*2)
+<LI>RC4 & RC6 (*3)
+<LI>Rijndael
+<LI>RSA
+<LI>Serpent
+<LI>Skipjack
+<LI>TEA & XTEA
+</UL>
+
+<H2>Key Handling and Support functions</H2>
+Additional support is provided for:
+<UL>
+<LI>DiffieHellman
+<LI>ElGamal key generation
+<LI>PGP keyring parsing
+<LI>x509 certificates
+<LI>pkcs signatures
+<LI>Prime Number generation
+<LI>Random Number generation
+</UL>
+
+<H2>Documentation</H2>
+This document is available upon request.
+
+<H2>Licensing</H2>
+These addOn packages are licensed separately from the base ST/X system.
+<BR>
+Please contact eXept for license information & pricing.
+<P>
+
+<DL>
+<DT>(1)<DD>MDC-2 used to be covered by a patent which was not renewed in 2003
+and would have expired anyway in 2007. It can therefore be used without royalties.
+
+<DT>(2)<DD>IDEA is provided for non-commercial use only
+(see details in the PGP licence conditions);
+<BR>
+for commercial use, a licence agreement with the IDEA patent holder may be required.
+Notice: the patent was applied in 1991, therefore expires in 2011-2012.
+
+<DT>(3)<DD>RC6 is covered by a patent which expires 2018.
+<BR>
+It is not guaranteed that RC6 can be used royalty-free, as the patent holder has
+not clearly stated his strategy.
+For commercial use, a licence agreement with the RC6 patent holder may be required.
+</DL>
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 1999 eXept Software AG
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.28 $
+</BODY>
+</HTML>

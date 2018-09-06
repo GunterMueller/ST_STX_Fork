@@ -1,0 +1,974 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+
+<html>
+
+
+
+<head>
+
+
+
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+
+<title>Kent Beck's SUnit Testing Framework</title>
+
+</head>
+
+
+
+<body bgcolor="#FFFFFF">
+
+
+
+<p align="center"><font size="6"><b>Simple Smalltalk Testing:<br>
+
+With Patterns</b></font></p>
+
+
+
+<p align="center"><font size="4"><i>Kent Beck, <br>
+
+First Class Software, Inc.<br>
+
+<a href="mailto:KentBeck@compuserve.com">KentBeck@compuserve.com</a></i></font></p>
+
+
+
+<blockquote>
+
+  <p><font color="#808080" size="3">This software and documentation is provided as a service
+
+  to the programming community. Distribute it free as you see fit. First Class Software,
+
+  Inc. provides no warranty of any kind, express or implied.</font></p>
+
+  <p><font color="#808080" size="3">(Transcribed to HTML by Ron Jeffries. The software is
+
+  available for many Smalltalks, and for C++, on my <a href="ftp://www.armaties.com" target="_parent">FTP site</a>.)</font></p>
+
+</blockquote>
+
+
+
+<blockquote>
+
+  <p><font size="5" face="Arial"><b><u>Introduction</u></b></font></p>
+
+  <p><font size="3">Smalltalk has suffered because it lacked a testing culture. This column
+
+  describes a simple testing strategy and a framework to support it. The testing strategy
+
+  and framework are not intended to be complete solutions, but rather a starting point from
+
+  which industrial strength tools and procedures can be constructed.</font></p>
+
+  <p><font size="3">The paper is divided into three sections:</font><ul>
+
+    <li><font size="3">Philosophy - Describes the philosophy of writing and running tests
+
+      embodied by the framework. Read this section for general background.</font></li>
+
+    <li><font size="3">Cookbook - A simple pattern system for writing your own tests.</font></li>
+
+    <li><font size="3">Framework - A literate program version of the testing framework. Read
+
+      this for in-depth knowledge of how the framework operates.</font></li>
+
+    <li><font size="3">Example - An example of using the testing framework to test part of the
+
+      methods in Set.</font></li>
+
+  </ul>
+
+  <p><font size="5" face="Arial"><b><u>Philosophy</u></b></font></p>
+
+  <p><font size="3">I don't like user interface-based tests. In my experience, tests
+
+  based on user interface scripts are too brittle to be useful. When I was on a project
+
+  where we used user interface testing, it was common to arrive in the morning to a test
+
+  report with twenty or thirty failed tests. A quick examination would show that most or all
+
+  of the failures were actually the program running as expected. Some cosmetic change in the
+
+  interface had caused the actual output to no longer match the expected output. Our testers
+
+  spent more time keeping the tests up to date and tracking down false failures and false
+
+  successes than they did writing new tests.</font></p>
+
+  <p><font size="3">My solution is to write the tests and check results in Smalltalk. While
+
+  this approach has the disadvantage that your testers need to be able to write simple
+
+  Smalltalk programs, the resulting tests are much more stable.</font></p>
+
+  <p><font size="4" face="Arial"><b>Failures and Errors</b></font></p>
+
+  <p><font size="3">The framework distinguishes between failures and errors. A failure is an
+
+  anticipated problem. When you write tests, you check for expected results. If you get a
+
+  different answer, that is a failure. An error is more catastrophic, a error condition you
+
+  didn't check for.</font></p>
+
+  <p><font size="4" face="Arial"><b>Unit testing</b></font></p>
+
+  <p><font size="3">I recommend that developers write their own unit tests, one per class.
+
+  The framework supports the writing of suites of tests, which can be attached to a class. I
+
+  recommend that all classes respond to the message &quot;testSuite&quot;, returning a suite
+
+  containing the unit tests. I recommend that developers spend 25-50% of their time
+
+  developing tests.</font></p>
+
+  <p><font size="4" face="Arial"><b>Integration testing</b></font></p>
+
+  <p><font size="3">I recommend that an independent tester write integration tests. Where
+
+  should the integration tests go? The recent movement of user interface frameworks to
+
+  better programmatic access provides one answer- drive the user interface, but do it with
+
+  the tests. In VisualWorks (the dialect used in the implementation below), you can open an
+
+  ApplicationModel and begin stuffing values into its ValueHolders, causing all sorts of
+
+  havoc, with very little trouble.</font></p>
+
+  <p><font size="4" face="Arial"><b>Running tests</b></font></p>
+
+  <p><font size="3">One final bit of philosophy. It is tempting to set up a bunch of test
+
+  data, then run a bunch of tests, then clean up. In my experience, this always causes more
+
+  problems that it is worth. Tests end up interacting with one another, and a failure in one
+
+  test can prevent subsequent tests from running. The testing framework makes it easy to set
+
+  up a common set of test data, but the data will be created and thrown away for each test.
+
+  The potential performance problems with this approach shouldn't be a big deal because
+
+  suites of tests can run unobserved.</font></p>
+
+  <p><font size="5" face="Arial"><b><u>Cookbook</u></b></font></p>
+
+  <p><font size="3">Here is a simple pattern system for writing tests. The patterns are:</font></p>
+
+  <table border="1" cellpadding="9" cellspacing="1" width="495">
+
+    <tr>
+
+      <td valign="top" width="27%" bgcolor="#FFFFFF"><font size="3"><strong>Pattern</strong></font></td>
+
+      <td valign="top" width="73%" bgcolor="#FFFFFF"><font size="3"><strong>Purpose</strong></font></td>
+
+    </tr>
+
+    <tr>
+
+      <td valign="top" width="27%"><font size="3">Fixture</font></td>
+
+      <td valign="top" width="73%"><font size="3">Create a common test fixture.</font></td>
+
+    </tr>
+
+    <tr>
+
+      <td valign="top" width="27%"><font size="3">Test Case</font></td>
+
+      <td valign="top" width="73%"><font size="3">Create the stimulus for a test case.</font></td>
+
+    </tr>
+
+    <tr>
+
+      <td valign="top" width="27%"><font size="3">Check</font></td>
+
+      <td valign="top" width="73%"><font size="3">Check the response for a test case.</font></td>
+
+    </tr>
+
+    <tr>
+
+      <td valign="top" width="27%"><font size="3">Test Suite</font></td>
+
+      <td valign="top" width="73%"><font size="3">Aggregate TestCases.</font></td>
+
+    </tr>
+
+  </table>
+
+  <p><font size="4" face="Arial"><b>Fixture</b></font></p>
+
+  <p><font size="3"><b>How do you start writing tests?</b></font></p>
+
+  <p><font size="3">Testing is one of those impossible tasks. You'd like to be
+
+  absolutely complete, so you can be sure the software will work. On the other hand, the
+
+  number of possible states of your program is so large that you can't possibly test
+
+  all combinations.</font></p>
+
+  <p><font size="3">If you start with a vague idea of what you'll be testing,
+
+  you'll never get started. Far better to start with a single configuration whose
+
+  behavior is predictable. As you get more experience with your software, you will be able
+
+  to add to the list of configurations.</font></p>
+
+  <p><font size="3">Such a configuration is called a &quot;fixture&quot;. Examples of
+
+  fixtures are:</font></p>
+
+  <table border="1" cellpadding="9" cellspacing="1" width="607">
+
+    <tr>
+
+      <td valign="top" width="32%" bgcolor="#FFFFFF"><font size="3"><strong>Fixture</strong></font></td>
+
+      <td valign="top" width="68%" bgcolor="#FFFFFF"><font size="3"><strong>Predictions</strong></font></td>
+
+    </tr>
+
+    <tr>
+
+      <td valign="top" width="32%"><font size="3">1.0 and 2.0</font></td>
+
+      <td valign="top" width="68%"><font size="3">Easy to predict answers to arithmetic problems</font></td>
+
+    </tr>
+
+    <tr>
+
+      <td valign="top" width="32%"><font size="3">Network connection to a known machine</font></td>
+
+      <td valign="top" width="68%"><font size="3">Responses to network packets</font></td>
+
+    </tr>
+
+    <tr>
+
+      <td valign="top" width="32%"><font size="3">#() and #(1 2 3)</font></td>
+
+      <td valign="top" width="68%"><font size="3">Results of sending testing messages</font></td>
+
+    </tr>
+
+  </table>
+
+  <p><font size="3">By choosing a fixture you are saying what you will and won't test
+
+  for. A complete set of tests for a community of objects will have many fixtures, each of
+
+  which will be tested many ways.</font></p>
+
+  <p><font size="3"><b>Design a test fixture.</b></font><ul>
+
+    <li><font size="3">Subclass TestCase</font></li>
+
+    <li><font size="3">Add an instance variable for each known object in the fixture</font></li>
+
+    <li><font size="3">Override setUp to initialize the variables</font></li>
+
+  </ul>
+
+  <p><font size="3">In the example, the test fixture is two Sets, one empty and one with
+
+  elements. First we subclass TestCase and add instance variables for the objects we will
+
+  need to reference later:</font></p>
+
+  <blockquote>
+
+    <pre><code>Class: SetTestCase
+    superclass: TestCase
+    instance variables: 'empty full'</code></pre>
+  </blockquote>
+
+  <p><font size="3">Then we override setUp to create the objects for the fixture:</font></p>
+
+  <blockquote>
+
+    <pre><code>SetTestCase &#187; setUp
+    empty := Set new.
+    full := Set with: #abc with: 5</code></pre>
+  </blockquote>
+
+  <p><font size="4" face="Arial"><b>Test Case</b></font></p>
+
+  <p><font size="3">You have a Fixture, what do you do next?</font></p>
+
+  <p><font size="3"><b>How do you represent a single unit of testing?</b></font></p>
+
+  <p><font size="3">You can predict the results of sending a message to a fixture. You need
+
+  to represent such a predictable situation somehow.</font></p>
+
+  <p><font size="3">The simplest way to represent this is interactively. You open an
+
+  Inspector on your fixture and you start sending it messages. There are two drawbacks to
+
+  this method. First, you keep sending messages to the same fixture. If a test happens to
+
+  mess that object up, all subsequent tests will fail, even though the code may be correct.
+
+  More importantly, though, you can't easily communicate interactive tests to others.
+
+  If you give someone else your objects, the only way they have of testing them is to have
+
+  you come and inspect them.</font></p>
+
+  <p><font size="3">By representing each predictable situation as an object, each with its
+
+  own fixture, no two tests will ever interfere. Also, you can easily give tests to others
+
+  to run.</font></p>
+
+  <p><font size="3"><b>Represent a predictable reaction of a fixture as a method.</b></font><ul>
+
+    <li><font size="3">Add a method to TestCase subclass</font></li>
+
+    <li><font size="3">Stimulate the fixture in the method</font></li>
+
+  </ul>
+
+  <p><font size="3">The example code shows this. We can predict that adding &quot;5&quot; to
+
+  an empty Set will result in &quot;5&quot; being in the set. We add a method to our
+
+  TestCase subclass. In it we stimulate the fixture:</font></p>
+
+  <blockquote>
+
+    <pre><code>SetTestCase &#187; testAdd
+    empty add: 5.
+    ...</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">Once you have stimulated the fixture, you need to add a Check to make
+
+  sure your prediction came true.</font></p>
+
+  <p><font size="4" face="Arial"><b>Check</b></font></p>
+
+  <p><font size="3">A Test Case stimulates a Fixture.</font></p>
+
+  <p><font size="3"><b>How do you test for expected results?</b></font></p>
+
+  <p><font size="3">If you're testing interactively, you check for expected results
+
+  directly. If you are looking for a particular return value, you use &quot;print it&quot;,
+
+  and make sure that you got the right object back. If you are looking for side effects, you
+
+  use the Inspector.</font></p>
+
+  <p><font size="3">Since tests are in their own objects, you need a way to programmatically
+
+  look for problems. One way to accomplish this is to use the standard error handling
+
+  mechanism (Object&gt;&gt;error:) with testing logic to signal errors:</font></p>
+
+  <blockquote>
+
+    <pre><code>2 + 3 = 5 ifFalse: [self error: 'Wrong answer']</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">When you're testing, you'd like to distinguish between errors
+
+  you are checking for, like getting six as the sum of two and three, and errors you
+
+  didn't anticipate, like subscripts being out of bounds or messages not being
+
+  understood.</font></p>
+
+  <p><font size="3">There's not a lot you can do about unanticipated errors (if you did
+
+  something about them, they wouldn't be unanticipated any more, would they?) When a
+
+  catastrophic error occurs, the framework stops running the test case, records the error,
+
+  and runs the next test case. Since each test case has its own fixture, the error in the
+
+  previous case will not affect the next.</font></p>
+
+  <p><font size="3">The testing framework makes checking for expected values simple by
+
+  providing a method, &quot;should:&quot;, that takes a Block as an argument. If the Block
+
+  evaluates to true, everything is fine. Otherwise, the test case stops running, the failure
+
+  is recorded, and the next test case runs.</font></p>
+
+  <p><font size="3"><b>Turn checks into a Block evaluating to a Boolean. Send the Block as
+
+  the parameter to &quot;should:&quot;.</b></font></p>
+
+  <p><font size="3">In the example, after stimulating the fixture by adding &quot;5&quot; to
+
+  an empty Set, we want to check and make sure it's in there:</font></p>
+
+  <blockquote>
+
+    <pre><code>SetTestCase &#187; testAdd
+    empty add: 5.
+    self should: [empty includes: 5]</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">There is a variant on TestCase&gt;&gt;should:. TestCase&gt;&gt;shouldnt:
+
+  causes the test case to fail if the Block argument evaluates to true. It is there so you
+
+  don't have to use &quot;(...) not&quot;.</font></p>
+
+  <p><font size="3">Once you have a test case this far, you can run it. Create an instance
+
+  of your TestCase subclass, giving it the selector of the testing method. Send
+
+  &quot;run&quot; to the resulting object:</font></p>
+
+  <blockquote>
+
+    <pre><code>(SetTestCase selector: #testAdd) run</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">If it runs to completion, the test worked. If you get a walkback,
+
+  something went wrong.</font></p>
+
+  <p><font size="4" face="Arial"><b>Test Suite</b></font></p>
+
+  <p><font size="3">You have several Test Cases.</font></p>
+
+  <p><font size="3"><b>How do you run lots of tests?</b></font></p>
+
+  <p><font size="3">As soon as you have two test cases running, you'll want to run them
+
+  both one after the other without having to execute two do it's. You could just string
+
+  together a bunch of expressions to create and run test cases. However, when you then
+
+  wanted to run &quot;this bunch of cases and that bunch of cases&quot; you'd be stuck.</font></p>
+
+  <p><font size="3">The testing framework provides an object to represent &quot;a bunch of
+
+  tests&quot;, TestSuite. A TestSuite runs a collection of test cases and reports their
+
+  results all at once. Taking advantage of polymorphism, TestSuites can also contain other
+
+  TestSuites, so you can put Joe's tests and Tammy's tests together by creating a
+
+  higher level suite.</font></p>
+
+  <p><font size="3"><b>Combine test cases into a test suite.</b></font></p>
+
+  <blockquote>
+
+    <pre><code>(TestSuite named: 'Money')
+    add: (MoneyTestCase selector: #testAdd);
+    add: (MoneyTestCase selector: #testSubtract);
+    run</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">The result of sending &quot;run&quot; to a TestSuite is a TestResult
+
+  object. It records all the test cases that caused failures or errors, and the time at
+
+  which the suite was run.</font></p>
+
+  <p><font size="3">All of these objects are suitable for storing with the ObjectFiler or
+
+  BOSS. You can easily store a suite, then bring it in and run it, comparing results with
+
+  previous runs.</font></p>
+
+  <p><font size="5" face="Arial"><b><u>Framework</u></b></font></p>
+
+  <p><font size="3">This section presents the code of the testing framework in literate
+
+  program style. It is here in case you are curious about the implementation of the
+
+  framework, or you need to modify it in any way.</font></p>
+
+  <p><font size="3">When you talk to a tester, the smallest unit of testing they talk about
+
+  is a test case. TestCase is a User's Object, representing a single test case.</font></p>
+
+  <blockquote>
+
+    <pre><code>Class: TestCase
+    superclass: Object</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">Testers talk about setting up a &quot;test fixture&quot;, which is an
+
+  object structure with predictable responses, one that is easy to create and to reason
+
+  about. Many different test cases can be run against the same fixture.</font></p>
+
+  <p><font size="3">This distinction is represented in the framework by giving each TestCase
+
+  a Pluggable Selector. The variable behavior invoked by the selector is the test code. All
+
+  instances of the same class share the same fixture.</font></p>
+
+  <blockquote>
+
+    <pre><code>Class: TestCase
+    superclass: Object
+    instance variables: selector
+    class variable: FailedCheckSignal</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">TestCase class &#187; selector: is a Complete Creation Method.</font></p>
+
+  <blockquote>
+
+    <pre><code>TestCase class &#187; selector: aSymbol
+    ^self new setSelector: aSymbol</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">TestCase &#187; setSelector: is a Creation Parameter Method.</font></p>
+
+  <blockquote>
+
+    <pre><code>TestCase &#187; setSelector: aSymbol
+    selector := aSymbol</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">Subclasses of TestCase are expected to create and destroy test fixtures
+
+  by overriding the Hook Methods setUp and tearDown, respectively. TestCase itself provides
+
+  Stub Methods for these methods which do nothing.</font></p>
+
+  <blockquote>
+
+    <pre><code>TestCase &#187; setUp
+    &quot;Run whatever code you need to get ready for the test to run.&quot;
+
+TestCase &#187; tearDown
+    &quot;Release whatever resources you used for the test.&quot;</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">The simplest way to run a TestCase is just to send it the message
+
+  &quot;run&quot;. Run invokes the set up code, performs the selector, the runs the tear
+
+  down code. Notice that the tear down code is run regardless of whether there is an error
+
+  in performing the test. Invoking setUp and tearDown could be encapsulated in an Execute
+
+  Around Method, but since they aren't part of the public interface they are just open
+
+  coded here.</font></p>
+
+  <blockquote>
+
+    <pre><code>TestCase &#187; run
+    self setUp.
+    [self performTest] valueNowOrOnUnwindDo: [self tearDown]</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">PerformTest just performs the selector.</font></p>
+
+  <blockquote>
+
+    <pre><code>TestCase &#187; performTest
+    self perform: selector</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">A single TestCase is hardly ever interesting, once you have gotten it
+
+  running. In production, you will want to run many TestCases at a time. Testers talk of
+
+  running test &quot;suites&quot;. TestSuite is a User's Object. It is a Composite of
+
+  Test Cases.</font></p>
+
+  <blockquote>
+
+    <pre><code>Class: TestSuite
+    superclass: Object
+    instance variables: name testCases</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">TestSuites are Named Objects. This makes them easy to identify so they
+
+  can be simply stored on and retrieved from secondary storage. Here is the Complete
+
+  Creation Method and Creation Parameter Method.</font></p>
+
+  <blockquote>
+
+    <pre><code>TestSuite class &#187; named: aString
+    ^self new setName: aString
+
+TestSuite &#187; setName: aString
+    name := aString.
+    testCases := OrderedCollection new</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">The testCases instance variable is initialized right in
+
+  TestSuite &#187; setName: because I don't anticipate needing it to be any different
+
+  kind of collection.</font></p>
+
+  <p><font size="3">TestSuites have an Accessing Method for their name, in anticipation of
+
+  user interfaces which will have to display them.</font></p>
+
+  <blockquote>
+
+    <pre><code>TestSuite &#187; name
+    ^name</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">TestSuites have Collection Accessor Methods for adding one or more
+
+  TestCases.</font></p>
+
+  <blockquote>
+
+    <pre><code>TestSuite &#187; addTestCase: aTestCase
+    testCases add: aTestCase
+
+TestSuite &#187; addTestCases: aCollection
+    aCollection do: [:each | self addTestCase: each]</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">When you run a TestSuite, you'd like all of its TestCases to run. It's
+
+  not quite that simple, though. If you have a suite that represents the acceptance test for
+
+  your application, after it runs you'd like to know how long the suite ran and which of the
+
+  cases had problems. This is information you would like to be able to store away for future
+
+  reference. </font></p>
+
+  <p><font size="3">TestResult is a Result Object for a TestSuite. Running a TestSuite
+
+  returns a TestResult which records the information described above- the start and stop
+
+  times of the run, the name of the suite, and any failures or errors.</font></p>
+
+  <blockquote>
+
+    <pre><code>Class: TestResult
+    superclass: Object
+    instance variables: startTime stopTime testName failures errors</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">When you run a TestSuite, it creates a TestResult which is timestamped
+
+  before and after the TestCases are run. </font></p>
+
+  <blockquote>
+
+    <pre><code>TestSuite &#187; run
+    | result |
+    result := self defaultTestResult.
+    result start.
+    self run: result.
+    result stop.
+    ^result</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">TestCase &#187; run and TestSuite &#187; run are not polymorphically
+
+  equivalent. This is a problem that needs to be addressed in future versions of the
+
+  framework. One option is to have a TestCaseResult which measures time in milliseconds to
+
+  enable performance regression testing.</font></p>
+
+  <p><font size="3">The default TestResult is constructed by the TestSuite, using a Default
+
+  Class.</font></p>
+
+  <blockquote>
+
+    <pre><code>TestSuite &#187; defaultTestResult
+    ^self defaultTestResultClass test: self
+
+TestSuite &#187; defaultTestResultClass
+    ^TestResult</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">A TestResult Complete Creation Method takes a TestSuite.</font></p>
+
+  <blockquote>
+
+    <pre><code>TestResult class &#187; test: aTest
+    ^self new setTest: aTest
+
+TestResult &#187; setTest: aTest
+    testName := aTest name.
+    failures := OrderedCollection new.
+    errors := OrderedCollection new</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">TestResults are timestamped by sending them the messages start and stop.
+
+  Since start and stop need to be executed in pairs, they could be hidden behind an Execute
+
+  Around Method. This is something else to do later.</font></p>
+
+  <blockquote>
+
+    <pre><code>TestResult &#187; start
+    startTime := Date dateAndTimeNow</code></pre>
+
+  </blockquote>
+
+  <blockquote>
+
+    <pre><code>TestResult &#187; stop
+    stopTime := Date dateAndTimeNow</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">When a TestSuite runs for a given TestResult, it simply runs each of its
+
+  TestCases with that TestResult.</font></p>
+
+  <blockquote>
+
+    <pre><code>TestSuite &#187; run: aTestResult
+    testCases do: [:each | each run: aTestResult]</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">#run: is the Composite selector in TestSuite and TestCase, so you can
+
+  construct TestSuites which contain other TestSuites, instead of or in addition to
+
+  containing TestCases.</font></p>
+
+  <p><font size="3">When a TestCase runs for a given TestResult, it should either silently
+
+  run correctly, add an error to the TestResult, or add a failure to the TestResult.
+
+  Catching errors is simple-use the system supplied errorSignal. Catching failures must be
+
+  supported by the TestCase itself. First, we need a Class Initialization Method to create a
+
+  Signal. </font></p>
+
+  <blockquote>
+
+    <pre><code>TestCase class &#187; initialize
+    FailedCheckSignal := self errorSignal newSignal
+    notifierString: 'Check failed - ';
+    nameClass: self message: #checkSignal</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">Now we need an Accessing Method.</font></p>
+
+  <blockquote>
+
+    <pre><code>TestCase &#187; failedCheckSignal
+    ^FailedCheckSignal</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">Now, when the TestCase runs with a TestResult, it must catch errors and
+
+  failures and inform the TestResult, and it must run the tearDown code regardless of
+
+  whether the test executed correctly. This results in the ugliest method in the framework,
+
+  because there are two nested error handlers and valueNowOrOnUnwindDo: in one method. There
+
+  is a missing pattern expressed here and in TestCase &#187; run about using ensure: to
+
+  safely run the second halt of an Execute Around Method.</font></p>
+
+  <blockquote>
+
+    <pre><code>TestCase &#187; run: aTestResult
+    self setUp.
+    [self errorSignal
+	handle: [:ex | aTestResult error: ex errorString in: self]
+	do:
+	    [self failedCheckSignal
+		handle: [:ex | aTestResult failure: ex errorString in: self]
+		do: [self performTest]]] valueNowOrOnUnwindDo: [self tearDown]</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">When a TestResult is told that an error or failure happened, it records
+
+  that fact in one of its two collections. For simplicity, the record is just a two element
+
+  array, but it probably should be a first class object with a timestamp and more details of
+
+  the blowup.</font></p>
+
+  <blockquote>
+
+    <pre><code>TestResult &#187; error: aString in: aTestCase
+    errors add: (Array with: aTestCase with: aString)
+
+TestResult &#187; failure: aString in: aTestCase
+    failures add: (Array with: aTestCase with: aString)</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">The error case gets invoked if there is ever an uncaught error (for
+
+  example, message not understood) in the testing method. How do the failures get invoked?
+
+  TestCase provides two methods that simplify checking for failure. The first, should:
+
+  aBlock, signals a failure if the evaluation of aBlock returns false. The second, shouldnt:
+
+  aBlock, does just the opposite.</font></p>
+
+  <blockquote>
+
+    <pre><code>should: aBlock
+    aBlock value ifFalse: [self failedCheckSignal raise]
+
+shouldnt: aBlock
+    aBlock value ifTrue: [self failedCheckSignal raise]</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">Testing methods will run code to stimulate the test fixture, then check
+
+  the results inside should: and shouldnt: blocks.</font></p>
+
+  <p><font size="5" face="Arial"><b><u>Example</u></b></font></p>
+
+  <p><font size="3">Okay, that's how it works, how do you use it? Here's a short example
+
+  that tests a few of the messages supported by Sets. First we subclass TestCase, because
+
+  we'll always want a couple of interesting Sets around to play with.</font></p>
+
+  <blockquote>
+
+    <pre><code>Class: SetTestCase
+    superclass: TestCase
+    instance variables: empty full</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">Now we need to initialize these variables, so we subclass setUp.</font></p>
+
+  <blockquote>
+
+    <pre><code>SetTestCase &#187; setUp
+    empty := Set new.
+    full := Set
+	with: #abc
+	with: 5</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">Now we need a testing method. Let's test to see if adding an element to
+
+  a Set really works.</font></p>
+
+  <blockquote>
+
+    <pre><code>SetTestCase &#187; testAdd
+    empty add: 5.
+    self should: [empty includes: 5]</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">Now we can run a test case by evaluating &quot;(SetTestCase selector:
+
+  #testAdd) run&quot;.</font></p>
+
+  <p><font size="3">Here's a case that uses shouldnt:. It reads &quot;after removing 5 from
+
+  full, full should include #abc and it shouldn't include 5.&quot;</font></p>
+
+  <blockquote>
+
+    <pre><code>SetTestCase &#187; testRemove
+    full remove: 5.
+    self should: [full includes: #abc].
+    self shouldnt: [full includes: 5]</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">Here's one that makes sure an error is signalled if you try to do keyed
+
+  access.</font></p>
+
+  <blockquote>
+
+    <pre><code>SetTestCase &#187; testIllegal
+    self should: [self errorSignal handle: [:ex | true] do: [empty at: 5. false]]</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">Now we can put together a TestSuite.</font></p>
+
+  <blockquote>
+
+    <pre><code>| suite |
+suite := TestSuite named: 'Set Tests'.
+suite addTestCase: (SetTestCase selector: #testAdd).
+suite addTestCase: (SetTestCase selector: #testRemove).
+suite addTestCase: (SetTestCase selector: #testIllegal).
+^suite</code></pre>
+
+  </blockquote>
+
+  <p><font size="3">Here is an Object Explorer picture of the suite and the TestResult we
+
+  get back when we run it.</font></p>
+
+  <p align="center"><font size="3"><img src="images/Image1.png" width="268" height="246"></font></p>
+
+  <p><font size="3">The test methods shown above only cover a fraction of the functionality
+
+  in Set. Writing tests for all the public methods in Set is a daunting task. However, as
+
+  Hal Hildebrand told me after using an earlier version of this framework, &quot;If the
+
+  underlying objects don't work, nothing else matters. You have to write the tests to make
+
+  sure everything is working.&quot;</font></p>
+
+</blockquote>
+
+</body>
+
+</html>

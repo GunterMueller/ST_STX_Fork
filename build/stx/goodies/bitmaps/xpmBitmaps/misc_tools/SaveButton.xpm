@@ -1,0 +1,25 @@
+/* XPM */
+static char *SaveButton_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"24 14 4 1",
+/* colors */
+"a c black",
+"b c #808080",
+"c c none",
+"d c #c0c0c0",
+/* pixels */
+"cccccccccccccccccccccccc",
+"cccccccccccaaaaaaaaaaacc",
+"cccccccccccabaaaaaaadacc",
+"ccccccaccccabadddddaaacc",
+"ccccccaacccabadddddabacc",
+"cccaaaaaaccabadddddabacc",
+"cccaaaaaaacabadddddabacc",
+"cccaaaaaaacabbaaaaaabacc",
+"cccaaaaaaccabbbbbbbbbacc",
+"ccccccaacccabbaaaaaabacc",
+"ccccccaccccabbaaaddabacc",
+"cccccccccccaabaaaddabacc",
+"ccccccccccccaaaaaaaaaacc",
+"cccccccccccccccccccccccc",
+};

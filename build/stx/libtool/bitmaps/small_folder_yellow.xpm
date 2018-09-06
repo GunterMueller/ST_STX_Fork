@@ -1,0 +1,29 @@
+/* XPM */
+static char *small_folder_yellow_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"20 16 6 1",
+/* colors */
+"a c black",
+"b c #c0c0c0",
+"c c #808080",
+"d c yellow",
+"e c white",
+". c none",
+/* pixels */
+"....................",
+"....................",
+"....ccccc...........",
+"...cbdbdbc..........",
+"..cbdbdbdbcccccc....",
+"..ceeeeeeeeeeeeca...",
+"..cedbdbdbdbdbdca...",
+"..cebdbdbdbdbdbca...",
+"..cedbdbdbdbdbdca...",
+"..cebdbdbdbdbdbca...",
+"..cedbdbdbdbdbdca...",
+"..cebdbdbdbdbdbca...",
+"..cedbdbdbdbdbdca...",
+"..cccccccccccccca...",
+"...aaaaaaaaaaaaaa...",
+"....................",
+};

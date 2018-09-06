@@ -1,0 +1,11 @@
+LIBRARY         libdb
+DESCRIPTION     'Smalltalk/X Abstract DB Interface Framework'
+VERSION         1.0
+CODE            EXECUTE READ SHARED
+DATA            READ WRITE
+SECTIONS
+    INITCODE    READ EXECUTE SHARED
+    INITDATA    READ WRITE
+    RODATA      READ SHARED
+EXPORTS 
+    _libdb_Init

@@ -1,0 +1,616 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+   <META NAME="Author" CONTENT="Thomas Zwick, eXept software AG, Germany">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.04 [en] (X11; I; Linux 2.0.30 i586) [Netscape]">
+   <TITLE>Functions of the GUI Painter</TITLE>
+</HEAD>
+<BODY>
+<A HREF="TOP.html" NOPRINT><IMG SRC="../../../icons/DocsUpArrow.gif" ALT="Using the GUI Painter" NOSAVE HEIGHT=30 WIDTH=30></A>
+<A HREF="Examples.html" NOPRINT><IMG SRC="../../../icons/DocsRightArrow.gif" ALT="Examples" NOSAVE HEIGHT=30 WIDTH=30></A>
+
+<HR ALIGN=LEFT WIDTH="100%">
+
+<H1><FONT SIZE=+4>Functions of the GUI Painter</FONT></H1>
+
+<H1>Index</H1>
+
+<UL>
+<LI><A HREF="#BASICSFUNCTIONSOFTHEGUIPAINTER">Basic Functions</A></LI>
+
+<LI><A HREF="#FILEFUNCTIONSOFTHEGUIPAINTER">File Functions</A></LI>
+
+<LI><A HREF="#EDITFUNCTIONSOFTHEGUIPAINTER">Edit Function</A></LI>
+
+<LI><A HREF="#ALIGNFUNCTIONSOFTHEGUIPAINTER">Align Functions</A></LI>
+
+<LI><A HREF="#MISCFUNCTIONSOFTHEGUIPAINTER">Misc Functions</A></LI>
+</UL>
+
+<H1><A NAME="BASICSFUNCTIONSOFTHEGUIPAINTER"></A>Basic Functions</H1>
+
+The GUI Painter offers all functions for loading, saving, and modifying
+window specs. The basic functions can be accessed both by the menu and
+the tool bar. The basic functions are as follows:
+<BR>
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFFFFF" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP BGCOLOR="#FFCC00" NOSAVE>
+<TD NOSAVE><B><FONT SIZE=+1>Menu</FONT></B></TD>
+
+<TD><B><FONT SIZE=+1>Button</FONT></B></TD>
+
+<TD><B><FONT SIZE=+1>Description</FONT></B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Test / Start Application</I></TD>
+
+<TD><IMG SRC="../../../pictures/StartButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+
+<TD>Starts the application.&nbsp;</TD>
+</TR>
+
+<TR NOSAVE>
+<TD COLSPAN="3" NOSAVE></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>File / New</I></TD>
+
+<TD><IMG SRC="../../../pictures/NewButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+
+<TD>Creates a new, empty window spec.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>File / Load</I></TD>
+
+<TD><IMG SRC="../../../pictures/LoadButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+
+<TD>Opens a dialog to load a window spec from a class
+<br>(a classes' #windowSpec method)&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>File / Save</I></TD>
+
+<TD><IMG SRC="../../../pictures/SaveButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+
+<TD>Saves the current window spec and (if modified) the help spec.&nbsp;</TD>
+</TR>
+
+<TR NOSAVE>
+<TD COLSPAN="3" NOSAVE></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Edit / Cut</I></TD>
+
+<TD><IMG SRC="../../../pictures/CutButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+
+<TD>Cuts the selected item(s) and places it to the clipboard.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Edit / Copy</I></TD>
+
+<TD><IMG SRC="../../../pictures/CopyButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+
+<TD>Copies the selected item(s) to the clipboard.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Edit / Paste</I></TD>
+
+<TD><IMG SRC="../../../pictures/PasteButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+
+<TD>Pastes the contents of the clipboard.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Edit / Delete</I></TD>
+
+<TD><IMG SRC="../../../pictures/DeleteButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+
+<TD>Delete the selected item(s).</TD>
+</TR>
+
+<TR NOSAVE>
+<TD COLSPAN="3" NOSAVE></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Edit / Move / Up</I></TD>
+
+<TD><IMG SRC="../../../pictures/MoveUpButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+
+<TD>Moves the selected widget one step up.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Edit / Move / Down</I></TD>
+
+<TD><IMG SRC="../../../pictures/MoveDownButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+
+<TD NOSAVE>Moves the selected widget one step down.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Edit / Move / Into</I></TD>
+
+<TD><IMG SRC="../../../pictures/MoveDownRightButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+
+<TD>Moves the selected widget into next widget as child widget.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Edit / Move / Out</I></TD>
+
+<TD><IMG SRC="../../../pictures/MoveLeftDownButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+
+<TD>Moves the selected widget out of its parent widget.&nbsp;</TD>
+</TR>
+
+<TR NOSAVE>
+<TD COLSPAN="3" NOSAVE></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Align / Left</I></TD>
+
+<TD><IMG SRC="../../../pictures/AlignLeftButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+
+<TD>Aligns the selected widgets to the left edge of the dominant widget.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Align / Right</I></TD>
+
+<TD><IMG SRC="../../../pictures/AlignRightButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+
+<TD>Aligns the selected widgets to the right edge of the dominant widget.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Align / Left &amp; Right</I></TD>
+
+<TD><IMG SRC="../../../pictures/AlignLeftRightButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+
+<TD>Aligns the selected widgets to the right and left edge of the dominant
+widget.&nbsp;
+<BR>&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Align / Top</I></TD>
+
+<TD><IMG SRC="../../../pictures/AlignTopButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+
+<TD>Aligns the selected widgets to the top edge of the dominant widget.&nbsp;
+<BR>&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Align / Bottom</I></TD>
+
+<TD><IMG SRC="../../../pictures/AlignBottomButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+
+<TD>Aligns the selected widgets to the bottom edge of the dominant widget.&nbsp;
+<BR>&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Align / Top &amp; Bottom</I></TD>
+
+<TD><IMG SRC="../../../pictures/AlignTopBottomButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+
+<TD>Aligns the selected widgets to the top and bottom edge of the dominant
+widget.&nbsp;</TD>
+</TR>
+
+<TR NOSAVE>
+<TD COLSPAN="3" NOSAVE></TD>
+</TR>
+
+<TR>
+<TD><I>Settings / Canvas</I></TD>
+
+<TD><IMG SRC="../../../pictures/GUIPainterCanvasButton.gif" HSPACE=4 NOSAVE HEIGHT=25 WIDTH=70></TD>
+
+<TD>Shows or hides the canvas window.</TD>
+</TR>
+
+<TR>
+<TD><I>Settings / Gallery</I></TD>
+
+<TD><IMG SRC="../../../pictures/GUIPainterGalleryButton.gif" HSPACE=4 NOSAVE HEIGHT=25 WIDTH=70></TD>
+
+<TD>Shows or hides the gallery window.</TD>
+</TR>
+
+<TR NOSAVE>
+<TD COLSPAN="3" NOSAVE></TD>
+</TR>
+
+<TR>
+<TD>&nbsp;</TD>
+
+<TD><IMG SRC="../../../pictures/PositionLeftButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+
+<TD>Changes the position of the selected widgets to the left.</TD>
+</TR>
+
+<TR>
+<TD>&nbsp;</TD>
+
+<TD><IMG SRC="../../../pictures/PositionRightButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+
+<TD>Changes the position of the selected widgets to the right.</TD>
+</TR>
+
+<TR>
+<TD>&nbsp;</TD>
+
+<TD><IMG SRC="../../../pictures/PositionTopButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+
+<TD>Changes the position of the selected widgets to the top.</TD>
+</TR>
+
+<TR>
+<TD>&nbsp;</TD>
+
+<TD><IMG SRC="../../../pictures/PositionBottomButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+
+<TD>Changes the position of the selected widgets to the bottom.</TD>
+</TR>
+
+<TR NOSAVE>
+<TD COLSPAN="3" NOSAVE></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><I>Edit / Open Widget Documentation</I></TD>
+
+<TD><IMG SRC="../../../pictures/HelpButton.gif" HSPACE=4 NOSAVE HEIGHT=32 WIDTH=32></TD>
+
+<TD NOSAVE>Opens a HTML-browser on the documentation file of the selected
+widget.</TD>
+</TR>
+</TABLE>
+
+<BR>&nbsp;
+
+<P>Further, there are functions from the menu:
+
+<H1><A NAME="FILEFUNCTIONSOFTHEGUIPAINTER"></A>File Functions</H1>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFFFFF" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1><I>File</I> Menu</FONT></B></TD>
+
+<TD BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1>Description</FONT></B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>File / Load Subspec</I></TD>
+
+<TD>Opens a dialog to load a sub spec from a class.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>File / Save As</I></TD>
+
+<TD>Opens a dialog to select or create a class and selector in order to
+save current window spec.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>File / Pick An Window Spec</I></TD>
+
+<TD>Changes the cursor to cross hair for moving it over another interface
+application to load its window spec.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>File / Show Window Spec</I></TD>
+
+<TD NOSAVE>Opens a Workspace showing the current window spec.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>File / Browse Class</I></TD>
+
+<TD>Opens a System Browser on current class and selector.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>File / Browse Aspect Methods</I></TD>
+
+<TD>Opens a System Browser to browse the aspect methods.</TD>
+</TR>
+
+<TR>
+<TD><I>File / Exit</I></TD>
+
+<TD>Exits the GUI Painter.</TD>
+</TR>
+</TABLE>
+
+
+<H1><A NAME="EDITFUNCTIONSOFTHEGUIPAINTER"></A>Edit Functions</H1>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFFFFF" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1><I>Edit</I> Menu</FONT></B></TD>
+
+<TD BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1>Description</FONT></B></TD>
+</TR>
+
+<TR>
+<TD><I>Edit / Undo</I></TD>
+
+<TD>Reverses last edit action.</TD>
+</TR>
+
+<TR NOSAVE>
+<TD COLSPAN="2" NOSAVE></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Edit / Paste Without Changing Layout</I></TD>
+
+<TD>Pastes the widgets of the clipboard without a changing of their layout.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD COLSPAN="3" NOSAVE></TD>
+</TR>
+
+<TR>
+<TD><I>Edit / Dimension / Default Extent</I></TD>
+
+<TD>Sets the selected widgets to their default extent.</TD>
+</TR>
+
+<TR>
+<TD><I>Edit / Dimension / Default Width</I></TD>
+
+<TD>Sets the selected widgets to their default width.</TD>
+</TR>
+
+<TR>
+<TD><I>Edit / Dimension / Default Height</I></TD>
+
+<TD>Sets the selected widgets to their default height.</TD>
+</TR>
+
+<TR NOSAVE>
+<TD COLSPAN="2" NOSAVE></TD>
+</TR>
+
+<TR>
+<TD><I>Edit / Dimension / Copy Layout</I></TD>
+
+<TD>Copies the layout of the selected widgets.</TD>
+</TR>
+
+<TR>
+<TD><I>Edit / Dimension / Copy Extent</I></TD>
+
+<TD>Copies the extent of the selected widgets.</TD>
+</TR>
+
+<TR NOSAVE>
+<TD COLSPAN="2" NOSAVE></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Edit / Dimension / Paste Layout</I></TD>
+
+<TD>Sets the layout of the selected widgets to the last copied layout.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Edit / Dimension / Paste Extent</I></TD>
+
+<TD>Sets the extent of the selected widgets to the last copied extent.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Edit / Dimension / Paste Width</I></TD>
+
+<TD>Sets the width of the selected widgets to the width of the last copied
+layout/extent.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Edit / Dimension / Paste Height</I></TD>
+
+<TD>Sets the height of the selected widgets to the height of the last copied
+layout/extent.</TD>
+</TR>
+
+<TR NOSAVE>
+<TD COLSPAN="2" NOSAVE></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><I>Edit / Inspect View</I></TD>
+
+<TD NOSAVE>Opens an inspector on the view object of the selected widget.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><I>Edit / Inspect Spec</I></TD>
+
+<TD NOSAVE>Opens an inspector on the spec object of the selected widget.</TD>
+</TR>
+</TABLE>
+
+
+<H1><A NAME="ALIGNFUNCTIONSOFTHEGUIPAINTER"></A>Alignment/Geometry Functions</H1>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFFFFF" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1><I>Align</I> Menu</FONT></B></TD>
+
+<TD BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1>Description</FONT></B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD ALIGN=LEFT VALIGN=TOP NOSAVE><I>Align/Centered Horizontal</I></TD>
+
+<TD NOSAVE>Aligns the selected widgets horizontally to the center of the
+dominant widgets.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Align / Centered Vertical</I></TD>
+
+<TD>Aligns the selected widgets vertically to the center of the dominant
+widgets.</TD>
+</TR>
+
+<TR NOSAVE>
+<TD COLSPAN="2" NOSAVE></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Align / Centered Horizontal in Frame</I></TD>
+
+<TD>Centers the selected widgets horizontally in their contained widget.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Align / Centered Vertical in Frame</I></TD>
+
+<TD>Centers the selected widgets vertically in their contained widget.</TD>
+</TR>
+
+<TR NOSAVE>
+<TD COLSPAN="2" NOSAVE></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Align / Spread Horizontal</I></TD>
+
+<TD>Sets the horizontal spaces between the selected widgets as the same.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Align / Spread Vertical</I></TD>
+
+<TD>Sets the vertical spaces between the selected widgets as the same.</TD>
+</TR>
+</TABLE>
+
+
+<H1><A NAME="MISCFUNCTIONSOFTHEGUIPAINTER"></A>Misc Functions</H1>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFFFFF" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1><I>Generate</I> Menu</FONT></B></TD>
+
+<TD BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1>Description</FONT></B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD ALIGN=LEFT VALIGN=TOP NOSAVE><I>Generate / Aspect Methods</I></TD>
+
+<TD NOSAVE>Generates aspect methods in the instance protocol of the application
+class for those aspect selectors of the widgets which you have defined
+in the entry fields.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Generate / Hook Methods</I></TD>
+
+<TD>Generates startup/release methods. (#closeRequest, #postBuildWith:,
+#postOpenWith:)</TD>
+</TR>
+</TABLE>
+
+
+<BR>&nbsp;
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFFFFF" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1><I>Test</I> Menu</FONT></B></TD>
+
+<TD BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1>Description</FONT></B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD ALIGN=LEFT VALIGN=TOP NOSAVE><I>Geometry Test/Set Mode</I></TD>
+
+<TD NOSAVE>Toggles the geometry test/set mode in order to define ratios
+of variable panels, and to check the effect of relative geometry specifications.
+<BR>(After switching to that mode the ratios of contained variable
+panels can be set with the mouse. Also, by resizing the window, the effect of
+any relative geometry specifications can be checked.
+Finally, use this to change the default window size.)</TD>
+</TR>
+</TABLE>
+
+
+<BR>&nbsp;
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFFFFF" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1><I>Settings</I> Menu</FONT></B></TD>
+
+<TD BGCOLOR="#FFCC00" NOSAVE><B><FONT SIZE=+1>Description</FONT></B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD ALIGN=LEFT VALIGN=TOP NOSAVE><I>Settings / Undo Manager...</I></TD>
+
+<TD NOSAVE>Opens a dialog to reverse a certain number of last edit actions.
+(The GUI Painter maintains a history of edit actions.)</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Settings / Grid Manager...</I></TD>
+
+<TD>Opens a dialog to show/hide the grid points or to change the distances
+between them.&nbsp;
+<BR>(As support to the align functions, the GUI Painter offers a snap-to-grid
+mechanism for immediate aligning the widgets after placing. The widgets
+will also be snapped to the grid when moving or sizing.&nbsp;
+<BR>The grid points can be hidden; the default value of the distance between
+horizontal and vertical grid lines is 10@10.)</TD>
+</TR>
+
+<TR NOSAVE>
+<TD COLSPAN="2" NOSAVE></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Settings / Redefine Aspect Methods</I></TD>
+
+<TD>Turns on/off the permission of redefinition of the aspect methods.&nbsp;
+<BR>(If there are some aspect methods already defined in a superclass of
+the application class, you are better to switch off this settings.)</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><I>Settings / Use Sketch as Background</I></TD>
+
+<TD>Opens a dialog to load a (.TOP) sketch file as a background image.
+<BR>These ".TOP" files are generated by some digital notebooks (pen-tables),
+<BR>when pen motions are stored offline in a file of the notebook.
+<BR>Exept uses this to import sketches as drawn during discussion
+sessions as an implementation guideline.
+<BR>At least the Tevion MD85276 digital notebook uses this format.
+</TD>
+</TR>
+
+</TABLE>
+
+<P>
+<HR>
+
+<P><IMG SRC="../../../icons/stx.gif" NOSAVE HEIGHT=48 WIDTH=47>
+<TT>Copyright &copy; 1998 eXept Software AG, all rights reserved</TT>
+<BR>
+<HR>
+</BODY>
+</HTML>

@@ -1,0 +1,51 @@
+"Show local sources"
+
+Class tryLocalSourceFirst: true.
+
+!
+
+"Activate history manager"
+
+Smalltalk addStartBlock:[HistoryManager activate]
+
+!
+
+"Add SmalltalkXProjects to package path"
+
+| projectsDir |
+
+projectsDir := Filename homeDirectory  / 'SmalltalkXProjects'.
+projectsDir exists ifFalse:[
+    Filename homeDirectory isWritable ifTrue:[
+    	projectsDir makeDirectory. 
+    ].
+].
+projectsDir isDirectory ifTrue:[
+	Smalltalk packagePath: (Smalltalk packagePath asOrderedCollection addFirst: projectsDir pathName; yourself)
+].
+
+!
+
+"Set up CVS & Mercurial Source Code Managers"
+
+| setupCVS setupHG |
+
+setupCVS := OperatingSystem canExecuteCommand: 'cvs'.
+setupHG  := OperatingSystem canExecuteCommand: 'hg'.
+
+setupCVS ifTrue:[
+	SourceCodeManager := CVSSourceCodeManager. 
+	CVSSourceCodeManager
+		shownInBrowserMenus: true;
+		repositoryInfoPerModule:
+			(Dictionary new 
+				add: 'stx' -> ':pserver:cvs@cvs.smalltalk-x.de:/cvs/stx';
+				yourself).
+].
+
+setupHG ifTrue:[
+	HGSourceCodeManager
+		shownInBrowserMenus: true.
+].
+
+UserPreferences default sourceCodeManagementMenyLayout: #inline.

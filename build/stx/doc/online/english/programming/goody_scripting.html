@@ -1,0 +1,180 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Remote Scripting Service</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="goody_javaScript.html">     <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="goody_pvm.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Remote Scripting Service</H1>
+
+<H2>Overview</H2>
+
+The remote scripting service allows for ST/X itself or
+a standalone application written in ST/X to be remote controlled.
+It consists of a server (on the Smalltalk side), similar to the
+<A HREF="goody_rdoit.html">rdoit service</A>,
+which awaits requests on a TCP connection.
+These requests consist of expressions in JavaScript syntax.
+The incoming expressions are evaluated, and the results are sent back to sender.
+All communication is done as ascii-text lines, where expressions are terminated
+with a semicolon.
+Therefore, any simple telnet-like communication tool can be used to interact with this service.
+<BR>
+The possibilities and use are very similar to the rdoit service's;
+however, JavaScript syntax is used.
+
+<P>
+With the scripting service, you can:
+<UL>
+<LI>setup and configure smalltalk itself or any smalltalk-based end-user application.
+<LI>easily integrate Smalltalk apps with existing applications written in other languages
+<LI>open Smalltalk apps or windows from the desktop
+<LI>trigger operations on remote hosts
+<LI>trigger operations via make- or shell-files
+<LI>integrate Smalltalk as a service (bignumber arithmetic) into other apps
+</UL>
+
+
+<H2>Directives</H2>
+
+The scripting service recognizes a number of directives.
+These are lines beginning with the escape character ~ (tilde) followed
+by the command character and optional arguments.
+<P>
+To get a list of supported directives, send a line beginning in "~?".
+
+
+<H2>Language Changes</H2>
+By default, expressions are interpreted in JavaScript syntax.
+This can be changed with the "~l" directive to one of the supported
+languages. For example, "~l smalltalk" switches to Smalltalk language.
+In Smalltalk language mode, expressions for evaluation are separated by
+a chunk-separator "!". However, the bang-character (!) must not be duplicated
+within a chunk.
+
+
+<H2>Security Considerations</H2>
+
+The script service enables full control over the
+system - not only the application itself, but also the
+underlying operating system. Therefore, access must be limited to
+trusted hosts. If required, the scripting service should be subclassed
+to filter incoming requests and restrict access.
+Alternatively, an authentication scheme could be added in such a subclass.
+Currently neither of these is provided out of the box.
+
+
+<H2>Examples</H2>
+Start Smalltalk with a "<I>--scripting</I>" argument, passing the port-number on which
+the scripting service should await incoming requests:
+<CODE><PRE>
+    stx --scripting 8008
+</PRE></CODE>
+By default, the script port only accepts connections from the local host.
+Using the "<I>--allowHost</I>" option, more hosts can be gained access to the scripting port:
+<CODE><PRE>
+    stx --scripting 8008 --allowHost myHostName
+</PRE></CODE>
+<P>
+To start ST/X without IDE, you can use:
+<CODE><PRE>
+    ./stx --load "stx:goodies/simpleServices" -E "STXScriptingServer startAt:8008"
+</PRE></CODE>
+(the load argument is needed because the "stx:goodies/simpleServices"-package is
+not present in the minimalistic scripting environment)
+<P>
+Alternatively, start a scripting service from your Smalltalk program
+(or in a workspace or a startup script)
+by evaluating:
+<CODE><PRE>
+    STXScriptingServer startAt:8008
+</PRE></CODE>
+or via the Launcher's settings dialog.
+<P>
+
+Then, on any allowed host, start a session via telnet:
+<CODE><PRE>
+    telnet localhost 8008
+</PRE></CODE>
+you will a prompt similar to:
+<CODE><PRE>
+    Welcome to ST/X (Type ~? for help)
+    > println("Hello world");
+    Hello world
+    > WorkspaceApplication.open();
+    >
+    ...
+    >~.
+
+    Lost Connection.
+</PRE></CODE>
+
+The scripting server supports session variables:
+<CODE><PRE>
+    > var app;
+    > app = new WorkspaceApplication;
+    > app.open();
+    ...
+    > app.paste("100 factorial");
+    > app.selectAll();
+    > app.printIt();
+    ...
+    > app.close();
+    >~.
+
+    Lost Connection.
+</PRE></CODE>
+and function definitions:
+<CODE><PRE>
+    > function foo(a) {
+    >    println("hello "+a);
+    > };
+    ...
+    > foo("smalltalk");
+</PRE></CODE>
+Language change:
+<CODE><PRE>
+    > WorkspaceApplication.open();
+    ...
+    >~l
+      supported languages:
+	JavaScript
+	Smalltalk
+    >
+    ...
+    >~l smalltalk
+    > WorkspaceApplication open
+    > !
+    ...
+</PRE></CODE>
+
+
+
+<H2>No Warranty</H2>
+This goody is provided AS-IS without any warranty whatsoever.
+
+
+<H2>Origin/Authors</H2>
+<BR>
+Author: Claus Gittinger
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 2009 eXept Software AG
+
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.11 $
+</BODY>
+</HTML>

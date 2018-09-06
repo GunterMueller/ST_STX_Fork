@@ -1,0 +1,7 @@
+include Makefile.xquery-workspace.common
+include Makefile.app.win32
+
+
+install-postinstall-hook:
+	cd $(APP_INSTALL_DIR)/applications/$(APP_NAME)/packages/cvut-fel/libutilui/resources/bitmaps/Tango && ./gen-icon-pack.sh
+	rm $(APP_INSTALL_DIR)/applications/$(APP_NAME)/packages/stx/goodies/xmlsuite/xmlreaderimpl/*Expat*.st

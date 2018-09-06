@@ -1,0 +1,208 @@
+<TITLE>Understanding HTML and SGML</TITLE> <H1>Understanding HTML and
+SGML</H1>
+
+<P>HTML is an application conforming to International Standard ISO 8879
+-- Standard Generalized Markup Language (SGML). SGML is a system for
+defining structured document types, and markup languages to represent
+instances of those document types. The SGML declaration for HTML is
+given in SGML Declaration for HTML. It is implicit among WWW
+implementations.
+
+<P>In the event of any apparent conflict between HTML and SGML
+standards, the SGML standard is definitive.
+
+<P>Every SGML document has three parts:
+
+<DL> <DT>SGML declaration <DD>Binds SGML processing quantities and
+syntax token names to specific values. For example, the SGML
+declaration in the HTML DTD specifies that the string that opens an end
+tag is &lt;/ and the maximum length of a name is 72 characters.
+
+<DT>Prologue <DD>Includes one or more document type declarations
+(DTDs), which specify the element types, element relationships and
+attributes. The HTML 3.0 DTD provides a definitive specification of the
+allowed syntax for HTML 3.0 documents.
+
+<DT>References <DD>Can be represented by markup. An instance, which
+contains the data and markup of the document.  </DL>
+
+<P>HTML refers to the document type as well as the markup language for
+representing instances of that document type.
+
+<HR> <H2>Understanding HTML Elements</H2>
+
+<P>In HTML documents, tags define the start and end of headings,
+paragraphs, lists, character highlighting and links. Most HTML elements
+are identified in a document as a start tag, which gives the element
+name and attributes, followed by the content, followed by the end tag.
+Start tags are delimited by &lt; and &gt;, and end tags are delimited
+by &lt;/ and &gt;. For example:
+
+<PRE>    &lt;H1&gt;This is a Heading&lt;/H1&gt;
+    &lt;P&gt;This is a paragraph.</PRE>
+
+<P>Some elements appear as just a start tag. For example, to create a
+line break, you use &lt;BR&gt;. Additionally, the end tags of some
+other elements (e.g. P, LI, DT, DD) can be omitted as the position of
+the end tag is clearly implied by the context.
+
+<P>The content of an element is a sequence of characters and nested
+elements. Some elements, such as anchors, cannot be nested. Anchors and
+character highlighting may be put inside other constructs. The content
+model for a tag defines the syntax permitted for the content.
+
+<P><B>Note:</B> The SGML declaration for HTML specifies
+SHORTTAG YES, which means that there are other valid syntaxes for tags,
+such as NET tags, &lt;EM/.../; empty start tags, &lt;&gt;; and empty
+end tags, &lt;/&gt;. Until support for these idioms is widely deployed,
+their use is strongly discouraged.
+
+<HR>
+<H3>Names</H3>
+
+<P>The element name immediately follows the tag open delimiter. An
+element name consist of a letter followed by up to 72 letters, digits,
+periods, or hyphens. Names are not case sensitive. For example, H1 is
+equivalent to h1. This limit of 72 characters is set by the NAMELEN
+parameter in the SGML declaration for HTML 3.0.
+
+<HR> <H3>Attributes</H3>
+
+<P>In a start tag, white space and attributes are allowed between the
+element name and the closing delimiter. An attribute typically consists
+of an attribute name, an equal sign, and a value (although some
+attributes may be just a value). White space is allowed around the
+equal sign.
+
+<P> The value of the attribute may be either:
+
+<OL> <LI>A string literal, delimited by single quotes or double quotes
+
+<LI>A name token (a sequence of letters, digits, periods, or hyphens)
+</OL>
+
+<P>In this example, a is the element name, href is the attribute name,
+and http://host/dir/file.html is the attribute value:
+
+<PRE>    &lt;A HREF="http://host/dir/file.html"&gt;</PRE>
+
+<P>Some implementations consider any occurrence of the &gt; character
+to signal the end of a tag. For compatibility with such
+implementations, when &gt; appears in an attribute value, you may want
+to represent it with an entity or numeric character reference, such as:
+
+<PRE>    &lt;IMG SRC="eq1.ps" alt="a &amp;#62; b"&gt;</PRE>
+
+<P>To put quotes inside of quotes, you can use single quotes if the outer
+quotes are double or vice versa, as in:
+
+<PRE>    &lt;IMG SRC="image.ps" alt="First 'real' example"&gt;</PRE>
+
+
+<P>Alternatively, you use the character representation &amp;quot; as in:
+
+<PRE>    &lt;IMG SRC="image.ps" alt="First &amp;quot;real&amp;quot; example"&gt;</PRE>
+
+<P>The length of an attribute value (after replacing entity and numeric
+character references) is limited to 1024 characters. This number is
+defined by the LITLEN parameter in the SGML declaration for HTML 3.0.
+
+<P><B>Note:</B> Some implementations allow any character except space
+or &gt; in a name token. Attributes values must be quoted only if they
+don't satisfy the syntax for a name token.
+
+<P>Attributes with a declared value of NAME (e.g. ISMAP, COMPACT) may
+be written using a minimized syntax. The markup:
+
+<PRE>    &lt;UL COMPACT="compact"&gt;</PRE>
+
+<P>can be written as:
+
+<PRE>    &lt;UL COMPACT&gt;</PRE>
+
+<P><B>Note:</B> Unless you use the minimized syntax, some implementations
+won't understand.
+
+<HR> <H3>Undefined Tag and Attribute Names</H3>
+
+<P>It is an accepted networking principle to be conservative in that
+which one produces, and liberal in that which one accepts. HTML parsers
+should be liberal except when verifying code. HTML generators should
+generate strictly conforming HTML. It is suggested that where ever
+practical, parsers should at least flag the presence of markup errors,
+as this will help to avoid bad markup being produced inadvertently.
+
+<P>The behavior of WWW applications reading HTML documents and
+discovering tag or attribute names which they do not understand should
+be to behave as though, in the case of a tag, the whole tag had not
+been there but its content had, or in the case of an attribute, that
+the attribute had not been present.
+
+<HR> <H3>Special Characters</H3>
+
+<P>The characters between the tags represent text in the ISO-Latin-1
+character set, which is a superset of ASCII. Because certain characters
+will be interpreted as markup, they should be represented by markup --
+entity or numeric character references, for instance the character
+"&amp;" must be represented by the entity <tt>&amp;amp;</tt>. See the
+Special Characters section of this specification for more information.
+
+<HR> <H3>Comments</H3>
+
+<P>To include comments in an HTML document that will be ignored by the
+parser, surround them with &lt;!-- and --&gt;. After the comment
+delimiter, all text up to the next occurrence of --&gt; is ignored.
+Hence comments cannot be nested. White space is allowed between the
+closing -- and &gt;, but not between the opening &lt;! and --.
+
+<P> For example:
+
+<PRE>&lt;HEAD&gt;
+&lt;TITLE&gt;HTML Guide: Recommended Usage&lt;/TITLE&gt;
+&lt;!-- Id: Text.html,v 1.6 1994/04/25 17:33:48 connolly Exp --&gt;
+&lt;/HEAD&gt;</PRE>
+
+<P><B>Note:</B> Some historical implementations incorrectly
+consider a &gt; sign to terminate a comment.
+
+<hr> <h2>Formal Variants of HTML 3.0</h2>
+
+<p>The HTML 3.0 document type definition includes two flags for
+controlling how prescriptive or how lax the language is. This makes use
+of SGML marked sections in the DTD to enable or disable certain
+features.
+
+<h3>HTML.Recommended</h3>
+
+<p>Certain features of the language are necessary for compatibility
+with widespread usage, but they may compromise the structural integrity
+of a document. The HTML.Recommended entity should be defined as INCLUDE
+in the DTD subset to enable a more prescriptive version of HTML 3.0
+that eliminates the above features. For example:
+
+<pre>&lt;!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 3.0//EN"
+[ &lt;!ENTITY % HTML.Recommended "INCLUDE"&gt; ] &gt;</pre>
+
+In particular, this prevents text from appearing except within block
+elements.
+
+<h3>HTML.Deprecated</h3>
+
+<p>By default, for backwards compatibility, the %HTML.Deprecated entity
+is defined as INCLUDE, enabling certain features which are now
+deprecated. These features can be eliminated by defining this entity as
+IGNORE in the DTD subset. For example:
+
+<pre>    &lt;!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 3.0//EN" [
+&lt;!ENTITY % HTML.Deprecated "IGNORE"&gt; ] &gt;</pre>
+
+<P><B>Note:</B> defining %HTML.Recommended as INCLUDE
+automatically sets %HTML.Deprecated to IGNORE.
+
+<p>In the spirit of being liberal in what you accept and strict in what
+you generate, HTML user agents are recommended to accept syntax
+corresponding to the specification with %HTML.Deprecated turned on,
+while HTML user agents generating HTML are recommended to generate
+documents that conform to the specification with %HTML.Recommended
+turned on.
+<!--NewPage-->

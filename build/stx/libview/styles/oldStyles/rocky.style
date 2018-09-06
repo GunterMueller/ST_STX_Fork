@@ -1,0 +1,39 @@
+; View defaultStyle:#rocky 
+;
+; rock solid windows (flintstones ?)
+; fun style; like motif, but with different view background
+; needs some rework to make text readable in selectionInListViews
+; and menus.
+;
+; $Header: /cvs/stx/stx/libview/styles/oldStyles/rocky.style,v 1.7 2000-08-16 14:24:30 ca Exp $
+
+#include 'motif.style'
+
+comment  'Fun style.\Like `motif'' - with rock solid views.\May be too dark on some VGA displays'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Wie `motif'' - mit beinhartem Hintergrund.\\Auf vielen VGA Monitoren zu dunkel'
+#endif
+
+shadowColor                 Color black
+lightColor                  Color lightGrey
+
+# viewBackground                    (Smalltalk imageFromFileNamed:'bitmaps/granite.tiff' inPackage:'stx:libwidg3') 
+viewBackground                     (Smalltalk imageFromFileNamed:'bitmaps/granite_small.tiff' inPackage:'stx:libwidg3') 
+selection.backgroundColor           =viewBackground
+selection.disabledForegroundColor   Color grey:10     "/ default grey is invisible on granite
+selection.hilightBackgroundColor    =viewBackground
+selection.hilightForegroundColor    Color white
+
+menu,viewBackgroundColor            =viewBackground
+menu.backgroundColor                =viewBackground
+menu.disabledForegroundColor        Color grey:10     "/ default grey is invisible on granite
+menu.hilightForegroundColor         Color white
+
+scroller.viewBackground             =viewBackground
+button.activeBackgroundColor        =viewBackground
+button.activeForegroundColor        Color white
+button.disabledForegroundColor      Color grey:10     "/ default grey is invisible on granite
+
+variablePanel.handleColor           =lightColor
+

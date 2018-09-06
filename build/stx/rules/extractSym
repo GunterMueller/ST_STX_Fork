@@ -1,0 +1,15 @@
+# /bin/sh
+# usage extractSym listOfNames defines
+#
+
+while true
+do
+    read sym
+    if [ "$sym" != "" ]
+    then
+        grep "define "$sym" (OBJ)" $2
+	sym=""
+    else
+	exit 0
+    fi
+done < $1

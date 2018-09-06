@@ -1,0 +1,8 @@
+[phases]
+publish = false
+
+[paths]
+canonical = https://bitbucket.org/janvrany/stx-goodies-xmlsuite
+staging = https://bitbucket.org/janvrany/stx-goodies-xmlsuite
+default = https://bitbucket.org/janvrany/stx-goodies-xmlsuite
+

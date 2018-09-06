@@ -1,0 +1,23 @@
+/* XPM */
+static char *ComboDn_win_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"14 14 2 1",
+/* colors */
+"a c black",
+"b c none",
+/* pixels */
+"bbbbbbbbbbbbbb",
+"bbbbbaaaabbbbb",
+"bbbbbaaaabbbbb",
+"bbbbbaaaabbbbb",
+"bbbbbaaaabbbbb",
+"bbbbbaaaabbbbb",
+"bbaaaaaaaaaabb",
+"bbbaaaaaaaabbb",
+"bbbbaaaaaabbbb",
+"bbbbbaaaabbbbb",
+"bbbbbbaabbbbbb",
+"bbbbbbbbbbbbbb",
+"bbaaaaaaaaaabb",
+"bbbbbbbbbbbbbb",
+};

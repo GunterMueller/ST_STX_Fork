@@ -1,0 +1,49 @@
+//
+// DO NOT EDIT 
+// automagically generated from the projectDefinition: stx_doc_coding_demoFactorial.
+//
+#define IDR_MAINFRAME   128
+#define IDR_SPLASH      129
+
+#if (__BORLANDC__)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#endif
+
+#pragma code_page(1252)
+
+
+
+VS_VERSION_INFO VERSIONINFO
+  FILEVERSION     7,1,1,10
+  PRODUCTVERSION  7,1,0,0
+#if (__BORLANDC__)
+  FILEFLAGSMASK   VS_FF_DEBUG | VS_FF_PRERELEASE
+  FILEFLAGS       VS_FF_PRERELEASE | VS_FF_SPECIALBUILD
+  FILEOS          VOS_NT_WINDOWS32
+  FILETYPE        VFT_DLL
+  FILESUBTYPE     VS_USER_DEFINED
+#else
+  FILEFLAGSMASK 0x3fL
+#endif
+
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904E4"
+    BEGIN
+      VALUE "CompanyName", "eXept Software AG\0"
+      VALUE "FileDescription", "Smalltalk/X Demo Program to Compute Factorials\0"
+      VALUE "FileVersion", "7.1.1.10\0"
+      VALUE "InternalName", "stx:doc/coding/demoFactorial\0"
+      VALUE "LegalCopyright", "Copyright Claus Gittinger 2016\0"
+      VALUE "ProductName", "Factorial Demo in Smalltalk/X\0"
+      VALUE "ProductVersion", "7.1.0.0\0"
+      VALUE "ProductDate", "Mon, 10 Oct 2016 23:35:13 GMT\0"
+    END
+  END
+
+  BLOCK "VarFileInfo"
+  BEGIN                               //  Language   |    Translation
+    VALUE "Translation", 0x409, 0x4E4 // U.S. English, Windows Multilingual
+  END
+END

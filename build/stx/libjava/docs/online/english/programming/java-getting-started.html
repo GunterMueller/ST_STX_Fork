@@ -1,0 +1,179 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Java Support - Getting Started</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="java-installation.html">   <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="java.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="java-tools.html">  <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Java Support - Getting Started</H1>
+
+<p>
+This document describes step-by-step how to start using STX:LIBJAVA. You need a
+running Smalltalk/X environment installed on your machine. For download and 
+installation notes refer to Section <a href="java-installation.html">Installation 
+&amp; Configuration</a>.
+</p>
+
+
+<h2>Hello World! Example</h2>
+
+<h3>Preparing Java classe</h3>
+
+<p>
+  In this short example, we will show how to initialize Java support, how load a Java class into Smalltalk/X environment and how to call 
+  methods on this class.
+</p> 
+
+<p>
+  First, let's create a simple <a href="https://swing.fit.cvut.cz/projects/stx-libjava/browser/branches/jk_new_structure/src/examples/java/src/stx/libjava/examples/HelloWorld.java?format=txt"><code>HelloWorld.java</code></a>:
+</p>
+
+<pre class="code java">  
+package stx.libjava.examples;
+
+public class HelloWorld {
+  public void sayHello(String name) {
+    System.out.println("Hello " + name);
+   }
+  
+  public static void main(String[] args) { 
+    new HelloWorld().sayHello(args[0]);
+  }
+}
+</pre>
+
+<p>
+  Compile it using standard <code>javac</code>:
+</p>
+
+<pre>
+  javac HelloWorld.java
+</pre>
+
+<p>
+  Let's assume that resulting <code>HelloWorld.class</code> is in directory <code>~/libjava-example-1/stx/libjava/examples<code>.
+  Therefore, the classpath one would use to run it under standard JVM would be <code>~/libjava-example-1<code>.
+</p>
+
+<h3>Initializing Java support</h3>
+
+<p>
+  In order to run Java code within Smalltalk/X, Java support must be properly 
+  initialized. This includes initialization of STX:LIBJAVA's runtime support 
+  stuctures as well as initialization of some essential Java objects such as
+  <code>java.lang.Object</code>, <code>java.lang.System</code>, standard I/O 
+  streams, system properties etc. Standard JVM does this too before dispatching
+  to any user code. 
+</p>
+
+<p>To initialize STX:LIBJAVA and required Java classes, evaluate following code 
+  in <a href="../tools/misc/TOP.html#WORKSPACE">Workspace</a>:
+</p>
+
+<pre class="code smalltalk">  
+  Java initialize.
+  JavaVM initializeVM.
+</pre>
+
+<p>  
+  At this point, Java runtime is initialized and ready to run user code 
+  <a href="#reinit">(*)</a>. If you 
+  look at terminal output Smalltalk/X VM, you may see number of info messages
+  as STX:LIBJAVA loads and initializes Java classes. If the initialization does
+  not proceed, check its configuration (see Section 
+  <a href="java-installation.html#config">Configuration</a>), especially 
+  if the Java release and JAVA_HOME are properly set.
+</p>
+
+<h3>Loading and running <i>HelloWorld</i></h3>
+
+<p>
+  As with standard JVM, STX:LIBJAVA must be told where to look for compiled classes.
+  A class path could be defined in user preferences (see Section 
+  <a href="java-installation.html#config">Configuration</a>) or ad-hoc using 
+  API method <code>#addToClassPath:</code>. The argument is path to directory
+  or <code>.jar</code> file containing the classes - same path you would use with
+  standard JVM. Assuming the compiled <i>HelloWorld</i> class is located under
+  <code>~/libjava-example-1</code>, evaluate:
+</p>
+
+<pre class="code smalltalk">  
+  Java addToClassPath: '~/libjava-example-1'.
+</pre>
+
+<p>
+  Note, that now the Java is booted and running so we have just changed
+  the classpath in living system.
+</p>  
+
+<p>
+  Now everything is ready to run the code. Evaluate:
+</p>
+
+<pre class="code smalltalk">  
+  JAVA stx libjava examples HelloWorld main: #('World from Java running in ST/X').
+</pre>
+
+<p>
+  The first part -- <code>JAVA org example HelloWorld</code> -- accesses the
+  Java class from Smalltalk. The class is loaded if not already. Sending 
+  <code>#main:</code> invokes <i>HelloWorld's</i> <code>public static void
+  main(String[] args)</code>. Note, that here you pass a Smalltalk array
+  with Smalltalk string - STX:LIBJAVA interoperability features handle this
+  and automagically convert parameters to the form expected by Java code. 
+  For details, refer Section<a href="java-interop.html">Java-Smalltalk 
+  interoperability</a>
+</p>
+
+<p>
+  If everything went well, you should see a greeting in system 
+  <a href="../tools/misc/TOP.html#LAUNCHER">Transcript</a>. 
+</o>
+
+<h3>Comments</h3>
+
+<p>
+<b><a name="reinit">Reinitializing Java runtime.</a></b><br/>
+  If you want (for whatever reason - for example you have modified some STX:LIBJAVA
+  internal classes and Java runtime become completely messed up) - you may always
+  completely flush all Java classes and start over. To do so, evaluate:
+</p>
+
+<pre class="code smalltalk">  
+  Java flushAllJavaResources.
+</pre>
+
+<p>
+  Then, initialize Java runtime as usual.
+</p>
+
+<!--
+
+  TODO:
+
+  example 2: Using Groovy console. Please, add a screenshot, just like in
+  java-installation
+
+  example 3: SAXON XSLT & othello 
+
+-->
+  
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt> , <tt>&lt;stxlibjava-dev@googlegroups.com&gt;</tt>
+</ADDRESS>
+
+<HR>
+CVS: §Id: N/A §<BR>
+SVN: $Id: java-getting-started.html,v 1.5 2015-03-20 12:08:02 vrany Exp $
+</BODY>
+</HTML>

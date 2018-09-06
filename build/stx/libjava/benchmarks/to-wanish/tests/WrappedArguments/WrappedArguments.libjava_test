@@ -1,0 +1,9 @@
+inst := JAVA WrappedArguments new.
+
+duration := Time millisecondsToRun: [
+	1 to: n do:[:idx|
+		inst doSmth: idx.		
+	].
+].
+
+Transcript showCR: 'EXECUTION TIME: ' , duration printString.

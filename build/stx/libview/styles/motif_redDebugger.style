@@ -1,0 +1,11 @@
+; View defaultStyle:#mswindows95_redDebugger 
+;
+; $Header: /cvs/stx/stx/libview/styles/motif_redDebugger.style,v 1.1 2001-11-19 14:27:30 martin Exp $
+
+#include 'motif.style'
+
+comment  'motif lookalike with red Debugger'
+
+debugView.viewBackgroundColor            Color red lightened
+
+

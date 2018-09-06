@@ -1,0 +1,451 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Smalltalk/X Cheat Sheet</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="TOP.html"> <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="selectors.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Smalltalk/X Cheat Sheet</H1>
+
+A short, one page summary of what beginners need to know about
+syntax and st/x command line on one page.
+
+<H2>Syntax</H2>
+
+<H3>Comments</H3>
+
+<table border>
+<tr>
+<td width=50%>regular comment</td>
+<td width=45%><code><pre>" this is a comment "</pre></code></td>
+</tr>
+
+<tr>
+<td width=50%>EOL-Comment</td>
+<td width=45%><code><pre>"/ this is an End-of-Line comment</pre></code></td>
+</tr>
+
+<tr>
+<td width=50%>Token-Comment</td>
+<td width=45%><code><pre>">> END
+a multiline token-comment up to
+a line starting with 'END'
+more commented stuff here
+...
+comment ends here
+END</pre></code></td>
+</tr>
+
+</table>
+
+
+<H3>Constants</H3>
+
+<table border>
+
+<tr>
+<td width=50%>integers</td>
+<td width=45%><code><pre>12345</pre></code>
+<code><pre>-12345</pre></td>
+</tr>
+
+<tr>
+<td width=50%>large integers</td>
+<td width=45%><code><pre>1234567890123456789012345...</pre></code>
+<br>(arbitrary size)
+</tr>
+
+<tr>
+<td width=50%>integers with radix</td>
+<td width=45%><code><pre>16rAFFE</pre></code>
+<code><pre>16r-AFFE</pre></td>
+<code><pre>2r010101</pre></td>
+<code><pre>8r0777</pre></td>
+</tr>
+
+<tr>
+<td width=50%>floats<br>(IEEE double; roughly 17 decimals)</td>
+<td width=45%><code><pre>12.456</pre></code>
+<code><pre>1.234e17</pre></td>
+<code><pre>-6.9</pre></td>
+<code><pre>-6e-10</pre></td>
+<code><pre>Float pi</pre></td>
+<code><pre>Float e</pre></td>
+</tr>
+
+<tr>
+<td width=50%>short floats<br>(IEEE single; roughly 8 decimals)</td>
+<td width=45%><code><pre>1.234f17</pre></td>
+<code><pre>-6f-10</pre></td>
+</tr>
+
+<tr>
+<td width=50%>long floats<br>(IEEE quad; roughly 20 decimals)</td>
+<td width=45%><code><pre>1.234q17</pre></td>
+<code><pre>-6q-10</pre></td>
+</tr>
+
+<tr>
+<td width=50%>high prec. floats; roughly 60 decimals<br></td>
+<td width=45%><code><pre>1.234Q17</pre></td>
+<code><pre>-6Q-10</pre></td>
+</tr>
+
+<tr>
+<td width=50%>fractions<br></td>
+<td width=45%><code><pre>(1/3)</pre></td>
+<code><pre>(17/2)</pre></td>
+</tr>
+
+<tr>
+<td width=50%>characters<br></td>
+<td width=45%><code><pre>$a</pre></td>
+<code><pre>Character space</pre></td>
+<code><pre>Character nl</pre></td>
+</tr>
+
+<tr>
+<td width=50%>strings<br></td>
+<td width=45%><code><pre>'hello'</pre></td>
+</tr>
+
+<tr>
+<td width=50%>arrays<br></td>
+<td width=45%><code><pre>#( <i>el1</i> <i>el2</i> ... <i>elN</i> )</pre></code>
+<p>(each element a literal constant)</td>
+</tr>
+
+<tr>
+<td width=50%>byte arrays<br></td>
+<td width=45%><code><pre>#[ <i>b1</i> <i>b2</i> ... <i>bN</i> ]</pre></code>
+<p>(each byte-element an integer constant in 0..255)</td>
+</tr>
+
+<tr>
+<td width=50%>special number arrays<br></td>
+<td width=45%><code><pre>#XX( <i>v1</i> <i>v2</i> ... <i>vN</i> )</pre></code>
+<p>(XX: one of
+<br>&nbsp;'u8', 's8', 'u16', 's16', 'u32', 's32', 'u64', 's64', 'f32', 'f64'
+<br>&nbsp;and each element being an integer or float constant)</td>
+</tr>
+
+</table>
+
+<H3>Lambda Blocks (Closures)</H3>
+
+<table border>
+<tr>
+<td width=50%>without argument</td>
+<td width=45%><code><pre>[ expr1 . expr2 ... exprN ]</pre></code>
+<p>when evaluated, the value is the value
+<br>&nbsp;from the last expression, exprN</td>
+</tr>
+
+<tr>
+<td width=50%>one argument</td>
+<td width=45%><code><pre>[:arg |<br>    expr1 . expr2 ... exprN<br>]</pre></code></td>
+</tr>
+
+<tr>
+<td width=50%>multiple arguments</td>
+<td width=45%><code><pre>[:a1 :a2 ... :aN |<br>    expr1 . expr2 ... exprN<br>]</pre></code></td>
+</tr>
+
+</table>
+
+<H3>Expressions</H3>
+
+<table border>
+<tr>
+<td width=50%>unary expression (without argument)</td>
+<td width=45%><code><pre><i>receiver</i> messageName</pre></code>
+<p>receiver is itself either a constant, a lambda-block, a unary expression
+or a parenthesized expression
+</tr>
+
+<tr>
+<td width=50%>keyword expression: (1 arg)</td>
+<td width=45%><code><pre><i>receiver</i> messageNamePart:<i>argExpression</i></pre></code></td>
+<p>whitespace between the colon and the argExpression is optional.
+</tr>
+
+<tr>
+<td width=50%>keyword expression: (any number of args)</td>
+<td width=45%><code><pre><i>receiver</i>
+     messageNamePart1:<i>argExpression1</i>
+     messageNamePart2:<i>argExpression2</i>
+     ...
+     messageNamePartN:<i>argExpressionN</i></pre></code></td>
+</tr>
+
+<tr>
+<td width="50%">binary expression</td>
+<td width="45%"><code><pre><i>receiver</i> <i>binOP</i> <i>arg</i></pre></code></td>
+<p>with binOP being any combination of special characters: * , + , - , % , & , / , \ , | , = , &lt; , &gt; , ?  and ,
+<p>i.e. "<code>foo ==> 123</code>" is the binary message "==>"<br> sent to foo with 123 as argument)
+<p>and "<code>foo ? 123</code>" is the binary message "?"<br> sent to foo with 123 as argument)
+</tr>
+
+<tr>
+<td width=50%>parentheses for grouping</td>
+<td width=45%><code><pre>( <i>any expression</i> )</pre></code></td>
+</tr>
+
+<tr>
+<td width=50%>assignment</td>
+<td width=45%><code><pre><i>variable</i> := <i>expression</i></pre></code></td>
+</tr>
+
+</table>
+
+<H3>Remaining Syntax</H3>
+
+<table border>
+
+<tr>
+<td width=50%>local variables (in block or method)</td>
+<td width=45%><code><pre>| <i>var1</i> <i>var2</i> ... <i>varN</i> |</pre></code>
+<p>variable declarations must be at the beginning (before any expression).
+</tr>
+
+<tr>
+<td width=50%>separating multiple expressions (sequence)</td>
+<td width=45%><code><pre><i>expr1</i> . <i>expr2</i> . ... <i>exprN</i></pre></code>
+<p>expressions (statements) are separated by fullstop (period) characters.
+<br>The last expression may or may not be followed by a fullstop
+(if there is one, this is treated like a followup empty statement)
+</tr>
+
+<tr>
+<td width=50%>return from method</td>
+<td width=45%><code><pre>^ <i>expression</i></pre></code>
+<p>returns from the enclosing method (also if inside a block-closure)
+</tr>
+
+</table>
+
+<H3>Wellknown Messages</H3>
+
+<table border>
+
+<tr>
+<td width=50%>conditional execution</td>
+<td width=45%><code><pre><i>boolExpr1</i> ifTrue:[ ... ] ifFalse:[ ... ]</pre></code>
+<p>variations without true-part, without false part and with the order reversed are available.
+</tr>
+
+<tr>
+<td width=50%>while loop</td>
+<td width=45%><code><pre>[ <i>boolExpr1</i> ] whileTrue:[ ... ]</pre>
+</code><p>notice the receiver being a block.<br>A whileFalse variant is also available.
+</tr>
+
+<tr>
+<td width=50%>for loop</td>
+<td width=45%><code><pre><i>start</i> to:<i>stop</i> do:[:<i>iterVar</i> | ... ]</pre>
+</code><p>evaluates the lambda for each value in <i>start</i>..<i>stop</i>.
+</tr>
+
+<tr>
+<td width=50%>enumerating collections</td>
+<td width=45%><code><pre><i>collection</i> do:[:<i>elementVar</i> | ... ]</pre>
+</code><p>evaluates the lambda for each element in the collection.
+</tr>
+
+<tr>
+<td width=50%>evaluating a lambda block<br>without arguments:
+<p>with arguments:</td>
+<td width=45%><code><pre><i>aBlock</i> value</pre></code>
+<p><code><pre><i>aBlock</i> value:<i>expr1</i> ... value:<i>exprN</i></pre></code>
+<p>the number of arguments must match the number expected by the lambda
+(although varArg lambdas are also available)
+</tr>
+
+<tr>
+<td width=50%>return from method</td>
+<td width=45%><code><pre>^ <i>expression</i></pre></code>
+<p>returns from the enclosing method (also if inside a block-closure)
+</tr>
+
+</table>
+
+<H2>Wellknown Globals</H2>
+
+<table border>
+
+<tr>
+<td width=50%>Logging and Messaging</td>
+<td width=45%><pre><code>Transcript</code> - console window
+<p><code>Stdout</code> - standard output
+<p><code>Stderr</code> - standard error
+<p><code>Stdin</code> - standard input
+<p><code>Logger</code> - redefinable logger (defaults to standard error)
+</pre>
+</tr>
+
+
+</table>
+
+<H2>Most Wellknown Classes</H2>
+
+<table border>
+
+<tr>
+<td width=50%>Collections</td>
+
+<td width=45%>
+<pre><code>Array             </code>(fixed size array)
+
+
+<code>OrderedCollection </code>(variable size)
+
+<code>List</code>
+
+<code>SortedCollection</code>
+
+
+<code>Set               </code>(unordered)
+
+<code>Bag</code>
+
+
+<code>Dictionary        </code>(mapped collections)
+
+<code>BinaryTree</code>
+
+<code>AVLTree</code>
+
+
+<code>SharedQueue       </code>(shared, synchronized)
+</pre>
+</td>
+</tr>
+
+<tr>
+<td width=50%>Process Handling</td>
+<td width=45%>
+<pre><code>Process           </code>(lightweight thread)
+
+
+<code>OSProcess         </code>(heavyweight OS process)
+
+
+<code>Semaphore         </code>(synchronization)
+
+<code>RecursionLock</code>
+
+<code>Monitor</code>
+
+<code>BoltLock</code>
+
+<code>Delay</code>
+</pre>
+</td>
+</tr>
+
+<tr>
+<td width=50%>Files & Streams</td>
+<td width=45%>
+<pre><code>Filename          </code>(file naming, directory access, mime type)
+
+
+<code>Stream            </code>(basic stream framework)
+
+<code>ReadStream</code>
+
+<code>WriteStream</code>
+
+<code>EncodedStream</code>
+
+
+<code>ExternalStream    </code>(OS streams)
+
+<code>FileStream</code>
+
+<code>Socket</code>
+
+<code>EncodedStream</code>
+</pre>
+</td>
+</tr>
+
+<tr>
+<td width=50%>Low Level Access</td>
+<td width=45%>
+<pre><code>OperatingSystem   </code>(OS API calls)
+
+
+<code>Smalltalk         </code>(startup, shutdown and globals)
+
+
+
+<code>ObjectMemory      </code>(VM access)
+
+</pre>
+</td>
+</tr>
+
+
+</table>
+
+<H2>Comand Line</H2>
+
+<table border>
+
+<tr>
+<td width=50%>-I</td>
+<td width=45%>ignore snapshot image</td>
+</tr>
+
+<tr>
+<td width=50%>--repl</td>
+<td width=45%>start an interactive read-eval-print-loop</td>
+</tr>
+
+<tr>
+<td width=50%>--print <i>expr</i></td>
+<td width=45%>eval expr, print its value then exit</td>
+</tr>
+
+<tr>
+<td width=50%>--eval <i>expr</i></td>
+<td width=45%>eval expr (without printing) then exit</td>
+</tr>
+
+<tr>
+<td width=50%>--execute <i>filename</i></td>
+<td width=45%>execute the script in fileName then exit</td>
+</tr>
+
+<tr>
+<td width=50%>--loadPackage <i>package-ID</i></td>
+<td width=45%>preload a compiled smalltalk class library (package)</td>
+</tr>
+
+<tr>
+<td width=50%>--help</td>
+<td width=45%>show all other command line options</td>
+</tr>
+
+</table>
+
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 2017 Claus Gittinger Development &amp; Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.3 $ $Date: 2017-08-30 19:47:17 $
+</BODY>
+</HTML>

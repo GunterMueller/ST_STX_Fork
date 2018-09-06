@@ -1,0 +1,11 @@
+[automerge]
+# Automatically merge pulled changes from specified mercurial branch (if exists) 
+# to specified mercurial branch (if exists). The syntax is 
+# 
+# automerge = <from-branch>:<to branch>. 
+#
+# The example below will merge changed from branch `default` to branch `jv`. 
+# If merge fails, issue a warning but proceed. Optional. 
+#
+# automerge = default:jv
+automerge = default:jv

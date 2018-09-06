@@ -1,0 +1,822 @@
+<HTML>
+
+<HEAD>
+<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<TITLE>Smalltalk/X Online Documentation - New Features in ST/X</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT INFO="Back to documentation's main page" HREF="TOP.html">
+   <IMG SRC="../icons/DocsUpArrow.gif" ALT="[up]"></A>
+
+<H1>New Features in ST/X</H1>
+<P>
+
+This page lists new major features which may be of interest in chronological order.
+<BR>
+Minor enhancements, features and fixes are not listed here.
+Major bug fixes are listed in the <A HREF="relNotes.html">"Release Notes"</A>.
+<BR>
+Documentation updates are found in <A HREF="whatsNew.html">"What's New in the Documentation"</A>.
+
+<H3>Rel7.1.0</H3>
+Major version incremented due to an incompatible class layout change.
+<BR>Older binaries (shared class libs) cannot be loaded into this version.
+<UL>
+<LI>more <A href="getstart/TOP.html#COMMANDLINE">command line options</A> for easier scripting
+<LI>GraphicContext-specifics separated into a separate GC object (View hierarchy cleanup).
+<LI>new (scheme-like) syntax for literal-integer and literal float arrays:
+<BR>#xx(...) an array literal of special type;
+<BR>xx must be one of:
+<BR>&nbsp;&nbsp;u1 (BitArray),
+u8 (ByteArray),
+u16 (WordArray),
+u32 (IntegerArray),
+u64 (LongIntegerArray),
+<BR>&nbsp;&nbsp;s8 (SignedByteArray),
+s16 (SignedWordArray),
+s32 (SignedIntegerArray),
+s64 (SignedLongIntegerArray),
+<BR>&nbsp;&nbsp;f32 (FloatArray),
+f64 (DoubleArray)
+<BR>in addition, the following shortcuts (alternative names) are supported:
+<BR>&nbsp;&nbsp;#f (FloatArray = f32);
+#d (DoubleArray = f64);
+#b (BitArray = u1)
+<BR>currently, this syntax is disabled by default (see ParserFlags >> allowSTXExtendedArrayLiterals)
+and not yet fully supported by the stc compiler.
+<LI>infoPrint, debugPrint and errorPrint now delegate to a Logger, if there is any
+<LI>new tool: ExternalStreamMonitor
+<LI>new feature in process monitor: "terminate all like this"
+<LI>more lint checks and fixes in existing rules
+<LI>more detail in many lint rules (in the lint result viewer)
+<LI>PNGReader supports TRNS chunk (transparency)
+<LI>ICO/CUR formats fixed in WindowsICOReader
+<LI>MacOSXIconReader fixed and improved (supports more formats)
+<LI>new WBMPReader added (for mobile devices icons)
+<LI>ImageEditor got many new functions and some bug fixes
+<LI>many fixes and improvements in the base classes (Semaphore, RecursionLock, Processor, OSProcess etc.)
+<LI>VersionDiffBrowser got nice filters to make comparisons of whole packages easier (among other improvements)
+<LI>selector and text filter in the system browser's methodlist.
+<LI>more menu functions in the file browser's "Tools" menu
+<LI>improved REPL (non-GUI mode)
+<LI>high resolution timetamps and timeDurations
+</UL>
+
+<H3>Rel6.2.5</H3>
+<UL>
+<LI>much better code completion and explainer info
+<LI>improved language translation tool
+<LI>autoloading of packages (see "Settings" - "System" - "Autoloaded Packages")
+<LI>PNGReader supports many more formats
+<LI>BMPReader supports many more formats
+<LI>64bit Windows version (preRelease)
+<LI>JPEGReader can now also save images
+<LI>Timestamp can now represent timestamps before the epoch 1970 and after
+the unix endtime at 2039 (i.e. we are prepared for the y2039 problem)
+<LI>Timestamp iso8601 reader also supports weekday formats and utc offsets.
+<LI>Added TZTimestamp which preserves its original timezone information
+<LI>Time now supports millisecond precision
+<LI>Date can now represent dates before 1900 and after 2039
+<LI>Date printing supports some roman options (for hungaria, romania and poland)
+<LI>64bit MAC-OSX version (10.6 and later, gcc or clang, using XQuartz)
+<LI>Runs on RaspberryPI / Ubuntu
+<LI>64bit Linux version
+<LI>Full support for negative zero (might be needed by some math algorithms)
+<LI>New easy to use package loading UI ("Launcher-Menu" - "File" - "Load Package")
+</UL>
+
+<H3>Rel6.2.4</H3>
+<UL>
+<LI>support for "almost the same" comparison in Float
+<LI>support for huge collections in SegmentedOrderedCollection and VirtualArray
+<LI>more breakpoint filters in the debugger
+<LI>new <A HREF="programming/language.html#TOKENCOMMENTS">token delimited comments</A>
+<LI>improved <A HREF="getstart/TOP.html#SCRIPTING">scripting support</A>
+<LI>improved javaScript and java integration
+<LI>improved mercurial SCM integration
+<LI>improved smallsense integration
+<LI>initial port of the SWF (flash) file reader and writer (basil)
+</UL>
+
+<H3>Rel6.2.3</H3>
+<UL>
+<LI>ported <A HREF="http://www.cincomsmalltalk.com/userblogs/vbykov/blogView?searchCategory=Announcements%20Framework&amp;index=1">Vassili Bykov's Announcements</A> package (in "goodies/announcements")
+<LI>package loading speedup and fixed prerequisite package loading
+<LI>all class libraries can now be compiled with mingw (mingwmake)
+<LI><A HREF="programming/goody_thrift.html">"Thrift IDL support"</A> (in "goodies/thrift")
+<LI>Cassandra Database interface (in "libdb/nosql/cassandra")
+<LI>GOODS Database interface (in "libdb/nosql/goods")
+<LI>improved monticello packager (includes extra ST/X files)
+<LI>additional lint checks for collection protocol usage and dialect compatibility
+<LI>fixes and improvements in the line-breakpoint handling
+<LI>per process debug/halt enabling & disabling (see browser's debug menu)
+<LI>count method invocations per receiver class in browser's debug menu
+<LI>timestamping of transcript messages (see launcher's debug menu)
+<LI>fixed and improved the VT100 terminal emulator (and TerminalApplication)
+<LI>improved break- and tracepoint handling in the system browser, debugger abd breakpoint browser
+<LI>improved code completion (better guessing, especially in the debugger)
+<LI>improved code correction when accepting invalid code (better suggestions)
+<LI>many additional useful menu operations here and there (workspace, debugger, launcher, file browser)
+</UL>
+
+<H3>Rel6.2.2</H3>
+<UL>
+<LI>coverage analysis fixed and enhanced
+<LI>enhancements in the browser
+<LI>improved windows-menu in the launcher
+<LI>all class libraries can now be compiled with msvc (vcmake)
+<LI>regex package (in goodies) fixed for unicode
+</UL>
+
+
+<H3>Rel6.2.1</H3>
+<UL>
+<LI>stc option to generate error &amp; warning messages in gcc format (for hudsun log parsing)
+<LI>sunit can generate junit compatible xml reports (for hudsun)
+<LI><A HREF="tools/newbrowser/accepting.html#NEW_CODE_EDITOR">improved codeview in the browser</A>
+<LI><A HREF="tools/misc/TOP.html#MULTIPLE_PRIVATE_WORKSPACE_PAGES">improved workspace</A>
+<LI>improved filebrowser (tags, directory-diff viewer)
+<LI>debug/trace for Transcript messages (Launcher's Class-Debug menu)
+<LI>improved debugger menu / can selectively ignore halts for some time/count
+<LI>improved method finder
+<LI>improved window menu in the launcher
+<LI>begin monticello support in browser
+<LI>begin multi source code manager supported (mercurial, p4,...)
+<LI><A HREF="programming/crypt.html">libcrypt</A>: xtea fixed; tea, rc6, carmellia, mcd2Des, serpent, sha224, sha384 and sha512 added;
+<br>libcrypt compiles with msvc
+<LI>syntaxhighlighter highlights side effect assignments (turn off via settings)
+<LI>more lint rules, better embedded lint viewer
+<!-- <LI hex dump in inspector  -->
+<LI>some compiler warnings can be disabled on a per-method basis
+<LI>loggia logging package
+</UL>
+
+<H3>Rel6.1.2</H3>
+<UL>
+<LI>Integrated Jan Vrany's enhancements
+<LI>Support Method Annotations
+<LI>XML-RPC Supports V3 protocol (nil, i8)
+</UL>
+
+<H3>Rel6.1.1</H3>
+<UL>
+<LI>MOP support (which adds a slot to Behavior and Context; therefore the major version change)
+</UL>
+
+<H3>Rel5.4.7</H3>
+<UL>
+<LI>LDAP library in "stx:goodies/net/ldap"
+<LI><A HREF="programming/goody_xmlrpc.html">XMLRPC Server and Client</A> (stx:goodies/xml/xmlrpc)
+</UL>
+
+<H3>Rel5.4.6</H3>
+<UL>
+<LI>Magritte ported and added to goodies
+<LI>SVN repository support (a package can live in both an SVN and a CVS repository) (thanks to Jan Vrany)
+<LI>SourceCodeManager and multilanguage-support (Ruby, ST, JS) cleanup
+<LI><A action="doit: Tools::ProjectBuilderAssistantApplication open" info="Click to open the Packager">Standalone Application Builder and Packager</A> (ProjectBuilder Assistant)
+<LI>A number of browser enhancements (pseudo categories, class wizard, better dialogs)
+<LI>Regex string-constants in code search
+<LI>PNG file writing support
+<LI>Rdoit for windows
+<LI>Nicer vista-viewStyle
+<LI>Breakpoints can be temporarily-disabled (time- or count)
+<LI>New VM command line flag: --immutableLiterals
+<LI>Win32: more widestring apis supported (file operations with unicode names)
+
+</UL>
+
+<H3>Rel5.4.5</H3>
+<UL>
+<LI>Win32: Smalltalk/X now runs with Data Execution Prevention enabled
+<LI>Win32: stx.com starts Smalltalk in a console window, stx.exe without console. winstx.exe is gone.
+</UL>
+
+<H3>Rel5.4.4</H3>
+<UL>
+<LI>Win32: Oldspace limit increased to 512Mb
+<LI>FixedPoint literals (i.e. 10.23s2) now also supported by stc
+<LI>Remote scripting support with "--scripting" command line argument (i.e. rdoit-telnet with JS syntax)
+<LI>Win32: splash screen can be hidden by pressing ESCAPE or CTRL-C
+</UL>
+
+<H3>Rel5.4.3</H3>
+<UL>
+<LI>CodeView menu functions to insert as string literal
+<LI>Unicode support: input methods, window title, file-names and attributes
+(Please read the <A HREF="compatibilityNotes.html">"Compatibility Notes"</A>)
+<LI>FilenameWidgetWithHistory fixes and improvements
+<LI>Splash banner now shown by VM (earlier)
+<LI>"--console" command line argument
+</UL>
+
+<H3>Rel5.4.2</H3>
+<UL>
+<LI>Abbreviation/Snippet support improved
+</UL>
+
+<H3>Rel5.4.1</H3>
+<UL>
+<LI>New Debugger feature: flyBy info on variable-values
+<LI>New Transcript feature: autoraise
+<LI>New tool: <A action="doit: Tools::BreakpointBrowser open" info="Click to open the BreakPoint Browser">BreakPoint Browser</A>
+<LI>Win32: Support Windows Mutex
+</UL>
+
+<H3>Rel5.3.9</H3>
+<UL>
+<LI>Windows INIFile reader/writer
+<LI><A action="doit:DidYouKnowTipViewer open" info="Click to show a Tip">Tip of the Day</A>
+<LI>Thanks to Felix, spanish is now almost completely supported
+<LI>More Workspace improvments (myWorkspace)
+<LI>Support for symbolic fonts in UIPainter
+<LI>New Debugger feature: skip-ignore halt/breakPoint
+<LI>New ImageEditor features: circles & spray
+</UL>
+
+<H3>Rel5.3.8</H3>
+<UL>
+<LI>CodeCompletion improved
+<LI>DebugMenu of browser reorganized
+<LI>New class for standAlone apps: GetOpt
+<LI>Support for symbolic colors in UIPainter/Views
+</UL>
+
+<H3>Rel5.3.7</H3>
+<UL>
+<LI>More UIPainter and ColorMenu improvements
+</UL>
+
+<H3>Rel5.3.6</H3>
+<UL>
+<LI>UIPainter, DataSetBuilder and ColorMenu improvements
+<LI>NewChangesBrowser fixes & improvements
+<LI>Improved Workspaces (snippets, sharedPool visible in doIt, sharedPool inspector)
+</UL>
+
+<H3>Rel5.3.5</H3>
+<UL>
+<LI>Improved Workspaces (menu, new functions, myWorkspace)
+<LI>Application- and LibraryDefinition for automatic deployable-package generation
+</UL>
+
+<H3>Rel5.3.2</H3>
+<UL>
+<LI>Indicate Focus-State in SelectionInListView.
+<LI>Better drawing of items with icon in Menus/MenuPanels.
+</UL>
+
+<H3>Rel5.3.1</H3>
+<UL>
+<LI>New class library naming scheme
+<LI>many more project support functions in the browser
+<LI>support for the generation of deployment packages
+<LI>Win32: native printing support
+<LI>Win32: some fixes for dual screen operation
+<LI>new external library function binding mechanism supported by stc
+</UL>
+
+<H3>Rel5.2.9</H3>
+<UL>
+<LI>Glorp update (0.4)
+<LI>new external library function binding mechanism
+<LI>generate makefiles from the browser
+</UL>
+
+<H3>Rel5.2.8</H3>
+<UL>
+<LI>Browser: some refactorings on SHIFT-code-menu; better project support; build features
+<LI>MenuEditor: added menuSlices.
+<LI>SharedPool support added.
+</UL>
+
+<H3>Rel5.2.7</H3>
+<UL>
+<LI>Notebook/TabView: destroy buttons
+<LI>ImageEditor: can edit trueColor bitmaps
+<LI>WebServer: FCGI support
+<LI>ODBC support bugfixed and improved (threaded, nonBlocking API for Win32)
+<LI>Sort functions in all editors (more->tools->sort menu item)
+<LI>Win32: Mozilla & IE browser plugin support
+<LI>Linux: Mozilla browser plugin support
+</UL>
+
+<H3>Rel5.2.6 - official release</H3>
+The first "non-beta" win32 release.
+<UL>
+<LI>Bug fixes in the Windows version: sockets, externalStream and hostName code fixed;
+cleanup when interrupting/aborting threaded API-calls.
+<LI>Bug fixes in the VM dynamic library loading code
+</UL>
+
+<H3>Rel5.2.5</H3>
+<UL>
+<LI>SharedPools are now supported (added to allow easier porting of non-ST/X Smalltalk code).
+<LI><A HREF="programming/goody_webserv.html">STT</a> can be configured for either Squeak- or ST/X-dialect code syntax
+<LI>First partial support for native win32 widgets (for now, only ScrollBars)
+<LI>Support undecorated and toolBar window styles (win32)
+<BR>See examples in <A HREF="onlyInSTX.html"
+   ACTION="doit:UserPreferences browserClass openInClass:(TopView class) selector:#examples"
+   INFO="Browse examples">
+TopView class &#187; examples</A>.
+<LI>Button and focus event handling fixes in the win32 version
+<LI>Better win-XP look
+</UL>
+
+<H3>Rel5.2.2</H3>
+<UL>
+<LI>MenuSlices added.
+<LI>SHIFT-middleButtonMenu in browser's codeView added (variable-rename etc.)
+</UL>
+
+<H3>Rel5.2.1</H3>
+<UL>
+<LI><A HREF="programming/language.html#UNICODE">Unicode</A> support.
+<LI>Damage event handling improved.
+<LI><A HREF="programming/goody_xpSwiki.html">xpSwiki</A> added to webServer.
+<LI>FileBrowser improved (is now almost a usable unicode editor !)
+</UL>
+
+<H3>Rel5.1.6</H3>
+<UL>
+<LI>HTTPServer/HTTPService: reply generation via a presenter for flexible layout of (corporate identity).
+<LI>Bug fixes in the Windows version: blocking api-call interrupt handling,
+exception handling (SEGV).
+<LI>FontPanel fixed and enhanced; Font handling and unicode support enhanced.
+<LI>Bug fixes in 32bit File-I/O API (seek, stat, etc.); added support for 64 bit API.
+
+</UL>
+
+<H3>Rel5.1.5</H3>
+<UL>
+<LI>More HTTPServer tuning, refactoring &amp; improvements.
+<BR>SWIKI can now be linked anywhere below the servers root
+(books had to be under "/" before). Swikis can now even be linked deep
+inside a fileServices tree.
+<BR>
+Swiki Service has now only one link name and all of its books are below that.
+<BR>
+CGI callout support.
+<BR>
+HTTP Utilities: a page counter
+
+<LI>Bug fixes in the Windows version: command-execution, redraw bug, drag&amp;drop, handle leak.
+</UL>
+
+<H3>Rel5.1.4</H3>
+<UL>
+<LI>HTTPServer url Parameter and post data field values are in a collection
+<LI>HTTPServer performance tuning.
+<LI>STC compiler generates new (more compact) code for literal arrays
+<LI>More refactorings in the HTTPService hierarchy.
+<LI>Multipane Terminal Application.
+</UL>
+
+<H3>Rel5.1.3 - internal (tag only) release</H3>
+
+<H3>Rel5.1.2 - official release</H3>
+<UL>
+<LI>Mostly bug fixes, enhancements and code cleanup.
+<LI><A HREF="programming/goody_sixx.html">SIXX</A> (XML-Object exchange) package ported (2 testCases still fail).
+</UL>
+
+<H3>Rel5.1.1</H3>
+<UL>
+<LI>Stream positioning is now 0-based.
+<br>For backward compatibility, position1Based/position0Based methods are still provided.
+<LI>Class layout changed (removed unused slots)
+<LI>Number class LongFloat (80/128 bit floats) now fully implemented on systems which offer extended floats.
+<LI><A HREF="programming/goody_smacc.html">SmaCC Compiler-Compiler</A> fully working, including UI.
+<LI>Much improved HTTPServer:
+  <UL>
+  <LI>better framework for http-services; common handling of action-services and PWS-services.
+  <LI>allow to start the same service twice under different link names.
+  <LI>read header and process requests in separate threads.
+  <LI>new services: WebSlides, SourceCode Access, DemoShop
+   <LI><A HREF="programming/goody_webserv.html">Comanche STT</a> support (Smalltalk Templates)
+  </UL>
+<LI>RDoit supports Unix domain sockets.
+<LI>RBFormatter fixed to better handle comments (still not perfect, but much better)
+<LI>NewSystemBrowser: many improvements: code search, multi-var search, multi-sender search,
+selective rewrite when renaming a method.
+</UL>
+
+Incremented the major version number, because we (finally) changed stream positioning to be 0-based.
+This could lead to incompatibilities with some programs.
+
+<H3>Rel4.1.9</H3>
+<UL>
+<LI>Restructuring of the HTTPServer and friends; now HTTPServices are much easier to add/remove.
+Also, the ST/X homePage, maintenance etc. are plugged services and easier to configure.
+<LI>Much better HTTPServer administration in the Launcher's settings dialog
+<LI>XML-Xpath and XSL support
+</UL>
+
+<H3>Rel4.1.8</H3>
+<UL>
+<LI>Tuning in the NewSystemBrowser
+<LI>ported the ComancheSwiki from Squeak. This is now the default Swiki offered in the ST/X-HTTPServer.
+</UL>
+
+<H3>Rel4.1.7 - official release</H3>
+Incremented the version number, since there were two major bug fixes in
+the VM and the Semaphore handling, which could lead to crash/blocking in certain situations.
+
+
+<H3>Rel4.1.6</H3>
+<UL>
+<LI>More examples on how to generate stand alone (also: headless) applications are provided
+under the projects directory. To start, look at
+<A HREF="misc/onlyInSTX.html"
+   ACTION="doit:FileBrowser openOn:(Filename currentDirectory directory construct:'helloWorld')"
+   INFO="Open a FileBrowser in the 'helloWorld'-directory">
+"projects/helloWorld"
+</A>.
+Sorry windows users: we do not (yet) provide the makefiles for non-unix systems - win32 users who want to
+generate binares have to wait or manually create a makefile.
+<LI><A HREF="programming/goody_soap.html">SOAP</A> package included
+<LI>Another XML parser: <A HREF="programming/goody_xml.html">YAXO</A>
+<LI>HTTP-Server can now be started multiple times (for example, to allow for HTTP
+SWIKI and SOAP to be served on different ports.
+<LI>improved (pluggable) settings dialog
+</UL>
+
+<H3>Rel4.1.5</H3>
+This is mostly a cleanup version - no fundamentally new feature was added;
+<BR>
+However, many fixes have been applied to make the widgets and tools (even) more useful.
+
+<UL>
+<LI>regex package upgraded (see <A HREF="misc/onlyInSTX.html" INFO="Browse it" ACTION="doit:Regex::RxParser autoload. SystemBrowser openInClass:Regex::RxParser class selector:#b_whatsNewInThisRelease">RxParser whatsNewInThisRelease</A>)
+<LI>cleanup, bug fixes and added features in the NewSystemBrowser
+<LI>many bug fixes in various widgets
+<LI>view style beautifications for winXP
+<!-- <LI>show pasted selection in alternative color (will not be replaced by keystroke)
+<BR>(see <A HREF="getstart/TOP.html#SELECTING">Selecting Text</A>)
+-->
+<LI>textDrag from/to textViews (with or without CTRL-key)
+<LI>delayed menu (stay pressed on the Launcher's SystemBrowser Icon...)
+<LI>improved FileBrowser, MenuEditor, BitmapEditor
+<LI>improved Workspace (automatic WorkspaceVariables)
+</UL>
+
+<H3>Rel4.1.4</H3>
+<UL>
+<LI>flyByHelp support
+<LI>codeView menus reorganized
+<LI>fixed win32 stc flags for accepting primitives in the browser (for borland-c)
+<LI><A HREF="tools/misc/TOP.html#METHODFINDER">MethodFinder</A> ported from Squeak (see Launchers Classes-Special Menu)
+<LI>win32 version now correctly handles stack overflow (recursion interrupts)
+<LI>more browser and changeSet enhancements
+<LI>accept: remove unused vars; declare inst & class vars.
+<LI>win32 wrap-call fixes (more non blocking API calls)
+<LI>win32 display improvements & resize bug fixes (minimize/maximize)
+</UL>
+
+<H3>Rel4.1.3 - official release</H3>
+
+<H3>Rel4.1.2 - published</H3>
+<UL>
+<LI>MenuPanel got scroll-buttons (and therefore also: ComboBox and ComboList)
+<LI><A HREF="tools/cbrowser/TOP.html">ChangeBrowser & ChangeSetBrowser</A> enhanced; multiple select, main menu etc.
+<LI>Workspace enhanced; main menu, mult-pages, embedded inspect etc.
+<LI>old SystemBrowser: added a main menu (to make switch to newBrowser easier)
+<LI>stc VW compatibility fix: correctly scans float constants with embedded d (i.e. 1.0d100)
+</UL>
+
+<H3>Rel4.1.1</H3>
+Major release bumped due to changes in the internal object layout (flag bits changed).
+Previous binary code class libraries are not guaranteed to be compatible.
+<UL>
+<LI>16bit unicode string support for win32 version
+<LI>can be compiled/used with the free borland compiler tools (bcc55)
+<LI>can now be executed multiple times under win32
+<LI>winstx.exe (non-console version of stx.exe) works again (win32 only)
+<LI>save a crash-image on SIGPWR signal (unix only)
+<LI>scripting support. You can now use Smalltalk/X scripts much
+like tcl, awk, perl or any other scripting language (see README_ALSO and demos in goodies/rdoit).
+<LI>SourceCodeManager supports multiple CVS repositories
+<!-- <LI>Window migration (take your windows with you, when you walk to another terminal ;-)
+-->
+<LI>new, much improved <A HREF="tools/newbrowser/TOP.html">New System Browser</A> (enable via the settings-tools menu)
+<LI><A HREF="tools/misc/TOP.html#SUNIT">SUnit testframework GUI</A> (thanks to Samuel, Travis, Kent and the Camp Smalltalk people)
+<LI>Original RefactoringBrowser is almost working (but have a look at the ''New System Browser'' ...)
+<LI>new tool: <A HREF="tools/sbrowser/hints.html#IMAGE_BROWSER">SnapShotImageBrowser</A> - allows old images to be browsed (see FileBrowsers Tools Menu)
+<LI>fixes and changes for hpux XServer settings
+<LI>hpux version tuned & fixed
+<LI>new oracle8i interface library
+<LI>exceptionHandling (class based exceptions, VW compatibility)
+<LI>additional widget functionality & GUI builder attributes (snap in VariablePanel, menu for Labels, many additional channels and callBacks)
+<LI>great new goody: Chicks-Eyes; you must have it !  ;-) [see Launcher-Demos-SimpleAnimations menu]
+</UL>
+
+<H3>Rel3.6.4 - published</H3>
+
+<H3>Rel3.6.3</H3>
+<UL>
+<LI>new menuBuilder attributes: 'hideAfterActivation' & 'busyCursorDuringActivation'
+<LI>arbitraryComponent - supports pluggable aspects (see GUI builders subAspects sections
+and <A HREF="programming/pluginComponents.html">"Component plugin scheme"</A>)
+
+<LI>subCanvas - supports pluggable aspects (see GUI builders subAspects sections
+and <A HREF="programming/pluginComponents.html">"Component plugin scheme"</A>)
+
+<LI>noteBook - better tabbing and acceleratorKey support; more control over look in GUI builder
+<LI>compatibility - more VW compatibility (for RefactoryBrowser)
+<LI>code formatter (ported from RefactoryBrowser) almost usable ;-)
+<LI>some additional goodies added to the browser and guiPainter
+<LI>ST/X finally got a splash image (under unix) !; can be changed or disabled
+via the "showBanner.rc"/"hideBanner.rc" scripts.
+</UL>
+
+<H3>Rel3.6.2 - eXept customer release</H3>
+
+<H3>Rel3.6.1 - published</H3>
+
+<H3>Rel3.5.6</H3>
+<UL>
+<LI>ROSE-MDL Parser and class-code generator added
+</UL>
+
+<H3>Rel3.5.5</H3>
+<UL>
+<LI>new file organization scheme - resources, bitmaps and sources
+are now located under the corresponding packages directory
+(/opt/smalltalk/packages/xxx).
+<BR>
+This avoids conflicts, when the same name appears in multiple packages.
+
+<LI>integrated Java virtual machine support and support classes.
+<BR>See <A HREF="programming/java.html">Java support</A> for more details.
+
+<LI>AddOn packages for <A HREF="programming/crypt.html">Cryptography</A>,
+and <A HREF="programming/smartcard.html">Smartcard interfacing</A>
+are now available as extra (non-free) addOn packages.
+
+<LI>started to port the <A HREF="programming/goody_refact.html">RefactoryBrowser</A> - not yet finished, but provided "as is" for hacking.
+<LI>started to add some Squeak compatibility support - not yet finished
+<LI>started to port the squeak morphic package - not yet finished, but provided "as is" for hacking.
+</UL>
+
+<H3>Rel3.5.4</H3>
+<UL>
+<LI>much improved Make.proto, Makefile etc. generation (for stc compilation of class libraries).
+<LI>first preRelease of the ProjectBrowser available.
+<LI><A HREF="programming/goody_xml.html">XML parser</A> ported to ST/X.
+<LI>mouseWheel support under windows; slow scroll with SHIFT+wheel, fast scroll with CTRL+wheel.
+</UL>
+
+<H3>Rel3.5.3</H3>
+<UL>
+<LI>Added support for class-based exceptions. Started to convert existing signal code.
+Tuned the exception code to avoid generating throw-away full blocks.
+<LI>Ported the PluggableWebServer code to run with HTTPServer (see PWS namespace).
+<BR>The HTTPServer is a merged version of the
+Squeak WebServer and our own old HTTPServer class, which supports both built-in and plugged actions,
+keepAlive connections, file access with file caching, temporary links and
+improved error handling (see <A HREF="programming/goody_webserv.html">WWW Server documentation</A>).
+
+<LI>The ChangeBrowser is now able to show a Squeak sourceFile.
+
+<LI>New improved VersionDiffBrowser, which shows changes on a per-method
+basis (the old diff displayed the whole-class diffs)
+
+<LI>New improved replacement classes for ListView, SelectionInListView and TreeView:
+ListModelView, SelectionInListModelView and HierarchicalListView.
+
+</UL>
+
+<H3>Rel3.5.2</H3>
+<UL>
+
+<LI><A HREF="programming/tdv.html">TDV (Technical Data Viewer)</A> 3D data visualization framework
+
+<LI>OpenGL interface library
+
+<LI>Workspace variables
+
+<LI>Immediate selector checks - checks for valid message selector,
+while you type (must be enabled in the settings-source&amp;debugger dialog)
+
+<LI>AddOn packages for <A HREF="programming/asn1.html">ASN1-Parsing</A>,
+<A HREF="programming/osi_rose.html">OSI-ROSE</A>
+and <A HREF="programming/osi_cmis.html">OSI-CMIS</A>
+protocols are now available
+as extra (non-free) addOn packages.
+
+<LI>Tuned LargeInteger arithmetic (had to do some cryptographic stuff).
+
+<LI>Changed (&amp; fixed) the keyboardFocus handling.
+<BR>It is now possible, to configure either focus-follows-mouse or click-to-focus
+mode from the launcher's misc-settings menu.
+
+</UL>
+
+
+<H3>Rel3.5.1</H3>
+<UL>
+<LI>ExternalTopWindow Support - allows ST/X to play in a window
+provided by another (non Smalltalk) application.
+<LI>New widget: Extended ComboBox.
+<LI>Bug fixes &amp; enhancements in the Image Editor
+</UL>
+
+<H3>Rel3.4.9</H3>
+<UL>
+<LI>New widgets: PieChartWidget, BarChartWidget, MeterClackCounter.
+<LI>More FileBrowser functions;
+<LI>Additional tools &amp; goodies: Telnet goody; Shell Terminal;
+<LI>better search functions in the systemBrowser;
+<LI>enhanced dataSet widget.
+</UL>
+
+<H3>Rel3.4.8</H3>
+<UL>
+<LI>Support for <A HREF="programming/processes.html#DYNAMICPRIOS">dynamic process priorities</A>.
+<LI>Beta release for Win-NT / Win-95 (x86 Architecture).
+</UL>
+
+<H3>Rel3.4.7</H3>
+<UL>
+<LI>Beta JIT-compiler support released for rs6k (aix) CPU.
+<LI>Pseudo TTY support (for terminal emulators).
+</UL>
+
+<H3>Rel3.4.6</H3>
+<UL>
+<LI><A HREF="programming/cparser.html">CType class hierarchy and CParser</A> to read C-language include files
+(available as addOn for the full commercial version)
+<P>
+
+<LI>UserAbort key (CTRL-Y) to interrupt a window-process without entering
+the debugger.
+</UL>
+
+<H3>Rel3.4.5</H3>
+<UL>
+<LI>Beta JIT-compiler support released for alpha and mc68k CPU's.
+<BR>
+The alpha JIT-compiler is a preRelease and does not generate optimized
+code (yet).
+<BR>
+This is the first and final version, which supports JIT-compilation
+for the mc68k - it will no longer be maintained in the future.
+</UL>
+
+<H3>Rel3.4.4</H3>
+<UL>
+
+<LI>Preliminary versions of the application- and library builder are included;
+sorry - no documentation yet (will be made available via WWW).
+<BR>
+Also includes a preliminary version of the new changes browser.
+<P>
+MessageTracer allows placing a trap on an instvar change in some object.
+<P>
+SyntaxColoring (enable in the Launcher's <I>"source &amp; debugger"</I> settings dialog).
+</UL>
+
+<H3>Rel3.4.3</H3>
+<UL>
+
+<LI>the JIT-compiler is now released for sparc, mips and i386 CPU's.
+JIT support for other architectures (hppa, alpha, rs6k &amp; 68k) is implemented,
+but not yet released.
+</UL>
+
+<H3>Rel3.4.2</H3>
+<UL>
+<LI>the VM now understands Java bytecodes and dynamically switches to Java
+execution, when a java-encoded method is encountered. However,
+the Java support system is not delivered with the standard system - it will be
+available soon as an add-on package.
+<P>
+
+<LI>very useful <i>"ref chains"</I> menu item in the memoryUsage monitor,
+to find object references
+(i.e. to answer the question: "why is this instance not garbage collected").
+<P>
+
+<LI>new widgets to display a collection of graphs in either 2D or 3D style.
+<P>
+</UL>
+
+<H3>Rel3.4.1</H3>
+
+<UL>
+<LI>the launcher has been rewritten using the GUI painter tool and can
+be opened via the <I>"New Launcher"</I> menu item in the (old launchers)
+<I>"tools"</I> menu.
+<P>
+
+<LI>improved GUI painter &amp; associated tools (MenuEditor, ImageEditor ...).
+<P>
+
+<LI>editTextViews can be configured to simulate other cursor editors behavior
+which cannot be positioned past the end of a line or past the last line of the text.
+<P>
+
+<LI>panels can be configured to ignore invisible components
+<P>
+
+<LI>more file formats supported in image save functions. (PBM, GIF and BMP)
+<P>
+</UL>
+
+<H3>Rel3.3.2</H3>
+<UL>
+<LI>the GUI menu builder is now included as a preliminary beta version.
+<BR>Similar to the GUI builder in operation, this allows menus to be defined
+and installed interactively.
+<P>
+
+<LI>the HTML Viewer now supports jis and big5 fonts (japanese &amp; chinese encodings).
+The documentation includes a japanese top page for demonstration.
+<P>
+</UL>
+
+<H3>Rel3.3.1</H3>
+<UL>
+<LI><CITE>ST/X</CITE> now includes
+a preliminary (beta) version of the
+<A HREF="tools/uipainter/TOP.html">
+GUI interface builder</A>.
+This allows generation of windowSpecs, which are used by the UIBuilder
+framework to dynamically build windows and menus.
+<BR>
+The builder is still being developed, and you are welcome to send comments.
+We are aware of the fact, that it is still unfinished and contains some
+bugs - however, we think that its is useful to include it (despite those bugs),
+to give you an idea of what will come and start playing with it early.
+<BR>
+Sorry - the documentation is not yet finished.
+<P>
+The GUI Builder can be opened from the launcher's <CITE>tools</CITE> menu.
+<P>
+
+<LI>NoteBook widget components have been added, supporting both horizontal
+and vertical tabs.
+<P>
+
+<LI>horizontal-only-scrollable views are now supported.
+ScrollBars may be enabled/disabled dynamically by the program,
+or the scrollableView be configured to do it automatically.
+<P>
+
+<LI>All system classes have been investigated and fixed for being
+threadsafe. <CITE>ST/X</CITE> runs with preemptive scheduling enabled (see Launchers settings menu).
+<P>
+
+<LI>Moved most examples into separate namespaces, to avoid name conflicts with 'real'
+applications.
+<P>
+
+<LI>Support for <A HREF="programming/language.html#NAMESPACES">multiple namespaces</A>.
+<P>
+
+<LI>New number class: <CODE><A HREF="misc/onlyInSTX2.html" ACTION="html:HTMLDocGenerator htmlDocOf:FixedPoint">FixedPoint</A></CODE>, to support business applications
+<P>
+
+<LI>Reclaimed <A HREF="programming/finalization.html">WeakArray</A> slots are now set to 0 (zero); used to be nil in
+previous versions.
+<P>
+
+<LI>Support for <A HREF="programming/language.html#PRIVATECLASSES">private classes</A>.
+<P>
+
+<LI>Just in time compilation of bytescodes to machine code (currently, this is not
+implemented for all architectures).
+<P>
+
+<LI><A HREF="BOOK.html">Document printing support</A> - prints HTML documents, automatic
+chapter numbering &amp; generates a table of contents.
+<P>
+
+<LI>Generated <A HREF="classDoc/TOP.html">class documentation</A> - always up-to-date.
+<P>
+
+<LI>Builtin <A HREF="tools/htmlViewer/TOP.html">HTML browser</A> with Smalltalk interaction,
+scripts and Smalltalk applet support.
+<P>
+
+</UL>
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../icons/stx.gif" ALT="[stx-logo]">
+<BR>
+Copyright &copy; 1996-2017 Claus Gittinger Development &amp; Consulting, all rights reserved
+<BR>
+Copyright &copy; 2003-2017 eXept Software AG, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+</BODY>
+
+<HR>
+Doc $Revision: 1.365 $ $Date: 2018-05-12 07:10:08 $
+</BODY>
+</HTML>

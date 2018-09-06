@@ -1,0 +1,239 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - JavaScript Compiler and Interpreter</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="goody_sunrpc.html"> <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html"> <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="goody_scripting.html"> <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>JavaScript Compiler and Interpreter</H1>
+
+<H2>Overview</H2>
+
+This framework provides a JavaScript language parser and bytecode compiler,
+which uses the underlying Smalltalk bytecode and dynamic machine code interpreter.
+This results in a JavaScript implementation with excellent performance.
+
+<H2>Syntax</H2>
+
+The standard JavaScript syntax is supported:
+
+<H2>Semantic Differences</H2>
+Some tradeoffs had to be made, in order to avoid confusion,
+when interfacing/mixing JavaScript and Smalltalk code.
+<BR>
+The biggest differences are:
+
+<H3>1-based array indexing</H3>
+In order to allow reuse of the rich collection protocol without numerous
+index confusions, and to allow for transparent use of either Smalltalk or JavaScript
+code in a method's implementation, this JavaScript uses 1-based array indexing.
+<BR>
+This means, that in contrast to other JavaScript systems (which use 0-based indexing),
+an array's first element has an index of 1.
+The array's last element has the index "<CODE>array.size</CODE>".
+
+<H3>Class based object model</H3>
+JavaScript as provided by current browsers implement an object model which is instance
+and array based. Slots may be dynamically added in order to add methods (function slots).
+<br>
+The ST/X JavaScript implementation uses the existing Smalltalk object model.
+
+<H3>Special Features</H3>
+
+<H4>Access to the full Smalltalk environment</H4>
+All of Smalltalk's classes can be accessed by global names and their message protocol.
+This includes a classes class-protocol.
+<br>
+Thus, it is possible to write:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+openWindow() {
+    var view, panel, button;
+    function closeView() { view.destroy(); };
+
+    view = new StandardSystemView;
+    view.width (100);
+    view.height (100);
+    view.add( panel = new VerticalPanelView );
+
+    button = new Button;
+    button.label("Press me");
+    button.action( closeView );
+
+    panel.add( button );
+
+    view.open();
+}
+</PRE></CODE></TD></TR></TABLE>
+
+the full metaclass protocol is accessible. Therefore, instead of:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+    ...
+    view = new StandardSystemView;
+    ...
+</PRE></CODE></TD></TR></TABLE>
+you can also write:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+    ...
+    view = StandardSystemView.new();
+    ...
+</PRE></CODE></TD></TR></TABLE>
+
+
+
+
+<H4>Inner Functions (Closures)</H4>
+Inner functions are supported and mapped onto the block mechanism of Smalltalk.
+These inner functions have access to and close over variables as visible by scoping rules
+(i.e. they are closures).
+Closures can be passed around as argument, returned from a function or stored into other objects.
+<br>
+The following example demonstrates this:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+fooMethod() {
+    var pre = "from within: ";
+
+    function outputEach(val){
+	Transcript.show(pre);
+	Transcript.showCR( val);
+    };
+
+    var lines = [
+		    "hello world" ,
+		    "these are some" ,
+		    "messages" ,
+		    "from" ,
+		    "a javaScript" ,
+		    "method." ,
+		];
+
+    lines.do( outputEach );
+}
+</PRE></CODE></TD></TR></TABLE>
+
+of course, inner functions can also be used in an expression,
+as in:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+fooMethod() {
+    var lines = [
+		    "hello world" ,
+		    "these are some" ,
+		    "messages" ,
+		    "from" ,
+		    "a javaScript" ,
+		    "method." ,
+		];
+
+    lines.do( function(val) { Transcript.showCR( val); }; );
+}
+</PRE></CODE></TD></TR></TABLE>
+
+As we use 1-based indexing,
+an explicit loop would look like:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+fooMethod() {
+    var lines = [
+		    "hello world" ,
+		    "these are some" ,
+		    "messages" ,
+		    "from" ,
+		    "a javaScript" ,
+		    "method." ,
+		];
+
+    for (var i = 1; i &lt;= lines.size(); i++) {
+	Transcript.showCR( lines[i] );
+    }
+}
+</PRE></CODE></TD></TR></TABLE>
+
+<p></p>
+Another typical use of inner functions is as a sort criteria:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+fooMethod() {
+    function outputEach(val) {
+	Transcript.showCR( val);
+    };
+
+    function sortFunction(line1, line2) {
+	return line1.asLowercase() &lt; line2.asLowercase();
+    }
+
+    var lines, sortedLines;
+
+    lines = [
+		    "hello world" ,
+		    "these are some" ,
+		    "messages" ,
+		    "from" ,
+		    "a javaScript" ,
+		    "method." ,
+	    ];
+
+    sortedLines = lines.sort(sortFunction);
+
+    sortedLines.do( outputEach );
+}
+</PRE></CODE></TD></TR></TABLE>
+
+
+<H2>Usage</H2>
+JavaScript can be used as an embedded scripting language or as implementation language in the browser.
+<BR>
+It is also used by the <A HREF="goody_scripting.html">remote scripting service</A>.
+
+<P>
+The standAlone smalltalk-to-c compiler (stc) does not support JavaScript syntax.
+This will be made available in the future as a non-free addOn.
+
+<H2>Debugging</H2>
+
+The Smalltalk debugger handles both Smalltalk and JavaScript code transparently.
+This includes access to local variables, single stepping etc.
+<br>
+For example, try single stepping after the "<CODE>halt</CODE>" in:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+squaresMethod() {
+    halt();
+    for (var i = 1; i &lt;= 10; i++) {
+	Transcript.show( i );
+	Transcript.show( " " );
+	Transcript.show( i*i );
+	Transcript.cr;
+    }
+}
+</PRE></CODE></TD></TR></TABLE>
+
+
+<H2>Examples</H2>
+
+To be added.
+
+
+<H2>No Warranty</H2>
+This goody is provided AS-IS without any warranty whatsoever.
+
+
+<H2>Origin/Authors</H2>
+<BR>
+    Claus Gittinger
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 2005 eXept Software AG
+
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.12 $
+</BODY>
+</HTML>

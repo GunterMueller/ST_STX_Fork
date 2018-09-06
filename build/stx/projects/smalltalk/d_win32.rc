@@ -1,0 +1,24 @@
+"*
+ * Encoding: iso8859-1
+ *
+ * $Header$
+ *
+ * MIMEType: application/x-smalltalk-source
+ *
+ * ST/X startup configuration file:
+ * display configuration - windows
+ *
+ * This file used to define keyboard mapping for more Windows-like feel.  
+ * Hoever, mappings have been unified and moved to
+ * 
+ *    DeviceWorkstation class>>defaultKeyboardMapDefinition
+ *
+ * Eventually, this file will vanish. 
+ * 
+ * Put all your customizations to some `rc.d` file and or to your private
+ * startup script. 
+ *" 
+!
+StandardSystemView takeFocusWhenMapped:true.
+!
+

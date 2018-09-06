@@ -1,0 +1,105 @@
+;
+; $Header: /cvs/stx/stx/clients/DrawTool/resources/DrawTool.rs,v 1.3 2014-06-21 10:59:01 cg Exp $
+;
+; DrawTool resources
+
+FONTFAMILY        'helvetica'
+FONTFACE          'medium'
+FONTSTYLE         'roman'
+FONTSIZE          12
+
+#if (Language == #de)
+
+file                   'Datei'
+edit                   'Bearbeiten'
+font                   'Schrift'
+form                   'Form'
+extra                  'Extra'
+pattern                'Muster'
+line                   'Linie'
+pen                    'Stift'
+foreground             'Vordergrund'
+background             'Hintergrund'
+
+new                    'neu'
+'open ..'              'öffnen ..'
+'load ..'              'laden ..'
+save                   'sichern'
+'save as ...'          'sichern als ..'
+'import ..'            'Bild importieren ..'
+print                  'drucken'
+quit                   'beenden'
+
+copy                   'kopieren'
+cut                    'ausschneiden' "/ 'löschen'
+paste                  'einfügen'
+
+larger                 'größer'
+smaller                'kleiner'
+normal                 'normal'
+bold                   'fett'
+italic                 'kursiv'
+'bold italic'          'fett-kursiv'
+'font panel ...'       'Auswahl ...'
+
+'grid on'              'auf Raster ausrichten'
+'grid off'             'nicht auf Raster ausrichten'
+'show grid'            'Raster einblenden'
+'hide grid'            'Raster ausblenden'
+inches                 'Inch'
+millimeter             'Millimeter'
+'show ruler'           'Maßstab einblenden'
+'hide ruler'           'Maßstab ausblenden'
+'page size'            'Seitengröße'
+'other ...'            'andere ...'
+'zoom factor (percent):'   'Zoomfaktor (in Prozent):'
+'image color resolution'   'Farbauflösung bei Bildern'
+'\c low'                   '\c niedrig'
+'\c high'                  '\c hoch'
+'\c medium'                '\c mittel'
+zoom                       'Skalierung'
+preview                    'Vorschau'
+
+change                  'ändern'
+
+
+'a6'                   'A6'
+'a5'                   'A5'
+'a4'                   'A4'
+'a3'                   'A3'
+'a2'                   'A2'
+'a1'                   'A1'
+'letter'               'US-letter'
+'a6 landscape'         'A6 quer'
+'a5 landscape'         'A5 quer'
+'a4 landscape'         'A4 quer'
+'a3 landscape'         'A3 quer'
+'a2 landscape'         'A2 quer'
+'a1 landscape'         'A1 quer'
+'letter landscape'     'US-letter quer'
+
+'to front'             'nach vorne bringen'
+'to back'              'nach hinten bringen'
+'flip horizontal'      'horizontal spiegeln'
+'flip vertical'        'vertikal spiegeln'
+'rotate cw'            'rotieren im Uhrzeigersinn'
+'rotate ccw'           'rotieren gegen Uhrzeigersinn'
+'align left'           'links bündig machen'
+'align right'          'rechts bündig machen'
+'align top'            'oben bündig machen'
+'align bottom'         'unten bündig machen'
+'select all'           'alles auswählen'
+group                  'gruppieren'
+ungroup                'Gruppierung auflösen'
+
+'open file:'               'Datei öffnen:'
+'load objects from file:'  'Objekte laden von:'
+'save as:'                 'sichern in Datei:'
+'Filename of image:'       'Bild importieren von:'
+
+abort                  'Abbruch'
+open                   'öffnen'
+save                   'sichern'
+load                   'laden'
+import                 'importieren'
+#endif

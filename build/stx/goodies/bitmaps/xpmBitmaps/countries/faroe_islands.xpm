@@ -1,0 +1,30 @@
+/* XPM */
+static char *faroe_islands_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 20 3 1",
+/* colors */
+"a c #2000C0",
+"b c #FF6060",
+"c c white",
+/* pixels */
+"ccccccccaabbbbaacccccccccccccccc",
+"ccccccccaabbbbaacccccccccccccccc",
+"ccccccccaabbbbaacccccccccccccccc",
+"ccccccccaabbbbaacccccccccccccccc",
+"ccccccccaabbbbaacccccccccccccccc",
+"ccccccccaabbbbaacccccccccccccccc",
+"aaaaaaaaaabbbbaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaabbbbaaaaaaaaaaaaaaaaaa",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"aaaaaaaaaabbbbaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaabbbbaaaaaaaaaaaaaaaaaa",
+"ccccccccaabbbbaacccccccccccccccc",
+"ccccccccaabbbbaacccccccccccccccc",
+"ccccccccaabbbbaacccccccccccccccc",
+"ccccccccaabbbbaacccccccccccccccc",
+"ccccccccaabbbbaacccccccccccccccc",
+"ccccccccaabbbbaacccccccccccccccc",
+};

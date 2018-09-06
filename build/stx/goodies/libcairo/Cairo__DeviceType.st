@@ -1,0 +1,87 @@
+"{ Package: 'stx:goodies/libcairo' }"
+
+"{ NameSpace: Cairo }"
+
+SharedPool subclass:#DeviceType
+	instanceVariableNames:''
+	classVariableNames:'CAIRO_DEVICE_TYPE_DRM CAIRO_DEVICE_TYPE_GL
+		CAIRO_DEVICE_TYPE_SCRIPT CAIRO_DEVICE_TYPE_XCB
+		CAIRO_DEVICE_TYPE_XLIB CAIRO_DEVICE_TYPE_XML
+		CAIRO_DEVICE_TYPE_COGL CAIRO_DEVICE_TYPE_WIN32
+		CAIRO_DEVICE_TYPE_INVALID'
+	poolDictionaries:''
+	category:'Cairo-Constants'
+!
+
+
+!DeviceType class methodsFor:'initialization'!
+
+initialize
+
+    CAIRO_DEVICE_TYPE_DRM := 0.
+    CAIRO_DEVICE_TYPE_GL := 1.
+    CAIRO_DEVICE_TYPE_SCRIPT := 2.
+    CAIRO_DEVICE_TYPE_XCB := 3.
+    CAIRO_DEVICE_TYPE_XLIB := 4.
+    CAIRO_DEVICE_TYPE_XML := 5.
+    CAIRO_DEVICE_TYPE_COGL := 6.
+    CAIRO_DEVICE_TYPE_WIN32 := 7.
+    CAIRO_DEVICE_TYPE_INVALID := -1.
+! !
+
+!DeviceType class methodsFor:'constants'!
+
+CAIRO_DEVICE_TYPE_COGL
+
+    ^CAIRO_DEVICE_TYPE_COGL
+!
+
+CAIRO_DEVICE_TYPE_DRM
+
+    ^CAIRO_DEVICE_TYPE_DRM
+!
+
+CAIRO_DEVICE_TYPE_GL
+
+    ^CAIRO_DEVICE_TYPE_GL
+!
+
+CAIRO_DEVICE_TYPE_INVALID
+
+    ^CAIRO_DEVICE_TYPE_INVALID
+!
+
+CAIRO_DEVICE_TYPE_SCRIPT
+
+    ^CAIRO_DEVICE_TYPE_SCRIPT
+!
+
+CAIRO_DEVICE_TYPE_WIN32
+
+    ^CAIRO_DEVICE_TYPE_WIN32
+!
+
+CAIRO_DEVICE_TYPE_XCB
+
+    ^CAIRO_DEVICE_TYPE_XCB
+!
+
+CAIRO_DEVICE_TYPE_XLIB
+
+    ^CAIRO_DEVICE_TYPE_XLIB
+!
+
+CAIRO_DEVICE_TYPE_XML
+
+    ^CAIRO_DEVICE_TYPE_XML
+! !
+
+!DeviceType class methodsFor:'documentation'!
+
+version_HG
+
+    ^ '$Changeset: <not expanded> $'
+! !
+
+
+DeviceType initialize!

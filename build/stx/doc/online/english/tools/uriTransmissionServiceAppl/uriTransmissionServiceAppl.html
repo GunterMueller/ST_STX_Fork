@@ -1,0 +1,201 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+	<TITLE>Zuordnungen f&uuml;r automatische Datei&uuml;bertragungen</TITLE>
+</HEAD>
+<BODY>
+<P>
+<A NOPRINT ONCLICK="window.history.back()">
+    <IMG SRC="../../../icons/DocsUpArrow.gif"
+	NAME="Grafik4"
+	 Alt="DocsUpArrow.gif"
+	ALIGN="BOTTOM" BORDER="0">
+  </A>
+</P>
+<P><BR></P>
+<HR>
+<P><BR></P>
+
+<H2>Zuordnungen f&uuml;r automatische Datei&uuml;bertragungen</H2>
+
+
+<P>
+Mit dieser Applikation k&ouml;nnen verschiedene automatischer Datei&uuml;bertragungen eingerichtet werden.
+Es ist m&ouml;glich, sowohl einzelne Quelldateien zu &uuml;bertragen als auch die gesamten Dateien eines
+Quellverzeichnisses.
+</P>
+<P>
+Die Datei&uuml;bertragung kann durch Angabe eines Intervals (Minuten) zyklisch wiederholt werden.
+Diese Angabe ist optional.
+</P>
+<P>
+Die Quelldateien werden nach der &Uuml;bertragung folgenderma&szlig;en umbenannt:
+<BR>
+  - file: verschiebt die lokalen Dateien in das definierte Unterverzeichnis history.<BR>
+  - ftp:  benennt die remote Dateien in *.old um.
+</P>
+
+
+uriTransmission.gif
+<P><IMG
+    SRC="uriTransmission.gif"
+    ALT="[Abb: uriTransmission.gif]"
+    NAME="Grafik2" ALIGN=LEFT BORDER=0>
+</P>
+<P><B>Abbildung:</B> Automatische Datei&uuml;bertragungen bearbeiten</P>
+
+
+<P><BR></P>
+<HR>
+<P><BR></P>
+
+<H3>URI</H3>
+
+<P>
+Alle Datei- und Verzeichnisangaben setzen sich aus URIs zusammen.
+</P>
+<P>
+Ein URI (Universal Resource Identifier - universelle Quellenbezeichnung) besteht aus der Angabe des scheme, z.B. file oder ftp, gefolgt von
+einem Doppelpunkt. Dahinter kann - das ist von Protokoll zu Protokoll verschieden - eine Zusatzangabe
+zu einem lokalen Netzwerknamen möglich sein. Diese Angabe wird in zwei Schrägstriche // eingeschlossen.
+Bei den meisten Adressen gibt es keine solche Angabe, weshalb die beiden Schrägstriche dort einfach ohne
+Inhalt nebeneinanderstehen.
+</P>
+<P>
+Hinter diesen Angaben folgt die Adresse des Hostrechners im Netz, auf dem sich die Datenquelle befindet.
+Das kann ein Domain-Name oder eine numerische IP-Adresse sein.
+</P>
+<P>
+Dahinter folgt schließlich die lokale Pfadangabe zur gewünschten Datenquelle. Egal um welches
+Betriebssystem es sich dabei handelt - Verzeichnispfade werden stets durch einfache Schrägstriche getrennt.
+Es ist Aufgabe der Server-Software auf dem Rechner, die Pfadangaben korrekt aufzulösen. Auf diese Weise
+brauchen Sie sich keine Gedanken zu machen, welches System der angesprochene Rechner benutzt.
+</P>
+<P>
+F&uuml;r die URIs kann ein spezieller Editor ge&ouml;ffnet werden, der zur komfortablen
+Bearbeitung der einzelnen Komponenten konstruiert ist.
+</P>
+<P>
+Auf dem Rechner k&ouml;nnen beliebige Dateien und Datenquellen angesprochen werden. Voraussetzung ist,
+dass sie über das angegebene Protokoll wie z.B. ftp unter der Adressierung erreichbar sind.
+</P>
+<P>
+Ebenso kann eine Auswahl von Dateien mit einer bestimmten Dateiendung angegeben werden.
+</P>
+
+<DL>
+<P>Beispiele für URIs:</P>
+<DD>file:/home/dokumentation/preasentation.pdf
+<DD>ftp://www.ihr-guter-name.de/home/dokumentation/preasentation.pdf
+<DD>file:~/outgoing/*.res
+</DL>
+
+<P>
+<P><HR></P>
+
+<H3>Service f&uuml;r automatische Datei&uuml;bertragungen</H3>
+<P>
+Der Service wird mit Angabe einer Datei, aus der die Definitionen der Datei&uuml;bertragungszuordnungen gelesen werden, gestartet.
+Der Service h&auml;lt sich dann die Liste mit den ausgelesenen Datei&uuml;bertragungszuordnungen und arbeitet diese der Reihe nach ab.
+Die Abarbeitung der Liste erfolgt automatisch nach einer definerten Pause immer wieder.
+Jedoch wird jedesmal zuvor gepr&uuml;ft, ob sich die Datei ver&auml;ndert hat, und folglich die Liste mit Datei&uuml;bertragungszuordnungen aktualisiert wird.
+
+</P>
+
+<P><HR></P>
+
+<H3>Zuordnungen von Datei&uuml;bertragungen</H3>
+</P>
+<UL>
+    <LI><B>Read from URI</B><BR>
+	Quelldatei oder Dateien im Quellverzeichnis, die &uuml;bertragen werden soll.
+    <LI><B>Write to URI</B><BR>
+	Zieldatei oder Zielverzeichnis in die geschrieben werden soll.
+    <LI><B>Interval</B> (optional)<BR>
+	Zeitangabe in Minuten, wann die &Uuml;bertragung zyklisch wiederholt werden soll.
+</UL>
+
+<P><BR></P>
+<P>Beispiele f&uuml;r Datei&uuml;bertragungen:</P>
+<P><BR></P>
+<P>
+1. Eine lokale Quelldatei /home/outgoing/test.dat soll in das lokales Verzeichis /home/incoming/ kopiert werden.
+</P>
+<TABLE BORDER CELLPADDING=4 CELLSPACING=1>
+	<TR>
+		<TH>Read from URI</TH>
+		<TH>Write to URI</TH>
+	</TR>
+	<TR>
+		<TD>file:/home/outgoing/test.dat</TD>
+		<TD>file:/home/incoming/</TD>
+	</TR>
+</TABLE>
+
+
+<P>
+2. Eine lokale Quelldatei /home/outgoing/test.dat soll in das Verzeichis /home/incoming/ auf einem entfernten Rechnersystem kopiert werden.
+</P>
+<TABLE BORDER CELLPADDING=4 CELLSPACING=1>
+	<TR>
+		<TH>Read from URI</TH>
+		<TH>Write to URI</TH>
+	</TR>
+	<TR>
+		<TD>file:/home/outgoing/test.dat</TD>
+		<TD>ftp://www.remotehost.de/home/incoming/</TD>
+	</TR>
+</TABLE>
+
+<P>
+3. Eine lokales QuellVerzeichis home/outgoing/ soll in das Verzeichis /home/incoming/ auf einem entfernten Rechnersystem kopiert werden.
+</P>
+<TABLE BORDER CELLPADDING=4 CELLSPACING=1>
+	<TR>
+		<TH>Read from URI</TH>
+		<TH>Write to URI</TH>
+	</TR>
+	<TR>
+		<TD>file:/home/outgoing/</TD>
+		<TD>ftp://www.remotehost.de/home/incoming/</TD>
+	</TR>
+</TABLE>
+
+
+<P>
+4. Eine lokales QuellVerzeichis /home/outgoing/ soll in das Verzeichis /home/incoming/ auf einem entfernten Rechnersystem kopiert werden,
+und alle 60 Minuten wiederholt werden.
+</P>
+<TABLE BORDER CELLPADDING=4 CELLSPACING=1>
+	<TR>
+		<TH>Read from URI</TH>
+		<TH>Write to URI</TH>
+		<TH>Interval</TH>
+	</TR>
+	<TR>
+		<TD>file:/home/outgoing/</TD>
+		<TD>ftp://www.remotehost.de/home/incoming/</TD>
+		<TD>60</TD>
+	</TR>
+</TABLE>
+
+
+<P>
+
+5. Alle Dateien mit der Endung .res eines lokalen QuellVerzeichnis in das Verzeichis /home/incoming/ auf einem entfernten Rechnersystem senden.
+</P>
+<TABLE BORDER CELLPADDING=4 CELLSPACING=1>
+	<TR>
+		<TH>Read from URI</TH>
+		<TH>Write to URI</TH>
+	</TR>
+	<TR>
+		<TD BGCOLOR="#f00000">file:/home/user/send/*.res/</TD>
+		<TD BGCOLOR="#f00000">ftp://www.remotehost.de/home/incoming/</TD>
+	</TR>
+</TABLE>
+
+<P><BR><HR><BR></P>
+
+</BODY>
+</HTML>

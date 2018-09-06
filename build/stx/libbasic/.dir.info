@@ -1,0 +1,38 @@
+This directory contains the basic classes. 
+They are compiled by stc into the library 'libbasic' to be
+linked to your application. It is also needed to build a complete 
+smalltalk (the one you're currently in).
+
+Depending on the configuration and capabilities of your Operating-
+System, the resulting classlibrary is either:
+
+	libbasic.a	- an archive
+
+	libbasic.obj	- a prelinked object library
+
+	libbasic.so	- a shared object
+
+the library includes init code (libbasic_Init) for all of its components.
+
+
+Things you can do here:
+
+    make                compile all classes, producing libbasic
+
+    make objs           compile all object files
+
+    make install	compile all and install in DESTLIBDIR
+
+    make qinstall	only install - assumes binaries are up-to-date
+
+    make check          syntax check only over all .st files
+
+    make <file>.o       compile <file>.st to object-file
+
+    make <file>.c       compile <file>.st to c intermediate
+
+    make <file>.chk     run syntax check on <file>.st
+
+    make clean		clean individual .o-files; leave library
+
+    make clobber	clean everything

@@ -1,0 +1,521 @@
+<HEAD>
+<TITLE>Using the System Browser - Hints</TITLE>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="warn.html">    <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">     <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="settings.html">   <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+
+<H2><A NAME="IMAGE_BROWSER" HREF="TOP.html#I_IMAGE_BROWSER">Browsing a Snapshot Image</A></H2>
+
+  The NewSystembrowser is not yet prepared to browse snapshot images (or, simulated
+  environments in general).
+<BR>
+  For now, please use the old SystemBrowser to do this:
+<PRE>
+    <CODE>SystemBrowser openOnSnapShotImage:</CODE><I>anImageFileName</I>
+</PRE>
+  For more information, please read the corresponding paragraph in the
+  <A HREF="../sbrowser/TOP.html">old Systembrowsers</A> documentation.
+<P>
+
+
+
+<H2><A NAME="HOWTO" HREF="TOP.html#I_HOWTO">How to Perform typical Day-to-Day Tasks</A></H2>
+
+Notice, that the NewSystemBrowser keeps a history, and allows for most changes to
+be undone/redone. These operations are performed via the browser's <VAR>"Operation"</VAR> menu.
+
+
+<H3><A NAME="HOWTO.CREATECLASS" HREF="TOP.html#I_HOWTO.CREATECLASS">Creating a New Class</A></H3>
+
+<UL>
+<LI>select the class category,
+    where the new class shall be included in
+    (if you want to add a new category, use the <VAR>"new class category"</VAR> menu
+    function in the class category list).
+<P>
+<LI>select the <VAR>"new"</VAR>-<VAR>"class"</VAR> item from the classList's popUp menu.
+    This will present a class definition template in the codeview.
+<P>
+<LI>edit the template (change the superclasses name, the class name
+    and add instance and/or class variables as required).
+<P>
+<LI><VAR>"accept"</VAR> i.e. select the <VAR>"accept"</VAR> menu function in the codeview
+or type the shortcut key (<KBD>Ctrl-S</KBD> or <KBD>Alt-A</KBD>)
+<P>
+<LI>it is a good idea to add some documentation now (see below)
+</UL>
+Notice:
+<BR>
+If the new class is installed in a namespace AND hides a corresponding global class,
+methods within that namespace which access the class by its name are recompiled
+(possibly then accessing the new namespace-class).
+
+
+
+<H3><A NAME="HOWTO.RENAMECLASS" HREF="TOP.html#I_HOWTO.RENAMECLASS">Renaming a Class</A></H3>
+
+<UL>
+<LI>select the class and apply the class lists <VAR>"rename ..."</VAR> menu
+    function. You will be asked for a new name.
+<P>
+<LI>After the rename, the browser will search for all references to the old class
+and (if any are found) open a browser on the referencing methods.
+You may or may not want to change those references to the new name.
+</UL>
+Notice:
+<BR>
+If the rename implies a change of the namespace, all methods which access
+the class by its old name are recompiled (possibly then accessing the previously
+hidden global class with the same name).
+<BR>
+Do not rename classes programmatically,  by changing a classes name and/or
+storing it under another key in the Smalltalk dictionary,
+because this will not take care of accessors and especially not recompile them.
+<BR>
+(a program should use <CODE>"Smalltalk renameClass:...to:"</CODE>, instead)
+
+
+
+<H3><A NAME="HOWTO.REMOVECLASS" HREF="TOP.html#I_HOWTO.REMOVECLASS">Removing a Class</A></H3>
+
+<UL>
+<LI>select the class and apply the class lists <VAR>"remove"</VAR> menu
+    function. You are asked to confirm the removal.
+</UL>
+Notice:
+<BR>
+If the removed class was located in some namespace, and a global class
+exists with the same name (i.e. the class has hidden the global class within
+the namespace), all methods which access
+the class by its old name are recompiled (possibly then accessing the previously
+hidden global class).
+<BR>
+Do not remove classes programmatically, by removing it from the Smalltalk dictionary,
+because this will not take care of accessors and especially not recompile them.
+<BR>
+(a program should use <CODE>"Smalltalk removeClass:..."</CODE>, instead)
+
+
+
+
+<H3><A NAME="HOWTO.DOCUMENT" HREF="TOP.html#I_HOWTO.DOCUMENT">Adding Documentation</A></H3>
+
+We suggest you stay with <CITE>Smalltalk/X's</CITE> philosophy of putting the
+documentation into empty methods under the '<CODE>documentation</CODE>' category.
+To do so:
+<UL>
+<LI>select the class
+<P>
+<LI>use the method category list popup menu function <VAR>"add documentation stubs"</VAR>.
+<P>
+<LI>edit these documentation methods and <VAR>"accept"</VAR> them
+</UL>
+
+The advantage of documentation methods vs. a documentation attribute of the class are
+obvious: all of the code-tools (string search, copy, move, etc.) are also available for
+documentation strings. The extra memory required by these empty documentation methods is
+negligible, as the methods text (source) is not stored in the object memory.
+
+
+<H3><A NAME="HOWTO.ADDMETHOD" HREF="TOP.html#I_HOWTO.ADDMETHOD">Adding Methods</A></H3>
+
+<UL>
+<LI>select the class
+<P>
+<LI>select the method category (or create a new method category, by
+	  using the <VAR>"new category"</VAR> menu function in the method category list)
+<P>
+<LI>type in the method into the codeview
+<BR>
+You can also get a method template with the <VAR>"new method"</VAR>
+   menu function in the method lists popup menu. Alternatively, copy and paste some
+code from any other textView, and modify it as appropriate.
+<P>
+<LI><VAR>"accept"</VAR>
+</UL>
+
+
+<H3><A NAME="HOWTO.CHANGEMETHOD" HREF="TOP.html#I_HOWTO.CHANGEMETHOD">Modifying existing Methods</A></H3>
+
+<UL>
+<LI> select class, method category and method; this will bring the
+	  methods source into the codeview.
+<P>
+<LI> edit the methods code as required
+<P>
+<LI> <VAR>"accept"</VAR>
+</UL>
+
+"<VAR>accept</VAR>" installs whatever is currently visible;
+if the methods selector has been changed, a corresponding (possibly new)
+method will be generated - independent of the method which was
+selected in the first place.
+<BR>
+Thus, you can select any other method, to take its source code as a starting
+point for new methods.
+
+
+
+
+<H3><A NAME="HOWTO.REMOVEMETHOD" HREF="TOP.html#I_HOWTO.REMOVEMETHOD">Removing Methods</A></H3>
+
+<UL>
+<LI> select class, method category and method; this will bring the
+	  methods source into the codeview.
+<P>
+<LI> use the <VAR>"remove"</VAR> function from the method lists popup menu
+</UL>
+
+Notice, that the system cannot itself find out, if the method is still
+required - i.e. if there are any message sends which would possibly invoke
+that method (since message sends could be constructed by a <CODE>#perform</CODE>,
+or by evaluating a Smalltalk expression from a string).
+<P>
+Therefore, looking at all senders
+before actually removing any method may not always ensure that the method
+is not needed.
+<BR>
+A good approach is to change the methods visibility to
+<VAR>"ignored"</VAR> instead of removing it. This marks the method as being
+invisible with respect to the method lookup - its still shown in the browser,
+but ignored by the program. Ignored methods may later be removed (or changed back to
+<VAR>"public"</VAR>).
+
+
+
+
+<H3><A NAME="HOWTO.ADDREMOVEINSTVAR" HREF="TOP.html#I_HOWTO.ADDREMOVEINSTVAR">Adding/Removing Instance- or Class Variables</A></H3>
+
+There are two ways to perform this task:
+<UL>
+<LI>use an appropriate menu function from the variable list menu (add,remove or rename)
+</UL>
+or, alternatively,
+<UL>
+<LI> select the class (this will show its definition in the codeview)
+<P>
+<LI> edit the <CODE>'instanceVariableNames'</CODE> or <CODE>'classVariableNames'</CODE>-string
+as required.
+<P>
+<LI> <VAR>"accept"</VAR>
+</UL>
+
+
+<P>
+	Notice:
+<BLOCKQUOTE>
+existing instances of the class will not be affected by this change.
+Instead, the original class will get its category
+changed to <CODE>"obsolete"</CODE> and a new class is installed under the
+original name.
+This means, that existing instances still have a valid class definition around,
+but methods can no longer be added, removed or changed to the old class.
+</BLOCKQUOTE>
+
+In case of a changed class definition (which affects the instance layout),
+the system will recompile all methods that require recompilation.
+Have a look at the Transcript, to see what is going on.
+<BR>
+If the changed class has many subclasses, this may take a while, since
+all subclasses may have to be recompiled.
+
+
+
+<H3><A NAME="HOWTO.WHOSENDS" HREF="TOP.html#I_HOWTO.WHOSENDS">Who Sends a Particular Message</A></H3>
+
+<UL>
+<LI> Select the <VAR>"Senders..."</VAR> item in the method menu
+<BR>
+     This opens a DialogBox asking for the selector of interest.
+<P>
+<LI> Fill in selector to search for. You can use wildcards (i.e. a matchpattern) and/or
+specify a case-ignoring search. Also, the scope of the search can be limited in various ways.
+<BR>
+     (The box will offer a reasonable default text, depending on
+     the context in which you use this function. It will either
+     use the current selection from the code view or the currently
+     selected method. It will even try to interpret the currently selected text
+     and extract the selector from partial expressions).
+</UL>
+The messages sent by the selected method(s) are also offered in a separate
+<VAR>"Senders"</VAR> submenu.
+
+
+
+<H3><A NAME="HOWTO.WHOIMPLEMENTS" HREF="TOP.html#I_HOWTO.WHOIMPLEMENTS">Who Implements a Particular Message</A></H3>
+
+<UL>
+<LI> Select the <VAR>"Implementors...</VAR> item in the method menu
+<BR>
+     This opens a DialogBox asking for the selector of interest.
+<P>
+<LI> Fill in selector to search for. You can use wildcards (i.e. a matchpattern) and/or
+specify a case-ignoring search. Also, the scope of the search can be limited in various ways.
+</UL>
+<P>
+The messages sent by the selected method(s) are also offered in a separate
+<VAR>"Implementors"</VAR> submenu.
+
+
+
+<H3><A NAME="HOWTO.WHOREFERENCESGLOBAL" HREF="TOP.html#I_HOWTO.WHOREFERENCESGLOBAL">Who References a Particular Class or Global</A></H3>
+
+<UL>
+<LI>Select the <VAR>"References to Class or Global"</VAR> menu item from the browse menu
+(this is found in the browser's main menu).
+<P>
+<LI> Enter the name of the global (matchpatterns are allowed)
+</UL>
+<P>
+Notice:
+<BLOCKQUOTE>
+  since classes are (almost) always referenced by globals,
+  this will also find explicit uses of classes.
+  (for example: try searching for <CODE>"Array"</CODE>)
+</BLOCKQUOTE>
+<P>
+ The outcome of the search will be presented in a browser, which
+ has its search pattern preset to the globals name.
+ Thus a search-next (i.e. <KBD>"<B>CMD-F</B>"</KBD>) will place the cursor to the
+ next occurence of the string.
+
+<H4><A NAME="HOWTO.WHOUSESCLASS">Which Methods use the Current Class</A></H4>
+<P>
+If you are interrested in references to the currently selected
+class, there is a shortcut (without a need to type in the class name):
+<UL>
+<LI> Select the <VAR>"Browser on References"</VAR> or
+<VAR>"Buffer with References"</VAR> item in the VAR>"Browse</VAR> submenu of the
+classLists popupMenu
+</UL>
+
+
+
+<H3><A NAME="HOWTO.WHICHMETHOD" HREF="TOP.html#I_HOWTO.WHICHMETHOD">Which Method is Executed if I Sent #foo</A></H3>
+
+Use this to search up the class inheritance for an implementor
+of a particular message.
+<UL>
+<P>
+<LI> Select the <VAR>"Response to..."</VAR> item in the find menu
+(this is found in the browser's main menu)
+<BR>
+     This opens a DialogBox asking for the selector of interest.
+<P>
+<LI> Fill in the selector to search for
+</UL>
+
+
+
+
+<H3><A NAME="HOWTO.WHOREFERENCES" HREF="TOP.html#I_HOWTO.WHOREFERENCES">Which Methods Reference/Modify a Particular Instance Variable</A></H3>
+
+<UL>
+<LI> Select any of the <CODE>"instanceVariable"</CODE> menu items in the
+     variable list menu.
+</UL>
+<BR>
+     A dialog appears, asking for the variables name (matchPatterns are allowed),
+     and the set of classes to limit the search.
+<P>
+ Since searching involves parsing the source code, these functions
+ may take a while to show the result. Limiting the search to the current class
+ or category helps here.
+<P>
+Notice:
+<BR>
+Simply selecting a variables name in this list will
+highlight (underline) all methods in which that variable is accessed.
+<BR>
+In addition, a red color shows modification(s) of that variable(s).
+
+
+
+
+
+
+<H3><A NAME="HOWTO.FINDSTRINGS" HREF="TOP.html#I_HOWTO.FINDSTRINGS">Which Method Contains some String</A></H3>
+This question is often asked, if you have some method producing a message
+or output to some stream, and you want to find out quickly where that happens.
+<BR>
+For example, which method is responsible for the <CODE>"compiled: ..."</CODE> message appearing
+on the transcript when methods are accepted.
+<BR>
+There is no direct search function available for this kind of query.
+However, you can use the substring search functions to (at least) limit the
+number of methods that have to be investigated.
+<UL>
+<LI>Select the <VAR>"string search"</VAR> item from the method list.
+</UL>
+Notice, that since all source code has to be processed,
+this function takes somewhat longer than other queries (<VAR>senders</VAR>/<VAR>implementors</VAR>);
+therefore, if you know the selector which is used,
+the <VAR>senders</VAR> function is probably better.
+<BR>
+Also, if you have any idea of which class (or superclass) the method is
+contained in, limit the search
+to the current class or category.
+
+
+
+
+<H3><A NAME="HOWTO.FINDCODE" HREF="TOP.html#I_HOWTO.FINDCODE">Which Method Contains some Code Construct</A></H3>
+Often, you are searching for occurrences of a particular message construct or
+message-argument combination. In many cases, a pure text search is not sufficient for
+this, as it requires complicated regular expressions to deal with comments, whitespace,
+argument/message names, formatting etc.
+<BR>
+For example, if you want to search for all senders of the <CODE>add:</CODE>-message with a <CODE>nil</CODE>-argument,
+you cannot simply search for the string <CODE>"add:nil"</CODE> (within the list returned
+by allsenders of the <CODE>add:</CODE>-message).
+<BR>
+Although the above does in fact return some results, it still would not find
+sends like "<CODE>"add: nil"</CODE> (i.e. with a space in-between)
+or <CODE>"add: "some comment here" nil"</CODE> (with embedded comment) etc.
+<BR>
+Use the <VAR>"code search"</VAR> menu function, to search using a parse-tree matcher
+algorithm instead of a string match.
+<P>
+The code search allows for very powerful searches - more detailed information is found
+in the refactoring documentation on
+<A HREF="../../help/browser/RBSearchPatterns.html">Code Search Patterns</A>.
+
+
+
+
+<H3><A NAME="HOWTO.FINDRESOURCE" HREF="TOP.html#I_HOWTO.FINDRESOURCE">Which Methods Contain a (Specific) Resource Tag</A></H3>
+
+For fast search, methods can be tagged with a <CODE>"resource:"</CODE> definition;
+this has no semantic meaning, but methods tagged this way can be quickly found,
+without a need to scan its source (there is a corresponding resource-tag-bit in
+the method object, which is much faster to check).
+<P>
+Within <CITE>ST/X</CITE>, methods are marked with the following tags:
+<UL>
+<LI>#keyboard
+<BR>
+methods which do some keyboard event handling and somehow depend on the keyboard map.
+<P>
+<LI>#style
+<BR>
+methods which access the view styleSheet and somehow depend on those definitions.
+</UL>
+Therefore, to find all methods which do keyboard event handling,
+search for a resource named <CODE>"keyboard"</CODE>.
+<P>
+You may either search for a resources key (as above)
+or for some particuler value item;
+for example, all methods which handle the <CODE>"Accept"</CODE> key
+are found by a search for the resource <CODE>"keyboard"</CODE> and a value of "<CODE>Accept"</CODE>.
+<P>
+You can mark your methods with any resource; for example, in a project it
+may be useful to tag methods with things like <CODE>"toBeReviewed"</CODE>,
+<CODE>"toBeTested"</CODE>, <CODE>"preliminary"</CODE> or whatever.
+<BR>
+These methods are later quickly found by searching for an appropriate resource.
+
+<P>
+Sorry, there is no resource search menu item in the browser;
+instead, the launcher offers this in its <VAR>classes</VAR> pull down menu.
+
+
+
+
+<H3><A NAME="HOWTO.CHANGENAMESPACE" HREF="TOP.html#I_HOWTO.CHANGENAMESPACE">Changing a Classes Namespace</A></H3>
+
+There is now a menu item in the class-list-menu for this operation:
+"<VAR>Move to Namespace</VAR>".
+
+
+
+<H3><A NAME="HOWTO.CHANGECATEGORY" HREF="TOP.html#I_HOWTO.CHANGECATEGORY">Changing a Classes Category</A></H3>
+
+There is now a menu item in the class-list-menu for this operation:
+"<VAR>Move to Category</VAR>".
+
+
+
+
+<H2><A NAME="HINTS" HREF="TOP.html#I_HINTS">Hints & Tips</A></H2>
+
+<H3>Prepare Use of the stc Machine Code Compiler</H3>
+
+  If you plan to compile your classes later to binary modules (which is likely the case),
+  use the
+  <VAR>"fileout-each"</VAR> function instead of <VAR>"fileOut"</VAR> in the class category list (*).
+<BR>
+  This will create separate sourcefiles for each class instead of
+  putting them all into one big file.
+  The reason is that the <VAR>stc</VAR>-compiler cannot compile files containing multiple
+  classes, but requires one class per sourcefile (except for private classes).
+<P>
+(*) of course, an even better aproach is to use the source code manager and check the classes
+into a repository, including make- and other build support files.
+<P>
+
+
+<H3>Use Project Directories</H3>
+
+  If you are working in multiple projects, define some per project directory
+  in the project view.
+  The System Browser will always save files into the active project's directory.
+<BR>
+  This avoids having all of your filedOut sourcefiles being saved in one
+  big directory, and helps to structure your project.
+  However, here again we recommend using a source code manager, which will deal with such issues for you)
+<P>
+
+
+<H3>Keep Your Sourcefiles Consistent</H3>
+
+  Do not edit existing sourcefiles with the fileBrowser or
+  another (non-<CITE>ST/X</CITE>) editor while <CITE>ST/X</CITE> is executing within that
+  directory hierarchy. Since methods do not keep the source
+  as a string (but instead the filename and filePosition), editing a sourcefile
+  makes this sourceInfo invalid (you will see funny code in the systemBrowser)
+  in the current Smalltalk executable.
+<BR>
+  Be also careful about overwriting existing sourcefiles when filing out:
+  since the methods source is typically extracted from some sourcefile,
+  overwriting one of them will lead to funny results. All fileOut functions
+  will be changed in upcoming versions to take care about this, but currently
+  you should <STRONG>never fileOut</STRONG> into one of the <CODE>"libXXX"</CODE> directories.
+<P>
+  You have to recompile that file and relink a new Smalltalk executable
+  to fix things.
+<P>
+  If you see funny sourcecode in the browser, do NEVER <VAR>fileOut</VAR> these -
+  the resulting sourcefile may be completely useless.
+<P>
+  The above consistency problem does not apply, if the sourceCode manager is
+  used; if enabled, the sourceCode manager can figure out the classes actual
+  version, and extract the corresponding source version from the
+  repository - even if newer versions of the same class are present
+  in local source files or in the repository.
+<P>
+  Especially if you do not use a sourceCode manager (but also if you do, to prevent trouble),
+  use two parallel source and execution hierarchies - one from which
+  you execute the current release, and another, on which the next one is maintained.
+  Exchange the two, whenever a stable, tested new release has been built in the other
+(not-executed) hierarchy.
+
+<HR>
+<A HREF="settings.html">Next: Settings</A>
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif" ALT="[stx logo]">
+Copyright &copy; 2000 eXept Software AG, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+<HR>
+Doc $Revision: 1.13 $ $Date: 2017-11-25 12:01:31 $
+
+</BODY>
+</HTML>

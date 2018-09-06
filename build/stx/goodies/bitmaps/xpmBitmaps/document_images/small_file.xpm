@@ -1,0 +1,29 @@
+/* XPM */
+static char *small_file_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"20 19 3 1",
+/* colors */
+"  c none",
+"a c white",
+"b c black",
+/* pixels */
+"bbbbbbbbbbbbbb      ",
+"baaaaaaaaaaaabb     ",
+"baaaaaaaaaaaabab    ",
+"baaaaaaaaaaaabaab   ",
+"baaaaaaaaaaaabaaab  ",
+"baaaaaaaaaaaabbbbbb ",
+"baaaaaaaaaaaaabbbbbb",
+"baaaaaaaaaaaaaaaaabb",
+"baaaaaaaaaaaaaaaaabb",
+"baaaaaaaaaaaaaaaaabb",
+"baaaaaaaaaaaaaaaaabb",
+"baaaaaaaaaaaaaaaaabb",
+"baaaaaaaaaaaaaaaaabb",
+"baaaaaaaaaaaaaaaaabb",
+"baaaaaaaaaaaaaaaaabb",
+"baaaaaaaaaaaaaaaaabb",
+"baaaaaaaaaaaaaaaaabb",
+"bbbbbbbbbbbbbbbbbbbb",
+" bbbbbbbbbbbbbbbbbbb",
+};

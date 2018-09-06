@@ -1,0 +1,2 @@
+all:
+	make CC=/opt/ansic/bin/cc CFLAGS="-O +DA2.0"

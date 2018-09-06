@@ -1,0 +1,29 @@
+/* XPM */
+static char *banglade_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 20 2 1",
+/* colors */
+"a c red",
+"b c #2e8b57",
+/* pixels */
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbaaaaabbbbbbbbbbbbbb",
+"bbbbbbbbbbbbaaaaaaabbbbbbbbbbbbb",
+"bbbbbbbbbbbaaaaaaaaabbbbbbbbbbbb",
+"bbbbbbbbbbaaaaaaaaaaabbbbbbbbbbb",
+"bbbbbbbbbbaaaaaaaaaaabbbbbbbbbbb",
+"bbbbbbbbbbaaaaaaaaaaabbbbbbbbbbb",
+"bbbbbbbbbbaaaaaaaaaaabbbbbbbbbbb",
+"bbbbbbbbbbbaaaaaaaaabbbbbbbbbbbb",
+"bbbbbbbbbbbbaaaaaaabbbbbbbbbbbbb",
+"bbbbbbbbbbbbbaaaaabbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+};

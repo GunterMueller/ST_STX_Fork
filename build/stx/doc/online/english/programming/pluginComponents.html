@@ -1,0 +1,131 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Component Plugin Scheme</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="dragAndDrop.html">   <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">       <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="GL.html"> <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Component Plugin Scheme</H1>
+
+<H2>Contents</H2>
+<UL>
+ <LI><A HREF="#INTRO"           NAME="I_INTRO">Introduction</A>
+ <LI><A HREF="#PLUGIN_WIDGETS"  NAME="I_PLUGIN_WIDGETS">PlugIn widgets (views)</A>
+ <LI><A HREF="#PLUGIN_SUBAPPS"  NAME="I_PLUGIN_SUBAPPS">PlugIn subApplications</A>
+</UL>
+
+
+<H2><A HREF="#I_INTRO" NAME="INTRO">Introduction</A></H2>
+  Some standard mechanism has been defined and added to ST/X, which
+  allows for arbitrary widgets (view instances) and subApplications (applicationModel instances)
+  to be handled by the GUIPainter and plugged into another application.
+<BR>
+  This allows for components to define which attributes and aspects
+  are to be considered as "pluggable" and those can be changed/connected
+  to values or other components in the GUI Painter tool.
+<P>
+  Although this was possible in earlier ST/X releases, the new scheme
+  allows for much more attributes and valueHolder-interaction to be
+  defined on the GUIPainter level, with less need for explicit program code
+  in <CODE>#postBuild:</CODE> or other methods.
+<P>
+  As with JavaBeans, it should be noted that the the following is less
+  a technology, but instead a set of conventions, which allows the component
+  integration.
+<P>
+  The scheme described here is backward compatible: existing widgets or
+applications need not be changed.
+<BR>
+Only a few additional specifiaction methods are required,
+in order to make existing components pluggable.
+
+
+
+<H2><A HREF="#I_PLUGIN_WIDGETS" NAME="PLUGIN_WIDGETS">PlugIn widgets</A></H2>
+
+To be pluggable, a view must describe its exported aspects (channels),
+via a class-method named <CODE>aspectSelectors</CODE>,
+which must return a sequencable collection of symbols.
+For each symbol, corresponding set/get methods must be implemented in
+the instance protocol.
+<P>
+To plug in such a widget into a GUI, use an arbitrary component
+and connect the exported aspects (the sub-aspects) with your applications
+aspects in the <I>SubAspects</I> section of the GUI painter.
+
+<!--
+<P>
+Information about changable attributes is returned
+by <CODE>attributeSpec</CODE>.
+-->
+
+
+<H2><A HREF="#I_PLUGIN_SUBAPPS" NAME="PLUGIN_SUBAPPS">PlugIn subApplications</A></H2>
+
+In a simular way, an application (i.e. derived from ApplicationModel)
+can be embedded as subCanvas,
+and its internal aspect holders be plugged to outer aspects holders.
+<P>
+This allows for dialogs, browsers or other components to be embedded
+in other applications.
+<P>
+To specify, which aspects are exported by an application,
+either manually edit the <CODE>aspectSelectors</CODE> class method,
+or use the UI-Painter (select the <I>Exported Aspects</I> tab).
+<BR>
+The UI-Painters "<I>save</I>"-button function
+will generate an <CODE>aspectSelectors</CODE> method,
+if there are exported aspects.
+<BR>
+Also, the "<I>generate aspect methods</I>" menu-function
+will generate setter-methods for all exported aspects.
+<P>
+
+
+
+<H2><A HREF="#I_WIDGET_EXAMPLE" NAME="WIDGET_EXAMPLE">PlugIn widget example</A></H2>
+
+see
+<A HREF="onlyInSTX.html"
+   INFO="browse CodingExamples_GUI::ArbitraryComponentDemo3"
+   ACTION="browse:CodingExamples_GUI::ArbitraryComponentDemo3"
+">
+CodingExamples_GUI::ArbitraryComponentDemo3</A>.
+
+<H2><A HREF="#I_APP_EXAMPLE" NAME="APP_EXAMPLE">PlugIn subApplication example</A></H2>
+
+see
+<A HREF="onlyInSTX.html"
+   INFO="browse CodingExamples_GUI::ArbitraryComponentDemo4"
+   ACTION="browse:CodingExamples_GUI::ArbitraryComponentDemo4"
+">CodingExamples_GUI::ArbitraryComponentDemo4</A>
+
+<BR>
+and the plugin in
+<A HREF="onlyInSTX.html"
+   INFO="browse CodingExamples_GUI::ArbitraryComponentDemo4SubApp"
+   ACTION="browse:CodingExamples_GUI::ArbitraryComponentDemo4SubApp"
+">CodingExamples_GUI::ArbitraryComponentDemo4SubApp</A>.
+
+
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 2000 eXept Software AG, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.9 $ $Date: 2016-07-11 09:24:05 $
+</BODY>
+</HTML>

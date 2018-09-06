@@ -1,0 +1,7 @@
+*.a
+*.sbr
+*.lib
+*.LST
+*.pdb
+*.idb
+lib

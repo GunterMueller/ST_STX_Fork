@@ -1,0 +1,23 @@
+This directory (and the resulting shared lib libdb.dll) provide common code
+which is independent of the concrete database binding used.
+Especially, abstract superclasses to represent statements, tables etc. are found here.
+
+Concrete database interfaces are:
+    libodbc   - provides access to the ODBC library, which can be sued to access almost any database
+    liboracle - interface to oci8/oci9 native oracle interface
+
+ODBC NOTICE:
+    in order to compile libodbc, some system ODBC header files are required.
+    Especially: sql.h, sqlext.h and sqltypes.h
+
+    These are usually already present on most machines when the compiler suite is installed.
+    So try "locate sql.h" or "find / -name "sql.h" --print"
+
+    A noticable exception is OSX since maverik (again?), where you have to install it first,
+    with brew, maybe:
+	brew update
+        brew install unixodbc
+
+    or else copy the stuff found in "libodbc/iodb_include_for_osx" to "/usr/local/include"
+    But be aware: having the include files around only allows for the .st files to be compiled.
+    You will still need the .so (shared objects) which make up the odbc library. So better brew a beer.

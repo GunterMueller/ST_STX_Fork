@@ -1,0 +1,31 @@
+/* XPM */
+static char *afghanis_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 20 4 1",
+/* colors */
+"a c black",
+"b c red",
+"c c #2e8b57",
+"d c white",
+/* pixels */
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaadbdaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaadaaadaaaaaaaaaaaaaaaaaaaaaa",
+"aaaadaaaaadaaaaaaaaaaaaaaaaaaaaa",
+"aaaadaaaaadaaaaaaaaaaaaaaaaaaaaa",
+"bbbbdbcccbdbbbbbbbbbbbbbbbbbbbbb",
+"bbbbdbcbcbdbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbcbbbcbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbcccbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+};

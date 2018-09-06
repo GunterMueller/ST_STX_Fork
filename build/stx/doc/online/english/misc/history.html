@@ -1,0 +1,230 @@
+<HTML>
+
+<HEAD>
+<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<TITLE>History of Smalltalk/X</Title>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="../TOP.html" INFO="Back to documentation's main page" > <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+
+<H1>History of Smalltalk/X (ST/X, pronounced 'STIX')</H1>
+
+    This little text is meant as a kind of FAQ on <CITE>ST/X</CITE>;
+    these questions have been asked so often, that I finally
+    wrote the answers down ...
+
+
+<H2>First implementation</H2>
+
+    The main trigger for creating a Smalltalk was (of course)
+    the famous Byte edition (Aug. 81),
+    which focused especially on the Smalltalk language.
+<BR>
+    I (Claus) was immediately fascinated by the language and its underlying
+    philosophy - certainly, I wanted such a system.
+<br>
+    Since I had no chance of getting my hands on any existing system
+    (at that time), I started to play around implementing fragments of
+    what I saw in Basic (yes, that's true),
+    and dreamed about a full implementation.
+<P>
+    Some time later, I got hold of the (excellent) book
+<A HREF="../overview/literature.html#[1]"><CITE>"Smalltalk-80, the language and implementation"</CITE></A>,
+    after that
+    I started to implement an experimental bytecode interpreter.
+<P>
+    The bad performance of this interpreter lead soon to the
+    conclusion, that only compilation to machine language will
+    provide acceptable performance.
+<P>
+    Due to previous (positive) experience with other cross-language
+    compilers (Basic-to-C :-)) and Lisp-to-C) this approach was
+    also taken, eventually leading to the first running Smalltalk-to-C
+    (<VAR>stc</VAR>) compiler during 1986/1987.
+    (the experiments began a few years earlier, but the full Smalltalk
+     semantics - especially contexts & blocks - was finally implemented
+     at that time).
+<BR>
+     Notice, that this was before dynamic translation of bytecode
+     to machine code (aka JIT-ting) was well known, and I had no running
+     Smalltalk at hand to start with.
+     So the system was written completely from scratch in a "clean-room"
+     environment. I decided to use yacc+lex to parse Smalltalk code (in fileOut format),
+     and generate C-code from it.
+<P>
+     This source-to-source compiler was named "stc"
+     (for "Smalltalk-to-C") and this compiler is still used today
+     (although it went through many revisions, as new syntax, features and optimizations where added).
+
+<H2>The "X" in "Smalltalk/X"</H2>
+
+    At about the same time, a first interface to the X Window system
+    was created - providing a true mapping of Smalltalk views to
+    X's windows. Although not noticed in the outside world, this
+    was a world premiere - the other available system at that time
+    (on unix systems) was NOT using a direct view-to-window
+    relation, but simulated its own windowing system in one big
+    X window.
+<BR>
+    That's where the "X" in <CITE>Smalltalk/X</CITE> originated.
+<P>
+    Of course, in the meantime, this is also done by other Smalltalk
+    systems, and Smalltalk/X nowadays also runs under non-X (e.g. Windows) systems,
+    making the "X" a historical leftover
+    (which is kept until I may find a better name :-).
+<P>
+    Notice, that there is another package called <CODE>"STIX"</CODE> around:
+    the <CITE>"GNU-Smalltalk's X extension"</CITE>.
+    These two have nothing in common
+    and <CODE>"ST/X"</CODE> (<CITE>"Smalltalk/X"</CITE>) should not be confused
+    with <CODE>"STIX"</CODE>.
+
+<H2>Licensing & Compatibility</H2>
+
+    ParcPlace allows licensing the basic classes (names & inheritance)
+    for a symbolic 1$ fee, and thus allows a (re-) implementation to provide a comparable
+    class hierarchy and instance protocol.
+    <CITE>Smalltalk/X's</CITE>
+    basic classes are written to be protocol compatible to the corresponding
+    <CITE>Smalltalk-80</CITE> classes,
+    and I still have the original licence paper framed on the wall.
+<BR>
+    The development of those classes was (and still is) done
+    without referring to the original implementation
+    (so called <VAR>"clean room development"</VAR>).
+    The information about class protocol was taken from public available
+    literature, information returned by alpha testers and by porting public
+    domain code, which uses that protocol.
+<P>
+    The author still depends on testers to send a note if any incompatibilities
+    are encountered. Such a note should include the class & method name and a
+    verbal description of what it should do. Also, incompatible instancevariable
+    names are worth such a note (since those names should match for proper
+    subclassability).
+    Do <STRONG>not</STRONG> send any code which is based on or derived
+    from any other existing Smalltalk system - I cannot make any use of it.
+<P>
+    Since this (ParcPlace-) license does not cover the View and GUI elements,
+    those classes are not (and may never be) fully compatible to ParcPlace
+    implementations - however, some hooks and compatibility methods have been built in,
+    in order to make porting at least easier
+    (in the recent past, we have spent quite some effort in making ST/X very compatible
+     to VisualWorks, making it very easy to port even highly GUI intensive code).
+<P>
+    This may change if ongoing standardization efforts lead to an
+    "Ansi Smalltalk" covering these classes. However, since even basic
+    features (such as Blocks being closures) seem to make trouble in
+    standardization, I personally doubt that there will be a standard
+    covering these classes in the near future.
+<P>
+
+<H2>Compilation</H2>
+
+    The original (1986) system did NOT include a bytecode compiler or
+    interpreter; it was purely batch oriented (much like traditional
+    language systems). I used it to write GUI applications, test and maintenance programs
+    in a traditional manner, using editors such as vi or emacs.
+<br>
+    An early plan was to offer the STC-compiler
+    as a turbo charger for existing Smalltalk systems.
+<P>
+    However, for development & prototyping, it became soon obvious
+    that an incremental compiler was needed to be available IN the
+    system and a bytecode compiler and interpreter were added during 1988.
+    This allowed for a much better development experience, as code can now be
+    executed inside the system, without the tedious save-compile-restart cycle.
+<P>
+    A dynamic machine code compiler (JITter) was added shortly after that,
+    around 1990. Initially, it supported MIPS and Sparc CPUs, but over time,
+    many more architectures were added, some of which are now obsolete and no
+    longer maintained (but could be reactivated relatively easily, if a demand arises).
+<P>
+    Thus, in <CITE>ST/X</CITE> things were developed vice versa - first came the
+    standAlone compiler, then the bytecodes and incremental compilation.
+
+
+<H2>Development</H2>
+
+    Till 1994, development of <CITE>Smalltalk/X</CITE> was done in
+    spare time as a single person's <VAR>"hobby"</VAR> project.
+<BR>
+    In 1994, ACC Software was founded, which was later renamed and
+    incorporated as eXept Software AG.
+<br>
+    Most further development is now done withing eXept, although the rights
+    on the basic Smalltalk/X engine, VM (runtime system) and stc are still at
+    Claus, with eXept having an unlimited right of using it.
+<BR>
+    "eXept Software" was founded by a group of people who wanted to make
+    their living not just by programming, but by having FUN doing so.
+    As a consequence, we want to use an environment which
+    supports us as programmers and which helps us to realize our dreams faster,
+    and with less time to be spent on low level (programming language) details.
+<br>
+    Smalltalk may not be perfect,
+    but it is certainly by far the best system to our knowledge.
+    And this is still true over 20 years later.
+<P>
+    Many testers and more people joined the team,
+    providing suggestions, hints, bug reports and adding new features.
+<P>
+    If you like to participate in the development and/or donate code,
+    new classes, examples or applications, feel free to contact the author
+    or eXept, to have it included in the next distribution.
+<P>
+    Be aware, that eXept has to earn money to pay its employees (what did you think?).
+    While you get ST/X for free, it must be clear that we cannot spend our time
+    with developing Smalltalk alone.
+    Therefore, what you get is the fall-out of what we need for our own products and
+     development.
+<P>
+    If you have any wishes for improvement, support or a port to a particular
+    machine, we have to ask for money.
+    Customers for which ST/X is mission critical (yes, there a quite a few!)
+    may get a maintenance contract which gives them online support, consulting,
+    feature implementation upon request, regular updates and online access to the
+    current development versions.
+    Please contact info@exept.de for details.
+<P>
+    Without such a contract, you will have to wait for whenever we find time to
+    provide a new free version.
+    However, this is usually somewhat older (1/2 to 1 year)
+    from what maintenance customers get.
+
+<H2>Future</H2>
+
+    We all do not like Java - in fact, we think it is a poor man's, half way thought through
+    implementation of something which is in between C++ and Smalltalk.
+    A big improvement for a C or C++ programmer, but certainly a
+    step back if viewed from Smalltalk.
+<br>
+    However, many people do not need (or want) to use the full power of Smalltalk,
+    and are perfectly happy with it.
+    Therefore, we think that a Smalltalk environment which supports and embraces the
+    Java world perfectly makes sense and would be a nice thing to have.
+<br>
+    Our current goal is to enhance the Smalltalk system to allow for other languages
+    to fit easily and seamless into the real (Smalltalk) world
+    - after all, all of todays other so-called OO-languages are (semantically)
+    true subsets of Smalltalk.
+<P>
+    The current system includes a Java support subsystem, which is able to
+    read binary Java class files, and load them almost seamless into the Smalltalk
+    class hierarchy (under a separate JAVA namespace).
+    The VM and Jitter do handle Java-bytecode methods transparently,
+    so Smalltalk can call Java and vice versa.
+    In fact, Java objects are represented as Smalltalk objects internally,
+    so there is no gap in the object representation.
+    All reflective features of Smalltalk are also available with Java classes/methods and
+    objects. And all dynamic features are available for Java code - this includes
+    dynamic change of object layouts, adding/removing methods, changing the
+    inheritance and accepting in the debugger.
+<P>
+    Ongoing work is done in the browser, code completion and refactoring tools.
+    Thanks to Marcel, Jan and the other guys from the Prag-CVUT Computer Science
+    lab for lots of stuff in this area.
+<HR>
+Doc $Revision: 1.29 $ $Date: 2017-03-20 07:04:27 $
+</BODY>
+</HTML>

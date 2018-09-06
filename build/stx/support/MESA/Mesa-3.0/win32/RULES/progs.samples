@@ -1,0 +1,35 @@
+
+!IF "$(STATIC_MESA)" == "1"
+EXELIBS     = mesaglut.lib mesaglu.lib mesagl.lib winmm.lib
+!ELSEIF "$(USE_SYSGL)" == "2"
+EXELIBS     = glut.lib glu.lib opengl.lib
+RUNTIMELIBS = glut.dll
+!ELSEIF "$(USE_SYSGL)" == "1"
+EXELIBS     = glut32.lib glu32.lib opengl32.lib
+RUNTIMELIBS = glut32.dll
+!ELSE
+EXELIBS     = mesaglut32.lib mesaglu32.lib mesagl32.lib
+RUNTIMELIBS = mesaglut32.dll mesaglu32.dll mesagl32.dll
+!ENDIF
+
+!IF ("$(USE_SYSGL)" == "0") && ("$(DEBUG)" == "1")
+EXELIBS=$(EXELIBS:.lib=d.lib)
+!IF "$(RUNTIMELIBS)" != ""
+RUNTIMELIBS=$(RUNTIMELIBS:.dll=d.dll)
+!ENDIF
+!ENDIF
+
+SRCALT1 = .\$(MESADEMOROOT)\samples
+
+SRCFILES = accum.c bitmap1.c bitmap2.c copy.c\
+	cursor.c depth.c eval.c fog.c font.c line.c logo.c nurb.c\
+	olympic.c overlay.c point.c prim.c quad.c select.c shape.c\
+	sphere.c star.c stencil.c stretch.c texture.c tri.c wave.c
+
+# The following items have not been ported to the environment...
+
+NAUGHTY = oglinfo.c
+
+!IF "$(USE_SYSGL)" == "0"
+SRCFILES = $(SRCFILES) blendeq.c blendxor.c
+!ENDIF

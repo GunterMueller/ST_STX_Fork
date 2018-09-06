@@ -1,0 +1,225 @@
+<title>Introduction to HTML 3.0</title>
+<h1>Introduction to HTML 3.0</h1>
+
+<p>HyperText Markup Language (HTML) is a simple markup system used to
+create hypertext documents that are portable from one platform to
+another.  HTML documents are SGML documents with generic semantics that
+are appropriate for representing information from a wide range of
+applications.  HTML markup can represent hypertext news, mail,
+documentation, and hypermedia; menus of options; database query
+results; simple structured documents with in-lined graphics; and
+hypertext views of existing bodies of information.
+
+<p>HTML has been in use by the World-Wide Web (WWW) global information
+initiative since 1990. The HTML 3.0 specification provides a number of
+new features, and is broadly backwards compatible with HTML 2.0. It is
+defined as an application of International Standard ISO ISO8879:1986
+Standard Generalized Markup Language (SGML). This specificiation will
+be proposed as the Internet Media Type (RFC 1590) and MIME Content Type
+(RFC 1521) called "<tt>text/html; version=3.0</tt>".
+
+<h2><a name="participate">How to participate in refining HTML 3.0</a></h2>
+
+<p>The process of refining HTML 3.0 into a formal standard will be
+carried out by the IETF HTML working group. The World Wide Web
+Organization is continuing to develop a freeware testbed browser for
+HTML 3.0 ("Arena") to encourage people to try out the proposed
+features. The discussion list for HTML 3.0 is www-html with html-wg
+reserved for use by the IETF working group for detailed matters
+relating to the formal specification. The process for developing HTML
+3.0 is open, and anyone who is interested and able to contribute to
+this effort is welcome to join in.
+
+<P><I>Note: make mailing list names into hypertext links to their
+archives and add info on how to join these lists</i>
+
+<h2><a name="overview">HTML 3.0 Overview</a></h2>
+
+<p>HTML 3.0 builds upon HTML 2.0 and provides full backwards
+compatibility. Tables have been one of the most requested features,
+with text flow around figures and math as runners up. Traditional SGML
+table models, e.g. the CALS table model, are really complex. The HTML
+3.0 proposal for tables uses a lightweight style of markup suitable for
+rendering on a very wide range of output devices, including braille and
+speech synthesizers.
+
+<p>HTML 3.0 introduces a new element: FIG for inline figures. This
+provides for client-side handling of hotzones while cleanly catering
+for non-graphical browsers. Text can be flowed around figures and you
+can control when to break the flow to begin a new element.
+
+<p>Including support for equations and formulae in HTML 3.0 adds
+relatively little complexity to a browser. The proposed format is
+strongly influenced by TeX. Like tables, the format uses a lightweight
+style of markup - simple enough to type in by hand, although it will in
+most cases be easier to use a filter from a word processing format or a
+direct HTML 3.0 wysiwyg editor. The level of support is compatible with
+most word processing software, and avoids the drawbacks from having to
+convert math to inline images.
+
+<p>The Web has acted as a huge exercise in user testing, and we have
+been able to glean lots of information from the ways people abuse HTML
+in trying to get a particular effect; as well as from explicit demand
+for new features. HTML 3.0, as a result, includes support for
+customised lists; fine positioning control with entities like &emspace;
+horizontal tabs and horizontal alignment of headers and paragraph text.
+
+<p>Additional features include a static banner area for corporate logos,
+disclaimers and customized navigation/search controls. The LINK element
+can be used to provide standard toolbar/menu items for navigation, such
+as previous and next buttons. The NOTE element is used for
+admonishments such as notes, cautions or warnings, and also used for
+footnotes.
+
+<P>Forms have been extended to support graphical selection menus with
+client-side handling of events similar to FIG. Other new form field
+types include range controls, scribble on image, file upload and audio
+input fields. Client-side scripting of forms is envisaged with the
+script attribute of the FORM element. Forms and tables make for a
+powerful combination offering rich opportunities for laying out custom
+interfaces to remote information systems.
+
+<p>To counter the temptation to add yet more presentation features,
+HTML 3.0 is designed (but doesn't require) to be used together with
+style sheets which give rich control over document rendering, and can
+take into account the user's preferences, the window size and other
+resource limitations, such as which fonts are actually available. This
+work will eventually lead to smart layout under the author's control,
+with rich magazine style layouts for full screen viewing, switching to
+simpler layouts when the window is shrunk.
+
+<P>The SGML Open consortium is promoting use of <a
+href="http://www.jclark.com/dsssl/">DSSSL Lite</a> by James Clark. This
+is a simplified subset of DSSSL - the document style semantics
+specification language. DSSSL is a ISO standard for representing
+presentation semantics for SGML documents, but is much too complex in
+its entirety to be well suited to the World Wide Web. H&aring;kon Lie
+maintains a list of pointers to <a
+href="http://www.w3.org/hypertext/WWW/Style/">work on style sheets</a>.
+
+<H2><a name="transition">Transition Strategy from HTML 2.0</a></H2>
+
+<P>The use of the MIME content type: "text/html; version=3.0" is
+recommended to prevent existing HTML 2.0 user agents screwing up by
+attempting to show 3.0 documents. Tests have shown that the suggested
+content type will safely cause existing user agents to display the save
+to file dialog rather than incorrectly displaying the document as if it
+were HTML 2.0.
+
+<P>To make it easy for servers to distinguish 3.0 documents from 2.0
+documents, it is suggested that 3.0 files are saved with the extension
+".html3" (or ".ht3" for PCs). Servers can also exploit the accept headers
+in HTTP requests from HTML user agents, to distinguish whether each
+client can or cannot support HTML 3.0. This makes it practical for information
+providers to start providing HTML 3.0 versions of existing documents for
+newer user agents, without impacting older user agents. It is envisaged
+that programs will be made available for automatic down conversion of 3.0
+to 2.0 documents. This conversion could be carried out in batch mode, or
+on the fly (with caching for greater efficiency).
+
+<h2><a name="design">Design Guidelines</a></h2>
+
+<p>The HTML 3.0 draft specification has been written to the following
+guidelines.
+
+<h3>Lingua Franca for the Web</h3>
+
+<p>HTML is intended as a common medium for tying together information
+from widely different sources. A means to rise above the
+interoperability problems with existing document formats, and a means
+to provide a truly open interface to proprietary information systems.
+
+<h3>Simplicity</h3>
+
+<p>The first version of HTML was designed to be extremely simple, both
+to author and to write browsers for. This has played a major role in
+the incredibly rapid growth of the World Wide Web. HTML 3.0 provides a
+clean superset of HTML 2.0 adding high value features such as tables,
+text flow around figures and math, while still remaining a simple
+document format. The pressures to adopt the complexities of traditional
+SGML applications has been resisted, for example the Department of
+Defense's CALS table model or the ISO 12083 math DTD.
+
+<h3>Scaleability</h3>
+
+<p>As time goes by, people's expectations change, and more will be
+demanded of HTML. One manifestation of this is the pressure to add
+yet more tags. HTML 3.0 introduces a means for subclassing elements in
+an open-ended way. This can be used to distinguish the role of a
+paragraph element as being a couplet in a stansa, or a mathematical
+term as being a tensor. This ability to make fresh distinctions can be
+exploited to impart distinct rendering styles or to support richer
+search mechanisms, without further complicating the HTML document
+format itself. Scaleability is also achieved via URI based links for
+embedding information in other formats. Initially limited to a few
+image formats, inline support is expected to rapidly evolve to cover
+drawing formats, video, distributed virtual reality and a general means
+for embedding other applications.
+
+<h3>Platform Independence</h3>
+
+<p>HTML is designed to allow rendering on a very wide range of devices,
+from clunky teletypes, to terminals, DOS, Windows, Macs and high end
+Workstations, as well as non-visual media such as speech and braille.
+In this, it allows users to exploit the legacy of older equipment as
+well as the latest and best of new machines. HTML 3.0 provides for
+improved support for non-graphical clients, allowing for rich markup in
+place of the figures shown on graphical clients. HTML can be rendered
+on a wide variety of screen sizes, using a scrolling or paged model.
+The fonts and presentation can be adjusted to suit the resources
+available in the host machine and the user's preferences.
+
+<h3>Content <i>not</i> Presentation Markup</h3>
+
+<p>Information providers are used to tight control over the final
+appearence of documents. The need for platform independence weighs
+against this, but there is still a strong pressure to find appropriate
+means for information providers to express their intentions. The
+experience with proprietary document formats has shown the dangers of
+mixing presentation markup with content (or structural) markup. It
+becomes difficult to apply different presentation styles. It becomes
+painful to incorporate material from different sources (with different
+presentation styles). It becomes difficult to be truly platform
+independent. As a result, HTML 3.0 is designed for use with linked
+style information that defines the intended presentation style for each
+element. Style sheets can be expressed in a platform independent
+fashion or used to provide more detailed control for particular
+classes of clients or output media.
+
+<h3>Support for Cascaded Style Sheets</h3>
+
+<p>For the Web, it is valuable to allow for a cascading of style
+preferences. The client has certain built-in preferences; the publisher
+may require a particular house style, e.g. for brand distinction;
+the author may feel the need to override the house style for special
+cases; the end-user may feel strongly about certain things, e.g. large
+fonts for easier visibility or avoiding certain colors due to an
+inability to distinguish between them. HTML 3.0 supports style sheets
+via the use of the LINK element to reference a style sheet with a URI.
+Authors can place overrides in separate style sheets or include them in
+the document head within the STYLE element. The effectiveness of
+caching mechanisms for speeding up the retrieval of style sheets is
+enhanced by the separation of style information into generic commonly
+used style sheets, and overrides specific to this document.
+
+<h3>Support for Non-Visual Media</h3>
+
+<p>HTML 3.0 is designed to cater for the needs of the visually
+impaired.  Markup for inline figures includes support for rich
+descriptions, along with hypertext links that double up as defining
+geometric hotzones for graphical browsers, simplifying the author's job
+in catering for the different groups of users. Table markup
+includes provision for abbreviated row and column names for each cell,
+which are essential for conversion to speech or braille. Math markup
+treats formulae and equations as hierarchies of expressions. This
+allows disambiguating pauses to be inserted in appropriate places
+during conversion to speech.
+
+<h3>Support for different ways of creating HTML</h3>
+
+<p>HTML 3.0 has been designed to be created in a variety of different
+ways. It is deliberately simple enough to type in by hand. It can be
+authored using wysiwyg editors for HTML, or it can be generated via
+export filters from common word processing formats, or other SGML
+applications.
+<!--NewPage-->

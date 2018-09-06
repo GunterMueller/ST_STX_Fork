@@ -1,0 +1,29 @@
+/* XPM */
+static char *euroSans_20x20_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"20 20 2 1",
+/* colors */
+"a c black",
+"b c white",
+/* pixels */
+"bbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbaaaaabbbbbbbb",
+"bbbbbaaaaaaaaabbbbbb",
+"bbbbaaabbbbbbaabbbbb",
+"bbbbaabbbbbbbbbbbbbb",
+"bbbaabbbbbbbbbbbbbbb",
+"baaaaaaaaaaaabbbbbbb",
+"baaaaaaaaaaabbbbbbbb",
+"bbbaabbbbbbbbbbbbbbb",
+"baaaaaaaaaaabbbbbbbb",
+"baaaaaaaaaabbbbbbbbb",
+"bbbbaabbbbbbbbbbbbbb",
+"bbbbaaabbbbbbaabbbbb",
+"bbbbbaaabbbbaabbbbbb",
+"bbbbbbaaaaaaabbbbbbb",
+"bbbbbbbbaaabbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbb",
+};

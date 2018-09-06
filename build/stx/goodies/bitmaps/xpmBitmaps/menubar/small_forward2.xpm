@@ -1,0 +1,35 @@
+/* XPM */
+static char *small_forward2_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"20 20 8 1",
+/* colors */
+"a c white",
+"b c #3F5F3F",
+"c c #3F5FBF",
+"d c #008000",
+"e c #3F9F3F",
+"f c #9EBE9E",
+"g c #A0A0A4",
+"h c none",
+/* pixels */
+"hhhhhhhhhhhhhhhhhhhh",
+"hhhhhhhhhhhhhhhhhhhh",
+"hhhhhhhhhhhhhhhhhhhh",
+"hhhhhhhhhhhhhhhhhhhh",
+"hhhhhhhbdehhhhhhhhhh",
+"hhhhhhhbadehhhhhhhhh",
+"hhhhhhhbaadehhhhhhhh",
+"hhhhhhhbaaadehhhhhhh",
+"hhhhhhhbaaaadehhhhhh",
+"hhhhhhhbaaaadbfhhhhh",
+"hhhhhhhbaaadbghhhhhh",
+"hhhhhhhbaadbghhhhhhh",
+"hhhhhhhbadbghhhhhhhh",
+"hhhhhhhbdbghhhhhhhhh",
+"hhhhhhhbbghhhhhhhhhh",
+"hhhhhhhhhhhhhhhhhhhh",
+"hhhhhhhhhhhhhhhhhhhh",
+"hhhhhhhhhhhhhhhhhhhh",
+"hhhhhhhhhhhhhhhhhhhh",
+"hhhhhhhhhhhhhhhhhhhh",
+};

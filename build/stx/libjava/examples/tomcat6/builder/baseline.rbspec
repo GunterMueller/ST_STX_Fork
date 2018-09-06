@@ -1,0 +1,38 @@
+
+# generated from project definition
+
+# load package dependencies
+load 'package.deps.rake'
+
+# kludge: clear some invalid dependencies of libwidg
+# (should be fixed in baseline)
+clear "stx:libwidg" => "stx:libui"
+clear "stx:libwidg2" => "stx:libui"
+
+project :'tomcat6:baseline' do
+  # preamble
+  
+  # --------
+
+  package "stx:libbasic"
+  package "stx:libbasic2"
+  package "stx:libcomp"
+  package "stx:libbasic3"
+  package "stx:libview"
+  package "stx:libui"
+  package "stx:libview2"
+  package "stx:goodies/sunit"
+  package "stx:libwidg"
+  package "stx:libhtml"
+  package "stx:libwidg2"
+  package "stx:libtool"
+  package "stx:libjava"
+
+
+  application "stx:libjava/examples/tomcat6"
+
+  # postamble
+  
+  # ---------
+
+end

@@ -1,0 +1,227 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.07 [en] (X11; I; Linux 2.0.36 i686) [Netscape]">
+   <META NAME="Author" CONTENT="Giovanni Giorgi">
+   <TITLE>MinneStore Version 2.03 for Visual Works 3.0 NC</TITLE>
+</HEAD>
+<BODY TEXT="#000099" BGCOLOR="#FFFFFF" LINK="#DD0000" VLINK="#551A8B" ALINK="#FF0000">
+
+<H1>
+MinneStore Version 2.03 for Visual Works 3.0 NC</H1>
+MinneStore Version 2.03 Copyright &copy; 1997, 1998 by Jonathan Carlson
+<BR>-------------------------------------------------------------------
+<BR>MinneStore Version 2.03 for Visual Works 3.0 NC
+<BR>Porting Version 1.2
+<BR>Copyright &copy; 1999 by Giovanni Giorgi
+<BR>&nbsp;<I></I>
+<P><I>***Note: This porting is *freeware*, but Giovanni Giorgi owns the copyright.</I>
+<BR><I>See License.txt for more details.</I>
+<BR><I>If you modify it (and I hope you let me know about bugs) you should keep track
+of your changes and send back the code to me for a new release!!</I>
+<BR>&nbsp;
+<P><I>Document created 5 January 1999</I>
+<BR><I>Last Update:13&nbsp; March&nbsp; 1999</I>
+<BR>&nbsp;
+<H1>
+Introduction</H1>
+This document has been created and updated by Giovanni Giorgi&nbsp; (gg482344@silab.dsi.unimi.it
+or giorgi_g@geocities.com) and will provide information on the porting&nbsp;
+for VW 3.0
+<P>The Porting is done thinking of Unix/Mac/Os2 Users too, so MinneStore
+will use the right directory delimiter under every OS. I tried the code
+under Linux and it is very very fast compared to the Windows95 Virtual
+Machine of Visualworks 3.0
+<BR>The original code is CR-LF delimited, but this isn't a problem for use.
+<BR><B>Look at <A HREF="http://www.objectshare.com">www.objectshare.com</A>
+for downloading a<FONT SIZE=+3> </FONT>free<FONT SIZE=+3> </FONT>non-commercial
+version of VisualWorks 3.0</B>
+<P>You should read this at least until you hit the "Additional information
+for the porting" part.
+<BR>I hope that all will work, but if problems occurs, feel free to e-mail
+to me.
+<P><FONT SIZE=+3>Index</FONT>
+<OL>
+<LI>
+<A HREF="#Installing on VW 3.0 NC">Installing on VW 3.0 NC</A></LI>
+
+<LI>
+<A HREF="#Installing on VW 2.5.x">Installing on VW 2.5.x</A></LI>
+
+<LI>
+<A HREF="#How To Update MinneStore">How To Update MinneStore</A></LI>
+
+<LI>
+<A HREF="#Additional information">Additional information</A></LI>
+
+<OL>
+<LI>
+<A HREF="#Debugging the propertyAt:.. methods">Debugging the propertyAt:..
+methods</A></LI>
+
+<LI>
+<A HREF="#Next Relase?">Next Relase?</A></LI>
+</OL>
+</OL>
+
+<HR SIZE=9 WIDTH="80%">
+<H2>
+<A NAME="Installing on VW 3.0 NC"></A>Installing on VW 3.0 NC</H2>
+Copy the two files MinneStore.pcl &amp;&nbsp; MinneStore.pst in&nbsp; visualworks_home\image
+or in
+<BR>visualworks_home\parcels.
+<BR>Simply load the parce!
+<BR>To do this launch VW and select the menu <I>Tools/Load Parcel Named...</I>
+<BR>inserting MinneStore at the prompt.
+<BR>&nbsp;
+<BR>&nbsp;
+<H2>
+<A NAME="Installing on VW 2.5.x"></A><B>Installing on VW 2.5.x</B></H2>
+Note: I do not even have the VW 2.5, so I *cannot test* this procedure,
+but it should work.
+<BR>Maybe the Exception-porting can NOT work, so someone may want to modify it
+and send it back to me?
+<P>First of ALL evaluate:
+<PRE>Smalltalk at:#MinneStorePropertyDB put: (WeakDictionary new: 100).</PRE>
+This will add a small class to the system. File-in the code in the vw2.5porting.st
+file using the menu item Tools/File list.
+<BR>Try the database:
+<PRE>MSExample ExampleCode</PRE>
+<FONT COLOR="#CC0000"><FONT SIZE=+1>VW 2.5.x Warning:</FONT></FONT>
+<BR><FONT COLOR="#CC0000">This code modify deeply your image, so install
+it in a fresh image or integrate (file-in) in a parcel. The VW 3.0 Parcel
+engine fix some problems the VW 2.5.x system has</FONT>
+<BR>&nbsp;
+<H2>
+Uninstalling on VW 3.0 NC</H2>
+Don't&nbsp; worry if the first time you try to unload the parcel an error
+occur. Click Terminate on the error box, and re-do the unload action. All
+will work. This problem isn't so easy to fix for the moment!!
+<H4>
+Report of TestSuite:</H4>
+TestSuite runCompatibilityTest.&nbsp; "Ok 99%"
+<BR>Only one line failed, but is ok for most uses. I changed that method
+in<TT> CompatibilityTesting>>testFileProtocol</TT>
+<BR>Look at <TT>FlavorCompatibility class>>createLockFile: aString ifExists:
+aBlock</TT>
+<BR>TestSuite runDiskObjectServiceTest. "OK"
+<BR>TestSuite runMinneStoreTest1 "OK"
+<BR>TestSuite runMinneStoreTest2. "OK"
+<BR>TestSuite runMinneStoreTest3. "OK"
+<BR>TestSuite runMinneStoreTest4. "OK"
+<BR>No important errors remains and it works at 95-100%
+<H2>
+<A NAME="How To Update MinneStore"></A>How To Update MinneStore</H2>
+Example:
+<BR>Suppose you downloaded the file MinneStore.st of version 3.0 of MinneStore
+and you want to update it. It is very easy:
+<OL>
+<LI>
+Copy the MinneStore.st in the visualworks_home\image directory</LI>
+
+<LI>
+Launch VW, then open parcel browse, select MinneStone parcel and click
+with the right mouse button on it.</LI>
+
+<LI>
+Select build/addFileIn and file in the MinneStore.st file.</LI>
+
+<LI>
+Save the MinneStore parcel.</LI>
+
+<LI>
+Plan a small journey to Milan (Italy), my city :)</LI>
+</OL>
+
+<H2>
+<A NAME="Additional information"></A>Additional information for the porting.
+(if you are tired you can stop reading :)</H2>
+All code modified by me has a comment with a "GG" string in it. In some
+cases I left&nbsp; original code fragments as comments. Maybe some (very
+little) comments are in Italian, but I promise to translate it in the next
+release (yip don't you like this language?...:).
+<BR>Most (but not all) of the code modified is in the "MinneStore-GG-Patch"
+category. I must supply a new class called File. This isn't so elegant,
+because this class name is too common and it isn't part of standard VW
+library.
+<BR><I><FONT COLOR="#CC0000">I try to modify less possible the MinneStore
+Code,&nbsp; for avoiding putting some bugs in it!!</FONT></I>
+<BR><B><FONT COLOR="#006600"><FONT SIZE=+2>Worst Problems fixed:</FONT></FONT></B>
+<UL>
+<LI>
+The propertyAt: &amp; so on methods aren't implemented in VW so I must&nbsp;
+create a workaround. The problem is this: I cannot add a instance variable
+to Object (it prints out "cannot make a byte subclass....") so I build
+Global Variable with the information needed. The variable name is&nbsp;
+MinneStorePropertyDB and I take care of right initialisation/release using
+the Parcel pre-load action &amp; post-unload action. This is quite elegant
+in VW 3.0, but cannot be done in VW 2.0 :(</LI>
+
+<BR>Note: The infos in MinneStorePropertyDB AREN'T SAVED in the objects
+itself when serialaized to files (=database do not record it?). This is
+NOT a problem for MinneStore, but if some memory is retained in the MinneStorePropertyDB
+you can do, ONLY when DB ARE NOT OPENED!!, this action: FlavorCompatibility
+clearMemory. to clear the Propery Dictionary and save a bit of space! Because
+all tests succesfully passed, the semantics is saved.
+<LI>
+A lot of problems TOO derive from file model, but have been fixed in a
+good way. The MSExample will work fine and the Exception engine is working
+in the right way.</LI>
+</UL>
+<B><FONT COLOR="#006600"><FONT SIZE=+1>Minor Changes (in order of importance)</FONT></FONT></B>
+<UL TYPE=SQUARE>
+<LI>
+The Exception porting seems work, but I'd like a bit of testing about it.
+E-mail me if some problems occurs! I don't know if my porting is compliance
+with new exception model of VW (this would be a problem for the VW 2.5.x
+relase but we must be compliant because the next version of VW will not
+support the old model).</LI>
+
+<LI>
+In MSNilValue I added the method "lessFromInteger:" and it seems work right.&nbsp;
+I do the porting in 4 days, and I review my changes in about 10 days. The
+original code has been taken from the VisualSmalltalk porting (I think
+it should be the best thing to do).</LI>
+</UL>
+
+<H3>
+<FONT COLOR="#990000">Improvements</FONT></H3>
+
+<UL TYPE=SQUARE>
+<LI>
+The speed is a major problem. I will try to speed-up the code in the next
+relase, reducing the message needed for having a object property or for
+creating a lock file.</LI>
+
+<LI>
+One thing is very strange: the code in <TT>FlavorCompatibility>>clone:
+anObject message</TT> can be replaced with a simple line like&nbsp; <TT>anObject
+copy</TT> ? I don't think is possibile but what is the reason? This would
+improve performance a&nbsp; little.</LI>
+
+<LI>
+Most classes have comments as a Comment method in the class. I'd like to
+build a small program for copying this comments but I have no time... Does someone
+want to help me?.....</LI>
+</UL>
+
+<H2>
+<A NAME="Debugging the propertyAt:.. methods"></A>Debugging the propertyAt:..
+methods</H2>
+Only for debugging purpose you can use:
+<PRE>Object debugPropertyEngine</PRE>
+For destroying the PropertyDB <B><FONT COLOR="#CC0000">WHEN DB&nbsp; ARE
+CLOSED</FONT></B> use:
+<PRE>FlavorCompatibility clearMemory.</PRE>
+
+<H2>
+<A NAME="Next Release?"></A>Next Relase?</H2>
+The next relase of this porting is planned in middle 1999 for having compatibility
+with the VW-5.0 if I can get a beta copy of it. ENJOY!!
+<P><TT>// Giovanni Giorgi&nbsp; e-mail:&nbsp; daitangio@tin.it --- gg482344@silab.dsi.unimi.it</TT>
+<BR><TT>// (ex)Tutor at Depart. of Information Technology of Milan, Italy</TT>
+<BR><TT>// http://www.geocities.com/CapeCanaveral/Hall/7276/</TT>
+<BR><TT>// http://www.silab.dsi.unimi.it/~gg482344/tutor/tutor.htm</TT>
+</BODY>
+</HTML>

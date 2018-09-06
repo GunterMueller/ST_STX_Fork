@@ -1,0 +1,39 @@
+This directory contains additional (less used) widgets. 
+They are compiled by stc into the library 'libwidg2' to be
+linked to your application and to smalltalk itself.
+
+Less frequently used elements (TwoColList, Rulers, Sliders etc.)
+are found here. You can build a smalltalk without these classes,
+or define them as autoloaded (which is done in the patches file).
+
+Depending on the configuration and capabilities of your Operating-
+System, the resulting classlibrary is either:
+
+	libwidg2.a      - an archive
+
+	libwidg2.obj    - a prelinked object library
+
+	libwidg2.so     - a shared object
+
+the library includes init code (libwidg2_Init) for all of its components.
+
+
+Things you can do here:
+
+    make                compile all classes, producing libwidg
+
+    make objs           compile all required object files
+
+    make install        compile all and install in DESTLIBDIR
+
+    make qinstall       only install - assumes binaries are up-to-date 
+
+    make check          syntax check only over all .st files
+
+    make <file>.o       compile <file>.st to object-file
+
+    make <file>.c       compile <file>.st to c intermediate
+
+    make clean
+
+    make clobber

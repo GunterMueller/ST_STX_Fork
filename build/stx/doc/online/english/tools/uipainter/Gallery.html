@@ -1,0 +1,229 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+   <META NAME="Author" CONTENT="Thomas Zwick, eXept software AG, Germany">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.04 [en] (X11; I; Linux 2.0.30 i586) [Netscape]">
+   <TITLE>The Gallery Widget</TITLE>
+</HEAD>
+<BODY>
+<A HREF="NoteBook.html" NOPRINT><IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="The Note Book Widget" NOSAVE HEIGHT=30 WIDTH=30></A><A HREF="TOP.html#TABLEOFTHEWIDGETS" NOPRINT><IMG SRC="../../../icons/DocsUpArrow.gif" ALT="Table of the Widgets" NOSAVE HEIGHT=30 WIDTH=30></A>
+<BR>&nbsp;
+<HR ALIGN=LEFT WIDTH="100%">
+<H1>
+<FONT SIZE=+4>The Gallery Widget</FONT></H1>
+<IMG SRC="../../../pictures/GUIPainterWidgetGallery.gif" ALT="A View of a Gallery Widget" NOSAVE HEIGHT=100 WIDTH=135>
+<P>View Class: <TT>UIGalleryView</TT>
+<BR>Spec Class: <TT>UIGalleryViewSpec</TT>
+
+<P>The <B>Gallery Widget</B> has a similar behavior like the <A HREF="NoteBook.html">Note
+Book Widget</A> extended by a drag and drop capability. For each page a
+resource specification (window spec method) with defined widgets must be
+created. The widgets should have the same behavior like the widgets of
+ST/X (means spec class is subclass of class UISpecification, and view class
+is subclass of class SimpleView).
+<BR>&nbsp;
+<H3>
+
+<HR ALIGN=LEFT WIDTH="100%"></H3>
+
+<H3>
+The <I>Basics</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>ID</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Unique symbolic name (ID) of the gallery.&nbsp;</B>&nbsp;
+<BR>This ID can be used by the application to access the widget
+via <TT>"builder>>componentAt:#ID"</TT>.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Model</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for the selected
+label of the gallery.</B>&nbsp;
+<BR>It should return a&nbsp;
+
+<P><TT>&nbsp;&nbsp;&nbsp; - String</TT> instance (only for static behavior)&nbsp;
+<BR><TT>&nbsp;&nbsp;&nbsp; - <A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance with a <TT>String</TT> instance&nbsp;
+
+<P>whereby <TT>String</TT> can also be replaced by a <TT>Text</TT> instance.&nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Label</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for holding
+the list of the labels of the gallery.</B>&nbsp;
+<BR>It should return a&nbsp;
+
+<P><TT>&nbsp;&nbsp;&nbsp; - Array</TT> instance (only for static behavior)&nbsp;
+
+<P>whereby the <TT>Array</TT> instance can also be replaced by an <TT>OrderedCollection</TT>
+instance or by a <TT>SortedCollection</TT> instance.&nbsp;
+
+<P>They contain the items of the gallery as <TT>String</TT> instances,
+<TT>Text</TT> instances, or as <TT>LabelAndIcon</TT> instances.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>From Class</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Name of the class implementing the window
+spec methods.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Selector List</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Name of the selector sent to the application
+returning a list of resource specification selectors.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Selection Specification</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for the resource
+specification of the current selected widget.</B></TD>
+</TR>
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Details</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFFFFF" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Font</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the font style of the gallery.</B>&nbsp;
+<BR>After selecting the check toggle the font style can be chosen by selecting
+one of the Family/Face/Style/Size buttons. If no font style is selected,
+the gallery bar takes its default font style from the style sheet.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>BG-Color</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the background color of the gallery.</B>&nbsp;
+<BR>After selecting the check toggle the background color can be chosen
+by selecting the desired colored button. If no color&nbsp; is selected,
+the gallery takes its default background color from the style sheet.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Style</B></TD>
+
+<TD ALIGN=LEFT VALIGN=TOP BGCOLOR="#FFFFFF" NOSAVE><B>Defines the type
+of the border style of the tab item (Windows or Mac).</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Orientation</B></TD>
+
+<TD NOSAVE><B>Defines the side for the arrangement of the tab item (top,
+bottom, left, or right).</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Level</B></TD>
+
+<TD NOSAVE><B>Defines the width of the 3D-border.</B>&nbsp;
+<BR>Positive values provide a raising,&nbsp;
+<BR>negative values provide a lowering of the gallery.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>One Tab Per Row</B></TD>
+
+<TD><B>Turns on/off that only one tab item is drawn per row.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Fit Tabs To View</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the tab items are fitted
+to the width of the widget's view.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Can Tab</B></TD>
+
+<TD><B>Turns on/off that the gallery can be reached by tabbing.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD BGCOLOR="#FFCC00" NOSAVE><B>Move Selected Row Down To View</B></TD>
+
+<TD><B>Turns on/off that the row of the selected tab item is always moved
+down to the widget's view.</B></TD>
+</TR>
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Channels</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Enable</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for en-/disabling
+the gallery.</B>&nbsp;
+<BR>It should return a&nbsp;
+
+<P>&nbsp;&nbsp;&nbsp; - <TT>Boolean</TT> instance (only for static behavior)&nbsp;
+<BR>&nbsp;&nbsp;&nbsp; - <TT><A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance with a <TT>Boolean</TT> instance**&nbsp;
+
+<P>A value model is used to provide a dynamically changing of the ability
+of the gallery.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Select Condition</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Name of the selector sent to the application
+before a selection is performed.</B>&nbsp;
+<BR>It should return a <TT>Boolean</TT> instance.&nbsp;
+<BR>If the selector ends with ':', the selector is performed with the index
+of the currently selected tab item as the passed argument.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Middle Button Pressed</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Name of the selector sent to the application
+when the middle button is pressed.</B>&nbsp;
+<BR>In the method of the selector, for example, a popup menu can be performed.</TD>
+</TR>
+</TABLE>
+<TT>*&nbsp; = ValueHolder, AspectAdaptor, BufferedValueHolder, RangeAdaptor,
+TriggerValue</TT>
+<BR><TT>** = true, false</TT>
+
+<P>&nbsp;
+<H3>
+The <I>Help</I> Section:</H3>
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="HelpTool.html">Using the Help Tool</A>"
+<BR>&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Layout</I> Section:</H3>
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="LayoutTool.html">The Layout of the Widgets</A>"
+<BR>&nbsp;
+<BR>&nbsp;
+
+<P>
+<HR>
+
+<P><IMG SRC="../../../icons/stx.gif" ALT="[stx-logo]" NOSAVE NOPRINT HEIGHT=48 WIDTH=47 ALIGN=CENTER>
+<BR><TT>Copyright &copy; 1998 eXept Software AG, all rights reserved</TT>
+<BR>
+<HR>
+</BODY>
+</HTML>

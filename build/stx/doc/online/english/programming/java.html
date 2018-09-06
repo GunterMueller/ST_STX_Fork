@@ -1,0 +1,116 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Java Support</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="tdv.html">     <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="rose.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Java Support (The Unified Virtual Machine)</H1>
+
+<H2>Overview</H2>
+
+The Smalltalk/X virtual machine (runtime system) allows for Java code
+to be integrated and executed within the Smalltalk environment.
+This integration is virtually seamless - from a programmers point
+of view, there is no difference between a smalltalk object and a java
+object. Java classes inherit from Object - much like most other smalltalk
+classes.
+<BR>
+This allows for java classes to be loaded into the system and used
+in the same way as smalltalk classes.
+
+<H2>Prerequisites</H2>
+You need the Java JDK classfiles (we recommend jdk1.1.6) 
+to be installed on your system.
+<BR>
+There is no need for a java virtual machine to be installed, since
+ST/X includes its own java interpreter, JIT and support system.
+<BR>
+
+<H2>Limitations</H2>
+JDK 1.2.x and above are not (yet) supported.
+
+
+<H2>Implementation</H2>
+see the paper and slides on our webServer.
+
+
+<H2>Startup</H2>
+<UL>
+ <LI>get a JDK (usually you will already have it on your machine)
+ <LI>if you want to embed Java applets in smalltalk applications,
+     you need an old 3.0 mozillas MozillaAppletContext class.
+     (Sorry for that, but we have not yet written our own AppletContext
+      stub class, and the JavaVM currently emulates an old Mozillas
+      interface ...)
+     <BR>This will change in the future.
+     <BR>You need to grab the file <CODE>ns30_unix.zip</CODE> from some
+	 Netscape3.0 distribution.
+     <BR>If netscape agrees, we can distribute that file in the future.
+
+ <LI>load the java support classes:
+  <BR>This is optional - the java classes should autoload when required;
+  <BR>However, autoloading is slower than package loading.
+  <BR><CODE>Smalltalk loadPackage:'stx:libjava'</CODE>
+  <BR>This should also load in many of the java classes as they are pulled
+      into the system during java classInitialization time.
+ <LI>switch to the JAVA namespace in the browser.
+ <LI>see them classes.
+</UL>
+If the java classes are not found, have a look at the method
+<CODE>Java class initialize</CODE>, where the various JDK versions are probed.
+<BR>
+In a workspace, you can test java-class loading by evaluating:
+<CODE><PRE>
+    Java classForName:'java.lang.Object'
+</PRE></CODE>
+this should return a (non-nil) java class object.
+<P>
+Notice, that the ST/X classLoader is not yet able to extract class
+files from a compressed zip archive. If in doubt, unzip the "classes.zip"
+file into individual files using "winzip.exe" or "unzip".
+
+<H2>Restricted use</H2>
+As we provide these classes for no additional charge,
+we request that any changes/modifications & enhancements
+made to them be returned to us (in source), to be reintegrated
+into future versions.
+<P>
+This code is NOT public domain code, but provided for free
+with the ST/X system.
+<P>
+You are not allowed to sell this code or any application built around this
+code unless special agreements are set up.
+<BR>
+(However, you are allowed to use this tool for your own applications)
+<P>
+
+<H2>No Warranty</H2>
+Java support is provided AS-IS without any warranty whatsoever.
+
+
+<H2>Origin/Authors</H2>
+Authors:
+<BR>
+Claus Gittinger (eXept)
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.9 $
+</BODY>
+</HTML>

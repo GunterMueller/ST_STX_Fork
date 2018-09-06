@@ -1,0 +1,794 @@
+<HTML>
+<HEAD>
+<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<TITLE>Quick 30 Minute Introduction</TITLE>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="../TOP.html" INFO="Back to documentation's main page" > <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+
+<H1>Quick 30 Minute Introduction</H1>
+
+<P>
+Ok, so you really don't want to spend a lot of time to
+see what's in here for you.
+Give yourself 30 minutes.
+Be aware, that that's a short time, only enough to get a very rough feeling on what
+this is all about. We'll try anyway, to get you hooked...
+<P>
+There are multiple Smalltalk systems around, but the differences are much smaller
+than usually thought; they all follow the same principles,
+but differ on details in the implementation (speed),
+the GUI (experimental vs. conservative)
+and intended target users (experimental vs. business).
+If you know one Smalltalk, you should not have problems to move on and feel
+comfortable in any other (Its like switching from Java-Swing to Java-SWT,
+or from one Visual-C to eclipse).
+<P>
+
+<H2>Contents</H2>
+
+<UL>
+<LI><A HREF="#INTRO" NAME="I_INTRO">Short Overview on Smalltalk: 5 Minutes</A>
+<LI><A HREF="#SCRIPTING" NAME="I_SCRIPTING">Smalltalk/X as a Scripting Language: 1 Minute</A>
+<LI><A HREF="#GUI_APP" NAME="I_GUI_APP">My First Hello World GUI Application: 5 Minutes</A>
+<LI><A HREF="#SMALLTALK" NAME="I_SMALLTALK">Some Smalltalk Coding: 10 Minutes</A>
+<LI><A HREF="#SAVING" NAME="I_SAVING">Saving your Work</A>
+<LI><A HREF="#DEPLOYING" NAME="I_DEPLOYING">Deploying: 5 Minutes</A>
+<LI><A HREF="#CONSOLE_APP" NAME="I_CONSOLE_APP">A Commandline Application: 5 Minutes</A>
+<LI><A HREF="#WEB_APP" NAME="I_WEB_APP">A Web Application: 5 Minutes</A>
+<LI><A HREF="#MORE" NAME="I_MORE">Where to Go From Here: 5 Minutes</A>
+</UL>
+
+
+
+<H2><A HREF="#I_INTRO" NAME="INTRO">Short Overview on Smalltalk</A></H2>
+
+Smalltalk is different! It is not just another programming language,
+but a combination of a powerful IDE,
+a highly reflective and dynamic programming language,
+and a comprehensive, well proven class library.
+Smalltalk as a language alone, without IDE and class library does not make really sense
+(although languages like Ruby and Python actually are almost that, and are successful too).
+
+<P>
+Smalltalk is a much more dynamic environment
+than anything you've ever seen before (with the exception of some Lisp systems, maybe):
+<UL>
+<LI>Classes can be created, changed or removed at any time (especially: at run time).
+<P>
+
+<LI>Individual methods can be created, changed or removed at any time (especially: at run time).
+<P>
+
+<LI>The tools which make up the IDE can be made available even in deployed applications
+(although, they are typically made invisible to the end-user).
+<P>
+
+<LI>Changes can be made while the program is running. Sounds strange at first, but
+it means that you don't have to shutdown an application to fix bugs or add more features.
+<P>
+
+<LI>Code is installed and effective as soon as you have typed it in.
+There is no extra compile, link and execute-the-program phase.
+Therefore, programs are typically debugged while being coded.
+<P>
+
+<LI>Programming can be done in the living system - even in the debugger
+<P>
+
+<LI>Every bit of the system (except for the low-level virtual machine) is itself written in Smalltalk and open to be read and learned or even
+to be changed and adapted to your needs. If you ever thought that some menu function is missing from your
+favourite program, here you can easily change eveything.
+Even while you are working with it.
+If you find anything to improve, there is no need to wait for the next release.
+</UL>
+
+The Smalltalk language is a programmer's dream:
+<UL>
+<LI>Simple, very regular, elegant and readable syntax.
+<BR>It may look strange and different at the beginning,
+especially to programmers which are used to C-style languages,
+but once you got it, many other languages may simply look ugly to you.
+<P>
+
+<LI>Entirely object oriented.
+<BR>Down to integers, code, classes, stack frames and threads, everything
+is defined by a class which specifies its behavior. Everywhere, you can add methods
+to extent any class. There are no builtIn primitive classes, for which the behavior
+is hidden.
+<P>
+
+<LI>Highly reflective.
+<BR>Every information is available and even changeable at run time.
+This includes the class inheritance, set of methods, private variables, globals and threads.
+Classes are themself objects which respond to messages.
+<P>
+
+<LI>Highly dynamic
+<BR>Any behavior can be changed at any time. You can access classes and methods by name, add, remove or change
+their behavior. Code can be changed without a need to stop the program.
+You can change the program in the debugger and proceed.
+<P>
+
+<LI>Higher order functions.
+<BR>Functions can be created dynamically and treated like any other object.
+Especially they can be returned as a value, passed as argument or stored in a private variable.
+They are also used to implement a very powerful and easy to use collection and GUI class
+hierarchies and control structures.
+<br>In Smalltalk, those functions are called "blocks" and have
+full closure semantics
+(same semantics as in the Scheme language but with a very nice syntax).
+<P>
+
+<LI>Sophisticated exception handling.
+<BR>Smalltalk is one of the rare languages which provides proceedable exceptions.
+These are the base for notifications, queries and other control structures which
+are hard to implement in other languages.
+</UL>
+
+The class library is mature and well proven:
+<UL>
+<LI>Smalltalk has been in use for more than 35 years now, and a lot of
+experience has flown into the implementation of its class libraries.
+It provides one of the most sophisticated collection, stream and numeric class hierarchies.
+<P>
+
+<LI>Many of the modern GUI concepts and patterns originated in Smalltalk: MVC, observer, visitor
+and many more.
+The GUI libraries are powerful, flexible and portable.
+</UL>
+
+The tools are a dream to work with:
+<UL>
+<LI>The class browser is unreached in power.
+Even after all those years, no other IDE is comparable.
+Programs can be debugged and changed while running, and even in the debugger.
+Turn around times are in the seconds range - you don't have to stop, recompile and restart for
+a change to be made.
+<P>
+
+<LI>Instrumentation (code coverage), memory statistics, thread monitors, execution time analysis are all included.
+NO extra tools needed.
+<P>
+
+<LI>The UIBuilder makes UI construction easy.
+Applications are completely architecture neutral and no line of code
+needs to be changed to support Windows, Unix/Linux and OSX.
+</UL>
+
+Smalltalk/X gives you even more:
+<UL>
+<LI>Ability to statically (i.e. offline) compile classes down to real machine code,
+and to package class libraries into shared libraries.
+<P>
+
+<LI>Generate makefiles and other build-support automatically and use traditional
+file based source code revision systems for offline building (eg. controlled by jenkins).
+<P>
+
+<LI>Statically compiled classes implement the full semantics (incl. contexts and block closures),
+but are not based on bytecode and cannot be decompiled easily.
+<P>
+
+<LI>Easy creation of headless server applications.
+<P>
+
+<LI>Inline C-code to tune performance critical methods (eg. image processing, bulk vector operations etc.).
+<P>
+
+</UL>
+
+<H2><A HREF="#I_SCRIPTING" NAME="SCRIPTING">Smalltalk/X as a Scripting Language</A></H2>
+
+Before we dig deeper, it should be emphasized that <CITE>Smalltalk/X</CITE>
+can be used both as a scripting language AND as an IDE to develop complex applications.
+<P>
+First, you can give it a command line expression
+to evaluate with the "-E" (eval) or "-P" (print) options.
+For example, to print "Hello World",
+try:<BLOCKQUOTE><PRE><CODE><A type="commandexample"><B>stx -E "'Hello World' printCR"</B></A></CODE></PRE></BLOCKQUOTE>
+or:<BLOCKQUOTE><PRE><CODE><A type="commandexample"><B>stx -P "22 factorial"</B></A></CODE></PRE></BLOCKQUOTE>
+or:<BLOCKQUOTE><PRE><CODE><A type="commandexample"><B>stx -P "22 factorial nextPrime"</B></A></CODE></PRE></BLOCKQUOTE>
+(notice the double quotes to ensure that the expression is passed as a single argument to the
+stx program.)
+<P>
+You can also put a script into a file
+and call it as:
+<BLOCKQUOTE><PRE><CODE><B>stx -F "&lt;filename&gt;"</B></CODE></PRE></BLOCKQUOTE>.
+On Linux/Unix systems, make it executable and run it just like any other script:
+<BLOCKQUOTE><PRE><CODE>
+bash$ <B>cat script</B>
+#!stx --script
+  1 to:23 do:[:i |
+     'the factorial of %d is %d\n' printf:{ i . i factorial } on: Stdout
+  ].
+bash$ <B>chmod +x script</B>
+bash$ <B>./script</B>
+the factorial of 1 is 1
+the factorial of 2 is 2
+the factorial of 3 is 6
+the factorial of 4 is 24
+...
+the factorial of 22 is 1124000727777607680000
+the factorial of 23 is 25852016738884976640000
+bash$
+</CODE></PRE></BLOCKQUOTE>
+
+Finally, <CITE>ST/X</CITE> can be started in an interactive line-by-line interpreter mode
+with:<BLOCKQUOTE><PRE><CODE><A type="commandexample"><B>stx --repl</B></A></CODE></PRE></BLOCKQUOTE>
+<P>
+These options may be useful for little scripts or computations.
+However, the real power lies in the integrated development envronment.
+It is not very useful, to write longer programs in a dumb (non-Smalltalk-aware)
+editor.
+Therefore, for the following examples,
+start the full <CITE>ST/X</CITE> IDE
+with the command line:<BLOCKQUOTE><PRE><CODE>stx</CODE> (or <CODE>"stx -I"</CODE> for a clean start)</PRE></BLOCKQUOTE>
+
+<H2><A HREF="#I_GUI_APP" NAME="GUI_APP">My First Hello World GUI Application</A></H2>
+
+This chapter demonstrates in 5 minutes, how to create a little standalone (fully compiled) demo application
+with a GUI. The coding is not explained, as the goal is to give you an impression
+of how an experienced Smalltalk programmer can make use of the tools.
+<P>
+In the Launcher, click on the "<I>Open SystemBrowser</I>" button:
+<p>
+<IMG SRC="Launcher1.gif">
+<p>
+to open the most useful tool, the <A HREF="../tools/newbrowser/TOP.html"><DFN>SystemBrowser</DFN></A>.
+This is the programmer's main interface to write, change and to execute programs.
+<p>
+<IMG SRC="SystemBrowser1.gif">
+<p>
+First notice, that the system browser is not file oriented.
+You are presented the class- and method objects as they are present in the current system,
+not with files.
+<P>
+Smalltalk does not normally need and use files for its operation
+(but of course allows for source files to be used for code exchange
+and also interacts with source code repositories
+such as CVS or Mercurial for version management).
+The browser shows the code base as it is present in your memory, not in some file.
+When you change code in it, it is directly and immediately affecting the existing code
+and possibly even code which is currently being executed.
+This means, that you are living inside the system, and your programming
+becomes part of the running program.
+<P>
+Second, notice that classes can be shown in various different organisations:
+by name, inheritance, package, namespace and by category.
+The default and the one also shown in the above picture is "<I>by category</I>".
+This organization presents classes by their function,
+even if you don't know the inheritance or the exact name.
+Of course, there are also functions to search for a class by various
+criteria - especially, by a matching name pattern, or if it calls for an operation in its code,
+if it references another part of the system or if it contains a particular string or code sequence.
+<P>
+The top panes are named "<I>class-category-list</I>", "<I>class-list</I>", "<I>method-category</I>" or "<I>protocol</I>"-list and
+"<I>method-list"</I> from left to right. They are used to select the class and method (= function).
+There is also a variable list, which we ignore for now.
+When anything is selected in the upper area,
+the corresponding code is shown in the code-view area at the bottom.
+<P>
+Some people like to work with a hierarchical or package organisation.
+Try the browser's "<I>View</I>"-menu to see those.
+<P>
+In this tutorial, we want to create a new little application.
+Applications are usually written as subclasses of the
+<code>ApplicationModel</code> class,
+which provides common functionality for window handling,
+resource management, startup and release etc.
+So we will need a new so-called "<DFN>Application-class</DFN>" to start with.
+To create it, press the right button in the class-list-pane (the second pane in the upper area)
+and select the "<DFN>New-Application</DFN>" item from the "<I>New</I>" submenu.
+<P>
+<IMG SRC="ClassMenu1.gif">
+<P>
+The following initial class definition template will be shown in the code-view:
+<CODE><PRE>
+    ApplicationModel subclass: #NewApplication1
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Applications'
+</PRE></CODE>
+Be aware that this is only a template - no real class has been
+created at this time. You have to change and fill in the details as required.
+Ignoring the other fields at the moment (they can be changed
+at any time later easily), we will only
+change the offered default name "<I>NewApplication1</I>" into something appropriate;
+for example "<I>HelloWorldApplication</I>".
+
+<P>To do this, select the text which is to be changed with the mouse pointer, and
+type in the new name. When you are finished,
+select the "<DFN>Accept</DFN>" menu item from the
+code view's right-button-menu (or press the green bar at the left, which performs the same action).
+Pressing "<DFN>Accept</DFN>" ("<DFN>accepting</DFN>", for short)
+tells the browser, that you are done with editing of whatever is shown in the code view,
+and you want to make this change permanent.
+In other words: "to let it create the new class as specified".
+<P>
+In other languages, or IDEs you'd say "compile" a class (although nothing has yet been compiled, actually).
+All we did so far was to create a new class object, and if you look
+at the accepted code, you will notice that this is actually an instance
+creation message being sent to the parent class. An operation which can also
+be performed by the program at execution time!.
+<P>
+You will be asked if you want the browser to generate some standard application framework
+code for you. Confirm by clicking "<i>Yes</i>" (or "<i>OK</i>"). This is a convenient service provided by the
+browser: whenever you create a new application class, it can generate a typical
+framework of UI and menu components.
+If you clicked on "<i>Cancel</i>" by accident,
+find the corresponding "<VAR>Create Initial Code</VAR>" item in the class list's popup menu and select it.
+<br>Now, your new class should be presented as:
+<P>
+<IMG SRC="SystemBrowser2.png">
+<P>
+Notice the little "launch rocket" icon in the toolbar. This appears whenever a launchable
+application class is being shown.
+Click on it, to see the first appearance of our "hello world" application.
+
+<H3><A HREF="#I_EDITING_THE_MENU" NAME="I_EDITING_THE_MENU">Editing the Menu</A></H2>
+
+When playing with the application, you'll notice that the generated menu contains many items which
+we do not need or want to change. Let us fix this.
+In the browser, you'll find the menu specification on the class side
+(in Smalltalk, both object instances
+and classes are objects in the sense that their method protocol can be changed.
+If you have a Java background, think of class methods as some kind of "static" class methods,
+with the added benefit of being redefinable and inherited).
+<P>Click on the radio button named "<I>Class</I>" below the browser's class list.
+You'll see "<I>menu specs</I>" in the method category list. Select it, then double click on
+the now appearing "mainMenu" method entry in the rightmost method list.
+A Menu Editor will appear:
+<P>
+<IMG SRC="MenuEditor1.png">
+<P>
+In the left tree list, select and remove all entries except for the "<i>Exit</i>" item
+(select, then either press the Delete-key,
+or use the right-button menu).
+Finally, save the changed menu specification
+via the menu editor's "<I>Save as Method</I>" toolbar button, and close the menu editor.
+<P>
+Restart the hello world app via the "rocket-launch" button in the browser to see
+the changed menu (in this case, we have to restart the application,
+because by default, the menu is constructed once at startup of an application.
+(We could have defined it to be constructed dynamically whenever clicked,
+but that is described elsewhere.)
+
+
+<H3><A HREF="#I_EDITING_THE_UI" NAME="I_EDITING_THE_UI">Editing the User Interface</A></H2>
+
+Let us take a look at how user interfaces are edited. In the browser,
+find the "windowSpec" method on the class side and double click on it.
+A UI-painter window appears, together with a drawing canvas and a gallery of draggable widgets.
+The drawing canvas represents the UI as it will look when the application
+is eventually started. Here, in the editor, it is used to select and manipulate
+the sub-parts of the UI. These are called widgets. Common widgets are buttons,
+checkboxes, panes or input fields.
+<P>
+Let us enhance the application by adding a button to close the application window.
+Drag a "close"-button from the gallery into the canvas:
+<P>
+<IMG SRC="UIPainter1.png">
+<P>
+Save the window specification ("<I>Save as Method</I>" button in the toolbar) and exit the UI-painter tool.
+Then retry the HelloWorld application, and close it via the new button.
+<P>
+Notice that the UI-painter tool also shows a launch rocket button -
+so you can also try the changed user interface right from within the UI painter,
+without having to go back to the browser. You can keep the UI painter open or iconified if
+you think that more changes are to be made soon.
+
+
+<H2><A HREF="#I_SMALLTALK" NAME="SMALLTALK">Some Smalltalk Coding</A></H2>
+
+All of the above did not involve any actual coding.
+We were using automatically generated code or, as in case of the close button, were using code
+as provided (inherited) by the ApplicationModel class.
+<P>
+Now we are going to add some real code to the application. First, reopen the UI painter tool
+on the window specification.
+Find and select the close button we have just added in the canvas view.
+Notice that the widget tree expands the containers to make the selected widget visible.
+Also find the two fields named "<I>Text</I>" and "<I>Action</I>" in the attribute area of the selected widget.
+Change the text to something like "Press Me", and the action to the name of a method which
+we are going to code in a minute, "pressMePressed".
+Now, we have just told the button to call the "pressMePressed" function of our application
+(which of course does not exist yet).
+<P>
+Click on the accept button at the bottom and then save the window spec again.
+But do not close the tool. Instead, launch the application right
+here via the tool's own rocket launcher toolbar button.
+<P>
+<IMG SRC="UIPainter2.png">
+<P>
+In your HelloWorld app, press this new button now. A debugger appears,
+telling you, that "pressMePressed" was called,
+but your application does not understand it.
+This basically means, that an unimplemented function was called.
+Of course, this was to be expected, because we have not yet defined
+how the helloWorld app should react when the "Press Me" button is clicked.
+We have not defined
+what the "pressMePressed" response should be!
+<P>
+<IMG SRC="Debugger1.png">
+<P>
+Close the debugger, and return back to the browser.
+Notice, that your application is still open,
+and you can press the non-functioning button again, if you like.
+Being able to play with such an unfinished application is great
+during development. You don't need any of the specified
+callback methods until they are actually called.
+This makes it easy to proceed in very small steps,
+implementing and debugging code as it is written.
+
+You may have noticed, that it is even possible to add or modify
+code in the debugger itself, and then retry the just edited code.
+This is the way most experienced Smalltalk programmers work, actually.
+<P>
+Back in the browser, switch to the instance side.
+Then first create a new method category named "<I>actions</I>"
+(in the method category/protocol view, which is the third list view), select this protocol,
+and then enter the code:
+<CODE><PRE>
+    pressMePressed
+	Dialog information:'wow, it worked'.
+</PRE></CODE>
+and "accept" it (which means: "<i>compile</i>") via the code-view's popup menu.
+<P>
+<IMG SRC="Accepting1.png">
+<P>
+This teaches the HelloWorldApplication a new trick:
+how to respond to "pressMePressed".
+Here, we tell it to send an "information:" message to Dialog,
+passing the string "wow, it worked!" as argument.
+Dialog happens to be a global variable, which is actually bound to a class
+(yes, you remember? Classes are objects too, and can be sent messages just like regular objects).
+If you are curious (and you should be), you can use a <I><A HREF="../tools/sbrowser/TOP.html">SystemBrowser</A></I> to find out,
+how Dialog responds to that and see how it is implemented.
+And also see that there are many more helpful messages understood
+by Dialog. If you feel attracted, you may now take a look at the syntax of
+the Smalltalk programming language. An introductionary text is found in the
+<A HREF="tut_2.html">"Smalltalk Basics"</A> chapter of the tutorial.
+<P>
+By the way: you can try code like this without a need to write an application or a test framework.
+In the browser's
+code view, simple select the whole line of code ("Dialog information:'....'") with the mouse
+and evaluate it via the right button menu function "<I>doIt</I>".
+An evaluator similar to Java's groovy is already built into the Smalltalk IDE (and has bee there for the past 30years!)
+
+<H2><A HREF="#I_SAVING" NAME="SAVING">Saving your Work</A></H2>
+
+It is now time to save your work.
+In the launcher, press the "<I>Save Snapshot Image</I>" button. This saves the state
+of the whole system into a so called "<DFN>snapshot</DFN>" file. This not only saves the
+application, but everything in the system. Including open browser windows, the contents
+of any workspace or UI editors etc. Saving a snapshot is a good thing, when your
+partner calls for dinner, and you want to continue later at exactly the same
+place. When <CITE>stx</CITE> ist started the next time,
+it will restore your session to that saved state.
+<P>
+Of course, the whole state is not what you need, when you want to give your new
+application's source code to a friend
+(the process of deploying a binary executable will be described later).
+<P>
+For this, a more fine-grain transport mechanism is useful:
+the fileOut mechanism allows you to save individual classes or packages to a
+source file. Try "<I>Fileout As</I>" in the class-list menu.
+The resulting source file can be loaded into another Smalltalk either manually
+via the <I><A HREF="../tools/fbrowser/TOP.html">FileBrowser</A></I> application, or by evaluating
+<CODE><PRE>    Smalltalk fileIn:'pathName'</CODE></PRE> in
+a workspace or by another Smalltalk program (i.e. you can do all of this programmatically !).
+<P>
+It is also possible to save all of your session changes into a so-called change list.
+This function is found in the launcher's "<I>File</I>" menu.
+Session changes can also be loaded as described above.
+
+<H3>Packaging</H3>
+Saving individual source files is OK for tiny projects or demo and script classes like the above.
+But if you have written a more complex application,
+these will certainly be structured into at least one,
+but usually into multiple packages.
+<P>
+Packages offer two big advantages: <br>a) they can be loaded as a whole, and thus
+be much easier transported, and <br>b) they can be compiled into a binary class
+library (which can later also be transported and loaded much faster as a single entity).
+<P>
+To package the application, first switch the browser to the "<I>package</I>"-viewing
+mode (in the "<I>View</I>" menu):
+<P>
+<IMG SRC="ProjectView1.png">
+<P>
+A hierarchical package list appears, replacing the previous "category" pane.
+You will notice, that your hello application is found packaged under "__NoProject__".
+Obviously, we did not assign it to any real project, yet.
+Select the "<I>New</I>" item and enter a reasonable package name
+into the dialog that pops up:
+<P>
+<IMG SRC="ProjectView2.png">
+<P>
+The name must conform to a certain pattern, which is described later.
+Skipping the details here, use "xxx:myDemoApp1" or "xxx:demos/myDemoApp1",
+where "xxx" is something unique for you, such as your company name or initials.
+It is recommended that you use at least a 2-level hierarchy.
+This makes your life easier later, when you add more and more projects.
+<P>
+The package name is similar to package names in other programming languages like Java.
+It should be a unique string, consisting of a so-called module (the xxx) and a path (the rest after the colon).
+The reason for the module to be special is due to its special role when it comes to source code management and versioning.
+We'll describe that later.
+<P>
+If this is an initial package creation, and no classes have yet been created for it,
+the browser opens another dialog, asking if you like some initial application class to
+be created for you. If you confirm with "Yes", it will basically create an empty helloWorld like
+application for you. If you followed the above steps (i.e. you already have your application class
+defined), click on the "No" button.
+<P>
+After you have created the new package, move your application class (via drag&amp;drop) into this package
+(or, if you prefer menus, use the class-list's "<I>Move to Package...</I>" menu function).
+<P>
+When done, your browser should show something like:
+<P>
+<IMG SRC="ProjectView3.png">
+<P>
+Notice, that the "create package" operation also created a new class, which is a so-called "<I>package definition</I>".
+This class ("cg_myDemoApp1" in the above example) contains all the meta information required for later building and loading of the packaged classes,
+such as which classes are contained, how to compile and how to deploy it.
+We'll come to this in a minute...
+<P>
+Now, having things packaged, you may file-out the whole package, to transport
+the application to a friend.
+For this, select the browser's "<I>FileOut As...</I>" menu function from
+the package list on the source machine.
+This creates a single source file which can be copied to the target machine.
+<P>
+On the target machine, open a <I><A HREF="../tools/fbrowser/TOP.html">FileBrowser</A></I>, select the file,
+and load it with the <I>fileIn</I> menu operation.
+Alternatively, evaluate <CODE><PRE>    '&lt;fileName&gt;' asFilename fileIn</PRE></CODE> in a Workspace.
+<H3>File Formats</H3>
+The file format used with the above <I>fileOut</I> is an ascii format,
+which should be supported by all Smalltalk implementations
+(it is the traditional <A HREF="../programming/fileoutFormat.html">"chunk"</A> file format).
+To load it into another
+Smalltalk, make sure to not use any of ST/X's syntax extensions and honor any limitations in class, method
+and variable naming (for example, Squeak/Pharo does not allow for underscores in a name).
+If you plan for portability, you may want to change the compiler's settings to warn you,
+whenever you use non-portable dialect specific extensions.
+<P>
+You can also use the so called <I>Monticello</I> file format for transportation.
+This is a package format supported by many Smalltalk dialects.
+It is dialect independent,
+meaning that it works when transporting
+code to other Smalltalk systems like VisualWorks or Squeak.
+<P>
+However, be aware that there still might be other obstacles, such as dialect specific language syntax
+(Namespace support, EOL comments etc.). and class hierarchy issues (superclass hierarchy being different)
+to be considered. For example, the ApplicationModel hierarchy is very similar in the VisualWorks Smalltalk
+dialect, whereas it is completely missing in Squeak/Pharo.
+As a rule of thumb, only non-UI packages are typically portable to other Smalltalk dialects,
+as each provides different UI framework libraries.
+
+<P>To create a Monticello package, open the Monitcello repository browser from the Launcher-menu,
+define a directory as package resource directory (or use the default package-cache),
+and select the "<I>Monticello</I> - <I>Commit or Create mcz File</I>" menu function from the browser's package list.
+Notice that Monticello support is autoloaded - the browser does not show that menu item
+before the monticello repository browser has been opened from the launcher.
+
+
+<H2><A HREF="#I_DEPLOYING" NAME="DEPLOYING">Deploying</A></H2>
+
+In all of the above, your application was developed and executed inside the IDE.
+For many projects and for your own tools and applications, this is just fine.
+After all: who needs many individual
+executables, if you can have them all in one single environment.
+Reusability is much enhanced, if you have all the parts at your hand in a single browsable environment.
+<P>
+Actually, many Smalltalk programmers (including the author) have their own universe, in which they find
+almost every piece of code they ever wrote. That is often a good source of bits and pieces for new
+projects. Already written parts can be resused or at least taken as a base to start with.
+<P>
+However, if you want to deploy an application to any other (especially "non-Smalltalker") user,
+you want to have a standalone application, which does not include all of the other stuff,
+and which also hides the graphical IDE and other development tools.
+<P>
+So you will sooner or later want to create something which can be given to an arbitrary user
+and which should be easily installable on her machine.
+This is called "deloying an application".
+<P>
+To create a self-installing package for deployment, open the "<I>Application Packager</I>" from
+the Launcher's "<I>Tools</I>" menu and follow its guiding.
+This assistent leads you through the build process interactively.
+A short introduction to the packager is found in the <A HREF="tut_1b.html">"Hello World in 5 Minutes"</A> introduction.
+<P>
+As an alternative, you can check in the package and supporting
+build files (makefiles and scripts) into a source repository (CVS or Mercurial)
+from the browser's SCM menu, go to the shell command level,
+check out the package there, and built the stand alone executable
+via make. This is also the way to go, if you want automatic builds
+using Jenkins or a similar automatic build tool.
+
+
+<H2><A HREF="#I_CONSOLE_APP" NAME="CONSOLE_APP">A (headless) Commandline Application</A></H2>
+
+Headless in this context stands for "without a GUI". Headless applications are command line
+utilities or server applications. If they offer a user interface, it is typically a web interface.
+<P>
+The following gives an example of a command line utility, which can be used just like any other
+Unix or MSWindows utility via the shell/cmd command line. It will read its stdin and write to
+stdout, so it can be used in a pipe just like any other Unix command.
+
+<H3>Create a new startup class in the system browser</H3>
+
+Select the "New" - "Smalltalk" - "Standalone Startup" menu item from its class menu:
+<P>
+<IMG SRC="CreateConsoleApp1.png">
+<P>
+change the class name to "DemoConsoleApp1",
+"<i>accept</i>" (either in the menu or via CTRL-s or by clicking on the green save-bar),
+and answer "Yes", when asked if the initial template code should be generated.
+<P>
+This creates a so called "<i>startup class</i>". Startup classes are the entry for stand-alone
+programs - i.e. programs which are not loaded into the Smalltalk/X IDE, but run as self-standing
+executables (console commands to be started on the command line or server programs, which are started
+by init on Unix machines or as services/autoexec programs on Windows).
+
+<H3>Define its behavior</H3>
+Take a look at the generated code,
+starting with the "<CODE>main:</CODE>"-method on the class side.
+<P>
+This will be the very first entry to your standalone program,
+and corresponds to the main()-function of other programming languages.
+It gets the command line as argument vector
+(a sequenceable collection of strings, accessable by numeric index).
+<P>
+You will notice, that it does not do much,
+but simply instantiates itself and calls the "<CODE>main:</CODE>" method on the instance side.
+There, the arguments are extracted (you may remove the sample code there),
+and a finally, a "<CODE>realMain:</CODE>" method is called.
+<P>
+If course, you can remove all this and put your own code right into "<CODE>main:</CODE>" on the class side;
+however, we found it convenient to have separate methods, allow for easier subclassing.
+<P>
+The "<CODE>realMain:</CODE>" method is where the actual action is, and it looks like:
+<CODE><PRE>
+    realMain:argsToEcho
+	Stdout nextPutLine:'Hello World'.
+	Stdout nextPutLine:(argsToEcho asStringWith:Character space)
+</PRE></CODE>
+so obviously, it prints a hello-message followed by its command line arguments on a second line
+on the stdout-stream.
+<P>
+Leave everything untouched for now.
+Our next task is to package this into a deployable package, which we can deliver as binary
+to other users.
+<P>
+First, we need to package them up.
+In the browser, change the view-mode to "package",
+<P>
+<IMG SRC="SwitchBrowserToPackage.png">
+<P>
+and select the "New..." menu item from the package list menu:
+<P>
+<IMG SRC="PackageNewMenuShown.png">
+<P>
+in the dialog, choose "NonGUI-Application" in the type-field,
+and enter a reasonable name for your package (the same notation as described above).
+You should now see a class with the funny name in the class list.
+Here, it is "stx_doc_coding_demoConsoleApp", because we used "stx:doc/coding/demoConsoleApp" as
+package name.
+<P>
+<IMG SRC="ShownNONGuiAppInBrowser.png">
+<P>
+Move your own class (the one with the main-method in it) into this package (drag&amp;drop or via the class's "<i>Move to Package</i>" menu function).
+<P>
+Your browser should now show the two classes in the class list, as in the picture above.
+<P>
+
+<H3>Fix the Package</H3>
+Before building, we have to tell the packager some details for the build-process and
+the startup of the generated executable.
+Go to the package definition (the class with the funny name), select "Class"-side protocol,
+and take a look at the methods you find there.
+<P>
+Most interseting are: "productName" and "startupClassName".
+The first gives the name of your application as shown in the installer, and it will
+also be the name of the deployable package. Change the returned string to something useful,
+like "HelloWorld Application".
+<P>The second is the startup definition in the executable. Change the value returned by "startupClassName"
+to the name of your startup class; here to return the string 'DemoConsoleApp1'.
+
+<H4>Build the Thing</H4>
+
+In the package list, select the package class and open its popup menu, selecting
+"Build" - "Generate Deployable Package":
+<P>
+<IMG SRC="MenuBuildPackage.png">
+<P>
+Take a look at the Transcript. A bunch of messages should appear, showing what is going on.
+The output should look like:
+<CODE><PRE>
+   *******************
+   building in /private/var/folders/yq/hzq_k0t96x76ylpk8ksxqzrr0000gn/T/stx_tmp/stx_build...
+   ...
+   build successful.
+</PRE></CODE>
+At the end, a filebrowser should open in the temporary build directory,
+and you should see your deployable package there. Depending on the system you are working on,
+this will be either a linux package, a self installing exe for Windows, or a mountable
+dmg package for OSX.
+<P>
+<IMG SRC="DeployablePackageInFileBrowser.png">
+<P>
+The above screenshot was taken on a Mac
+(on Windows, you would find a file named "setup_demoConsoleApp.exe",
+and on Linux, you'd find "demoConsoleApp.pkg").
+<P>
+Two files are of interest here:
+<UL>
+<LI>demoConsoleApp
+<BR>is the binary executable, which you can execute in a shell;
+but only in this folder,
+as it refers to the shared class libraries and possibly other support files
+(language translations etc.). Read below, for more options.
+<LI>demoConsoleApp.dmg
+<BR>is the wrapped up application for deployment (contains all required shared libraries
+and other support files, such as language translation strings etc.).
+</UL>
+Open a console, and try it:
+<P>
+<IMG SRC="RunningDemoApp.png">
+
+
+<H4>Installing the Application</H4>
+The above build process generates the required self-installers (.pkg or .exe files).
+These contain all required shared libraries, resource files (language translations), bitmaps etc.).
+and thus may become quite big.
+<P>
+To get shrink wrapped installers, separate installation of the underlying runtime system
+and the application alone is needed, which is currently not supported by the automatic
+package process. Actually, from a maintenance point of view, it makes for more stability
+if each application is self contained and contains all-it-needs in its version;
+as Smalltalk tends to be less used for small headless programs than for complex server-
+or GUI apps, size issues are less of a problem in practice.
+<P>
+If you absolutely need (or want) to have a smaller footprint,
+make sure that the ST/X shared libraries are installed in some standard place
+(i.e. /usr/local/lib) and the remaining support files are found in "/opt/smalltalk".
+Then ensure that the LD_LIBRARY_PATH is set correctly so the libs are found.
+<P>
+Once these settings are correct, all you need is the compiled executable, which is
+typically quite small (40Kb in the above hello world example).
+
+
+
+
+<H2><A HREF="#I_WEB_APP" NAME="WEB_APP">A Web Application</A></H2>
+
+...to be written...
+
+
+<H2><A HREF="#I_MORE" NAME="MORE">Where to Go From Here</A></H2>
+
+...to be written...
+
+
+<P>
+<HR>
+Continue in <A HREF="tutorial.html">"Go to the Tutorial"</A>.
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif" ALT="[stx-logo]">
+<BR>Copyright &copy; 1996-2016 Claus Gittinger Development & Consulting
+<BR>Copyright &copy; 1996-2016 eXept Software AG
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.43 $ $Date: 2018-07-22 09:13:32 $
+
+</BODY>
+</HTML>

@@ -1,0 +1,149 @@
+<HTML>
+
+<HEAD>
+<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<TITLE>New Features in ST/X</Title>
+</HEAD>
+<BODY>
+
+<H1>Graphical User Interface (GUI) Tools</H1>
+
+
+<H3>The GUI Painter</H3>
+
+The GUI Painter allows for Graphical User Interface Applications to be
+built quickly and maintained easily.
+<BR>
+Using Drag & Drop, the application's window and components (widgets) are placed
+onto a canvas and connected via valueHolder aspects.
+<BR>
+Finally, the GUI Painter generates a windowSpec method
+containing the symbolic GUI description and the required aspect methods,
+which setup the valueHolders.
+<P>
+<IMG SRC="../../../pictures/GUIPainter.gif" ALT="[Image of GUI Painter]">
+
+
+<H3>The Menu Editor</H3>
+
+Similar to the GUI Painter, PopUpMenus and MenuPanels can be defined easily
+with the Menu Builder.
+<BR>
+The Menu Painter generates a menuSpec method, which contains a symbolic
+description of the menu items.
+<P>
+<IMG SRC="../../../pictures/MenuEditor.gif" ALT="[Image of Menu Editor]">
+
+
+<H3>The Bitmap Editor</H3>
+
+The bitmap editor can be used to edit bitmap files or image resource methods
+(which contain the bitmap image within the program).
+<BR>
+The editor can read and write PCX, XPM, XBM, GIF, TIFF, BMP and a few other image
+formats.
+<P>
+<IMG SRC="../../../pictures/ImageEditor.gif" ALT="[Image of Image Editor]">
+
+<P>
+<P>
+<HR>
+<P>
+<P>
+
+<H1>New Language & System Features</H1>
+
+<H3>Private classes</H3>
+
+Classes can now be defined to be private to some other class, making them
+effectively invisible to other classes.
+<BR>
+This features helps to strukture big projects and avoid name conflicts.
+
+
+<H3>Syntax coloring</H3>
+
+Source code is now colored and emphasized to highlight syntactic
+features, such as message selectors, variables etc.
+<BR>
+The color and emphasis of particular syntactic elements is fully
+configurable.
+
+
+<H3>Improved Just-In-Time (JIT) Translation</H3>
+
+The JIT translator has been improved and generates optimized inline code
+for more common constructs.
+
+
+<H3>Integrated Java Virtual Machine</H3>
+
+This feature is still under construction and will be released in one of
+the upcoming releases. It will allow for binary Java class files to be loaded
+into the system and be integrated seamless into the Smalltalk class hierarchy.
+
+
+<P>
+<P>
+<HR>
+<P>
+<P>
+
+<H1>New Widget Elements</H1>
+
+<H3>New Extended ComboBox</H3>
+Allows for an arbitrary dialog to be pulled down as a comboBox menu.
+
+<H3>Improved Notebook Widget</H3>
+
+<H3>Improved DataSet Widget</H3>
+
+<H3>Improved Hierarchical List Widgets</H3>
+
+<H3>3D Technical Data Viewer (TDV) Framework</H3>
+
+Using openGL, technical data can be visualized easily.
+Includes a generic, extendable framework for 3D visualization and interaction.
+
+<P>
+<P>
+<HR>
+<P>
+<P>
+
+<H1>Additional AddOn Products</H1>
+
+<H3>C Type Parser, Type Hierarchy</H3>
+
+Allows for C-Types and #defines to be read from a C-Header file and
+generates corresponding type objects.
+
+<H3>ASN1 Parser, Type Hierarchy & Coders</H3>
+
+Reads ASN1 module definitions (incl. Macros) and/or GDMO definitions to be parsed and
+returns a collection of types and/or managed object definitions.
+<BR>These definitions can be used to create instances of ASN1 types or
+managedObjects.
+<BR>
+Includes BER and DER coders/decoders and allows for other coders to be plugged in
+easily.
+
+<H3>OSI ACSE Access</H3>
+
+Interface to the Sun-Solistice OSI ACSE implementation.
+<BR>
+An interface to other packages (ISODE) is being prepared.
+Requires the ASN1 package.
+
+<H3>OSI ROSE Protocol implementation</H3>
+
+A Smalltalk implementation of the OSI-ROSE Protocol layer.
+Requires an ACSE implementation and the ASN1 package.
+
+<H3>OSI CMISE Protocol implementation & support framework</H3>
+
+A Smalltalk implementation of the OSI-CMISE Protocol layer.
+Requires the ROSE and ASN1 packages.
+
+</BODY>
+</HTML>

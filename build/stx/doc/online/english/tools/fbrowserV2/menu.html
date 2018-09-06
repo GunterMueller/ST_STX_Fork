@@ -1,0 +1,471 @@
+<HEAD>
+<TITLE>Using the New File Browser - Main menu</TITLE>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="newFeatures.html">    <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">     <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="dirTree.html"> <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H2><A NAME="MENU" HREF="TOP.html#I_MENU">The Main Menu</A></H2>
+
+<H3><A NAME="MENU_FILE" HREF="TOP.html#I_MENU_FILE">Browser Submenu Functions</A></H3>
+
+<DL>
+
+<DT><A NAME="MENU.SPAWN">Spawn</A>
+<DD>Open another file browser in the same directory.
+<P>
+
+<DT><A NAME="MENU.OPEN_FINDER">Open Finder (Mac Only)</A>
+<DD>Open a finder window in the same directory.
+<P>
+
+<DT><A NAME="MENU.OPEN_EXPLORER">Open Explorer (Windows Only)</A>
+<DD>Open a Windows explorer in the same directory.
+<P>
+
+<DT><A NAME="MENU.OPEN_CBROWSER">Open CBrowser (eXept Only)</A>
+<DD>Open a C-Browser in the same directory.
+This is a C-language development tool used in-house within eXept.
+<P>
+
+<DT><A NAME="MENU.ADD_TEXTEDITOR_PAGE">Add Texteditor Page</A>
+<DD>Adds another text editor tab.
+<P>
+
+<DT><A NAME="MENU.ADD_SHELL_PAGE">Add Shell Page</A>
+<DD>Adds another shell window tab.
+<P>
+
+<DT><A NAME="MENU.ADD_ARCHIVER_PAGE">Add Archiver Page</A>
+<DD>Adds another archiver tab.
+<P>
+
+<DT><A NAME="MENU.ADD_SEARCH_PAGE">Add Search Page</A>
+<DD>Adds another search tab.
+<P>
+
+<DT><A NAME="MENU.SPAWN">Exit</A>
+<DD>Closes the fileBrowser.
+<P>
+</DL>
+
+<H3><A NAME="MENU_DIR" HREF="TOP.html#I_MENU_DIR">Directory Submenu Functions</A></H3>
+
+<DL>
+<DT><A NAME="MENU.UP">Up</A>
+<DD>Move to the parent directory.
+<P>
+
+<DT><A NAME="MENU.DIR_BACK">Back</A>
+<DD>Move backwards in the list of previously visited directories.
+<P>
+
+<DT><A NAME="MENU.DIR_FORWARD">Forward</A>
+<DD>Move forward in the list of previously visited directories.
+<P>
+
+<DT><A NAME="MENU.DIR_HOME">Home</A>
+<DD>Move to the user's home directory.
+<P>
+
+<DT><A NAME="MENU.DIR_DESKTOP">Desktop</A>
+<DD>Move to the user's desktop directory.
+<P>
+
+<DT><A NAME="MENU.DIR_CURRENT">Current Directory</A>
+<DD>Move to the current directory. This is the directory from which
+ST/X was started (not required to be the ST/X installation directory).
+<P>
+
+<DT><A NAME="MENU.DIR_STX_INSTALL_DIR">ST/X Directory</A>
+<DD>Move to the ST/X installation directory.
+This is the directory in which the ST/X binary was installed.
+<P>
+
+<DT><A NAME="MENU.DIR_STX_TEMP">ST/X Temporary Directory</A>
+<DD>Move to the ST/X temporary directory.
+This is where ST/X creates temporary files.
+<P>
+
+<DT><A NAME="MENU.DIR_MAKE_CURRENT">Make Current Directory</A>
+<DD>Make this the "current" directory. The current directory
+(read a Unix programmer's manual) is the folder on which
+relative file names (i.e. without an initial "/") are based.
+<P>
+
+<DT><A NAME="MENU.DIR_BOOKMARKS">Bookmarks</A>
+<DD>A submenu for quick navigation to bookmarked directories.
+<P>
+
+<DT><A NAME="MENU.DIR_HISTORY">Visited History</A>
+<DD>A submenu for quick navigation to previously visited directories.
+<P>
+
+</DL>
+
+<H3><A NAME="MENU_FILE" HREF="TOP.html#I_MENU_FILE">File Submenu Functions</A></H3>
+
+<DL>
+<DT><A NAME="MENU.OPEN">Open</A>
+<DD>Open the selected file.
+<BR>If the selected file is a textFile, its contents is read and
+shown in the contents view.
+<BR>If the file contains a bitmap image, an image editor is opened.
+<P>
+
+<DT><A NAME="MENU.FILEIN">FileIn</A>
+<DD>loads the selected file(s) into the system.
+The file must be either a Smalltalk source
+file, containing valid Smalltalk expressions
+in <A HREF="../../programming/fileoutFormat.html">fileOut-format</A> (chunk format),
+or a dll containing a compiled SmalltalkX class library.
+<P>
+
+<DT><A NAME="MENU.FILEIN">FileIn to Namespace</A>
+<DD>loads the selected file(s) into the system but enforces
+classes to loaded into a given namespace to prevent overloading of
+existing classes.
+The file must be a Smalltalk source file
+(i.e. binary class files cannot be loaded into another namespace).
+<P>
+
+<DT><A NAME="MENU.NEW">New ...</A>
+<DD>Creates a new directory, empty plain file, symbolic- or
+hardLink (if supported by the OperatingSystem)
+<P>
+
+<DT><A NAME="MENU.CUT_COPY_PASTE">Cut - Copy - Paste</A>
+<DD>allow for files to be moved/copied to other folders.
+<P>
+
+<DT><A NAME="MENU.REMOVE">Remove</A>
+<DD>remove the currently selected file(s) and/or
+directory(s). A dialog will ask for confirmation.
+<P>
+
+<DT><A NAME="MENU.ERASE">Erase</A>
+<DD>first erase the file(s) physically, by overwriting disk blocks.
+Then logically remove them. This is useful for files which contain
+security data, such as cryptographic keys or passwords, as the original
+contents can usually not be recovered by "file undelete" tools.
+However, no absolute guaranty is given here, as the details depend on how
+actual hardware handles caches, ssd buffers etc.
+<P>
+
+<DT><A NAME="MENU.RENAME">Rename...</A>
+<DD>rename the selected file(s) or directory(s).
+A dialog will ask for the new name.
+<P>
+
+<DT><A NAME="MENU.RENAME">Move To...</A>
+<DD>move the selected file(s) to another directory.
+A dialog will ask for the destination.
+<P>
+
+<DT><A NAME="MENU.RENAME">Copy To...</A>
+<DD>copy the selected file(s) to another directory.
+A dialog will ask for the destination.
+<P>
+
+<DT><A NAME="MENU.SHOW_INFO">Properties</A>
+<DD>show file information of the selected file.
+This includes file type, owner, size and access rights.
+<P>
+
+<DT><A NAME="MENU.FILE_HISTORY">Visited History</A>
+<DD>A submenu for quick navigation to previously visited files.
+<P>
+
+
+</DL>
+
+
+<H3><A NAME="MENU_EDIT" HREF="TOP.html#I_MENU_EDIT">Edit Submenu Functions</A></H3>
+
+<DL>
+<!--
+<DT><A NAME="MENU.GET">Get contents</A>
+<DD>same as double click; shows the contents of the
+currently selected file in the contents view.
+<P>
+
+<DT><A NAME="MENU.INSERT">Insert contents</A>
+<DD>inserts the contents of the
+currently selected file into the contents view at the current text cursor position.
+<P>
+-->
+
+<DT><A NAME="MENU.COPY_NAMES">Copy Selected Names to Clipboard</A>
+<DD>places a copy of the selected file names into the cut & paste buffer.
+<BR>Useful, when editing Makefiles, and you need a list of
+some files in a directory.
+<P>
+
+<DT><A NAME="MENU.COPY_ALL_NAMES">Copy All Names to Clipboard</A>
+<DD>places a copy of the file list into the cut & paste buffer.
+<BR>Useful, when editing Makefiles, and you need a list of
+all files in a directory.
+<P>
+</DL>
+
+<H3><A NAME="MENU_VIEW" HREF="TOP.html#I_MENU_VIEW">View Submenu Functions</A></H3>
+
+<DL>
+<DT><A NAME="MENU.LONGLIST">Detail</A>
+<DD>toggles individual columns in the file list view.
+By default, only the name, size and modification date is shown.
+It may take a longer to read directories
+if more columns are choosen.
+<P>
+
+<DT><A NAME="MENU.SHOWALL">Sort By...</A>
+<DD>Changes the sorting criteria of the filenames in the fileList.
+<P>
+
+<DT><A NAME="MENU.SHOWALL">Show - Hidden Files</A>
+<DD>toggles display of hidden files whose name begins with
+a period <CODE>"."</CODE>. By default, these are not shown in the list.
+<P>
+
+<DT><A NAME="MENU.SHOWALL">Show - Tool Menu etc.</A>
+<DD>toggles display of various subcomponents,
+such as the toolbar, the bookmarks bar, the path field
+and the info label at the bottom.
+<P>
+
+<DT><A NAME="MENU.UPDATE">Update</A>
+<DD>reread the directory and update the file list.
+<P>
+
+This function is normally not needed, since
+the fileBrowser checks for modifications
+of the current directory in regular intervals,
+updating the list automatically every few seconds.
+However, a manual update may be needed in certain situations
+(for example, if the time/dates are out of sync between NFS hosts)
+or if you do not want to wait for the next automatic update.
+<P>
+
+</DL>
+
+
+<H3><A NAME="MENU_TOOLS" HREF="TOP.html#I_MENU_TOOLS">Tools Submenu Functions</A></H3>
+
+<DL>
+<DT><A NAME="MENU.EXECUTE">Unix Command... (DOS Command...)</A>
+<DD>allows execution of any unix command; a popup
+box allows input of the command.
+The output of the command is inserted in the contents view
+at the cursor position.
+<P>
+
+<DT><A NAME="MENU.SHELL_TERMINAL">Shell Terminal</A>
+<DD>Open a separate shell command window (similar to "xterm" on Unix
+or "command.exe" on Windows).
+<P>
+
+<DT><A NAME="MENU.CBROWSER">Changes Browser</A>
+<DD>Open a changesBrowser on the selected file
+(which should contain Smalltalk source code)
+<P>
+
+<DT><A NAME="MENU.WORKSPACE">Workspace</A>
+<DD>Open a workspace window showing on the selected file's contents.
+<P>
+
+<DT><A NAME="MENU.INSTALL_AUTOLOAD">Install as Autoloaded</A>
+<DD>Consult the selected file and install an autoloaded class stub for it.
+The file must contain valid Smalltalk source code in chunk format.
+<P>
+
+<DT><A NAME="MENU.INSTALL_AUTOLOAD">Install All as Autoloaded</A>
+<DD>Consult all files with an ST suffix in the selected directory and install autoloaded class stubs for them.
+The files must contain valid Smalltalk source code in chunk format.
+<P>
+
+<DT><A NAME="MENU.INSTALL_ALL_AUTOLOAD">Install All as Autoloaded (Recursive)</A>
+<DD>Recursively consult all files with an ST suffix in the selected directory and all of its
+subdirectories and install autoloaded class stubs for them.
+The files must contain valid Smalltalk source code in chunk format.
+<P>
+
+<DT><A NAME="MENU.FILE_OPERATIONS">File Operations Menu</A>
+<DD>Contains items for less frequently used operations:
+<P>
+
+<DL>
+<DT><A NAME="MENU.SPLIT_FILE">Split File</A>
+<DD>Split a file into manageable pieces
+(for example for transport in a USB stick, or to be sent via mail,
+if the mailer does not accept big files).
+<P>
+
+<DT><A NAME="MENU.MERGE_FILE">Merge Files</A>
+<DD>The reverse operation to the above split: concatenate multiple pieces
+into a single file.
+<P>
+
+<DT><A NAME="MENU.COPY_BROKEN_FILE">Copy Currupted File To..</A>
+<DD>Reads a file and copies it to another place.
+However, any read errors are cought, and the file's corrupt area
+is skipped (written as zeros) after a number of retries have failed.
+This operation can be used to recover parts from unreadable disks, tapes
+or old floppy disk media, which happens to be unreadable as a whole,
+but may still contain some readable fragments.
+<P>
+
+<DT><A NAME="MENU.ROT13">Rot13</A>
+<DD>Show a rot13 (poor man's) text obfuscated file's contents.
+<P>
+
+<DT><A NAME="MENU.TRUNCATE">Truncate</A>
+<DD>Truncate a file to a given size. Useful to cut long log files
+or the output of a runaway program back to size.
+<P>
+
+<DT><A NAME="MENU.FILEDIFF">File difference view</A>
+<DD>Open a diff-text view.
+<BR>First, a dialog is opened, asking for two filenames - these
+are compared and the changes are shown highligted in a two-column
+diff view.
+<P>
+
+
+<DT><A NAME="MENU.FOLDER_DIFFERENCES">Differences Between Folders</A>
+<DD>Recursively scans two folder hierarchies for differences.
+<P>
+</DL>
+
+
+
+<DT><A NAME="MENU.FILE_TOOLS">File Tools Menu</A>
+<DD>Contains items for less frequently used file tools, especially viewers
+and editors:
+<P>
+
+<DL>
+<DT><A NAME="MENU.EDITOR">Editor</A>
+<DD>Open a separate text editor window on the selected file.
+<P>
+
+<DT><A NAME="MENU.HTMLREADER">HTML Reader</A>
+<DD>Open an HTML reader on the selected file.
+<P>
+
+<DT><A NAME="MENU.XMLINSPECTOR">XML Inspector</A>
+<DD>Displays XML data in a hierarchical tree fashion.
+<P>
+
+<DT><A NAME="MENU.IMGEDIT">Image Editor</A>
+<DD>Open the Smalltalk/X bitmap image editor on the selected file
+(which should contain a bitmap image in one of the supported
+formats: XBM, XPM, JPEG, GIF, TIFF etc. .
+<P>
+
+<DT><A NAME="MENU.ZIPTOOL">Zip Tool</A>
+<DD>Open a ZIP tool on the selected file
+(which should contain a zip compressed archive of files).
+<BR>This tool lists the zip-archives contents and allows extraction
+of individual files.
+<P>
+</DL>
+
+
+<DT><A NAME="MENU.FILE_SEARCH">File Search Menu</A>
+<DD>Contains items for more exhaustive search operations:
+<P>
+
+<DL>
+<DT><A NAME="MENU.SEARCH">Search...</A>
+<DD>Open a separate search window.
+This is the same as the embedded search page tab.
+<P>
+
+<DT><A NAME="MENU.SEARCH_SAME">Same Contents as Selected</A>
+<DD>Search for files with the same contents as the selected one.
+<P>
+
+<DT><A NAME="MENU.SEARCH_DUPLICATES">Duplicates</A>
+<DD>Search for all duplicate files in the shown directory.
+<P>
+
+<DT><A NAME="MENU.SEARCH_DUPLICATES">All Duplicates (Recursive)</A>
+<DD>Search for all duplicate files in the shown directory and all of its
+sub directories.
+<P>
+</DL>
+</DL>
+
+<H3><A NAME="MENU_CVS" HREF="TOP.html#I_MENU_CVS">CVS Submenu Functions</A></H3>
+
+Contains functions to checkin/checkout files into a CVS repository.
+
+
+<H3><A NAME="MENU_MERCURIAL" HREF="TOP.html#I_MENU_MERCURIAL">Mercurial (HG) Submenu Functions</A></H3>
+
+Contains functions to checkin/checkout files into a Mercurial (hg) repository.
+
+<H3><A NAME="MENU_EXTRAS" HREF="TOP.html#I_MENU_EXTRAS">Extras Submenu Functions</A></H3>
+
+<DL>
+<DT><A NAME="MENU.ENCODING">Encoding ...</A>
+<DD>opens a dialog to specify the file's encoding to use.
+<BR>
+<UL>
+<LI>Character Encoding (charset)
+<BR>
+By default, the file browser assumes ISO8859-1 encoding,
+and tries to figure out a file's encoding (by heuristic rules),
+when a file's contents is read (eg. by double clicking).
+Usually, UTF-8 encoded files are detected, and the charset-encoding changed
+as appropriate.
+<P>
+This autoselect may fail sometimes,
+and a specific encoding can be enforced via this menu,
+by first choosing an encoding and setting the "Lock" check toggle, to prevent further
+attempts in autoselecting.
+<P>
+
+<LI>Line End Convention
+<BR>
+Different operating systems traditionally used different line-end encodings.
+By default, ST/X uses the Unix convention, where end-of-line is marked by a
+NL (Newline, ascii 10) character. If you edit a file with a different line end
+convention, change to CR-NL (for MSDOS family of operating systems),
+CR (for VMS and older Macintosh operating systems), or one of th special conventions,
+which are only useful to write files for mainframes or some more exotic modem
+protocols.
+<P>
+
+<LI>Tab Stops
+<BR>
+ST/X assumes that tabs in a file are conforming to the historic standard
+of forwarding to the next multiple of 8 spaces.
+When reading a file, tabs are always converted to an appropriate number of spaces,
+and treated as such in the editor.
+I.e. the text editor does not show or handle tabs at all.
+When writing a file, leading sequences of spaces (but only those)
+are converted to a number of tab characters.
+</UL>
+<P>
+</DL>
+
+
+<HR>
+<A HREF="dirTree.html">Next: Directory Tree View</A>
+<HR>
+
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif" ALT="[stx logo]">
+Copyright &copy; 2002 eXept Software AG, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+<HR>
+Doc $Revision: 1.7 $ $Date: 2016-09-14 09:41:13 $
+
+</BODY>
+</HTML>

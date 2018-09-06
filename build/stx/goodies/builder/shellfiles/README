@@ -1,0 +1,3 @@
+Set of simple shell scripts to build projects. Used by Jenkins jobs. 
+
+This is a poor-mans implementation for those who don't like 'rakefiles'.

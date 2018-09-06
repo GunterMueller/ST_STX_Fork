@@ -1,0 +1,18 @@
+/.cvsignore/1.1.1.1/Mon May 14 00:19:58 2018//
+/Make.proto/1.1/Mon May 14 00:20:27 2018//
+/Make.spec/1.1/Mon May 14 00:20:24 2018//
+/Makefile.init/1.1/Mon May 14 00:20:30 2018//
+/Parrot__HelloWorldTestServer.st/1.1/Mon May 14 00:20:04 2018//
+/Parrot__StateMachineTest.st/1.1/Mon May 14 00:20:00 2018//
+/Parrot__ThunkASN1FrameTest.st/1.1/Mon May 14 00:20:20 2018//
+/Parrot__ThunkFrameTest.st/1.1/Mon May 14 00:20:08 2018//
+/Parrot__ThunkHelloWorldTest.st/1.1/Mon May 14 00:20:16 2018//
+/abbrev.stc/1.1/Mon May 14 00:20:36 2018//
+/bc.mak/1.1/Mon May 14 00:20:33 2018//
+/bmake.bat/1.1/Mon May 14 00:20:39 2018//
+/libInit.cc/1.1/Mon May 14 00:20:51 2018//
+/mingwmake.bat/1.1/Mon May 14 00:20:45 2018//
+/stx_goodies_communication_parrotTalk_tests.st/1.2/Mon May 14 00:20:52 2018//
+/stx_goodies_communication_parrotTalk_testsWINrc.rc/1.1/Mon May 14 00:20:48 2018//
+/vcmake.bat/1.1/Mon May 14 00:20:42 2018//
+D

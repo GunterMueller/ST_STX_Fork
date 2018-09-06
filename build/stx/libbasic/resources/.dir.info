@@ -1,0 +1,10 @@
+This directory contains resource files for some language specifics.
+These files are normally copied or sym-linked to a standard
+place (like '/usr/local/lib/smalltalk/resources').
+
+The only class using resources is (currently) Date, which needs language
+specific day- and month names.
+
+If you change anything here, make sure to do a 'make newResources'
+in the directory '../smalltalk' and - if appropriate reinstall
+the resource files into their standard place.

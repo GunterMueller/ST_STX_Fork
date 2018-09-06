@@ -1,0 +1,37 @@
+This directory contains some more (less frequently used) basic classes.
+They are included in a standard smalltalk, but can be left out for a 
+minitalk or in special (small) final applications.
+
+Compiled by stc into the library 'libbasic2'.
+
+Depending on the configuration and capabilities of your Operating-
+System, the resulting classlibrary is either:
+
+	libbasic2.a      - an archive
+
+	libbasic2.obj    - a prelinked object library
+
+	libbasic2.so     - a shared object
+
+the library includes init code (libbasic2_Init) for all of its components.
+
+
+Things you can do here:
+
+    make                compile all classes, producing libbasic2
+
+    make objs           compile object files
+
+    make install        compile all and install in DESTLIBDIR
+
+    make qinstall       only install - assumes binaries are up-to-date 
+
+    make check          syntax check only over all .st files
+
+    make <file>.o       compile <file>.st to object-file
+
+    make <file>.c       compile <file>.st to c intermediate
+
+    make clean
+
+    make clobber

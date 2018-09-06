@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- xml:lang and lang are different attributes, one
+    has a namespace, the other has not.  this must not raise an error -->
+<!DOCTYPE html SYSTEM "fake-xhtml.dtd" >
+<html xml:lang="en" lang="en">
+    <head>
+        <title>Title</title>
+        <meta content="asdf" />
+    </head>
+    <body>
+
+        <h1>Heading Level 1</h1>
+
+        <p>This is a paragraph</p>
+    </body>
+</html>

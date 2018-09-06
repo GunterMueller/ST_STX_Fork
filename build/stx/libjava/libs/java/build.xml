@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project name="" default="compile" basedir=".">
+    <import file="build.auto.xml"/>
+    <!-- Put custom build code here, this file is never overwritten by Smalltalk/X -->
+
+    <target name="libs.create-xbeans.jar" extensionOf="libs.post">
+    	<copy file="${build.libs.dir}/xmlbeans-2.6.0.jar" 
+    	    tofile="${build.libs.dir}/xbean.jar"/>
+    </target>
+</project>

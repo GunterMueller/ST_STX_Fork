@@ -1,0 +1,31 @@
+/* XPM */
+static char *menu_timeDate_16x16_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 8 1",
+/* colors */
+"a c white",
+"b c black",
+"c c #800000",
+"d c #000080",
+"e c yellow",
+"f c #0000FF",
+"g c #C0C0C0",
+"h c none",
+/* pixels */
+"dddddddddhhhhhhh",
+"dfdfffdfdbhhhhhh",
+"dddddddddbhhhhhh",
+"dgagagagdbhhhhhh",
+"dagcgccadbhhhhhh",
+"dgccagcgdbhhhhhh",
+"dagcgcgabbbbbhhh",
+"dgacaccbeabaebhh",
+"dagagabeaebeaebh",
+"ddddddbaeabaeabh",
+"hbbbbbbbaebbbbbh",
+"hhhhhhbaeaeaeabh",
+"hhhhhhbeaeaeaebh",
+"hhhhhhhbeabaebhh",
+"hhhhhhhhbbbbbhhh",
+"hhhhhhhhhhhhhhhh",
+};

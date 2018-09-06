@@ -1,0 +1,158 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Help - printer setting</Title>
+</HEAD>
+
+<BODY>
+
+<H1>Printer settings</H1>
+
+<H2><A NAME="INDEX">Help index</A></H2>
+
+<UL>
+<LI><A HREF="#PRINTER_TYPE">Printer type</A>
+<LI><A HREF="#PRINTER_COMMAND">Print command</A>
+<LI><A HREF="#PRINTER_PAGE">Page format</A>
+<LI><A HREF="#PRINTER_MARGIN">Margins</A>
+<LI><A HREF="#PRINTER_COLOR">Color printing</A>
+<LI><A HREF="#INITIAL_SETTINGS">Changing the default settings</A>
+<LI><A HREF="#SPECIAL_NOTE">Special note on postscript printing</A>
+<LI><A HREF="#MORE_INFO">Further reading</A>
+</UL>
+
+<HR>
+
+<H2><A NAME="PRINTER_TYPE" HREF="#INDEX">Printer type</A></H2>
+
+Choose the type of printer you have here.
+Beside the recommended <VAR>postscript printer</VAR> (for unix)
+and <VAR>windows printer</VAR> (for win32),
+you may find entries for other printer types here.
+These are only partially supported: no graphics printing is possible with those printers.
+<P>
+Unix users:
+<br>Even if you do NOT have a postscript printer attached to your computer,
+we recommend using the postscript setup, and filter the output through
+a software processor (such as <VAR>ghostscript</VAR>).
+
+
+
+<H2><A NAME="PRINTER_COMMAND" HREF="#INDEX">Print command</A></H2>
+
+Specifies the command for printing. Typically, this is <CODE>"lp"</CODE>
+or <CODE>"lpr"</CODE>. However, for previewing, or if you do not
+have a postscript printer available, you can also define it to save the
+output in some file:
+<CODE><PRE>
+    cat > preview.ps
+</PRE></CODE>
+or filter it through <VAR>ghostscript</VAR>
+with:
+<CODE><PRE>
+    cat > tmp.ps; ghostview tmp.ps
+</PRE></CODE>
+
+<P>
+Processing the output with a postscript filter (like <VAR>a2ps</VAR>
+or <VAR>enscript</VAR>) is done by setting the printers type to <VAR>dumb</VAR>,
+and defining a command like:
+<CODE><PRE>
+    a2ps | lpr
+</PRE><CODE>
+
+
+
+
+<H2><A NAME="PRINTER_PAGE" HREF="#INDEX">Page format</A></H2>
+
+Page format setting is only possible (required) with a postscript printer.
+Various standard formats are offered: the US formats <VAR>letter</VAR>,
+<VAR>legal</VAR> and <VAR>ledger</VAR> (which is landscape 17x11).
+<BR>
+The DIN formats include <VAR>A4</VAR> through <VAR>A6</VAR> and <VAR>B5</VAR>.
+
+
+
+<H2><A NAME="PRINTER_MARGIN" HREF="#INDEX">Margins</A></H2>
+
+Margin setting is only possible (required) with a postscript printer.
+You can set the margins either in inches or in millimeters.
+
+
+
+<H2><A NAME="PRINTER_COLOR" HREF="#INDEX">Color printing</A></H2>
+
+Tells the system that the attached printer is a color printer.
+If turned off, documents are printed in b&amp;w.
+<BR>
+<B>
+Notice that most b&amp;w postscript printers DO interpret color information,
+and use dithering techniques to simulate greyscales. Often, this
+does not produce the desired output, and better results may be obtained,
+by disabling this to force printing in black &amp; white mode.
+<BR>
+(for example: the HTML documents' blue anchor texts
+ looks ugly on a low resolution b&amp;w printer).
+</B>
+
+<H2><A NAME="INITIAL_SETTINGS" HREF="#INDEX">Changing the default settings</A></H2>
+
+The default settings and the list of offered printCommands can be
+defined in a host-specific startup file. The original defaults are
+set in the <CODE>"host.rc"</CODE> startup file.
+<BR>
+To change these, create a file called
+"<CODE>h_</CODE><VAR>myHostName</VAR><CODE>.rc</CODE>" and add
+printer setup to this file (take the stuff found in <CODE>"host.rc"</CODE>
+as a starting point.
+<BR>
+To provide an example, our in-house setup is included
+(within a conditional based upon the systems domainName) in that file.
+
+
+<H2><A NAME="SPECIAL_NOTE" HREF="#INDEX">Special note on postscript printing</A></H2>
+
+The ST/X postscriptPrinting classes currently do not know about
+correct font sizes on your printer (it will parse postscript font metrics
+files in later versions - if your system provides those metrics files).
+<P>
+In order to find out a fonts size (especially height), ST/X asks
+the windowServer for the size of the corresponding screen font,
+and scales the returned value for the printer, using the displays resolution
+as a scaling factor.
+<BR>
+If your screen size in the display settings is wrong, that computation
+will lead to wrong results - be certain to give the correct dimension in
+the screen setting dialog.
+<BR>
+Wrong printer font sizes are also computed,
+if the displays font sizes are not correct (for example, when using
+75dpi fonts on a 100dpi display).
+
+
+
+<H2><A NAME="MORE_INFO" HREF="#INDEX">Further reading</A></H2>
+
+For more information, read <A HREF="../../custom/TOP.html">
+<VAR>"Configuration &amp; Customization"</VAR></A>.
+
+
+<P>
+<P>
+
+
+
+<HR>
+<P>
+<P>
+Copyright &copy;  Claus Gittinger Development &amp; Consulting, all rights reserved
+<BR>Copyright &copy;  1996 eXept Software AG
+<P>
+<P>
+
+<HR>
+Doc $Revision: 1.12 $ $Date: 2008-03-31 13:48:16 $
+
+</BODY>
+</HTML>

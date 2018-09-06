@@ -1,0 +1,4573 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Inline C Code</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="compiling.html"> <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">       <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="dynamicloading.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>How to Write Primitives and Inline C Code</H1>
+
+<H2>Contents</H2>
+
+<UL>
+  <LI><A HREF="#INTRO" NAME="I_INTRO">Introduction</A>
+  <LI><A HREF="#SIMPLE" NAME="I_SIMPLE">Simple Examples</A>
+  <LI><A HREF="#ACCESS" NAME="I_ACCESS">Accessing Smalltalk Objects</A>
+  <UL>
+  <LI><A HREF="#OBJECT_REPRESENTATION" NAME="I_OBJECT_REPRESENTATION">Object Representation</A>
+  <LI><A HREF="#ACCESS_VARS" NAME="I_ACCESS_VARS">Variables</A>
+  <LI><A HREF="#IDENTIFIERS" NAME="I_IDENTIFIERS">Global Variables & Identifier Conflicts</A>
+  <LI><A HREF="#ACCESS_SYMBOLS" NAME="I_ACCESS_SYMBOLS">Symbols</A>
+  <LI><A HREF="#ACCESS_MACROS" NAME="I_ACCESS_MACROS">Macros & Helper Functions</A>
+    <UL>
+    <LI><A HREF="#MACROS_CONSTS" NAME="I_MACROS_CONSTS">Constants & Types</A>
+    <LI><A HREF="#MACROS_QUERY" NAME="I_MACROS_QUERY">Query & Value Extraction Helpers</A>
+    <LI><A HREF="#MACROS_OBJCREATE" NAME="I_MACROS_OBJCREATE">Object Creation Helpers</A>
+    <LI><A HREF="#MACROS_GC" NAME="I_MACROS_GC">Garbage Collector Helpers</A>
+    <LI><A HREF="#MACROS_CASTS" NAME="I_MACROS_CASTS">OBJ to C-Structure Casts</A>
+    <LI><A HREF="#MACROS_UTIL" NAME="I_MACROS_UTIL">Utility Functions</A>
+    </UL>
+  </UL>
+  <LI><A HREF="#RETURN" NAME="I_RETURN">Returning a Value from a Primitive</A>
+  <LI><A HREF="#LOCALS" NAME="I_LOCALS">Local Storage in Primitives</A>
+  <LI><A HREF="#STACK" NAME="I_STACK">Stack Requirements</A>
+  <LI><A HREF="#NOCONTEXT" NAME="I_NOCONTEXT">Ommiting the Context Setup</A>
+  <LI><A HREF="#REGISTER" NAME="I_REGISTER">Register Variables / Method Locals</A>
+  <LI><A HREF="#SENDS" NAME="I_SENDS">Sending Messages from within Primitive Code</A>
+  <LI><A HREF="#OBJREFS" NAME="I_OBJREFS">Remembering Smalltalk Objects in External C-Code</A>
+  <LI><A HREF="#ALLOC" NAME="I_ALLOC">Allocating Object Memory in Primitives</A>
+  <LI><A HREF="#MALLOC" NAME="I_MALLOC">Allocating C-Memory in Primitives</A>
+  <LI><A HREF="#MALLOC_IN_ST" NAME="I_MALLOC_IN_ST">Allocating C-Memory from Smalltalk-Code</A>
+  <LI><A HREF="#STORING" NAME="I_STORING">Modifying Objects from within Primitive Code (Storing)</A>
+  <LI><A HREF="#SELFSTORE" NAME="I_SELFSTORE">Storing into the Receiver</A>
+  <LI><A HREF="#GLOBALS" NAME="I_GLOBALS">Storing into Globals and Classvariables</A>
+  <LI><A HREF="#MIXING" NAME="I_MIXING">Mixing Smalltalk and C-Code</A>
+  <LI><A HREF="#INTERRUPTS" NAME="I_INTERRUPTS">Interrupting Primitive Code</A>
+  <LI><A HREF="#INTERRUPTING" NAME="I_INTERRUPTING">Triggering Interrups from C-Code</A>
+  <LI><A HREF="#TIMER" NAME="I_TIMER">Timed Callbacks into C-Code</A>
+  <LI><A HREF="#ERRORS" NAME="I_ERRORS">Reporting Errors from C-Code</A>
+  <LI><A HREF="#PROBLEMS" NAME="I_PROBLEMS">Problems</A>
+  <UL>
+    <LI><A NAME="I_PROBLEMS_STRUCTNAMES" HREF="#PROBLEMS_STRUCTNAMES">Conflicting Names of Local Variables and Structures/Typedefs</A>
+    <LI><A NAME="I_PROBLEMS_OTHERNAMES" HREF="#PROBLEMS_OTHERNAMES">Other Name Conflicts with Structures, Macros and Typedefs</A>
+    <LI><A NAME="I_PROBLEMS_UNDERSCORE" HREF="#PROBLEMS_UNDERSCORES">Local Variables whose Name Starts with an Underscore</A>
+  </UL>
+  <LI><A HREF="#HINTS" NAME="I_HINTS">Hints & Tips for Writing Primitives</A>
+  <LI><A HREF="#SYMPTOMS" NAME="I_SYMPTOMS">Symptoms and Strategies to Find and Fix Bugs</A>
+  <LI><A HREF="#EXAMPLES" NAME="I_EXAMPLES">Solutions for Typical Problems</A>
+  <UL>
+    <LI><A NAME="I_EXAM_STRING_DOWN" HREF="#EXAM_STRING_DOWN">Passing a String to a C-Function</A>
+    <LI><A NAME="I_EXAM_STRING_UP" HREF="#EXAM_STRING_UP">Returning a String from a C-Function</A>
+    <LI><A NAME="I_EXAM_2STRINGS_UP" HREF="#EXAM_2STRINGS_UP">Returning two Strings from a C-Function</A>
+    <LI><A NAME="I_EXAM_STRINGVEC_DOWN" HREF="#EXAM_STRINGVEC_DOWN">Passing an Array of Strings to a Primitive</A>
+    <LI><A NAME="I_EXAM_POLYVEC_DOWN" HREF="#EXAM_POLYVEC_DOWN">Passing a Polymorph Array with either Strings, Floats or Integers</A>
+    <LI><A NAME="I_EXAM_STRINGVEC_UP" HREF="#EXAM_STRINGVEC_UP">Returning an Array of Strings</A>
+    <LI><A NAME="I_EXAM_FLOATVEC_PASS" HREF="#EXAM_FLOATVEC_PASS">Passing a Vector of Floats</A>
+    <LI><A NAME="I_EXAM_SQUAREMATRIX" HREF="#EXAM_SQUAREMATRIX">Processing a Square Matrix</A>
+    <LI><A NAME="I_EXAM_TIMERCALL" HREF="#EXAM_TIMERCALL">Calling an Extern C-Function via a Timer</A>
+  </UL>
+
+</UL>
+
+
+<A NAME="INTRO" HREF="#I_INTRO"><H2>Introduction</A></H2>
+
+Standard Smalltalk implementations define a set of primitive operations
+which are built into a virtual (Smalltalk-) machine; these primitives do
+the kind of work which cannot be expressed as Smalltalk code (for example
+integer addition), which interfaces with operating system APIs (such as file reading)
+or which is reimplemented for performance reasons (for example: copying Arrays).
+<P>
+<CITE>Smalltalk/X</CITE> does not support these <A HREF="#FN1" NAME="BACK_FN1">(*)</A>;
+instead <VAR>primitive code</VAR>
+is entered as C-code into the methods.
+This allows the programmer to code everything
+he/she likes as C-code (beside the traditional primitives).
+Notice that in order to simply call any existing C function (for example, a library
+function from a dll), no inline C code is strictly needed: you can use
+the alternative FFI callout mechanism, which is very easy to use
+by defining a method with a C-call pragma.
+However, inline C code is both faster and allows for more control over
+what is done in the method. It also allows for arbitrary code to be written
+which manipulates Smalltalk or other objects without calling another function.
+<P>
+Primitive C-code is included right into the method code and
+surrounded by the special character sequences
+<CODE>'%{'</CODE> and <CODE>'%}'</CODE> (the quotes are not part of it).
+<BR>
+This character sequence has been choosen as it does not conflict with
+existing Smalltalk programs.
+<P>
+Inline code can be placed wherever a Smalltalk statement may be placed.
+<P>
+Notice, that not all systems support the dynamic compilation to machine code
+(and especially: its dynamic integration) into the active system;
+<UL>
+<LI>On systems which <b>do</b> support dynamic loading, the incremental compiler
+will automatically call the <VAR>stc</VAR> compiler to create an intermediate
+object file and load the resulting machine code module into the system.
+Thus, on those systems, methods with primitive code can be edited
+and accepted just like any other method in the System Browser.
+All popular systems support dynamic loading; expecially Windows, Linux and Solaris do so.
+<P>
+
+<LI>On systems which <b>do not</b> support dynamic loading of program code,
+you have to save the class containing the primitives into a file (fileOut),
+leave the system, compile it and relink the system.
+Systems which do not support dynamic loading may include some mobile or embedded systems,
+and also very old operating systems (which are actually no longer maintained anyway).
+
+</UL>
+In either case it is possible to disable primitive compilation via the Launcher's settings
+dialog. An error raising stub method will then be created whenever primitive code is accepted in the
+browser.
+This allows for a classes code to be typed to completion and even to execute methods which do not contain
+primitive code. Then, save (fileout or checkin) the code, compile using make/stc and try the code in a
+second terminal window.
+<P>
+
+
+Lets start with introductionary
+<A NAME="SIMPLE" INFO="back to index" HREF="#I_SIMPLE">examples</A>,
+
+to give you some idea how
+primitive code looks in <CITE>ST/X</CITE>.
+The details will be described below.
+<P>
+Calling a simple C function:
+<CODE><PRE>
+   myPrimitive
+   %{
+       printf("hello world\m");
+   %}
+   !
+</PRE></CODE>
+inline C-code within a condition:
+<CODE><PRE>
+   anotherPrimitive:aFlag
+       aFlag ifTrue:[
+   %{
+	   printf("it is true\n");
+   %}
+       ] ifFalse:[
+   %{
+	   printf("no, it is not\n");
+   %}
+       ]
+   !
+</PRE></CODE>
+the same code, completely in C:
+<CODE><PRE>
+   anotherPrimitive2:aFlag
+   %{
+       if (aFlag == true) {
+	   printf("it is true\n");
+       } else{
+	   printf("no, it is not\n");
+       }
+   %}
+   !
+</PRE></CODE>
+
+accessing a local variable from within C code:
+<CODE><PRE>
+   yetAnotherPrimitive:something
+       |aVariable|
+
+       aVariable := something.
+   %{
+       if (aVariable == true)
+	   aVariable = nil;
+   %}
+   . "&lt;- notice the period - %{ ... %} is syntactically a statement
+	 which must be separated by '.'-characters "
+
+       aVariable print
+   !
+</PRE></CODE>
+accessing arguments and local variables from within C code:
+<CODE><PRE>
+   add:num1 and:num2
+       |sum|
+
+   %{
+       /* the code below only handles
+	* SmallInteger operands ...
+	*/
+       if (__isSmallInteger(num1)
+	&& __isSmallInteger(num2)) {
+	    sum = __MKINT(sum1 + sum2);
+       }
+   %}.
+
+       ^ sum
+   !
+</PRE></CODE>
+accessing a global from within C code:
+<CODE><PRE>
+   globalAccessExample
+   %{
+       if (@global(Debugging) == true) {
+	   printf("some info message\n");
+       }
+   %}.
+   !
+</PRE></CODE>
+instantiating an array of strings:
+<CODE><PRE>
+   makeArrayWithStrings
+   %{
+       OBJ myArray;
+
+       myArray = __ARRAY_NEW_INT(3);
+       // notice the protect/unprotect. These are needed to protect myArray
+       // from being garbage collected. it is required around any code which possibly
+       // leads to a garbage collect.
+       __PROTECT__(myArray);
+       s = __mkString("string1");
+       __UNPROTECT__(myArray);
+       __ArrayVal(myArray)->a_element[0] = s;   // C uses 0-based indexing
+       __STORE(myArray, s);     // tell GC that a reference was taken (write barriere)
+
+       __PROTECT__(myArray);
+       s = __mkString("string2");
+       __UNPROTECT__(myArray);
+       __ArrayVal(myArray)->a_element[1] = s;   // C uses 0-based indexing
+       __STORE(myArray, s);     // tell GC that a reference was taken (write barriere)
+
+       __PROTECT__(myArray);
+       s = __mkString("string3");
+       __UNPROTECT__(myArray);
+       __ArrayVal(myArray)->a_element[2] = s;   // C uses 0-based indexing
+       __STORE(myArray, s);     // tell GC that a reference was taken (write barriere)
+
+       RETURN(myArray);     // not return! RETURN is a macro which handles context references
+   %}.
+   !
+</PRE></CODE>
+
+As you see, C code can easily get complicated, error prone and hard to read.
+Notice that the above is exactly the code which would be emitted by the stc compiler for
+a simple Array creation "{ 'string1' . 'string2' . 'string3' }". The C code is therefore
+not faster or shorter. Therefore it only makes sense to write primitive C coe for
+stuff which cannot be easily expressed in Smalltalk.
+
+
+
+<A NAME="ACCESS" HREF="#I_ACCESS"><H2>Accessing Smalltalk Objects from within Primitives</H2></A>
+
+Since C does not know about Smalltalk objects <A HREF="#FN2" NAME="BACK_FN2">(**)</A>,
+some conversion is required whenever Smalltalk objects are passed to/from
+C code. Although it is theoretically possible to access the internals of
+any Smalltalk object in C code, we recommend that only basic data types
+(integers, floats, arrays etc.) are ever processed by C code.
+<BR>
+In any case, some understanding of the object representation
+is required, to avoid errors and frustration. Please read and understand the
+following chapters before trying any C primitives.
+
+
+
+<A NAME="OBJECT_REPRESENTATION" HREF="#I_OBJECT_REPRESENTATION"><H3>Object Representation</H3></A>
+
+Smalltalk objects consist of a header, followed by the
+named instance variables (if any), followed by the indexed instance variables (if any).
+<BR>
+The header includes the size, the class and some additional information
+required for memory management.
+The instance variables are actually direct pointers to the objects (except for small integers).
+<BR>
+Since the header is always required, the minimum size is:
+<BLOCKQUOTE>
+sizeof(char *) + (2 * sizeof(int32))
+</BLOCKQUOTE>
+bytes (call it <VAR>overhead</VAR>).
+<BR>On 32bit machines, this is 12 bytes.
+<BR>On 64bit machines (alpha, x86_64), which use 64bit pointers, the headers size is 16 bytes.
+<P>
+Notice, that beside those 12bytes, there is NO additional overhead;
+if you think this is much, think about malloc(), which also requires at least
+4 or 8 bytes of overhead per allocated chunk (depending on the algorithm used),
+and does NOT provide runtime type information and automatic generational memory reclamation.
+<P>
+
+For example, the memory used by the <CODE>"true"</CODE> singleton object looks like:
+<CODE><PRE>
+	+-------------------------+
+	|       class-pointer   --------------> True-class
+	+-------------------------+
+	|       size  (12)        |
+	+-------------------------+
+	|       additional info   +
+	+-------------------------|
+</PRE></CODE>
+Notice, that the size field includes the header.
+<P>
+The size field is actually only required for objects with indexed instance
+variables; for other objects, the size could be fetched from its class
+object (which also knows how big its instances are).
+
+However, to tune the memory system, all objects include that size info, even if that is redundant.
+Future <CITE>ST/X</CITE> versions may optionally support objects without  a size field.
+<BR>
+This would save about 120k-150k bytes of object space in the initial image
+(there are about 35000-40000 objects initially) and would result in a
+noticable reduction in memory requirements if many small objects are created.
+Obviously, the savings are marginally for big objects.
+
+However, also a slight performance degration is to be expected
+(since all accesses to the size will require an additional compare & conditional branch)
+and a major part of object space is required for indexed objects
+(strings, byteArrays, methodDictionaries and symbols),
+which is why there are currently no plans to do this.
+<P>
+However, to avoid disaster if such a change may ever be made,
+<STRONG>never</STRONG> access the size field
+(or any other header field) directly.
+<BR>
+Instead, use the access macros which are described below.
+Upcoming systems may be delivered with different access macros.
+<P>
+Lets return to an object's layout;
+right after the header, any named instance variables are stored.
+<BR>
+For example, the object <CODE>"(100.0 @ 200.0)"</CODE> is in memory:
+<CODE><PRE>
+	+-------------------------+
+	|       class-pointer   --------------> Point-class
+	+-------------------------+
+	|       size  (20)        |
+	+-------------------------+
+	|       additional info   |
+	+-------------------------|
+	|       x instvar       --------------> 100.0 Float object
+	+-------------------------+
+	|       y instvar       --------------> 200.0 Float object
+	+-------------------------+
+</PRE></CODE>
+Since most numbers in the system are SmallIntegers,
+representing those as above would lead to many small objects.
+<BR>
+To avoid this (and also to avoid indirect memory references),
+a special encoding is used to represent these:
+a bit (the so called <VAR>TAG bit</VAR>)
+marks object pointers from smallInteger values.
+<BR>
+Since all pointers are aligned on word boundaries anyway (they are always even),
+putting the TAG bit into the low bit
+does not limit the address space for objects.
+<BR>
+However, only 31 (osf1/alpha: 63) bits are available to encode a smallIntegers value.
+<BR>
+Since the value is stored ``directly'' in the pointer field,
+these are often referred to as ``<VAR>immediate integers</VAR>''.
+<P>
+Do not depend on the TAG bit being in a particular bit position;
+on some machines, this bit is stored in the sign bit, to make the
+smallInteger-check faster
+<BR>
+(its done with all CPUs which have a <CITE>branch on minus</VAR>
+instruction and set the condition codes without a test instruction;
+for example, the 68k or mips CPUs currently have the TAG bit in the sign bit).
+<P>
+To stay unaffected of such details, use the check/conversion macros described below.
+<P>
+Although, on 32 bit machines there are actually 2 bits for use as tag
+bits (alignment is really at least a 4byte one), currently only
+one bit is used to tag small integers.
+<BR>
+Future versions may encode other types (for example, short floats)
+as immediate values, to reduce memory requireements even more.
+<BR>
+These changes will be transparent to your primitives source code,
+IF access macros are used everywhere.
+
+<P>
+To summarize, the object <CODE>"(100 @ 200)"</CODE> is in memory:
+<CODE><PRE>
+	+-------------------------+
+	|       class-pointer   --------------> Point-class
+	+-------------------------+
+	|       size  (20)        |
+	+-------------------------+
+	|       additional info   |
+	+-------------------------|
+	|TAG|   x instvar 100     |
+	+-------------------------+
+	|TAG|   y instvar 200     |
+	+-------------------------+
+</PRE></CODE>
+BTW: this TAG representation is the reason
+why <CODE>"SmallInteger allInstances"</CODE> does not
+return any useful result and the <CODE>SmallInteger</CODE>
+class cannot be subclassed
+(instances do not have a class field where we could record
+ them NOT being smallIntegers).
+<P>
+The <CODE>__Class()</CODE> macro described below
+(and therefore the <CODE>#class</CODE> message sent to any object)
+check for the TAG bit and 'mimics' a class field pointing to
+<CODE>SmallInteger</CODE>.
+
+<P>
+There is one other special object,
+which is represented as an immediate object,
+"<CODE>nil</CODE>".
+It is represented by a NULL pointer (i.e. all zero bits).
+The choice of using an immediate nil (as opposed to using a singleton),
+was mainly to make C-code easier to write and because many machines
+have special instructions to deal with zeros eficiently
+(i.e. branch-on-zero, clear register or even having a constant zero-register).
+<P>
+For that reason, the <CODE>UndefinedObject</CODE> class is also not subclassable
+and does not have ``instances'' in the strict sense.
+<P>
+Indexed instance variables are stored after the named instance variables
+(or after the header if there are none).
+<BR>
+For example, the array <CODE>"#('foo' true 30 nil)"</CODE> looks in memory:
+<CODE><PRE>
+	+-------------------------+
+	|       class-pointer   --------------> Array-class
+	+-------------------------+
+	|       size  (24)        |
+	+-------------------------+
+	|       additional info   |
+	+-------------------------|
+	|       instvar (1)     --------------> 'foo' object
+	+-------------------------+
+	|       instvar (2)     --------------> true object
+	+-------------------------+
+	|TAG|   instvar (3)  30   |
+	+-------------------------+
+	|       instvar (4)  NULL |
+	+-------------------------+
+</PRE></CODE>
+and an instance of a subclass of Array with one named instvar would look
+like:
+<CODE><PRE>
+	+-------------------------+
+	|       class-pointer     |
+	+-------------------------+
+	|       size              |
+	+-------------------------+
+	|       additional info   |
+	+-------------------------|
+	|       named instvar     |
+	+-------------------------+
+	|       instvar (1)       |
+	+-------------------------+
+	|       instvar (2)       |
+	+-------------------------+
+		   ...
+	+-------------------------+
+	|       instvar (N)       |
+	+-------------------------+
+</PRE></CODE>
+ByteArrays, Strings, FloatArrays and DoubleArrays are variable sized too,
+but do not store pointers to the elements. Instead, the elements are stored
+as non objects (i.e. untagged immediate values).
+<BR>
+Strings and ByteArrays store bytes in the variable part.
+<BR>
+For example, the string <CODE>"'hello'"</CODE> looks in memory:
+<CODE><PRE>
+	+-------------------------+
+	|       class-pointer   --------------> String-class
+	+-------------------------+
+	|       size  (18)        |
+	+-------------------------+
+	|       additional info   |
+	+-------------------------|
+	| 'h' | 'e' |  'l' |  'l' |
+	+-------------------------+
+	| 'o' | '\0'| '\0' | '\0' |
+	+-------------------------+
+</PRE></CODE>
+Strings are ALWAYS delimited by a zero-byte ('\0') to make interfacing C string
+functions (which expect this 0-byte) easier. Therefore, conversion from a Smalltalk
+string to a C string is done by computing the address of the first character,
+which is simply done by adding the size of the object header (OHDR_SIZE) to the object's address.
+<BR>
+You have to be a bit careful when computing a strings size: on the Smalltalk level,
+a string's size does NOT include the 0-byte, whereas in C you have to take care of
+it when allocating or accessing strings.
+<BR>
+Thus, <CODE>"'hello' size"</CODE> returns 5 in Smalltalk,
+while the object's size value (and therefore the value of the <CODE>__size</CODE> macro)
+includes the 0-byte.
+<BR>
+We recommend using the <CODE>__stringSize()</CODE> macro which takes care of that
+and returns the actual size without the 0-byte.
+<P>
+Currently, the 0-byte is only added to single-byte strings.
+Wide strings (for example: Unicode16 and Unicode32) do not have a 0-byte at the end.
+This may change in the future, as it complicates the use of wide-char APIs under Windows.
+<P>
+Any size field reflects the number of bytes an object has
+- however, the memory system
+will always align memory in full word increments and
+on a full-word boundary when allocating objects.
+<BR>
+(any padding bytes are invisible and inaccessible to
+ Smalltalk code; for C code: the contents is undefined)
+
+<P>
+As a final example, the doubleArray <CODE>"#(1.0 2.0 3.0) asDoubleArray"</CODE>
+looks in memory:
+<CODE><PRE>
+	+-------------------------+
+	|       class-pointer   --------------> FloatArray-class
+	+-------------------------+
+	|       size  (36)        |
+	+-------------------------+
+	|       additional info   |
+	+-------------------------|
+	|     optional padding    |
+	+-------------------------|
+	|                         |
+	|     1.0 as a C double   |
+	|                         |
+	+-------------------------+
+	|                         |
+	|     2.0 as a C double   |
+	|                         |
+	+-------------------------+
+	|                         |
+	|     3.0 as a C double   |
+	|                         |
+	+-------------------------+
+</PRE></CODE>
+Now, it should be clear why FloatArray and DoubleArray are more efficient
+when storing large amounts of numbers: there is no overhead in object headers
+for all the elements.
+<BR>
+Notice the optional padding - on many systems, double numbers are required to be aligned
+on an 8-byte boundary. This is taken care of in the doubleArray allocation and access code.
+
+
+<A NAME="ACCESS_VARS" HREF="#I_ACCESS_VARS"><H3>Variables</H3></A>
+
+Within a primitive, a Smalltalk variable <CODE>"xyz"</CODE> is accessible in C as:
+<P>
+<DL>
+
+<DT><CODE>true</CODE>, <CODE>false</CODE> or <CODE>nil</CODE>
+<DD>to access the corresponding Smalltalk object.
+<BR>
+'<CODE>nil</CODE>' is actually a macro for a constant (usually 0);
+while '<CODE>true</CODE>' and '<CODE>false</CODE>' are object pointers.
+<BR>
+Nil may not be dereferenced (i.e. do not apply the _qXXX macros which are
+described below).
+<P>
+
+<DT><CODE>@global(xyz)</CODE>
+<DD>if <CODE>xyz</CODE> is a global variable (other than above).
+<BR>
+(this is a bad example, globals should start with an
+ upper case letter, as in <CODE>@global(Xyz)</CODE> or <CODE>@global(ByteArray)</CODE>)
+<P>
+
+<DT><CODE>@global(class:xyz)</CODE>
+<DD>if <CODE>xyz</CODE> is a class variable in <CODE>class</CODE>.
+<BR>
+(this is a bad example, classvars and class names should start with an
+ upper case letter, as in ``<CODE>@global(MyClass:Xyz)</CODE>'' or
+``<CODE>@global(Object:AbortSignal)</CODE>'')
+<BR>
+Notice, that the classes name is encoded in the name - this allows for any classvar
+to be accessed from primitive code
+- even if that variable is defined in multiple (super-) classes.
+<P>
+
+<DT><CODE>__INST(xyz)</CODE>
+<DD>if <CODE>'xyz'</CODE> is an instance variable.
+<P>
+
+<DT><CODE>__CINST(xyz)</CODE>
+<DD>if <CODE>'xyz'</CODE> is a class instance variable.
+<BR>
+(do not confuse ``<VAR>class variables</VAR>'' with ``<VAR>class instance variables</VAR>''.)
+<P>
+
+<DT><CODE>xyz</CODE>
+<DD>if <CODE>'xyz'</CODE> is a method variable, method argument,
+block variable or block argument AND 'xyz' is NOT a C keyword.
+
+<P>
+
+<DT><CODE>__xyz</CODE>
+<DD>if <CODE>'xyz'</CODE> is a method variable, method argument,
+block variable or block argument AND 'xyz' is a C keyword.
+<BR>
+(i.e. all variables named after C-keywords, such as "<CODE>int</CODE>" or "<CODE>char</CODE>")
+
+</DL>
+
+
+<A NAME="IDENTIFIERS" HREF="#I_IDENTIFIERS"><H3>Global Variables & Identifier Conflicts</H3></A>
+<BR>
+You may encounter problems when including a header file which defines true/false.
+Some C frameworks do so (and also for other common names like Rectangle, Point or Context).
+For this, st/x object definitions are available in two variants: one which defines identifiers
+which correspond to the Smalltalk names ("true", "false", "Rectangle", etc.) and another which
+avoids any such conflict with other C definitions by prepending an "__STX_" prefix.
+I.e. you can refer to the Rectangle class from within your primitive code both as "Rectangle"
+and "__STX_Rectangle".
+Thus, if you ever encounter a naming problem when compiling primitive code which includes other (non-st/x)
+C header files, use the following work-around:
+<CODE><PRE>
+    ...
+    #include &lt;stc.h>            // get the st/x definitions
+
+    #undef true                 // get rid of st/x definitions
+    #undef false                // which conflict with C definitions
+    ...
+
+    #include &lt;your-file.h>      // get C definitions (possibly redefining true, false and others)
+
+    #define true __STX_true
+    #define false __STX_false   // get back st/x versions
+    ...
+</PRE></CODE>
+<P>
+
+
+
+
+<A NAME="ACCESS_SYMBOLS" HREF="#I_ACCESS_SYMBOLS"><H3>Symbols</H3></A>
+
+Symbols are string-like objects which are guaranteed to be identical, if they have
+equal contents. The central "__MKSYMBOL(char *)"-function (described <A HREF="#MKSYMBOL">below</A>) keeps a table of already existing
+symbols and makes sure that a reference to an existing one is returned, whenever
+one already exists for the given character sequence.
+<P>
+The downside of MKSYMBOL is that it is called at run time and involves some execution time
+overhead (not too much, as the table is hashed, and therefore fast;
+but still there is a function call and hash key computation involved.
+<P>
+Constant symbols, can be created at compilation/system startup time,
+and require no execution time (actually a single memory fetch, which executes in the nanosecond order).
+<P>
+
+To specify a compile-time symbol,
+<CITE>stc</CITE> supports selector translation.
+A construct of the form:
+<CODE><PRE>
+	@symbol(...)
+</PRE></CODE>
+  where <CODE>'...'</CODE> is a selector in Smalltalk's form, will be replaced by the
+  corresponding c name. (the '@'-syntax has been chosen, since it does not
+  conflict with existing C lexical elements (also, a similar mechanism is
+  found in objective-c compilers). No spaces or separators are allowed around <CODE>'...'</CODE>.
+<P>
+Typically, the overhead of MKSYMBOL is in the 20-30ns order, compared to 3-5ns for @symbol.
+<P>
+
+As an example, to return one of the symbols
+[<CODE>"#+"</CODE> <CODE>"#foo"</CODE>  <CODE>"#bar"</CODE> <CODE>"#bar:with:with:"</CODE>]
+from a C primitive,
+write:
+<CODE><PRE>
+    myPrimitive
+    %{
+	...
+	switch (something) {
+	    case a:
+		RETURN ( @symbol(+) );
+	    ...
+	    case x:
+		RETURN ( @symbol(foo) );
+	    case y:
+		RETURN ( @symbol(bar) );
+	    case z:
+		RETURN ( @symbol(bar:with:with:) );
+	    default:
+		RETURN (nil);
+	}
+    %}
+</PRE></CODE>
+
+
+<P>
+  PLEASE: DO use this feature, since it allows future changes made to the
+  translation mechanism without making existing primitive codes source
+  incompatible.
+<P>
+Late note:
+<BR>
+  Starting with rel 1.4 of <CITE>ST/X</CITE>, it is no longer optional but required that you
+  use the above syntax, since the compiler has to generate special declarations
+  in systems which use dynamic or shared libraries, for symbols to be
+  unified. Since the compiler does not parse and analyze primitive code
+  (except for @symbol and @global), it had otherwise no chance of knowing which
+  symbols are required.
+<BR>
+  Although undetected by <CITE>stc</CITE>, it is considered an error if you
+  use symbols directly - so better forget all of the above.
+
+
+
+<A NAME="ACCESS_TYPES" HREF="#I_ACCESS_TYPES"><H3>Types</H3></A>
+
+All primitive code includes the header file <CODE>"stc.h"</CODE>,
+which contains definitions and typedefs for primitive code (and also for
+the generated C code).
+<BR>
+The most common type to be used by C code is <CODE>"OBJ"</CODE>, which
+is defined as a pointer to an object's header.
+All Smalltalk objects are <STRONG>only</STRONG> to be used as <CODE>"OBJ"</CODE>s
+and extraction macros are to be used to access instance variables.
+Never cast an <CODE>OBJ</CODE> and access fields directly.
+<P>
+Another highly useful definition is <CODE>"INT"</CODE>, which is defined as
+an integer type with a size large enough to hold a casted <CODE>"OBJ"</CODE>.
+It is also the type used for smallInteger values.
+<BR>
+On most systems, this is a 32bit integer;
+however, on alpha, x86_64 and other 64bit cpus, it is defined as a 64bit integer.
+<P>
+Be very careful to declare integer variables as <CODE>"INT"</CODE> in your primitive code.
+Not "int" or "long" in your - it may otherwise fail to run correctly if your code is to be
+ported to another machine. Notice, that "long" is NOT always defined to be of pointer size;
+thanks to wise microsoft decisions, it is especially not true for 64bit windows!
+
+<P>
+Since C originally had no boolean type, all check macros (such as <CODE>"__isSmallInteger()"</CODE>)
+return 1 (one) as true and 0 (zero) as false.
+Those are marked with a type of <CODE>"bool"</CODE> in the section below
+(although they really return <CODE>"int"</CODE>)
+
+
+<A NAME="ACCESS_MACROS" HREF="#I_ACCESS_MACROS"><H3>Macros & Helper Functions</H3></A>
+
+  The following macros and functions are provided for C-primitives
+  and allow extraction
+  of values, conversion or creation of Smalltalk objects.
+<BR>
+ Most of them are defined as macros in the file <CODE>"include/stc.h"</CODE>.
+ Code generated by <CITE>stc</CITE> automatically includes this file.
+<BR>
+ Notice, that some macros/functions return a 64bit C-integer on
+ alpha CPU systems.
+<BR>
+ (notice the distinction between <CODE>"int"</CODE> and <CODE>"INT"</CODE>
+in the description below.)
+<BR>
+
+<A NAME="MACROS_CONSTS" HREF="#I_MACROS_CONSTS"><H3>Constants & Types</H3></A>
+
+<DL>
+<DT><CODE><B>INT</B></CODE>
+<DD>an integer type of appropriate type to hold smallInteger values and tagged pointers.
+<BR>
+On 32bit machines, this is defined as "int" or "long" (i.e. a 32bit integer type).
+<BR>On the alpha (or other 64bit) CPU, this is defined as "long long" (i.e. a 64bit integer type).
+Never ever use "int", "long" or "int32" or similar machine types inside your
+primitive code, and do not expect that an "int" or "long" is able to be of the same size as a pointer
+(instead, always use "INT").
+<P>
+
+<DT><CODE><B>UINT</B></CODE>
+<DD>like <CODE>INT</CODE> but unsigned
+<P>
+
+<DT><CODE><B>_MIN_INT</B></CODE>
+<DD>the minimum value a smallInteger can have.
+<BR>
+This returns the same value as <CODE>"SmallInteger minVal"</CODE>.
+<BR>In general, that is the smallest signed integer which can be
+represented with one bit less than the wordsize of the CPU.
+<BR>
+On 32bit machines, this is defined as "0x40000000".
+<BR>
+On a 64bit CPU, this is defined as "0x4000000000000000L"
+<P>
+
+<DT><CODE><B>_MAX_INT</B></CODE>
+<DD>the maximum value a smallInteger can have.
+<BR>
+This returns the same value as <CODE>"SmallInteger maxVal"</CODE>.
+<BR>In general, that is the largest signed integer which can be
+represented with one bit less than the wordsize of the CPU.
+<BR>
+On 32bit machines, this is defined as "0x3FFFFFFF".
+<BR>
+On a 64bit CPU, this is defined as  "0x3FFFFFFFFFFFFFFFL"
+<P>
+
+<DT><CODE><B>OHDR_SIZE</B></CODE>
+<DD>the size (in bytes) of an object header.
+<BR>
+Useful when objects are allocated via the __NEW* functions below.
+<P>
+
+
+</DL>
+
+<A NAME="MACROS_QUERY" HREF="#I_MACROS_QUERY"><H3>Query & Value Extraction Helpers</H3></A>
+
+<DL>
+<DT><CODE>OBJ <B>__Class</B>(OBJ x)</CODE>
+<DD>returns the class of <CODE>'x'</CODE>. Handles immediate objects (i.e. is "safe")
+<BR>
+This is typically used in a primitives entry sequence, to
+check for the arguments being of the expected types.
+<BR>
+(i.e. <CODE>"if (__Class(arg) == @global(SomeClassHere)) ..."</CODE>)
+
+<P>
+<DT><CODE>OBJ <B>__qClass</B>(OBJ object_x)</CODE>
+<DD>same, but <CODE>'object_x'</CODE> must be non-Nil, non-SmallInteger (i.e. reference to a "real", non-immediate object).
+<BR>
+Use only if you are certain about this
+(it is slightly faster than <CODE>_Class</CODE> macro,
+but leads to a segmentation violation, if applied to non pointer objects, because
+it unconditionally indirects through the object header's class slot).
+<BR>
+If you do not understand the above, use the __Class macro.
+<P>
+
+<DT><CODE>int <B>__Size</B>(OBJ x)</CODE>
+<DD>the size of the object (including header) in bytes (0 for nil or integers).
+<BR>
+Do not confuse this with the value returned by Smalltalk's <CODE>#size</CODE> message.
+This macro returns the memory size in bytes - not the logical size.
+<P>
+Be careful with strings: the 0-byte counts here.
+<BR>
+(use <CODE>__stringSize()</CODE> to get the net size without header and 0-byte).
+<P>
+Be also careful with arrays: you have to subtract the size of the header
+and divide by
+"<CODE>sizeof(OBJ)</CODE>" to get the number of elements.
+<BR>
+(better use the <CODE>__arraySize()</CODE> macro, which does this for you)
+<P>
+
+<DT><CODE>int <B>__qSize</B>(OBJ object_x)</CODE>
+<DD>like above, but <CODE>'object_x'</CODE> may not be nil or a SmallInteger.
+Use only if you are certain.
+(this is slighly faster than the <CODE>_Size()</CODE> macro,
+but leads to a segmentation violation, if applied to non pointer objects)
+<P>
+
+<DT><CODE>(x == nil)</CODE>, <CODE>(x == true)</CODE>, <CODE>(x == false)</CODE>
+<DD>to check for nil, true and false
+<P>
+
+<DT><CODE>bool <B>__isObject</B>(OBJ x)</CODE>
+<DD>1 if <CODE>'x'</CODE> is not a SmallInteger; 0 (zero) otherwise
+<P>
+
+<DT><CODE>bool <B>__isNonNilObject</B>(OBJ x)</CODE> (macro)
+<DD>1 if <CODE>'x'</CODE> is neither a SmallInteger nor nil; 0 (zero) otherwise
+<BR>
+(i.e. a 'real' object for which the _q-macros are allowed.
+ You should only dereference a given OBJ (-pointer) in C, if it passed the
+ __isNonNilObject test before - otherwise, segmentation violations may occur).
+<P>
+
+<DT><CODE>bool <B>__isSmallInteger</B>(OBJ x)</CODE>
+<DD>1 if <CODE>'x'</CODE> is a SmallInteger
+<P>
+
+<DT><CODE>bool <B>__bothSmallInteger</B>(OBJ x, OBJ y)</CODE>
+<DD>1 if both <CODE>'x'</CODE> and <CODE>'y'</CODE> are SmallIntegers
+<BR>
+(this saves some typing for the lazy guy, and a branch for the CPU)
+<P>
+
+<DT><CODE>bool <B>__isLargeInteger</B>(OBJ x)</CODE>
+<DD>1 if <CODE>'x'</CODE> is a LargeInteger
+<P>
+
+<DT><CODE>bool <B>__isInteger</B>(OBJ x)</CODE>
+<DD>1 if <CODE>'x'</CODE> is either a LargeInteger or a SmallInteger
+<P>
+
+<DT><CODE>bool <B>__isArray</B>(OBJ x)</CODE>
+<DD>1 if <CODE>'x'</CODE> is an Array
+<BR>
+(i.e. elements can be accessed
+with <CODE>__ArrayInstPtr(x)->a_element[index0]</CODE>)
+<P>
+
+<DT><CODE>bool <B>__isByteArray</B>(OBJ x)</CODE>
+<DD>1 if <CODE>'x'</CODE> is a ByteArray (but not an instance of a subclass of it)
+<BR>
+(i.e. elements can be accessed
+with <CODE>__ByteArrayInstPtr(x)->a_element[index0]</CODE>)
+<BR>Attention: Please consider using <A HREF="#isByteArrayLike">__isByteArrayLike</A>
+or <A HREF="#isBytes">__isBytes</A></B>.
+<P>
+
+<DT><CODE>bool <B>__isFloat</B>(OBJ x</CODE>)
+<DD>1 if <CODE>'x'</CODE> is a Float (double precision float), but not an instance of a subclass.
+<BR>
+(i.e. C-double value can be extracted with the
+<CODE>__floatVal</CODE> macro)
+<BR>Attention: Please consider using <A HREF="#isFloatLike">__isFloatLike</A>.
+<P>
+
+<DT><CODE>bool <B>__isShortFloat</B>(OBJ x</CODE>)
+<DD>1 if <CODE>'x'</CODE> is a ShortFloat (single precision float)
+<BR>
+(i.e. C-float value can be extracted with the
+<CODE>__shortFloatVal</CODE> macro)
+
+<P>
+<DT><CODE>bool <B>__isFraction</B>(OBJ x)</CODE>
+<DD>1 if <CODE>'x'</CODE> is a Fraction (but not an instance of a subclass of it)
+
+<P>
+<DT><CODE>bool <B>__isString</B>(OBJ x)</CODE>
+<DD>1 if <CODE>'x'</CODE> is a String (but not an instance of a subclass of it)
+<BR>
+(i.e. a C-unsigned char pointer can be extracted with
+<CODE>__stringVal(x)</CODE>)
+
+<P>
+<DT><CODE>bool <B>__isUnicode16String</B>(OBJ x)</CODE>
+<DD>1 if <CODE>'x'</CODE> is a Unicode16String
+<BR>
+(i.e. a C-unsigned int16 pointer can be extracted with
+<CODE>__unicode16StringVal(x)</CODE>)
+
+<P>
+<DT><CODE>bool <B>__isUnicode32String</B>(OBJ x)</CODE>
+<DD>1 if <CODE>'x'</CODE> is a Unicode32String
+<BR>
+(i.e. a C-unsigned int32 pointer can be extracted with
+<CODE>__unicode32StringVal(x)</CODE>)
+
+<P>
+<DT><CODE>bool <B>__isSymbol</B>(OBJ x)</CODE>
+<DD>1 if <CODE>'x'</CODE> is a Symbol
+<BR>
+Since symbols are derived from string, the <CODE>__stringVal</CODE>
+macro can also be applied to symbols.
+<BR>Attention: Please consider using <A HREF="#isSymbolLike">__isSymbolLike</A>.
+<P>
+
+<DT><CODE>bool <B>__isCharacter</B>(OBJ x)</CODE>
+<DD>1 if <CODE>'x'</CODE> is a Character
+
+<P>
+<DT><CODE>bool <B>__isPoint</B>(OBJ x)</CODE>
+<DD>1 if <CODE>'x'</CODE> is a Point
+<P>
+<DT><CODE>bool <B>__isBlock</B>(OBJ x)</CODE>
+<DD>1 if <CODE>'x'</CODE> is a Block
+<BR>Attention: Please use <B>__isBlockLike</B>
+<P>
+<DT><CODE>bool <B>__isExternalBytes</B>(OBJ x)</CODE>
+<DD>1 if <CODE>'x'</CODE> is an ExternalBytes instance
+<BR>Attention: Please use <B>__isExternalBytesLike</B>
+<P>
+<DT><CODE>bool <B>__isExternalAddress</B>(OBJ x)</CODE>
+<DD>1 if <CODE>'x'</CODE> is an ExternalAddress instance
+<P>
+<DT><CODE>bool <B>__isExternalFunction</B>(OBJ x)</CODE>
+<DD>1 if <CODE>'x'</CODE> is an ExternalFunction instance
+<P>
+
+<DT><A NAME="isByteArrayLike"><CODE>bool <B>__isByteArrayLike</B>(OBJ x)</CODE></A>
+<DD>1 if <CODE>'x'</CODE> is either a ByteArray or an ImmutableByteArray
+<P>
+<DT><CODE>bool <B>__isBytes</B>(OBJ x)</CODE>
+<DD>1 if <CODE>'x'</CODE> is ByteArray-like (i.e. ByteArray or subclass)
+<P>
+<DT><CODE>bool <B>__isWords</B>(OBJ x)</CODE>
+<DD>1 if <CODE>'x'</CODE> is WordArray-like (i.e. WordArray or TwoByteArray or subclass)
+<P>
+<DT><CODE>bool <B>__isBlockLike</B>(OBJ x)</CODE>
+<DD>1 if <CODE>'x'</CODE> is an instance of Block or of a subclass
+<P>
+<DT><A NAME="isSymbolLike"><CODE>bool <B>__isSymbolLike</B>(OBJ x)</CODE></A>
+<DD>1 if <CODE>'x'</CODE> is an instance of Symbol or of a subclass
+<P>
+<DT><CODE>bool <B>__isMethodLike</B>(OBJ x)</CODE>
+<DD>1 if <CODE>'x'</CODE> is an instance of Method or of a subclass
+<P>
+<DT><A NAME="isFloatLike"><CODE>bool <B>__isFloatLike</B>(OBJ x)</CODE></A>
+<DD>1 if <CODE>'x'</CODE> is an instance of Float or of a subclass
+<P>
+<DT><CODE>bool <B>__isBehaviorLike</B>(OBJ x)</CODE>
+<DD>1 if <CODE>'x'</CODE> is an instance of Behavior or of a subclass
+<P>
+<DT><CODE>bool <B>__isExternalBytesLike</B>(OBJ x)</CODE>
+<DD>1 if <CODE>'x'</CODE> is an instance of ExternalBytes or of a subclass thereof
+<P>
+
+<DT><CODE>INT <B>__intVal</B>(OBJ x)</CODE>
+<DD>the 31 bit (x86_64, alpha: 63 bit) signed integer value;
+<CODE>'x'</CODE> must be a SmallInteger.
+No check is done whether the passed argument is really a smallInteger;
+you will get a wrong numeric value (actually something based on the object's address)
+if applied to non smallIntegers.
+<BR>
+This is the reverse of <CODE>__MKSMALLINT()</CODE>.
+<BR>
+Sorry: the name was badly choosen; it should be called ``__smallIntVal()''.
+<BR>
+(but its too late to change this now, as many users have already written C-primitive
+code using those macros...)
+
+<P>
+<DT><CODE>unsigned INT <B>__longIntVal</B>(OBJ x)</CODE>
+<DD>returns the 32 bit (x86_64, alpha: 64 bit) unsigned integer value;
+<CODE>'x'</CODE> must be a SmallInteger or a 4-byte (8-byte) LargeInteger.
+<BR>
+This does check for the argument being of
+correct type, and returns 0 if x is neither a small or largeInteger,
+or if the largeIntegers value does not fit into 32/64 bit.
+<BR>
+Since 0 (zero) is a valid value, you have to check x agains beeing equal
+to __MKSMALLINT(0) before and care for that case.
+<BR>
+This is the reverse of <CODE>__MKUINT()</CODE>.
+<BR>
+Sorry: the name was badly choosen; it should be called ``__uintVal()'',
+but the old name is kept for backward compatibility.
+<P>
+
+<DT><CODE>INT <B>__signedLongIntVal</B>(OBJ x)</CODE>
+<DD>returns the 32 bit (x86_64, alpha: 64 bit) signed integer value; <CODE>'x'</CODE> must be a SmallInteger
+or a 4-byte (8-byte) LargeInteger.
+<BR>
+This does check for the argument being of
+correct type, and returns 0 if x is neither a small or largeInteger,
+or if the largeIntegers signed value does not fit into 32/64 bits.
+<BR>
+Since 0 (zero) is a valid value, you have to check x agains beeing equal
+to __MKSMALLINT(0) before and care for that case.
+<BR>
+This is the reverse of <CODE>__MKINT()</CODE>.
+<BR>
+Sorry: the name was badly choosen; it should be called ``__intVal()''.
+<P>
+
+
+<DT><CODE>int <B>__unsignedLong64IntVal</B>(OBJ x, uint64 *pInt)</CODE> (function)
+<DD>returns the 64 bit unsigned integer value; <CODE>'x'</CODE> must be a Small-
+or LargeInteger with an appropriate value.
+<BR>
+If the class and value of the object are correct, the value is stored as a 64bit
+unsigned integer through the given pointer and the function returns 1.
+<BR>
+Otherwise, a 0 is returned.
+<BR>
+This is the reverse of <CODE>__MKUINT64()</CODE>.
+<P>
+
+
+<DT><CODE>int <B>__signedLong64IntVal</B>(OBJ x, int64 *pInt)</CODE> (function)
+<DD>returns the 64 bit unsigned integer value; <CODE>'x'</CODE> must be a Small-
+or LargeInteger with an appropriate value.
+<BR>
+If the class and value of the object are correct, the value is stored as a 64bit
+unsigned integer through the given pointer and the function returns 1.
+<BR>
+Otherwise, a 0 is returned.
+<BR>
+This is the reverse of <CODE>__MKINT64()</CODE> / <CODE>__MKLARGEINT64()</CODE>.
+<P>
+
+
+<DT><CODE>double <B>__floatVal</B>(OBJ x)</CODE>
+<DD>the double value; <CODE>'x'</CODE> must be a Float.
+Does not check - you must check for <CODE>'x'</CODE> being
+an instance of Float before invoking this (using <CODE>"__isFloat()"</CODE> or <CODE>"__isFloatLike()"</CODE>).
+<BR>
+This is the reverse of <CODE>__MKFLOAT()</CODE>.
+<P>
+
+<DT><CODE>float <B>__shortFloatVal</B>(OBJ x)</CODE>
+<DD>the float value; <CODE>'x'</CODE> must be a ShortFloat.
+Does not check the argument for being an instance of ShortFloat (use <CODE>"__isShortFloat()"</CODE>).
+<BR>
+This is the reverse of <CODE>__MKSFLOAT()</CODE>.
+<P>
+
+
+<DT><CODE>char * <B>__stringVal</B>(OBJ x)</CODE>
+<DD>the character-pointer, pointing to the 0-terminated characters of the String object.
+<CODE>'x'</CODE> must be an instance of String or a subclass of it.
+Does not check (use <CODE>"__isString()"</CODE> or <CODE>"__isStringLike()"</CODE>).
+<BR>
+This is the reverse of <CODE>__MKSTRING()</CODE>.
+<P>
+
+<DT><CODE>unsigned short * <B>__unicode16StringVal</B>(OBJ x)</CODE> (macro)
+<DD>the 2-byte-character-pointer; <CODE>'x'</CODE> must be a Unicode16String. Does not check.
+Notice that (currently) multibyte string objects are NOT 0-terminated. If required, you have to
+copy the bytes into a local buffer and 0-terminate them manually, before passing them to C.
+This may change in a future version.
+<BR>
+This is the reverse of <CODE>__MKUSTRING()</CODE>.
+<P>
+
+
+<DT><CODE>char * <B>__symbolVal</B>(OBJ x)</CODE>
+<DD>the character-pointer, pointing to the 0-terminated characters of the Symbol object.
+<CODE>'x'</CODE> must be a Symbol. Does not check.
+<BR>
+This is the reverse of <CODE>__MKSYMBOL()</CODE>
+or <A HREF="#ACCESS_SYMBOLS"><CODE>@symbol()</CODE></A> (for constant symbols).
+<P>
+
+
+<DT><CODE>OBJ <B>__characterVal</B>(OBJ x)</CODE>   (macro)
+<DD>the asciicode/codePoint as ST-SmallInteger;
+<CODE>'x'</CODE> must be a Character. Does not check for x to be a valid character object.
+<BR>
+This is the reverse of <CODE>__MKCHARACTER()</CODE> or <CODE>__MKUCHARACTER()</CODE>.
+<BR>
+Be careful: the result is still an OBJ - not a C-int.
+You still have to extract the asciiValue/codePoint using the <CODE>__intVal()</CODE>
+macro.
+<BR>
+To check an argument for being a character and getting its C equivalent, use:
+<CODE><PRE>
+char ch;
+
+if (__isCharacter(arg)) {
+    ch = __intVal( __characterVal(arg) );
+    if (ch &lt;= 0xFF) {
+	... iso8859-1 ...
+    } else {
+	... unicode ...
+    }
+}
+</PRE></CODE>
+Notice that character encoding is always unicode; however, for single byte characters,
+iso8859 encoding is used which is a subset of unicode.
+<P>
+
+
+<DT><CODE>void * <B>__externalBytesAddress</B>(x)</CODE>
+<DD>the address of an externalBytes underlying memory;
+<CODE>'x'</CODE> must be an instance of ExternalBytes or a subclass thereof.
+Does not check.
+<BR>
+This is the reverse of <CODE>__MKEXTERNALBYTES()</CODE>.
+
+<P>
+<DT><CODE>OBJ <B>__externalBytesSize</B>(x)</CODE>
+<DD>returns the number of bytes in an externalBytes memory block,
+or nil if that size is not known.
+Notice, that this nil-check is still required, and the intVal must
+be taken in order to get the size as C-int.
+Does not check.
+
+<P>
+<DT><CODE>void * <B>__externalAddressVal</B>(x)</CODE>
+<DD>the C-pointer of an externalAddress;
+<CODE>'x'</CODE> must be an ExternalAddress instance. Does not check.
+<BR>
+This is the reverse of <CODE>__MKEXTERNALADDRESS()</CODE>.
+
+<P>
+<DT><CODE>void * <B>__externalFunctionVal</B>(x)</CODE>
+<DD>the C-pointer of an externalFunction;
+<CODE>'x'</CODE> must be an ExternalFunction instance. Does not check.
+<BR>
+This is the reverse of <CODE>__MKEXTERNALFUNCTION()</CODE>.
+
+<P>
+<DT><CODE>OBJ <B>__point_X</B>(OBJ p)</CODE>
+<DD>the x-instance as ST-Object; <CODE>'x'</CODE> must be a Point. Does not check.
+<P>
+<DT><CODE>OBJ <B>__point_Y</B>(OBJ p)</CODE>
+<DD>the y-instance as ST-Object; <CODE>'x'</CODE> must be a Point. Does not check.
+
+<P>
+<DT><CODE>int <B>__stringSize</B>(OBJ s)</CODE>
+<DD>the size of the string-object; <CODE>'s'</CODE> must be a String. Does not check.
+<BR>
+In contrast to <CODE>__Size</B>()</CODE>, this returns the strings net size
+(i.e. without header and 0-byte).
+
+<P>
+<DT><CODE>int <B>__arraySize</B>(OBJ a)</CODE>
+<DD>the number of elements in the array-object;
+<CODE>'a'</CODE> must be an Array. Does not check.
+<P>
+<DT><CODE>int <B>__byteArraySize</B>(OBJ a)</CODE>
+<DD>the  number of elements in the byteArray-object;
+<CODE>'a'</CODE> must be a ByteArray. Does not check.
+<P>
+<DT><CODE>OBJ <B>__AT_</B>(OBJ receiver, int index)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>sends #at: to the receiver. For certain classes (String, Array) no real send
+is performed; instead the value is extracted directly.
+<P>
+<DT><CODE>OBJ <B>__AT_PUT_</B>(OBJ receiver, int index, OBJ value)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>sends #at:put: to the receiver. For certain classes (String, Array) no real send
+is performed; instead the value is stored directly.
+<P>
+<DT><CODE>OBJ <B>__SIZE</B>(OBJ receiver)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>sends #size to the receiver. For certain classes (String, Array) no real send
+is performed; instead the size is determined directly.
+
+</DL>
+<P>
+
+
+<A NAME="MACROS_OBJCREATE" HREF="#I_MACROS_OBJCREATE"><H3>Object Creation Helpers</H3></A>
+
+Please be aware that any object creation can lead to a garbage collect operation to
+happen. Because Smalltalk/X uses a moving garbage collector and direct object pointers,
+you must be very careful to both make sure that all object references in your C-code are both
+reachable by (i.e. known to) the collector AND that any changed object addresses are correctly
+updated in your C-pointers. For that, please read the "garbage collector interface" section
+below very carefully, when using any of the following object allocation functions.
+Also, please read and understand the documentation of
+__PROTECT__ / __UNPROTECT__ below.
+
+<DL>
+
+<DT><CODE>bool <B>__ISVALIDINTEGER</B>(INT ival)</CODE>
+<DD>checks if <CODE>'ival'</CODE> is in the valid range for a smallInteger.
+(i.e. in [<CODE>_MIN_INT</CODE> .. <CODE>_MAX_INT</CODE>])
+<P>
+
+<DT><CODE>OBJ <B>__MKSMALLINT</B>(INT ival)</CODE>
+<DD>makes a SmallInteger object with value <CODE>'ival'</CODE>.
+The argument must be within the valid SmallInteger range which is
+typically 31 bit (alpha: 63 bit).
+<BR>
+For security and portability, compare 'ival' against <CODE>_MIN_INT</CODE>
+and <CODE>_MAX_INT</CODE> (using __ISVALIDINTEGER) before using this macro.
+<BR>
+Attention: will be obsoleted by <B>__mkSmallInteger()</B>
+
+<P>
+<DT><CODE>OBJ <B>__MKFLOAT</B>(double dval)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes a Float object with value <CODE>'dval'</CODE>.
+<BR>
+Notice that the Smalltalk class
+"Float" corresponds to the C-double type, whereas the Smalltalk "ShortFloat" holds a "float" value.
+(this was done for compatibility with VisualAge- and Dolphin Smalltalk systems)
+
+<P>
+<DT><CODE>OBJ <B>__MKSFLOAT</B>(float fval)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes a ShortFloat object with value <CODE>'fval'</CODE>
+<BR>
+Notice that the Smalltalk class
+"Float" corresponds to the C-double type, whereas the Smalltalk "ShortFloat" holds a "float" value.
+(this was done for compatibility with VisualAge- and Dolphin Smalltalk systems)
+
+<P>
+<DT><CODE>OBJ <B>__MKFRACT_I</B>(int num, int denom)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes a Fraction object with integral numerator and integral denominator
+<BR>
+The arguments must be in the valid smallInteger range (which is not checked in this
+function).
+<P>
+
+<DT><CODE>OBJ <B>__MKEMPTYSTRING</B>(int len)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes an empty String object for <CODE>'len'</CODE> 1-byte-characters with undefined contents.
+Actually, the allocation includes space for an extra zero byte. So do not count that in the passed len
+argument.
+<BR>
+The returned object is an instance of String, which can only hold 8-bit characters.
+<P>
+
+<DT><CODE>OBJ <B>__MKEMPTYUSTRING</B>(int len)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes an empty Unicode16String object for <CODE>'len'</CODE> 2-byte-characters with undefined contents.
+<BR>
+The returned object is an instance of Unicode16String, which can hold 16-bit characters.
+The allocation does currently NOT include space for a zero character at the end.
+<BR>
+This function was introduced with ST/X release 5.2.1.
+<P>
+
+<DT><CODE>OBJ <B>__MKSTRING</B>(char *sval)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes a String object with value <CODE>'sval'</CODE>.
+<P>
+Warning: <CODE>'sval'</CODE> is not allowed to point into a Smalltalk object,
+because the string allocation itself could lead to a garbage collect to happen,
+which could make any passed-in object-pointer useless.
+To create a new string from a passed-in Smalltalk string, use the following
+procedure:
+<OL>
+<LI>protect the st-object from which you want to copy (__PROTECT__)
+<LI>allocate an empty string (__MKEMPTYSTRING)
+<LI>unprotect the st-object (__UNPROTECT__)
+<LI>copy the bytes (bcopy)
+</OL>
+of course, the PROTECT/UNPROTECT is only needed if the reference is not via a
+local/argument of the current context.
+
+<P>
+<DT><CODE>OBJ <B>__MKSTRING_L</B>(char *sval, int len)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>as above, if you know the length (is somewhat faster, since a call to <CODE>strlen()</CODE> is avoided)
+<BR>
+Warning: <CODE>'sval'</CODE> is not allowed to point into a Smalltalk object (see above).
+
+<P>
+<DT><CODE>OBJ <B>__MKSTRING_ST</B>(OBJ stStringObject)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>use this, top copy an existing Smalltalk string.
+
+<P>
+<DT><CODE>OBJ <B>__MKSTRING_ST_L</B>(OBJ stStringObject, int len)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>like above, if you know the length or only want to copy the first len characters.
+
+<P>
+<DT><A NAME="MKSYMBOL"><CODE>OBJ <B>__MKSYMBOL</B>(char *sval, 0)</CODE> </A>(function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes a Symbol object with name <CODE>'sval'</CODE>
+<BR>
+For constant symbols, always use the <A HREF="#ACCESS_SYMBOLS"><CODE>@symbol()</CODE></A> macro, which creates
+the symbol at compilation time and does not take any time at execution time.
+In contrast, MKSYMBOL creates the symbol at execution time and requires a search
+in the hashtable of existing symbols.
+<P>
+
+<DT><CODE>OBJ <B>__MKCHARACTER</B>(unsigned char c)</CODE> (macro)
+<DD>makes a Character object with asciiValue <CODE>'c'</CODE>
+<BR><CODE>'c'</CODE> must be in the range [0 .. 255].
+<BR>
+No actual object creation is done, as all 256 single-byte character objects
+are created and remembered at startup time.
+<BR>
+The character is assumed to have unicode coding
+(of which iso8859-1 and ascii are single-byte subsets).
+<P>
+
+<DT><CODE>OBJ <B>__MKUCHARACTER</B>(unsigned short uc)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes a Character object with unicode-codePoint <CODE>'uc'</CODE>
+<BR><CODE>'uc'</CODE> must be in the range [0 .. 0xFFFF].
+<BR>
+This may or may not actually create a new object, depending on the passed codePoint:
+the first 1024 characters are shared and reused (immediate objects),
+and for those, this function simply returns a pointer
+to one of those preallocated character objects. For higher codepoints,
+an object allocation is performed and thus, garbage collection may happen.
+<BR>
+The character is assumed to have unicode coding.
+<BR>
+This function was introduced with ST/X release 5.2.1.
+<P>
+
+<DT><CODE>OBJ <B>__MKLARGEINT</B>(INT lval)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes a LargeInteger object with value <CODE>'lval'</CODE>
+<BR>
+Be careful to only create largeIntegers if 32 bits (alpha: 64 bits) of value are really needed;
+use <CODE>__MKSMALLINT()</CODE> (if you are certain)
+or <CODE>__MKINT()</CODE> (if you don't know).
+Otherwise, this will return an unnormalized LargeInteger (i.e. a LargeInteger with a value
+in the SmallInteger range).
+<BR>
+Most code in the numeric classes is not prepared to handle unnormalized largeIntegers;
+therefore strange things may happen.
+
+<P>
+<DT><CODE>OBJ <B>__MKULARGEINT</B>(unsigned INT uval)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes a LargeInteger object with value <CODE>'uval'</CODE>
+<BR>
+Same care as above.
+<P>
+
+<DT><CODE>OBJ <B>__MKINT</B>(INT val)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes a Small or LargeInteger object with value <CODE>'val'</CODE>
+<BR>
+This checks the value of the passed number and returns a correctly typed
+object. If in doubt, always use this or __MKUINT below to pass integers from C to Smalltalk.
+<P>
+
+<DT><CODE>OBJ <B>__MKUINT</B>(unsigned INT uval)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes a Small or LargeInteger object with value <CODE>'uval'</CODE>
+<P>
+
+<DT><CODE>OBJ <B>__MKINT64</B>(int64 *iP)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes a LargeInteger object with up to 64 bits of value.
+<BR>
+The argument is a pointer to an int64 structure (see stc.h).
+<BR>
+This checks the passed arguments value and returns a correctly typed object
+(i.e. SmallInteger, 4-byte LargeInteger or 8-byte LargeInteger as required).
+<P>
+
+<DT><CODE>OBJ <B>__MKUINT64</B>(unsigned int64 *iP)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes a LargeInteger object with up to 64 bits of value
+<BR>
+The argument is a pointer to an unsigned int64 structure (see stc.h).
+<BR>
+This checks the passed arguments value and returns a correctly typed object
+(i.e. SmallInteger, 4-byte LargeInteger or 8-byte LargeInteger as required).
+<P>
+
+<DT><CODE>OBJ <B>__MKLARGEINT64</B>(int sign, int low32bits, int hi32Bits)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>same as __MKINT64, but expects sign, low and hi bits as separate arguments.
+(this is sometimes useful, when a datum is either computed or read from an external
+source)
+<BR>
+This checks the passed arguments values and returns a correctly typed object
+(i.e. SmallInteger, 4-byte LargeInteger or 8-byte LargeInteger as required).
+<P>
+
+
+<DT><CODE>OBJ <B>__MKEXTERNALBYTES</B>(void *ptr)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes an ExternalBytes object from an arbitrary pointer <CODE>'ptr'</CODE>
+<BR>
+This is useful to pass a block of memory which was allocated by C-code
+up to Smalltalk. It can be accessed there via protocol found in <CODE>ExternalBytes</CODE>.
+<BR>
+This does not allocate the bytes-block; however, a Smalltalk object which points to
+the passed memory is allocated.
+<BR>
+Notice:
+<BR>
+The created ExternalBytes object does not know the size of the memory block,
+and therefore does no bound checking when individual bytes are accessed.
+This makes your code less robust, of course.
+<BR>
+Therefore, it is recommended to ALWAYS use the function below if the size of the memory
+block is known.
+<P>
+
+<DT><CODE>OBJ <B>__MKEXTERNALBYTES_N</B>(void *ptr, int nBytes)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>like above, passing the number of (byte-) elements.
+<BR>
+If possible, use this to create externalBytes objects, since knowing the size of
+the data block enables for bounds checking operations when elements are accessed
+from Smalltalk code - this makes your code more robust.
+<P>
+
+<DT><CODE>OBJ <B>__MKEXTERNALADDRESS</B>(void *ptr)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes an ExternalAddress object from an arbitrary pointer <CODE>'ptr'</CODE>
+
+<P>
+<DT><CODE>OBJ <B>__MKEXTERNALFUNCTION</B>(voidFunc *ptr)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes an ExternalFunction object from an arbitrary function pointer <CODE>'ptr'</CODE>
+
+<P>
+<DT><CODE>OBJ <B>__MKPOINT_INT</B>(INT x, INT y)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes a Point object given two integer coordinates; x and y must be within
+the valid smallInteger range.
+
+<P>
+<DT><CODE>OBJ <B>__MKPOINT_DOUBLE</B>(double x, double y)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes a Point object given two double coordinates
+
+<P>
+<DT><CODE>OBJ <B>__ARRAY_NEW_INT</B>(int n)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes an Array with <CODE>'n'</CODE> slots (nilled) elements.
+
+<P>
+<DT><CODE>OBJ <B>__ARRAY_NEW_INT_WITHALL</B>(int n, OBJ val)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes an Array with <CODE>'n'</CODE> slots, all referring to <CODE>'val'</CODE>.
+<BR>
+The <CODE>'val'</CODE> argument must be a valid OBJ.
+
+<P>
+<DT><CODE>OBJ <B>__ARRAY_WITH1</B>(OBJ element)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes an Array with 1 element. The argument must be a valid OBJ.
+
+<P>
+<DT><CODE>OBJ <B>__ARRAY_WITH2</B>(OBJ e1, e2)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes an Array with 2 elements. The arguments must be valid OBJs.
+
+<P>
+<DT><CODE>OBJ <B>__ARRAY_WITH[3-5]</B>(OBJ e1, e2, ...)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>same with up to 5 elements.
+
+<P>
+<DT><CODE>OBJ <B>__STRING_NEW_INT</B>(int n)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes an String with <CODE>'n'</CODE> elements; the string is initialized with spaces.
+
+<P>
+<DT><CODE>OBJ <B>__BYTEARRAY_UNINITIALIZED_NEW_INT</B>(int n)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes a ByteArray with <CODE>'n'</CODE> elements; the contents is undefined.
+
+<P>
+<DT><CODE>OBJ <B>__BYTEARRAY_NEW_INT</B>(int n)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes a ByteArray with <CODE>'n'</CODE> elements; the elements are set to zero.
+
+<P>
+<DT><CODE>OBJ <B>__BASICNEW</B>(OBJ cls)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>low level instance creation. This does NOT actually send #basicNew to
+the class - only the memory is allocated and the instance variables nilled.
+(i.e. a classes private basicNew method would not be invoked by this).
+
+<P>
+<DT><CODE>OBJ <B>__BASICNEW_INT</B>(OBJ cls, int n)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>like above, with indexed instance variables.
+
+<P>
+<DT><CODE>OBJ <B>__NEW</B>(OBJ cls)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>instance creation. Sends #new to cls.
+
+<P>
+<DT><CODE>OBJ <B>__NEW_INT</B>(OBJ cls, int n)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>instance creation with indexed instance variables. Sends #new: to cls.
+
+<P>
+<DT><CODE>OBJ <B>__stArrayFromCIntArray</B>(int *pInts, int nItems)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes an Array filled with integer values from a C-array of ints.
+Individual elements of the returned array may be smallIntegers or largeIntegers,
+depending on their value.
+<P>
+
+<DT><CODE>OBJ <B>__stArrayFromCUIntArray</B>(unsigned int *pInts, int nItems)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes an Array filled with integer values from a C-array of unsigned ints.
+Individual elements of the returned array may be smallIntegers or largeIntegers,
+depending on their value.
+<P>
+
+<DT><CODE>OBJ <B>__stArrayFromCShortArray</B>(short *pInts, int nItems)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes an Array filled with integer values from a C-array of short ints.
+All elements of the returned array will be smallIntegers.
+<P>
+
+<DT><CODE>OBJ <B>__stArrayFromCUShortArray</B>(unsigned short *pInts, int nItems)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes an Array filled with integer values from a C-array of unsigned short ints.
+All elements of the returned array will be smallIntegers.
+<P>
+
+<DT><CODE>OBJ <B>__stArrayFromCFloatArray</B>(float *pInts, int nItems)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes an Array filled with floats from a C-array of floats.
+<P>
+
+<DT><CODE>OBJ <B>__stArrayFromCDoubleArray</B>(double *pInts, int nItems)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes an Array filled with floats from a C-array of doubles.
+<P>
+
+<DT><CODE>OBJ <B>__stFloatArrayFromCFloatArray</B>(pfloat *pInts, int nItems)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes a FloatArray filled with values from a C-array of floats.
+<P>
+
+<DT><CODE>OBJ <B>__stDoubleArrayFromCDoubleArray</B>(double *pInts, int nItems)</CODE> (function) <A HREF="NOTE_GC">[1]</A>
+<DD>makes an DoubleArray filled with values from a C-array of doubles.
+</DL>
+<P>
+<A NAME="NOTE_GC">[1]</A> these macros/functions (may) allocate object memory and
+therefore may trigger a garbage collect - read more on this below.
+
+
+<A NAME="MACROS_GC" HREF="#I_MACROS_GC"><H3>garbage collector interface</H3></A>
+
+<DL>
+<DT><CODE><B>__PROTECT__</B>(var)</CODE>
+<DD>tell the VM, that var contains a reference to a valid Smalltalk object
+which should not be collected. This is required if C-code holds a reference to a
+Smalltalk object and there is a chance for a garbage collect operation to occur.
+<BR>
+This macro must be used in a stack-like fashion
+together with the UNPROTECT macro. For every PROTECT, there MUST be a corresponding
+UNPROTECT; otherwise, some VM internal table will overflow.
+Notice, that this internal table is relatively small (some 30 entries or so),
+and no mechanism whatsowever exists in the VM to clean up this table.
+Thus, PROTECT/UNPROTECT are strictly not allowed iff there is any chance of a message
+send (i.e. a call into smalltalk code), an interrupt or a context switch is to happen
+inside. This is because then, the table could overflow because a user may end up in a debugger
+and/or exception handler and the UNPROTECT may never be executed.
+<P>
+<B>Only use PROTECT/UNPROTECT around calls to a memory allocation VM routine;
+never around message sends or when interrupts are enabled</B>
+
+<BR>
+See more below in ``Allocating object memory in primitives''.
+
+<P>
+<DT><CODE><B>__UNPROTECT__</B>(var)</CODE>
+<DD>get any updated pointer back from the VM into var, and release the
+VM's remembering as installed with PROTECT.
+This macro MUST be used in a stack-like fashion
+together with the PROTECT macro. For every PROTECT, there MUST be a corresponding
+UNPROTECT; otherwise, some VM internal table will overflow.
+<BR>
+Also notice, that you have to use the UNPROTECT macro after EVERY object allocation,
+to refetch any other possibly changed object reference.
+<BR>
+See more below in ``Allocating object memory in primitives''.
+
+<P>
+<DT><CODE>OBJ <B>__STORE</B>(OBJ dst, OBJ val)</CODE>
+<DD>to tell the garbage collector, that a store of <VAR>val</VAR>
+was made into <VAR>dst</VAR>; the <CODE>STORE</CODE> macro is not needed
+for local variables (method locals) or if you are certain that the
+stored object is either nil or a SmallInteger. The macro checks for those,
+so it does not hurt (much) to place this macro after every non-context store.
+<BR>
+Please read further information on why a store macro is required and
+how it is used.
+
+<P>
+<DT><CODE>OBJ <B>__GSTORE</B>(OBJ val)</CODE>
+<DD>to tell the garbage collector, that a store of <VAR>val</VAR>
+was made into a global (or classVariable);
+<BR>
+This is equivalent to <CODE>__STORE(Smalltalk, val)</CODE>.
+
+
+</DL>
+<BR>
+After calling any of the macros/functions marked with a ``[1]'',
+any unprotected pointer referencing a Smalltalk object
+or pointing into a Smalltalk object (for example: __stringVal) will be void.
+<P>
+You have to take care of this, either by using the PROTECT/UNPROTECT macros,
+or by placing the variables into the current context
+(i.e. effectively keeping those references in a Smalltalk method local instead of a
+C variable which is unknown to the grabage collector).
+<BR>
+All pointers <STRONG>into</STRONG> an object are
+to be considered invalid after a garbage collect, even if the underlying
+base pointer was PROTECTED/UNPROTECTED.
+<BR>
+Therefore, <STRONG>never</STRONG> create any C pointers into an object;
+instead, always use indexed accesses, and protect the base object.
+
+<P>
+  Currently (and maybe forever), pointers in <CITE>ST/X</CITE> are DIRECT object pointers,
+  meaning that the values of these variables point directly to the underlying
+  object's structure (some of which can be found in the stc.h include file).
+<P>
+  Since I cannot guarantee that this statement remains true in the future
+  (indirection makes things like the garbage collector or the become:-operation
+   much much simpler), you should always use access macros such as
+  <CODE>"__InstPtr(o)->field"</CODE> instead of <CODE>"o->field"</CODE>.
+<BR>
+  These access macros are also defined in stc.h:
+<P>
+
+
+
+
+<A NAME="MACROS_CASTS" HREF="#I_MACROS_CASTS"><H3>OBJ to C-structure casts</H3></A>
+
+<DL>
+<DT><CODE><B>__objPtr</B>(o)</CODE>
+<DD>same as o, to hide indirection if ever implemented,
+			     always use <CODE>"__objPtr(o)->field"</CODE> instead of
+			     <CODE>"o->field"</CODE> !
+
+<P>
+<DT><CODE><B>__InstPtr</B>(o)</CODE>
+<DD>to access instvars by index [0 .. instSize-1]
+<P>
+Direct access to instance variables it is <STRONG>NOT</STRONG>
+recommended, since you have to modify your primitives whenever
+ther instance variable layout of the accessed object changes.
+<P>
+For primitive code in methods, use the <CODE>"__INST(name)"</CODE> macro
+to access named instance variables.
+
+<P>
+<DT><CODE><B>__PointInstPtr</B>(o)</CODE>
+<DD>to access x and y of a point (actually, simply a cast to the points structure)
+<P>
+For example, to access the x component of a point instance, use:
+<CODE><PRE>
+    ...
+    if (__isPoint(stVar)) {
+	OBJ xComponent;
+
+	xComponent = __PointInstPtr(stVar)->p_x;  /* see "stc.h" for p_x */
+	if (__isSmallInteger(xComponent)) {
+	    INT xValue;
+
+	    xValue = __intVal(xComponent);
+	    ...
+	}
+    }
+    ...
+</PRE></CODE>
+
+of course, never forget to check the types with the <CODE>__isXXX</CODE>
+macros - just to make certain.
+
+<P>
+<DT><CODE><B>__ArrayInstPtr</B>(o)</CODE>
+<DD>to access elements of an array.
+<P>
+For example, to access the 10th element of a Smalltalk array, use:
+<CODE><PRE>
+    ...
+    if (__isArray(stVar)) {
+	OBJ el_10;
+
+	/* notice: c-indexing starts at 0 */
+	el_10 = __ArrayInstPtr(stVar)->a_element[9];
+	...
+    }
+    ...
+</PRE></CODE>
+another example (summing the elements of an array):
+<CODE><PRE>
+    ...
+    if (__isArray(stVar)) {
+	int nElements;
+	INT sum;
+	int index;
+	OBJ element;
+
+	nElements = __arraySize(stVar);
+	sum = 0;
+	for (index=0; index &lt; nElements; index++) {
+	    element = __ArrayInstPtr(stVar)->a_element[index];
+	    if (! __isSmallInteger(element)) {
+		RETURN (nil);
+	    }
+	    sum += __intVal(element);
+	}
+	RETURN ( __MKSMALLINT(sum));   /* use "__MKINT()" if there is a chance
+					* that sum does not fit into 31 bits
+					*/
+    }
+    ...
+</PRE></CODE>
+notice, <CITE>stc</CITE> is not too bad: the code generated by compiling the
+corresponding ST code is not much slower.
+
+</DL>
+<P>
+and so on ...
+<BR>
+There are macros for all objects which are known
+to the runtime system
+<BR>
+i.e.
+<UL>
+<LI><CODE><B>__ByteArrayInstPtr</B>()</CODE>,
+<LI><CODE><B>__StringInstPtr</B>()</CODE>,
+<LI><CODE><B>__SymbolInstPtr</B>()</CODE>,
+<LI><CODE><B>__CharacterInstPtr</B>()</CODE>
+</UL>
+(any many more) to access other objects internals.
+However, it is always better (with respect to portability),
+to send access messages to
+the object from the ST part of your method, deposit them in
+some local variable, and access those variables from the C part.
+
+
+<P>
+  If there will ever be a switch to indirect pointers, only those macros have
+  to be changed instead of all primitive code.
+<P>
+
+late news:
+<BLOCKQUOTE>
+ Originally, all those macros were named <CODE>_XXX()</CODE>.
+ However,
+ some compilers got confused by a definition of both a macro
+ named <CODE>"_XXX"</CODE> and a global variable with the same name.
+<P>
+ In the current <CITE>ST/X</CITE> release,
+ this was true for the <CODE>_isBlock</CODE> macro,
+ where a corresponding <CODE>'_isBlock'</CODE> c-variable exists
+(for the <CODE>isBlock</CODE> symbol).
+<P>
+ The macro has been renamed to <CODE>__isBlock</CODE> to avoid this problem
+This renaming will be done for all and every
+ other macro.
+<BR>
+It has already been done for most macros, but some remain to
+use a single underscore.
+Be prepared for  some minor (name-) changes in that area.
+<BR>
+For the intermediate time, please excuse the confusion due to some
+macros starting with two underscores, others with only one.
+<P>
+With release 2.10.5.4, almost all macros have been renamed for
+a double-underscore name. The old names are available as synonym for
+easier migration, but will vanish in a future version.
+</BLOCKQUOTE>
+
+
+
+
+<A NAME="MACROS_UTIL" HREF="#I_MACROS_UTIL"><H3>Utility functions</H3></A>
+
+<DL>
+
+<DT><CODE>int id =  <B>__STX_AddTimeout</B>(func, deltaT, arg)</CODE>
+<DD>installs a timeout, which arranges for the C-function
+<VAR>func</VAR> to be called after <VAR>deltaT</VAR> milliseconds.
+<VAR>arg</VAR> is passed to the function as argument (use a pointer
+to a structure, if more than
+one argument is required).
+<BR>
+The function will be called by the scheduler (i.e. at highest priority),
+but will <B>NOT</B> interrupt the garbage collector (i.e. it can be used
+for soft realtime only).
+<P>
+The return value is an integer, which identifies the timeout.
+<P>
+The passed timeout-function is called only once - for cyclic calling, another call to
+<CODE>__STX_AddTimeout</CODE> should be made in the called function.
+<P>
+
+<DT><CODE><B>__STX_RemoveTimeout</B>(int id)</CODE>
+<DD>removes a timeout as previously installed with <CODE>__STX_AddTimeout</CODE>.
+The argument must be the timeouts id, as previously returned.
+
+<P>
+
+<DT><CODE><B>__STX_SignalSemaphore</B>(aSemaphore)</CODE>
+<DD>signals a semaphore. Before using this function,
+carefully read the section on how references to Smalltalk
+objects are kept & remembered in C-code.
+</DL>
+
+<P>
+
+
+
+
+
+<P>
+
+
+
+<A NAME="RETURN" HREF="#I_RETURN"><H2>Returning a value from a primitive</H2></A>
+
+
+
+  Since some cleanup is required before a method is left, a simple C-return from
+  a primitive will not be sufficient in most cases (consider for example a
+  pending reference to the current context). To deal with these situations
+  correctly, a <CODE>"RETURN(value)"</CODE> macro is provided by the runtime system,
+  which does all the housekeeping. For simple primitives (which do not require a context),
+  the macro will expand to a simple return, so there is no performance penalty in this case.
+<BR>
+<STRONG>
+Never use <CODE>return</CODE> - always use the <CODE>RETURN</CODE> macro
+</STRONG>
+<P>
+examples:
+<CODE><PRE>
+    myMethodReturningOne
+    %{
+	/* return a SmallInteger */
+	RETURN ( __MKSMALLINT(1) );
+    %}
+    !
+
+    anotherMethodReturningOne
+	|retVal|
+
+    %{
+	/* return a SmallInteger */
+	retVal = __MKSMALLINT(1);
+    %}.
+	^ retVal
+    !
+
+    mySpecialTrigMethod:arg
+    %{
+	if (__isFloat(arg)) {
+	    /* compute a Float */
+
+	    double fVal = __floatVal(arg);
+	    RETURN ( __MKFLOAT(sin(exp(fVal) * 1.2345)) );
+	}
+    %}
+    .
+	self primitiveFailed
+    !
+
+    myMethodReturningSymbol
+    %{
+	/* return a Symbol */
+	RETURN ( @symbol(fooBar) );
+	}
+    %}
+    !
+
+    myMethodReturningString
+    %{
+	/* return a String */
+	RETURN ( __MKSTRING("hello world") );
+	}
+    %}
+    !
+
+    anotherMethodReturningString
+	|retVal|
+
+    %{
+	char buffer[100];
+
+	strcpy(buffer, "hello ");
+	strcat(buffer, getLogin());
+	/* return a String */
+	retVal = __MKSTRING(buffer);
+    %}.
+	^ retVal
+    !
+
+    aMethodReturningArrayWithStrings
+    %{
+	OBJ arr, s;
+
+	/*
+	 * you need a lot of PROTECT/UNPROTECT,
+	 * if references are not reachable via the context...
+	 */
+	arr = __ARRAY_NEW_INT(2);
+	__PROTECT__(arr);
+	s = __MKSTRING("hello");    // may GC and make reference in arr obsolete
+	__UNPROTECT__(arr);         // fetch possibly updated ref
+	__ArrayInstPtr(arr)->a_element[0] = s;
+	__STORE(arr, s);            // tells memory manager that a reference exists
+
+	__PROTECT__(arr);
+	s = __MKSTRING("hello");    // may GC and make reference in arr obsolete
+	__UNPROTECT__(arr);         // fetch possibly updated ref
+	__ArrayInstPtr(arr)->a_element[1] = s;
+	__STORE(arr, s);            // tells memory manager that a reference exists
+	RETURN(arr);
+    %}
+    !
+
+    anotherMethodReturningArrayWithStrings
+	|arr s|
+    %{
+	/*
+	 * you dont need PROTECT/UNPROTECT,
+	 * if references ARE reachable via the context...
+	 */
+	arr = __ARRAY_NEW_INT(2);
+	s = __MKSTRING("hello");
+	__ArrayInstPtr(arr)->a_element[0] = s;
+	__STORE(arr, s);
+
+	s = __MKSTRING("hello");
+	__ArrayInstPtr(arr)->a_element[1] = s;
+	__STORE(arr, s);
+    %}.
+	^ arr
+    !
+
+    myDestructiveUpperCaseToLowerCase:aString
+    %{
+	char *cp;
+	char c;
+
+	/* check if argument is a string */
+	if (__isString(aString)) {
+	    /*
+	     * get the C-character pointer to the characters
+	     * this is allowed here, since no danger for a garbage
+	     * collect exists here.
+	     */
+	    cp = __stringVal(aString);
+
+	    /* walk over string till end (0-byte) is reached */
+	    while ((c = *cp)) {
+		if (isUpper(c)) {
+		    *cp = toLower(c);
+		}
+		cp++;
+	    }
+	    RETURN ( aString );
+	}
+    %}
+    .
+	self primitiveFailed
+    !
+
+</PRE></CODE>
+
+
+
+<A NAME="LOCALS" HREF="#I_LOCALS"><H2>Local storage in primitives</H2></A>
+
+
+
+
+  Primitives involving local storage which hold Smalltalk objects AND
+  call other methods and/or allocate new objects, MUST be written with
+  great care, since the garbage collector may run at any time. The garbage
+  collector will move objects around so that your pointers become invalid.
+  The garbage collector will of course update all reachable pointers,
+  however, to be able to update your pointers, it must know them!
+<P>
+  The easiest way of handling this situation is by declaring these
+  locals as method locals (in contrast to c-variables).
+  Method locals are located in
+  the context, which is investigated (and updated) by the garbage collector:
+<P>
+  instead of:
+<CODE><PRE>
+      aMethodName
+      %{
+	  OBJ aLocal;
+
+	   ...
+	  do something with aLocal
+	   ...
+      %}
+</PRE></CODE>
+  it is better to write:
+<CODE><PRE>
+      aMethodName
+	  |aLocal|
+      %{
+	    ...
+	  do something with aLocal
+	    ...
+      %}
+</PRE></CODE>
+  In the later case, the Smalltalk compiler produces code which protects
+  the local variable from beeing garbage collected (by creating a context,
+  which will be fixed by the garbage collector).
+<P>
+  Of course, this protection is only needed if your primitive code calls
+  other methods and/or allocates storage - otherwise there is no danger
+  since the garbage collector will only run when new objects are allocated
+  (which is always possible when calling other methods).
+<BR>
+  Warning: the previous statement is not true, iff you declare your primitive code
+  as being interruptable (which is described below). If you do this,
+  an interrupt may occur at any time, leading to a thread-switch to some
+  other Smalltalk process, which may of course trigger a garbage collect.
+<P>
+  For coding examples, see the primitives in <CODE>"libbasic/SmallInt.st"</CODE> or
+  <CODE>"libbasic/Float.st"</CODE>. Also, even though a bit more complex, looking into
+  <CODE>"libview/XWorkstation.st"</CODE> also gives a lot of insight.
+
+
+
+<A NAME="STACKS" HREF="#I_STACKS"><H2>Stack management</H2></A>
+
+  Each thread inside ST/X has its own stack, which grows automatically as required.
+  The Smalltalk programmer does not have to preallocate the stack,
+  or predeclare the size of the required stack.
+<P>
+  For this, the STC compiler generates code which checks for the amount of required
+  stack on method- or block entry, and grows the stack if required.
+<P>
+  Of course, called C-functions do not do so,
+  therefore great care must be taken when
+  calling c library functions which use big stack frames.
+  Especially C-functions, which use alloca, or declare big automatic arrays or generate a very deep
+   call-nesting.
+<P>
+  <CITE>ST/X</CITE> internally keeps 2 classes of stacks:
+<UL>
+<LI>the so called <CITE>C-Stack</CITE>
+<BR>
+this is an automatic growing stack, which is virtually unlimited in size.
+This is the machine stack, which was allocated by the operating system for the
+"main()" function.
+Only (exactly) one such C-stack is available.
+The C-stack is non-scattered.
+The operating system typically maintains this stack and grows it as required
+(by detecting memory references below the current stack pointer and allocating more
+stack pages as requried). This stack may bounce into the heap memory area (which grows upward).
+<BR>
+Its actuall size limit is typically some 8Mb, 16Mb or even more.
+<P>
+<LI>per thread (Smalltalk process) stacks
+<BR>
+these are maintained by the Smalltalk runtime system and are semi automatically
+grown (and shrunk) as required by the thread.
+Each Smalltalk process (thread) has its own threadStack.
+ThreadStacks are allocated in fragments (typically multiples of the systems
+page size) and may be allocated as non-consecutive pages. (so called <CITE>spaghetti-stack</CITE>)
+<BR>
+In contrast to the C-stack,
+the growing is done in software (in every method's and block's entry
+code sequence).
+</UL>
+
+Except for the startup and initialization, all processing is usually done
+on a threadStack, which is guaranteed to provide a certain amount of
+local stack frame memory (typically: 4k).
+<P>
+Primitive code which calls out to a C-function will have this
+default amount of stack available for its called C-function,
+which may or may not be enough.
+In some cases, it may be required to
+arrange for a bigger thread-stack-frame to be reserved,
+or to do a temporary switch to the (unlimited) C-stack.
+
+
+<A NAME="STACK" HREF="#I_STACK"><H2>Stack requirements</H2></A>
+
+<CITE>ST/X</CITE> usually reserves a stack frame which is big enough for most C-functions
+(usually the stack has a 4k reserve), but
+  some functions need more
+(to name some: <CODE>printf</CODE>, <CODE>scanf</CODE>, <CODE>popen</CODE> and some Xlib
+  functions).
+<BR>
+  Since no documentation exists on C-library stack requirements,
+  you have to guess, try or otherwise find out what the requirements are.
+  If your ST/X crashes after execution of a primitive, stack violations
+  are first class candidates for being responsible.
+<P>
+  To tell the stc compiler, that a primitive needs more stack, a stack
+  declaration should be added - this is done by inserting a comment of the form:
+<CODE><PRE>
+    /* STACK:n */
+</PRE></CODE>
+  or
+<CODE><PRE>
+    /* UNLIMITEDSTACK */
+</PRE></CODE>
+  into the first line of the primitive (i.e. right after the opening <CODE>"{"</CODE>).
+<P>
+  Detecting the first declaration, <VAR>stc</VAR> will make certain that <VAR>n</VAR> bytes of
+  stack are available for the method containing that primitive.
+You may have to guess on what a good value for <VAR>n</VAR> is. Taking a bigger
+value may be less performant, but give you more security.
+<P>
+  The second declaration will produce code to switch to the unlimited c-stack
+  for the execution of the method containing that primitive. This stack
+is grown by the operating system and unlimited (not really, but the limit is
+typically some 8 or 16 megabytes).
+<P>
+  There is one big catch in using <CODE>UNLIMITEDSTACK:</CODE> - it is not reentrant.
+  Methods running on the unlimited stack may NOT send other
+  Smalltalk messages. The reason is that all messages might eventually lead to
+  a process switch into another thread and the c-stack cannot hold frames for
+  multiple processes in a non first-in/last-out order.
+<P>
+  To summarize things, your primitive might now look like:
+<CODE><PRE>
+    myMethod
+
+    %{ /* STACK:3500 */
+
+	char aBigBuffer[3000];
+	...
+	...
+    %}
+</PRE></CODE>
+
+  Do not fear estimating the stack need -
+  if your estimate is low, there is still a 4k save area;
+  while no memory is lost or runtime penalty to be payed if you estimate too
+  high: after all its just stack memory, which is released with the return of
+  the method.
+<P>
+  A rule of thumb is the size of local data arrays (i.e. 3000 bytes of
+  aBigBuffer) plus some 500 bytes for the context and other housekeeping locals.
+  (500 is actually too high for most situations;
+   but better estimate too high than too low.)
+<P>
+A new version with more protection against stack violations is being
+prepared and soon available. This will at least protect agains violations near
+the top of the stack - however, there is (currently and in the near future)
+no insurance against violations due to big <CODE>alloca</CODE> chunks.
+<P>
+You are always on the bright side of life, if an <CODE>UNLIMITEDSTACK</CODE> declaration
+is added - however, these methods MUST be leaf methods (i.e. they may not send any further
+messages).
+<P>
+Late note:
+<BR>
+The newest <CITE>ST/X</CITE> releases can be started with the VM commandLine argument
+"<VAR>-MprotectStack</VAR>".
+This makes the memory page below a threads stack non-accessible (by using mprotect),
+and helps to find stack problems.
+<BR>
+However, not all operating systems provide this functionality, and also it does not
+help against alloca operations, which access memory below that memory page.
+
+
+
+<A NAME="NOCONTEXT" HREF="#I_NOCONTEXT"><H2>Ommiting the context setup</H2></A>
+
+  For primitive code which does not send Smalltalk messages, it is possible to
+  save the context setup altogether, effectively producing a very simple
+  (and speedy) c function (saving another bunch of nanoseconds of execution time ;-).
+<P>
+  This is done by adding a comment of the form <CODE>"/* NOCONTEXT */"</CODE> to the first
+  line of the primitive code.
+<P>
+  BIG WARNING:
+<BR>
+  Since those methods do not have a context, there
+  is no way for the garbage collector to update object references.
+  Thus neither self, nor locals, nor arguments are valid after a
+  garbage collect.
+  You must take great care (using PROTECT/UNPROTECT) to not loose any pointers in case
+  of a garbage collect.
+<BR>
+  <VAR>NOCONTEXT</VAR> primitives should only be written by experienced users or for
+  methods which do NOT allocate memory and do NOT send other Smalltalk messages
+  (i.e. which are completely save from ever entering the garbage collector).
+<P>
+  For the curious:
+<BLOCKQUOTE>
+    the macros <CODE>__PROTECT__(ptr)</CODE> and <CODE>__UNPROTECT__(ptr)</CODE> can be used to tell the
+    garbage collector about variable values to be updated - see some primitives
+    in libbasic for examples.
+<BR>
+    Thus, with careful use of these <CODE>__PROTECT__</CODE> macros,
+it is possible to define
+    <VAR>NOCONTEXT</VAR> methods even if there is a possibility of garbage collection.
+<BR>
+These macros are used as:
+<CODE><PRE>
+    {
+	OBJ myRef;
+	...
+	__PROTECT__(myRef);
+	...
+	do something which may lead to a GC
+	this invalidates myRef
+	...
+	__UNPROTECT__(myRef);
+	...
+	myRef valid again
+    }
+</PRE></CODE>
+</BLOCKQUOTE>
+
+
+
+<A NAME="REGISTER" HREF="#I_REGISTER"><H2>Register variables / Method locals</H2></A>
+
+
+  The newest sparc version of <VAR>stc</VAR> can (and does) now put locals into the registers
+  (and other versions will also support this feature in the future).
+  Since <VAR>stc</VAR> does not look-into or parse primitive code, you have to tell
+  when register locals are not wanted (for example when the address of such a
+  variable is taken in the primitive).
+<BR>
+  This is now done using a <CODE>/* NOREGISTER */</CODE> comment - which forces all
+  method/block locals to be allocated as auto-variables, so that an
+  address can be taken.
+<P>
+Not all C-compilers complain when the address is taken of a register variable;
+some silently make the variable a non register one.
+<BR>
+For portability of your code, please use the <CODE>NOREGISTER</CODE> pragma
+even if your compiler is a tolerant one iff your primitive takes the address of the variable.
+<P>
+  Multiple of these kludge comment pragmas may be in one comment as in:
+
+<CODE><PRE>
+	  %{ /* STACK:4096  NOREGISTER */
+</PRE></CODE>
+		...
+
+  however, <VAR>stc</VAR> does not check if your combination makes sense
+  - using the last one if any conflicts arise.
+
+
+<A NAME="SENDS" HREF="#I_SENDS"><H2>Sending messages from within primitive code</H2></A>
+
+
+<H4>Low performance but space saving code</H4>
+
+
+  To easiest way of sending a message to an object from within primitive code
+ is via the SSEND support function:
+
+<CODE><PRE>
+    OBJ sel, receiver, arg1, ... argi;
+
+    val = __SSEND&lt;i&gt;(receiver, sel, 0, arg1, arg2, ... argi);
+</PRE></CODE>
+  where <VAR>i</VAR> is is the number of arguments to the method,
+  <VAR>sel</VAR> is the selector which is a symbol (see above and below),
+  and <VAR>arg&lt;i&gt;</VAR> are the arguments.
+<P>
+This performs a message send which uses a single static inline cache slot
+for all sends - therefore it does not require
+any additional memory for caching.
+<P>
+Although, the performance of this is relatively poor (if compared to a fully cached send),
+this is the most space effective code sequence - use this, if the message
+send is seldom performed ('SSEND' stands for 'Space-saving Send').
+<P>
+Expect a performance of roughly 500k to 2M sends per second
+depending on CPU and memory speed (750ns per send on a P5/200) - for highly polymorphic message sends,
+the performance may degrade to lower numbers.
+<P>
+The <CITE>stc</CITE> compiler generates this type of message sends if the
+<CODE>"+optSpace"</CODE> compilation option is enabled.
+
+
+
+<H4>Medium performance</H4>
+
+More performance is gained by using a cached message send:
+
+<CODE><PRE>
+    OBJ sel, receiver, arg1, ... argi;
+    OBJ val;
+    static struct inlineCache dummy = _DUMMYILC&lt;i&gt;;
+
+    val = _SEND&lt;i&gt;(receiver, sel, nil, &amp;dummy, arg1, arg2, ... argi)
+</PRE></CODE>
+
+  where <VAR>i</VAR> is is the number of arguments to the method,
+  <VAR>sel</VAR> is the selector which is a symbol (see above and below),
+  and <VAR>arg&lt;i&gt;</VAR> are the arguments.
+<P>
+  This results in a medium-speed message send - the methodLookup is cached in the
+  global method cache, but no inline cache is used.
+<P>
+Expect a performance of roughly 700k to 3M sends per second.
+(550ns per send on a P5/200)
+
+
+<H4>High performance</H4>
+
+<P>
+  If your message send is often performed, you may like to use the inline
+  caching facility, which keeps the target of the last send and speeds up
+  future sends - effectively making the next send an indirect
+  function call.
+<BR>
+For very highspeed sends, use:
+<CODE><PRE>
+	static struct inlineCache ilc = _ILC&lt;i&gt;;
+
+	val = (*ilc.ilc_func)(receiver, sel COMMA_SENDER, nil, &amp;ilc, args);
+</PRE></CODE>
+
+  here the target will be cached for a quick indirect call.
+<P>
+Expect a performance of roughly 2M to 15M sends per second.
+(105ns per send on a P5/200)
+<P>
+The above code also shows good performance for polymorphic message sends.
+However, this requires additional memory for caching.
+<P>
+For highly polymorphic sends (as when enumerating all objects),
+the performance may degrade to below the speed of the medium-speed send above,
+since the polymorph cache handling may create more overhead than savings in
+rare cases.
+<P>
+The <CITE>stc</CITE> compiler generates this code sequence, unless the <CODE>+optSpace</CODE>
+option is enabled. The JIT-compiler always generates this code sequence.
+
+<P>
+  Examples:
+<CODE><PRE>
+      myMethod:argument
+	  |local|
+      %{
+	  static struct inlineCache dummy = _DUMMYILC0;
+
+	  local =_SEND0(argument, @symbol(redraw) COMMA_SENDER, nil, &amp;dummy);
+      %}
+      !
+</PRE></CODE>
+
+  is equivalent to:
+<CODE><PRE>
+      myMethod:argument
+	  |local|
+
+	  local := argument redraw
+      !
+</PRE></CODE>
+
+  If you don't use the <CODE>@(symname)</CODE> construct, you have to make certain,
+  that the selector is known and defined somewhere. In this case, you should
+  include a <CODE>"{ Symbol: redraw }"</CODE> compiler directive; see below for details.
+  The <CODE>@(..)</CODE> construct will do this automatically for you.
+<P>
+  Notice:
+<P>
+  Since the SEND-code produced by the compiler is usually as good as handwritten code -
+  you should avoid writing primitives which send messages, if possible.
+<BR>
+  (actually the compilers add additional hints to the cache management
+   which further speeds up sends to self, constants and classes).
+<P>
+  Primitives should be written for things which cannot be written in Smalltalk
+  (for example: interface to databases, interface to graphics etc)
+  or which are very time-consuming and can be considerable tuned in c
+  (for example: copying arrays, String search, Image rotation etc.)
+<P>
+  A good strategy is to do all nescessary Smalltalk stuff before entering
+  the primitive code, and not sending anything from inside.
+  (See examples in <CODE>XWorkstation.st</CODE>, <CODE>Array.st</CODE>
+and especially the image manipulation methods in <CODE>DepthXImage.st</CODE> etc.)
+<P>
+  Also, keep in mind, that the interface will be changed if I get an idea
+  of a faster send, and YOU have to update the code in this case; whereas all
+  high level Smalltalk code will not be affected by these changes.
+
+
+
+
+
+<A NAME="OBJREFS" HREF="#I_OBJREFS"><H2>Remembering Smalltalk objects in external C-code</H2></A>
+
+In some situations, it is required to keep references to certain Smalltalk objects
+within C-memory. For example, if semaphores are to be signalled from C-code.
+<BR>
+In order to do this, we have to tell the garbage collector, that there are
+other (i.e. alien) references to that object and that these should be
+considered when checking for the reachability of some object.
+Also, when objects are moved (or changed via <CODE>#become:</CODE>),
+these references must be updated.
+<P>
+All of the above is done, iff the garbage collector knows about external
+memory locations which hold references to some Smalltalk object.
+<P>
+
+<DL>
+<DT><CODE><B>__ADD_REFCELL</B>( OBJ *cellRef )</CODE>
+<DD>announces to the garbage collector, that cell contains a reference
+to some Smalltalk object, and should be investigated/updated when garbage
+is collected.
+<BR>
+The cell will <B>NOT</B> survive a snapshot-save & restart - i.e. it has to
+be reinstalled when an image is restarted.
+
+<P>
+<DT><CODE><B>__REMOVE_REFCELL</B>( OBJ *cellRef)</CODE>
+<DD>to deinstall a cell. After that, the value in the cell has to be considered
+to be invalid.
+</DL>
+
+Example:
+<BR>
+The following code passes a Smalltalk semaphore to some external C-code,
+which triggers this semaphore after some time delta.
+<CODE><PRE>
+    static OBJ semaRef = nil;
+
+    void
+    doTrigger(dummyArg)
+    {
+	__STX_SignalSemaphore(semaRef);
+	semaRef = nil;
+	__REMOVE_REFCELL( &amp;semaRef );
+    }
+
+    void
+    triggerSemaAfter(theSema, delta)
+	OBJ theSema;
+	int delta;
+    {
+
+	/*
+	 * remember the semaphore
+	 */
+	semaRef = theSema;
+	__ADD_REFCELL( &amp;semaRef );
+
+	/*
+	 * install a timeout
+	 */
+
+	__STX_AddTimeout(doTrigger, delta, 0);
+    }
+</PRE></CODE>
+from Smalltalk, the show can be started with:
+<CODE><PRE>
+    startShow
+	|mySema|
+
+	mySema := Semaphore new.
+    %{
+	triggerSemaAfter(mySema, 1000);
+    %}.
+	mySema wait
+</PRE></CODE>
+
+
+
+
+<A NAME="ALLOC" HREF="#I_ALLOC"><H2>Allocating object memory in primitives</H2></A>
+
+  In general, direct object allocation (i.e. allocating some bytes of storage
+  and setting the class & instance fields 'manually') should be avoided and
+  banned from all primitives,
+  since direct allocation makes redefinition of the <CODE>'new'</CODE> method invisible to
+  your primitive and also opens the door for many possible errors (setting
+  fields/instvars wrong or forgetting to define or nil-out any field/instvar).
+<P>
+In most cases, it is possible to do the allocation outside of the primitive code
+as in:
+<CODE><PRE>
+    someMethod
+	|localBytes|
+
+	localBytes := ByteArray new:10000.
+	%{
+	    ...
+	    do something with localBytes in the primitive
+	    ...
+	%}
+</PRE></CODE>
+
+<P>
+If you really have to allocate in a primitive, here is how its done using a
+call to the "__STX___new()" function as:
+<CODE><PRE>
+	newObject = __STX___new(size, SENDER);
+</PRE></CODE>
+  (<VAR>size</VAR> is the number of bytes and includes any object header and 0-bytes,
+   <CODE>SENDER</CODE> is a macro from <CODE>stc.h</CODE>.
+  It represents a reference to the current context which the garbage collector
+  needs to trace object references. It MUST be present here.
+<P>
+  This returns space for an object with (size - OHDR_SIZE) bytes, where
+  OHDR_SIZE is the space (overhead) required for an object header.
+  The object header includes the size field, the class,
+  and some flags needed by the garbage collector.
+<P>
+  Since an object header is always required, the call is better written as:
+<CODE><PRE>
+	newObject = __STX___new(bytesWanted + OHDR_SIZE, SENDER);
+</PRE></CODE>
+
+<BR>
+  The <CODE>SENDER</CODE> macro
+  passes the current context as additional argument.
+  Since <CODE>__STX___new()</CODE> might trigger a garbage collect,
+  it needs a handle to the context chain to find references and update pointers.
+  Notice, that depending on the type of CPU and operating system,
+  the <CODE>SENDER</CODE> macro may be actually empty.
+  On some systems, the current context is kept in a statically reserver machine
+  register or a thread local variable named "__thisContext__".
+  Thus, the "SENDER" macro hides those details.
+
+<P>
+Notice, that this function may return nil in case the memory manager has problems
+allocating the memory. This may happen only in one situation: if the object memory is full,
+and the operating system is not willing to satisfy a request for more memory.
+(I.e. if the memory requirements hit any virtual memory size limits of the operating system).
+<P>
+Since this does not happen in normal situations,
+forgetting the non-nil test is a common
+mistake - which will get unnoticed for quite some time but may later lead to a segmentation violation,
+when the system is about to run out of space.
+<BR>
+ST/X can deal with low memory situations gracefully, as it keeps some emergency memory aside,
+which is used to handle an out-of-memory exception. A handler for this (Smalltalk-) exception
+will try to free memory (sending lowSpaceCleanup) and proceed.
+If you do not check for a nil return, you will break this graceful emergency scheme.
+Therefore: you <STRONG>MUST</STRONG> check the value returned
+and handle the nil case (usually by raising an exception).
+<P>
+<H3>Initialized vs. Uninitialized Memory</H3>
+  The memory returned by "__STX___new" is not initialized - not even cleared and the class field
+  in the header is not set.
+  To avoid a later crash of your code or in the
+  garbage collector, you <STRONG>MUST</STRONG> set the class-field and correctly set
+  all the instance fields of the new object as soon as possible
+  (concrete: BEFORE the next memory allocation).
+<BR>
+Exceptions from this rule are ByteArrays, Strings, Float- and DoubleArray.
+Here the nilling (but not the setting of the class field) can be omitted,
+because the contents will not investigated as pointers.
+This is what the ByteArray's <CODE>#uninitializedNew:</CODE> method does.
+<P>
+Also, proper setup of the contents must be done shortly after the object is created:
+even if you think that no accesses are possible to the uninitialized object, the garbage collector
+may want to peek into it to find references to other objects.
+<P>
+  example: allocate a ByteArray.
+<CODE><PRE>
+    {
+	...
+	/*
+	 * notice, there may be a garbage collect here ...
+	 * thus invalidating all local pointers, which are neither
+	 * in the context, nor have been PROTECTED
+	 *
+	 * don't forget the OHDR in the given size ...
+	 */
+	newObject = __STX___new(100 + OHDR_SIZE, SENDER);
+	if (newObject != nil) {
+	    /*
+	     * MUST set the class
+	     */
+	    __objPtr(newObject)->o_class = ByteArray;
+	    /*
+	     * except for ByteArrays and Strings, MUST nil-out instvars
+	     * but care for the first OHDR_SIZE header bytes - don't clear
+	     * those.
+	     */
+	    bzero((char *)__objPtr(newObject) + OHDR_SIZE, 100);
+	}
+	RETURN ( newObject );
+    }
+</PRE></CODE>
+  example: allocate a Point.
+<CODE><PRE>
+    {
+	...
+	newPoint = __STX___new(sizeof(OBJ)*2 + OHDR_SIZE, SENDER);
+	if (newPoint != nil) {
+	    /*
+	     * MUST set the class
+	     */
+	    __objPtr(newPoint)->o_class = Point;
+	    /*
+	     * must set the fields
+	     */
+	    __InstPtr(newPoint)->i_instvars[0] = _MKSMALLINT(1);  /* p x:1 */
+	    __InstPtr(newPoint)->i_instvars[1] = _MKSMALLINT(0);  /* p y:0 */
+	}
+	RETURN ( newPoint );
+    }
+</PRE></CODE>
+in the above, there was no problem to expect in case of a garbage collect,
+since the stored values where smallIntegers.
+<P>
+The situation becomes a bit more difficult, if previously allocated objects are
+to be stored into a newly created object. Since every object allocation may lead to a GC,
+we have to make certain that these other pointers are not lost.
+<BR>
+To help here, use the above mentioned PROTECT/UNPROTECT macros. The PROTECT macro
+tells the VM, that some value is still referenced from primitive code (possibly not
+reachable via regular object references) and that the referenced object should
+be protected in case of a garbage collect.
+<BR>
+This protection stays active until the UNPROTECT macro releases the protection.
+<BR>
+These macros have to be used in a stack-like fashion; every PROTECT must be
+followed by a corresponding UNPROTECT. If you forget any UNPROTECT, some VM internal
+table will sooner or later overflow, and bad things happen to it.
+<BR>
+(for the curious:
+<BR>
+PROTECT/UNPROTECT are actually stack push/pop operations for a VM protection stack.
+ The pointers found on this stack are taken to be references
+ to living objects by the garbage collector and updated as appropriate.
+ If you forget to UNPROTECT, this stack may overflow. Also, you will get back
+ the updated pointer value via UNPROTECT. Any other object reference (in a C-variable)
+ will be osolete and may point to an invalid location.
+<P>
+The following example shows what has to be done if the stored values
+are allocated in the primitive.
+<CODE><PRE>
+    primitivePoint
+    %{
+	OBJ newPoint;
+	OBJ newX;
+	OBJ newY;
+
+	/*
+	 * create a float for some X value:
+	 */
+	newX = __MKFLOAT(1.2345);
+
+	/*
+	 * in case allocation failed
+	 */
+	if (newX == nil) {
+	    RETURN (nil);
+	}
+
+	/*
+	 * create a float for the y value.
+	 * WARNING: newX may be invalid after that, if not protected,
+	 * because the allocation of newY may lead into a garbage collect
+	 */
+	__PROTECT__(newX);
+	newY = __MKFLOAT(3.14159);
+	__UNPROTECT__(newX);
+	/*
+	 * in case allocation failed
+	 */
+	if (newY == nil) {
+	    RETURN (nil);
+	}
+
+	/*
+	 * create a point for the x and y values.
+	 * WARNING: newX and newY may be invalid after that, if
+	 * we do not protect them, because the allocation of the
+	 * new point may lead into a garbage collect ...
+	 */
+	__PROTECT__(newX);
+	__PROTECT__(newY);
+	newPoint = __STX___new(sizeof(OBJ)*2 + OHDR_SIZE, SENDER);
+	__UNPROTECT__(newY);  // fetch possibly changed reference
+	__UNPROTECT__(newX);  // fetch possibly changed reference
+	if (newPoint == nil) {
+	    RETURN (nil);
+	}
+
+	/*
+	 * MUST set the class
+	 */
+	__objPtr(newPoint)->o_class = Point;
+	/*
+	 * must set the fields
+	 */
+	__InstPtr(newPoint)->i_instvars[0] = newX;
+	__InstPtr(newPoint)->i_instvars[1] = newY;
+	/*
+	 * see below
+	 */
+	__STORE(newPoint, newX);
+	__STORE(newPoint, newY);
+
+	RETURN ( newPoint );
+    %}
+</PRE></CODE>
+The above primitive becomes much cleaner (and less error prone),
+if you keep these references in local variables of the method's context,
+instead of using C-language variables.
+<BR>
+Be reminded, that these context variables are always handled correctly
+by the garbage collector, therefore you do not have to take care of
+invalid pointers
+here:
+<CODE><PRE>
+    primitivePoint
+	|newX newY newPoint ok|
+
+    %{
+	ok = false;
+
+	/*
+	 * create a float for some X value:
+	 */
+	newX = __MKFLOAT(1.2345);
+	/*
+	 * always check for allocation failure ...
+	 */
+	if (newX != nil) {
+	    /*
+	     * create a float for the y value.
+	     */
+	    newY = __MKFLOAT(3.14159);
+	    if (newY != nil) {
+		/*
+		 * create a point for the x and y values.
+		 */
+		newPoint = __STX___new(sizeof(OBJ)*2 + OHDR_SIZE, SENDER);
+		if (newPoint != nil) {
+		    /*
+		     * MUST set the class
+		     */
+		    __objPtr(newPoint)->o_class = Point;
+
+		    /*
+		     * must set the fields
+		     */
+		    __InstPtr(newPoint)->i_instvars[0] = newX;
+		    __InstPtr(newPoint)->i_instvars[1] = newY;
+
+		    /*
+		     * see below
+		     */
+		    __STORE(newPoint, newX);
+		    __STORE(newPoint, newY);
+
+		    /*
+		     * good
+		     */
+		    ok = true;
+		}
+	    }
+	}
+    %}.
+	ok ifTrue:[
+	    ^ newPoint
+	].
+
+	"/ mhmh, something went wrong ...
+
+	ObjectMemory allocationFailureSignal raise
+
+</PRE></CODE>
+The above also shows the preferred method of handling errors; set
+a flag somewhere in your primitive code, and let Smalltalk code
+do the error handling (typically raise a signal or perform a primitiveFailure).
+<P>
+
+For experts:
+<BR>
+ there are also macros for very hi-speed allocation (without
+ a function call). These macros will directly manipulate the storage managers
+ free-pointers, thus allowing an object to be allocated with just a few
+ machine instructions. These macros are in the order of 10-20 times faster
+than ordinary malloc/free calls if no garbage collection is involved
+<A HREF="#FN3" NAME="BACK_FN3">(*3)</A>.
+
+<BR>
+The macros are:
+
+<DL>
+<DT><CODE>__qNew(newObject, int size)</CODE>
+<DD>tries to do a quick (inline) new;
+if no memory is available, calls
+the general <CODE>__STX___new()</CODE> for a garbage collect.
+
+<P>
+<DT><CODE>__canDoQuickNew(int size)</CODE>
+<DD>returns 1 if a quick new is possible WITHOUT a garbage collect.
+(i.e. returns zero if a quick new operation would do a GC)
+
+<P>
+<DT><CODE>__qCheckedNew(newObject, int size)</CODE>
+<DD>does the quick new; is only allowed
+after a <CODE>canDoQuickNew()</CODE> which returned true.
+
+<P>
+<DT><CODE>__qMKFLOAT(newObject, double dval)</CODE>
+<DD>like __MKFLOAT, but tries to allocate inline; if no memory is available,
+the general __MKFLOAT is invoked which performs a garbage collect.
+
+</DL>
+  Since use of these macros can also lead to mysterious errors, they should not
+  be used in normal situations.  (the saving is NOT spectacular under normal
+  circumstances.)
+<P>
+You should start to write your primitive using <CODE>#new</CODE> on the Smalltalk level
+or (at least) the normal
+ <CODE>__STX___new()</CODE> function and later
+decide if its worth to tune the allocation (I'd say: seldom) .
+<P>
+Notice, that <VAR>stc</VAR> does generate high performance code for some
+classes' new operations. For example, it may decide to generate inline
+allocation code for a float, point or array creation.
+<BR>
+This <VAR>stc</VAR> generated code may be faster than what you write -
+especially, if you are not too familiar with all those internals.
+
+
+
+<A NAME="MALLOC" HREF="#I_MALLOC"><H2>Allocating C memory in primitives</H2></A>
+
+If C memory is allocated (i.e. <CODE>malloc</CODE> or
+<CODE>calloc</CODE> are called either directly or indirectly)
+care must be taken to cleanup this memory
+if the primitive performs other sends or
+if the there is a possibility that the method gets interrupted.
+Otherwise, there is a chance for a memory leak, where this
+C memory is never freed.
+<BR>
+For example, the method:
+<CODE><PRE>
+    dangerousMethod
+    %{
+	char *cp;
+
+	cp = malloc(100);
+	SEND(...);
+	...
+	free(cp);
+    %}
+</PRE></CODE>
+possibly creates this memory leak (and may also crash, since it does not
+check the return value of malloc for being nil).
+<P>
+Due to the message send in this method (the <CODE>SEND</CODE> call),
+it is possible, that the <CODE>free()</CODE> call is never executed.
+This happens if either a signal raise (with a handler and unwind)
+or a block return
+to some upper method, or a process termination
+occurs in or below the method reached via the send.
+<P>
+Of course, this will not lead to a crash, but instead to more and more
+memory being allocated over time.
+This memory will never be freed since the
+garbage collector does not know anything about this C memory.
+<BR>
+These errors are especially hard to find, since Smalltalk does not know
+about it and they do not show any fatal conditions for quite a while
+(eventually, allocation failures will occur, though)
+<P>
+There are three possible solutions to fix the above, of which
+2 suffer from other problems (they are described for didactic reasons):
+<UL>
+<LI>Bad Solution 1: keep a handle and cleanup when called the next time
+<BR>
+<CODE><PRE>
+    fixedMethod
+    %{
+	static char *saveHandle;
+	char *cp;
+
+	if (saveHandle) {
+	    free(saveHandle);
+	}
+	cp = saveHandle = malloc(100);
+	if (cp) {
+	    ...
+	    SEND(...);
+	    ...
+	    free(cp); saveHandle = (char *)0;
+	}
+    %}
+</PRE></CODE>
+this will free the memory when the method is called the next time
+and the previous free was not executed for some reason.
+This is not the very best solution, but at least, unfreed memory will
+not accumulate.
+<BR>
+Be aware, that above method is not reentrant - this means, that it will
+lead to trouble, if another process executes the same method
+(for example, if another process becomes runnable while the SEND is executed).
+<BR>
+If this happens, the other invocation will free the memory and this in turn will
+lead to trouble, when the first invocation is continued.
+<P>
+
+<LI>Bad Solution 2: keep a handle in a global C variable and provide a cleanup method
+<BR>
+<CODE><PRE>
+    !MyClass class primitiveVariables!
+
+    %{
+	static char *saveHandle;
+    %}
+    ! !
+
+    ...
+
+    cleanupMethod
+    %{
+	if (saveHandle) {
+	    free(saveHandle);
+	    saveHandle = (char *)0;
+	}
+    %}
+    !
+
+    fixedMethod
+    %{
+	char *cp;
+
+	if (saveHandle) {
+	    free(saveHandle);
+	}
+	cp = saveHandle = malloc(100);
+	if (cp) {
+	    ...
+	    SEND(...);
+	    ...
+	    free(cp); saveHandle = (char *)0;
+	}
+    %}
+</PRE></CODE>
+Also not the very best solution, since it requires that the cleanup code
+is called.
+However, the system already provides a hook for low space cleanup
+actions (the <CODE>#lowSpaceCleanup</CODE> class method), which is invoked
+before running out of memory. This method could do the cleanup in the above example.
+<BR>
+Also, this suffers from the same reentrancy problem as above code
+<P>
+<LI>Good Solution: use an instance of <CODE>ExternalBytes</CODE> which is garbage collected,
+and the memory is freed by the finalizer.
+<BR>
+<CODE><PRE>
+    fixedMethod
+	|memory|
+
+	memory := ExternalBytes unprotectedNew:100.
+    %{
+	char *cp;
+
+	cp = (char *)(__ExternalBytesInstPtr(memory)->e_address);
+	...
+	SEND(...);
+	...
+    %}.
+	memory free
+</PRE></CODE>
+Here, the memory as held by the externalBytes object will be freed by
+the garbage collector in case the <CODE>#free</CODE> send is not performed.
+</UL>
+Of course, the last example is the clean one; it handles C-memory
+somewhat automatic, in the Smalltalk way.
+<P>
+We highly recommend this solution, since it also solves the reentrancy problem.
+(If the memory block is passed to a C-function
+which remembers that memory reference (e.g. it should not be freed by the smalltalk
+collector but by explicit freeing), use "ExternalBytes protectedNew:"
+<BR>
+Please read more on ExternalByte below.
+
+
+<A NAME="MALLOC_IN_ST" HREF="#I_MALLOC_IN_ST"><H2>Allocating C memory from Smalltalk code</H2></A>
+
+The easiest (and most secure) way to allocate C-memory is to use
+instances of <CODE>ExternalByte</CODE>. These Smalltalk objects keep
+a handle to some memory which is allocated via malloc (and stays at a
+constant address, therefore).
+<P>
+In addition, you can either manually free the underlying C memory or
+let it be freed by the garbage collectors finalization procedure.
+<P>
+For example, to allocate a block of 100 bytes, use:
+<CODE><PRE>
+    |bytes|
+
+    ...
+    bytes := ExternalBytes new:100.
+    ...
+</PRE></CODE>
+from your primitive, this memory can be accessed via:
+<CODE><PRE>
+    ...
+    {
+	char *cp;
+
+	cp = (char *)(__externalBytesAddress(bytes));
+	cp[i] = ...
+    }
+    ...
+</PRE></CODE>
+on the Smalltalk side, externalBytes provide an accessing protocol much like
+ByteArrays do; therefore, you can fill this memory from ST with:
+<CODE><PRE>
+    ...
+    bytes at:1 put:16r13.
+    ...
+    foo := bytes at:10.
+    ...
+</PRE></CODE>
+(notice the 1-based indexing in Smalltalk).
+<P>
+In the above example, the externalBytes memory is never automatically freed.
+You have to manually free the memory later with:
+<CODE><PRE>
+    ...
+    bytes free.
+    ...
+</PRE></CODE>
+Be careful in freeing all memory allocated - otherwise, memory leaks are
+unavoidable. ExternalBytes has been written by purpose to behave that way,
+to support storage which can be passed to and kept by C code.
+Since ST/X cannot know if C code keeps any of those references, no automatic
+freeing is done.
+<P>
+However, this may not be a good choice in your concrete application;
+therefore, ExternalBytes offers a mechanism for automatic freeing.
+This is implemented with the finalization mechanisms described elsewhere.
+To get some memory which is freed automatically, use:
+<CODE><PRE>
+    ...
+    bytes := ExternalBytes unprotectedNew:100.
+    ...
+</PRE></CODE>
+
+You can also create an externalBytes object from your primtive code,
+and pass it up to Smalltalk:
+<CODE><PRE>
+    ...
+    char *cp;
+    OBJ bytes;
+
+    cp = (char *) malloc(100);
+    bytes = __MKEXTERNALBYTES(cp);
+    ...
+    RETURN (bytes);
+</PRE></CODE>
+freeing can be done by either by C-code:
+<CODE><PRE>
+    ...
+    char *cp;
+    OBJ bytes;
+
+    cp = (char *) __externalBytesAddress(bytes);
+    free(cp);
+    ...
+    __ExternalBytesInstPtr(bytes)->e_address = (OBJ)0;
+    ...
+</PRE></CODE>
+If the memory is freed by C-code,
+you have to nil-out the address-pointer in the externalBytes
+object, to tell the finalization code that the memory is already freed.
+Otherwise, bad things will happen, as the memory will be freed twice.
+<P>
+It is better to free it from Smalltalk with:
+<CODE><PRE>
+    ...
+    bytes free.
+    ...
+</PRE></CODE>
+
+See the examples and documentation in the <CODE>ExternalBytes</CODE> class
+for more info.
+
+
+
+<A NAME="STORING" HREF="#I_STORING"><H2>Modifying objects from within primitive code (storing)</H2></A>
+
+
+  Special care must be taken, when an object reference is stored somewhere
+  in a primitive.
+<BR>
+  To give you some background, the garbage collector (GC) must know which objects have references
+  to some special things like contexts. Also cross space references (i.e. old
+  objects referencing new objects or any object referencing a stack-context)
+  must be detected and the GC be given a chance to remember these.
+  This is called a <CITE>write-barrier</CITE> or <CITE>store-check</CITE>,
+  and the underlying code places those objects into the so called <CITE>remembered list</CITE>.
+<P>
+  Therefore, every store of a non-SmallInteger, non-Nil object into another
+  object must be checked for these special situations. To do so, after every
+  store, a macro of the form:
+<CODE><PRE>
+	dest->i_inst[3] = value;     /* the store */
+	__STORE(dest, value);        /* the writeBarrier-macro */
+</PRE></CODE>
+  must be placed. This macro checks for those situations and calls a GC
+  utility-function if required.
+<P>
+  Omitting the <CODE>STORE</CODE> macro may leave you with a running program for
+  a while or longer but lead to a bad crash at a later time. The crash will also usually
+  hit some other object and it will be very hard to find the actual cause.
+  The kind of crash is hard to predict, as arbitrary objects may become inconsistent or get
+  invalid contents. For example, if a bytearray or string is affected, it may even silently
+  get changed elements without ever getting a warning message from the compiler.
+<P>
+  Sometimes it may even go totally unnoticed up to the time when storage allocation patterns
+  or types of stored objects change.
+<P>
+  Therefore: <STRONG>Never forget this macro for pointer stores!</STRONG>
+<P>
+ It can ONLY be omitted if
+ you are absolutely certain that the stored value is either nil nor a SmallInteger.
+ Also for all non-pointer-arrays (i.e. ByteArray. FloatArray, DoubleArray and String) this
+ store-check is not needed for the elements.
+<P>
+If you get one of the following error messages from the garbage collector:
+<CODE><PRE>
+    GC [error]: tried to mark free inst ... in ...
+    GC [error]: tried to mark strange object: ...
+    MEM [error]: bad class: ... in object at ...
+    MEM [error]: class of ... is nil in scavenge
+    MEM [error]: class of inst[...] ... is nil in scavenge
+</PRE></CODE>
+
+chances are high, that you forgot this STORE macro somewhere and more
+trouble can be expected.
+<BR>
+The <CITE>ST/X</CITE> memory system tries to do its best to handle the situation
+by nilling invalid references to continue its operation - however,
+this cannot be guaranteed and crashes or endless loops in the
+memory handling code are likely to occur.
+<BR>
+Even if the system seems to work properly: whenever you get
+messages from the VM, GC or MEM subsystems,
+carefully check your primitive code for assignments to instvars,
+classvars, globals, arrays or other objects with a missing STORE chack macro.
+<P>
+From our past experience, almost all (>80%) of all trouble came from
+user written primitives which had one or more STORE checks missing
+(the rest being missing PROTECT/UNPROTECT macros).
+<P>
+Late note:
+<BR>
+The newest <CITE>ST/X</CITE> releases can be started with the
+VM commandLine argument
+"<VAR>-MprotectSurv</VAR>".
+This makes unsused portions of the object memory
+inaccessible (by using mprotect),
+and may help to find those problems, since missing STORE macros usualy lead
+to object references not being updated correctly and therefore tends to
+result in pointers into the alternative semispace of the copying garbage collector.
+<BR>
+However, this is not a replacement for a careful code review,
+as not all operating systems provide this functionality and it
+also this does not guarantee to detect all such bugs.
+
+
+
+<A NAME="OBJECTSTORE" HREF="#I_OBJECTSTORE"><H2>Storing into another Object's Instvars (not recommended)</H2></A>
+
+
+
+  The only store that is actually legal in Smalltalk is a store into instance
+  variables of the current receiver. Any change of another object's slot requires
+  a message send.
+  Of course, in your primitive code,
+  a "bad guy" can store into any object without a message send, and thus circumvent this
+  encapsulation.
+<P>
+Doing so is a very very bad practice, because another object's instance
+  slots can only be accessed by index.
+  Thus it makes your code invalid, if the accessed object's
+  instance layout changes.
+<P>
+If you ever have to return structured data or fill a passed-in object from a primitive,
+  we recommend passing in or returning an array, and moving the slots into the target object via setter calls
+  on the smalltalk level afterwards.
+  Take a look at the event-returning code in XWorkstation to get the idea.
+<P>
+  This may not be the "superfast" solution, but it is save and maintainable.
+<P>
+  If you really have to care for every nanosecond, pass in the instvar offsets of the
+  target object to make your primitive code independent from the target object's layout
+  (either as argument or via preinitialized class variables).
+<P>
+  Be reminded that this is more of a theoretical advice - even the author of the ST/X system
+  never felt a need to do this.
+
+<P>
+<A NAME="SELFSTORE" HREF="#I_SELFSTORE"><H2>Storing into the receiver</H2></A>
+
+  To update an instance variable named <CODE>'xyz'</CODE> in the current receiver, the
+  following code is needed:
+<CODE><PRE>
+	__INST(xyz) = value;
+	__STORE(self, value);
+</PRE></CODE>
+  As a rule: this should normally NOT be done from primitive code; better
+  separate the code into a primitive part and a Smalltalk part - let stc handle
+  all these internals.
+<BR>
+  example:
+<CODE><PRE>
+    myMethod
+	myInstance := someThing.
+    %{
+	/* other stuff */
+    %}
+    .
+	myInstance := somethingElse
+</PRE></CODE>
+  Final note: a store check is also needed when storing into a method variable
+  of the home context from within a block context. However, writing blocks as
+  inline c-code is very tricky and even more restricted.
+  Therefore, forget about inline C-blocks (I would not write any !)
+  and better write your blocks in Smalltalk.
+
+
+
+<A NAME="GLOBALS" HREF="#I_GLOBALS"><H2>Storing into globals and class variables</H2></A>
+
+
+  A store check is also needed when updating a value into a global variable,
+  or classVariable.
+  After modifying global XYZ, you should add:
+<CODE><PRE>
+	__STORE(Smalltalk, XYZ);
+</PRE></CODE>
+  to your code.
+<P>
+  For the curious: these macros are found in <CODE>"stc.h"</CODE>; all of them can be used
+  in expressions and evaluate to the stored value.
+
+
+
+<A NAME="MIXING" HREF="#I_MIXINGS"><H2>Mixing Smalltalk and C-code</H2></A>
+
+You can have multiple primitive code statements within one Smalltalk method,
+and even switch back and forth between C and Smalltalk.
+<BR>
+However, since there are certain limitations: no C-variables can be shared
+between these code pieces and they are not allowed in non-inlined blocks,
+because the blocks' statements will end up in different C-functions after stc-compilation.
+<BR>
+Therefore, we do not recommend this coding style,
+except for very special needs.
+<P>
+As an artifical example, here is a Smalltalk loop over a collection,
+collecting its (integer) elements into an externalBytes object:
+(you may need this, to pass an integer vector to some external C function
+later)
+<CODE><PRE>
+    externalBytesVectorFor:someCollection
+	|sz index element vector|
+
+	sz := someCollection size.
+	vector := ExternalBytes new:(sz * ExternalBytes sizeofInt).
+
+	index := 1.
+	[index &lt;= sz] whileTrue:[
+	    element := someCollection at:index.
+    %{
+	    INT iVal;
+	    int *pI;
+
+	    iVal = __longIntVal(element);
+	    pI = (int *)(__ExternalBytesInstPtr(vector)->e_address);
+	    pI[_intVal(index) - 1] = iVal;
+    %}.
+	    index := index + 1
+	].
+	^ vector
+</PRE></CODE>
+
+Notice, that intimate knowledge about the generated C code may be required.
+The above depends on the fact, that while-loops are inlined by stc - thus the C-statements
+will actually be placed in the method's body.
+This would be different for non-inlined blocks.
+
+<A NAME="INTERRUPTS" HREF="#I_INTERRUPTS"><H2>Interrupting primitive code</H2></A>
+
+By default, interrupts (i.e. operating system signals like timers or <CODE>CTRL-C</CODE>)
+are not handled immediately while in a primitive, but instead simply set a flag
+and are processed later (with the next send or when the method returns).
+<P>
+For most primitives, this behavior is correct and simplifies the writing
+of primitive code, because you don't have to care for effects due to multiple
+processes, reentrancy, context switching etc.
+<BR>
+Also, typical C-libraries (Xlib, Stdio etc.) are not thread safe or
+reentrant and therefore, library functions should normally not be interrupted.
+<P>
+However, primitive code in which a blocking I/O or a (long) wait operation occurs,
+should be interruptable and tell the interrupt system to do immediate
+interrupt processing and handle the interrupt
+even while executing primitive code.
+Otherwise there would be no chance to get out of
+a blocking read
+(for example, when reading from a socket/pipe to which noone is writing).
+<P>
+To tell <CITE>ST/X</CITE> that interrupts should be handled immediately,
+two macros are provided in the <CODE>"stc.h</CODE> include file.
+These should be placed around interruptable code, as in:
+<CODE><PRE>
+    ...
+    __BEGIN_INTERRUPTABLE__
+    n = read(fd, buffer, count);
+    __END_INTERRUPTABLE__
+    ...
+</PRE></CODE>
+Notice, that without this flag being set, timer interrupts will not
+be handled while waiting for input to arrive.
+Instead, the interrupt would be pending
+and handled as soon as the primitive code returns.
+Thus no switching to other (Smalltalk-) processes is done without those macros.
+<P>
+Of course, also <KBD>"<B>CTRL-C</B>"</KBD> processing is done using signals -
+therefore even pressing <KBD>"<B>CTRL-C</B>"</KBD> has no effect and there is
+no chance to get into the debugger.
+<BR>
+Beside the obvious <CODE>read()</CODE> and <CODE>write()</CODE> many
+other C library functions possibly block for longer time - sometimes unexpected as with <CODE>gethostname()</CODE>.
+<P>
+The handling of interrupts is not done the same on all systems
+(not even within the Unix world). Especially when system calls are
+interrupted, things may be very different
+(BSD vs. SYS5 signals; i.e. restarted call vs. EINTR return).
+<BR>
+Your code should take care of this, by checking for an errno of EINTR
+and retrying the operation as appropriate. Therefore, the above
+was an oversimplification; real code should look like:
+<CODE><PRE>
+    ...
+    __BEGIN_INTERRUPTABLE__
+    do {
+	n = read(fd, buffer, count);
+    } while ((n &lt; 0) && (errno == EINTR));
+    __END_INTERRUPTABLE__
+    ...
+</PRE></CODE>
+Notice, that either the operating system or the stx runtime system keeps a
+private copy of the errno variable for each thread
+- preserving the errno value even if another
+thread does some system calls in the meanwhile.
+<P>
+As a side effect, enabling immediate interrupt processing enables the VM
+to reschedule to another process. If your interruptable primitive code
+runs at a lower priority, higher priority processes can suspend it and
+become active. This allows long computations (even in c-code) to be
+performed in the background.
+<P>
+On the other hand, if an interrupt occurs and is handled immediately,
+you have to be <STRONG>very</STRONG> careful in coding your primitive.
+Anything can happen there, especially recursive entry into this method,
+a garbage collect, context unwinds, long returns or even process
+termination have to be considered.
+<P>
+Be VERY VERY careful when enabling interrupts in a primitive method which calls
+c-library functions; most system's libraries are NOT prepared for reentrant
+calls. This may result in memory leaks, locks, flags which are not set correct,
+stack overflows ...
+<P>
+For this very reason, there are only a few places in the system
+(blocking select and I/O system calls) where interrupts are currently enabled.
+<P>
+As an example, the following does some long computation in C, which
+is interruptable. Therefore, it can be performed in the background without
+disturbing foreground processes:
+<CODE><PRE>
+    longComputation
+    %{
+	int run, i, j;
+
+	__BEGIN_INTERRUPTABLE__
+
+	for (run=0; run&lt;20; run++) {
+	  for (i=0; i&lt;50; i++) {
+	    for (j=0; j&lt;1000000; j++) {
+	    }
+	  }
+	  printf("looping\n");
+	}
+
+	__END_INTERRUPTABLE__
+    %}
+
+    "
+     [XXX new longComputation] forkAt:3
+    "
+</PRE></CODE>
+
+Be very very careful, when enabling interrupts, while
+processing some Smalltalk object, since this may be moved by the garbage
+collector, or (which is worse) even be changed into a completely different
+object by a <CODE>#become:</CODE> (which another process could theoretically do).
+<BR>
+(Another reason for most primitives being executed as non interruptable, atomic operations.)
+<BR>
+Example: interruptably processing some string:
+<CODE><PRE>
+    interruptableDestructiveUpperCaseToLowerCase:aString
+    %{
+	int i, len;
+	char c, *cp;
+
+	/* check if argument is a string */
+	if (__isString(aString)) {
+	    /*
+	     * fetch size once
+	     */
+	    len = __stringSize(aString);
+	    /*
+	     * walk over string till len characters have been processed
+	     */
+	    for (i = 0; i &lt; len; i++) {
+		/*
+		 * allow interrupts only here; let the loop body run uninterrupted
+		 */
+		__BEGIN_INTERRUPTABLE__
+		__END_INTERRUPTABLE__
+		/*
+		 * check if the string has magically changed its identity or size
+		 */
+		if (! __isString(aString)
+		 || (len != __stringSize(aString)) break;
+		/*
+		 * refetch the actual pointer - the old one may be obsolete
+		 */
+		cp = __stringVal(aString)-&gt;s_element;
+		if (isUpper(c = cp[i])) {
+		    cp[i] = toLower(c);
+		}
+	    }
+	    RETURN ( aString );
+	}
+    %}
+    .
+	self primitiveFailed
+    !
+</PRE></CODE>
+For fine-tuned performance optimized primitives, you can
+ask the VM if there are chances for any pointers to be invalidated:
+<BR>
+The VM keeps counters which are incremented with any pointer changing
+operation; these are:
+<UL>
+<LI><CODE>__newGCGeneration__</CODE>
+<BR>
+incremented for any newSpace garbage collect (i.e. scavenge)
+<P>
+
+<LI><CODE>__oldGCGeneration__</CODE>
+<BR>
+incremented for any oldSpace garbage collect (i.e. full compress)
+<P>
+
+<LI><CODE>__becomeGeneration__</CODE>
+<BR>
+incremented with any #become or #becomeNil
+<P>
+
+<LI><CODE>__pointerGeneration__</CODE>
+<BR>
+incremented with any of the above
+</UL>
+
+using this information, a higher performance version of the above can be written as:
+<CODE><PRE>
+    interruptableDestructiveUpperCaseToLowerCase:aString
+    %{
+	int i, len;
+	char c, *cp;
+	extern int __pointerGeneration__;
+	int currentGeneration = __pointerGeneration__;
+
+	/* check if argument is a string */
+	if (__isString(aString)) {
+	    /*
+	     * fetch size once
+	     */
+	    len = __stringSize(aString);
+	    cp = __stringVal(aString)->s_element[0];
+	    /*
+	     * walk over string till len characters have been processed
+	     */
+	    for (i = 0; i &lt; len; i++) {
+		__BEGIN_INTERRUPTABLE__
+		__END_INTERRUPTABLE__
+		/*
+		 * check if the string has magically changed its identity or size
+		 */
+		if (__pointerGeneration__ != currentGeneration) {
+		    if (! __isString(aString)
+		     || (len != __stringSize(aString)) break;
+		    /*
+		     * refetch the actual pointer - the old one is obsolete
+		     */
+		    cp = __stringVal(aString)->s_element[i];
+		    currentGeneration = __pointerGeneration__;
+		}
+		if (isUpper(c = *cp)) {
+		    *cp = toLower(c);
+		}
+		cp++;
+	    }
+	    RETURN ( aString );
+	}
+    %}
+    .
+	self primitiveFailed
+    !
+</PRE></CODE>
+Of course, the above was not a real-world example: you would not care for
+interrupts when procesing small collections. However, if the collection is huge
+and the processing takes in the order of 100's of milliseconds, the system
+will be more responsive if you care for interrupts.
+<BR>
+Typical situations are vector and/or matrix opertions, FFT computations etc.
+
+
+
+
+<A NAME="INTERRUPTING" HREF="#I_INTERRUPTING"><H2>Triggering interrups from C code</H2></A>
+
+As mentioned above, interrupts (i.e. signals) are handled by setting
+a flag and checking this flag at regular times (with the next message send,
+when the current context returns or at a loops head).
+<BR>
+These interrupt flags can be accessed from C code.
+Therefore, interrupts can be triggered from C code by setting the corresponding
+flag to nonNil (typically, they are set to true).
+<BR>
+Although possible, you should not play around with interrupt flags other
+than the <CODE>customInterrupt</CODE>, which was specially designed for
+the purpose of triggering interrupts from a C subsystem.
+<BR>
+For example, a C signal handler function may trigger this interrupt
+by calling:
+<CODE><PRE>
+    __stxRegisterCustomInterrupt__();
+</PRE></CODE>
+to set the flag.
+and
+<CODE><PRE>
+    __stxHandleInterrupt__();
+</PRE></CODE>
+to have the runtime system check for immediate interrupts being
+enabled and perform the interrupt processing sequence as required.
+<P>
+In the Smalltalk world, this will send a <CODE>#customInterrupt</CODE>
+message to the <CODE>CustomInterruptHandler</CODE>.
+<P>
+Using custom interrupts is especially useful for callBacks and other
+C functions which want to interrupt Smalltalk processing and get
+immediate response.
+
+
+
+<A NAME="TIMER" HREF="#I_TIMER"><H2>Timed callBacks into C code</H2></A>
+
+
+You can install a timer callBack into an external C function either
+from the C level with:
+<CODE><PRE>
+    int id = __STX_AddTimeout(func, millis, arg)
+</PRE></CODE>
+or from Smalltalk with:
+<CODE><PRE>
+    id = Processor
+	    addTimeoutFunctionCall:anExternalFunction
+	    for:nil
+	    afterMilliseconds:millis
+	    with:arg
+</PRE></CODE>
+
+Both arrange for some C-function to be called after millis <VAR>milliseconds</VAR>,
+passing one single argument, <VAR>arg</VAR>.
+<P>
+The timeout is installed as a oneShot - i.e. to get some cyclic
+calling, you have to reinstall another timeout from within the called
+function.
+<P>
+Any pending timeout can be removed with:
+<CODE><PRE>
+    __STX_RemoveTimeout(id)
+</PRE></CODE>
+or from Smalltalk with:
+<CODE><PRE>
+    Processor removeTimeoutWithID:id
+</PRE></CODE>
+passing the id as returned by the previous addTimeout functions.
+
+<P>
+An example & demonstration can be found in the
+<CODE>"doc/coding/cCallBack</CODE> directory.
+
+
+
+
+<A NAME="ERRORS" HREF="#I_ERRORS"><H2>Reporting errors from C code</H2></A>
+
+The obvious way to return error information from primitive code is
+via the return value; either directly return a returncode, or leave
+the returnCode in an instance variable and return some special value
+(such as nil) from the primitive method.
+<P>
+The above should work in most situations;
+<BR>
+however, there are cases where the error is reported asynchronously,
+and there is noone to return an errorCode to.
+<P>
+For example, take the error mechanism in the Xlib:
+<BR>
+here, in case of an error, a handler (c-)function is called from withing Xlib, which gets additional
+error information passed as arguments.
+<P>
+In <CITE>ST/X</CITE>, these asynchronous errors must be handled as
+<VAR>errorInterrupts</VAR>, since there is no particular method available,
+to which the handler could return this error information.
+<BR>
+To do so, the (C-)handler function should call one of the
+VM functions
+<CODE><PRE>
+    __errorInterruptWithID__(id)
+or:
+    __errorInterruptWithIDAndParameter__(id, param)
+</PRE></CODE>
+and pass some unique
+subsystem identifier as <VAR>id</VAR> argument.
+This identifier is typically a unique number or (better) a symbol.
+<BR>
+The second function allows for an additional value
+(for example, some more error detail, or a connectionID)
+to be passed to the Smalltalk interrupt handler.
+(the first entry simply passes nil as parameter)
+If present, the parameter must be a valid Smalltalk object
+(typically, a smallInteger).
+<P>
+For example, the XErrorHandler uses the symbol <CODE>#DisplayError</CODE>
+as errorID and passes the display connections ID as (integer-) parameter.
+<P>
+Calling one of the above functions leads to an error interrupt being registered,
+which eventually invokes the <CODE>errorInterrupt:with:</CODE> method
+(in <CODE>Object</CODE>). The actual interrupt processing may be done
+asynchronously (for example, if the VM is currently in the garbage collector,
+or a noninterruptable primitive).
+<BR>
+This method uses the passed id to find a specific handler and
+forward the error to that handler;
+again by sending <CODE>#errorInterrupt:with:</CODE> to it.
+<BR>
+The specific handler must have been registered previously via
+<CODE><PRE>
+ObjectMemory registerErrorInterruptHandler:aHandler forID:anId
+</PRE></CODE>
+- this is typically done at class initialization time.
+<P>
+If the above sounds confusing, lets see a concrete example:
+<BR>
+assume that you want to use some C library, which calls
+an error function asynchronously, and this error should be translated into a
+private (Smalltalk-) signal.
+<BR>
+First, create the signal in your class's initialize method and
+provide access to it:
+<CODE><PRE>
+!MyClass class methodsFor:'initialization'!
+
+initialize
+    ...
+    MySignal := Object errorSignal newSignalMayProceed:true.
+    MySignal nameClass:self message:#mySignal.
+    ...
+
+...
+
+!MyClass class mathodsFor:'Signal constants'!
+
+mySignal
+    ^ MySignal
+!
+....
+</PRE></CODE>
+
+then, define the specific errorInterrupt method in your class,
+which raises the signal:
+<CODE><PRE>
+
+!MyClass class methodsFor:'error handling'!
+
+errorInterrupt:id with:someParameter
+    mySignal raise
+!
+....
+</PRE></CODE>
+
+define the handler (c-) function, which reports subsystem errors
+as an errorInterrupt with an id of <CODE>#MySubsystem</CODE>.
+It should look like:
+
+<CODE><PRE>
+!MyClass class primitiveFunctions!
+
+subsystemError() {
+	__errorInterruptWithIDAndParameter__(@symbol(MySubSystem), nil);
+}
+</PRE></CODE>
+Finally, register this errorInterrupt handler to be invoked for all
+errors reported for <CODE>#MySubSystem</CODE>
+(this can be done in
+the classes <CODE>initialize</CODE> method, or when the first instance
+of your class is created):
+<CODE><PRE>
+...
+ObjectMemory registerErrorInterruptHandler:self forID:#MySubSytem
+</PRE></CODE>
+
+If you don't need a specific handler, but instead want all subsystem
+errors be handled by the default errorInterrupt mechanism (which raises
+an errorSignal, typically entering the Debugger), you can call
+<CODE>__errorInterruptWithID__(id)</CODE> without ever registering a specific handler.
+<BR>
+In this case,
+the passed <VAR>id</VAR> will be available as <VAR>parameter</VAR>
+in the exception handler (of errorSignal).
+<P>
+Further examples:
+<BR>
+see how <CODE>DeviceWorkstation</CODE> and
+<CODE>XWorkstation</CODE> handles errors occuring in the graphic interface.
+
+
+
+
+<A NAME="PROBLEMS" HREF="#I_PROBLEMS"><H2>Problems</H2></A>
+
+<A NAME="PROBLEMS_STRUCTNAMES" HREF="#I_PROBLEMS_STRUCTNAMES">
+<H3>conflicting names of local variables and structures/typedefs</H3>
+</A>
+
+  Names of C-Structures, structure fields and typedefs may not conflict with the
+  names of method or block local variables. <VAR>Stc</VAR> will produce which
+  leads to a syntax error in the C-compilation phase.
+<BR>
+  Example:
+<CODE><PRE>
+    %{
+	struct abc {
+	    int field1;
+	    char field2;
+	};
+    %}
+
+    method
+	|local1 field2|
+	...
+</PRE></CODE>
+  will lead to an error, since the name "field2" is used both in a c-structure
+  and as a method local. This may also happen with other C-names (i.e. typedefs,
+  structure names, enum values etc.)
+<P>
+  Workaround: rename the local variables.
+
+
+<A NAME="PROBLEMS_OTHERNAMES" HREF="#I_PROBLEMS_OTHERNAMES">
+<H3>other name conflicts with structures, macros and typedefs</H3>
+</A>
+
+  STC does not always handle instance- and local variable names correctly,
+  which have the same name as existing C-structures or C-typedefs.
+  This also applies to structures defined in stc's standard header file
+  <CODE>"stc.h"</CODE>. (as in version 2.10.3). So, you have to avoid names such as
+  'byteArray', 'array' etc.
+<P>
+  This will be changed soon - at least for names in <CODE>"stc.h"</CODE>.
+  Compiling code with such conflicts will usualy lead to errors in the
+  C-compilation phase. Since stc does not parse (and understand) the structure
+  of primitive code, it will not notice this conflict.
+
+
+<A NAME="PROBLEMS_UNDERSCORE" HREF="#I_PROBLEMS_UNDERSCORE">
+<H3>local variables whose name starts with an underscore</H3>
+</A>
+
+Although STC does handle local variables whose name starts with an
+underscore, name conflicts may arise due to the renaming of symbols
+(as described above).
+For example, the symbol #x is translated into a C variable _x, which
+creates a problem when a local method variable named _x exists.
+<P>
+This will be changed to use a different renaming scheme
+either for local variables or symbols (or both).
+<P>
+For now, be when a locals name starts with an underscore; we suggest you
+use 'normal' variable names for now.
+
+
+
+<A NAME="EXAMPLES" HREF="#I_EXAMPLES"><H2>Solutions for typical problems</H2></A>
+
+  The next chapter shows solutions to typical tasks that primitives have to deal with.
+  Have a look at, and understand the examples; some may give you a starting point
+  for writing your own primitives. At least, they should give hints for what
+  needs special considerations.
+<P>
+  Most problems involved with primitives deal with memory management; especially,
+  when data structures as returned or filled by some C function have to be converted
+  into Smalltalk objects.
+<UL>
+
+<LI><A NAME="EXAM_STRING_DOWN" HREF="#I_EXAM_STRING_DOWN">passing a string to a C function</A>
+<P>
+The following passes a string to the printf function:
+<CODE><PRE>
+    myPrintf:someString
+	"print someString, with printf"
+
+    %{
+	/*
+	 * first, check if its a string that was passed - just to make sure
+	 */
+	if (__isString(someString)) {
+	    char *format = __stringVal(someString);
+
+	    printf(format);
+	    RETURN ( self );
+	}
+	/* fall through in case of a non-string... */
+    %}.
+	self primitiveFailed
+</PRE></CODE>
+
+
+<LI><A NAME="EXAM_STRING_UP" HREF="#I_EXAM_STRING_UP">returning a string from a C function</A>
+<P>
+The following returns the string as returned by the <CODE>getlogin()</CODE> function:
+<CODE><PRE>
+    getLoginName
+	"return a string with the user's name"
+
+    %{
+	char *name;
+
+	name = (char *)getlogin();
+	if (name) {
+	    RETURN ( __MKSTRING(name) );
+	} else {
+	    RETURN ( nil );
+	}
+    %}
+</PRE></CODE>
+
+<LI><A NAME="EXAM_2STRINGS_UP" HREF="#I_EXAM_2STRINGS_UP">returning two strings from a C function</A>
+<P>
+Since Smalltalk does not directly support returning multiple values,
+we have to wrap multiple values into one return object.
+Here, we place them into an array of 2 elements
+(the later releases of <CITE>ST/X</CITE> provide private classes - so a better
+ solution would be to define a private class for holding those two values
+ and return an instance of it instead of an array).
+<BR>
+The example is interesting, since it has to take care that the objects which
+where allocated first will be handled correctly in case of a garbage collection
+(which may happen during allocation of the last object, for example).
+<BR>
+Here, we take the easy road, and simply put allocated objects into
+local variables of the method (remember, these context variables are
+always seen and handled correctly by the garbage collector),
+and let Smalltalk code construct the return array:
+<CODE><PRE>
+    getUserAndGroupName
+	"return an array of two strings, filled with the user's name
+	 and the group name"
+
+	|user group|
+    %{
+	char *userName, *groupName;
+	int userId, groupID;
+
+	userID = (int) getuid();
+	groupId = (int) getgid();
+	userName = (char *) getpwuid(userID)
+	groupName = (char *) getgrgid(userID)
+
+	user = __MKSTRING(userName);
+	group = __MKSTRING(groupName);
+    %}.
+	^ Array with:user with:group
+
+	"
+	 alternative:
+
+	^ (IdentityDictionary new)
+		at:#userName put:user;
+		at:#groupName put:group;
+		yourself
+	"
+</PRE></CODE>
+
+<LI><A NAME="EXAM_STRINGVEC_DOWN" HREF="#I_EXAM_STRINGVEC_DOWN">passing an array of strings to a primitive</A>
+<P>
+The following sends each line from a collection of strings via
+printf to the standard output:
+<BR>
+(of course, this is for the demonstration only; you better use Smalltalk's printOn:)
+<CODE><PRE>
+    printAll:aCollectionOfStrings
+	"send all strings to the standard output"
+
+	|arrayOfStrings|
+
+	"/ only handle arrays in the primitive
+	"/ convert, if required
+
+	arrayOfStrings := aCollectionOfStrings asArray.
+    %{
+	char *name;
+
+	/*
+	 * check - we never know ...
+	 * (in case of allocation failure,
+	 *  or if interrupted and set to something else in the debugger ...)
+	 */
+	if (__isArray(arrayOfStrings)) {
+	    int nElements = __arraySize(arrayOfStrings);
+
+	    for (i=0; i &lt; nElements; i++) {  /* notice: C-index starts with 0 */
+		OBJ element;
+
+		element = __ArrayInstPtr(arrayOfStrings)->a_element[i];
+		/*
+		 * the bad guy could have placed something else into
+		 * the array; check it.
+		 */
+		if (__isString(element)) {
+		    printf("%s\n", __stringVal(element));
+		} else {
+		    /*
+		     * mhmh - what should we do here ?
+		     */
+		    printf("*** non-string ***\n");
+		}
+	    }
+	    RETURN ( self );
+	}
+    %}.
+	self primitiveFailed
+</PRE></CODE>
+
+<LI><A NAME="EXAM_POLYVEC_DOWN" HREF="#I_EXAM_POLYVEC_DOWN">passing a polymorph array with either strings, floats or integers</A>
+<P>
+Like above, but allow non-strings entries.
+<CODE><PRE>
+	...
+	...
+	element = __ArrayInstPtr(arrayOfStrings)->a_element[i];
+	if (__isString(element)) {
+	    printf("%s\n", __stringVal(element));
+	} else {
+	    if (__isSmallInteger(element)) {
+		printf("%d\n", __intVal(element));
+	    } else {
+		if (__isFloat(element)) {
+		    printf("%f\n", __floatVal(element));
+		} else {
+		    /*
+		     * mhmh - what should we do here ?
+		     */
+		    printf("*** bad element ***\n");
+		}
+	    }
+	}
+	...
+	...
+</PRE></CODE>
+
+<LI><A NAME="EXAM_STRINGVEC_UP" HREF="#I_EXAM_STRINGVEC_UP">returning an array of strings</A>
+<P>
+this is more complicated, since we have to be careful about memory allocation
+and garbage collector effects (reread the previous chapters, if things are unclear):
+<BR>
+The following example is especially interesting, since we do not know in
+advance, how big the array will be.
+<BR>
+Also, the called X function internally uses <CODE>alloca()</CODE>
+and therefore may require a huge
+stack frame for its operation.
+Thus, we have to tell the <CITE>stc</CITE> compiler to temporarily switch from
+the bounded thread stack to the unbounded C stack.
+<BR>
+You normally do not know this in advance;
+consider this a first-class candidate when running into memory problems
+(i.e. SIGBUS or SIGSEGV or ST/X crashes).
+Or, always use UNLIMITEDSTACK to make sure - the overhead is only a few microseconds.
+
+<CODE><PRE>
+    getAvailableFontsFromXServer
+	"return anArray filled with font names"
+
+    %{  /* UNLIMITEDSTACK */
+
+	int nnames = 1000;
+	int available = nnames + 1;
+	char **fonts;
+	OBJ arr, str;
+	int i;
+
+	for (;;) {
+	    /*
+	     * ask for nnames font-names
+	     */
+	    fonts = XListFonts(myDpy, __stringVal(pattern), nnames, &amp;available);
+	    if ((fonts == NULL) || (available &lt; nnames)) break;
+	    /*
+	     * mhmh - there are more. Double the size and ask again
+	     */
+	    XFreeFontNames(fonts);
+	    nnames = available * 2;
+	}
+	/*
+	 * no names returned
+	 */
+	if (fonts == NULL) {
+	    RETURN ( nil );
+	}
+
+	/*
+	 * ok; got 'available' names, pointed to by 'fonts'
+	 *
+	 * first, create a Smalltalk array:
+	 */
+	arr = __ARRAY_NEW_INT(available);
+	if (! arr) {
+	    /*
+	     * allocation failed
+	     */
+	    RETURN (nil);
+	}
+	/*
+	 * then, enter each string into it.
+	 * Be careful, creating a string may lead to a garbage collect;
+	 * therefore, we PROTECT/UNPROTECT the array reference.
+	 * (could have used a method local variable for the same effect)
+	 */
+	for (i=0; i &lt; available; i++) {
+	    __PROTECT__(arr);
+	    str = __MKSTRING(fonts[i]);
+	    __UNPROTECT__(arr);
+	    __ArrayInstPtr(arr)->a_element[i] = str;
+	    /*
+	     * do not forget the write-barrier;
+	     * arr may be in a different memory space than the newly
+	     * created string ...
+	     */
+	    __STORE(arr, str);
+	}
+	RETURN (arr);
+    %}
+</PRE></CODE>
+(the above code is actually found in the <CODE>XWorkstation</CODE> class.
+ BTW: This class and <CODE>GLXWorkstation</CODE>
+are good sources of many more primitive code examples)
+<P>
+
+<LI><A NAME="EXAM_FLOATVEC_PASS" HREF="#I_EXAM_FLOATVEC_PASS">passing a vecor of floats</A>
+<P>
+some of you may want to use ST/X's inline C features to speedup
+number crunching. The following shows a very high performance version,
+using an instance of FloatArray. In contrast to regular arrays, these to
+not keep their elements as pointer references, but instead directly hold
+the numeric values. (it does not really make sense, to write a primitive operating
+on a regular array containing floats; such a primitive will show comparable
+performance to the corresponding compiled Smalltalk code, since most time
+is spent in the garbage collector.)
+<BR>
+Therefore, it is possible to operate on these elements without any need
+to allocate temporary storage, or care for any shared references.
+<BR>
+The following code is about as fast as one can get;
+if your system is attached to a vector processing unit, you may even
+pass the whole vector down to that unit for processing ...
+<BR>
+To make the example simple, lets simply negate all elements in the array:
+<CODE><PRE>
+    negateFloatArray:aFloatArray
+	"in place negate all floats in the array"
+
+    %{
+	if (__Class(aFloatArray) == @global(FloatArray)) {
+	    int nElements = __floatArraySize(aFloatArray);
+	    float *fPtr = __FloatArrayInstPtr(aFloatArray)->f_element;
+
+	    while (nElements) {
+		*fPtr = -(*fPtr);
+	    }
+	    RETURN ( aFloatArray );
+	}
+    %}.
+	self primitiveFailed
+</PRE></CODE>
+since no allocation is done (and no other sends are performed),
+we can further speed this up, by ommiting the context setup.
+<BR>
+Also, we might add code to handle doubleArrays as well:
+<CODE><PRE>
+    negateFloatOrDoubleArray:aFloatOrDoubleArrayArray
+	"in place negate all floats in the array"
+
+    %{  /* NOCONTEXT */
+	OBJ cls;
+
+	cls = __Class(aFloatOrDoubleArrayArray);
+	if (cls == @global(FloatArray)) {
+	    int nElements = __floatArraySize(aFloatOrDoubleArrayArray);
+	    float *fPtr = __FloatArrayInstPtr(aFloatOrDoubleArrayArray)->f_element;
+
+	    while (nElements) {
+		*fPtr = -(*fPtr);
+	    }
+	    RETURN ( aFloatOrDoubleArrayArray );
+	}
+	if (cls == @global(DoubleArray)) {
+	    int nElements = __doubleArraySize(aFloatOrDoubleArrayArray);
+	    double *dPtr = __DoubleArrayInstPtr(aFloatOrDoubleArrayArray)->d_element;
+
+	    while (nElements) {
+		*dPtr = -(*dPtr);
+	    }
+	    RETURN ( aFloatOrDoubleArrayArray );
+	}
+    %}.
+	self primitiveFailed
+</PRE></CODE>
+the above leads us directly to the next example:
+<P>
+
+
+
+<LI><A NAME="EXAM_SQUAREMATRIX" HREF="#I_EXAM_SQUAREMATRIX">processing a square matrix</A>
+<P>
+lets assume, we have already created two subclasses of
+<CODE>FloatArray</CODE>, called <CODE>HomogeneousPoint3D</CODE> and <CODE>TransformationMatrix</CODE>.
+Lets further assume, that <CODE>HomogeneousPoint3D</CODE>
+always creates instances containing exactly 4 elements
+(for x, y, z and W components) while <CODE>TransformationMatrix</CODE> always creates instances
+containing exactly 16 elements (for a 4 x 4 transformation matrix).
+<P>
+Then take your <CITE>Foley, vanDam, Feiner & Hughes</CITE> from your library, and
+start to code:
+<CODE><PRE>
+    multiplyVector:point with:matrix into:result
+	"in-place multiply; we do not return any newly created objects,
+	 instead, we destructively place things into the result vector.
+	 This gives us more control over object allocation, and allows
+	 result vectors to be reused.
+	 Well, well, well; at some point, we have to make a compromise ..."
+
+    %{  /* NOCONTEXT */
+	if ((__Class(point)== @global(HomogeneousPoint3D))
+	 && (__Class(result)== @global(HomogeneousPoint3D))
+	 && (__Class(matrix)== @global(TransformationMatrix))) {
+	    float *p = __FloatArrayInstPtr(point)->f_element;
+	    float *r = __FloatArrayInstPtr(result)->f_element;
+	    float *m = __FloatArrayInstPtr(matrix)->f_element;
+
+	    r[0] = p[0] * m[0][0] + p[1] * m[1][0] + p[2] * m[2][0] + p[3] * m[3][0];
+	    r[1] = p[0] * m[0][1] + p[1] * m[1][1] + p[2] * m[2][1] + p[3] * m[3][1];
+	    r[2] = p[0] * m[0][2] + p[1] * m[1][2] + p[2] * m[2][2] + p[3] * m[3][2];
+	    r[3] = p[0] * m[0][3] + p[1] * m[1][3] + p[2] * m[2][3] + p[3] * m[3][3];
+	    RETURN ( self );
+	}
+    %}.
+	self primitiveFailed
+</PRE></CODE>
+
+
+
+<!-- NOT YET FINISHED
+
+<LI><A NAME="EXAM_TIMERCALL" HREF="#I_EXAM_TIMERCALL">calling an extern C function via a timer</A>
+<P>
+In some applications, an external C-function has to be called
+via a timer - typical applications are data gathering functions, or
+high speed output functions (for example, in video or audio applications).
+<P>
+Often, those C functions are already available and are not to be included
+as inline C code, but called as external functions instead.
+<P>
+In the following, we will show a rough overview on how this can be done.
+
+-->
+
+
+
+</UL>
+
+As time goes by, more examples will be added to this section.
+
+
+
+
+<A NAME="HINTS" HREF="#I_HINTS"><H2>Hints & tips for writing primitives</H2></A>
+
+  The following is a list of common bugs, and can be used as a check
+  list in case of <VAR>'mysterous'</VAR> behavior. If you get a big bunch
+  of error messages from the C-compiler, start to fix things from top;
+  followup errors may be a consequence of a single missing parentesis,
+  bracket or brace, which destroys the program structure.
+
+<UL>
+<LI><STRONG>Enable additional pointer checks in the VM</STRONG>
+<BR>
+Whenever new primititives have been added, enable the additional
+pointer checking code in the VM, by running <CITE>ST/X</CITE> with the
+<CITE>"-Mcheck"</CITE> argument. This instructs the VM to perform
+additional checking of pointers for being valid in the garbage collect
+and memory allocation functions and may help to detect bugs earlier.
+<BR>
+Let the program run in this mode for a while (a few weeks).
+<P>
+Notice:
+<BR>
+The overhead created by this checking is usually not noticed
+(typically below 1% in memory intensive applications),
+therefore, it may be a good idea to always run the system in this mode.
+<P>
+Also notice, that these checks cannot cover all possible errors - especially
+illegal pointers into objects (as opposed to pointers to non-object memory)
+are not detected and will certainly lead to crashes.
+<P>
+
+<LI><STRONG>Never forget to PROTECT/UNPROTECT references</STRONG>
+<BR>
+Whenever a garbage collection happens, objects may be moved (from new- to survivor or
+to old-space. Also when oldSpace is compressed).
+For all reachable objects (i.e. reachable via the context chain or globals),
+references are updated. However, you may end up in getting obsolete and invalid
+pointers if either:
+<UL><LI>an object is not reachable and it has not been protected
+<LI>a reference was not known to the GC and still points to the old memory
+<LI>a reference in a local variable has not been updated after a GC
+</UL>
+This means that you have to make sure that all objects are known to th GC,
+either by holding a reference in the context, or by adding a reference to it
+to the protect-list.
+<P>
+It also means, that after any operation which possibly resulted in a GC,
+you have to refetch (UNPROTECT) any pointers.
+Be especially careful with local variables which refer to Smalltalk objects.
+<P>
+
+
+<LI><STRONG>Never forget the STORE-macro</STRONG>
+<BR>
+This has been and still is one of the most often encountered bug in primitives,
+and usually leads to a VM-crash sooner or later.
+<P>
+Whenever an OBJ-reference is stored into some object, you MUST place
+a __STORE(dst, ptr) macro after the store operation.
+<BR>
+If this is ommited, the VM may loose track of ptr and treat it as free garbage
+with the next scavenge operation (Garbage collect).
+<BR>
+The result will be that ptr gets overwritten later (whenever new objects are
+created) and desaster happens.
+<BR>
+This is especially dangerous, because the crash occurs delayed - often much
+later.
+<P>
+A typical symptom of such a bug are VM messages, complaining about bad sizes
+in object headers, invalid pointers or class references.
+<BR>
+We have made the VM very robust towards such bugs, and often the system survives
+even those invalid object references (typically, these are nilled when encountered).
+<BR>
+However, even if the VM and object system survives, your objects will get instance
+variable slots silently nilled in such situations, which will certainly not be
+what your program expects... (;-)
+<P>
+
+
+
+<LI><STRONG>Always check argument types</STRONG>
+<BR>
+Even if you are certain that some primitive is always being passed a certain
+type (i.e. a SmallInteger, a String etc), please add code to check for
+this and do a primitiveFailure if not.
+<P>
+Especially when debugging, there are often situations when incorrect arguments
+are passed to a primitive, and funny things can happen if you interpret these
+wrong (all the swamp of C programming may surround you ;-).
+<BR>
+For proper checking, use a construct like:
+<CODE><PRE>
+    myPrimitive:arg
+	...
+    %{
+	/*
+	 * check for correct type - even if you think that can
+	 * never happen ...
+	 */
+	if (__isSmallInteger(arg)) {
+	    ...
+	    /*
+	     * do something with the integers value
+	     */
+	    ... __intVal(arg) ...
+	    ...
+	    RETURN ( ... );
+	}
+    %}.
+	self primitiveFailed
+</PRE></CODE>
+failing to do this check may not be fatal in the above integer case
+(simply taking a wrong value), but may lead to hard to find bugs if you take the argument
+as a string, symbol or other pointer value.
+<P>
+
+<LI><STRONG>Never forget the RETURN-macro</STRONG>
+
+The RETURN macro is quite diferent from a regular return: it also checks for a pending interrupt
+(for single stepping or thread switching) and takes special actions if a reference was taken of
+the current context.
+</UL>
+
+
+<A NAME="SYMPTOMS" HREF="#I_SYMPTOMS"><H2>Symptoms and Strategies to Find and Fix Bugs</H2></A>
+
+<UL>
+<LI>when compiling, stc gives funny error messages about block nesting,
+    unclosed comments etc.
+<P>
+action:
+<UL type=arrow>
+ <LI> check parenthesis, bracket and brace-nesting;
+<P>
+ <LI> check nesting of #ifdef .. #endif directives;
+<P>
+ <LI> check unclosed comments, single- and double-quote strings
+<P>
+ <LI> check for missing semicolons
+<P>
+ <LI> check if you wrote a Smalltalk comment ("...") within the c-code
+</UL>
+<P>
+
+<LI>stc compiles ok, but c compiler gives funny error messages;
+and the line numbers as reported may not be those of primitive code
+<P>
+action:
+<UL type=arrow>
+<LI> like above: check parenthesis, bracket and brace-nesting, comments and
+unterminated strings in previous primitive
+code; if missing or  too many, the whole program structure may get out of
+sync and errors are reported where no errors are.
+</UL>
+<P>
+
+<LI>stc compiles ok, but c compiler errs with undefined names
+<P>
+action:
+<UL type=arrow>
+<LI>check if you used a structure-field name as an argument and/or local
+<P>
+<LI> check parenthesis, bracket and brace-nesting;
+<P>
+<LI> check unclosed comments, single- and double-quote strings
+<P>
+<LI> check for missing semicolons
+<P>
+<LI> check if you wrote a Smalltalk comment ("...") within the c-code
+</UL>
+<P>
+
+<LI>Accepting in the browser, the primitive compiles but you get messages about <VAR>'__con'</VAR>
+being undefined from the linker.
+<P>
+This happens on Linux, if you installed the a.out version on an ELF system.
+The loader is not able to load an ELF object module and will fail with the above
+behavior.
+<P>
+On all systems, this happens if the include files are not correctly installed
+and/or the path variables pointing to the include directory are not set correctly.
+<P>
+action:
+<UL type=arrow>
+ <LI> on Linux: check if you installed the correct <CITE>ST/X</CITE> version.
+<P>
+ <LI> open the Launcher's compiler-settings dialog and check if the stx-include
+directory is found in the include setting.
+<P>
+ <LI> check if the include files are all installed correctly - especially the
+files named <CODE>"stc.h</CODE> and <CODE>"stxIntern.h"</CODE> are required.
+</UL>
+<P>
+
+<P>
+<LI>all runs fine, but system runs into segv when executing one of the _isXXX
+    macros (can only happen on some systems)
+<P>
+action:
+<UL type=arrow>
+<LI>look for typing errors; there is a special danger in the _isXXX macros,
+since some are also known as Smalltalk-symbols.
+This error occurs, when you write '_isString' instead of '__isString'
+on systems, which do not differentiate between text- and data symbols.
+(i.e. in this case the C compiler creates a function-call to the data-symbol
+<CODE>_isString</CODE> - which is the C variable of the #isString symbol)
+</UL>
+
+<P>
+<LI>the program runs fine for a while, then the VM outputs messages about bad classes,
+    invalid method-arrays etc.
+<P>
+action:
+<UL type=arrow>
+ <LI> check garbage collector effects (are there any ST-objects stored into
+	  C-data ?)
+<P>
+ <LI> check for uninitialized instance variables of objects created in primitives
+<P>
+ <LI> check for boundary violations when accessing ST objects (array elements, strings)
+      in primitive code
+<P>
+ <LI> check if you stored/returned a C integer or float, ommitting the
+      <CODE>MKSMALLINT</CODE> or <CODE>MKFLOAT</CODE> macro).
+<BR>
+      Look for c-compiler warnings.
+<P>
+ <LI> check if you stored/returned a C pointer instead of a proper st-pointer.
+<BR>
+      Look for c-compiler warnings.
+<P>
+ <LI> check for missing __STORE macros when assigning to an objects instance
+      variable or to an ST-array element.
+<BR>
+Run <CITE>ST/X</CITE> with the <VAR>-MprotectSurv</VAR> command line argument.
+<BR>
+<P>
+ <LI> check for stack overflows. Try if the error vanishes if you give your
+primitive a huge stack.
+<BR>
+Run <CITE>ST/X</CITE> with the <VAR>-MprotectStack</VAR> command line argument.
+<BR>
+<P>
+ <LI>Run <CITE>ST/X</CITE> with the <VAR>-Mcheck</VAR> command line argument
+for more pointer checks in the VM.
+<BR>
+<P>
+ <LI>re-read description in this document
+</UL>
+
+<P>
+<LI>my primitive works, but crashes when called for instances
+    of a subclass (where the class is of variable size and the subclass has additional instvars)
+<P>
+the memory layout of subclass instances is not the same as
+for instances of the class where your primitive is defined.
+Therefore access to the variable part (the indexed instvars)
+is wrong (the indexed instvars are stored right behind the named instvars).
+<P>
+action:
+<UL type=arrow>
+ <LI> in your primitive, either check the receiver for being an instance
+of the class, or take care of the changed instSize.
+<BR>
+See some primitives in <CODE>Array</CODE> and <CODE>String</CODE>,
+of which some are prepared to handle subclass instances, others simply
+fall back into a super send.
+</UL>
+
+<P>
+<LI>I pass a string to a c function which remembers this string. After some time, the system crashes
+when C uses this string
+<P>
+you probably passed the value of the string using the <CODE>_stringVal()</CODE> macro.
+This macro returns a <CODE>(char *)</CODE> to the characters of the string object.
+<BR>
+At the time you pass this to the c function, everything runs fine and looks ok.
+However, if the C function remembers that pointer, the next GC may move the string around,
+leaving the (remembered) c pointer pointing to nowhere (actually, it will point to some
+random object).
+<BR>
+The next access from c will access a totally random object and may lead to a bus error
+or segmentation violation.
+<P>
+action:
+<UL type=arrow>
+<LI>never pass pointers of or pointers based on ST objects to C functions which remember these.
+<BR>
+You MUST get the value out of Smalltalk memory (i.e. by malloc'ing some memory, copying the
+value and passing that pointer to your c function).
+<P>
+An alternative mechanism for pinning down objects at a fixed address already
+exist in the VM (and are internally used), but not yet released for public use
+and especially: not documented.
+</UL>
+
+
+
+</UL>
+
+
+Notes:
+<UL>
+<LI><A NAME="FN1" HREF="#BACK_FN1">primitives by number (*)</A>:
+<BR>
+Actually, this is not really true; <CITE>ST/X</CITE> also supports a mechanism
+for custom C functions to be registered by number, and have them invoked by
+<BR>
+"<CODE>ExternalFunction callCustomFunction:nr</CODE>".
+This mechanism allows (some) integration of external functions even if no
+<CITE>stc</CITE> compiler is available.
+<P>
+
+<LI><A NAME="FN2" HREF="#BACK_FN2">how about C++ (**)</A>:
+<BR>
+This is also true for C++, since Smalltalk's objects are much more dynamic
+than those of C++, and therefore require more information to be accessible
+at execution time. For example, new classes may be added/removed or changed
+or objects may change their class. Therefore, these conversions are also
+required if Smalltalk code is combined with C++. I.e. it is not possible,
+to provide a simple 1-to-1 mapping of Smalltalk objects to C++ objects.
+<P>
+
+<LI><A NAME="FN3" HREF="#BACK_FN3">allocation speed (*3)</A>:
+Even with garbage collection, mosts Smalltalk's memory systems are
+much faster than the <CODE>malloc()/free()</CODE> combination,
+if the objects are allocated temporarily and reclaimed within a short time
+period. (Measured P90/SGI Indy: 1-2 us per object vs. 9us for malloc/free - these times are
+from the 90's - these days, allocation speed is in the 100ns order)
+<BR>
+Things are of course different if static or non-malloced data is used in C/C++,
+or if the objects have to be reclaimed from oldSpace (which is more expensive to reclaim).
+</UL>
+
+
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 1995 Claus Gittinger Development &amp; Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.53 $ $Date: 2016-07-11 09:24:05 $
+</BODY>
+</HTML>

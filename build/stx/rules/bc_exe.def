@@ -1,0 +1,4 @@
+DESCRIPTION     "Smalltalk/X Application (BCC compiled)"
+CODE            PRELOAD MOVABLE DISCARDABLE
+SECTIONS 	
+	INITCODE EXECUTE READ

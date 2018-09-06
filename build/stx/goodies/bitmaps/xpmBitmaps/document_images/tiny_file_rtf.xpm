@@ -1,0 +1,26 @@
+/* XPM */
+static char *tiny_file_rtf_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 3 1",
+/* colors */
+"a c black",
+"b c white",
+"c c none",
+/* pixels */
+"cccccccccccccccc",
+"cccccccccccccccc",
+"aaaaaaaaaacccccc",
+"abbbbbbbabaccccc",
+"abbbbbbbabbacccc",
+"abaabbbbaaaaaccc",
+"ababbbbbbbbbaccc",
+"ababbabbbaabaccc",
+"ababbabbbabbaccc",
+"ababaaabaaabaccc",
+"abbbbabbbabbaccc",
+"abbbbaabbabbaccc",
+"aaaaaaaaaaaaaccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+};

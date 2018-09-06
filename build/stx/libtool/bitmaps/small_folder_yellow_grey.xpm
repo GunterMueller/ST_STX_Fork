@@ -1,0 +1,29 @@
+/* XPM */
+static char *small_folder_yellow_grey_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"20 16 6 1",
+/* colors */
+"a c black",
+"b c white",
+"c c #BEBE00",
+"d c #C2C2C2",
+"e c #818181",
+"f c none",
+/* pixels */
+"ffffffffffffffffffff",
+"ffffffffffffffffffff",
+"ffffeeeeefffffffffff",
+"fffedcdcdeffffffffff",
+"ffedcdcdcdeeeeeeffff",
+"ffebbbbbbbbbbbbeafff",
+"ffebcdcdcdcdcdceafff",
+"ffebdcdcdcdcdcdeafff",
+"ffebcdcdcdcdcdceafff",
+"ffebdcdcdcdcdcdeafff",
+"ffebcdcdcdcdcdceafff",
+"ffebdcdcdcdcdcdeafff",
+"ffebcdcdcdcdcdceafff",
+"ffeeeeeeeeeeeeeeafff",
+"fffaaaaaaaaaaaaaafff",
+"ffffffffffffffffffff",
+};

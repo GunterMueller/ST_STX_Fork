@@ -1,0 +1,31 @@
+/* XPM */
+static char *user_redSmall_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"15 18 6 1",
+/* colors */
+"a c black",
+"b c #C6C3C6",
+"c c #FF0009",
+"d c white",
+"e c #848284",
+"f c none",
+/* pixels */
+"fffffffffffffff",
+"fffffaaaaaaafff",
+"ffffaaaaaaaaaaf",
+"ffaaaaaaaaaaaaa",
+"ffaaaaaaaaabbaa",
+"faaaaaaaaabdbaf",
+"faaaaaaabdbaaff",
+"faaaaaaddbdabaf",
+"faaaaadbbdbdbaf",
+"faaaaaabbdbdaaf",
+"ffaaaaaadbdbaff",
+"ffaaaaabbdbdaff",
+"ffffaadbaaaafff",
+"ffffadbdeeaffff",
+"fffaabdbbeaffff",
+"ffacccceeeacfff",
+"ffaaccccccccaff",
+"ffffaaaaaaaafff",
+};

@@ -1,0 +1,249 @@
+<HTML>
+<HEAD>
+<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<TITLE>Smalltalk/X Introduction & Tutorial</TITLE>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="../TOP.html" INFO="Back to documentation's main page" > <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+
+<H1>Smalltalk/X Introduction & Tutorial</H1>
+
+<TABLE WIDTH=100%>
+<TR>
+<TD WIDTH=40%>  </TD>
+<TD WIDTH=60%><CITE>Share in the excitement of discovery
+<BR>without vain attempts to claim priority.
+<P>
+(Goethe)
+</CITE></TD>
+</TR>
+</TABLE>
+
+
+<P>
+<IMG SRC="../../pictures/at_work.gif" ALT="[under construction]">
+This document is being prepared - it is not complete.
+<P>
+
+<H2>Contents</H2>
+
+<UL>
+<LI><A HREF="#INTRO" NAME="I_INTRO">Introduction</A>
+<LI><A HREF="#GENERALITY" NAME="I_GENERALITY">Different Smalltalks and the Validity of this Tutorial</A>
+<LI><A HREF="#BOOKS" NAME="I_BOOKS">Books on Smalltalk</A>
+
+<P>
+<LI><A HREF="tut_1.html" NAME="I_BASICS">Getting Started</A>
+ <UL>
+  <LI><A HREF="tut_1.html#SAVING" NAME="I_SAVING">Saving a Snapshot Image</A>
+  <LI><A HREF="tut_1.html#PATCHES" NAME="I_PATCHES">Applying Patches</A>
+  <LI><A HREF="tut_1.html#WORKSPACE" NAME="I_WORKSPACE">Opening a Workspace</A>
+  <LI><A HREF="tut_1.html#DEBUGGER" NAME="I_DEBUGGER">Leaving the Debugger</A>
+ </UL>
+<P>
+
+<LI><A HREF="tut_1b.html" NAME="I_BASICS">Hello World in 5 Minutes</A>
+<P>
+
+<LI><A HREF="tut_2.html" NAME="I_BASICS">Smalltalk Basics</A>
+ <UL>
+  <LI><A HREF="tut_2.html#DEFINITIONS">Definitions, Nomenclature &amp; Concepts</A>
+  <LI><A HREF="tut_2.html#SYNTAX">Language Syntax</A>
+   <UL>
+    <LI><A HREF="tut_2.html#COMMENTS">Comments</A>
+    <LI><A HREF="tut_2.html#LITERALS">Literals</A>
+    <LI><A HREF="tut_2.html#IDENTIFIERS">Identifiers</A>
+    <LI><A HREF="tut_2.html#MESSAGES">Messages</A>
+   <UL>
+      <LI><A HREF="tut_2.html#UNARY_MESSAGES">Unary Messages</A>
+      <LI><A HREF="tut_2.html#KEYWORD_MESSAGES">keyword Messages</A>
+      <LI><A HREF="tut_2.html#BINARY_MESSAGES">Binary Messages</A>
+      <LI><A HREF="tut_2.html#STRANGE_BINARY_MESSAGES">"Strange" Binary Messages</A>
+     </UL>
+    <LI><A HREF="tut_2.html#VARIABLES">Variables</A>
+    <LI><A HREF="tut_2.html#ASSIGNMENT">Assigning a Value to a Variable</A>
+    <LI><A HREF="tut_2.html#CASCADE">Cascade Expression</A>
+    <LI><A HREF="tut_2.html#BLOCKS">Blocks</A>
+     <UL>
+      <LI><A HREF="tut_2.html#IF">Conditional Evaluation (if)</A>
+      <LI><A HREF="tut_2.html#WHILE">Conditional Looping (while)</A>
+      <LI><A HREF="tut_2.html#ENUMERATING">Looping over Elements of a Collection (Enumerating)</A>
+      <LI><A HREF="tut_2.html#ENUMERATING">Looping over a Range of Numbers</A>
+     </UL>
+    <LI><A HREF="tut_2.html#SYNTACTICSUGAR">Syntactic Sugar</A>
+     <UL>
+      <LI><A HREF="tut_2.html#BRACE">Brace-Array-Constructor</A>
+     </UL>
+   </UL>
+ </UL>
+<P>
+
+<LI><A HREF="tut_2b.html" NAME="I_PLAYING">Playing with Objects</A>
+ <UL>
+  <LI><A HREF="tut_2b.html#DRAWING_WITH_PENS">Drawing with a Pen</A>
+  <LI><A HREF="tut_2b.html#INSPECTING_A_PEN">Looking into our Pen (Inspecting)</A>
+  <LI><A HREF="tut_2b.html#BROWSING_A_PEN">Browsing Pens protocol</A>
+  <LI><A HREF="tut_2b.html#ADDING_A_NEW_METHED">Adding a new Method to the Pen Class</A>
+ </UL>
+<P>
+
+<LI><A HREF="tut_3.html" NAME="I_BASICS">Defining new Classes</A>
+ <UL>
+  <LI><A HREF="tut_3.html#CREATING_INSTANCES">Creating an Instance of a Class</A>
+  <LI><A HREF="tut_3.html#DEFINING_METHODS">Defining Methods</A>
+   <UL>
+    <LI><A HREF="tut_3.html#COMMON_PROTOCOL">Inherited Protocol</A>
+    <LI><A HREF="tut_3.html#ACCESS_SETTER">Adding access Protocol</A>
+    <LI><A HREF="tut_3.html#RETURNING_VALUE">Returning a Value from a Method</A>
+    <LI><A HREF="tut_3.html#REDEFINING_PRINT">Redefining the "printOn:" Method</A>
+    <LI><A HREF="tut_3.html#CHANGING_METHODS">Changing a Method</A>
+    <LI><A HREF="tut_3.html#ADDING_INSTVARS">Adding more Instance Variables</A>
+   </UL>
+  <LI><A HREF="tut_3.html#REDEFINING_CLASSPROTOCOL">Redefining the Class Protocol</A>
+ </UL>
+<P>
+
+<LI><A HREF="tut_5.html" NAME="I_WEB">Creating a Web Application</A>
+ <UL>
+  <LI><A HREF="tut_5.html#STARTING_SERVER">Starting a WebServer</A>
+  <LI><A HREF="tut_5.html#CREATING_WEB_CLASS">Creating a New WebApplication Class</A>
+  <LI><A HREF="tut_5.html#CHANGING_THE_RESPONSE">Changing the Response</A>
+  <LI><A HREF="tut_5.html#SUBPAGES">Adding Sub-Page Responses</A>
+  <LI><A HREF="tut_5.html#HTML_GENERATION">Easier HTML Generation</A>
+  <LI><A HREF="tut_5.html#SESSION_CONTROL">Session Control (to be written)</A>
+  <LI><A HREF="tut_5.html#COOKIES">Cookies (to be written)</A>
+  <LI><A HREF="tut_5.html#TEMPORARY_LINKS">Temporary Links (to be written)</A>
+  <LI><A HREF="tut_5.html#HIGHER_LEVEL_FRAMEWORKS">Higher Level Frameworks (to be written)</A>
+   <UL>
+    <LI><A HREF="tut_5.html#SEASIDE">STT (to be written)</A>
+    <LI><A HREF="tut_5.html#SEASIDE">Swazoo (to be written)</A>
+    <LI><A HREF="tut_5.html#SEASIDE">Seaside (to be written)</A>
+   </UL>
+  <LI><A HREF="tut_5.html#EXISTING_SERVICES">Existing Services (to be written)</A>
+   <UL>
+    <LI><A HREF="tut_5.html#FILESERVICE">File Service (to be written)</A>
+    <LI><A HREF="tut_5.html#CGISERVICE">CGI Service (to be written)</A>
+   </UL>
+ </UL>
+<P>
+
+<LI><A HREF="tut_4.html" NAME="I_GUI">Creating a GUI Application</A>
+ <UL>
+  <LI><A HREF="tut_4.html#CREATING_APP_CLASS">Creating a New Application Class</A>
+  <LI><A HREF="tut_4.html#CREATING_APP_FRAME">Generating the Initial Application Code</A>
+  <LI><A HREF="tut_4.html#CHANGING_APP_MENU">Modifying the Application's Menu</A>
+  <LI><A HREF="tut_4.html#CHANGING_APP_WINDOW">Modifying the Application's Window</A>
+ </UL>
+<P>
+
+<LI><A HREF="tut_6.html" NAME="I_RECOVERING">Recovering from a Crash</A>
+
+<LI><A HREF="tut_7.html" NAME="I_DEPLOYING">Deploying an Application</A>
+<LI><A HREF="tut_7b.html" NAME="I_SHARING">Sharing your Work with Others</A>
+<P>
+
+<LI><A HREF="tut_8.html" NAME="I_MORESMALLTALK">More Smalltalk</A>
+ <UL>
+  <LI><A HREF="tut_8.html#OTHER_VARIABLES">Other Variable Types</A>
+  <LI><A HREF="tut_8.html#CONTEXTS">Contexts</A>
+ </UL>
+<P>
+
+<LI><A HREF="tut_edit.html" NAME="I_EDITING">Tips & Tricks for Editing Text</A>
+
+</UL>
+
+
+<H2><A HREF="#I_INTRO" NAME="INTRO">Introduction</A></H2>
+
+This document will give you a short step-by-step introduction to
+the Smalltalk language in general and the <CITE>Smalltalk/X</CITE> integrated
+programming environment in particular.
+<P>
+The tutorial is meant for those who have never worked with
+a Smalltalk system before - if you have, you may skip this document.
+<P>
+Notice that although these texts are available on the web and
+can be viewed with a regular webBrowser (Mozilla, Opera etc.)
+they are interactive documents containing executable code
+for execution within the <CITE>ST/X</CITE> help-browser.
+<BR>
+Interactive examples, buttons, automatic opening of example windows
+as present in the texts can only be executed if this text is viewed with
+the <CITE>ST/X</CITE> help system.
+<P>
+If you are reading this via the internet in a regular wen-Browser,
+we highly recommend that you download the Smalltalk/X package and
+read these documents there
+(it's much more fun if you click on a codeing examample, and the underlying code is executed).
+
+
+
+<H2><A HREF="#I_GENERALITY" NAME="GENERALITY">Different Smalltalks and the Validity of this Tutorial</A></H2>
+
+All of the language and non-GUI related information in this tutorial is pretty much valid for all of the Smalltalk
+implementations (Dolphin, GNU-ST, Squeak, ST/X, VA, VisualWorks and others).
+They all use the same language syntax and even most of the class-libraries and set of
+operations are more or less the same.
+However, they do differ in their GUI-libraries and tools.
+<BR>
+Consider them as systems using the same language, almost the same standard library,
+but different GUI libraries. After all, in C, people also use other libraries beside Xlib and Qt.
+Also, even in Java, there is AWT, Swing and the Eclipse Toolkit.
+However, in Smalltalk, even those differences are probably smaller than those between
+Visual-C, Eclipse, Vi or Emacs.
+<P>
+Also, the set of available tools and the "way programs are made" is very similar among all Smalltalk systems,
+and also very different to the way things work in almost every other language system and IDE.
+The single most striking difference is, that you develop, execute and debug your program WITHIN the
+IDE itself. As you add new code and functionality, this immediately becomes part of your working
+environment and is immediately usable.
+There is no separate executable.
+The new code lives in the same object-space as all the basic classes, the compiler,
+the widgets and even the pieces which make up the IDE itself.
+If your program needs text-edit capabilities, simply instantiate a TextEditor;
+if it needs to generate and compile a piece of Smalltalk-code, simply call for the compiler.
+Even a debugger or browser can be
+opened via a simple message send. They are all there for you to be used.
+On the other hand, this also makes it very easy to extend, fix or adapt the IDE itself according
+to your needs.
+<P>
+If you know one Smalltalk, you will, with a high probability be able to use the others
+in relatively short time, because they share the same basic "philosophy".
+<P>
+Therefore, give it a try and don't worry - it's worth learning it, you will get so much insight
+into the OO-world, that even if you will not use Smalltalk at work, it will give a lot
+of inspiration, ideas and after all, pure fun.
+<P>
+It has never been easier to simply try out an idea than in Smalltalk !
+
+
+<H2><A HREF="#I_BOOKS" NAME="BOOKS">Books on Smalltalk</A></H2>
+
+A number of books on Smalltalk are avaliable for free and included in
+the Smalltalk/X distribution for your convenience: <A HREF="../../../books">books</A>.
+<BR>
+Google for "free smalltalk literature" or "Stephane Ducasse literature" should
+give you many more hits.
+
+
+<P>
+<HR>
+Continue in <A HREF="tut_1.html">"Getting Started"</A>.
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif" ALT="[stx-logo]">
+<BR>Copyright &copy; 1996-2009 Claus Gittinger Development & Consulting
+<BR>Copyright &copy; 1997-2009 eXept Software AG
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.23 $ $Date: 1999/05/27 13:56:17 $
+
+</BODY>
+</HTML>

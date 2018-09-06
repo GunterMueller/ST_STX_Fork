@@ -1,0 +1,121 @@
+# Makefile for zlib - Borland C
+#
+# Updated for zlib 1.2.x by Cosmin Truta, 11-Mar-2003
+# Last updated: 28-Aug-2003
+#
+# Usage:
+#  make -f win32/Makefile.bor
+#  make -f win32/Makefile.bor LOCAL_ZLIB=-DASMV OBJA=match.obj OBJPA=+match.obj
+
+# ------------ Borland C++ ------------
+TOP=..\..
+INCLUDE_TOP=$(TOP)\..
+
+!INCLUDE $(TOP)\rules\stdHeader_bc
+
+# INCL=-Ic:\borland\bcc55\include -Ic:\programme\borland\bcc55\include -Ie:\programme\borland\bcc55\include -Ic:\tools\bcc55\include
+INCL=-I$(BCB)\include
+
+OUTDIR=objbc\\
+
+# Optional nonstandard preprocessor flags (e.g. -DMAX_MEM_LEVEL=7)
+# should be added to the environment via "set LOCAL_ZLIB=-DFOO" or
+# added to the declaration of LOC here:
+LOC = $(LOCAL_ZLIB)
+
+CC = bcc32
+AS = bcc32
+LD = bcc32
+AR = tlib
+CFLAGS  = -a -d -k- -O2 $(LOC) $(INCL)
+ASFLAGS = $(LOC)
+LDFLAGS = $(LOC)
+
+# variables
+ZLIB_LIB = $(OUTDIR)zlib.lib
+
+OBJ1  = $(OUTDIR)adler32.obj $(OUTDIR)compress.obj $(OUTDIR)crc32.obj $(OUTDIR)deflate.obj $(OUTDIR)gzio.obj $(OUTDIR)infback.obj
+OBJ2  = $(OUTDIR)inffast.obj $(OUTDIR)inflate.obj $(OUTDIR)inftrees.obj $(OUTDIR)trees.obj $(OUTDIR)uncompr.obj $(OUTDIR)zutil.obj
+#OBJA =
+OBJP1 = +$(OUTDIR)adler32.obj+$(OUTDIR)compress.obj+$(OUTDIR)crc32.obj+$(OUTDIR)deflate.obj+$(OUTDIR)gzio.obj+$(OUTDIR)infback.obj
+OBJP2 = +$(OUTDIR)inffast.obj+$(OUTDIR)inflate.obj+$(OUTDIR)inftrees.obj+$(OUTDIR)trees.obj+$(OUTDIR)uncompr.obj+$(OUTDIR)zutil.obj
+#OBJPA=
+
+
+# targets
+# all: $(ZLIB_LIB) example.exe minigzip.exe
+all: $(ZLIB_LIB)
+
+full:: all
+
+$(OUTDIR):
+	-md $(OUTDIR)
+
+.c.obj:
+	$(CC) -c $(CFLAGS) -o$*.obj $<
+
+.asm.obj:
+	$(AS) -c $(ASFLAGS) $<
+
+$(OUTDIR)adler32.obj: adler32.c zlib.h zconf.h
+
+$(OUTDIR)compress.obj: compress.c zlib.h zconf.h
+
+$(OUTDIR)crc32.obj: crc32.c zlib.h zconf.h crc32.h
+
+$(OUTDIR)deflate.obj: deflate.c deflate.h zutil.h zlib.h zconf.h
+
+$(OUTDIR)gzio.obj: gzio.c zutil.h zlib.h zconf.h
+
+$(OUTDIR)infback.obj: infback.c zutil.h zlib.h zconf.h inftrees.h inflate.h \
+ inffast.h inffixed.h
+
+$(OUTDIR)inffast.obj: inffast.c zutil.h zlib.h zconf.h inftrees.h inflate.h \
+ inffast.h
+
+$(OUTDIR)inflate.obj: inflate.c zutil.h zlib.h zconf.h inftrees.h inflate.h \
+ inffast.h inffixed.h
+
+$(OUTDIR)inftrees.obj: inftrees.c zutil.h zlib.h zconf.h inftrees.h
+
+$(OUTDIR)trees.obj: trees.c zutil.h zlib.h zconf.h deflate.h trees.h
+
+$(OUTDIR)uncompr.obj: uncompr.c zlib.h zconf.h
+
+$(OUTDIR)zutil.obj: zutil.c zutil.h zlib.h zconf.h
+
+$(OUTDIR)example.obj: example.c zlib.h zconf.h
+
+$(OUTDIR)minigzip.obj: minigzip.c zlib.h zconf.h
+
+
+$(ZLIB_LIB): $(OUTDIR) $(OBJ1) $(OBJ2) $(OBJA)
+	-del $(ZLIB_LIB)
+	$(AR) $(ZLIB_LIB) $(OBJP1) $(OBJP2) $(OBJPA)
+
+
+# testing
+test: example.exe minigzip.exe
+	example
+	echo hello world | minigzip | minigzip -d
+
+example.exe: example.obj $(ZLIB_LIB)
+	$(LD) $(LDFLAGS) example.obj $(ZLIB_LIB)
+
+minigzip.exe: minigzip.obj $(ZLIB_LIB)
+	$(LD) $(LDFLAGS) minigzip.obj $(ZLIB_LIB)
+
+
+# cleanup
+clean:
+	-del $(OUTDIR)*.$(O) $(OUTDIR)*.$(LIB) $(OUTDIR)*.bak
+	-del *.obj *.lib *.exe *.tds
+	-del zlib.bak
+	-del foo.gz
+
+clobber:    clean
+	-rmdir /s /q objbc
+	-rmdir /s /q objvc
+	-rmdir /s /q objlcc
+	-rmdir /s /q objtcc
+	-rmdir /s /q objmingw

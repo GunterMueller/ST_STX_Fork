@@ -1,0 +1,37 @@
+//
+// DO NOT EDIT
+// automagically generated from the projectDefinition: stx_libjava_tests_mauve.
+//
+VS_VERSION_INFO VERSIONINFO
+  FILEVERSION     6,2,32767,32767
+  PRODUCTVERSION  6,2,5,0
+#if (__BORLANDC__)
+  FILEFLAGSMASK   VS_FF_DEBUG | VS_FF_PRERELEASE
+  FILEFLAGS       VS_FF_PRERELEASE | VS_FF_SPECIALBUILD
+  FILEOS          VOS_NT_WINDOWS32
+  FILETYPE        VFT_DLL
+  FILESUBTYPE     VS_USER_DEFINED
+#endif
+
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904E4"
+    BEGIN
+      VALUE "CompanyName", "SWING Research Group, Czech Technical University in Prague\0"
+      VALUE "FileDescription", "Mauve test suite (LIB)\0"
+      VALUE "FileVersion", "6.2.32767.32767\0"
+      VALUE "InternalName", "stx:libjava/tests/mauve\0"
+      VALUE "LegalCopyright", "Copyright 2011-2012 Marcel Hlopko, Jan Kurs and Jan Vrany\0"
+      VALUE "ProductName", "Mauve test suite for libjava\0"
+      VALUE "ProductVersion", "6.2.5.0\0"
+      VALUE "ProductDate", "Wed, 04 Feb 2015 07:49:10 GMT\0"
+    END
+
+  END
+
+  BLOCK "VarFileInfo"
+  BEGIN                               //  Language   |    Translation
+    VALUE "Translation", 0x409, 0x4E4 // U.S. English, Windows Multilingual
+  END
+END

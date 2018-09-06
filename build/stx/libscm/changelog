@@ -1,0 +1,9 @@
+2014-03-05 Jan Vrany <jan.vrany (o) fit.cvut.cz>
+
+  * Fixed handling of circular class renames (issue #18)
+  * Improved support for nested packages (issue #29)
+
+
+2013-07-19 Jan Vrany <jan.vrany (o) fit.cvut.cz>
+
+  * Initial release of stx:libscm 1.0

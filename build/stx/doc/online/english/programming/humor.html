@@ -1,0 +1,300 @@
+<html>
+
+<head>
+<title>Humor</title>
+</head>
+
+<body>
+
+<a NOPRINT HREF="wishList.html">    <img SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></a>
+<a NOPRINT HREF="TOP.html">         <img SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></a>
+<a NOPRINT HREF="performanceMisconceptions.html">     <img SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></a>
+
+<h1>Smalltalk Humor</h1>
+<p>
+
+Some humorous articles and opinions I found in comp.lang.smalltalk and/or mailing lists.
+<br>
+Some seem stupid at first sight, but contain a deeper meaning on second thought...
+<BR>
+I do certainly appreciate the philosophy behind these articles and definitely do not consider
+them as stupid.
+<BR>
+Read and enjoy - Claus.
+
+<ul>
+<li><a href="#DUALITYOFCLOSURESANDOBJECTS" name="I_DUALITYOFCLOSURESANDOBJECTS">The Duality of Objects and Closures</a>
+<ul>
+  <li><a href="#GETRIDOFBLOCKS" name="I_GETRIDOFBLOCKS">How to get rid of Blocks in Smalltalk</a>
+  <li><a href="#GETRIDOFOBJECTS" name="I_GETRIDOFOBJECTS">How to get rid of Objects in Smalltalk</a>
+  <li><a href="#COMMENT1" name="I_COMMENT1">Comment on the above</a>
+  <li><a href="#MASTER_AND_STUDENT" name="I_MASTER_AND_STUDENT">Master and Student</a>
+</ul>
+</ul>
+More to come.
+
+<h2 ><font face="Arial" ><a name="DUALITYOFCLOSURESANDOBJECTS" href="#I_DUALITYOFCLOSURESANDOBJECTS">The Duality of Objects and Closures</a></font></h2>
+
+
+<h3 ><font face="Arial" ><a name="GETRIDOFBLOCKS" href="#I_GETRIDOFBLOCKS">Aha! How to get rid of Blocks in Smalltalk</a></font></h3>
+<p >
+<pre>
+To: squeak@cs.uiuc.edu
+Subject: Aha! How to get rid of Blocks in Smalltalk.
+From: David Farber &lt;dfarber@numenor.com>
+Date: Wed, 19 Apr 2000 23:31:51 -0600
+
+First of all, let me apologize if what I am about to propose is not a novel
+idea. I've certainly never heard anyone propose anything like it.
+
+Second, I must confess that this idea came to me while I was under the
+influence. The substance in question was Jef Raskin's excellent new book,
+"The Humane Interface". I strongly recommend that anyone on the list that
+has not bought and read this book do so ASAP.
+
+Now, to the heart of the matter: I have realized how Blocks can be removed
+as a language construct in Smalltalk without giving up functionality or
+power of expression.
+
+Why remove Blocks? Blocks have long been one of my biggest qualms with
+Smalltalk (perhaps second only to the lack of namespaces). I am sure that
+my original uneasiness came from having to get used to the wierd flow
+control contructs. But even once I was used to 'aBoolean ifTrue: []
+ifFalse: []' and thought it was so cool that flow control could be left out
+of the base language and created, on demand, from simple message passing, I
+was still not entirely convinced that Blocks were The Right Thing To Do.
+
+Then, last night, in less than an hour after I had just finished Raskin's
+new book it hit me: Blocks are almost always unique functional units by
+virtue of grouping message sends. But Smalltalk already has a mechanism for
+creating new functional units by grouping message sends; it is called a
+Method. Having two ways to do the same thing violates the principle of
+monotony. As soon as my beef with Blocks was expressed in these terms, I
+knew for certain that 1) Blocks had to go and 2) they could be replaced
+with regular methods and message sends and not be missed.
+
+To put what I've just said into a (kind of) concrete example, what I am
+proposing is the following:
+
+WITH BLOCKS
+
+aCollection do: [ :each | a foo. b bar. self doSomethingWith: a with: b
+with: each].
+
+WITHOUT BLOCKS
+
+newMessage := MessageSend send: 'doThisWith:with:with:' to: self with: #(a b).
+aCollection do: newMessage.
+
+METHOD
+doThisWith: a with: b with: c
+
+  a foo.
+  b bar.
+  self doSomethingWith: a with: b with: c.
+
+(NOTE: To obviate the need for the Collection do: method to be rewritten,
+MessageSend would implement value: by just appending the object passed to
+the arguments array. I made up the MessageSend class just to make my point
+as cleanly as possible. The method send:to:with:super: in ContextPart
+actually does what I am describing.)
+
+To try and explain my idea one more time, all I have done is: 1) put the
+message sends formly grouped in the Block into their own method. 2)
+Explicitly created a message send. 3) Passed the message send instead of
+the Block.
+
+I don't see anything that cannot be done with this scheme that can be done
+with blocks. The advantage is that the language is now simpler, having
+removed a construct that, in the final analysis, didn't really contribute
+anything.
+
+Now, having to always explicitly create the message send as I did in the
+example above could lead to some serious brain damage; it is really quite
+cumbersome. So, what we need is a shorthand for creating explicit message
+sends just as #() is shorthand for Array creation. I don't have any
+definite ideas here, but one possiblity would be to re-use the old block
+semantics.
+
+  [ :arg3 | receiver message: arg1 with: arg2 with: arg3]
+
+The example given above would now look like:
+
+  aCollection do: [ :each | self doThisWith: a with: b with: each].
+
+The above is an explicit message send, NOT a block. You could not, for
+instance, try to stuff a second message send in there or chain message
+sends with ;. That would be creating a new message grouping and that is
+what methods are for. The advantage here is that the new language
+specification is a proper subset of the old; you could file this into any
+current Smalltalk implementation and it would run. It should also be fairly
+straightforward to translate from the old to the new. The biggest drawback
+that I can see to this is that users who were presented with the change but
+not the rationale would probably not think to make a new method to take the
+place of the message grouping that would have been put inside the block.
+
+Well, I hope I have explained my idea clearly enough. Let me know what you
+think. I, for one, am estatic; I've finally figured out why I've always
+been uncomfortable with blocks and how I can get rid of them! At least,
+until someone bursts my bubble. :)
+
+david
+
+--
+David Farber
+dfarber@numenor.com
+</pre> <p >
+
+
+
+
+
+
+<hr >
+<p >
+<h3 ><font face="Arial" ><a name="GETRIDOFOBJECTS" href="#I_GETRIDOFOBJECTS">Aha! How to get rid of Objects in Smalltalk</a></font></h3>
+<p >
+<pre>
+To: squeak@cs.uiuc.edu
+Subject: Aha! How to get rid of Objects in Smalltalk. (was RE: Aha! How to get rid of Blocks in Smalltalk)
+From: "Vassili Bykov" &lt;vassili@objectpeople.com>
+Date: Thu, 20 Apr 2000 11:55:44 -0400
+
+
+First of all, let me apologize if what I am about to propose sounds
+sarcastic with respect to an earlier post on this list.  I am not making
+evil fun of David's post.  (Yes, so far I AM serious).
+
+Second, I must confess that this idea came to me while I was under the
+influence of the recent events at the company I work for.  The substance in
+question is described on our excellent webpage "www.objectpeople.com".  I do
+NOT strongly recommend that anyone reads it, unless you want to know why I
+wanted to lighten up.
+
+Now, to the heart of the matter: I have realized how Objects can be removed
+as a language construct in Smalltalk without giving up functionality or
+power of expression.
+
+Why remove Objects?  Objects have long been one of my biggest qualms with
+Smalltalk (perhaps second only to the lack of continuations). I am sure that
+my original uneasiness came from having to get used to the weird variable
+binding and method lookup constructs. But even once I was used to 'Object
+subclass: #MyClass instanceVariableNames: '...' ...' and thought it was so
+cool that methods could me invoked, on demand, by simply sending messages, I
+was still not entirely convinced that Objects were The Right Thing To Do.
+
+Then, last night, in less than an hour after we had just finished a staff
+meeting it hit me: Objects are almost always unique structural units by
+virtue of grouping variable bindings and methods. But Smalltalk already has
+a mechanism for creating new structural units by grouping variable bindings;
+it is called a BlockClosure. Having two ways to do the same thing violates
+the principle of monotony. As soon as my beef with Objects was expressed in
+these terms, I knew for certain that 1) Objects had to go and 2) they could
+be replaced with regular block closures and block closure invocations and
+not be missed.
+
+To put what I've just said into a (kind of) concrete example, what I am
+proposing is the following:
+
+WITH OBJECTS
+
+Object subclass: #Car
+	instanceVariableNames: 'speed'
+	classVariableNames: ''
+	poolDictionaries: '' !
+
+! Car methods !
+
+speed
+	^speed !
+
+speed: aNumber
+	speed := aNumber !
+
+stop
+	speed := 0 ! !
+
+WITHOUT OBJECTS
+
+
+Car := [ | speed |
+       speed := 0.
+	[:message |
+	  #speed == message
+	    ifTrue: [[speed]]
+	    ifFalse: [#speed: == message
+	      ifTrue: [[:newSpeed | speed := newSpeed]]
+	      ifFalse: [#stop == message
+	       ifTrue: [[speed := 0]]
+	       ifFalse: [self error: 'MessageNotUnderstood', message]]]]]
+
+CREATING AN INSTANCE
+
+aCar := Car value.
+
+SENDING MESSAGES
+
+(aCar value: #speed:) value: 65.  "aCar speed: 65"
+(aCar value: #speed) value.       "aCar speed"
+(aCar value: #stop) value.        "aCar stop"
+
+To try and explain my idea one more time, all I have done is: 1) put the
+methods formerly grouped in the Object into their own closures. 2) Explicitly
+implemented closure look-up. 3) Invoked a closure instead of sending a
+message.
+
+I don't see anything that cannot be done with this scheme that can be done
+with objects. The advantage is that the language is now simpler, having
+removed a construct that, in the final analysis, didn't really contribute
+anything.   The biggest drawback that I can see to this is that users who
+were presented with the change but not the rationale would probably not
+think to make a new closure to take the place of the method grouping that
+would have been put inside the class.
+
+Well, I hope I have explained my idea clearly enough. Let me know what you
+think. I, for one, am estatic; I've finally figured out why I've always
+been uncomfortable with objects and how I can get rid of them! At least,
+until someone bursts my bubble. :)
+
+--Vassili
+
+Vassili Bykov
+BEA Systems, Inc.
+</pre>
+<p >
+
+
+
+
+<hr >
+<p >
+<h3 ><font face="Arial" ><a name="COMMENT1" href="#I_COMMENT1">Comment on the above</a></font></h3>
+<p >
+These two articles show us the duality of objects and closures - they can be mapped onto each other
+and simulated/implemented with each other. Read SICP (Structure and Interpretation of Computer Programs) for a very good introduction
+to all of this.
+<p >
+--Claus Gittinger
+<p >
+
+
+<h3 ><font face="Arial" ><a name="MASTER_AND_STUDENT" href="#I_MASTER_AND_STUDENT">Master and Student</a></font></h3>
+The student excitedly exclaimed to his master,
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;<I>"Master! Closure are more powerful than objects!"</I>
+<BR>to which the master replied,
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;<I>"You fool, objects are more powerful than closures, go away and study"</I>.
+<P>
+Many moons later, the student returns,
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;<I>"Master, you were right, objects are more powerful than closures,"</I>
+<BR>to which the master replied,
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;<I>"You fool, closures are more powerful than objects"</I>.
+
+
+
+
+
+<hr>
+Doc $Revision: 1.6 $ $Date: 2018-02-19 13:12:07 $
+
+</body>
+</html>

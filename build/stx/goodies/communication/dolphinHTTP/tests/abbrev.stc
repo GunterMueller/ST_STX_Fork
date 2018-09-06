@@ -1,0 +1,17 @@
+SptHTTPProxySettingsTest SptHTTPProxySettingsTest stx:goodies/communication/dolphinHTTP/tests 'Dolphin-Spt-HTTP-Tests' 1
+SptHTTPRequestTest SptHTTPRequestTest stx:goodies/communication/dolphinHTTP/tests 'Dolphin-Spt-HTTP-Tests' 1
+SptHTTPTests SptHTTPTests stx:goodies/communication/dolphinHTTP/tests 'Dolphin-Spt-HTTP-Tests' 1
+stx_goodies_communication_dolphinHTTP_tests stx_goodies_communication_dolphinHTTP_tests stx:goodies/communication/dolphinHTTP/tests '* Projects & Packages *' 3
+SptBasicCredentialsTest SptBasicCredentialsTest stx:goodies/communication/dolphinHTTP/tests 'Dolphin-Spt-HTTP-Tests' 1
+SptHTTPChallengeTest SptHTTPChallengeTest stx:goodies/communication/dolphinHTTP/tests 'Dolphin-Spt-HTTP-Tests' 1
+SptHTTPConnectionTest SptHTTPConnectionTest stx:goodies/communication/dolphinHTTP/tests 'Dolphin-Spt-HTTP-Tests' 1
+SptHTTPCookieJarTest SptHTTPCookieJarTest stx:goodies/communication/dolphinHTTP/tests 'Dolphin-Spt-HTTP-Tests' 1
+SptHTTPCookieTest SptHTTPCookieTest stx:goodies/communication/dolphinHTTP/tests 'Dolphin-Spt-HTTP-Tests' 1
+SptHTTPEntityTest SptHTTPEntityTest stx:goodies/communication/dolphinHTTP/tests 'Dolphin-Spt-HTTP-Tests' 1
+SptHTTPHostCacheTest SptHTTPHostCacheTest stx:goodies/communication/dolphinHTTP/tests 'Dolphin-Spt-HTTP-Tests' 1
+SptHTTPResponseTest SptHTTPResponseTest stx:goodies/communication/dolphinHTTP/tests 'Dolphin-Spt-HTTP-Tests' 1
+SptHTTPSessionStateTest SptHTTPSessionStateTest stx:goodies/communication/dolphinHTTP/tests 'Dolphin-Spt-HTTP-Tests' 1
+SptHTTPStatusTest SptHTTPStatusTest stx:goodies/communication/dolphinHTTP/tests 'Dolphin-Spt-HTTP-Tests' 1
+SptHTTPUrlTest SptHTTPUrlTest stx:goodies/communication/dolphinHTTP/tests 'Dolphin-Spt-HTTP-Tests' 1
+SptHTTPUserTest SptHTTPUserTest stx:goodies/communication/dolphinHTTP/tests 'Dolphin-Spt-HTTP-Tests' 1
+SptHTTPProxyTestExept SptHTTPProxyTestExept stx:goodies/communication/dolphinHTTP/tests 'Dolphin-Spt-HTTP-Tests' 1

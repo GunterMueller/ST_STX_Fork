@@ -1,0 +1,37 @@
+; View defaultStyle:#irisBigFont 
+;
+; silicon graphics style, brownish with large fonts
+; a customer style.(for NCD x-terminals)
+;
+; $Header: /cvs/stx/stx/libview/styles/iris_ncd2.style,v 1.3 2002-08-19 16:26:47 cg Exp $
+
+#include 'iris_GB.style'
+
+comment  'Silicon graphics'' iris look alike\brownish, with big fonts (for NCD X-Terminal)' 
+
+#if (Language == #german) or:[Language == #de]
+comment  'An Silicon Graphics Iris angelehnter Stil,\braun, mit großen Zeichen für NCD X-Terminal'
+#endif
+
+#if Screen current hasGreyscales
+viewGrey                        =gbBrown
+#else
+viewGrey                        Color white
+lightColor                      Color grey:50
+#endif
+
+name                            #iris_NCD
+
+cadsoftFontSize                 8
+cadsoftCommentFontSize          8
+cadsoftStepPinFontSize          8
+
+text.font Font family:'courier' size:10
+editField.font Font family:'courier' size:10
+variableFont Font family:'helvetica' size:10
+selection.font Font family:'helvetica' size:10
+label.font Font family:'helvetica' size:10
+menu.font Font family:'helvetica' size:10
+pullDownMenu.font Font family:'helvetica' size:10
+
+requestBoxIconFile 'bitmaps/BigRequest.xbm'

@@ -1,0 +1,6 @@
+*.sth
+objbc
+ntLibInit.c
+*.res
+objvc
+objmingw

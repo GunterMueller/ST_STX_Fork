@@ -1,0 +1,26 @@
+/* XPM */
+static char *tiny_file_characterOrBlockDevice_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 3 1",
+/* colors */
+"a c black",
+"b c white",
+"c c none",
+/* pixels */
+"cccccccccccccccc",
+"cccccccccccccccc",
+"aaaaaaaaaaaaaacc",
+"abbbbbbbbbbbbacc",
+"abbbbbbbbbbbbacc",
+"abaabbaabababacc",
+"ababababbababacc",
+"abababaabababacc",
+"ababababbababacc",
+"abaabbaabbabbacc",
+"abbbbbbbbbbbbacc",
+"abbbbbbbbbbbbacc",
+"aaaaaaaaaaaaaacc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+};

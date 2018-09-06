@@ -1,0 +1,223 @@
+<HEAD>
+<TITLE>Using the New System Browser - Code Generation</TITLE>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="refactorings.html">  <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">    <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="codeCoverage.html"> <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+
+<H2><A NAME="CODE_GENERATION" HREF="TOP.html#I_CODE_GENERATION">Code Generation</A></H2>
+
+A number of code generation operations are supported by the browser.
+These functions are reachable via the classList's, the variableListView's and the methodList's
+"generate"-submenus.
+<P>
+One of the most useful code generator is the
+<A NAME="I_GENERATE_APPLICATION_CODE" HREF="#GENERATE_APPLICATION_CODE"><I>Generate Application Code</I></A> function,
+which, after a new Application subclass has been defined, generates all code that is
+required for an empty application window, a main menu and some initial template code.
+<BR>
+Further application development from this initial code
+is very easy using the Menu- and UIPainter tools.
+<P>
+Notice, that these code generators never overwrite existing code.
+To re-generate a method, it is required to remove any existing method before.
+
+<UL>
+  <LI>Class Menu - Generate:
+  <UL>
+    <LI><A NAME="I_GENERATE_ACCESS_METHODS" HREF="#GENERATE_ACCESS_METHODS">Access Methods</A>
+    <LI><A NAME="I_GENERATE_GETTER_METHODS" HREF="#GENERATE_GETTER_METHODS">Getter Methods</A>
+    <LI><A NAME="I_GENERATE_SETTER_METHODS" HREF="#GENERATE_SETTER_METHODS">Setter Methods</A>
+    <LI><A NAME="I_GENERATE_MULTI_SETTER_METHOD" HREF="#GENERATE_MULTI_SETTER_METHOD">Multi Setter Method</A>
+    <P>
+    <LI><A NAME="I_GENERATE_ACCESS_METHODS_WITH_LAZY_INIT" HREF="#GENERATE_ACCESS_METHODS_WITH_LAZY_INIT">Access Methods with Lazy Initialization</A>
+    <LI><A NAME="I_GENERATE_ACCESS_METHODS_WITH_CHANGE" HREF="#GENERATE_ACCESS_METHODS_WITH_CHANGE">Access Methods with Change Notification</A>
+    <LI><A NAME="I_GENERATE_ACCESS_METHODS_FOR_VALUEHOLDER" HREF="#GENERATE_ACCESS_METHODS_FOR_VALUEHOLDER">Access Methods for ValueHolder</A>
+    <LI><A NAME="I_GENERATE_ACCESS_METHODS_FOR_VALUEHOLDER_WITH_CHANGE" HREF="#GENERATE_ACCESS_METHODS_FOR_VALUEHOLDER_WITH_CHANGE">Access Methods for ValueHolder with Change Notification</A>
+    <P>
+    <LI><A NAME="I_GENERATE_UPDATE_TEMPLATE" HREF="#GENERATE_UPDATE_TEMPLATE">Update Method Template</A>
+    <LI><A NAME="I_GENERATE_VISITOR_METHOD" HREF="#GENERATE_VISITOR_METHOD">Visitor Method</A>
+    <LI><A NAME="I_GENERATE_VISITOR_AND_VISITED" HREF="#GENERATE_VISITOR_AND_VISITED">Visitor and Visited Methods</A>
+    <LI><A NAME="I_GENERATE_CLASSTYPE_TEST" HREF="#GENERATE_CLASSTYPE_TEST">Classtype Test Methods</A>
+    <P>
+    <LI><A NAME="I_GENERATE_DOCUMENTATION_STUBS" HREF="#GENERATE_DOCUMENTATION_STUBS">Documentation Stubs</A>
+    <LI><A NAME="I_GENERATE_INITIALIZED_INSTANCE_CREATION" HREF="#GENERATE_INITIALIZED_INSTANCE_CREATION">Initialized Instance Creation</A>
+    <LI><A NAME="I_GENERATE_APPLICATION_CODE" HREF="#GENERATE_APPLICATION_CODE">Application Code</A>
+    <LI><A NAME="I_GENERATE_SHAREDPOOL_INIT_CODE" HREF="#GENERATE_SHAREDPOOL_INIT_CODE">Sharedpool Initialization</A>
+    <LI><A NAME="I_GENERATE_REQUIRED_PROTOCOL" HREF="#GENERATE_REQUIRED_PROTOCOL">Required Protocol</A>
+  </UL>
+  <P>
+
+  <LI>Variable Menu - Generate:
+  <UL>
+    <LI><A NAME="I_GENERATE_ACCESS_METHODS" HREF="#GENERATE_ACCESS_METHODS">Access Methods</A>
+    <LI><A NAME="I_GENERATE_GETTER_METHODS" HREF="#GENERATE_GETTER_METHODS">Getter Methods</A>
+    <LI><A NAME="I_GENERATE_SETTER_METHODS" HREF="#GENERATE_SETTER_METHODS">Setter Methods</A>
+    <LI><A NAME="I_GENERATE_MULTI_SETTER_METHOD" HREF="#GENERATE_MULTI_SETTER_METHOD">Multi Setter Method</A>
+    <P>
+    <LI><A NAME="I_GENERATE_ACCESS_METHODS_WITH_LAZY_INIT" HREF="#GENERATE_ACCESS_METHODS_WITH_LAZY_INIT">Access Methods with Lazy Initialization</A>
+    <LI><A NAME="I_GENERATE_ACCESS_METHODS_WITH_CHANGE" HREF="#GENERATE_ACCESS_METHODS_WITH_CHANGE">Access Methods with Change Notification</A>
+    <LI><A NAME="I_GENERATE_ACCESS_METHODS_FOR_VALUEHOLDER" HREF="#GENERATE_ACCESS_METHODS_FOR_VALUEHOLDER">Access Methods for ValueHolder</A>
+    <LI><A NAME="I_GENERATE_ACCESS_METHODS_FOR_VALUEHOLDER_WITH_CHANGE" HREF="#GENERATE_ACCESS_METHODS_FOR_VALUEHOLDER_WITH_CHANGE">Access Methods for ValueHolder with Change Notification</A>
+    <P>
+  </UL>
+
+  <LI>Selector Menu - Generate:
+  <UL>
+    <LI><A NAME="I_GENERATE_SUBCLASSRESPONSIBILITY_IN_SUPER" HREF="#GENERATE_SUBCLASSRESPONSIBILITY_IN_SUPER">SubclassResponsibility in Superclass</A>
+    <LI><A NAME="I_GENERATE_SUBCLASSRESPONSIBILITY_HERE" HREF="#GENERATE_SUBCLASSRESPONSIBILITY_HERE">SubclassResponsibility Here</A>
+    <LI><A NAME="I_GENERATE_TEMPLATES_IN_SUBCLASSES" HREF="#GENERATE_TEMPLATES_IN_SUBCLASSES">Templates in Subclasses</A>
+    <LI><A NAME="I_GENERATE_CORRESPONDING_INSTANCE_CREATION" HREF="#GENERATE_CORRESPONDING_INSTANCE_CREATION">Corresponding Instance Creation</A>
+    <LI><A NAME="I_GENERATE_FORWARDER_ON_INSTANCE_SIDE" HREF="#GENERATE_FORWARDER_ON_INSTANCE_SIDE">Forwarding Method on Instance Side</A>
+  </UL>
+</UL>
+
+
+<H3><A NAME="CODE_GENERATION_ATTRIBUTE_ACCESS">Attribute Access</A></H2>
+
+<DL>
+
+<DT><A NAME="GENERATE_ACCESS_METHODS" HREF="#I_GENERATE_ACCESS_METHODS">Access Methods</A>
+<DD>Generates getter/setters for the selected instance/class variable(s).
+<BR>
+Similar to the corresponding
+<A HREF="refactorings.html#REFACTORING.ABSTRACT_VARIABLE">"Abstract Variable Refactoring"</A>,
+but does not rewrite any code which accesses the variable(s).
+<P>
+
+<DT><A NAME="GENERATE_GETTER_METHODS" HREF="#I_GENERATE_GETTER_METHODS">Getter Methods</A>
+<DD>Generates getters for the selected instance/class variable(s).
+<P>
+
+<DT><A NAME="GENERATE_SETTER_METHODS" HREF="#I_GENERATE_SETTER_METHODS">Setter Methods</A>
+<DD>Generates setters for the selected instance/class variable(s).
+<P>
+
+<DT><A NAME="GENERATE_MULTI_SETTER_METHOD" HREF="#I_GENERATE_MULTI_SETTER_METHOD">Multi Setter Method</A>
+<DD>Generates a setter method for the selected instance/class variable(s).
+This method expects multiple arguments and writes all instances variables (useful for initializers).
+<P>
+
+<DT><A NAME="GENERATE_ACCESS_METHODS_WITH_LAZY_INIT" HREF="#I_GENERATE_ACCESS_METHODS_WITH_LAZY_INIT">Access Methods with Lazy Initialization</A>
+<DD>Generates getter/setters for the selected instance/class variable(s).
+<BR>The getter method performs lazy initialization of the intance variable
+<P>
+
+<DT><A NAME="GENERATE_ACCESS_METHODS_WITH_CHANGE" HREF="#I_GENERATE_ACCESS_METHODS_WITH_CHANGE">Access Methods with Change Notification</A>
+<DD>Generates getter/setters for the selected instance/class variable(s).
+<BR>The setter method sends out a change notification to observers (i.e. dependents).
+<P>
+
+<DT><A NAME="GENERATE_ACCESS_METHODS_FOR_VALUEHOLDER" HREF="#I_GENERATE_ACCESS_METHODS_FOR_VALUEHOLDER">Access Methods for ValueHolder</A>
+<DD>Generates getter/setters for the selected instance/class variable(s).
+The actual value is kept in a valueHolder.
+<P>
+
+<DT><A NAME="GENERATE_ACCESS_METHODS_FOR_VALUEHOLDER_WITH_CHANGE" HREF="#I_GENERATE_ACCESS_METHODS_FOR_VALUEHOLDER_WITH_CHANGE">Access Methods for ValueHolder with Change Notification</A>
+<DD>Like above. In addition, the setter sends out a change notification to observers (i.e. dependents)..
+</DL>
+<P>
+
+
+<H3><A NAME="CODE_GENERATION_COMMON_PATTERNS">Common Patterns</A></H2>
+
+<DL>
+<DT><A NAME="GENERATE_UPDATE_TEMPLATE" HREF="#I_GENERATE_UPDATE_TEMPLATE">Update Method Template</A>
+<DD>Generates an empty <CODE>#update:with:from:</CODE> method (Observer entry).
+<P>
+
+<DT><A NAME="GENERATE_VISITOR_METHOD" HREF="#I_GENERATE_VISITOR_METHOD">Visitor Method</A>
+<DD>Generates a visitor entry method (part of visitor pattern).
+<P>
+
+<DT><A NAME="GENERATE_VISITOR_AND_VISITED" HREF="#I_GENERATE_VISITOR_AND_VISITED">Visitor and Visited Methods</A>
+<DD>Generates both visitor and visited methods (full visitor pattern).
+<P>
+
+<DT><A NAME="GENERATE_CLASSTYPE_TEST" HREF="#I_GENERATE_CLASSTYPE_TEST">Classtype Test Methods</A>
+<DD>Generates <CODE>#isXXX</CODE> classType test methods in the selected class and all subclasses.
+(like <CODE>isString</CODE>.)
+</DL>
+<P>
+
+
+<H3><A NAME="CODE_GENERATION_CLASSCODE">Class Code</A></H2>
+
+<DL>
+
+<DT><A NAME="GENERATE_DOCUMENTATION_STUBS" HREF="#I_GENERATE_DOCUMENTATION_STUBS">Documentation Stubs</A>
+<DD>Generates empty documentation methods on the class-side.
+<P>
+
+<DT><A NAME="GENERATE_APPLICATION_CODE" HREF="#I_GENERATE_APPLICATION_CODE">Application Code</A>
+<DD>Generates initial window- and menu- specification methods and also dummy hooks for an application.
+This menu item is enabled if the selected class is a subclass of ApplicationModel.
+<P>
+
+<DT><A NAME="GENERATE_INITIALIZED_INSTANCE_CREATION" HREF="#I_GENERATE_INITIALIZED_INSTANCE_CREATION">Initialized Instance Creation</A>
+<DD>Generates a dummy <CODE>#initialize</CODE> method and a <CODE>#new</CODE>-method on the class side, which invokes this initializer.
+<P>
+
+<DT><A NAME="GENERATE_CORRESPONDING_INSTANCE_CREATION" HREF="#I_GENERATE_CORRESPONDING_INSTANCE_CREATION">Corresponding Instance Creation</A>
+<DD>Generates an instance creation method on the class side, named the same as the selected method,
+which invokes the selected method.
+<P>
+
+<DT><A NAME="GENERATE_SHAREDPOOL_INIT_CODE" HREF="#I_GENERATE_SHAREDPOOL_INIT_CODE">Sharedpool Initialization</A>
+<DD>Generates code to initialize the pool's class-variables.
+</DL>
+<P>
+
+<H3><A NAME="CODE_GENERATION_FRAMEWORKS">Framework Building / Filling</A></H2>
+
+<DL>
+<DT><A NAME="GENERATE_REQUIRED_PROTOCOL" HREF="#I_GENERATE_REQUIRED_PROTOCOL">Required Protocol</A>
+<DD>Generates dummy methods for all those selectors which are declared as <CODE>#subclassResponsibility</CODE> in a
+superclass. Useful to help in implementing the required protocol in a whiteBox framework.
+<P>
+
+
+<DT><A NAME="GENERATE_SUBCLASSRESPONSIBILITY_IN_SUPER" HREF="#I_GENERATE_SUBCLASSRESPONSIBILITY_IN_SUPER">SubclassResponsibility in Superclass</A>
+<DD>Generates a trapping <CODE>#subclassResponsibility</CODE> method in the superclass for the selected method's selector.
+<P>
+
+<DT><A NAME="GENERATE_SUBCLASSRESPONSIBILITY_HERE" HREF="#I_GENERATE_SUBCLASSRESPONSIBILITY_HERE">SubclassResponsibility Here</A>
+<DD>Generates a trapping <CODE>#subclassResponsibility</CODE> method.
+<P>
+
+<DT><A NAME="GENERATE_TEMPLATES_IN_SUBCLASSES" HREF="#I_GENERATE_TEMPLATES_IN_SUBCLASSES">Templates in Subclasses</A>
+<DD>Generates dummy template methods for the selected method's selector in all subclasses.
+<P>
+
+<DT><A NAME="GENERATE_FORWARDER_ON_INSTANCE_SIDE" HREF="#I_GENERATE_FORWARDER_ON_INSTANCE_SIDE">Forwarding Method on Instance Side</A>
+<DD>Generates an instance method, which forwards the selected message to the class side.
+The forwarding method takes the same arguments as the selected class method.
+<BR>
+(See also
+<A HREF="menu.html#METHOD_MENU.MOVE_TO_CLASS_WITH_FORWARDER">"Move to Class with Forwarder"</A>,
+found in the selector menu, which moves a method to another class with forwarding).
+<P>
+
+</DL>
+<P>
+
+
+<HR>
+<A HREF="warn.html">Next: A Warning</A>
+<HR>
+
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif" ALT="[stx logo]">
+Copyright &copy; 2000 eXept Software AG, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+<HR>
+Doc $Revision: 1.9 $ $Date: 2012-10-20 17:55:42 $
+
+</BODY>
+</HTML>

@@ -1,0 +1,185 @@
+Keyboard ShortCuts reference:
+=============================
+(see also the HTML online documentation, or the Launcher's "Settings-Keyboard" dialog).
+
+For Smalltalkers, the most useful key first:
+============================================
+    Pause/Break             is the UserInterrupt key: "interrupt & enter debugger"
+    CTRL-. and also CMD-.   do the same, for all those used to VW or Squeak
+
+Attention: Recent Changes:
+F2      Was changed from CodeCompletion to Rename (for win32 compatibility);
+	If you don't like that, see & edit the "keyboard.rc" file.
+	CTRL-SPACE still works for completion.
+
+ALT-SPACE snippet insertion has been added (try typing <t><s><ALT-SPACE>)
+
+
+
+Notice1:
+    for most systems: the CMD-key is mapped to the left ALT-key.
+    This includes the Mac, where currently the Apple-CMD key is used
+    by Xquartz (which is a little annoying at times).
+
+Notice2:
+    case matters; CMD-a is different from CMD-A  (CMD-Shift-a)
+    case matters; Ctrl-a is different from Ctrl-A  (Ctrl-Shift-a)
+
+Notice3:
+    the settings are defined during startup, by reading the
+    file: "keyboard.rc".
+    In our lab, we are working across all kinds of systems (windows,
+    osx, linux), but always in Smalltalk. So the keyboard settings
+    are set to be the same across them. Therefore, some keys behave
+    different from the native OS's standard.
+    If you don't like the settings, change them!
+
+Notice4:
+    You can add your own keyboard macros and/or change the shortKey
+    mapping, by modifying the file "keyboard.rc" (make a save copy first).
+    The either restart ST/X, or file-in the modified one.
+
+Default Function Key Mapping (see "keyboard.rc" for details):
+=============================================================
+
+Unix      Windows   OSX         Function
+----------------------------------------------------------------------------------------
+CMD-a     CTRL-s    CTRL-s      Accept / Save (compile or save)
+CMD-b     CTRL-b    CTRL-b      Backward search (selection or previous search pattern)
+CMD-c     CTRL-c    CTRL-c      Copy
+CMD-d     CTRL-d    CTRL-d      DoIt (evaluate selection)
+
+CMD-f                           Forward search (selection or previous search pattern)
+CMD-g     CTRL-g    CTRL-g      Goto lineNumber
+CMD-h     F1                    Help (= explain)
+CMD-i     CTRL-q    CTRL-q      InspectIt
+CMD-m     CMD-m                 select up to Matching parenthesis
+CMD-p     CTRL-p    CTRL-p      PrintIt (evaluate selection and paste result)
+CMD-r     CTRL-r    CTRL-r      Replace
+CMD-s     CTRL-f    CTRL-f      Search (open search dialog)
+CMD-v     CTRL-v    CTRL-v      Paste
+CMD-w     CMD-w                 Select Word under cursor
+CMD-x     CTRL-x    CTRL-x      Cut
+CMD-z     CMD-z                 PopUpMenu
+
+CTRL-z    CTRL-z    CTRL-z      Undo
+CTRL-y    CTRL-y    CTRL-y      Redo
+
+CMD-A     CTRL-a    CTRL-a      Select All
+CMD-B     CTRL-B    CTRL-B      BrowseIt
+CMD-L     CTRL-F2               Enter/leave Learn-macro mode (CMD-M to replayMacro)
+CMD-M     CMD-F2                Execute keyboard Macro (CMD-L to learn)
+CMD-S     CMD-S                 Save as (a file)
+
+CMD-Tab                         Focus next (unless eaten by windowManager)
+CMD-Cursor                      Focus next/previous (unless eaten by windowManager)
+
+CMD-.     CMD-.      CTRL-.     Interrupt - enter debugger
+BREAK     BREAK                 Interrupt - enter debugger
+CTRL-BRK  CTRL-BRK              Interrupt - abort operation. do not enter debugger
+CMD-Y                           Interrupt - abort operation. do not enter debugger
+
+CTRL-Tab  CTRL-Tab   CTRL-Tab   Backtab
+Shift-Tab                       Non-inserting tab (cursor movement only)
+Shift-Return                    Non-inserting return (cursor movement only)
+
+HOME      HOME                  Goto begin of line
+POS1      POS1                  Goto begin of line
+END       END                   Goto end of line
+
+Ctrl-HOME Ctrl-HOME             Goto begin of page/text (press twice for begin of text)
+Ctrl-POS1 Ctrl-POS1             Goto begin of page/text (press twice for begin of text)
+Ctrl-END  Ctrl-END              Goto end of page/text (press twice for end of text)
+CTRL-g    CTRL-g     CTRL-g     Goto line (opens a dialog for the line-number)
+
+Shift-HOME Shift-HOME           Select from begin of line
+Shift-POS1 Shift-POS1           Select from begin of line
+Shift-END  Shift-END            Select to end of line
+
+CTRL-W    CTRL-W     CTRL-W     Forward to end-of this / begin of next word
+CTRL-w    CTRL-w     CTRL-w     Forward to begin next word
+CTRL-l    CTRL-l     CTRL-l     Goto line
+
+CTRL-A    CTRL-A     CTRL-A     Select from begin of text
+CTRL-E    CTRL-E     CTRL-E     Select to end of text
+CTRL-X    CTRL-X                Flush (trow away) typeahead input
+
+CTRL-2    CTRL-2     CTRL-2     Enclose the selected text in parenthesis / remove parenthesis
+CTRL-9    CTRL-9     CTRL-9     Enclose the selected text in parenthesis / remove parenthesis
+
+CTRL-SPACE                      CodeCompletion (in the browser only)
+ALT-SPACE                       Insert Abbreviation (try <ALT-SPACE> behind the string 'it')
+
+CMD--                           Open SpecialCharacterWindow (CMD-<minus>)
+
+F2         F2        F2         Rename (used to be: CodeCompletion)
+F3         F3        F3         Comment selection
+F4         F4        F4         Uncomment Selection
+F6         F6        F6         Selection to Lowercase/Uppercase/UpperCaseFirst (toggle through)
+CTRL-F6    CTRL-F6              Selection to UpperCase
+F8         F8        F8         Again (repeat last cut/replace)
+F9         F9        F9         Undent by 4
+F10        F10       F10        Indent by 4
+F11        F11       F11        Undent by 1
+F12        F12       F12        Indent by 1
+
+PageUp     PageUp               Backward one page
+PageDown   PageDown             Forward one page
+
+Insert     Insert               Paste
+Delete     Delete               Delete the selection
+Shift-Delete                    Delete followup spaces up to the next non-space
+
+
+
+Special (national) Characters:
+=============================
+
+There is a virtual keyboard found on the popUpMenu, under "others"-"others"-"special keys".
+Keep this view open, beside your editor and click on a character to insert it.
+
+
+Unix only:
+==========
+The right CTRL-key is used as a Compose key
+(this can be changed in the "keyboard.rc" file).
+Composed national characters are entered as a 3-character sequence:
+    COMPOSE key1 key2
+press them in sequence - not at the same.
+For example, the french e-accentGrave is entered as:
+    COMPOSE e `
+and the german ä (umlaut-a) is entered as:
+    COMPOSE a "
+
+A full list is found in the Method "WindowSensor initializeComposeKeyTable".
+
+Alternatively, special characters can be copy/pasted from the following list:
+(Notice: you can also use a font-display via the text-editors
+    'more'-'tools'-'specialCharacters'
+ menu to insert any special character)
+
+    acute:
+	Á É Í Ó Ú Ý     á é í ó ú ý    [ Compose <char> ' ]
+    grave:
+	À È Ì Ò Ù       à è ì ò ù      [ Compose <char> ` ]
+    circumflex:
+	Â Ê Î Ô Û       â ê î ô û      [ Compose <char> ^ ]
+    tilde:
+	Ã Õ Ñ           ã õ ñ          [ Compose <char> ~ ]
+    dieresis:
+	Ä Ë Ï Ö Ü       ä ë ï ö ü ÿ    [ Compose <char> " ]
+    slash:
+	Ø ø                            [ Compose <char> / ]
+    ring:
+	Å å                            [ Compose <char> * ]
+    cedille:
+	Ç ç                            [ Compose <char> , ]
+    ligatures:
+	ß Æ æ                          [ Compose <char1> <char1> ]
+    others:
+	Ð Þ þ ð × ÷ ± µ ¬ « » ° º ¹ ² ³ ¼ ½ ¾
+    misc:
+	[ ] ~ @ { } | \ © ®
+
+---------------------------------------------------------------------------------------------------------
+This Documents Version: $Revision$

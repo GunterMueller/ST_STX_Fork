@@ -1,0 +1,99 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Help - HTTPServer - Standalone WebServer Setup</Title>
+</HEAD>
+<Body>
+
+<A HREF="index.html">Back to HTTPServer Main Index</A>
+<P>
+
+<H2>Standalone WebServer Setup</H2>
+
+<H2><A NAME="INDEX">Help index</A></H2>
+
+<UL>
+<LI><A HREF="#BUILDING">Building</A>
+<LI><A HREF="#STARTUP">Startup and Configuration</A>
+<LI><A HREF="#MULTIPLE">Serving Multiple Ports</A>
+</UL>
+
+<H2><A HREF="#INDEX" NAME="BUILDING">Building</A></H2>
+
+To create (compile) the
+standalone webServer application,
+type:
+<CODE><PRE>
+    make
+</PRE></CODE>
+
+in the "projects/webServer" directory.
+This compiles all required libraries and generates a standAlone executable
+named "webServer".
+
+
+
+<H2><A HREF="#INDEX" NAME="STARTUP">Startup and Configuration</A></H2>
+
+Then start a server with the command:
+<CODE><PRE>
+    webServer
+</PRE></CODE>
+to get a list of command line argument options,
+type:
+<CODE><PRE>
+    webServer --help
+</PRE></CODE>
+<P>
+    The webServer can read its configuration from a settings file (XML format),
+    typically, this is named "webServerSettings.xml".
+
+    The easiest way to create such a file is to configure a server in the (non-standAlone Smalltalk)
+    settings dialog  and save it.
+<BR>
+    Then start the standalone server with:
+<CODE><PRE>
+    webServer --useFile filename
+</PRE></CODE>
+
+    Further setup can be done via the maintenance service (if it was configured).
+    Notice, that for security reasons, the maintenance service can only be invoked from a
+    local machine unless it was given a realm in the authentication settings.
+
+<P>
+If the standAlone webServer is started without a settings file,
+it will include some default services (including the maintenance service)
+and serve the default port (8080).
+<BR>
+Further setup can (must) then be done via a local browser.
+
+
+<H2><A HREF="#INDEX" NAME="MULTIPLE">Serving Multiple Ports</A></H2>
+
+The webServer is capable of serving multiple ports,
+when started with:
+<CODE><PRE>
+    webServer --useFile filename1 , --useFile filename2 , ... , --useFile filenameN
+</PRE></CODE>
+each fileName provides the setup for a port (which is defined in the config file).
+<P>
+It is also possible to overwrite the port as specified in the settings file,
+by adding the command line argument "--port portNr", as in:
+<CODE><PRE>
+    webServer --useFile filename1 --port 8081 , --useFile filename1 -port 8082
+</PRE></CODE>
+Notice that the ","-character separates definitions for individual ports.
+
+
+<HR>
+<P>
+<P>
+Copyright &copy; 2003 eXept Software AG, all rights reserved
+<P>
+<P>
+
+<HR>
+Doc $Revision: 1.4 $ $Date: 1997/08/07 15:06:09 $
+
+</BODY>
+</HTML>

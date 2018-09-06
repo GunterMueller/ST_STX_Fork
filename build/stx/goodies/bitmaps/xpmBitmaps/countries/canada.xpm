@@ -1,0 +1,29 @@
+/* XPM */
+static char *canada_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 20 2 1",
+/* colors */
+"b c white",
+"a c #ff0000",
+/* pixels */
+"aaaaaaaabbbbbbbbbbbbbbbbaaaaaaaa",
+"aaaaaaaabbbbbbbbbbbbbbbbaaaaaaaa",
+"aaaaaaaabbbbbbbbbbbbbbbbaaaaaaaa",
+"aaaaaaaabbbbbbbbbbbbbbbbaaaaaaaa",
+"aaaaaaaabbbbaababaabbbbbaaaaaaaa",
+"aaaaaaaabbbbaaaaaaabbbbbaaaaaaaa",
+"aaaaaaaabbbbbaaaaabbbbbbaaaaaaaa",
+"aaaaaaaabbbbbaaaaabbbbbbaaaaaaaa",
+"aaaaaaaabbbbabbabbabbbbbaaaaaaaa",
+"aaaaaaaabbbaaababaaabbbbaaaaaaaa",
+"aaaaaaaabbaaaababaaaabbbaaaaaaaa",
+"aaaaaaaabaaaaababaaaaabbaaaaaaaa",
+"aaaaaaaabbbbaaaaaaabbbbbaaaaaaaa",
+"aaaaaaaabbbbabbabbabbbbbaaaaaaaa",
+"aaaaaaaabbbbbbbabbbbbbbbaaaaaaaa",
+"aaaaaaaabbbbbbbabbbbbbbbaaaaaaaa",
+"aaaaaaaabbbbbbbabbbbbbbbaaaaaaaa",
+"aaaaaaaabbbbbbbbbbbbbbbbaaaaaaaa",
+"aaaaaaaabbbbbbbbbbbbbbbbaaaaaaaa",
+"aaaaaaaabbbbbbbbbbbbbbbbaaaaaaaa",
+};

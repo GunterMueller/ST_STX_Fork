@@ -1,0 +1,49 @@
+#!/bin/bash 
+# Simple Unix shell script to build Mercurial using Jenkins CI
+# Designed to run under Cygwin as well. 
+
+PROJECT="Mercurial Support"
+
+
+m4_include(common.sh.in)
+
+# Checkout
+function checkout {
+    # Checkout stx
+    if [ ! -d stx ]; then
+      if ! cvs co stx; then
+        error "CVS: Cannot checkout stx";
+      fi
+    #else
+    #  (cd stx && cvs update -d)
+    fi
+
+    # Checkout stx:libscm
+    repo="https://bitbucket.org/janvrany/stx-libscm"
+    if [ ! -d stx/libscm ]; then
+        hg clone "$repo" stx/libscm || error "HG: cannot clone stx:libscm"
+    else
+        hg --cwd stx/libscm pull "$repo" || error "HG: cannot pull stx:libscm"
+        hg --cwd stx/libscm update || error "HG: cannot update stx:libscm"
+    fi
+}
+
+
+# Compile
+function compile {
+    TARGETS1="stx stx/libscm/common stx/libscm/mercurial stx/librun"
+    for target in $TARGETS1; do
+      if ! (cd "$target" && mk); then
+        echo "ERROR:  cannot $MAKE in $target"
+        exit 3
+      fi
+    done
+}
+
+function runtests {
+    sunit "stx:libscm/mercurial"
+}
+
+
+# Now, call main
+main $1 $2 $3

@@ -1,0 +1,67 @@
+<html>
+<head>
+<title>Refactoring: 
+Replace Parameter with Explicit Methods</title>
+</head>
+<body>
+<H1>
+Replace Parameter with Explicit Methods</H1>
+<P>
+<I>
+<CENTER>
+
+You have a method that runs different code depending on the values of an enumerated parameter.</CENTER>
+</I>
+</P>
+<P>
+<B>
+<CENTER>
+
+Create a separate method for each value of the parameter.</CENTER>
+</B>
+</P>
+
+<PRE>
+	void setValue (String name, int value) {
+		if (name.equals("height")) {
+			_height = value;
+			return;
+		}
+		if (name.equals("width")) {
+			_width = value;
+			return;
+		}
+		Assert.shouldNeverReachHere();
+	}
+</PRE>
+<P>
+<CENTER>
+<IMG SRC="arrow.gif"></CENTER>
+</P>
+<PRE>
+	void setHeight(int arg) {
+		_height = arg;
+	}
+	void setWidth (int arg) {
+		_width = arg;
+	}
+</PRE>
+
+
+
+<P>For more information see page 
+	<font color="#FF0000">285</font>
+	of <I>Refactoring</I>
+</P>
+
+<P>
+</P>
+<P>
+</P>
+<P>
+<CENTER>
+<A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A>
+</CENTER>
+</P>
+</body>
+</html>

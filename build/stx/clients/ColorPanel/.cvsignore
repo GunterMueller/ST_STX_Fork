@@ -1,0 +1,4 @@
+makefile
+*.H
+.listOfSTfiles
+classList.stc

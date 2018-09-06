@@ -1,0 +1,1054 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Basic classes - Collection classes</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="TOP.html#I_COLLECTIONS">     <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="streams.html"> <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Collection classes</H1>
+<P>
+Collections are containers for other objects.
+Smalltalk provides a rich set of collection classes ready to be used.
+<P>
+The protocol offered by these collections is very orthogonal, making
+good use of polymorphism. For example, most collections respond to
+messages
+like <CODE>#at:</CODE>, <CODE>#includes:</CODE> or <CODE>#do:</CODE>,
+even though the implementations are totally different and the performance
+may vary greatly between different collections and access methods
+<A HREF="#FN1" NAME="BACK_FN1">(*)</A>.
+<P>
+To get a rough idea of the common protocol,
+take a look at the
+<CODE>Collection</CODE> and <CODE>SequenceableCollection</CODE> classes.
+<CODE>Collection</CODE>  is the superclass of all collections,
+and <CODE>SequenceableCollection</CODE> is inherited by all collections which use
+a numeric index (among others: <CODE>Array</CODE>, <CODE>String</CODE> and <CODE>OrderedCollection</CODE>).
+<BR>
+These implement most of the common operations,
+so knowledge about those classes' protocol is highly recommended.
+
+<P>
+The most useful and most used collection classes are:
+<UL>
+<LI> <A HREF="#ARRAY" NAME="I_ARRAY">Array</A>
+<LI> <A HREF="#STRING" NAME="I_STRING">String</A>
+<LI> <A HREF="#SYMBOL" NAME="I_SYMBOL">Symbol</A>
+<LI> <A HREF="#SET" NAME="I_SET">Set</A> and
+     <A HREF="#SET">IdentitySet</A>
+<LI> <A HREF="#DICTIONARY" NAME="I_DICTIONARY">Dictionary</A> and
+     <A HREF="#DICTIONARY">IdentityDictionary</A>
+<LI> <A HREF="#ORDCOLL" NAME="I_ORDCOLL">OrderedCollection </A>
+<LI> <A HREF="#SORTCOLL" NAME="I_SORTCOLL">SortedCollection </A>
+</UL>
+<P>
+less frequently used collections:
+<UL>
+<!-- <LI> <A HREF="#TWOBYTESTRING" NAME="I_TWOBYTESTRING">TwoByteString</A> -->
+<LI> <A HREF="#BYTEARRAY" NAME="I_BYTEARRAY">ByteArray</A>
+<LI> <A HREF="#FLOATARRAY" NAME="I_FLOATARRAY">FloatArray and DoubleArray</A>
+<LI> <A HREF="#INTERVAL" NAME="I_INTERVAL">Interval</A>
+<LI> <A HREF="#QUEUE" NAME="I_QUEUE">Queue and SharedQueue</A>
+</UL>
+<P>
+seldom used or highly specialized collections:
+<UL>
+<LI> <A HREF="#LINKEDLIST" NAME="I_LINKEDLIST">LinkedList</A>
+<LI> <A HREF="#WEAKARRAY" NAME="I_WEAKARRAY">WeakArray, WeakIdentitySet and WeakIdentityDictionary</A>
+<LI> <A HREF="#REGISTRY" NAME="I_REGISTRY">Registry and HandleRegistry</A>
+<LI> <A HREF="#CACHEDICT" NAME="I_CACHEDICT">CacheDictionary and ResourcePack</A>
+<LI> <A HREF="#MAPPEDCOLL" NAME="I_MAPPEDCOLL">MappedCollection</A>
+</UL>
+
+The above lists only a small subset of the collection classes as provided with the system;
+<BR>
+Use the SystemBrowser to see what else is available,
+to have a more detailed look into the implementation
+and also to see the full set of operations offered by these classes.
+
+
+
+
+<H2><A HREF="#I_ARRAY" NAME="ARRAY">Array</A></H2>
+
+Arrays store references to other objects, and use a numeric key
+(1 .. ) to access these elements. The elements can be of any type.
+The size of an array is assumed to be constant. (It is possible to
+change the size, but this is a relatively expensive i.e. slow operation.)
+<BR>
+When accessing elements in arrays, the index is always checked for being
+within the bounds - you will get an indexBounds exception if you try to access
+an element using an illegal index
+<BR>
+(this is not a special behavior of arrays - instead,
+ it is true for any indexed reference in Smalltalk).
+<P>
+The typical uses of arrays are:
+<P>
+<UL>
+<LI> creation:
+<CODE><PRE>
+    <VAR>anArray</VAR> := Array new:<VAR>size</VAR>
+</PRE></CODE>
+
+<LI> creation (from an existing collection):
+<CODE><PRE>
+    <VAR>anArray</VAR> := <VAR>someCollection</VAR> asArray
+</PRE></CODE>
+
+<LI> creation (from element expressions; notice the separating periods):
+<CODE><PRE>
+    { <VAR>expr1</VAR> . <VAR>expr2</VAR> ... <VAR>exprN</VAR> }
+</PRE></CODE>
+
+<LI> asking for its size:
+<CODE><PRE>
+    <VAR>theSize</VAR> := <VAR>anArray</VAR> size
+</PRE></CODE>
+
+<LI> storing an element:
+<CODE><PRE>
+    <VAR>anArray</VAR> at:<VAR>index</VAR> put:<VAR>anObject</VAR>
+</PRE></CODE>
+
+<LI> retrieving an element:
+<CODE><PRE>
+    <VAR>element</VAR> := <VAR>anArray</VAR> at:<VAR>index</VAR>
+</PRE></CODE>
+
+<LI> inclusion test (i.e. searching for an element):
+<CODE><PRE>
+    <VAR>anArray</VAR> includes:<VAR>anObject</VAR>
+</PRE></CODE>
+
+<LI> searching for an element and returning the index:
+<CODE><PRE>
+    <VAR>anArray</VAR> indexOf:<VAR>anObject</VAR>
+</PRE></CODE>
+
+<LI> 'looping' over an array:
+<CODE><PRE>
+    <VAR>anArray</VAR> do:[:<VAR>element</VAR> | ... do something with element ...]
+</PRE></CODE>
+</UL>
+The Smalltalk language allows array constants (so called
+"<CITE>Array literals</CITE>"), the syntax is:
+<CODE><PRE>
+    #( element1 element2 ... elementN )
+</PRE></CODE>
+where the individual elements must be literals (numbers, characters,
+strings or other arrays).
+Nested literal Arrays can be written as:
+<CODE><PRE>
+    #(
+	(element1.1 element1.2 ... element1.M)
+	(element2.1 element2.2 ... element2.M)
+	...
+	(elementN.1 elementN.2 ... elementN.M)
+     )
+</PRE></CODE>
+Notice, the above is an <CITE>Array of 3 Arrays</CITE>. Not to confuse
+with an array containing 9 elements (which you get, if the inner parenthesises
+are ommited).
+<P>
+<CITE>Smalltalk/X</CITE> also allows the objects <CODE>true</CODE>,
+<CODE>false</CODE> and <CODE>nil</CODE> to be treated like constants in
+literal arrays. This is NOT compatible with some older Smalltalk implementations (but is now part of the Ansi standard),
+so care should be taken if that code is to be ported to other systems later.
+<BR>
+For example,
+<CODE><PRE>
+    #( nil 1 'foo' true #true )
+</PRE></CODE>
+represents a 5-element array literal consisting of <CODE>nil</CODE>,
+the integer <CODE>1</CODE>, the string <CODE>'foo'</CODE>, the boolean
+<CODE>true</CODE> and the <STRONG>symbol</STRONG> <CODE>#true</CODE>.
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of Array" ACTION="html:HTMLDocGenerator htmlDocOf:Array backRef:'collections.html'">
+"<CODE>Array's class description</CODE></A>".
+<P>
+In practice, arrays are very very seldom used except as literal constants "#( ... )".
+<BR>
+Beginners, especially with a C/C++ background, often tend to overuse arrays - please look at the
+description of <A HREF="#ORDCOLL">OrderedCollection</A>,
+which behaves much like arrays do,
+but offer functionality for growing and shrinking and are usually a better
+choice. Also, for searching, counting, mapping etc. please use Set and Dictionary.
+
+
+
+
+<H2><A HREF="#I_STRING" NAME="STRING">String</A></H2>
+
+Strings are special arrays, which are tuned for storage of characters.
+(actually, they only allow storing characters - an error is reported,
+if you try to store something else into it).
+<BR>
+They provide the same basic protocol as arrays, but offer many more
+string specific operations. For example, pattern matching, substring
+searching, padding, upper/lowercase translation and others.
+<P>
+Depending on the number of bits which are required to store a character,
+strings use a single- or double-byte storage scheme.
+Unicode is used as internal encoding.
+However, various converters assist in transcoding
+to/from different coding schemes used with fonts or in files.
+
+<P>
+Typical operations on strings are:
+<P>
+<UL>
+
+<LI>asking for its size:
+<CODE><PRE>
+    <VAR>theSize</VAR> := <VAR>aString</VAR> size
+</PRE></CODE>
+
+<LI>storing an element (destructive):
+<CODE><PRE>
+    <VAR>aString</VAR> at:<VAR>index</VAR> put:<VAR>someCharacter</VAR>
+</PRE></CODE>
+
+<LI>retrieving an element:
+<CODE><PRE>
+    <VAR>element</VAR> := <VAR>aString</VAR> at:<VAR>index</VAR>
+</PRE></CODE>
+
+<LI>non-destructive replacement:
+<CODE><PRE>
+    <VAR>newString</VAR> := <VAR>aString</VAR> copyReplaceString:<VAR>string1</VAR> withString:<VAR>string2</VAR>
+    <VAR>newString</VAR> := <VAR>aString</VAR> copyReplace:<VAR>character1</VAR> with:<VAR>character2</VAR>
+    <VAR>newString</VAR> := <VAR>aString</VAR> copyReplaceAll:<VAR>character1</VAR> with:<VAR>character2</VAR>
+</PRE></CODE>
+
+
+<LI>destructive replacement:
+<CODE><PRE>
+    <VAR>aString</VAR> replaceFrom:<VAR>index1</VAR> to:<VAR>index2</VAR> with:<VAR>otherCollection</VAR> startingAt:<VAR>startIndex</VAR>
+</PRE></CODE>
+
+
+<LI>concatenating and copying strings (these create new strings):
+<CODE><PRE>
+    <VAR>newString</VAR> := <VAR>string1</VAR> , <VAR>string2</VAR>
+    <VAR>newString</VAR> := <VAR>aString</VAR> copyFrom:<VAR>index1</VAR> to:<VAR>index2</VAR>
+    <VAR>newString</VAR> := <VAR>aString</VAR> copyFrom:<VAR>index1</VAR>
+    <VAR>newString</VAR> := <VAR>aString</VAR> copyTo:<VAR>index1</VAR>
+    <VAR>newString</VAR> := <VAR>aString</VAR> contractTo:<VAR>size</VAR>
+</PRE></CODE>
+
+<LI>outputting to the Transcript (not string methods, but often needed):
+<CODE><PRE>
+    Transcript show:<VAR>aString</VAR>
+    Transcript showCR:<VAR>aString</VAR>
+</PRE></CODE>
+
+<LI>outputting to the standard output (for debugging):
+<CODE><PRE>
+    <VAR>aString</VAR> print
+    <VAR>aString</VAR> printCR
+</PRE></CODE>
+
+<LI>converting (these create new strings):
+<CODE><PRE>
+    <VAR>newString</VAR> := <VAR>aString</VAR> withoutSeparators
+    <VAR>newString</VAR> := <VAR>aString</VAR> withoutSpaces
+    <VAR>newString</VAR> := <VAR>aString</VAR> withoutLeadingSpaces
+    <VAR>newString</VAR> := <VAR>aString</VAR> withoutTrailingSpaces
+    <VAR>newString</VAR> := <VAR>aString</VAR> asUppercase
+    <VAR>newString</VAR> := <VAR>aString</VAR> asUppercaseFirst
+</PRE></CODE>
+
+<LI>padding (these create new strings):
+<CODE><PRE>
+    <VAR>newString</VAR> := <VAR>someString</VAR> leftPaddedTo:<VAR>size</VAR>
+    <VAR>newString</VAR> := <VAR>someString</VAR> paddedTo:<VAR>size</VAR>
+    <VAR>newString</VAR> := <VAR>someString</VAR> centerPaddedTo:<VAR>size</VAR>
+    <VAR>newString</VAR> := <VAR>someString</VAR> decimalPaddedTo:<VAR>size</VAR>
+</PRE></CODE>
+
+<LI>searching:
+<CODE><PRE>
+    <VAR>index</VAR> := <VAR>aString</VAR> indexOf:<VAR>aCharacter</VAR> startingAt:<VAR>startIndex</VAR>
+    <VAR>index</VAR> := <VAR>aString</VAR> indexOfAny:<VAR>aCharacterCollection</VAR> startingAt:<VAR>startIndex</VAR>
+    <VAR>index</VAR> := <VAR>aString</VAR> indexOfSeparatorStartingAt:<VAR>startIndex</VAR>
+    <VAR>index</VAR> := <VAR>aString</VAR> indexOfNonSeparatorStartingAt:<VAR>startIndex</VAR>
+    <VAR>index</VAR> := <VAR>aString</VAR> indexOfSubCollection:<VAR>subString</VAR> startingAt:<VAR>startIndex</VAR>
+    <VAR>aString</VAR> includes:<VAR>character</VAR>
+    <VAR>aString</VAR> includesString:<VAR>subString</VAR>
+    <VAR>aString</VAR> startsWith: <VAR>anotherString</VAR>
+    <VAR>aString</VAR> endsWith: <VAR>anotherString</VAR>
+</PRE></CODE>
+
+<LI>regular expression pattern matching (GLOB regex):
+<CODE><PRE>
+    <VAR>aPatternString</VAR> match:<VAR>someString</VAR>
+    <VAR>index</VAR> := <VAR>someString</VAR> findMatchString:<VAR>aPatternString</VAR> startingAt:<VAR>index</VAR>
+</PRE></CODE>
+
+<LI>regular expression pattern matching (full regex):
+<CODE><PRE>
+    <VAR>aPatternString</VAR> matchesRegex:<VAR>someString</VAR>
+</PRE></CODE>
+
+<LI>taking apart:
+<CODE><PRE>
+    <VAR>words</VAR> := <VAR>aString</VAR> asCollectionOfWords
+    <VAR>words</VAR> := <VAR>aString</VAR> asCollectionOfLines
+    <VAR>parts</VAR> := <VAR>aString</VAR> asCollectionOfSubstringsSeparatedBy:<VAR>aCharacter</VAR>
+    <VAR>parts</VAR> := <VAR>aString</VAR> asCollectionOfSubstringsSeparatedByAny:<VAR>sepCharacters</VAR>
+    <VAR>parts</VAR> := <VAR>aString</VAR> asCollectionOfSubstringsSeparatedByAll:<VAR>aString</VAR>
+</PRE></CODE>
+
+<LI>converting:
+<CODE><PRE>
+    <VAR>filename</VAR> := <VAR>aString</VAR> asFilename
+    <VAR>number</VAR> := <VAR>aString</VAR> asNumber
+    <VAR>symbol</VAR> := <VAR>aString</VAR> asSymbol
+</PRE></CODE>
+
+<LI>testing:
+<CODE><PRE>
+    <VAR>aString</VAR> isAlphaNumeric
+    <VAR>aString</VAR> isNumeric
+</PRE></CODE>
+
+<LI>special:
+<CODE><PRE>
+    <VAR>string</VAR> := <VAR>aString</VAR> asSoundexCode
+    <VAR>number</VAR> := <VAR>aString</VAR> spellAgainst: <VAR>anotherString</VAR>
+    <VAR>number</VAR> := <VAR>aString</VAR> levenshteinTo: <VAR>anotherString</VAR>
+</PRE></CODE>
+
+</UL>
+<P>
+Constant strings (<VAR>string literals</VAR>) are entered by enclosing the characters in single quotes
+(<CODE>'</CODE>). Single quotes within string constants are to be doubled.
+String literals can cross line boundaries; in this case, the newline character
+is part of the string.
+<BR>
+Examples:
+<CODE><PRE>
+    'a normal string constant'
+
+    'a string constant with embedded ''quotes'''
+
+    'a string constant
+     with mutliple
+     lines'
+</PRE></CODE>
+Currently, there exists no standard on how non printable characters
+are to be represented in strings via escape sequences.
+For embedded newline characters,
+<CITE>Smalltalk-80</CITE> provides the <CODE>#withCRs</CODE> method,
+<CITE>VisualAge</CITE> calls this <CODE>#addLineDelimiters</CODE>.
+<BR>
+Both are supported by <CITE>ST/X</CITE> and convert embedded '\' (backslash)
+characters to the newLine character, as in:
+<CODE><PRE>
+    'a string\with newlines\' withCRs
+</PRE></CODE>
+In addition, the (non standard) method <CODE>#withEscapes</CODE> converts
+embedded C-language escape sequences:
+<CODE><PRE>
+    'a string\n\t\twith newline and tabs' withEscapes
+</PRE></CODE>
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in the class documentation of
+<A HREF="../../misc/onlyInSTX2.html"  INFO="show class documentation of String" ACTION="html:HTMLDocGenerator htmlDocOf:String backRef:'collections.html'">
+"<CODE>String</CODE>"</A>.
+<BR>
+and (highly recommended) especially in its superclass
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of CharacterArray" ACTION="html:HTMLDocGenerator htmlDocOf:CharacterArray backRef:'collections.html'">
+"<CODE>CharacterArray</CODE></A>".
+This is where most of the functionality of <CODE>String</CODE>,
+<CODE>TwoByteString</CODE> and <CODE>Unicode16String</CODE> is actually implemented.
+
+<BR>
+
+
+
+<H2><A HREF="#I_SYMBOL" NAME="SYMBOL">Symbol</A></H2>
+
+Symbols are much like strings, with the exception that the system keeps track of
+all existing symbols and will make certain that two symbols are identical,
+if they contain the same characters.
+<BR>
+In other words: if the system is asked to
+create a symbol from some string, it will search the existing symbols first for
+an already existing one with the same characters. If its found, that existing object
+is returned. If not found, a new symbol is created and entered into this table.
+<P>
+Therefore, symbols can be compared using identity compare (==), which is much faster
+than value compare (=). Identity compare is technically implemented as a pointer
+compare, while value compare on strings is implementated by comparing each element
+of the two objects.
+<P>
+Symbols are internally used by the system to assign names to class objects
+(in the Smalltalk global table), and to assign method names to method objects
+(in each classes method/selector association). Also, symbols are perfect to use
+as keys in IdentityDictionaries.
+<P>
+Since symbols are handled just as fast as
+integers, they are also perfect for flags,
+states (state machines) or other
+variables which are represented by enumeration types or define-constants in
+other programming languages.
+<P>
+Symbols do <B>not</B> allow any change of their character elements; the <CODE>at:put:</CODE>
+method will raise an error. Other than that, all read-accesses are the same as for
+strings (actually, the Symbol class inherits all those methods from the String class).
+<P>
+Consider symbols as being some kind of <CITE>readonly</CITE> string.
+<P>
+Symbols can be created (at runtime) from a string with:
+<CODE><PRE>
+    sym := aString asSymbol
+</PRE></CODE>
+also, symbol constants (i.e. <VAR>symbol literals</VAR>)
+can be written directly by prefixing some identifier with the #-character as in:
+<CODE><PRE>
+    sym := #helloThere.
+</PRE></CODE>
+These symbol literals are created at compile time -
+<B>NOT</B> at execution time.
+Therefore, the cost of using them is not more than using integers
+<BR>
+Which is why there is no need for enumeration-types in Smalltalk;
+ simply use a symbol, wherever other programming languages would
+ use a numeric define or an enumeration type.
+
+<P>
+Only alphanumeric identifiers or valid message selectors
+are allowed in the above example.
+Examples for valid symbol iterals are:
+<CODE><PRE>
+    #helloThere
+    #FooBar
+    #+
+    #at:
+    #at:put:
+</PRE></CODE>
+Use quotes around the characters for other symbol literals:
+<CODE><PRE>
+    sym := #'a symbol with spaces and .... other stuff'
+</PRE></CODE>
+The quotes are not part of the symbols characters;
+therefore <CODE>#+</CODE> and <CODE>#'+'</CODE> represent the same symbol.
+<BR>
+Symbol literals can also be present in array literals
+as in:
+<CODE><PRE>
+    #( #foo #bar #'baz' )
+</CODE></PRE>
+Within such an array literal, the leading #-character can be ommitted
+(for your convenience).
+Thus, the above is equivalent to:
+<CODE><PRE>
+    #( foo bar baz )
+</CODE></PRE>
+but, NOT equivalent to:
+<CODE><PRE>
+    #( 'foo' 'bar' 'baz' )
+</CODE></PRE>
+which is an array of strings.
+<P>
+Since <CODE>true</CODE>, <CODE>false</CODE> and <CODE>nil</CODE> are treated
+as constant objects,
+you'd have to add a #-prefix if you ever want those symbols in an array literal,
+as in:
+<CODE><PRE>
+    #( #true #false #nil)
+</CODE></PRE>
+Which - you have guessed it - is not the same as:
+<CODE><PRE>
+    #( true false nil)
+</CODE></PRE>
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of Symbol" ACTION="html:HTMLDocGenerator htmlDocOf:Symbol backRef:'collections.html'">
+"<CODE>Symbol's class description</CODE></A>".
+<P>
+
+
+
+
+<H2><A HREF="#I_SET" NAME="SET">Set and IdentitySet</A></H2>
+
+Sets keep references to other objects, but do not allow for duplicates.
+Thus an individual object will appear at most once in a set.
+<BR>
+To check if some object is already contained in the set, the elements
+are compared using <CODE>=</CODE>, which typically compares objects values.
+<BR>
+Thus, <CODE>1</CODE> (the Integer "<VAR>one</VAR>") will be considered
+equal to <CODE>1.0</CODE> (the Float "<VAR>one</VAR>")  in
+set-inclusion tests.
+<BR>
+The alternative <CODE>IdentitySet</CODE> uses identity compare
+(<Code>==</CODE>) and treats <CODE>1</CODE> and <CODE>1.0</CODE> as different
+objects.
+<BR>
+The typical use of sets and identitySets is:
+<P>
+<UL>
+<LI> creation:
+<CODE><PRE>
+    <VAR>aSet</VAR> := Set new
+</PRE></CODE>
+
+<LI> creation with preallocated size:
+<CODE><PRE>
+    <VAR>aSet</VAR> := Set new:1000
+</PRE></CODE>
+
+<LI> asking for its actual number of elements:
+<CODE><PRE>
+    <VAR>theSize</VAR> := <VAR>aSet</VAR> size
+</PRE></CODE>
+
+<LI> adding an element:
+<CODE><PRE>
+    <VAR>aSet</VAR> add:<VAR>anObject</VAR>
+</PRE></CODE>
+
+<LI> removing an element:
+<CODE><PRE>
+    <VAR>aSet</VAR> remove:<VAR>anObject</VAR>
+</PRE></CODE>
+
+<LI> checking if some object is included in the set:
+<CODE><PRE>
+    <VAR>aSet</VAR> includes:<VAR>anObject</VAR>
+</PRE></CODE>
+
+<LI> 'looping' over the elements:
+<CODE><PRE>
+    <VAR>aSet</VAR> do:[:element | ... do something with element ...]
+</PRE></CODE>
+</UL>
+
+Because sets keep their elements unordered, the keyed access methods
+(<CODE>#at:</CODE> and <CODE>#at:put:</CODE>) are
+not allowed and trigger an error.
+<P>
+Sets and identitySets use hashing algorithms internally for inclusion
+tests.
+Thus, they are usually fast and show a constant access time which is
+determined by their fill-grade and the quality of the hash key algorithm;
+<STRONG>not</STRONG> by the absolute size of the set.
+The hash key generation is implemented by the elements - not by the set.
+<P>
+Sets automatically grow (and shrink) as required
+when elements are added or removed.
+To get good hashing performance,
+they grow larger (by some percentage) than the actual size required for the
+elements. Expect some 20% storage overhead when using sets.
+<P>
+IdentitySets are sometimes faster than Sets, since both hashKey generation
+and comparing is implemented more efficiently.
+If your keys are small integers or symbols, you may use an IdentitySet.
+<BR>
+However, for string elements or float numbers, using identitySets is usually a bad choice.
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of Set" ACTION="html:HTMLDocGenerator htmlDocOf:Set backRef:'collections.html'">
+"<CODE>Set's class description</CODE></A>"
+and
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of IdentitySet" ACTION="html:HTMLDocGenerator htmlDocOf:IdentitySet backRef:'collections.html'">
+"<CODE>IdentitySet's class description</CODE></A>".
+<P>
+
+
+<H2><A HREF="#I_DICTIONARY" NAME="DICTIONARY">Dictionary and IdentityDictionary</A></H2>
+
+Dictionaries are probably the most powerful and useful collections around;
+it is definitely worth knowing and using them.
+<BR>
+Dictionaries are somewhat like arrays, in that they allow access to the elements
+by <CODE>#at:</CODE> and <CODE>#at:put:</CODE> messages, using an access key.
+However, in contrast to arrays they allow ANY other object to be used as key.
+Thus an array can be thought of as a special dictionary using numeric keys
+only (if you want to do this, it is faster to use an array rightaway - except
+if your array is filled very sparse).
+<P>
+Like sets, dictionaries come in two flavours: <CODE>Dictionary</CODE> uses
+value compare (<CODE>=</CODE>) and <CODE>IdentityDictionary</CODE> which uses
+identity compare (<CODE>==</CODE>) for key accesses.
+<BR>
+Thus:
+<CODE><PRE>
+    |d value|
+
+    d := Dictionary new.
+    d at:1 put:'one'.
+     ...
+    value := d at:1.0
+</PRE></CODE>
+will return the expected <CODE>'one'</CODE> in the variable <VAR>"value"</VAR>,
+because the integer "1" compares equal to the float "1.0" and therefore,
+the dictionary will find a value under the key "1.0".
+<BR>
+In contrast,
+<CODE><PRE>
+    |d value|
+
+    d := IdentityDictionary new.
+    d at:1 put:'one'.
+     ...
+    value := d at:1.0
+</PRE></CODE>
+will raise an error, since there is no element stored under the key "1.0"
+(remember: "<CODE>1 = 1.0</CODE>" returns true, while "<CODE>1 == 1.0</CODE>"
+returns false).
+<P>
+Like with sets, dictionaries use hashing internally, and therefore show a constant access time
+depending on the fill-rate only. Not on the absolute size.
+(However, they do depend upon the quality of the hashing algorithm used).
+<P>
+Dictionaries are very powerful collections, and worth a second look.
+You can put associations between objects into dictionaries.
+A simple example:
+<CODE><PRE>
+    |nameToAge|
+
+    nameToAge := Dictionary new.
+    nameToAge at:'fred' put:17.
+    nameToAge at:'peter' put:21.
+     ...
+    age := nameToAgeAt:name ifAbsent:['I do not know'].
+</PRE></CODE>
+You can also use Dictionaries as a replacement for simple data structures,
+which are called ``<VAR>record</VAR>'' or ``<VAR>struct</VAR>'' in other programming languages:
+<CODE><PRE>
+    |peter marry|
+
+    peter := IdentityDictionary new.
+    peter at:#age put:23.
+    peter at:#firstName put:'peter'.
+    peter at:#middleName put:'m'.
+    peter at:#name put:'smalltalker'.
+    peter at:#salary put:51234.
+     ...
+    marry := IdentityDictionary new.
+    marry at:#age put:21.
+    marry at:#firstName put:'marry'.
+    marry at:#middleName put:'s'.
+    marry at:#name put:'smalltalker'.
+    marry at:#husband put:peter.
+    ...
+    age := peter at:#age.
+    firstNameOfHusband := (marry at:#husband) at:#firstName.
+</PRE></CODE>
+Of course, real programmers define a Person class and create an
+instance of it ... this is both more 'object oriented' and provides
+faster access than using dictionaries (which are not meant to be used
+for the above 'constant' key access).
+<BR>
+However, the above scheme may be used, if the number of information slots
+to be held is not constant, or not foreseeable by the programmer.
+A typical example would be an application, in which the end-user is allowed to
+add user-defined fields to some entity.
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of Dictionary" ACTION="html:HTMLDocGenerator htmlDocOf:Dictionary backRef:'collections.html'">
+"<CODE>Dictionary's class description</CODE></A>"
+and
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of IdentityDictionary" ACTION="html:HTMLDocGenerator htmlDocOf:IdentityDictionary backRef:'collections.html'">
+"<CODE>IdentityDictionary's class description</CODE></A>".
+
+
+
+
+<H2><A HREF="#I_ORDCOLL" NAME="ORDCOLL">OrderedCollection </A></H2>
+
+OrderedCollections are collections which access their elements via a numeric
+key - in that, they are much like arrays. However, they are specially tuned for
+adding/removing elements (i.e. they can easily grow and shrink),
+which is a very expensive operation if applied to an array.
+<BR>
+Therefore, orderedCollections can also be used as stacks and queues - either
+directly or by subclassing.
+<P>
+typical use:
+<UL>
+<LI> creation:
+<CODE><PRE>
+    <VAR>coll</VAR> := OrderedCollection new
+</PRE></CODE>
+
+<LI> creation with preallocated size (but zero logical size!):
+<CODE><PRE>
+    <VAR>coll</VAR> := OrderedCollection new:1000
+</PRE></CODE>
+
+<LI> creation with real size:
+<CODE><PRE>
+    <VAR>coll</VAR> := OrderedCollection new grow:1000
+</PRE></CODE>
+
+<LI> asking for its actual number of elements:
+<CODE><PRE>
+    <VAR>theSize</VAR> := <VAR>coll</VAR> size
+</PRE></CODE>
+
+<LI> adding an element:
+<CODE><PRE>
+    <VAR>coll</VAR> add:<VAR>anObject</VAR>
+</PRE></CODE>
+
+<LI> adding an element at front:
+<CODE><PRE>
+    <VAR>coll</VAR> addFirst:<VAR>anObject</VAR>
+</PRE></CODE>
+
+<LI> removing the first element:
+<CODE><PRE>
+    <VAR>coll</VAR> removeFirst
+</PRE></CODE>
+<LI> removing the last element:
+<CODE><PRE>
+    <VAR>coll</VAR> removeLast
+</PRE></CODE>
+<LI> checking if some object is included in the collection:
+<CODE><PRE>
+    <VAR>coll</VAR> includes:<VAR>anObject</VAR>
+</PRE></CODE>
+<LI> 'looping' over the elements:
+<CODE><PRE>
+    <VAR>coll</VAR> do:[:element | ... do something with element ...]
+</PRE></CODE>
+</UL>
+Beginners may get a bit confused by the <CODE>new:</CODE> instance creation method,
+which uses the numeric argument as a size hint,
+not to specify the logical size of the resulting collection.
+It therefore returns a logically empty collection, which has some slots
+"preallocated" for performance reasons.
+One may argue about this and many do not like it. However, as it is too late to change
+it now without affecting thousands of programs, you will have to live with it (just like the others have to).
+<P>
+Notice, that the above <CODE>#includes:</CODE> message
+is usually much slower for large orderedCollections or arrays than it
+is for sets or dictionaries. The reason is that the former have to do
+a sequential search over all elements, while the later can use a fast
+hashed access, typically finding an element after a few compares.
+<P>
+Stacks are implemented by using <CODE>#addLast:</CODE> as push operation,
+and <CODE>#removeLast</CODE> as a pop operation.
+<BR>
+Queues are implemented using <CODE>#addLast:</CODE> and <CODE>#removeFirst</CODE>.
+<BR>
+Also, Smalltalk provides a specialized Queue class, which is tuned
+for this particular type of access.
+<P>
+
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of OrderedCollection" ACTION="html:HTMLDocGenerator htmlDocOf:OrderedCollection backRef:'collections.html'">
+"<CODE>OrderedCollection's class description</CODE></A>".
+
+
+
+<H2><A HREF="#I_SORTCOLL" NAME="SORTCOLL">SortedCollection </A></H2>
+
+SortedCollections are like OrderedCollections, but they keep their elements
+in sorted order. By default, sortedCollections sort in ascending order,
+by comparing individual elements using '#>'
+(which implies that the elements must respond to this
+comparison message, and return a useful truth value).
+<BR>
+You can specify your own sorting rule (so called <VAR>sortBlock</VAR>).
+<P>
+Sorting is done using quickSort and binary search (when inserting elements).
+
+typical use:
+<UL>
+
+<LI> creation:
+<CODE><PRE>
+    <VAR>sorted</VAR> := <VAR>someOtherCollection</VAR> asSortedCollection
+</PRE></CODE>
+
+<LI> creation:
+<CODE><PRE>
+    <VAR>sorted</VAR> := SortedCollection new
+</PRE></CODE>
+
+<LI>defining the sort rule:
+<CODE><PRE>
+    <VAR>sorted</VAR> sortBlock:[:a :b | a > b]
+</PRE></CODE>
+
+<LI>defining another sort rule:
+<CODE><PRE>
+    <VAR>sorted</VAR> sortBlock:[:a :b | a &lt; b]
+</PRE></CODE>
+
+<LI>yet another sort rule:
+<CODE><PRE>
+    <VAR>sorted</VAR> sortBlock:[:a :b | a asUppercase &lt; b asUppercase]
+</PRE></CODE>
+
+<LI>adding:
+<CODE><PRE>
+    <VAR>sorted</VAR> add:<VAR>someObject</VAR>
+</PRE></CODE>
+
+<LI>inclusion test:
+<CODE><PRE>
+    <VAR>sorted</VAR> includes:<VAR>someObject</VAR>
+</PRE></CODE>
+
+</UL>
+
+Be aware, that the building of a sorted collection by adding individual elements is not
+necessarily a fast operation. Because the contents must be shifted inside the collection
+in order to make an empty slot for incoming elements, this may actually be a very slow way
+of setting up a sorted collection
+(for the specialists: its an O(n²) algorithm, unless the elements come in already sorted).
+<BR>
+It is usually better to either add all elements to an OrderedCollection
+and to sort this as a whole, using the <CODE>sort</CODE> message.
+Or else to use another collection, such as a <CODE>BTree</CODE>, which is more specialized
+to insertion/deletion of individual elements.
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of SortedCollection" ACTION="html:HTMLDocGenerator htmlDocOf:SortedCollection backRef:'collections.html'">
+"<CODE>SortedCollection's class description</CODE></A>".
+
+
+<!--
+<H2><A HREF="#I_TWOBYTESTRING" NAME="TWOBYTESTRING">TwoByteString </A></H2>
+
+Are like strings, but the elements are characters in the coderange 0..65535.
+They can be used to represent strings in
+Japanese, Chinese, Unicode or any other 16bit characterset.
+<P>
+Support for twoByteStrings is (currently) somewhat preliminary and
+limited: there exists no language standard for 16bit string literals
+and no 16bit keyboard input method is supported (yet).
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of TwoByteString" ACTION="html:HTMLDocGenerator htmlDocOf:TwoByteString backRef:'collections.html'">
+"<CODE>TwoByteString's class description</CODE></A>".
+-->
+
+
+
+
+<H2><A HREF="#I_BYTEARRAY" NAME="BYTEARRAY">ByteArray</A></H2>
+
+ByteArrays are tuned for space efficient storage of short (byte-valued)
+integers in the range 0..255.
+They are used for bitmap storage and executable (byte-) code.
+<P>
+Bytearrays are also valuable for data interchange with other programs via
+files, sockets, shared memory or pipes.
+<BR>
+Protocolwise, they behave much like Arrays.
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of ByteArray" ACTION="html:HTMLDocGenerator htmlDocOf:ByteArray backRef:'collections.html'">
+"<CODE>ByteArray's class description</CODE></A>".
+
+
+
+<H2><A HREF="#I_FLOATARRAY" NAME="FLOATARRAY">FloatArray and DoubleArray</A></H2>
+
+Float- and DoubleArray are specially tuned for space efficient storage of
+short (typically 32bit) and double float (typically 64bit) Float values.
+<BR>
+For normal users, these are less interesting, but offer performance
+and space advantages
+when matrices or 3D graphics are involved, where large float number collections
+are often needed.
+<BR>
+Protocolwise, they behave much like Arrays.
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of FloatArray" ACTION="html:HTMLDocGenerator htmlDocOf:FloatArray backRef:'collections.html'">
+"<CODE>FloatArray's class description</CODE></A>".
+
+
+
+<H2><A HREF="#I_INTERVAL" NAME="INTERVAL">Interval</A></H2>
+
+An interval represents a set of numbers which can be generated from a
+start value, a final value and a step. For example, the even numbers
+between 2 and 10 can be represented by an interval as <CODE>(2 to:10 by:2)</CODE>.
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of Interval" ACTION="html:HTMLDocGenerator htmlDocOf:Interval backRef:'collections.html'">
+"<CODE>Interval's class description</CODE></A>".
+
+
+
+
+<H2><A HREF="#I_LINKEDLIST" NAME="LINKEDLIST">LinkedList</A></H2>
+
+A linkedList consists of a chained number of <CODE>Link</CODE> or
+<CODE>ValueLink</CODE> instances. They provide reasonable fast
+methods for insertion at either ends,
+but show poor performance when any inner element is to be accessed
+(since the list has to be walked up to the element).
+<P>
+Although often overemphasized in existing computer science literature,
+linkedLists are not very often used in Smalltalk, due to their poor
+indexed access performance and their storage overhead.
+<BR>
+In most cases, an orderedColllection or a specialized tree implementation
+will outperform a linkedList.
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of LinkedList" ACTION="html:HTMLDocGenerator htmlDocOf:LinkedList backRef:'collections.html'">
+"<CODE>LinkedList's class description</CODE></A>".
+
+
+
+<H2><A HREF="#I_QUEUE" NAME="QUEUE">Queue and SharedQueue</A></H2>
+
+A queue is a collection where elements are added at one end and removed at
+the other end. An interesting class to look at is <CODE>SharedQueue</CODE>
+(which is a subclass of <CODE>Queue</CODE>) and helps in writing
+producer/consumer applications with separate writer/reader processes.
+<P>
+Notice, that queue functionality is also provided by OrderedCollection
+(<code>addLast:</code> / <code>removeFirst</code> messages);
+however the Queue-class protocol mimics a stream (<code>next</code> and <code>nextPut:</code> messages)
+and is therefore slightly
+different.
+<BR>
+If you don't care for this and if you don't need the synchronization
+of a SharedQueue, use whichever you find more appealing.
+
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of Queue" ACTION="html:HTMLDocGenerator htmlDocOf:Queue backRef:'collections.html'">
+"<CODE>Queue's class description</CODE></A>".
+
+
+
+<H2><A HREF="#I_WEAKARRAY" NAME="WEAKARRAY">WeakArray, WeakIdentitySet, WeakIdentityDictionary</A></H2>
+
+to be documented
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of WeakArray" ACTION="html:HTMLDocGenerator htmlDocOf:WeakArray backRef:'collections.html'">
+"<CODE>WeakArray's class description</CODE></A>" or
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of WeakIdentitySet" ACTION="html:HTMLDocGenerator htmlDocOf:WeakIdentitySet backRef:'collections.html'">
+"<CODE>WeakIdentitySet's class description</CODE></A>" or
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of WeakIdentityDictionary" ACTION="html:HTMLDocGenerator htmlDocOf:WeakIdentityDictionary backRef:'collections.html'">
+"<CODE>WeakIdentityDictionary's class description</CODE></A>".
+
+
+
+<H2><A HREF="#I_REGISTRY" NAME="REGISTRY">Registry and HandleRegistry</A></H2>
+
+to be documented
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of Registry" ACTION="html:HTMLDocGenerator htmlDocOf:Registry backRef:'collections.html'">
+"<CODE>Registry's class description</CODE></A>" or
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of HandleRegistry" ACTION="html:HTMLDocGenerator htmlDocOf:HandleRegistry backRef:'collections.html'">
+"<CODE>HandleRegistry's class description</CODE></A>".
+
+
+
+<H2><A HREF="#I_CACHEDICT" NAME="CACHEDICT">CacheDictionary and ResourcePack</A></H2>
+
+A cacheDictionary is a dictionary which only stores a certain number of
+elements - removing existing entries when full and new elements are to be added.
+As the name suggests, they can be used to keep a collection of recently used
+objects.
+<P>
+ResourcePacks are used to keep track of string translations for
+national language variants. Technically, they are dictionaries.
+However, the class provides additional protocol for loading resourcePacks
+from so called <VAR>resource files</VAR>.
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of CacheDictionary" ACTION="html:HTMLDocGenerator htmlDocOf:CacheDictionary backRef:'collections.html'">
+"<CODE>CacheDictionary's class description</CODE></A>" or
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of ResourcePack" ACTION="html:HTMLDocGenerator htmlDocOf:ResourcePack backRef:'collections.html'">
+"<CODE>ResourcePack's class description</CODE></A>".
+
+
+
+<H2><A HREF="#I_MAPPEDCOLL" NAME="MAPPEDCOLL">MappedCollection </A></H2>
+
+A mappedCollection offers indirect indexing; access is via a map which
+provides the actual access key.
+<P>
+<IMG SRC="../../../icons/seeAlso.gif" ALT="">
+More details are found in
+<A HREF="../../misc/onlyInSTX2.html" INFO="show class documentation of MappedCollection" ACTION="html:HTMLDocGenerator htmlDocOf:MappedCollection backRef:'collections.html'">
+"<CODE>MappedCollection's class description</CODE></A>".
+
+
+
+
+<P>
+Notes:
+<P>
+<A HREF="#BACK_FN1" NAME="FN1">(*)</A>
+<BR>
+Some collections are tuned for growing, while others are not;
+some use hashing or other fast access methods to support fast
+search and/or inclusion test, while others do sequential searches.
+<BR>
+Please check out and understand the individual collection classes
+and use the one which best fits your needs to get best performance and memory utilisation.
+Most collection classes provide detailed information in their
+<A HREF="../../misc/onlyInSTX2.html"
+   INFO="show documentation of collection classes in a brower"
+   ACTION="doit:
+    UserPreferences systemBrowserClass
+	browseMethods:(Collection withAllSubclasses
+			collect:[:cls | cls theMetaclass compiledMethodAt:#documentation]
+			thenSelect:[:mthd | mthd notNil])
+	title:'Documentation of Collection classes'.
+">#documentation</A> method.
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif">
+Copyright © 1996-2016 Claus Gittinger Development & Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.38 $ $Date: 2016-10-13 23:28:46 $
+
+</BODY>
+</HTML>

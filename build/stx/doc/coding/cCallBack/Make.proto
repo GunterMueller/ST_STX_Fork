@@ -1,0 +1,16 @@
+# $Header: /cvs/stx/stx/doc/coding/cCallBack/Make.proto,v 1.5 1999-04-22 14:06:41 cg Exp $
+#
+
+#--------- no need to modify anything below -------
+
+TOP=../../..
+PACKAGE=stx:doc/coding/cCallBack
+
+RCSSOURCES=Make.proto *.st
+
+# NOAUTOLOAD=1
+
+OBJS=   CCall.$(O) \
+	CTimer.$(O) 
+
+all::   $(OBJS)

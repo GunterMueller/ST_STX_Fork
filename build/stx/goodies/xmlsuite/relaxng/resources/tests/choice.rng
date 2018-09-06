@@ -1,0 +1,19 @@
+<element name="root" xmlns="http://relaxng.org/ns/structure/1.0">
+  <oneOrMore>
+    <element name="subelement">
+      <choice>
+        <element name="a">
+	  <text/>
+	</element>
+	<zeroOrMore>
+	  <element name="b">
+	    <empty/>
+	  </element>	  
+	  <element name="c">
+	    <empty/>
+          </element>	  
+	</zeroOrMore>
+      </choice>
+    </element>
+  </oneOrMore>
+</element>

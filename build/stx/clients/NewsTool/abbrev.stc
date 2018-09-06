@@ -1,0 +1,4 @@
+NNTPHandler NNTPHndlr stx:clients/NewsTool 'demos-NewsTool' 0
+NewsGroup NewsGroup stx:clients/NewsTool 'demos-NewsTool' 0
+NewsHandler NewsHndlr stx:clients/NewsTool 'demos-NewsTool' 0
+NewsView NewsView stx:clients/NewsTool 'demos-NewsTool' 0

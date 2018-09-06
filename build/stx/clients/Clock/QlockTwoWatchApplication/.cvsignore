@@ -1,0 +1,13 @@
+*.sc
+*.sth
+objbc
+objvc
+*.rc
+*.com
+*.tds
+*.res
+main.c
+resources
+builddate.h
+*.c
+objmingw

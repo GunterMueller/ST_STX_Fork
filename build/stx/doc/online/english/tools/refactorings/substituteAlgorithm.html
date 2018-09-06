@@ -1,0 +1,43 @@
+<html><head><title>Refactoring: 
+Substitute Algorithm</title></head><body>
+
+
+<H1>
+Substitute Algorithm</H1>
+<P><I><CENTER>
+You want to replace an algorithm with one that is clearer.</CENTER></I></P>
+<P><B><CENTER>
+Replace the body of the method with the new algorithm.</CENTER></B></P>
+<PRE>
+	String foundPerson(String[] people){
+		for (int i = 0; i &lt; people.length; i++) {
+			if (people[i].equals ("Don")){
+				return "Don";
+			}
+			if (people[i].equals ("John")){
+				return "John";
+			}
+			if (people[i].equals ("Kent")){
+				return "Kent";
+			}
+		}
+		return "";
+	}
+
+</PRE><P><CENTER><IMG SRC="arrow.gif"/></CENTER></P>
+<PRE>
+	String foundPerson(String[] people){
+		List candidates = Arrays.asList(new String[] {"Don", "John", "Kent"});
+		for (int i=0; i&lt;people.length; i++)
+			if (candidates.contains(people[i]))
+				return people[i];
+		return "";
+	}
+</PRE>
+
+
+<P>For more information see page 
+	<font color="#FF0000">139</font>
+	of <I>Refactoring</I></P>
+
+<P /><P /><P><CENTER><A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A></CENTER></P></body></html>

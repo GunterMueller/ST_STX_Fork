@@ -1,0 +1,119 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Help - Perforce Repository Setup Dialog</Title>
+</HEAD>
+
+<BODY>
+
+<H1>Perforce Repository Setup Dialog</H1>
+
+<H2><A NAME="INDEX">Help index</A></H2>
+
+<UL>
+ <LI><A HREF="#INTRODUCTION">Introduction</A>
+<P>
+ <LI><A HREF="#SETTINGS">Perforce Settings Dialog</A>
+ <UL>
+   <LI><A HREF="#P4_DEFAULT_ROOT">Perforce Reporitory Root</A>
+   <LI><A HREF="#BINARY_PATH">Perforce Command Path</A>
+   <LI><A HREF="#P4_PERMODULE_ROOT">Per Module Setup</A>
+   <LI><A HREF="#SOURCE_CACHE">Source Cache</A>
+<!--
+   <LI><A HREF="#USE_LOCAL_SOURCE">Use Local Source</A>
+   <LI><A HREF="#KEEP_METHOD_SOURCE">Keep Method Source</A>
+   <LI><A HREF="#CHECK_HALTS">Check for Halt and other bad Message Sends</A>
+-->
+   <LI><A HREF="#VERBOSE">Verbose</A>
+ </UL>
+</UL>
+
+<H2><A NAME="INTRODUCTION" HREF="#INDEX">Introduction</A></H2>
+
+This source code manager was provided by a customer and
+is not maintained by eXept itself.
+It implements an interface to a Perforce (P4) repository.
+<P>
+For a general introduction to source code management,
+please consult the
+<A HREF="../../programming/sourcemanager.html">
+"<I>Programmer's Guide to ST/X - Sourcecode & Revision Management</I>"</A>.
+
+
+<H2><A NAME="SETTINGS" HREF="#INDEX">P4 Settings Dialog</A></H2>
+
+<H3><A NAME="BINARY_PATH" HREF="#INDEX">P4 Binary Executable Path</A></H3>
+
+Optionally specifies the path to the <CODE>"p4"</CODE> command.
+<BR>
+A full path is only required if you do not have Perforce installed along the default <CODE>PATH</CODE>,
+or if you want to use your own private version of the "<CODE>p4</CODE>" command.
+Usually, the default "p4" is ok for the system to find it.
+
+
+<H3><A NAME="P4_DEFAULT_ROOT" HREF="#INDEX">Perforce Root Default</A></H3>
+
+Specifies the perforce ROOT for all classes which do not
+belong to a module listed in the per-module list.
+<BR>
+I.e. its the fallback P4Root used for all other classes, not listed below.
+
+
+
+<H3><A NAME="P4_PERMODULE_ROOT" HREF="#INDEX">Per Module Setup</A></H3>
+
+In ST/X, class packages form a hierarchical tree and their files are mapped in the source
+repository to subdirectories below a so called
+module root. The module itslef is specified by the first component of a package
+path.
+For example:
+<br>
+The "Array"-class is found in the "stx:libbasic" package.
+<BR>Therefore, its module is "stx" and its container is found in the "libbasic"
+sub-directory, of the repository which has been associated to the "stx" module.
+<P>
+Placing your own packages into a separate module (typically, you would use your company name
+as module-name) and specifying a separate root for this module, allows you to
+manage your own classes in a separate source code repository.
+<BR>
+Of course, this also allows for multiple independent repositories to be defined and
+maintained in bigger organizations.
+
+
+<H3><A NAME="SOURCE_CACHE" HREF="#INDEX">Source Cache</A></H3>
+
+Performing a slow checkOut operation for every class which is visited in
+the browser does slow down the system's responses - especially the search functions
+(senders/string-search etc.) may become unusably slow.
+<BR>
+To avoid this, the sourcecode-manager keeps track of already checked-out classes
+and remembers those in a cacheDirectory. This cache may grow over time, as
+it remembers multiple versions of all classes of which source code has ever been asked for.
+<BR>
+The default location for this cache is <CODE>"/tmp/stx_sourceCache"</CODE> (unix)
+or <CODE>"&lt;userDefault&gt;\local files\Temp\stx_sourceCache"</CODE> (windows).
+<BR>
+Over time, this directory may grow and should be purged from time to time
+(The purge operation removes old versions in the cache and leaves the youngest only).
+<BR>
+It is not dangerous, to remove those old files, as they will be re-checked out
+as required (for example, when you do a "compare with previous" operation later).
+
+
+<P>
+<P>
+
+
+
+<HR>
+<P>
+<P>
+Copyright &copy;  eXept Software AG, all rights reserved
+<P>
+<P>
+
+<HR>
+Doc $Revision: 1.3 $ $Date: 2013-07-31 17:38:55 $
+
+</BODY>
+</HTML>

@@ -1,0 +1,58 @@
+"/ Packages you may want to load:
+"/ ==============================
+
+"/ Please see also the "Load Package" menu item in the Launcher's file menu.
+"/ You can also specify a list of autoloaded packages in the settings dialog.
+
+"/ Programmer Tools:
+"/ -----------------
+Smalltalk loadPackage:'stx:goodies/smallsense'.     "/ as you type lint checking (probably already loaded when you read this)
+
+
+"/ Languages and Parsers:
+"/ ----------------------
+Smalltalk loadPackage:'stx:libjavascript'.          "/ adds javaScript-like syntax
+Smalltalk loadPackage:'stx:libjava'.                "/ adds java execution & classes
+
+Smalltalk loadPackage:'stx:goodies/petitparser'.    "/ peg parsing
+Smalltalk loadPackage:'stx:goodies/tgen'.           "/ parser generator
+Smalltalk loadPackage:'stx:goodies/smacc'.          "/ another parser generator
+
+Smalltalk loadPackage:'stx:goodies/regex'.          "/ regular expressions
+
+"/ XML, etc.
+"/ ---------
+Smalltalk loadPackage:'stx:goodies/xml/yaxo'.       "/ xml parser
+Smalltalk loadPackage:'stx:goodies/xml/stx'.        "/ another xml parser
+Smalltalk loadPackage:'stx:goodies/xml/xpath'.      "/ xpath implementation
+
+"/ Networking & Web Services:
+"/ --------------------------
+Smalltalk loadPackage:'stx:goodies/webServer/ui'.   "/ loads the webserver + server setup in the Launcher's settings dialog
+Smalltalk loadPackage:'stx:goodies/webServer/htmlTree'.
+Smalltalk loadPackage:'stx:goodies/webServer'.
+
+Smalltalk loadPackage:'stx:goodies/soap'.
+Smalltalk loadPackage:'stx:goodies/xml/xmlrpc'.
+
+Smalltalk loadPackage:'stx:goodies/net'.            "/ imap, pop3 etc.
+Smalltalk loadPackage:'stx:goodies/communication'.  "/ iftp, dns, http-get, sftp, sunrpc, etc.
+
+"/ Databases
+"/ ---------
+Smalltalk loadPackage:'stx:libdb/libodbc'.          "/ ODBC database connectivity
+Smalltalk loadPackage:'stx:libdb/libsqlite'.        "/ sqlite databases
+Smalltalk loadPackage:'stx:libdb/liboracle'.        "/ Native Oracle interface
+
+Smalltalk loadPackage:'stx:libdb/nosql/cassandra'.
+Smalltalk loadPackage:'stx:libdb/nosql/mongoDB'.
+Smalltalk loadPackage:'stx:libdb/nosql/couchDB'.
+Smalltalk loadPackage:'stx:libdb/nosql/sandstoneDB'.
+Smalltalk loadPackage:'stx:libdb/nosql/minneStore'.
+Smalltalk loadPackage:'stx:libdb/nosql/goods'.
+
+"/ Misc
+"/ ----
+Smalltalk loadPackage:'stx:goodies/sunit'.
+Smalltalk loadPackage:'stx:goodies/monticello'.     "/ loaded automatically, when you open the monticello browser via the Launcher's tools menu
+Smalltalk loadPackage:'stx:goodies/metacello'.

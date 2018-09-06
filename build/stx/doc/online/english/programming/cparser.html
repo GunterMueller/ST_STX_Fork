@@ -1,0 +1,489 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - CParser & CTypes</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="goody_thrift.html">     <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="asn1.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>CParser & CTypes</H1>
+
+<H2><A NAME=CONTENTS>Contents</A></H2>
+
+<UL>
+<LI><A HREF=#INTRODUCTION>Introduction</A>
+<LI><A HREF=#AREA>Area of use</A>
+<LI><A HREF=#OVERVIEW>Overview</A>
+<LI><A HREF=#PARSING>Parsing C-Types</A>
+<LI><A HREF=#META>Meta knowledge of C-Types</A>
+<LI><A HREF=#ALLOCATING>Allocating C-Data</A>
+<LI><A HREF=#CDATA>Manipulating C-Data</A>
+<LI><A HREF=#POINTERS>Pointers into C-Data</A>
+<LI><A HREF=#BYTEORDER>ByteOrder issues</A>
+<LI><A HREF=#EXAMPLES>Examples</A>
+</UL>
+
+<H2><A HREF=#CONTENTS NAME=INTRODUCTION>Introduction</A></H2>
+
+The CParser and CType class hierarchy provide a framework to
+read C-Language header files containing type declaration and
+#define directives.
+<P>
+While parsing, the CParser generates the corresponding type
+information into a hierarchy of CType objects, which can
+then be used to create and manipulate byte-oriented data blocks.
+<P>
+
+<H2>Licensing</H2>
+The CParser/CType package is not included in the standard distribution;
+it is delivered as an extra (non-free) add-on package.
+<BR>
+Please contact eXept for license information & pricing.
+
+
+
+
+<H2><A HREF=#CONTENTS NAME=AREA>Area of use</A></H2>
+
+The CParser & CType framework is especially useful to interface
+to C-Language data or programs via either shared data files,
+or via some communication mechanism (such as Pipes or Sockets).
+<P>
+In contrast to ST/X's inline C-code features, CParser and
+CType are completely implemented as Smalltalk code and are therefore
+easier to use and less error prone.
+<BR>
+However, the performance may be slower than corresponding hardcoded
+inline C routines, since a lot of meta information is kept in the
+CType hierarchy.
+
+<H2><A HREF=#CONTENTS NAME=OVERVIEW>Overview</A></H2>
+
+Use of the framework consists of three major parts:
+<UL>
+<LI>parsing the C-Types
+<LI>generating structured C-Data (CDatums)
+<LI>accessing C-Data structures
+</UL>
+
+
+
+<H3><A HREF=#CONTENTS NAME=PARSING>Parsing C-Types</A></H3>
+
+As a first step, a C-Header file (or a string, containing the C-Language
+source) must be given to CParser and parsed.
+<BR>
+The resulting collection of C-Types should be kept by the application
+(typically in a class variable).
+<BR>
+A good place to perform this task is a classes <CODE>#initialize</CODE>
+method.
+<P>
+
+
+Example:
+<CODE><PRE>
+    ...
+    classVariableNames:'CTypes'
+    ...
+
+
+    initialize
+	"parse C-Types from the file cDefs.h,
+	 which contains C-Language types and #defines"
+
+	CTypes isNil ifTrue:[
+	    parser := CParser new.
+
+	    parser parse:('cDefs.h' asFilename readStream).
+	    "/ fetch types ...
+	    CTypes := parser types.
+	].
+	...
+</PRE></CODE>
+Now, the classVariable <CODE>CTypes</CODE> refers to a dictionary
+of C-types, where the keys are the type names.
+Thus, if the C-header file contained the definition
+<CODE><PRE>
+    struct myStruct {
+	int foo;
+	float bar;
+    };
+</PRE></CODE>
+a corresponding entry will be found in the dictionary under the key
+<CODE>myStruct</CODE>,
+<BR>
+i.e.
+<CODE><PRE>
+    ...
+    myStructType := CTypes at:'myStruct'.
+    ...
+</PRE></CODE>
+
+Beside reading types, the CParser also keeps track of #define
+definitions. Defines can be retrieved from the parser via
+the <CODE>#defines</CODE> message.
+<BR>
+Notice, that defines are typeless - i.e. the cparser treats and
+returns all defines as string-defines.
+However, some protocol exists to extract a #defines integer value
+(which might be required for bit-constants or array dimensions).
+<P>
+#include and #if directives are not handled by the CParser -
+if required, a cpp (c-preprocessor) filtered output must be used
+for CParser to handle the header file.
+
+
+<H3><A HREF=#CONTENTS NAME=META>Meta knowledge of C-Types</A></H3>
+
+CTypes keep all information as collected by the CParser;
+therefore, it is possible to query the type for various aspects.
+Of special interest are:
+<UL>
+<LI><VAR>aCType</VAR> <CODE><B>isCArray</B></CODE>
+<BR>true if type is a C-array of something
+<P>
+<LI><VAR>aCType</VAR> <CODE><B>isCCompound</B></CODE>
+<BR>true if type is a C-struct or C-union
+<P>
+<LI><VAR>aCType</VAR> <CODE><B>isCEnum</B></CODE>
+<BR>true if type is a C-enumeration type
+<P>
+<LI><VAR>aCType</VAR> <CODE><B>isCNumber</B></CODE>
+<BR>true if type is a C-int, float or double
+<P>
+<LI><VAR>aCType</VAR> <CODE><B>isCStruct</B></CODE>
+<BR>true if type is a C-struct
+<P>
+<LI><VAR>aCType</VAR> <CODE><B>isCUnion</B></CODE>
+<BR>true if type is a C-union
+<P>
+<LI><VAR>aCType</VAR> <CODE><B>isIndexed</B></CODE>
+<BR>same as isCArray
+<P>
+<LI><VAR>aCType</VAR> <CODE><B>memberNames</B></CODE>
+<BR>a collection of field names for structs or unions
+<P>
+<LI><VAR>aCType</VAR> <CODE><B>sizeof</B></CODE>
+<BR>size in bytes of a corresponding datum
+<P>
+<LI><VAR>aCType</VAR> <CODE><B>dimension</B></CODE>
+<BR>dimension of a C-Array type
+<P>
+<LI><VAR>aCType</VAR> <CODE><B>elementType</B></CODE>
+<BR>element type of a C-Array type
+</UL>
+(Notice, that there are many other
+query methods - see the CType implementation in the Browser, for a complete list)
+
+
+<H3><A HREF=#CONTENTS NAME=ALLOCATING>Allocating C-Data</A></H3>
+
+Given a CType, you can allocate a corresponding CDatum by sending one of
+the following messages to the CType:
+
+<UL>
+<LI><VAR>aCType</VAR> <CODE><B>new</B></CODE>
+<BR>allocate a new CDatum in smalltalk memory
+<BR>The CDatum will use a garbage collected ByteArray as storage.
+<BR>The data area may be moved around by the compressing garbage collector
+and is automatically reclaimed when the CDatum is no longer referenced.
+<BR>I.e. this should never be passed to C-functions, which keep a reference
+to the data.
+<P>
+<LI><VAR>aCType</VAR> <CODE><B>new:</B></CODE><VAR>dim</VAR>
+<BR> like above, for C-arrays.
+<P>
+<P>
+
+<LI><VAR>aCType</VAR> <CODE><B>malloc</B></CODE>
+<BR>allocate a new CDatum in external memory
+<BR>The CDatum will use a malloc'd memory block as storage.
+This memory will not be freed automatically (i.e. it must be freed by
+the program).
+<P>
+<LI><VAR>aCType</VAR> <CODE><B>malloc:</B></CODE><VAR>dim</VAR>
+<BR>like above, for C-arrays.
+
+<P>
+<P>
+<LI><VAR>aCType</VAR> <CODE><B>gcMalloc</B></CODE>
+<BR>allocate a new CDatum in external memory
+<BR>The CDatum will use a malloc'd memory block as storage.
+This memory will be freed automatically whenever the CDatum is no longer referenced.
+<P>
+<LI><VAR>aCType</VAR> <CODE><B>gcMalloc:</B></CODE><VAR>dim</VAR>
+<BR>like above, for C-arrays.
+
+<P>
+<LI><VAR>aCType</VAR> <CODE><B>onBytes:</B></CODE><VAR>bytes</VAR>
+<BR>wrap a type over a buffer
+<BR>the CDatum is mapped over the given byte-accessible storage,
+which is usually either a ByteArray or an instance of ExternalBytes.
+</UL>
+
+Use <CODE>onBytes:</CODE> if some data has either been allocated elsewhere
+(for example, in a C-primitive function or library routine), or has
+been read from a file or communication channel.
+For example, when reading data from a DataBase or via a Socket.
+<P>
+
+Use <CODE>new</CODE> / <CODE>new:</CODE> for all data which is not given
+to C code directly (i.e. for message/data buffers for file storage,
+or which are sent to another program via a pipe or socket).
+<P>
+Use <CODE>gcMalloc</CODE> / <CODE>gcMalloc:</CODE> for data which is passed
+to either inline C-code or to a C-library function and it is known that
+the C-code does not keep a reference to the datum internally.
+This memory will be automatically freed whenever smalltalk has no more
+references to it.
+<P>
+Use <CODE>malloc</CODE> / <CODE>malloc:</CODE> for data which is passed
+to either inline C-code or to a C-library function and it is either
+unknown if or certain that the C-code keeps references internally.
+<BR>
+Be very careful to avoid memory leaks, since the storage must be
+freed manually (via the <CODE>#free</CODE> message) by the programmer.
+
+
+
+
+<H3><A HREF=#CONTENTS NAME=CDATA>Manipulating C-Data</A></H3>
+
+CDatum objects respond to the same query protocol as described above,
+plus the additional protocol:
+<UL>
+<LI><VAR>aCDatum</VAR> <CODE><B>type</B></CODE>
+<BR>return the CDatums type.
+<P>
+<LI><VAR>aCDatum</VAR> <CODE><B>at:</B></CODE><VAR>index</VAR>
+<BR>get an array element.
+<P>
+<LI><VAR>aCDatum</VAR> <CODE><B>at:</B></CODE><VAR>index</VAR> <CODE><B>put:</B></CODE><VAR>val</VAR>
+<BR>set an array element.
+<P>
+<LI><VAR>aCDatum</VAR> <CODE><B>memberAt:</B></CODE><VAR>fieldName</VAR><BR>
+get a struct/union field
+<P>
+<LI><VAR>aCDatum</VAR> <CODE><B>memberAt:</B></CODE><VAR>fieldName</VAR> <CODE><B>put:</B></CODE><VAR>val</VAR>
+<BR>set a struct/union field.
+</UL>
+
+
+CDatums provide access protocol to access indexed elements via
+<CODE>#at:</CODE> / <CODE>#at:put:</CODE> and field members via
+<CODE>#memberAt:</CODE> / <CODE>#memberAt:put:</CODE> messages.
+<P>
+If the elementType (for arrays) or fieldType (for struct/union) is a scalar
+type (i.e. char, int, float or double),
+the get methods return smalltalk integers or floats,
+and the set-methods accept smalltalk numeric objects as value.
+<P>
+For a non-scalar element type, the get-methods return another
+CDatum (i.e. a copy) and the set methods expect a cDatum.
+<BR>
+For convenience, some smalltalk collections are allowed for setting:
+<BR>
+<UL>
+<LI>structures - a dictionary containing fieldName - value associations
+is allowed and set corresponding fields of the struct/union.
+<LI>arrays - a sequencable collection is allowed and corresponding indexed
+elements are set (but notice, that indexing is offset by one in Smalltalk)
+</UL>
+
+<BR>
+In addition, the <CODE>doesNotUnderstand:</CODE> method is redefined
+to allow for member access in the typical smalltalk fashion (i.e. get/set
+protocol).
+<BR>
+i.e. field members can also be accessed via:
+<UL>
+<LI><VAR>aCDatum</VAR> <VAR><B>fieldName</B></VAR>
+<BR>get a struct/union fields value.
+<P>
+<LI><VAR>aCDatum</VAR> <VAR><B>fieldName:</B></VAR><VAR>val</VAR>
+<BR>set a struct/union fields value.
+</UL>
+
+
+<P>
+For example, the above example data structure can be allocated and
+manipulated as:
+<CODE><PRE>
+    ...
+    myStructType := CTypes at:'myStruct'.
+    myDatum := myStructType new.
+    myDatum memberAt:'foo' put:15.
+    myDatum memberAt:'bar' put:3.14159.
+    ...
+</PRE></CODE>
+or:
+<CODE><PRE>
+    ...
+    myDatum foo:15.
+    myDatum bar:3.14159.
+    ...
+</PRE></CODE>
+
+
+
+<H3><A HREF=#CONTENTS NAME=POINTERS>Pointers into C-Data</A></H3>
+
+Sometimes, it is useful to create pointers into a CDatum - for example,
+to use a common helper-method which manipulates a subStruct, or
+to process a substruct without a need to copy the underlying storage.
+<P>
+Remember, that the <CODE>#memberAt:</CODE> message extracts a field,
+which results in an expensive copy, if the field is a structure, union
+or array.
+<P>
+You can create a CPointer (which points into another CDatum) with:
+<UL>
+<LI><VAR>aCDatum</VAR> <CODE><B>refMemberAt:</B></CODE><VAR>fieldName</VAR><BR>
+get a pointer to a struct/union field
+</UL>
+
+
+
+
+<H3><A HREF=#CONTENTS NAME=BYTEORDER>ByteOrder issues</A></H3>
+
+Often, when data is passed between machines,
+the byteorder is different between the CPU architectures.
+<BR>To provide a convenient solution for this problem,
+CDatums keep the byteOrder of their data and allow it to be queried
+or changed.
+<BR>
+By default, CDatums assume that the byteorder is that of the underlying
+CPU (i.e. LSB for intel/alpha, MSB for hp/sparc).
+<P>
+At any time, a CDatums byteOrder can be changed/queried via the
+<UL>
+<LI><VAR>aCDatum</VAR> <CODE><B>msb</B></CODE>
+<BR>return the CDatums byteOrder
+<P>
+<LI><VAR>aCDatum</VAR> <CODE><B>msb:</B></CODE><VAR>aBoolean</VAR>
+<BR>change the CDatums byteOrder
+</UL>
+message.
+<BR>
+Thus, when some data has been retrieved via a socket or pipe, and
+the data is known to be bigEndian (i.e. MSB-first),
+simply send the CDatum the message:
+<CODE><PRE>
+    cDatum msb:true
+</PRE></CODE>
+All followup accesses will assume bigEndian data.
+<P>
+You should always set the byteOrder when communicating with
+external processes/machines (i.e. do not depend upon the
+default, because it is not the same on all ST/X implementations)
+
+
+<H3><A HREF=#CONTENTS NAME=EXAMPLES>Examples</A></H3>
+
+The following code fragment can be used to send and receive
+C-structured data blocks to/from a C-program via a Socket.
+Data is transfered in msb-first (i.e. network-) byteOrder.
+<P>
+receiver:
+<CODE><PRE>
+    |buffer socket datum foo bar|
+
+    ...
+    buffer := ByteArray new:1024.
+    ...
+    socket readWait.
+    socket nextAvailableInto:buffer.
+    ...
+    datum := myStructType onBytes:buffer.
+    datum msb:true.
+    ...
+    foo := datum foo.
+    bar := datum bar.
+    ...
+</PRE></CODE>
+
+sender:
+<CODE><PRE>
+    |buffer socket datum foo bar|
+
+    ...
+    buffer := ByteArray new:1024.
+    ...
+    datum := myStructType onBytes:buffer.
+    datum msb:true.
+    ...
+    datum foo:123.
+    datum bar:1.2345.
+    ...
+    socket nextPutBytes:datum sizeof from:datum data.
+    ...
+</PRE></CODE>
+
+
+The following code fragment uses a helper method to initialize the
+fields of a structure and a CPointer is passed to it to fill a
+substructure.
+<BR>The corresponding C-header definitions are:
+<CODE><PRE>
+    #define NUM_CHARS  10
+
+    typedef struct foo {
+	int     foo1;
+	float   foo2;
+    };
+
+    typedef struct bar {
+	foo     innerFoo;
+	int     bar1;
+	char    bar2[NUM_CHARS];
+    };
+</PRE></CODE>
+the smalltalk code is:
+<CODE><PRE>
+initFoo:aFoo
+    aFoo foo1:10.
+    aFoo foo2:(Float pi).
+    ^ self
+
+
+    ...
+    cTypes := cparser types.
+    cDefines := cparser defines.
+    ...
+    fooType := cTypes at:'foo'.
+    barType := cTypes at:'bar'.
+    ...
+    aBar := barType new.
+    ...
+    self initFoo:(aBar refMemberAt:'innerFoo');
+    ...
+    NUM_CHARS := Integer fromString:(defines at:'NUM_CHARS').
+    ...
+</PRE></CODE>
+Notice, that passing the result of <CODE>#memberAt:</CODE> to the
+<CODE>initFoo</CODE> method would
+not work in the above example, since that would pass a copy of the inner structure and
+leave the original (outer) datum unchanged.
+
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 1999 eXept Software AG
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.15 $
+</BODY>
+</HTML>

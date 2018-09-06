@@ -1,0 +1,26 @@
+; View defaultStyle:#mswindows98
+;
+; $Header$
+
+is3D                            true
+
+;
+; for now, much like win95, except for some menuPanel details
+; (animated menu-popup is not yet implemented; but, who likes it ?)
+;
+.
+#include 'mswindows95.style'
+
+name     #win98
+comment  'win98 lookalike'
+
+#if (Language == #german) or:[Language == #de]
+comment  'an MS Windows98 angelehnter Stil'
+#endif
+
+#if (Language == #french) or:[Language == #fr]
+comment  'Un style qui résemble MS Windows98'
+#endif
+
+menu.enteredLevel               1
+menu.selectionFollowsMouse      true

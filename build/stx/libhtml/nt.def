@@ -1,0 +1,11 @@
+LIBRARY         libhtml
+DESCRIPTION     'Smalltalk/X HTML Viewer'
+VERSION         3.5
+CODE            EXECUTE READ 
+DATA            READ WRITE
+SECTIONS
+    INITCODE    READ EXECUTE 
+    INITDATA    READ WRITE
+EXPORTS 
+    _libhtml_Init       @1
+IMPORTS

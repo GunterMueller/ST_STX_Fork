@@ -1,0 +1,24 @@
+; View defaultStyle:#rocky3 
+;
+; rock solid windows (flintstones ?)
+; fun style; like motif, but with different view background
+;
+; $Header: /cvs/stx/stx/libview/styles/oldStyles/rocky3.style,v 1.7 2000-08-16 14:24:30 ca Exp $
+
+
+#include 'motif.style'
+
+comment  'Fun style.\Like `motif'' - with rock solid views.\Very dark on most displays.'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Wie `motif'' mit beinhartem Hintergrund.\Sehr dunkel'
+#endif
+
+viewBackground                     (Smalltalk imageFromFileNamed:'bitmaps/granite.tiff' inPackage:'stx:libwidg3')
+
+shadowColor                        Color black
+lightColor                         Color lightGrey
+selection.hilightForegroundColor    Color white
+button.activeForegroundColor        Color white
+button.foregroundColor              Color grey:50
+

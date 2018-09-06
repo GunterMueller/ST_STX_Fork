@@ -1,0 +1,6 @@
+/^.*_Init:/
+i
+ .csect INIT{RO}
+.
+w
+q

@@ -1,0 +1,738 @@
+"{ Package: 'stx:clients/Demos' }"
+
+"{ NameSpace: CodingExamples_GUI }"
+
+GUIDemoApplication subclass:#GUIDemoFileBrowser
+	instanceVariableNames:'accessLock fileBrowser readerProcess magnifyTo'
+	classVariableNames:''
+	poolDictionaries:''
+	category:'examples-GUI'
+!
+
+Model subclass:#FileDescription
+	instanceVariableNames:'mimeType fileItem icon'
+	classVariableNames:''
+	poolDictionaries:''
+	privateIn:GUIDemoFileBrowser
+!
+
+!GUIDemoFileBrowser class methodsFor:'documentation'!
+
+documentation
+"
+    The example implements a very simple File Browser
+
+    [author:]
+        Claus Atzkern
+
+    [start with:]
+        GUIDemoFileBrowser open
+        GUIDemo open
+"
+
+! !
+
+!GUIDemoFileBrowser class methodsFor:'interface specs'!
+
+windowSpec
+    "This resource specification was automatically generated
+     by the UIPainter of ST/X."
+
+    "Do not manually edit this!! If it is corrupted,
+     the UIPainter may not be able to read the specification."
+
+    "
+     UIPainter new openOnClass:CodingExamples_GUI::GUIDemoFileBrowser andSelector:#windowSpec
+     CodingExamples_GUI::GUIDemoFileBrowser new openInterface:#windowSpec
+     CodingExamples_GUI::GUIDemoFileBrowser open
+    "
+
+    <resource: #canvas>
+
+    ^ 
+     #(#FullSpec
+        #name: #windowSpec
+        #window: 
+       #(#WindowSpec
+          #label: 'Simple FileBrowser'
+          #name: 'Simple FileBrowser'
+          #min: #(#Point 10 10)
+          #max: #(#Point 1152 900)
+          #bounds: #(#Rectangle 497 261 1198 785)
+        )
+        #component: 
+       #(#SpecCollection
+          #collection: #(
+           #(#VariableHorizontalPanelSpec
+              #name: 'Panel'
+              #layout: #(#LayoutFrame 0 0.0 0 0.0 0 1.0 0 1.0)
+              #component: 
+             #(#SpecCollection
+                #collection: #(
+                 #(#ViewSpec
+                    #name: 'DirectoryView'
+                    #component: 
+                   #(#SpecCollection
+                      #collection: #(
+                       #(#FilenameInputFieldSpec
+                          #name: 'DirectoryEdit'
+                          #layout: #(#LayoutFrame 0 0.0 0 0 0 1.0 23 0)
+                          #model: #directoryHolder
+                          #acceptOnPointerLeave: false
+                        )
+                       #(#HierarchicalListViewSpec
+                          #name: 'DirectoryBrowser'
+                          #layout: #(#LayoutFrame 0 0.0 24 0.0 0 1.0 0 1.0)
+                          #hasHorizontalScrollBar: true
+                          #hasVerticalScrollBar: true
+                          #miniScrollerHorizontal: true
+                          #miniScrollerVertical: true
+                          #listModel: #directoryList
+                          #highlightMode: #label
+                          #doubleClickSelector: #doDoubleClick:
+                          #showLines: false
+                          #indicatorSelector: #doIndicatorClick:
+                          #postBuildCallback: #postBuildDirectoryBrowser:
+                        )
+                       )
+                     
+                    )
+                  )
+                 #(#ViewSpec
+                    #name: 'FileView'
+                    #component: 
+                   #(#SpecCollection
+                      #collection: #(
+                       #(#FilenameInputFieldSpec
+                          #name: 'FileEdit'
+                          #layout: #(#LayoutFrame 0 0.0 0 0 0 1.0 23 0)
+                          #model: #fileHolder
+                          #immediateAccept: false
+                          #acceptOnTab: true
+                          #acceptOnPointerLeave: false
+                        )
+                       #(#DataSetSpec
+                          #name: 'FileBrowser'
+                          #layout: #(#LayoutFrame 0 0.0 24 0 0 1.0 0 1.0)
+                          #hasHorizontalScrollBar: true
+                          #hasVerticalScrollBar: true
+                          #miniScrollerHorizontal: true
+                          #miniScrollerVertical: true
+                          #dataList: #fileList
+                          #has3Dsepartors: false
+                          #doubleClickSelector: #fileBrowserDoubleClick:
+                          #columnHolder: #tableColumns
+                          #valueChangeSelector: #fileBrowserSingleClick:
+                          #multipleSelectOk: true
+                          #beDependentOfRows: true
+                          #verticalSpacing: 0
+                          #postBuildCallback: #postBuildFileBrowser:
+                        )
+                       )
+                     
+                    )
+                  )
+                 )
+               
+              )
+              #handles: #(#Any 0.32097 1.0)
+            )
+           )
+         
+        )
+      )
+! !
+
+!GUIDemoFileBrowser class methodsFor:'resources'!
+
+asciiText
+    "Generated by the Image Editor"
+    "
+    ImageEditor openOnClass:self andSelector:#asciiText
+    "
+
+    <resource: #image>
+
+    ^Icon
+        constantNamed:#'SFBrowser asciiText'
+        ifAbsentPut:[(Depth8Image new) width: 32; height: 16; photometric:(#palette); bitsPerSample:(#(8 )); samplesPerPixel:(1); bits:(ByteArray fromPackedString:'@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@DA@PDA@PDA@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@PHB@ HB@ @B@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@A@ DA@P@B@@HB@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@DB@ HB@ H@@PDA@@@@@@@@@@@@@@@@@@@@@@@@@@@@@PHA@PD@@ HB@ H@@@@@@@@@@@@@@@@@@@@@@@@@@@@A@ HB@ HB@ HB@ @@@@@@@@@@@@@@@@@@@@@@@@@@@@DB@PDA@PDA@P@B@@@@@@@@@@@@@@@@@@@@@@@@@@@@@PHB@ HB@ HB@ H@@@@@@@@@@@@@@@@@@@@@@@@@@@@A@ DA@PDA@PD@@ @@@@@@@@@@@@@@@@@@@@@@@@@@@@DB@ HB@ HB@ HB@@@@@@@@@@@@@@@@@@@@@@@@@@@@@PDA@PDA@PDA@P@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@b') ; colorMapFromArray:#[0 0 0 0 0 0 255 255 255]; mask:((Depth1Image new) width: 32; height: 16; photometric:(#blackIs0); bitsPerSample:(#(1 )); samplesPerPixel:(1); bits:(ByteArray fromPackedString:'@@@@@@@@@@C? @@@?<@@@O? @AS?<@@@??GL5O?2TQS?<$$T??IEEO?16MS?<@@@??@@@@@@@@@@@@@@@@@@@@@a') ; yourself); yourself]
+!
+
+binaryFile
+    "Generated by the Image Editor"
+    "
+    ImageEditor openOnClass:self andSelector:#binaryFile
+    "
+
+    <resource: #image>
+
+    ^Icon
+        constantNamed:#'SFBrowser binaryFile'
+        ifAbsentPut:[(Depth8Image new) width: 32; height: 16; photometric:(#palette); bitsPerSample:(#(8 )); samplesPerPixel:(1); bits:(ByteArray fromPackedString:'@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@DA@PDA@PDA@PD@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@PHB@ HB@ HB@ H@@@@@@@@@@@@@@@@@@@@@@@@@@@@A@ DB@@D@@ @A@ @@@@@@@@@@@@@@@@@@@@@@@@@@@@DB@PHA@ DB@PHB@@@@@@@@@@@@@@@@@@@@@@@@@@@@@PHA@ @A@@H@@PH@@@@@@@@@@@@@@@@@@@@@@@@@@@@A@ HB@ HB@ HB@ @@@@@@@@@@@@@@@@@@@@@@@@@@@@DB@@D@@ D@@ @B@@@@@@@@@@@@@@@@@@@@@@@@@@@@@PHA@ DB@PHB@@H@@@@@@@@@@@@@@@@@@@@@@@@@@@@A@ @A@@HA@@H@@ @@@@@@@@@@@@@@@@@@@@@@@@@@@@DB@ HB@ HB@ HB@@@@@@@@@@@@@@@@@@@@@@@@@@@@@PDA@PDA@PDA@P@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@b') ; colorMapFromArray:#[0 0 0 0 0 0 255 255 255]; mask:((Depth1Image new) width: 32; height: 16; photometric:(#blackIs0); bitsPerSample:(#(1 )); samplesPerPixel:(1); bits:(ByteArray fromPackedString:'@@@@@@@@@@C?<@@@??@@@O?0@BC?<@@ ??FX9O?2IR+?<"T.??H%JO?1&N[?<@@@??@@@@@@@@@@@@@@@@@@@@@a') ; yourself); yourself]
+!
+
+brokenImage
+    "Generated by the Image Editor"
+    "
+    ImageEditor openOnClass:self andSelector:#brokenImage
+    "
+
+    <resource: #image>
+
+    ^Icon
+        constantNamed:#'SFBrowser brokenImage'
+        ifAbsentPut:[(Depth8Image new) width: 12; height: 16; photometric:(#palette); bitsPerSample:(#(8 )); samplesPerPixel:(1); bits:(ByteArray fromPackedString:'APTEAPTEAPTEAPTEAPHB@ HB@ HCAPTEAPH@@@@@@@@@@0TEAPH@@@@@@@@@@@LEAPH@@@@@@@@DA@HCAPH@@@@@@@@DA@PDAPH@@@@@@@@@@ HDAPH@@@@@@@@@@@@DAPHD@@@D@@@@A@PDAPHEA@@D@@PDAPPDAPTDAPPEA@TEA@TDAPT@APTDAPTE@@PEAPH@@@P@A@@@@@@DAPH@@@@@@@@@@@@DAPH@@@@@@@@@@@@DAPTDA@PDA@PDA@PD') ; colorMapFromArray:#[255 255 255 191 191 191 187 187 187 86 86 85 55 55 55 0 0 0]; mask:((ImageMask new) width: 12; height: 16; photometric:(#blackIs0); bitsPerSample:(#(1 )); samplesPerPixel:(1); bits:(ByteArray fromPackedString:'@@A? G?@_>A?<G?0_?A?<G?0W;@*TBQ _?A?<G?0O?@b') ; yourself); yourself]
+!
+
+fileLink
+     ^ FileBrowser icons at:#fileLink
+!
+
+fileLocked
+     ^ FileBrowser icons at:#fileLocked
+!
+
+htmlText
+    "Generated by the Image Editor"
+    "
+    ImageEditor openOnClass:self andSelector:#htmlText
+    "
+
+    <resource: #image>
+
+    ^Icon
+        constantNamed:#'SFBrowser htmlText'
+        ifAbsentPut:[(Depth8Image new) width: 32; height: 16; photometric:(#palette); bitsPerSample:(#(8 )); samplesPerPixel:(1); bits:(ByteArray fromPackedString:'@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@DA@PDA@PDA@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@PHB@ HB@ @B@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@A@ DA@P@B@@HB@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@DB@ HB@ H@@PDA@@@@@@@@@@@@@@@@@@@@@@@@@@@@@PHA@PD@@ HB@ H@@@@@@@@@@@@@@@@@@@@@@@@@@@@A@ HB@ HB@ HB@ @@@@@@@@@@@@@@@@@@@@@@@@@@@@DB@PDA@PDA@P@B@@@@@@@@@@@@@@@@@@@@@@@@@@@@@PHB@ HB@ HB@ H@@@@@@@@@@@@@@@@@@@@@@@@@@@@A@ DA@PDA@PD@@ @@@@@@@@@@@@@@@@@@@@@@@@@@@@DB@ HB@ HB@ HB@@@@@@@@@@@@@@@@@@@@@@@@@@@@@PDA@PDA@PDA@P@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@b') ; colorMapFromArray:#[0 0 0 0 0 0 255 255 255]; mask:((Depth1Image new) width: 32; height: 16; photometric:(#blackIs0); bitsPerSample:(#(1 )); samplesPerPixel:(1); bits:(ByteArray fromPackedString:'@@@@@@@@@@C? @@@?<@@@O?"B@S?<  D??N]9O?2RUS?<$%T??IIUO?2SU[?<@@@??@@@@@@@@@@@@@@@@@@@@@a') ; yourself); yourself]
+! !
+
+!GUIDemoFileBrowser class methodsFor:'tableColumns specs'!
+
+tableColumns
+    "This resource specification was automatically generated
+     by the DataSetBuilder of ST/X."
+
+    "Do not manually edit this!! If it is corrupted,
+     the DataSetBuilder may not be able to read the specification."
+
+    "
+     DataSetBuilder new openOnClass:CodingExamples_GUI::GUIDemoFileBrowser andSelector:#tableColumns
+    "
+
+    <resource: #tableColumns>
+
+    ^#(
+      #(#DataSetColumnSpec
+         #label: 'file name'
+         #labelAlignment: #left
+         #labelButtonType: #Button
+         #labelActionSelector: #fileBrowserSort:
+         #labelActionArgument: 'baseName'
+         #model: #baseName
+         #canSelect: false
+         #showRowSeparator: false
+         #showColSeparator: false
+       )
+      #(#DataSetColumnSpec
+         #label: 'permissions'
+         #labelAlignment: #left
+         #labelButtonType: #Button
+         #usePreferredWidth: true
+         #model: #permissions
+         #canSelect: false
+         #showRowSeparator: false
+         #showColSeparator: false
+       )
+      #(#DataSetColumnSpec
+         #label: 'owner'
+         #labelAlignment: #left
+         #labelButtonType: #Button
+         #width: 70
+         #model: #owner
+         #canSelect: false
+         #showRowSeparator: false
+         #showColSeparator: false
+       )
+      #(#DataSetColumnSpec
+         #label: 'group'
+         #labelAlignment: #left
+         #labelButtonType: #Button
+         #width: 70
+         #model: #group
+         #canSelect: false
+         #showRowSeparator: false
+         #showColSeparator: false
+       )
+      #(#DataSetColumnSpec
+         #label: 'size'
+         #labelAlignment: #left
+         #labelButtonType: #Button
+         #labelActionSelector: #fileBrowserSort:
+         #labelActionArgument: 'size'
+         #width: 70
+         #model: #size
+         #canSelect: false
+         #showRowSeparator: false
+         #showColSeparator: false
+       )
+      #(#DataSetColumnSpec
+         #label: ''
+         #labelButtonType: #Button
+         #width: 60
+         #height: 20
+         #model: #icon
+         #printSelector: #icon
+         #canSelect: false
+         #showRowSeparator: false
+         #showSelectionHighLighted: false
+         #showColSeparator: false
+       )
+      )
+    
+! !
+
+!GUIDemoFileBrowser methodsFor:'actions directoryBrowser'!
+
+doDoubleClick:anIndex
+    "handle a doubleClick on a directory
+    "
+    |item directory openedItem  newList contents|
+
+    item := self directoryList at:anIndex ifAbsent:nil.
+    item isNil ifTrue:[^ self].
+
+    item isDirectory ifFalse:[
+        item := item parent.
+        item isNil ifTrue:[^ self].
+    ].    
+    directory := item fileName.
+
+    (directory isReadable and:[directory isExecutable]) ifFalse:[
+        ^ self
+    ].
+
+    (    (openedItem := self fileList at:1 ifAbsent:nil) notNil
+     and:[openedItem fileName = directory]
+    ) ifTrue:[
+        "/ nothing changed
+        ^ self
+    ].
+
+    Cursor wait showWhile:[
+        self stopReader.
+        fileBrowser releaseAllRegisteredImages.
+        newList := OrderedCollection new.
+
+        directory notNil ifTrue:[
+            contents := DirectoryContents directoryNamed:directory.
+
+            contents size ~~ 0 ifTrue:[
+                contents itemsDo:[:anItem|
+                    anItem isDirectory ifFalse:[
+                        newList add:(FileDescription fileItem:anItem)
+                    ]
+                ]
+            ].
+        ].
+        self fileList contents:newList.
+    ].
+    self startReader.
+!
+
+doIndicatorClick:anIndex
+    "handle a click on the indicator
+    "
+    |item|
+
+    item := self directoryList at:anIndex ifAbsent:nil.
+
+    (item notNil and:[item isDirectory]) ifTrue:[
+        item toggleExpand
+    ].
+! !
+
+!GUIDemoFileBrowser methodsFor:'actions fileBrowser'!
+
+fileBrowserDoubleClick:aNumber
+    "handle a double click in the file browser;
+     open a tool on the current selected file (inspector, html browser; ...
+    "
+    |item file|
+
+    (item := self fileList at:aNumber ifAbsent:nil) isNil ifTrue:[
+        ^ self
+    ].
+    file := item fileName.
+
+    file isReadable ifFalse:[^ self].
+    item isFileImage ifTrue:[ ^ ImageEditor  openOnFile:(file pathName)].
+!
+
+fileBrowserSingleClick:aColl
+    |path|
+
+    aColl size == 1 ifTrue:[
+        path := (self fileList at:(aColl at:1)) pathName
+    ] ifFalse:[
+        path := nil
+    ].
+    self fileHolder value:path.
+!
+
+fileBrowserSort:what
+    |rsel list nlst|
+
+    list := self fileList.
+
+    list notEmpty ifTrue:[
+        nlst := what = 'size'
+                 ifTrue:[ SortedCollection sortBlock:[:a :b| a size > b size] ]
+                ifFalse:[ SortedCollection sortBlock:[:a :b| a baseName < b baseName] ].
+
+        list do:[:r| nlst add:r ].
+
+        accessLock critical:[
+            list removeAll.
+            list addAll:nlst.
+        ]
+    ]
+! !
+
+!GUIDemoFileBrowser methodsFor:'aspects'!
+
+directoryHolder
+    "holder, which keeps the current root directory
+    "
+    |holder|
+
+    (holder := builder bindingAt:#directoryHolder) isNil ifTrue:[
+        builder aspectAt:#directoryHolder put:(holder :=  ValueHolder new).
+        holder value:(Filename homeDirectory).
+        holder addDependent:self.
+    ].
+    ^ holder
+!
+
+directoryList
+    "holder, which keeps the current list of directory entries shown by the directory-browser
+    "
+    |list|
+
+    (list := builder bindingAt:#directoryList) isNil ifTrue:[
+        list := HierarchicalFileList new.
+        list showRoot:false.
+        list matchBlock:[:fn :isDir| isDir ].
+        list directory:(self directoryHolder value).
+        builder aspectAt:#directoryList put:list.
+    ].
+    ^ list
+!
+
+fileHolder
+    "holder, which keeps the current selected file
+    "
+    |holder|
+
+    (holder := builder bindingAt:#fileHolder) isNil ifTrue:[
+        builder aspectAt:#fileHolder put:(holder :=  ValueHolder new).
+    ].
+    ^ holder
+!
+
+fileList
+    "holder, which keeps the current list of file entries shown by the file-browser
+    "
+    |list|
+
+    (list := builder bindingAt:#fileList) isNil ifTrue:[
+        builder aspectAt:#fileList put:(list :=  List new).
+    ].
+    ^ list
+! !
+
+!GUIDemoFileBrowser methodsFor:'change & update'!
+
+update:something with:aParameter from:aModel
+    "one of my models changed
+    "
+    |list file|
+
+    aModel == self directoryHolder ifFalse:[
+        super update:something with:aParameter from:aModel.
+      ^ self
+    ].
+
+    list := self directoryList.
+    file := aModel value.
+
+    file notNil ifTrue:[
+        file := Filename named:file.
+
+        (file isDirectory and:[file isReadable and:[file isExecutable]]) ifTrue:[
+            list directory:file
+        ]
+    ].
+    aModel value:(list directory asString) withoutNotifying:self
+! !
+
+!GUIDemoFileBrowser methodsFor:'reader'!
+
+readIconFor:anItem magnifiedTo:anExtent
+    "returns image assigned to a file description
+    "
+    |icon|
+
+    anItem mustReadImage ifTrue:[
+        Error handle:[:ex|
+            icon := #brokenImage.
+        ] do:[ |w h|
+            icon := Image fromFile:(anItem pathName).
+
+            h := icon height.
+            w := icon width.
+        
+            (h > anExtent y or:[w > anExtent x]) ifTrue:[
+                icon := icon magnifiedTo:(w min:anExtent x)@ (h min:anExtent y).
+            ].
+        ].
+        anItem icon:icon
+    ].
+!
+
+readerCycle
+    "start reader task
+    "
+    |start idx list node magnify|
+
+    list    := self fileList.
+    magnify := magnifyTo.
+
+    magnify isNil ifTrue:[
+        fileBrowser columnsDo:[:aColumn||desc|
+            magnifyTo isNil ifTrue:[
+                (desc := aColumn description) readSelector == #icon ifTrue:[
+                    magnifyTo := (desc width) @ (desc height) - (2@2)
+                ]
+            ]
+        ].
+        magnify := magnifyTo ? (16@16).
+    ].
+
+    [ fileBrowser shown ] whileTrue:[
+        start := (fileBrowser indexOfFirstRowShown ? 1) max:1.
+
+        accessLock critical:[
+            idx := list findFirst:[:n| n mustReadImage ] startingAt:start.
+
+            (idx == 0 and:[start > 1]) ifTrue:[
+                idx := list findLast:[:n|n mustReadImage] startingAt:(start - 1)
+            ].
+            node := list at:idx ifAbsent:nil.
+        ].
+        node isNil ifTrue:[ ^ self ].
+        self readIconFor:node magnifiedTo:magnify.
+        Processor yield.
+    ].
+!
+
+startReader
+    "start reader task
+    "
+    self fileList size == 0 ifTrue:[
+        ^ self
+    ].
+
+    readerProcess := Process for:[ [ self readerCycle
+                                   ] valueNowOrOnUnwindDo:[ readerProcess := nil ].
+                                 ]
+                        priority:(Processor activePriority - 1).
+
+    readerProcess resume.
+!
+
+stopReader
+    "stop reader task
+    "
+    |task|
+
+    task := readerProcess.
+    readerProcess := nil.
+
+    task notNil ifTrue:[
+        task terminateWithAllSubprocessesInGroup.
+        task waitUntilTerminated.
+    ].
+    accessLock critical:[
+        self fileList removeAll.
+    ].
+! !
+
+!GUIDemoFileBrowser methodsFor:'startup & release'!
+
+closeDownViews
+    "stop the reader before closeing the application
+    "
+    self stopReader.
+  ^ super closeDownViews
+!
+
+initialize
+    super initialize.
+    accessLock := Semaphore forMutualExclusion.
+!
+
+postBuildDirectoryBrowser:theBrowser
+    "called after build of the file-browser
+    "
+    theBrowser hasConstantHeight:true.
+!
+
+postBuildFileBrowser:theBrowser
+    "called after build of the file-browser
+    "
+    fileBrowser := theBrowser.
+! !
+
+!GUIDemoFileBrowser::FileDescription class methodsFor:'instance creation'!
+
+fileItem:anItem
+    |item|
+
+    item := self new.
+    item fileItem:anItem.
+  ^ item
+! !
+
+!GUIDemoFileBrowser::FileDescription methodsFor:'accessing'!
+
+baseName
+    ^ fileItem baseName
+!
+
+fileName
+    ^ fileItem fileName
+!
+
+group
+    |info|
+
+    info := fileItem info.
+    info isNil ifTrue:[ ^ nil ].
+
+  ^ OperatingSystem getGroupNameFromID:(info gid)
+!
+
+icon
+    "returns the icon assigned to the file
+    "
+    |type image|
+
+    icon notNil ifTrue:[^ icon].
+    type := self mimeType.
+    type == #unknown ifTrue:[^ nil].
+
+    image := FileBrowser iconForKeyMatching:mimeType.
+
+    (type startsWith:'image') ifTrue:[
+        ^ image
+    ].
+    icon:= image.
+  ^ icon
+!
+
+icon:anIcon
+    "set the icon
+    "
+    icon := anIcon.
+    self changed:#icon.
+!
+
+mode
+    |info|
+
+    info := fileItem info.
+    info notNil ifTrue:[ ^ info mode ].
+  ^ nil
+!
+
+owner
+    |info|
+
+    info := fileItem info.
+    info isNil ifTrue:[ ^ nil ].
+
+  ^ OperatingSystem getUserNameFromID:(info uid)
+!
+
+pathName
+    ^ self fileName pathName
+!
+
+permissions
+    "return the value of the instance variable 'permissions' (automatically generated)"
+
+    |mode perm|
+
+    mode := self mode.
+    mode isNil ifTrue:[^ nil].
+
+    perm := String new:9 withAll:$-.
+
+    1 to:9 by:3 do:[:i|
+        (mode bitAt:i    ) == 1 ifTrue:[perm at:10 - i put:$x].
+        (mode bitAt:i + 1) == 1 ifTrue:[perm at:9  - i put:$w].
+        (mode bitAt:i + 2) == 1 ifTrue:[perm at:8  - i put:$r].
+    ].
+    ^ perm
+!
+
+size
+    |info|
+
+    info := fileItem info.
+    info notNil ifTrue:[ ^ info size ].
+  ^ nil
+!
+
+type
+    |info|
+
+    info := fileItem info.
+    info notNil ifTrue:[ ^ info type ].
+  ^ nil
+! !
+
+!GUIDemoFileBrowser::FileDescription methodsFor:'accessing mimeType'!
+
+mimeType
+    "returns the mimeType assigned to the file
+    "
+    mimeType isNil ifTrue:[
+        mimeType := FileBrowser iconKeyForFile:(self fileName).
+        mimeType isNil ifTrue:[ mimeType := #unknown ].
+    ].
+    ^ mimeType
+!
+
+mustReadImage
+    ^ icon isNil and:[ self isFileImage ]
+! !
+
+!GUIDemoFileBrowser::FileDescription methodsFor:'change & update'!
+
+fileItem:anItem
+    "setup instance for a fileName
+    "
+    fileItem := anItem.
+! !
+
+!GUIDemoFileBrowser::FileDescription methodsFor:'queries'!
+
+isFileImage
+    ^ self mimeType startsWith:'image'
+! !
+
+!GUIDemoFileBrowser class methodsFor:'documentation'!
+
+version
+    ^ '$Header: /cvs/stx/stx/clients/Demos/GUIDemoFileBrowser.st,v 1.12 2002-10-15 11:39:29 ca Exp $'
+! !

@@ -1,0 +1,81 @@
+<title>The Structure of HTML 3.0 Documents</title> <h1>The Structure of
+HTML 3.0 Documents</h1>
+
+<p>In HTML documents, tags define the start and end of headings,
+paragraphs, lists, character highlighting and links etc. Most HTML
+elements are identified in a document as a start tag, which gives the
+element name and attributes, followed by the content, followed by the
+end tag. Start tags are delimited by &lt; and &gt;, while end tags are
+delimited by &lt;/ and &gt;. For example:
+
+<pre>    &lt;title&gt;This is a Title&lt;/title&gt;
+    &lt;h1&gt;This is a Heading&lt;/h1&gt;
+    &lt;P&gt;This is a paragraph.</pre>
+
+<p>Every HTML document as a minimum must have a title. To identify the
+document as being HTML 3.0, it is recommended that documents start with
+the prologue:
+
+<pre>    &lt;!doctype HTML public "-//W3O//DTD W3 HTML 3.0//EN"&gt;</pre>
+
+<p>When absent, this prologue is implied by the MIME content type for
+HTML 3.0 together with the associated version parameter.
+
+<hr> <h2>Document Structure</h2>
+
+<p>HTML 3.0 documents formally have the following structure:
+
+<pre>    &lt;HTML&gt;
+    &lt;HEAD&gt; <i>head elements ...</i>
+    &lt;BODY&gt; <i>body elements ...</i>
+    &lt;/HTML&gt;</pre>
+
+<p>In most cases, the HTML, HEAD and BODY tags can be safely omitted.
+Note that the formal syntax of HTML 3.0 is defined by the document type
+definition, which is included as an appendix of this specification. The
+details of the HEAD and BODY elements will be described in subsequent
+sections.
+
+<p>The permitted syntax of HTML 3.0 compliant documents is specified by
+the DTD. This includes the content model for each element, defining
+what markup is permitted within each element. The DTD uses SGML entities
+in content models to express regular features of HTML 3.0, for example
+<tt>%body.content</tt> defines what markup is permitted within the BODY
+element. A number of other elements also share this content model, e.g.
+BQ, DIV, FORM, TH and TD.
+
+<p>The description of each tag includes the <i>content model</i> and the
+<i>permitted context</i> (which elements can contain this tag). Where
+practical, these properties are given with the same entity names as used
+in the DTD, and should help the newcomer to get to grips with
+understanding the DTD itself. For example, the description of the NOTE
+element starts with:
+
+<pre>    <B>The NOTE element</B>
+
+    <B>Permitted context:</B> %block
+    <B>Content model:</B> %flow</pre>
+
+This says that the NOTE element (used for admonishments such as notes,
+cautions and errors) can occur in any element which includes
+%block in its content model. Similarly, any element with %flow as part
+of its permitted context can occur within a NOTE element.
+
+
+<h2>The HTML element</h2>
+
+<P>This has three attributes:
+
+<DL> <DT>VERSION <DD>This is fixed by the DTD as the string
+"-//W3O//DTD W3 HTML 3.0//EN"
+
+<DT>URN <DD>The universal resource name for the document (optional)
+
+<DT>ROLE <DD>An optional space separated list of SGML NAME tokens that
+define the role this document plays, e.g. table of contents. The
+conventions for these names are outside the scope of this
+specification. <i>wouldn't it be better to leave this to a link to a
+URC?</i> </DL>
+
+<B>Note</B> that both the start and end tag for the HTML element can be
+omitted. <!--NewPage-->

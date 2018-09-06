@@ -1,0 +1,53 @@
+; View defaultStyle:#'motif_light' 
+;
+; like motif, but using a brighter grey
+;
+; use this (instead of motif) on VGA displays,
+; where the colors are a bit darkish
+;
+; $Header: /cvs/stx/stx/libview/styles/motif_light.style,v 1.12 1999-10-27 13:28:03 stefan Exp $
+;
+
+#if Screen current hasGreyscales
+viewGrey                  Color grey:67 
+lightColor                Color grey:80
+shadowColor               Color grey:25
+mediumColor               Color grey:50
+#endif
+
+#include 'motif.common'
+
+comment  'like `motif'' style\\slightly brighter colors'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Wie `motif''\Hellerer Hintergrund.'
+#endif
+
+scroller.viewBackground    Color grey:50
+scroller.thumbColor        =viewGrey
+
+selection.foregroundColor  Color black
+
+label.foregroundColor      Color black
+
+button.activeBackgroundColor     Color grey:50
+button.activeForegroundColor     Color black
+button.disabledForegroundColor   Color grey:25
+
+menu.viewBackgroundColor         Color grey:50
+menu.disabledForegroundColor     Color darkGrey
+
+ruler.foregroundColor            Color black
+ruler.backgroundColor            Color grey:50
+
+selection.disabledForegroundColor Color grey:25
+
+;
+; although the following is not really motif, it looks much better ...
+;
+#if Screen current hasColors   
+editField.backgroundColor           Color red:100 green:75 blue:75
+editField.selectionBackgroundColor  Color white
+editField.selectionForegroundColor  Color black
+#endif
+

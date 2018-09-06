@@ -1,0 +1,713 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Times, Delays and Interrupts</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="processes.html">     <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="binaryStore.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Working with Time, Delays and Interrupts</H1>
+
+<H2>Contents</H2>
+<UL>
+ <LI><A HREF="#INTRO" NAME="I_INTRO">Introduction</A>
+ <LI><A HREF="#TIMES" NAME="I_TIMES">The current Time vs. the millisecondClock</A>
+ <LI><A HREF="#DELAY" NAME="I_DELAY">Using Delay</A>
+ <LI><A HREF="#DELAYERRS" NAME="I_DELAYERRS">Delay-time errors and how to avoid them</A>
+ <LI><A HREF="#EARLYWAKEUP" NAME="I_EARLYWAKEUP">Premature wake up</A>
+ <LI><A HREF="#TIMEDWAKEUP" NAME="I_TIMEDWAKEUP">Installing a timed wakeup on any other semaphore</A>
+ <LI><A HREF="#TIMED_INTERRUPT" NAME="I_TIMED_INTERRUPT">Timed interrupts</A>
+ <LI><A HREF="#LOWLEVEL_INTERRUPT" NAME="I_LOWLEVEL_INTERRUPT">Lowlevel interrupts</A>
+</UL>
+
+
+<H2><A HREF="#I_INTRO" NAME="INTRO">Introduction</A></H2>
+  This document will teach you how to use the timing facilities
+  of <CITE>Smalltalk/X</CITE>.
+Typically, time handling is done by delaying a process
+(a smalltalk-lightweight process) for some time delta.
+There are also other (more tricky) possibilities.
+<P>
+  Please read the document
+<A HREF="processes.html"><VAR>``Working with processes''</VAR></A>
+if you do not yet know about processes, priorities, suspension etc.
+
+
+
+<H2><A HREF="#I_TIMES" NAME="TIMES">The current Time vs. the millisecondClock</A></H2>
+
+  The internals of smalltalk use different facilities for time
+  representation. Instances of <CODE>Time</CODE>, which represent time-of-day values,
+  of <CODE>AbsoluteTime</CODE>, which represent a particular time
+  at a specific date and finally millisecondClock values,
+  which are the values of a free running clock, incremented every millisecond.
+<P>
+  Currently, all delaying is internally based upon the millisecondClock value.
+  This value has only a limited precision (i.e. number of bits) and therefore
+  overruns in regular intervals. Although the details depend on the particular
+  OperatingSystem internals, this interval guaranteed to be greater than 24 hours.
+<BR>
+  On Unix, a flip through 0 occurs about every 74 hours.
+  Since <CITE>Smalltalk/X's</CITE> smallIntegers are represented in 31 bits,
+  it is (currently) not possible to represent time intervals longer
+  than HALF of the range (i.e. about 37 hours) using the millisecondClock value.
+<BR>
+  (see <CODE>OperatingSystem &#187; maximumMillisecondTimeDelta</CODE>)
+<P>
+  Therefore, it is (currently) not possible to directly use delays on
+  times longer than this interval.
+  To do this, you have to write
+  a little program doing this with a workaround
+  (i.e. delaying in smaller steps until the desired time
+  and/or time-of-day has passed).
+<P>
+  The operatingSystems millisecondClock offers a limited precision.
+  Typical internal resolutions are 1/100, 1/60, 1/50 or even 1/20 of a second.
+  Thus, when asking for the millisecondClocks value after a short time interval
+  may return you the same value as before, even when some milliseconds actually
+  have passed in between.
+<P>
+  Since millisecondClock values wrap, you cannot perform arithmetic directly
+  upon them. Class <CODE>OperatingSystem</CODE> provides methods which know about the wrap
+  and handle it correctly.
+<BR>
+See:
+<CODE><PRE>
+    OperatingSystem &#187; millisecondTimeDeltaBetween:and:
+    OperatingSystem &#187; millisecondTimeAdd:and:
+    OperatingSystem &#187; millisecondTime:isAfter:
+</PRE></CODE>
+
+Note:
+<BR>
+We are not perfectly happy with this solution - there ought to be some
+"WrappingNumber" subclass of Number, which does all this transparently.
+
+
+
+
+<H2><A HREF="#I_DELAY" NAME="DELAY">Using Delay</A></H2>
+
+  Delay can be used to suspend the currently running process for some time.
+<BR>
+  A delay object for some time interval is created with:
+<CODE><PRE>
+    d := Delay forSeconds:numberOfSeconds
+</PRE></CODE>
+  or:
+<CODE><PRE>
+    d := Delay forMilliseconds:numberOfMillis
+</PRE></CODE>
+  The actual delaying is done by sending <CODE>wait</CODE> to this delay.
+<BR>
+  Try evaluating:
+<CODE><PRE>
+    |d|
+
+    d := Delay forSeconds:3.
+    d wait
+</PRE></CODE>
+  you will notice, that only the current process is suspended for the
+  delay time. Other processes continue to execute (open some animated
+  demo - for example, the CubeDemo - to see this).
+<P>
+  For short delays, use <CODE>forMilliseconds</CODE>, as in:
+<CODE><PRE>
+    (Delay forMilliseconds:100) wait
+</PRE></CODE>
+
+There are also `combined create & wait' interfaces available in the
+<CODE>Delay</CODE> class:
+<CODE><PRE>
+    Delay waitForMilliseconds:100
+</PRE></CODE>
+or:
+<CODE><PRE>
+    Delay waitForSeconds:10
+</PRE></CODE>
+
+
+
+<H2><A HREF="#I_DELAYERRS" NAME="DELAYERRS">Delay-time errors and how to avoid them</A></H2>
+
+  The delay will last for at least the specified time, it usually waits a
+  bit longer due to internal overhead (the scheduler switching processes) or
+  if a higher priority process becomes runnable in the meantime.
+  Also, no operating system can guarantee exact times;
+  even realtime systems (like the realIX/88k) only guarantee an upper limit
+  for delays.
+<BR>
+  For example, another unix process may be executing
+  at a higher priority and thus lead to a slightly longer delay.
+<P>
+  This means, that if you call for a delay in a loop, the individual errors
+  will accumulate. It is therefore not possible, to maintain a heart-beat
+  kind of time handling by simply performing delays in a loop.
+<BR>
+  The example:
+<A TYPE="example">
+<CODE><PRE>
+    |d t1 t2 delta|
+
+    t1 := Time millisecondClockValue.
+    d := Delay forMilliseconds:50.
+    100 timesRepeat:[
+	d wait.
+	"do something"
+    ].
+    t2 := Time millisecondClockValue.
+    delta := OperatingSystem millisecondTimeDeltaBetween:t2 and:t1.
+    Transcript show:'delta time is '; show:(delta); showCR:' milliseconds'.
+</PRE></CODE>
+</A>
+  will NOT finish after 5 seconds, but some time later. On an unloaded system,
+  the error is typically a few percent, but, depending on other
+  processes running on your machine, the error may become substantial.
+<P>
+  Also, the actual delay time also depends on the resolution of the
+  machines clock: for example, if the minimum resolution is 60ms, all delays
+  smaller than that time interval will always delay for at least that time.
+<BR>
+  (therefore, the above example may take 6 or even 10 seconds to complete,
+   with clock resolutions of 60ms or 100ms !)
+<P>
+  To fix this problem, <CODE>Delay</CODE> allows waiting for a specific time to be reached,
+  (in addition to the deltatime based wait described above).
+<BR>
+  Try:
+<A TYPE="example">
+<CODE><PRE>
+    |t1 t2 now then delta|
+
+    t1 := Time millisecondClockValue.
+    now := Time millisecondClockValue.
+    100 timesRepeat:[
+	then := OperatingSystem millisecondTimeAdd:now and:50.
+	(Delay untilMilliseconds:then) wait.
+	now := then
+    ].
+    t2 := Time millisecondClockValue.
+    delta := OperatingSystem millisecondTimeDeltaBetween:t2 and:t1.
+    Transcript show:'delta time is '; show:(delta); showCR:' milliseconds'.
+</PRE></CODE>
+</A>
+  of course, there is also a nonzero error in each individual wait,
+  but this error will not accumulate.
+<BR>
+  Therefore, the relative error will approach zero over time.
+  Use the above algorithm, if you need some action to be performed in
+  constant intervals.
+
+
+
+<H2><A HREF="#I_EARLYWAKEUP" NAME="EARLYWAKEUP">Premature wakeup</A></H2>
+
+  A process waiting on a delay can be resumed before its actual delay-time
+  has expired. To do so, send <CODE>#resume</CODE> to the delay.
+<BR>
+  Of course, this must be done
+  by some other process (the delayed process itself obviously cant do it).
+<BR>
+  Example:
+<A TYPE="example">
+<CODE><PRE>
+    |process d|
+
+    process :=
+	[
+	    Transcript show:(Time now);
+		       showCR:' subprocess: going to wait for half an hour ...'.
+	    d := Delay forSeconds:1800.
+	    d wait.
+	    Transcript show:(Time now);
+		       showCR:' subprocess: here I am again ...'.
+	    Transcript show:(Time now);
+		       showCR:' subprocess: done.'
+	] fork.
+
+    "after some short time, stop the wait"
+
+    Transcript show:(Time now); showCR:' main process: wait a bit'.
+    Delay waitForSeconds:2.
+    Transcript show:(Time now); showCR:' main process: wakeup the delay early now'.
+    d resume.
+    Transcript show:(Time now); showCR:' main process: done.'.
+</PRE></CODE>
+</A>
+ Process priorities also have an influence; in the following example,
+ the subprocess will start right-away and resume immediately (before the
+ parent process outputs the 'done' message):
+<A TYPE="example">
+<CODE><PRE>
+    |process d|
+
+    process :=
+	[
+	    Transcript show:(Time now);
+		       showCR:' subprocess: going to wait for half an hour ...'.
+	    d := Delay forSeconds:1800.
+	    d wait.
+	    Transcript show:(Time now);
+		       showCR:' subprocess: here I am again ...'.
+	    Transcript show:(Time now);
+		       showCR:' subprocess: done.'
+	] forkAt:(Processor activePriority + 1).
+
+    "after some short time, stop the wait"
+
+    Transcript show:(Time now); showCR:' main process: wait a bit'.
+    Delay waitForSeconds:2.
+    Transcript show:(Time now); showCR:' main process: wakeup the delay early now'.
+    d resume.
+    Transcript show:(Time now); showCR:' main process: done.'.
+</PRE></CODE>
+</A>
+
+
+<H2><A HREF="#I_TIMEDWAKEUP" NAME="TIMEDWAKEUP">Installing a timed wakeup on any other semaphore</A></H2>
+
+  If you look at the implementation of delays and semaphores,
+  you will notice that
+  the actual work is done in the <CODE>ProcessorScheduler</CODE> class.
+  Through the global
+  variable <CODE>Processor</CODE>
+  (which is the one-and-only instance of <CODE>ProcessorScheduler</CODE>)
+  you can tell the processor to signal a semaphore whenever some time has been
+  reached, or input arrives on an external stream.
+<BR>
+  This allows installation of a timeout, while waiting for some input
+  to arrive.
+<P>
+
+  The following example waits until either some input arrives on
+  a pipe-stream, or 5 seconds have expired,
+<BR>
+Actually, there is already a method which does exactly this:
+<CODE><PRE>
+    ExternalStream readWaitWithTimeout:
+</PRE></CODE>
+we show the code here anyway, for didactic reasons:
+<A TYPE="example">
+<CODE><PRE>
+    |sema pipe|
+
+    "/ create a pipeStream - there will be data after 1 second:
+
+    pipe := PipeStream readingFrom:'(sleep 1; echo hello)'.
+    Transcript show:Time now; showCR:' pipe created'; endEntry.
+
+    "/ create a semaphore, arrange for it to be signalled when
+    "/ either data arrives, or 5 seconds have passed
+
+    sema := Semaphore new.
+    Processor signal:sema onInput:(pipe fileDescriptor).
+    Processor signal:sema afterMilliseconds:5000.
+
+    "/ now wait
+
+    sema wait.
+
+    Transcript show:Time now; showCR:' after wait'; endEntry.
+
+    "/ data or timeout ?
+
+    pipe canReadWithoutBlocking ifTrue:[
+	Transcript show:Time now; showCR:' data available'; endEntry
+    ] ifFalse:[
+	Transcript show:Time now; showCR:' no data available'; endEntry
+    ].
+
+    "/ cleanup
+
+    Transcript show:Time now; showCR:' closing pipe'; endEntry.
+    pipe shutDown.
+    Transcript show:Time now; showCR:' done'; endEntry.
+</PRE></CODE>
+</A>
+in the previous example, the semaphore was signalled by data arriving
+in the pipe; in the following, a timeOut will trigger the semaphore:
+<A TYPE="example">
+<CODE><PRE>
+    |sema pipe|
+
+    "/ create a pipeStream - there will be data after 15 second:
+
+    pipe := PipeStream readingFrom:'(sleep 15; echo hello)'.
+    Transcript show:Time now; showCR:' pipe created'; endEntry.
+
+    "/ create a semaphore, arrange for it to be signalled when
+    "/ either data arrives, or 5 seconds have passed
+
+    sema := Semaphore new.
+    Processor signal:sema onInput:(pipe fileDescriptor).
+    Processor signal:sema afterMilliseconds:5000.
+
+    "/ now wait
+
+    sema wait.
+    Transcript show:Time now; showCR:' after wait'; endEntry.
+
+    "/ data or timeout ?
+
+    pipe canReadWithoutBlocking ifTrue:[
+	Transcript show:Time now; showCR:' data available'; endEntry
+    ] ifFalse:[
+	Transcript show:Time now; showCR:' no data available'; endEntry
+    ].
+
+    "/ cleanup
+
+    Transcript show:Time now; showCR:' closing pipe'; endEntry.
+    pipe shutDown.
+    Transcript show:Time now; showCR:' done'; endEntry.
+</PRE></CODE>
+</A>
+Notice:
+<BR>
+The close method in pipeStream waits for the underlying unix
+command to finish correctly (this is done in the underlying <CODE>pclose()</CODE>
+system function and not a smalltalk feature).
+<BR>
+Therefore, we better use the alternative <CODE>shutDown</CODE> method
+(which does not wait) to close the pipeStream in the second example.
+<BR>
+You can use <CODE>shutDown</CODE> just like <CODE>close</CODE> with ordinary
+streams - they behave the same, except for pipeStreams and socket connections.
+
+<P>
+using the existing <i>waitWithTimeout</I>-mechanism from <CODE>ExternalStream</CODE>
+the above is of course the same as:
+<A TYPE="example">
+<CODE><PRE>
+    |pipe|
+
+    "/ create the pipe - data will arrive after 15 seconds
+
+    pipe := PipeStream readingFrom:'(sleep 15; echo hello)'.
+    Transcript show:Time now; showCR:' pipe created'; endEntry.
+
+    "/ wait, but no longer than 5 seconds
+
+    (pipe readWaitWithTimeout:5) ifTrue:[
+	Transcript show:Time now; showCR:' data available'; endEntry
+    ] ifFalse:[
+	Transcript show:Time now; showCR:' no data available'; endEntry
+    ].
+
+    "/ cleanup
+
+    Transcript show:Time now; showCR:' closing pipe'; endEntry.
+    pipe shutDown.
+    Transcript show:Time now; showCR:' done'; endEntry.
+</PRE></CODE>
+</A>
+Try it with data arriving earlier in a workspace.
+
+
+
+<H2><A HREF="#I_TIMED_INTERRUPT" NAME="TIMED_INTERRUPT">Timed interrupts</A></H2>
+
+  Using delays, timing is done by suspending a process for some interval.
+  It is also possible, to continue execution and arrange for an interrupt
+  to occur after some time and let the process continue to run.
+<BR>
+  To do this, you have to define a block (which will be evaluated by the
+  process after the time has passed) and install it with:
+<CODE><PRE>
+    Processor addTimedBlock:aBlock afterSeconds:seconds
+</PRE></CODE>
+  or:
+<CODE><PRE>
+    Processor addTimedBlock:aBlock afterMilliseconds:millis
+</PRE></CODE>
+  or:
+<CODE><PRE>
+    Processor addTimedBlock:aBlock atMilliseconds:aMillisecondsClockValue
+</PRE></CODE>
+  The currently running process will be interrupted in whatever it is doing
+  when the time has come; if suspended, it will be resumed.
+<BR>
+  Since the behavior is as if the process did <CODE>"aBlock value"</CODE>,
+  you can perform
+  all kind of actions in the block: raise a signal, do a block-return,
+  terminate the process etc.
+<P>
+  You can also force an immediate interrupt and have another process evaluate
+  a block:
+<CODE><PRE>
+    aProcess interruptWith:aBlock
+</PRE></CODE>
+  to arrange for this to occur after some time, use:
+<CODE><PRE>
+    Processor addTimedBlock:[
+	aProcess interruptWith:aBlock
+    ] afterSeconds:timeTillInterrupt
+</PRE></CODE>
+  example:
+<A TYPE="example">
+<CODE><PRE>
+    Processor
+	addTimedBlock:[Transcript showCR:'interrupt occured'; endEntry]
+	afterSeconds:1.
+
+    Transcript showCR:'start processing ...'; endEntry.
+    1 to:10 do:[:i |
+	Transcript showCR:i; endEntry.
+	1000 factorial
+    ].
+    Transcript showCR:'done.'; endEntry
+</PRE></CODE>
+</A>
+  example:
+<A TYPE="example">
+<CODE><PRE>
+    |p|
+
+    p := [
+	    Transcript showCR:'subprocess start.'; endEntry.
+	    1 to:20 do:[:i |
+		Transcript showCR:i; endEntry.
+		1000 factorial.
+	    ].
+	    Transcript showCR:'subprocess end.'; endEntry.
+    ] forkAt:4.
+
+    Transcript showCR:'waiting for a while ...'; endEntry.
+    (Delay forSeconds:3) wait.
+
+    Transcript showCR:'now killing subprocess ...'; endEntry.
+    p interruptWith:[p terminate].
+
+    Transcript showCR:'done.'; endEntry
+</PRE></CODE>
+</A>
+Notice:
+The system uses this interrupt mechanism to interrupt a process when <KBD>"<B>Ctrl-C</B>"</KBD>
+is pressed.
+
+
+
+
+<H2><A HREF="#I_LOWLEVEL_INTERRUPT" NAME="LOWLEVEL_INTERRUPT">Lowlevel interrupts</A></H2>
+
+All of the above examples involved a process to react somehow on an
+incoming interrupt (either directly by interrupting the process to perform
+some action, or indirectly by signalling a semaphore).
+<P>
+On the lowest level, the runtime system reacts to interrupts by
+sending messages to so called <VAR>interrupt handler objects</VAR>
+at the time the interrupt occurs.
+<BR>
+These objects are responsible for signalling semaphores, rescheduling processes
+and
+to implement the above described highlevel interrupt behavior.
+<BR>
+At system startup time, <CITE>Smalltalk/X</CITE> installs appropriate handler
+objects as interrupt handler.
+<BR>
+(see
+<A INFO="Browse it"
+   TYPE="example"
+  action="Smalltalk browseInClass:(Smalltalk class) selector:#initInterrupts">
+"<CODE>Smalltalk initInterrupts</CODE>"
+</A>,
+ or
+<A INFO="Browse it"
+   TYPE="example"
+  action="Smalltalk browseInClass:ProcessorScheduler selector:#initialize">
+"<CODE>ProcessorScheduler initialize</CODE>"
+</A>
+for some examples which install low level handlers.)
+<P>
+You can <A HREF="#FN1" NAME="BACK_FN1">(*)</A> install your own interrupt handler objects;
+situations in which this makes sense are:
+<UL>
+<LI> to change the behavior of the system
+<LI> to implement totally different interrupt schemes
+<LI> to get faster interrupt response
+</UL>
+You get a faster interrupt response, because the handler object gets
+called right in the context of whichever process is currently running
+(i.e. there is no automatic switch to the scheduler or any other).
+<BR>
+In normal situations, the general mechanism are fast enough and there
+is no need to change things - however, if you have to handle interrupts
+at a very high frequency (say 1000 per second ;-), the context switch times
+may easily become a limiting factor. Consider this a hook for very specialized
+real time applications. [there are other things to take into consideration
+when doing realtime, though.]
+<P>
+
+
+
+<H3>Interrupt handler objects and messages</H3>
+
+All interrupt handler objects are accessed by the runtime system via
+class variables in the <CODE>ObjectMemory</CODE> class.
+These class variables are known to the runtime system - you may not remove
+them
+(actually, you could do this - the VM would then no longer send any
+interrupt messages ... but why would you want to do this ?).
+<P>
+The handler variables and messages sent to them are:
+<UL>
+<LI><CODE>InternalErrorHandler internalError:</CODE><VAR>aString</VAR>
+<BR>
+sent for errors internal to the runtime system. The message is sent with
+a string argument which describes the error.
+<BR>
+Examples are:
+<UL>
+<LI>invalid method/block objects in the interpreter
+<LI>doesNotUnderstand is not understood
+<LI>stack overflow in an interpreter context
+<LI>invalid class pointer in an object header
+<LI>invalid entries in a methodArray or selectorArray of a class
+</UL>
+
+<P>
+<LI><CODE>UserInterruptHandler userInterrupt</CODE>
+<BR>
+gets notified if <KBD>"<B>CTRL-C</B>"</KBD> (or whatever the <VAR>interrupt key</VAR>
+is on your keyboard) is pressed.
+(i.e. <CODE>SIGINTR</CODE> arrives).
+<BR>
+Notice, that this interrupt is different from the <CODE>CTRL-C</CODE>-interrupt
+in a smalltalk window.
+
+<P>
+<LI><CODE>TimerInterruptHandler timerInterrupt</CODE>
+<BR>
+Alarm timer (<CODE>SIGALRM</CODE>) handler.
+
+<P>
+<LI><CODE>SpyInterruptHandler spyInterrupt</CODE>
+<BR>
+Spy timer handler for MessageTally (<CODE>SIGVTALARM</CODE> or <CODE>SIGALRM</CODE>).
+
+<P>
+<LI><CODE>StepInterruptHandler stepInterrupt</CODE>
+<BR>
+Single step interrupt
+<A NAME="BACK_FN2" HREF="#FN2">(**)</A>.
+
+<P>
+<LI><CODE>ExceptionInterruptHandler exceptionInterrupt</CODE>
+<BR>
+Floating point exception interrupt (<CODE>SIGFPE</CODE>).
+<BR>
+Not all systems trigger this - some simply return invalid floating point
+results or the special float value: <CODE>NaN</CODE> (<VAR>Not-a-Number</VAR>).
+
+<P>
+<LI><CODE>ErrorInterruptHandler errorInterrupt</CODE>
+<BR>
+Subsytem error (for example, Xlib error notification).
+
+<P>
+<LI><CODE>MemoryInterruptHandler memoryInterrupt</CODE>
+<BR>
+Soon running out of memory notification.
+
+<P>
+<LI><CODE>ChildSignalInterruptHandler childInterrupt</CODE>
+<BR>
+Death of a (Unix) child process notification.
+
+<P>
+<LI><CODE>IOInterruptHandler ioInterrupt</CODE>
+<BR>
+Data available on a fileDescriptor (<CODE>SIGIO</CODE>) notification.
+<BR>Not all systems support this.
+
+<P>
+<LI><CODE>SignalInterruptHandler signalInterrupt:</CODE><VAR>signalNumber</VAR>
+<BR>
+Any other Unix signal arrived (Notice: these have to be enabled before).
+
+<P>
+<LI><CODE>DisposeInterruptHandler disposeInterrupt</CODE>
+<BR>
+Garbage collector reclaimed objects of which some require finalization.
+
+<P>
+<LI><CODE>RecursionInterruptHandler recursionInterrupt</CODE>
+<BR>
+a smalltalk process reached its stack limit.
+
+<P>
+<LI><CODE>CustomInterruptHandler customInterrupt</CODE>
+<BR>
+Custom (i.e. user defined) interrupt.
+
+</UL>
+
+<H3>Changing interrupt handler objects</H3>
+
+The above listed messages are implemented in the <CODE>Object</CODE> class.
+Therefore, every object understands and responds to those messages.
+<P>
+For each handler, <CODE>ObjectMemory</CODE> provides a message to get
+and set the corresponding handler objects. Like signal access methods,
+these are named after the corresponding handlers variable name.
+<BR>
+For example,
+<CODE><PRE>
+    ObjectMemory userInterruptHandler
+</PRE></CODE>
+returns, and
+<CODE><PRE>
+    ObjectMemory userInterruptHandler:<VAR>someObject</VAR>
+</PRE></CODE>
+sets the <CODE>UserInterruptHandler</CODE>.
+<P>
+
+<A NAME="FN1" HREF="#BACK_FN1">(*)</A> <STRONG>WARNING:</STRONG>
+<P>
+You may easily make
+the system inoperatable when playing around with these handlers.
+So be prepared for malfunctions or deadlocks when changing things in
+this area (think twice and save your work before doing so).
+<UL>
+<LI><CODE>disposeInterrupt</CODE> is used by the
+memory/resource management and controls object finalization.
+<BR>
+The object finalizer will no longer run if things get corrupted.
+<P>
+
+<LI><CODE>timerInterrupt</CODE> and <CODE>ioInterrupt</CODE> are used by the
+scheduler.
+<BR>
+You will certainly no longer be able to interact with the system if that
+gets corrupted.
+<P>
+
+<LI><CODE>userInterrupt</CODE> for console interrupt processing.
+<BR>
+If corrupted, <KBD>"<B>Ctrl-C</B>"</KBD> typed on the console will no longer
+interrupt the running process. (<KBD>"<B>Ctrl-C</B>"</KBD> in a view may still
+work, if the scheduler and event dispatcher processes are still alive)
+</UL>
+
+<A NAME="FN2" HREF="#BACK_FN2">(**)</A>
+Switched with processes - each process may have its own private handler object.
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 1995 Claus Gittinger Development &amp; Consulting, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.20 $ $Date: 2016-11-05 17:38:36 $
+</BODY>
+</HTML>

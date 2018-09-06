@@ -1,0 +1,117 @@
+project :'stx:baseline' do
+
+  repository :'exept:public'
+  package "stx:stc"
+  package "stx:librun"
+  package "stx:libbasic"
+  package "stx:goodies/refactoryBrowser/helpers"
+  package "stx:goodies/refactoryBrowser/parser"
+  package "stx:libbasic2"
+  package "stx:libcomp"
+  package "stx:libcompat"
+  package "stx:libview"
+  package "stx:libbasic3"
+  package "stx:libdb"
+  package "stx:libdb/libodbc"
+  package "stx:libdb/libsqlite"
+  package "stx:libview2"
+  package "stx:libboss"
+  package "stx:goodies/refactoryBrowser/changes"
+  package "stx:libwidg"
+  package "stx:libhtml"
+  package "stx:libwidg2"
+  package "stx:libui"
+  package "stx:libview3"
+  package "stx:libwidg3"
+  package "stx:libtool"
+  package "stx:libjavascript"
+  package "stx:goodies/refactoryBrowser/refactoring"
+  package "stx:goodies/refactoryBrowser/lint"
+  package "stx:goodies/refactoryBrowser/browser"
+  package "stx:libtool2"
+  package "stx:goodies/libdbase" if not win32?
+  package "stx:goodies/fileformats/plist"
+
+  application 'stx:projects/smalltalk'
+
+  tasks do
+
+    task :'checkout:buildtools' => [ BUILD_DIR / 'stx' / "rules",				     
+                        				     BUILD_DIR / 'stx' / "support",
+                        				     BUILD_DIR / 'stx' / "RELEASE",
+				                             # needed by applications for *.rc stuff
+                                     BUILD_DIR / 'stx' / 'projects' / 'smalltalk',
+                                     # documentation
+                                     BUILD_DIR / 'stx' / 'doc' / 'online' / 'english',
+                                     BUILD_DIR / 'stx' / 'doc' / 'online' / 'pictures',
+                                     BUILD_DIR / 'stx' / 'doc' / 'online' / 'icons',
+                                     # various icons (country flags etc)
+                                     BUILD_DIR / 'stx' / 'goodies' / 'bitmaps'
+				                           ]
+
+    file BUILD_DIR / 'stx' / 'rules'  => BUILD_DIR do | t |
+      checkout :'exept:public', 'stx/rules'      
+      chdir BUILD_DIR / 'stx' / 'rules'  do          
+        rm_f 'stmkmf'
+        rm_f 'stdHeader'
+        rm_f 'stdHeader2'
+        rm_f 'stdRules'
+        rm_f 'stdHeader_bc'
+        rm_f 'stdRules_bc'
+      end
+    end
+
+    file BUILD_DIR / 'stx' / 'RELEASE'  => BUILD_DIR do | t |
+      checkout :'exept:public', 'stx/RELEASE'
+      # the clear is here to avoid multiple checkouts
+      t.clear()
+    end
+
+    file BUILD_DIR / 'stx' / 'doc' / 'online' / 'english'  => BUILD_DIR do | t |
+      checkout :'exept:public', 'stx/doc/online/english'
+      # the clear is here to avoid multiple checkouts
+      t.clear()
+    end
+
+    file BUILD_DIR / 'stx' / 'doc' / 'online' / 'pictures'  => BUILD_DIR do | t |
+      checkout :'exept:public', 'stx/doc/online/pictures'
+      # the clear is here to avoid multiple checkouts
+      t.clear()
+    end
+
+    file BUILD_DIR / 'stx' / 'doc' / 'online' / 'icons'  => BUILD_DIR do | t |
+      checkout :'exept:public', 'stx/doc/online/icons'
+      # the clear is here to avoid multiple checkouts
+      t.clear()
+    end
+
+    file BUILD_DIR / 'stx' / 'goodies' / 'bitmaps'   => BUILD_DIR do | t |
+      checkout :'exept:public', 'stx/goodies/bitmaps'
+      # the clear is here to avoid multiple checkouts
+      t.clear()
+    end
+
+    file BUILD_DIR / 'stx' / 'support' => BUILD_DIR do | t |
+      checkout :'exept:public', 'stx/support'
+      # the clear is here to avoid multiple checkouts
+      t.clear()
+    end
+    
+
+    file BUILD_DIR / 'stx' / 'projects' / 'smalltalk' do | t |
+      app = project.application
+      repo = :'exept:public'
+      branch = nil
+      if (app.name == 'stx:projects/smalltalk' ) 
+      	repo = app.repository
+      	branch = app.branch
+      end
+      checkout repo, 'stx/projects/smalltalk', :branch => branch, :separator => '-'
+      # the clear is here to avoid multiple checkouts
+      t.clear()
+    end
+
+  end
+
+end
+

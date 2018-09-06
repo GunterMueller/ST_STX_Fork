@@ -1,0 +1,105 @@
+; View defaultStyle:#'decWindows' 
+;
+; dec's motif style (as seen on an OSF-alpha system)
+; like motif
+;
+;
+; $Header: /cvs/stx/stx/libview/styles/decWindows.style,v 1.9 2000-10-27 17:57:39 stefan Exp $
+
+#if Screen current isNil or:[Screen current hasGreyscales]
+viewGrey                    (Color grey:60) "/ (Color grey:59.6078) 
+scrollerVB                  (Color grey:50) "/ (Color grey:50.1961)
+selectionInListColor        (Color grey:66.7)
+#endif
+
+#if Screen current isNil or:[Screen current hasColors]
+orange                      (Color red:90.9804 green:65.8824 blue:43.9216)
+#endif
+
+shadowColor                 (Color grey:50 "50.1961")
+lightColor                  (Color grey:81 "81.5686")
+mediumColor                 (Color grey:60 "59.6078")
+
+selectionFont        Font family:'lucidabright' face:'medium' style:'roman' size:14
+labelFont            Font family:'lucidabright' face:'medium' style:'roman' size:14
+menuFont             Font family:'lucidabright' face:'medium' style:'roman' size:14
+textFont             Font family:'courier' size:14 
+
+#include 'motif.common'
+
+comment  'DEC-windows look alike'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Angelehnt an DEC-windows.'
+#endif
+#if (Language == #french) or:[Language == #fr]
+comment  'Comme DEC-windows'
+#endif
+
+textForeground            Color black
+; textForeground Color white
+
+lightColor                Color grey:85
+shadowColor               Color grey:25 "/ Color grey:30
+
+textCursor.type            #block
+
+scroller.viewBackground    =scrollerVB 
+scroller.thumbColor        =viewGrey
+scroller.thumbLevel        1
+scrollBar.level            -1
+
+selection.foregroundColor  Color black
+
+button.activeBackgroundColor      =scrollerVB
+button.foregroundColor            =textForeground
+button.activeForegroundColor      =textForeground
+button.activeLevel                -1
+button.passiveLevel               1
+button.font                       =menuFont
+
+label.font                       =menuFont
+label.foregroundColor            =textForeground
+
+arrowButton.activeForegroundColor =viewGrey  
+
+checkToggle.bitmapFile                  'CheckOn14Dec.xbm'
+checkToggle.activeBackgroundColor       =scrollerVB
+checkToggle.backgroundColor             =viewGrey
+checkToggle.disabledForegroundColor     Color grey:33
+checkToggle.activeLevel                 -1
+checkBoxStyle                           #dummy
+
+menu.viewBackgroundColor         =viewGrey
+menu.backgroundColor             =viewGrey
+menu.foregroundColor             =textForeground
+menu.disabledForegroundColor     Color darkGrey
+; menu.hilightLevel                -1
+; menu.hilightFrameColor           nil
+
+selection.backgroundColor        =selectionInListColor
+selection.foregroundColor        =textForeground
+selection.hilightForegroundColor Color black
+selection.hilightBackgroundColor Color white
+; selection.hilightFrameColor      =orange
+selection.hilightFrameColor      nil
+selection.font                   =menuFont
+selection.disabledForegroundColor     Color grey:25
+
+editField.backgroundColor        =selectionInListColor
+editField.foregroundColor        =textForeground
+editField.hilightForegroundColor Color black
+editField.hilightBackgroundColor Color white
+editField.cursorType             #Ibeam
+editField.cursorForegroundColor  nil
+editField.cursorBackgroundColor  Color white
+editField.disabledForegroundColor  Color grey:33
+ruler.backgroundColor            =scrollerVB
+
+focusBorderWidth                 2
+#if Screen current isNil or:[Screen current hasColors]
+focusColor                       =orange
+#endif
+
+framedBox.foregroundColor        =textForeground
+framedBox.font                   =menuFont

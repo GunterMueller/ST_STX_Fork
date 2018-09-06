@@ -1,0 +1,50 @@
+<html><head><title>Refactoring:
+
+
+
+Consolidate Duplicate Conditional Fragments</title></head><body>
+
+
+<H1>
+
+
+
+Consolidate Duplicate Conditional Fragments</H1>
+<P><I><CENTER>
+
+The same fragment of code is in all branches of a
+conditional expression.</CENTER></I></P>
+<P><B><CENTER>
+
+Move it outside of the expression.</CENTER></B></P>
+
+<PRE>
+		if (isSpecialDeal()) {
+			total = price * 0.95;
+			send();
+		}
+		else {
+			total = price * 0.98;
+			send();
+		}
+</PRE><P><CENTER><IMG SRC="arrow.gif"/></CENTER></P>
+
+<PRE>
+		if (isSpecialDeal())
+			total = price * 0.95;
+		else
+			total = price * 0.98;
+		send();
+</PRE>
+
+
+<P>For more information see page
+	<font color="#FF0000">243</font>
+	of <I>Refactoring</I></P>
+<h2>Additional Comments</h2><h3>Using with try/catch blocks</h3>
+<P>Paul Haahr rightly took me to task for being far too glib when I talked about consolidating with exceptions. You can only pull repeated code into a final block if all non-fatal exceptions are caught. This is because the finally block is executed after any exception, including those that don't have a catch clause. (Of course you may prefer that to happen, but that's not a semantics preserving change.)
+</P>
+<h2>Contributors</h2><UL><LI>Paul Haahr</LI>
+</UL>
+
+<P /><P /><P><CENTER><A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A></CENTER></P></body></html>

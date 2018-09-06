@@ -1,0 +1,86 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - TDV Technical Data Viewer</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="opengl.html">     <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="java.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>TDV Technical Data Viewer</H1>
+
+<H2>Overview</H2>
+
+This goody implements a framework for 3D visualisation of technical data.
+<BR>
+Typical applications include quality monitoring (factory automation,
+telecom etc.).
+<P>
+The framework has been written to allow for easy change/customization
+of the rendering process. 
+<BR>
+Especially rendered graphic parts such as grids, scales etc. are all
+implemented as separate objects, and can be easily changed/subclassed for
+a particular application.
+<P>
+The data-gathering mechanism is not part of the TDV framework and
+must be written for a particular application 
+<BR>
+To display realTime data, usually, some shared
+memory interface to the realTime process is added;
+<BR>
+for non-realTime display, the data may also be read from a file or
+via some IPC (interprocess communication) mechanism.
+
+Technical data can be displayed basically in two forms:
+<UL>
+<LI>A fixed 2-dimensional matrix of values 
+<LI>A one dimensional data vector over time
+</UL>
+
+<H2>Prerequisites</H2>
+This goody requires the openGL interface package.
+
+<H2>Documentation</H2>
+Use the source - Luke.
+
+<H2>Examples</H2>
+see <CODE>TDV::ApplciationMatrix3D</CODE> 
+
+
+<H2>Licensing</H2>
+This addOn package is part of the base ST/X system, and
+<BR>the copyright is held by eXept Software AG.
+<BR>
+You are free to use it under the conditions of your
+ST/X licence 
+<BR>(i.e. commercial vs. non-commercial).
+
+
+<H2>No Warranty</H2>
+This goody is provided AS-IS without any warranty whatsoever.
+
+
+
+<H2>Origin/Authors</H2>
+Authors:
+<BR>
+Pierre Schwarz (eXept)
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.5 $
+</BODY>
+</HTML>

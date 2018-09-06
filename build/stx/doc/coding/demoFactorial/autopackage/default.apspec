@@ -1,0 +1,69 @@
+# -*- shell-script -*-
+[Meta]
+ShortName: factorial
+SoftwareVersion: 7.1.0.0
+DisplayName: Smalltalk/X Demo Program to Compute Factorials
+RootName: Factorial Demo in Smalltalk/X
+Summary: Smalltalk/X Demo Program to Compute Factorials
+Maintainer: eXept Software AG
+Packager: eXept Software AG
+PackageVersion: 1
+CPUArchitectures: x86
+AutopackageTarget: 1.0
+Type: Application
+License: Commercial
+
+[Description]
+Smalltalk/X Demo Program to Compute Factorials
+
+[BuildPrepare]
+# If you're using autotools, the default should be enough.
+# prepareBuild will set up apbuild and run configure for you. If you
+# need to pass arguments to configure, just add them to prepareBuild:
+# prepareBuild --enable-foo --disable-bar
+#prepareBuild
+
+[BuildUnprepare]
+# If you're using prepareBuild above, there is no need to change this!
+#unprepareBuild
+
+[Globals]
+# Variables declared in this section will be available in all other sections
+export APKG_BUILD_SKIP_CONFIGURE=1
+export APKG_BUILD_SKIP_MAKE=1
+export MYPREFIX=/opt/factorial
+
+[Prepare]
+#recommend '@autopackage.org/autopackage-gtk' 1
+
+[Imports]
+import <<EOF
+$source_dir/factorial
+
+EOF
+
+for i in $source_dir/*.so
+do
+    echo $source_dir/$(readlink $i)
+done | import
+
+[Install]
+if [ "$PREFIX" != "/usr" ]
+then
+    export MYPREFIX=$PREFIX
+fi
+
+find . -type d \( -name CVS -or -name 'not_*' \) -print | xargs rm -rf
+mkdir -p $MYPREFIX
+copyFiles Factorial Demo in Smalltalk/X *.rc resources        $MYPREFIX/bin
+
+
+#installExe Factorial Demo in Smalltalk/X
+#installLib *.so
+
+
+[Uninstall]
+# Leaving this at the default is safe unless you use custom commands in
+# "Install" to create files. All autopackage API functions
+# that installs files are logged.
+uninstallFromLog

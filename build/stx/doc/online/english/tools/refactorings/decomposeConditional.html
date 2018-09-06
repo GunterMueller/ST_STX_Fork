@@ -1,0 +1,31 @@
+<html><head><title>Refactoring: 
+Decompose Conditional</title></head><body>
+
+
+<H1>
+Decompose Conditional</H1>
+<P><I><CENTER>
+
+You have a complicated conditional (if-then-else) statement.</CENTER></I></P>
+<P><B><CENTER>
+
+Extract methods from the condition, then part, and else parts.</CENTER></B></P>
+
+<PRE>
+		if (date.before (SUMMER_START) || date.after(SUMMER_END))
+			charge = quantity * _winterRate + _winterServiceCharge;
+		else charge = quantity * _summerRate;
+</PRE><P><CENTER><IMG SRC="arrow.gif"/></CENTER></P>
+
+<PRE>
+		if (notSummer(date))
+			charge = winterCharge(quantity);
+		else charge = summerCharge (quantity);
+</PRE>
+
+
+<P>For more information see page 
+	<font color="#FF0000">238</font>
+	of <I>Refactoring</I></P>
+
+<P /><P /><P><CENTER><A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A></CENTER></P></body></html>

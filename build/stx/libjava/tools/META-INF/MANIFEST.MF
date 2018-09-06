@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Stx_libjava___tools
+Bundle-SymbolicName: stx_libjava_tools
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.eclipse.jdt.core
+Require-Bundle: org.eclipse.jdt.core,
+ org.junit

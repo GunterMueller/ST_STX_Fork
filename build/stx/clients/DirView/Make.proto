@@ -1,0 +1,46 @@
+# $Header: /cvs/stx/stx/clients/DirView/Make.proto,v 1.10 2016-01-14 14:49:09 mawalch Exp $
+#
+# -------------- no need to change anything below ----------
+
+TOP=../..
+MODULE=stx
+MODULE_DIR=clients/DirView
+PACKAGE=$(MODULE):$(MODULE_DIR)
+SUBDIRS=
+RCSSOURCES=*.st Make.proto bitmaps/*.xbm resources/*.rs
+
+SYSLIBS    = -lX11
+
+STCOPT=$(CLIENT_STCOPT)
+
+# OPT=-DSTATISTIC
+
+LIBNAME=dirView
+
+PROGS      = DirView
+
+all::       $(PROGS)
+
+DirView:    obj
+	    $(CC) -c $(CFLAGS) -DSTARTUP_CLASS="DirectoryView" \
+			       -DSTARTUP_SELECTOR='"start"' $(MAIN)
+	    $(LD) $(LDFLAGS) -o DirView \
+		  $(CRT0) main.o DirView.obj \
+		  $(LIBOBJS) \
+		  $(LIBRUNDIR)/hidata.o $(LIBRUN) \
+		  $(MATHLIB) $(SYSLIBS) \
+		  $(OTHERLIBS) $(CRTN)
+	    @-rm -f main.o
+
+OBJS =      \
+	    DirView.o                   \
+	    ToolView.o                  \
+	    DirVObj.o                   \
+	    FileObj.o                   \
+	    DirObj.o                    \
+	    ToolObj.o              
+
+objs::  $(OBJS)
+
+# BEGINMAKEDEPEND
+# ENDMAKEDEPEND

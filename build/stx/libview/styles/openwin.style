@@ -1,0 +1,99 @@
+; View defaultStyle:#openwin 
+;
+; somewhat like SUN openwindows - however, the scrollbars
+; are not openwin-like (and since SUN dropped openwin, no
+; effort will probably ever be spent on changing this).
+;
+; $Header: /cvs/stx/stx/libview/styles/openwin.style,v 1.17 1999-10-27 13:28:03 stefan Exp $
+;
+
+comment  'SUN openwin look alike\unfinished (especially scrollbars)'
+
+#if (Language == #german) or:[Language == #de]
+comment  'An SUN''s openwin angelehnter Stil\nicht perfekt (insbes. Verschiebebalken).'
+#endif
+#if (Language == #french) or:[Language == #fr]
+comment  'Comme openwin du SUN'
+#endif
+
+selectionFont               Font family:'helvetica' face:'medium' style:'roman' size:12
+#menuFont                    Font family:'helvetica' face:'medium' style:'roman' size:14
+menuFont                    Font family:'lucida' face:'medium' style:'roman' size:12
+
+is3D                        true
+name                        #openwin
+
+#if Screen current hasGreyscales
+viewGrey                    (Color grey:80) exactOrNearestOn:(Screen current)
+darkerGrey                  (Color grey:67) exactOrNearestOn:(Screen current)
+#else
+viewGrey                    Color white
+lightColor                  Color grey:50
+darkerGrey                  Color grey:67
+#endif
+
+borderWidth                 0
+popup.borderWidth            1     
+
+viewBackground              =viewGrey
+
+textCursor.type                          #bigSolidCaret
+textCursor.noFocusForegroundColor        Color grey
+
+scrolledView.level           0    
+scrollableView.level         0    
+scrolledView.borderWidth     1
+
+scroller.level               -1
+scroller.thumbLevel          1
+scroller.thumbColor          =viewGrey
+#if Screen current hasGreyscales
+scroller.viewBackground      =darkerGrey 
+#else
+scroller.viewBackground      Color white
+#endif
+scrollBar.position           #right 
+
+#if Screen current hasGreyscales
+button.activeForegroundColor Color black
+button.activeBackgroundColor =darkerGrey
+#else
+button.activeForegroundColor Color white
+button.activeBackgroundColor Color black
+#endif
+
+menu.separatingLineLevel     1
+menu.hilightStyle            #openwin
+#if Screen current hasGreyscales
+menu.hilightLevel            -1
+menu.hilightBackgroundColor  =darkerGrey
+#else
+menu.hilightBackgroundColor  Color black
+menu.hilightForegroundColor  Color white
+menu.hilightLevel            0
+#endif
+
+pullDownMenu.hilightForegroundColor   Color black
+#if Screen current hasGreyscales not
+pullDownMenu.hilightBackgroundColor   Color grey:87
+pullDownMenu.hilightLevel             0
+pullDownMenu.level                    0
+pullDownMenu.font                     Font family:'lucida' face:'bold' style:'roman' size:12
+#endif
+
+selection.rightArrowLevel    -1
+selection.hilightLevel       -1
+#if Screen current hasGreyscales
+selection.hilightBackgroundColor       =darkerGrey
+#endif
+
+#if Screen current hasGrayscales not
+html.anchorUnderline                true
+html.anchorForegroundColor          Color black
+html.backgroundColor                Color white
+html.activeAnchorForegroundColor    Color black
+html.activeAnchorBackgroundColor    =htmlBackgroundColor
+html.visitedAnchorForegroundColor   Color black
+html.exampleAnchorForegroundColor   Color black
+#endif
+

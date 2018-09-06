@@ -1,0 +1,31 @@
+; View defaultStyle:#'fun_motif' 
+;
+; like motif, but with different viewbackground
+;
+; $Header: /cvs/stx/stx/libview/styles/oldStyles/fun_motif2.style,v 1.5 2000-08-16 14:27:26 ca Exp $
+
+
+#include 'motif.style'
+
+comment  'Fun style. Like motif with rocky viewbackground,\nice buttons and menu highlightning.\May be too dark on some displays'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Wie ''motif'', mit steinhartem, solidem Hintergrund\und edlen Knöpfen.\Erscheint auf vielen VGA Monitoren zu dunkel'
+#endif
+
+#viewBackground             (Smalltalk imageFromFileNamed:'bitmaps/granite.tiff' inPackage:'stx:libwidg3') 
+viewBackground              (Smalltalk imageFromFileNamed:'bitmaps/wall2.tiff' inPackage:'stx:libwidg3')
+; wooden                    (Smalltalk imageFromFileNamed:'bitmaps/wood2H.tiff' inPackage:'stx:libwidg3')  
+averageColor                =viewBackground averageColor
+
+button.backgroundColor       =averageColor
+button.activeBackgroundColor =averageColor
+button.shadowColor           =averageColor darkened
+button.lightColor            =buttonLightColor
+
+arrowButton.activeForegroundColor =lightColor  
+
+menu.hilightForegroundColor  Color yellow
+menu.hilightBackgroundColor  Color red
+
+scroller.thumbColor          =averageColor

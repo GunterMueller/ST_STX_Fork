@@ -1,0 +1,44 @@
+<html><head><title>Refactoring: 
+
+
+
+Introduce Assertion</title></head><body>
+
+
+<H1>
+
+
+
+Introduce Assertion</H1>
+<P><I><CENTER>
+
+A section of code assumes something about the state of the program.</CENTER></I></P>
+<P><B><CENTER>
+
+Make the assumption explicit with an assertion.</CENTER></B></P>
+
+<PRE>
+	double getExpenseLimit() {
+		// should have either expense limit or a primary project
+		return (_expenseLimit != NULL_EXPENSE) ?
+			_expenseLimit:
+			_primaryProject.getMemberExpenseLimit();
+	}
+</PRE><P><CENTER><IMG SRC="arrow.gif"/></CENTER></P>
+
+<PRE>
+	double getExpenseLimit() {
+		Assert.isTrue (_expenseLimit != NULL_EXPENSE || _primaryProject != null);
+		return (_expenseLimit != NULL_EXPENSE) ?
+			_expenseLimit:
+			_primaryProject.getMemberExpenseLimit();
+	}
+</PRE>
+
+
+
+<P>For more information see page 
+	<font color="#FF0000">267</font>
+	of <I>Refactoring</I></P>
+
+<P /><P /><P><CENTER><A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A></CENTER></P></body></html>

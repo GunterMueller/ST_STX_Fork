@@ -1,0 +1,92 @@
+Most of the stuff here is obsolete.
+
+
+This directory contains various style sheets which are read
+and used when the view style is changed (via View>>defaultStyle:).
+An initial style default is set up by the display.rc and corresponding
+d_xxx.rc files (found in the projects/smalltalk directory).
+However, at any later time, the preferred style can be changed either
+by evaluating (View defaultStyle:#styleName) or via the launchers
+settings menu.
+If the settings are saved, the style will be reinstalled whenever
+ST/X is restarted later.
+
+Look into generic.style, to see which parameters can be changed
+and how they are named.
+
+There are still some places in the system, where style information is
+programmed into (instead of controlled via the StyleSheet) - but these
+will be removed over time (these are historical leftovers).
+So be prepared, that some things are not fully working.
+
+Do not modify the original style files - but instead create your own.
+Styles are read using the same path mechanism as all other file accesses,
+so you can put your private style-files into your private directories,
+even in case a public file exists with the same name.
+
+You can inherit other styles via a #include - see 'motifXXX.style' as
+an example.
+
+To get your new style, perform the following steps:
+
+	1. create a styleSheet, say 'foo.style'
+	   (take any existing to start with and see 'generic.style'
+	    for more comments)
+
+	2. make sure its accessible under any 'resources' directory
+	   of your systemPath.
+	   (for the development environment, there is a rule 'make styles'
+	    in the 'projects/smalltalk/Makefile', which symlinks all styles
+	    to the local directory).
+
+	3. check it by evaluating: 'View defaultStyle:#foo' in
+	   a workspace (or change the style setting in the Launcher)
+	 . Try some NEW views
+	   (the new style will affect only new views).
+
+	   Notice, that the styleSheet is only re-read if the style
+	   has changed (the contents is cached to avoid reading the style
+	   files over and over again). Thus, to get an updated styleSheet to be
+	   used, either switch temporary to another style and back, or
+	   use 'View updateAllStyleCaches' to force rereading of the current
+	   style.
+
+	4. if your style is ok and you want it to become your default at startup,
+	   add the above line (View defaultStyle:#foo) to your 'private.rc' file.
+	   It will then be automatically installed at startup time.
+
+
+A note on the existing styles:
+
+    Most are included as demo and to give you a starting point.
+    Many are not really usable for ergonomic reasons.
+    You may want to try your own, by combining features from different styles.
+    For example, if you think the #st80-style may look good combined with green-background
+    text-selection hilighting; go ahead and create your own.
+
+Disclaimer:
+    It is neither intended, nor do I claim, that these styleSheets mimic the
+    originals exactly, they are included for fun and to make your ST/X views
+    integrate better into whatever your environment may look like.
+
+    You may improve them and send me back your updated files ....
+    ... that way, the next release will have more and/ore better styleSheets.
+
+
+    No, I do not intent to extent this mechanism the Xt way, where every
+    individual component can be specified ... (actually, I do not like it).
+    It could be easily done, by reading the Xresource files (a naming hierarchy
+    is already present in the views). But it either tends to make
+    your display look very ugly and colorful, or it is not used by serious
+    users. So what ?
+
+    Most users prefer simple (unspectacular) styles; the most attractive being
+    the iris, motif, os2 and normal (for monochrome displays) styles.
+
+TODO:
+    The new ViewStyle supports entries of the form:
+	className.styleVariable ...
+    which makes the whole style definition easier to understand,
+    and allows the style-code to be simplified.
+    The style sheets will be changed till the next version to reflect
+    this. Be prepared for this.

@@ -1,0 +1,22 @@
+OperatingSystem isUNIXlike ifTrue:[
+    | fontNormal fontMonospace |
+
+    fontNormal    := XftFontDescription family: 'Sans'      size: 10.
+    fontMonospace := XftFontDescription family: 'Monospace' size: 10.
+
+
+    SimpleView            defaultFont: fontNormal.
+    CheckLabel            defaultFont: fontNormal.
+    CheckBox              defaultFont: fontNormal.
+    CheckLabel            defaultFont: fontNormal.
+    Button                defaultFont: fontNormal.
+    Toggle                defaultFont: fontNormal.
+    SelectionInListView   defaultFont: fontNormal.
+    MenuView              defaultFont: fontNormal.
+    MenuPanel             defaultFont: fontNormal.
+    NoteBookView          defaultFont: fontNormal.
+    PullDownMenu          defaultFont: fontNormal.
+    TextView              defaultFont: fontNormal.
+    EditTextView          defaultFont: fontNormal.
+    CodeView              defaultFont: fontMonospace.
+]

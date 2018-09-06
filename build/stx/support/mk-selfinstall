@@ -1,0 +1,296 @@
+#! /bin/sh
+
+#
+# $Header: /cvs/stx/stx/support/mk-selfinstall,v 1.17 1999-06-11 10:41:37 cg Exp $
+#
+
+outfile=NONE
+preinst=NONE
+default_preinst=NONE
+postinst=NONE
+default_postinst=NONE
+rootdir=NONE
+default_rootdir=/
+type=targz
+default_type=targz
+nonopt=NONE
+installDirMsg=
+
+ac_prev=
+for ac_option
+do
+	# If the previous option needs an argument, assign it.
+	if test -n "$ac_prev"; then
+		eval "$ac_prev=\$ac_option"
+		ac_prev=
+		continue
+	fi
+
+	case "$ac_option" in
+	    -*=*)
+		ac_optarg=`echo "$ac_option" | sed 's/[-_a-zA-Z0-9]*=//'`
+		;;
+	    *)
+		ac_optarg=
+		;;
+	esac
+
+	case "$ac_option" in
+	    -installDirMsg=* | --installDirMsg=*)
+		installDirMsg="$ac_optarg"
+		;;
+	    -outfile | -o | --outfile | --outfil | --outfi | --outf | --out | --ou | --o)
+		ac_prev=outfile
+		;;
+	    -outfile=* | -o=* | --outfile=* | --outfil=* | --outfi=* | --outf=* | --out=* | --ou=* | --o=*)
+		outfile="$ac_optarg"
+		;;
+	    -preinst | -pre | --preinst | --preins | --prein | --prei | --pre | --pr)
+		ac_prev=preinst
+		;;
+	    -preinst=* | -pre=* | --preinst=* | --preins=* | --prein=* | --prei=* | --pre=* | --pr=*)
+		preinst="$ac_optarg"
+		;;
+	    -postinst | -post | --postinst | --postins | --postin | --posti | --post | --pos | --po)
+		ac_prev=postinst
+		;;
+	    -postinst=* | -post=* | --postinst=* | --postins=* | --postin=* | --posti=* | --post=* | --pos=* | --po=*)
+		postinst="$ac_optarg"
+		;;
+	    -rootdir | --rootdir | --rootdi | --rootd | --root | --roo | --ro | --r)
+		ac_prev=rootdir
+		;;
+	    -rootdir=* | --rootdir=* | --rootdi=* | --rootd=* | --root=* | --roo=* | --ro=* | --r=*)
+		rootdir="$ac_optarg"
+		;;
+	    -type | --type | --typ | --ty | --t)
+		ac_prev=type
+		;;
+	    -type=* | --type=* | --typ=* | --ty=* | --t=*)
+		type="$ac_optarg"
+		;;
+	    -help | --help | --hel | --he)
+		cat << EOF
+Usage: $0 [options] file --outfile=OUTFILE
+Options: [defaults in brackets after descriptions]
+Configuration:
+  --outfile=OUTFILE     write output script into OUTFILE
+  --help                print this message
+  --preinst=PRESCRIPT   store PRESCRIPT[$default_preinst] as a pre-install script
+  --postinst=POSTSCRIPT store POSTSCRIPT[$default_postinst] as a post-install script
+  --installDirMsg=DIR   add a confirmation message, that install is into DIR
+  --type=TYPE           FILE is of type TYPE[$default_type]
+			I know how to unpack the following TYPEs:
+			  targz   => cat - | gunzip -c | tar -xpf -
+			  tarZ    => cat - | uncompress | tar -xpf -
+			  zip     => cat > tmpFile ; unzip tmpFile ; tar -xpf tmpFile
+EOF
+		exit 0
+		;;
+	    -*)
+		echo "${0}: error: $ac_option: invalid option; use --help to show usage" >&2
+		exit 1
+		;;
+	    *)
+		if test "x$nonopt" != xNONE; then
+			echo "${0}: error: can only work on one file at a time" >&2
+			exit 1
+		fi
+		nonopt="$ac_option"
+		;;
+	esac
+done
+
+if test -n "$ac_prev"; then
+	echo "${0}: error: missing argument to --`echo $ac_prev | sed 's/_/-/g'`" >&2
+	exit 1
+fi
+if test "x$outfile" = xNONE; then
+	echo "${0}: error: missing output file name; use --help to show usage" >&2
+	exit 1
+fi
+if test "x$nonopt" = xNONE; then
+	echo "${0}: error: missing file name; use --help to show usage" >&2
+	exit 1
+fi
+if test ! -f $nonopt; then
+	echo "${0}: error: file \"$nonopt\" does not exist" >&2
+	exit 1
+fi
+if test "x$rootdir" = xNONE; then
+	rootdir=$default_rootdir
+fi
+case x"$type" in
+
+    xtargz )
+	;;
+
+    xtarZ )
+	;;
+
+    xzip )
+	;;
+
+    * )
+	echo "${0}: error: unknown file type \"${type}\"" >&2
+	exit 1
+	;;
+esac
+
+
+rm -f ${outfile}.tmp ${outfile}
+
+(
+cat << EOF
+#! /bin/sh
+
+umask 022
+set +e
+
+case "\$0" in
+    /* )        # We do have an absolute pathname already, OK.
+	infile=\$0
+	;;
+    .* )        # Need to get an absolute pathname.
+	infile=\`( cd \\\`dirname \$0\\\`; pwd ) 2> /dev/null\`/\`basename \$0\`
+	;;
+esac
+if test ! -f "\$infile"; then
+	echo "\${0}: \\"\$infile\\" should be a file, but is not - abort." >&2
+	exit 1
+fi
+
+EOF
+) > ${outfile}.tmp
+
+# if test x${DEBUG_THIS_SCRIPT} = xyes; then
+	cat << EOF >> ${outfile}.tmp
+
+rootdir=\${rootdir-$rootdir}
+EOF
+# else
+#       cat << EOF >> ${outfile}.tmp
+# 
+# rootdir=/
+# EOF
+# fi
+
+(
+if test x$installDirMsg != x; then
+  cat << EOF
+     echo "About to install product into "${installDirMsg}
+     echo "Press <Return> to continue; Interrupt to abort."
+     read dummy
+EOF
+fi
+
+cat << EOF
+export rootdir
+if test ! -d \$rootdir; then
+	mkdir -p \$rootdir || { echo Directory \$rootdir does not exist or I am not allowed to write into it >&2; exit 1; }
+fi
+cd \$rootdir
+echo "Changing directory to \${rootdir} for installation." >&2
+EOF
+
+if test x$preinst != xNONE && test -f x$preinst; then
+	cat << EOF
+
+# Pre-installscript $preinst inserted here:
+EOF
+	cat $preinst
+	cat << EOF
+# End of inserted pre-installscript.
+EOF
+fi
+) >> ${outfile}.tmp
+
+DEFAULT_BS_FOR_DD=20480
+OFFSET_FOR_BINARY=`wc -c < ${outfile}.tmp`
+OFFSET_FOR_BINARY=`expr \( $OFFSET_FOR_BINARY + $DEFAULT_BS_FOR_DD + 256 \) / $DEFAULT_BS_FOR_DD`
+OFFSET_FOR_BINARY=`expr $OFFSET_FOR_BINARY \* $DEFAULT_BS_FOR_DD`
+
+(
+
+case x"$type" in
+
+    xtargz )
+	cat << EOF
+
+gunzip_msg="\`gunzip --version 2>&1\`"
+if test \$? -ne 0; then
+	echo "You do not seem to have GNU gunzip installed. Make sure it" >&2
+	echo "can be found along your \$PATH and restart this script again." >&2
+	exit 1
+fi
+echo "Unpacking files..." >&2
+# dd bs=$OFFSET_FOR_BINARY skip=1 conv=sync < \$infile 2> /dev/null | gunzip -c 2> /dev/null | tar -xpf -
+# dd bs=$OFFSET_FOR_BINARY skip=1 < \$infile 2> /dev/null | gunzip -c 2> /dev/null | tar -xpf -
+dd bs=$OFFSET_FOR_BINARY skip=1 < \$infile 2> /dev/null | gunzip -c 2> /dev/null | tar -xf -
+if test \$? -eq 0; then
+	echo "Files successfully extracted." >&2
+else
+	echo "Installation terminated with error(s)." >&2
+	exit 1
+fi
+EOF
+	;;
+
+    xtarZ )
+	cat << EOF
+
+echo "Unpacking files..." >&2
+# dd bs=$OFFSET_FOR_BINARY skip=1 conv=sync < \$infile 2> /dev/null | uncompress -c 2> /dev/null | tar -xpf -
+dd bs=$OFFSET_FOR_BINARY skip=1 conv=sync < \$infile 2> /dev/null | uncompress -c 2> /dev/null | tar -xf -
+if test \$? -eq 0; then
+	echo "Files successfully extracted." >&2
+else
+	echo "Installation terminated with error(s)." >&2
+	exit 1
+fi
+EOF
+	;;
+
+    xzip )
+	cat << EOF
+
+echo "Unpacking files..." >&2
+dd bs=$OFFSET_FOR_BINARY skip=1 conv=sync < \$infile 2> /dev/null > /tmp/.zipfile.zip
+unzip /tmp/.zipfile.zip
+if test \$? -eq 0; then
+	echo "Files successfully extracted." >&2
+else
+	echo "Installation terminated with error(s)." >&2
+fi
+EOF
+	;;
+
+esac
+
+if test x$postinst != xNONE; then
+	cat << EOF
+
+# Post-installscript $postinst will be called here:
+if test -x $postinst; then
+	echo "Calling post-install script $postinst" >&2
+	$postinst
+	test \$? -eq 0 && rm -f $postinst
+fi
+EOF
+fi
+
+cat << EOF
+echo "Installation successfully finished." >&2
+exit 0
+
+EOF
+) >> ${outfile}.tmp
+
+( cat ${outfile}.tmp /dev/zero 2> /dev/null     \
+  | dd of=${outfile} bs=${OFFSET_FOR_BINARY} conv=sync count=1 2> /dev/null ) 2> /dev/null
+cat $nonopt >> ${outfile}
+
+chmod 755 $outfile
+rm -f ${outfile}.tmp
+
+exit 0

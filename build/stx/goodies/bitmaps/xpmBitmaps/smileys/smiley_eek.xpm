@@ -1,0 +1,26 @@
+/* XPM */
+static char *smiley_eek_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"15 15 4 1",
+/* colors */
+"a c black",
+"b c #303030",
+"c c #9D9DFF",
+"d c none",
+/* pixels */
+"dddddaaaaaddddd",
+"dddaacccccaaddd",
+"ddacccccccccadd",
+"dacccccccccccad",
+"dacccccccccccad",
+"acccaacccaaccca",
+"acccbbcccbbccca",
+"accccccccccccca",
+"accccccccccccca",
+"accccccccccccca",
+"daccccaaaccccad",
+"daccccaaaccccad",
+"ddacccaaacccadd",
+"dddaacccccaaddd",
+"dddddaaaaaddddd",
+};

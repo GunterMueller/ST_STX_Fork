@@ -1,0 +1,27 @@
+/* XPM */
+static char *tiny_yellow_dir_link_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 4 1",
+/* colors */
+"a c black",
+"b c red",
+"c c yellow",
+"d c none",
+/* pixels */
+"dddddddddddddddd",
+"dddddddddddddddd",
+"dddddddddddddddd",
+"ddaaaaaddddddddd",
+"ddabbbbadddddddd",
+"aaabbbbbaaaaaadd",
+"acaaabbbaccccadd",
+"accccabbbaaaabad",
+"accccabbbbbbbbba",
+"acccccabbbbbbbba",
+"accccccaaaaaabad",
+"accccccccccccadd",
+"aaaaaaaaaaaaaadd",
+"dddddddddddddddd",
+"dddddddddddddddd",
+"dddddddddddddddd",
+};

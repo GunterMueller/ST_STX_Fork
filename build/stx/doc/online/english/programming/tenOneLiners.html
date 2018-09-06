@@ -1,0 +1,150 @@
+<HTML>
+<!encoding: utf8 -->
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - 10 One Liners to Impress Your Friends</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="stForJavaGuys.html">   <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">  <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="doingThingsInST.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>10 One Liners to Impress Your Friends</H1>
+
+
+<H3>Introduction</H3>
+
+Inspired by corresponding papers for the Ruby and Scala programming language,
+here is a Smalltalk version of "<i>10 One Liners to Impress Your Friends</i>".
+These demonstrate that Smalltalk's elegant syntax also makes it very easy to
+write highly readable, concise and powerful code.
+And all of this has been around for more than 30 years now!
+<P>
+
+<H4>Multiply Each Item in a List by 2</H4>
+
+The <VAR>collect:</VAR> method, which is implemented by all collections, returns a new collection
+of the same type as the receiver, containing the collected results from applying a
+block (lambda, anonymous function) to each element. It directly corresponds to the <VAR>map</VAR>
+function of lisp/scheme, which also expects a lambda (closure) as processing argument.
+Notice the <CODE>"(1 to:10)"</CODE> expression, which
+creates an interval object without a special syntactic construct for list comprehension.
+<A type="example" showresult><CODE><PRE>
+    (1 to:10) collect:[:e | e * 2]
+</PRE></CODE></A>
+<P>
+
+<H4>Sum a List of Numbers</H4>
+
+Similar to <VAR>ReduceLeft</VAR> from functional languages, the Smalltalk <VAR>inject:</VAR> method can be used to process
+each element of a collection, where each result is passed on to the next iteration as
+input parameter. The very first injected value is passed in as argument:
+<A type="example" showresult><CODE><PRE>
+    (1 to:1000) inject:0 into:[:sumSoFar :e | sumSoFar + e]
+</PRE></CODE></A>
+of course, every collection also implements the sum method, so you can make it even more compact:
+<A type="example" showresult><CODE><PRE>
+    (1 to:1000) sum
+</PRE></CODE></A>
+<P>
+
+<H4>Verify if Exists in a String</H4>
+The following returns true, if a list contains any from a list of words:
+<A type="example" showresult><CODE><PRE>
+    wordList := #('scala' 'akka' 'play framework' 'sbt' 'typesafe').
+    tweet := 'This is an example tweet talking about scala and sbt.'.
+
+    wordList contains:[:w | tweet includesString:w]
+</PRE></CODE></A>
+the <VAR>contains:</VAR> method expects a block argument and returns true,
+if this block ever returns true, when applied to each element of the collection.
+It does not proceed through the remaining elements, if any delivers a false.
+<br>
+But, as this is a relatively common task, the Smalltalk library also contains
+a method called <VAR>includesAny:</VAR>, which checks a collection's elements to contain
+any from another collection. This gives us:
+<A type="example" showresult><CODE><PRE>
+    wordList := #('scala' 'akka' 'play framework' 'sbt' 'typesafe').
+    tweet := 'This is an example tweet talking about scala and sbt.'.
+
+    tweet asCollectionOfWords includesAny:wordList
+</PRE></CODE></A>
+<P>
+
+<H4>Read in a File</H4>
+The following gives you a list of text lines:
+<A type="example"><CODE><PRE>
+    fileText := 'data.txt' asFilename contents
+</PRE></CODE></A>
+or as one big string:
+<A type="example"><CODE><PRE>
+    fileText := 'data.txt' asFilename contentsAsString
+</PRE></CODE></A>
+<P>
+
+<H4>Happy Birthday to You!</H4>
+A common one-liner which prints out the "Happy Birthday" song.
+<A type="example"><CODE><PRE>
+    1 to:4 do:[:i | ('Happy Birthday ',((i == 3) ifTrue:['dear Tony'] ifFalse:['to You'])) printCR ]
+</PRE></CODE></A>
+<P>
+
+<H4>Filter List of Numbers </H4>
+
+Smalltalk does not directly support returning multiple values;
+however, we can pass a block as argument, which takes two values.
+Programmers familiar with continuations will like:
+<A type="example"><CODE><PRE>
+    |passed failed|
+
+    #(49 58 76 82 88 90) partition:[:e | e > 60] into:[:a :b| passed := a. failed := b].
+    passed printCR. failed printCR.
+</PRE></CODE></A>
+<P>
+
+<H4>Find Minimum (or Maximum) in a List</H4>
+<A type="example" showresult><CODE><PRE>
+    #(14 35 -7 46 98) reduceLeft:[:min :el | min min: el]
+</PRE></CODE></A>
+some Smalltalk dialects do not have <var>reduceLeft:</var>;
+then, you can write:
+<A type="example" showresult><CODE><PRE>
+    #(14 35 -7 46 98) inject:nil into:[:minSoFar :el | (minSoFar ? el) min: el]
+</PRE></CODE></A>
+(the ?-operator returns the left side if it is non-nil, the right side if it is nil.
+<br>
+Finally, there is the super-concise <VAR>min</VAR>:
+<A type="example" showresult><CODE><PRE>
+    #(14 35 -7 46 98) min
+</PRE></CODE></A>
+<P>
+
+
+<H4>Count, how often a Word is found in a File</H4>
+<A type="example" showresult><CODE><PRE>
+    'data.text' asFilename contentsAsString asCollectionOfWords asBag occurrencesOf:'fred'
+</PRE></CODE></A>
+if the file is large, and you cannot hold its contents in memory, process it line-wise:
+<A type="example" showresult><CODE><PRE>
+    bag := Bag new.
+    'data.text' asFilename readingLinesDo:[:l | bag addAll:l asCollectionOfWords].
+    bag occurrencesOf:'fred'
+</PRE></CODE></A>
+(not a 1-liner, but we could have written in one longer line).
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 2002 Claus Gittinger, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.5 $
+</BODY>
+</HTML>

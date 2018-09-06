@@ -1,0 +1,45 @@
+; View defaultStyle:#'fun_motif'
+;
+; like motif, but with different viewbackground
+;
+; $Header: /cvs/stx/stx/libview/styles/oldStyles/fun_motif.style,v 1.11 2006-01-19 12:19:34 cg Exp $
+
+
+shadowColor                     Color grey:20
+
+#include 'motif.common'
+
+comment  'Fun style. Like motif with rocky viewbackground,\nice buttons and menu highlightning.\May be too dark on some displays'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Wie ''motif'', mit steinhartem, solidem Hintergrund\und edlen Knöpfen.\Erscheint auf vielen VGA Monitoren zu dunkel'
+#endif
+
+#viewBackground             (Smalltalk imageFromFileNamed:'bitmaps/granite.tiff' inPackage:'stx:libwidg3')
+viewBackground              (Smalltalk imageFromFileNamed:'bitmaps/granite_small.tiff' inPackage:'stx:libwidg3') onDevice:Screen current
+wooden                      (Smalltalk imageFromFileNamed:'bitmaps/wood2H.tiff' inPackage:'stx:libwidg3') onDevice:Screen current
+averageColor                =wooden averageColorIn:(0@0 corner:9@9)
+
+foregroundColor             (Color rgbValue:16rDCDCDC)
+label.foregroundColor       =foregroundColor
+menu.foregroundColor        =foregroundColor
+menu.itemSpace              3
+
+disabledGrey                Color grey:66
+
+button.backgroundColor          =wooden
+button.activeBackgroundColor    =wooden
+; button.shadowColor            =averageColor darkened
+button.shadowColor              =shadowColor
+button.lightColor               =buttonLightColor
+button.disabledForegroundColor  =disabledGrey
+
+toggle.backgroundColor          =viewBackground
+
+arrowButton.activeForegroundColor =lightColor
+
+menu.hilightForegroundColor       Color yellow
+menu.hilightBackgroundColor       Color red
+menu.disabledForegroundColor      =disabledGrey
+
+scroller.thumbColor               =wooden

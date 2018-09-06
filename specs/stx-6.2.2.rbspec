@@ -1,0 +1,44 @@
+project :'stx:6.2.2' do
+  # Builds (actually - downloads) official Smalltalk/X 6.2.2 released
+  # by eXept on July 2012.
+  # import :'stx:baseline'
+
+
+  tasks do
+    task :'checkout:buildtools'
+
+    task :'checkout:pre' => [ BUILD_DIR / 'stx' ]
+
+    file BUILD_DIR / 'stx' => [ BUILD_DIR ] do
+      # should download stuff from eXept site...
+      if win32? 
+      	files = [ 'win32.zip' ]
+      else 
+      	files = [ 'linux.tgz', 'common.tgz' ]
+      end
+
+      download_dir = (ENV['DOWNLOADS'] || BUILD_DIR) 
+
+      files.each do | f |
+        chdir download_dir do      	        
+          if not File.exist? f        	
+            if not system "wget ftp://ftp.exept.de/download/stx/stx622/#{f}"
+              raise Exception.new("Cannot download #{f}")
+            end  
+          end                      
+        end
+        chdir BUILD_DIR do
+          if win32? 
+            unpack = "unzip #{download_dir / f}"
+          else            
+            unpack = "tar xzf #{download_dir / f}"
+          end
+          if not system unpack  
+            raise Exception.new("Cannot unzip #{download_dir / f}")
+          end          	
+        end
+      end  
+    end
+  end
+end  
+  

@@ -1,0 +1,87 @@
+<HEAD>
+<TITLE>Using the File Browser - Path Field</TITLE>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="menu.html">      <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">        <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="fileList.html">   <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H2><A HREF="TOP.html#I_PATHFIELD">Path Field</A></H3>
+
+This field shows the current directories (absolute) path name.
+<BR>
+It is also an input field, to type in a new directory - the browser will change
+to the entered directory when the return-Key is hit in the field.
+<BR>
+Notice, that the field allows for fileName-completion (Tab-Key).
+
+<H3><A NAME="MENU" HREF="TOP.html#I_PATHFIELD_MENU">Path Field Menu Functions</A></H3>
+
+The path field has its own popup menu, which is activated by pressing the
+middle button (or the right button, if you own a 2-button mouse).
+<BR>
+The functions of this menu are also available
+via the <I>"Directory"</I> pull-down menu item.
+<BR>
+This menu provides functions concerning the current path:
+
+<DL>
+<DT><A HREF="TOP.html#I_PATHFIELD_MENU.COPY_PATH" NAME="MENU.COPY_PATH">
+Copy Path</A>
+<DD>copy the current pathname into the cut & paste buffer.
+This is useful if you want to paste the full pathname into some other textview
+or workspace.
+<P>
+
+<DT><A HREF="TOP.html#I_PATHFIELD_MENU.UP" NAME="MENU.UP">
+Up</A>
+<DD>change to the parent directory.
+This has the same effect as double-clicking on the
+<CODE>".."</CODE> entry.
+<P>
+
+<DT><A HREF="TOP.html#I_PATHFIELD_MENU.CHANGE_DIR" NAME="MENU.CHANGE_DIR">
+Goto...</A>
+<DD>opens a box to enter the name of a directory to change to.
+Like every other fileBox, the box performs filename completion with the <KBD>"<B>TAB</B>"</KBD> key.
+Notice, that all fileBrowsers keep a common history of already visited
+directories; therefore, you do not have to enter the name
+of a recently visited directory again.
+<P>
+
+<DT><A HREF="TOP.html#I_PATHFIELD_MENU.BACK" NAME="MENU.BACK">
+Back</A>
+<DD>change back to the previous directory.
+<P>
+
+<DT><A HREF="TOP.html#I_PATHFIELD_MENU.CHANGE_DEFAULT" NAME="MENU.CHANGE_DEFAULT">
+Default</A>
+<DD>change to your default directory; that is the directory where stx was started originally.
+<P>
+
+<DT><A HREF="TOP.html#I_PATHFIELD_MENU.CHANGE_HOME" NAME="MENU.CHANGE_HOME">
+Home</A>
+<DD>change to your home directory.
+<P>
+
+<DT><A HREF="TOP.html#I_PATHFIELD_MENU.BOOKMARKS" NAME="MENU.BOOKMARKS">
+Bookmarks Submenu</A>
+<DD>A submenu for bookmark managemen and
+quick goto items for bookmarked directories.
+<P>
+
+<DT><A HREF="TOP.html#I_PATHFIELD_MENU.HISTORY" NAME="MENU.HISTORY">
+History Submenu</A>
+<DD>The last menu entries allow a quick change back to recently visited
+directories. To avoid ever growing menus, only the last few directories (15)
+are shown in the history list.
+<P>
+
+</DL>
+
+<HR>
+Doc $Revision: 1.13 $ $Date: 2014-06-05 16:17:59 $
+
+</BODY>
+</HTML>

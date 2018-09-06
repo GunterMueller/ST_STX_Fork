@@ -1,0 +1,25 @@
+/* XPM */
+static char *file_plain[] = {
+	"16 16 4 1",
+	". c none",
+	"b c black  m black g4 black",
+	"g c white m white g4 white",
+	"r c red m black g4 black",
+	"................",
+	"................",
+	"rrbbbbbbbb..rr..",
+	"brrgggggbgbrr...",
+	"bgrrggggbgrr....",
+	"bggrrgggbrrbb...",
+	"bgggrrggrrggb...",
+	"bggggrrrrgggb...",
+	"bgggggrrggggb...",
+	"bggggrrrrgggb...",
+	"bgggrrggrrggb...",
+	"bggrrggggrrgb...",
+	"bbrrbbbbbbrrb...",
+	".rr........rr...",
+	"rr..........rr..",
+	"................",
+};
+

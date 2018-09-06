@@ -1,0 +1,26 @@
+/* XPM */
+static char *mac_down_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"14 14 5 1",
+/* colors */
+"a c white",
+"b c #aaaaaa",
+"c c #cccccc",
+"d c #333366",
+"e c #666666",
+/* pixels */
+"aaaaaaaaaaaaae",
+"acccccccccccce",
+"acccddddddccce",
+"acccdbbbbdccce",
+"acccdbbbbdccce",
+"acccdbbbbdccce",
+"addddbbbbdddde",
+"acdbbbbbbbbdce",
+"accdbbbbbbdcce",
+"acccdbbbbdccce",
+"accccdbbdcccce",
+"acccccddccccce",
+"acccccccccccce",
+"eeeeeeeeeeeeee",
+};

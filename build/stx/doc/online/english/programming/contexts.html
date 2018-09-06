@@ -1,0 +1,573 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Contexts, Stacks & Unwinding</Title>
+</HEAD>
+
+<BODY>
+
+<!-- <A NOPRINT HREF="knownbugs.html">    <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A> <-->
+<A NOPRINT HREF="debugging.html">    <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">          <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="exceptions.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Contexts, Stacks and Unwinding</H1>
+
+<H2>Contents</H2>
+
+<UL>
+	<LI><A HREF="#INTRO" NAME="I_INTRO">Introduction</A>
+	<LI><A HREF="#CONTEXTS" NAME="I_CONTEXTS">Context</A>
+	<LI><A HREF="#CONTEXTCHAIN" NAME="I_CONTEXTCHAIN">The context chain</A>
+	<LI><A HREF="#HOMECONTEXT" NAME="I_HOMECONTEXT">Blocks homecontexts</A>
+	<LI><A HREF="#LONGRETURN" NAME="I_LONGRETURN">Long return from a block</A>
+	<LI><A HREF="#UNWINDING" NAME="I_UNWINDING">Stack unwinding</A>
+</UL>
+
+
+<H2><A NAME="INTRO" HREF="#I_INTRO">Introduction</A></H2>
+
+In <CITE>Smalltalk/X</CITE> 
+(like in some other Smalltalk implementations 
+ and most other programming languages),
+variables which are declared locally in a method or block,
+are created in a memory area called the <VAR>stack</VAR>.
+<BR>
+Since most machines provide hardware support (i.e. machine instructions) to
+support efficient manipulation of the stack, 
+this makes allocation and deallocation
+of memory in this stack highly efficient.
+<P>
+In general, the area which holds the local variables of
+a particular method or block is
+called a <VAR>stack frame</VAR>. 
+In Smalltalk, these are accessible to the
+program as objects (of course) and are called <VAR>contexts</VAR>.
+<BR>
+(In the browser, have a look at the <CODE>Context</CODE>
+and <CODE>BlockContext</CODE> classes.)
+
+
+<H2><A NAME="CONTEXTS" HREF="#I_CONTEXTS">Contexts</A></H2>
+
+<P>
+To the programmer, the currently active context (i.e. the one of the
+currently executing method or block) is accessible through the pseudovariable
+<CODE>thisContext</VAR>.
+<P>
+Every context keeps some state for its 
+method or block (in general: <VAR>codeObject</VAR>). 
+Among others, the interesting things
+found in a context are:
+<UL>
+<LI>the <CODE>sender</CODE>
+<BR>
+this is the context of the codeObject which is responsible for the execution
+of the current codeObject. This context either performed a message send
+or a block evaluation which lead into the current codeObject 
+(and thereby created the current context).
+<P>
+<LI>the <CODE>receiver</CODE> (methods only)
+<BR>
+this is the receiver of the current message.
+Within the codeObject, this is usually referred to via the
+<CODE>self</CODE> pseudovariable. For blocks, this referres to
+the receiver of the method in which the block was defined.
+<BR>
+(blockContexts do not refer to the receiver directly;
+ these access the receiver via their homeContext.)
+<P>
+<LI><CODE>arguments</CODE> (if any)
+<BR>
+these are the arguments passed to the codeObject. I.e. either method
+or block arguments.
+<P>
+<LI>the local variables
+<BR>
+these are the local variables of the codeObject; i.e. either method locals
+or block locals. 
+<P>
+<LI>the <CODE>selector</CODE>
+<BR>
+the selector by which the codeObject was found. For blocks, the selector will
+one of the <CODE>#value...</CODE> selectors.
+<P>
+<LI>the <CODE>homeContext</CODE> (blocks only)
+<BR>
+the context of the block- or methodCodeObject in which the block-codeObject
+was defined. For nested blocks, the homeContext may refer to another blockContext.
+Blocks access outer locals and arguments via the homeContext
+chain.
+</UL>
+
+Via <CODE>thisContext</CODE>, the program can gain quite interesting
+things about the current state of execution.
+For example, it is possible to find out who was the sender of a message,
+the receiver of a message etc.
+<BR>
+The debugger uses this to extract the information shown in the walkback list.
+
+
+<H2><A NAME="CONTEXTCHAIN" HREF="#I_CONTEXTCHAIN">The context chain</A></H2>
+
+Whenever a method or block is called for execution, the system automatically
+creates a new context object which holds the above state during the
+execution.
+<BR>
+The individual contexts are linked via the <CODE>sender</CODE> fields
+and unlinked when the codeObject returns.
+This allows a program to traverse the calling chain - back to the first context
+which is where the whole show started. 
+<BR>
+Of course, every smalltalk process has its own context chain. 
+We call the last context of inactive processes the <VAR>suspendedContext</VAR> 
+of a process.
+
+<P>
+Let us see a concrete example;
+the following code shows the senders selector when executed:
+<A TYPE="example">
+<CODE><PRE>
+    Transcript show:'I am the: '.
+    Transcript show:thisContext selector.
+    Transcript show:' method of '.
+    Transcript show:thisContext receiver class name.
+    Transcript cr.
+</PRE></CODE>
+</A>
+or, looking at the sender:
+<A TYPE="example">
+<CODE><PRE>
+    Transcript show:'I was invoked by: '.
+    Transcript show:thisContext sender selector.
+    Transcript show:' method of '.
+    Transcript show:thisContext sender receiver class name.
+    Transcript cr.
+</PRE></CODE>
+</A>
+
+a nice application of this is a trace printing facility;
+you can define a method in the <CODE>Object</CODE> class, which outputs
+its senders selector and receiver:
+<CODE><PRE>
+    tracePrint
+	Transcript show:thisContext sender receiver printString.
+	Transcript show:' '.
+	Transcript showCR:thisContext sender selector printString
+</PRE></CODE>
+and add trace printing to your methods with:
+<CODE><PRE>
+    someMethod
+	self tracePrint.
+	...
+</PRE></CODE>
+a concrete application of this is found in the <CODE>#obsoleteMethodWarning:</CODE>
+method, found in the <CODE>Object</CODE> class.
+<P>
+Of course, mostly debugging utilities within <CITE>ST/X</CITE> 
+use the context chain information; for more details, have a look into
+the <CODE>DebugView</CODE> and the <CODE>ProcessMonitor</CODE> classes.
+
+
+
+<H2><A NAME="HOMECONTEXT" HREF="#I_HOMECONTEXT">Blocks homecontexts</A></H2>
+
+Consider the case where you define a block in some method, and pass this
+as actionBlock to a button:
+<A TYPE="example">
+<CODE><PRE>
+    |myButton aString|
+
+    aString := 'hello there'.
+
+    myButton := Button label:'foo'.
+    myButton action:[Transcript showCR:aString].
+    myButton open
+</PRE></CODE>
+</A>
+At first sight, there seems to be nothing special with the above code ...
+<BR>
+... however, thinking about the above, you will find that the blocks code
+references a variable which was declared in an outer scope: the method in which
+the block was defined <A HREF="#FN0" NAME="BACK_FN0">(*1)</A>. 
+<BR>
+
+<P>
+To be able to do this, a block keeps a reference to the context of its
+defining codeObject - in this case, the context of the anonymous <VAR>doIt</VAR>method.
+<BR>
+This context is called the blocks <VAR>homeContext</VAR> 
+(or sometimes shortly the blocks <VAR>home</VAR>).
+<BR>
+Since blocks may be declared within other blocks, a blocks homeContext 
+can be either a methods context or another blocks context. 
+For blocks within other blocks, we can walk the homeContext chain back to 
+the context of the method in which
+all those blocks are defined; 
+<BR>
+this is called the blocks <VAR>methodHome</VAR>.
+
+<P>
+Knowing this, we now understand, how a block can access variables declared in
+its enclosing method: it uses the <VAR>homeContext</VAR> reference, to
+fetch and store these outer variables. 
+<BR>
+I.e. it accesses those variables
+indirectly, through the <VAR>homeContext</VAR> reference 
+<A HREF="#FN1" NAME="BACK_FN1">(*2)</A>.
+<P>
+The above example is even more interesting: 
+<BR>
+you may have already noticed, that the
+<VAR>doIt</VAR> method returns after the <CODE>"myButton open"</CODE>.
+However, the block is still living (since kept in the button)
+and can still reference this dead methods local variable !
+<P>
+This is one of the <STRONG>most fundamental</STRONG> differences between
+Smalltalk and most other programming languages:
+<BLOCKQUOTE><STRONG>
+in Smalltalk, a context behaves just like any other object, in that it
+is not destroyed, IFF there are still
+references from other objects to it. </STRONG>(typically, these are blocks)<STRONG>
+</STRONG></BLOCKQUOTE>
+Technically, the context is moved from the stack area
+(which has <VAR>first-in/last-out</VAR> behavior) to the normal
+object memory, which is garbage collected
+<A HREF="#FN2" NAME="BACK_FN2">(*3)</A>. 
+<BR>
+Some Smalltalk implementations allocate contexts in the object memory right away;
+other (older) systems only allow references to outer variables
+as long as the outer context is still on the active context chain
+(i.e. the corresponing method has not yet returned)
+and report an error for the above example.
+<P>
+If you tried something like the above example in other programming languages
+(say C or C++), you'd get a core dump in the best case - or silently invalid
+references in the typical case.
+
+
+
+<H2><A NAME="LONGRETURN" HREF="#I_LONGRETURN">Long return from a block</A></H2>
+
+Blocks may contain a return statement (<CODE>^ someValue</CODE>).
+This return will end the execution of its defining <B>method</B> and force
+a return to the sender of this <B>method</B>.
+<BR>
+Notice the word: <VAR>method</VAR> being boldified; it is <B>NOT</B>
+only the block from which we return, but also the defining method.
+
+<P>
+This mechanism allows you to pass an exception block down to a called method
+and to return from the outer method - 
+even from within an arbitrary deeply nested calling hierarchy.
+<BR>
+For example:
+<CODE><PRE>
+    method1
+	self method2:[^ false].
+	^ true
+    !
+
+    method2:exceptionBlock
+	...
+	self method3:exceptionBlock
+	...
+
+    method3:exceptionBlock
+	...
+	someErrorOccurred ifTrue:[
+	    exceptionBlock value
+	].
+	...
+</PRE></CODE>
+in the above, the evaluation of <VAR>exceptionBlock</VAR> in <CODE>method3:</CODE>
+will return immediately from <CODE>method1</CODE>.
+<P>
+The above may seem artificial, 
+but you use this feature daily in situations like:
+<CODE><PRE>
+    ...
+    aCollection do:[:element |
+	someConditionWithElement ifTrue:[
+	    ^ true
+	]
+    ].
+    ...
+</CODE></PRE>
+here, a block gets passed down to the collections <CODE>#do:</CODE>
+method, which evaluates it. The return statement found there will
+return from your method.
+<BR>
+(Now you understand, why a return statements semantic should not be changed
+to return from the block instead ...)
+<P>
+The above is called a <VAR>stack unwind</VAR> or <VAR>context unwind</VAR>.
+<BR>
+Technically, it is similar to a <CODE>longjmp()</CODE> in the C language
+or (roughly) to a <VAR>catch&amp;throw</VAR> in other programming languages 
+<BR>
+(well, not exactly; read ``<A HREF="exceptions.html">exception handling</A>'' 
+ for the real catch&amp;throw mechanism).
+<BR>
+In contrast to <CODE>longjmp()</CODE> in C/C++,
+all situations concerning pending references 
+to intermediate contexts (as described above) are handled correctly.
+<BR>
+Also, the garbage collector takes care of any objects which were created
+in the meanwhile and are no longer in use.
+<BR>
+
+<P>
+It is not allowed to return from a method which has already returned
+i.e. the following code is illegal (and raises an exception):
+<CODE><PRE>
+    ...
+
+    getABlock
+	^ [ ^ self]
+    !
+
+    method2
+	|aBlock|
+
+	aBlock := self getABlock.
+	aBlock value
+    !
+</PRE></CODE>
+the above block as returned by <CODE>#getABlock</CODE> tries to return
+from its home context, when evaluated.
+In the above example, that home context has already returned.
+<BR>
+
+        
+
+
+<H2><A NAME="UNWINDING" HREF="#I_UNWINDING">Stack unwinding</A></H2>
+
+The above unwind operation is performed by code which was compiler
+generated; every <CODE>^</CODE> (return) statement produces this code.
+<P>
+You can also perform unwinds manually, via messages sent to a context.
+<BR>
+(the debuggers <VAR>return</VAR> and <VAR>abort</VAR> functions do this).
+<P>
+There are situations, where naive unwind operations are critical and
+leave the system in a bad mood: consider the case, where your program
+wants to perform some dataBase update and has locked a record for doing so:
+<CODE><PRE>
+    ...
+    aDataBase lock.
+    ...
+    record := aDataBase readRecord.
+    ...
+    update the information
+    ...
+    aDataBase writeRecord:record.
+    ...
+    aDataBase unlock
+    ...
+</PRE></CODE>
+now, consider the case of an unwind occurring while the database is locked;
+noone would ever unlock
+<BR>
+(it makes no difference what the exact reason for the unwind was;
+it could be a return statement in a block,
+a programmed unwind, or an <VAR>abort</VAR>
+from a debugger which opened due to an error somewhere) 
+
+<P>
+In general, the above problem arises whenever some state is changed
+temporarily and has to be restored later.
+<BR>
+Other examples where this may happen are: 
+cursor change to an hourGlass shape during
+ <VAR>doIt</VAR> evaluation, block/unblock interrupts, 
+ changing drawing colors in a view, unlocking a semaphore etc.)
+
+<P>
+To support this, <CITE>ST/X</CITE>, <CITE>ST-80</CITE> and others
+provide mechanisms to allow a cleanup
+action to be defined. 
+This cleanup action is executed in case of any stack unwinds.
+<BR>
+In your program, you have to wrap your statements into a block, and send it
+the message <CODE>#ifCurtailed:</CODE>, passing the cleanup
+actions as a block argument.
+<BR>
+i.e.
+<CODE><PRE>
+    ...
+    [
+       ...
+       do something
+       ...
+    ] ifCurtailed:[
+       ...
+       cleanup in case of unwinding
+       ...
+    ].
+    ...
+</PRE></CODE>
+<BR>
+With unwind protection, the database example becomes:
+<CODE><PRE>
+    ...
+    [
+	aDataBase lock.
+	...
+	record := aDataBase readRecord.
+	...
+	update the information
+	...
+	aDataBase writeRecord:record.
+	...
+	aDataBase unlock
+    ] ifCurtailed:[
+	aDataBase unlock
+    ]
+    ...
+</PRE></CODE>
+Since the cleanup actions are often the same as the last actions
+in the block (here: unlocking the dataBase),
+there is another more convenient method called <CODE>ensure:</CODE>, which evaluates the block
+argument in any case (i.e. whether the computation was unwound or
+not) and avoids you having to write these actions twice:
+<CODE><PRE>
+    ...
+    [
+	aDataBase lock.
+	...
+	record := aDataBase readRecord.
+	...
+	update the information
+	...
+	aDataBase writeRecord:record.
+	...
+    ] ensure:[
+	aDataBase unlock
+    ]
+    ...
+</PRE></CODE>
+
+These messages used to be called <CODE>#valueOnUnwindDo:</CODE> and
+<CODE>#valueNowOrOnUnwindDo:</CODE>;
+they have been renamed in the process of ANSI standardization.
+The old messages are still supported, but should be avoided in new code.
+<P>
+If you browse for senders of these messages, you will find many concrete
+examples of unwind-protection in the system.
+(browse senders of 
+<A INFO="Browse It" TYPE="example" action="Smalltalk browseAllCallsOn:#valueOnUnwindDo:">
+ <CODE>#valueOnUnwindDo:</CODE></A> 
+<A INFO="Browse It" TYPE="example" action="Smalltalk browseAllCallsOn:#ifCurtailed:">
+ <CODE>#ifCurtailed:</CODE></A> 
+or:
+<A INFO="Browse It" TYPE="example" action="Smalltalk browseAllCallsOn:#valueNowOrOnUnwindDo:">
+<CODE>#valueNowOrOnUnwindDo:</CODE></A>
+or:
+<A INFO="Browse It" TYPE="example" action="Smalltalk browseAllCallsOn:#ensure:">
+<CODE>#ensure:</CODE></A>
+)
+
+<P>
+All unwind actions are also performed when an exception handler 
+aborts some computation (i.e. <VAR>returns</VAR>) or if
+a process is terminates. 
+<BR>
+Before doing a hard terminate (i.e. really destroying itself and freeing
+its resources), every process unwinds its stack and thereby evaluates all
+unwind blocks found. This means that the above cleanup is done even if
+the process gets terminated (which is <STRONG>very</STRONG> convenient for the programmer ;-).
+<BR>
+(see <A HREF="exceptions.html">``exception handling''</A>
+and <A HREF="processes.html">``working with processes''</A>).
+<P>
+Since there is is a non-zero chance of a never ending recursion here (in case of
+errors in the unwind actions which are to be unwound again), 
+the <CODE>Process</CODE> class provides two variations for termination:
+<UL>
+<LI>a "soft terminate" (<VAR>aProcess</VAR> <CODE>terminate</CODE>)
+<BR>
+which does evaluate all unwind actions
+<P>
+<LI>a "hard terminate" (<VAR>aProcess</VAR> <CODE>terminateNoSignal</CODE>)
+<BR>
+which does <STRONG>not</STRONG> evaluate them.
+</UL>
+The hard terminate can be executed from within a debugger or
+an error handler, in case things got messed up very badly.
+<BR>
+However, the state as modified before will not be restored correctly
+in this case, and you may have to manually remove locks and/or restore variables;
+also, no unwind actions are performed.
+<P>
+As a general rule, be careful when coding these unwind actions, and try to
+avoid errors there, IFF there is critical state involved (such as dataBase locks).
+
+
+
+<P>
+Notes:
+<BR>
+
+<A HREF="#BACK_FN0" NAME="FN0">(*1) doIt code</A>
+<BR>
+This is also true for <CITE>doIt</CITE> execution;
+here, the compiler
+creates a temporary (anonymous) method, and invokes it directly
+(without a message send).
+<BR>
+Thus, the context-behavior is the same for
+regular methods, blocks and <VAR>doIt</VAR> evaluations.
+<P>
+
+<A HREF="#BACK_FN1" NAME="FN1">(*2) indirection</A>
+<BR>
+this indirection is the reason for block local variables being
+slightly faster accessed than outer block or method variables.
+<P>
+
+<A HREF="#BACK_FN2" NAME="FN2">(*3) context copying</A>
+<BR>
+not all blocks require the <VAR>homeContext</VAR>. <CITE>ST/X</CITE>
+(and <CITE>ST-80</CITE>) distinguish between those that do access 
+outer context locals or
+return through their homeContext (so called <VAR>full blocks</VAR>),
+those that only access the receiver via <CODE>self</CODE> (so called
+<VAR>copying blocks</VAR>) and finally those that do not require any
+homeContext access at all (so called <VAR>cheap blocks</VAR>).
+<BR>
+The checking and context moving is only required and performed for
+full blocks. Which is the reason that creation and use of fullBlocks
+requires slightly more CPU time (and space) overhead than the others.
+<P>
+Cheap blocks are the most CPU friendly during program execution:
+they are created at compile time, and there is no overhead
+at all during execution. 
+<P>
+Copying blocks are created during program execution, 
+but require no special home context handling. 
+The CPU overhead is somewhere in-between cheap blocks and full blocks.
+<P>
+Finally, the ``most expensive'' ones are the full blocks,
+which force the compiler to create additional check code into the
+context-return.
+
+
+
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 1995 Claus Gittinger Development &amp; Consulting
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.18 $ $Date: 2016-07-11 09:24:05 $
+</BODY>
+</HTML>

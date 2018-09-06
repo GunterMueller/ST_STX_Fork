@@ -1,0 +1,26 @@
+/* XPM */
+static char *up_down_small_arrow_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 3 1",
+/* colors */
+"a c white",
+"b c black",
+"c c none",
+/* pixels */
+"cccccccacccccccc",
+"ccccccabaccccccc",
+"cccccabbbacccccc",
+"ccccabbbbbaccccc",
+"cccabbbbbbbacccc",
+"cccaaaabaaaacccc",
+"ccccccabaccccccc",
+"ccccccabaccccccc",
+"ccccccabaccccccc",
+"ccccccabaccccccc",
+"cccaaaabaaaacccc",
+"cccabbbbbbbacccc",
+"ccccabbbbbaccccc",
+"cccccabbbacccccc",
+"ccccccabaccccccc",
+"cccccccacccccccc",
+};

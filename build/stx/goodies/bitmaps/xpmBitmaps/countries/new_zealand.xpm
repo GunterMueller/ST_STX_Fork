@@ -1,0 +1,31 @@
+/* XPM */
+static char *new_zealand_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 20 4 1",
+/* colors */
+"a c #0000FF",
+"b c #F80000",
+"c c red",
+"d c white",
+/* pixels */
+"cddaaaadccdaaaaddcaaaaaaaaaaaaaa",
+"accddaadccdaaddccaaaaaaaaaaaaaaa",
+"aaaccdddccdddccaaaaaaaaaaaaaaaaa",
+"aaaaaccdccdccaaaaaaaaaaaabaaaaaa",
+"ddddddddccdddddddaaaaaaabbbaaaaa",
+"cccccccccccccccccaaaaaaaabaaaaaa",
+"cccccccccccccccccaaaaaaaaaaaaaaa",
+"ddddddddccdddddddaaaaaaaaaaaaaaa",
+"aaaaaccdccdccaaaaaaaabaaaaaaabaa",
+"aaaccdddccdddccaaaaabbbaaaaabbba",
+"cccddaadccdaaddccaaaabaaaaaaabaa",
+"cddaaaadccdaaaaddcaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaabaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaabbbaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaabaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+};

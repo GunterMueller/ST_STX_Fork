@@ -1,0 +1,66 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Tools - Book</Title>
+</HEAD>
+
+<BODY>
+
+<H1>Smalltalk/X Tools guide - Book printing</H1>
+
+
+This document represents the complete Tools description as a book.
+<BR>
+It is only useful with the Smalltalk HTML Document viewer.
+<P>
+If you use a regular HTML browser, the print button below
+is non functioning, and you should switch to
+<A NOPRINT HREF="TOP.html">TOP.html</A> and print individual pages.
+
+<HR>
+
+
+<P>
+
+<FORM ACTION="../misc/onlyInSTX.html" 
+      METHOD="DOIT | 
+	Processor activeProcess withUserBackgroundPriorityDo:[
+	    HTMLDocumentPrinter printBookURL:(self currentURL).
+	]
+      ">
+
+To print the whole Tools description, make certain, that your
+printer has enough paper loaded (roughly 70 pages), press: 
+<INPUT TYPE="submit" VALUE="print"> and go for a coffee break. 
+</FORM>
+
+<P>
+
+Start of Book
+<HR>
+
+
+<UL>
+<LI><A HREF="BOOK_cover.html">Coverpage</A>
+<P>
+<LI><A HREF="TOP.html">IndexPage</A>
+<P>
+    <LI><A ISBOOK HREF="fbrowser/BOOK.html">File Browser</A>
+    <LI><A ISBOOK HREF="sbrowser/BOOK.html">System Browser</A>
+    <LI><A ISBOOK HREF="debugger/BOOK.html">Debugger</A>
+    <LI><A HREF="cbrowser/TOP.html">Changes Browser</A>
+    <LI><A HREF="htmlViewer/TOP.html">HTML Document Browser</A>
+    <LI><A HREF="uipainter/TOP.html">GUI Builder</A>
+    <LI><A HREF="ImageEditor/TOP.html">Image Editor</A>
+    <LI><A HREF="MenuEditor/TOP.html">Menu Editor</A>
+    <LI><A HREF="misc/TOP.html">Other Tools</A>
+
+</UL>
+
+<HR>
+
+End of Book.
+<P>
+
+</BODY>
+</HTML>

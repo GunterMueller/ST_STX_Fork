@@ -1,0 +1,89 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Lisp Interpreter</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="goody_dhbnumeric.html">     <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="goody_prolog.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Lisp Interpreter</H1>
+
+<H2>Overview</H2>
+
+These classes implement a simple Lisp interpreter.
+<BR>
+To avoid interference with the rest of the system,
+these classes have been installed under the <CODE>"Lisp"</CODE>
+namespace.
+
+<P>
+
+
+<H2>Documentation</H2>
+See the class documentation of
+<CODE>"Lisp::LispInterpreter"</CODE>, and
+<BR>
+Use the source - Luke.
+
+<H2>Examples</H2>
+To open a lisp workspace:
+<CODE><PRE>
+    Lisp::LispInterpreter open
+</PRE></CODE>
+To evaluate a lisp expression:
+<CODE><PRE>
+    |result|
+
+    result := Lisp::LispInterpreter 
+		evaluateFrom:'(cons (car `(1 2 3)) `(3 4))'.
+    result inspect
+</PRE></CODE>
+
+
+<H2>Licensing</H2>
+This addOn package is NOT to be considered part of the base ST/X system. 
+It is provided physically with the ST/X delivery, but only for your 
+convenience. 
+<P>
+Legally, it is a freeware or public domain goody, as specified in
+the goodies copyright notice (see the goodies source).
+
+<H2>No Warranty</H2>
+This goody is provided AS-IS without any warranty whatsoever.
+
+
+<H2>Origin/Authors</H2>
+Ported from the MEI package as found in the smalltalk archives.
+<BR>
+Authors:
+<P>
+    Copyright (C) 1995-1997 AOKI Atsushi
+<BR>
+    Atsushi Aoki,
+<BR>
+    Software Research Associates, Inc.
+<BR>
+    1113 Spruce Street, Suite 502
+<BR>
+    Boulder, Colorado 80302 the U.S.A.
+
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.7 $
+</BODY>
+</HTML>

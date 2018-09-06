@@ -1,0 +1,4 @@
+AddressBook AddressBook stx:clients/AddrBook 'demos-AddressBook' 0
+AddressBook2 AddressBook2 stx:clients/AddrBook 'demos-AddressBook' 0
+AddressView AddressView stx:clients/AddrBook 'demos-AddressBook' 0
+InitialLabelView InitialLabelView stx:clients/AddrBook 'demos-AddressBook' 0

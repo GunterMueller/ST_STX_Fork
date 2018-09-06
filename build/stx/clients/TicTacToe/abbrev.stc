@@ -1,0 +1,5 @@
+Games::NewTicTacToePlayer NewTicTacToePlayer stx:clients/TicTacToe 'games-TicTacToe' 0
+Games::TicTacToe TicTacToe stx:clients/TicTacToe 'games-TicTacToe' 0
+Games::TicTacToeGame TicTacToeGame stx:clients/TicTacToe 'games-TicTacToe' 0
+Games::TicTacToePlayer TicTacToePlayer stx:clients/TicTacToe 'games-TicTacToe' 0
+Games::TicTacToeView TicTacToeView stx:clients/TicTacToe 'games-TicTacToe' 0

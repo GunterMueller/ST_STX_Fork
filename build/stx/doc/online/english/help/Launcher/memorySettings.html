@@ -1,0 +1,212 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Help - Memory Settings</Title>
+</HEAD>
+
+<BODY>
+
+<H1>Memory Settings</H1>
+
+<H2><A NAME="INDEX">Help index</A></H2>
+
+  <UL>
+  <LI><A HREF="#NEWSPACE_SIZE">NewSpace Size</A>
+  <LI><A HREF="#MAXMEM_LIMIT">Maximum Memory Limit</A>
+  <LI><A HREF="#QUICKALLOCATION_LIMIT">Quick Allocation Limit</A>
+  <LI><A HREF="#IGC_TRIGGER">Incremental GC Allocation Trigger</A>
+  <LI><A HREF="#IGC_FREE_TRIGGER">Incremental GC FreeSpace Trigger</A>
+  <LI><A HREF="#IGC_AMOUNT">Incremental GC Amount</A>
+  <LI><A HREF="#OLDSPACE_INCR">Oldspace Increment</A>
+  <LI><A HREF="#OLDSPACE_COMPR_LIMIT">Oldspace Compress Limit</A>
+  <LI><A HREF="#STACK_LIMIT">Stack Limit</A>
+  <LI><A HREF="#CODE_LIMIT">Dynamic Code Limit</A>
+  <LI><A HREF="#CODE_TRIGGER">Dynamic Code GC Trigger</A>
+  <LI><A HREF="#ADDITIONAL_SETTINGS">Additional Settings (Not available in the Settings Menu)</A>
+  <LI><A HREF="#MORE_INFO">Further Reading</A>
+  </UL>
+
+<HR>
+
+<H2><A NAME="NEWSPACE_SIZE" HREF="#INDEX">NewSpace Size</A></H2>
+
+Defines the amount of memory where new objects are created.
+The memory manager uses a generation scavenging mechanism, where
+objects are allocated in newSpace (also called <VAR>eden space</VAR>)
+and promoted to the so called <VAR>oldSpace</VAR> after a while.
+<BR>
+Objects in newSpace are quickly reclaimed (actually, the cost for
+reclamation is zero - its the survival of new objects, which generates
+some overhead).
+<P>
+Choosing a size for the newSpace is a trade between GC overhead
+(as percentage of the total CPU time) vs. maximum pause time due to
+scavenging operations.
+<BR>
+The default of 400k leads to a maximum
+pause time of about 20-60ms on average machines
+(this heavily depends on the CPU and especially the memory access times).
+<P>
+
+
+<H2><A NAME="MAXMEM_LIMIT" HREF="#INDEX">Maximum Memory Limit</A></H2>
+
+This is the maximum size of the oldSpace memory area.
+Notice, that if a copying (Baker-) garbage collection mechanism is used,
+the virtual memory requirements might be twice this amount during a copying
+garbage collection.
+
+
+<H2><A NAME="QUICKALLOCATION_LIMIT" HREF="#INDEX">Quick Allocation Limit</A></H2>
+
+Up to this amount of memory, the system will not try to compress memory when the allocated
+memory becomes used; instead, more memory is quickly allocated and the oldSpace size therefore
+increased.
+
+
+
+<H2><A NAME="IGC_TRIGGER" HREF="#INDEX">Incremental GC Allocation Trigger</A></H2>
+
+The incremental background
+garbage collector (<VAR>IGC</VAR>) reclaims oldSpace objects in the background,
+usually without noticable pauses.
+<BR>
+This number defines the allocation trigger value for the IGC to start:
+whenever that amount of memory has been allocated since the last
+collection, it starts a reclamation cycle.
+<P>
+Notice, that the IGC runs as a Smalltalk thread; by default, at low priority.
+If higher priority processes are active, it may not complete a reclamation
+cycle early enough, leading eventually to a blocking garbage collect.
+<BR>
+In some situations, it may be useful to raise the background collectors
+priority.
+
+
+<H2><A NAME="IGC_FREE_TRIGGER" HREF="#INDEX">Incremental GC FreeSpace Trigger</A></H2>
+
+This number defines the freeSpace trigger value for the IGC to start:
+whenever the amount of free memory drops below this number,
+it starts a reclamation cycle.
+
+
+<H2><A NAME="IGC_AMOUNT" HREF="#INDEX">Incremental GC Amount</A></H2>
+
+This number defines the amount of memory which is supposed to be
+free after an incremental GC cycle completes;
+of it is not, more memory is allocated in order to fill the freeLists
+up to that amount.
+<BR>
+In other words: this defines a reserve for peak allocation requests,
+which the memory system tries to keep.
+
+
+<H2><A NAME="OLDSPACE_INCR" HREF="#INDEX">Oldspace Increment</A></H2>
+
+This number defines the amount by which the oldSpace is increased
+when running of memory. The memory is requested from the OS in chunks
+of (at least) this size.
+
+
+<H2><A NAME="OLDSPACE_COMPR_LIMIT" HREF="#INDEX">Oldspace Compress Limit</A></H2>
+
+The memory manager will perform 2-pass compressing garbage collects,
+if more than this amount of memory is in use. If this number is 0 or less then
+this amount of memory is used, one-pass compressing garbage collects are performed.
+<BR>
+The one-pass compress algorithm needs twice the amount of currently used memory
+during the collect, but is faster as long as enough physical memory is available.
+Use this variable to avoid paging when doing a compress of large images.
+
+
+
+<H2><A NAME="STACK_LIMIT" HREF="#INDEX">Stack Limit</A></H2>
+
+The runtime system will trigger an error, whenever a threads stack
+grows above that number. The stack is used for the context chain and
+for local storage in primitive code.
+<BR>
+Be aware, that some primitives require a huge amount of stack
+(especially, primitives, which use the Xlib bitmap-image display functions).
+<BR>
+Therefore, all threads which perform display operations should be
+provided with a minimum stack of roughly 250k bytes.
+
+
+<H2><A NAME="CODE_LIMIT" HREF="#INDEX">Dynamic Code Limit</A></H2>
+
+This defines the amount of memory which is used as a
+cache for dynamically compiled bytecodes.
+
+<BR>
+The runtime system may temporarily allocate more memory, however,
+the garbage collectors will flush old methods whenever more code cache
+space is in use.
+<BR>
+Code for an active method is never flushed from the cache.
+<P>
+If no limit is set, the code cache is only flushed for recompiled
+(i.e. accepted) methods.
+
+
+
+<H2><A NAME="CODE_TRIGGER" HREF="#INDEX">Dynamic Code GC Trigger</A></H2>
+
+Start a background collector whenever this amount of dynamic code
+has been generated. Can be set to some non-zero value, to force flushing
+of recently unused code.
+
+
+
+<H2><A NAME="ADDITIONAL_SETTINGS" HREF="#INDEX">Additional Settings (Not available in the Settings Menu)</A></H2>
+
+The following additional settings allow further fine tuning/control over the
+memory managers behavior. These are not found in the launcher's settings menu
+and must be changed by evaluating expressions in a workspace
+(also, see the comments in the corresponding methods in <CODE>ObjectMemory</CODE>).
+<UL>
+ <LI>fastMoreOldSpaceAllocation - boolean
+ <BR>if on, the memory manager will quickly allocate more oldSpace
+     up to the limit defined by the <VAR>fastMoreOldSpaceLimit</VAR>,
+     without perforing a garbage collect first. Above that amount of allocated
+     memory, a garbage collect is performed before more oldSpace is allocated.
+ <BR>
+     a useful setup is <CODE>fastMoreOldSpaceAllocation:true</CODE>
+ <BR>
+     and <CODE>fastMoreOldSpaceLimit:80000000</CODE>
+ <P>
+ <LI>fastMoreOldSpaceLimit - number
+ <BR>the limit - see description above.
+ <P>
+ <LI>maxOldSpace - number
+ <BR>defines the absolute maximum amount of oldSpace memory, which ST/X
+     will ever allocate. If more memory is ever required, further object
+     allocations will fail and return nil.
+ <BR>A value of nil (which is the default) allows unrestricted memory allocation
+     However, the operating system may refuse further allocations, depending
+     on the amount of swap space or any user limits.
+</UL>
+
+<H2><A NAME="MORE_INFO" HREF="#INDEX">Further Reading</A></H2>
+
+For more information, read
+<A HREF="../../programming/GC.html"><VAR>"garbage collection"</VAR></A>.
+
+
+<P>
+<P>
+
+
+
+<HR>
+<P>
+<P>
+Copyright &copy; Claus Gittinger Development & Consulting, all rights reserved
+<P>
+<P>
+
+<HR>
+Doc $Revision: 1.8 $ $Date: 2016-09-14 09:41:11 $
+
+</BODY>
+</HTML>

@@ -1,0 +1,172 @@
+<?xml version="1.0"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<document>
+   <properties>
+      <title>Overview</title>
+      <author email="dev@commons.apache.org">Commons Documentation Team</author>
+      <author email="rwaldhoff@apache.org">Rodney Waldhoff</author>
+      <revision>$Id: index.xml,v 1.5 2015-03-20 12:08:11 vrany Exp $</revision>
+   </properties>
+
+   <body>
+      <section name="The Pool Component">
+         <p>
+          Pool provides an Object-pooling API, with three major aspects:
+          <ol>
+           <li>
+            A generic object pool interface that clients and implementors can use to provide easily 
+            interchangable pooling implementations.
+           </li>
+           <li>
+            A toolkit for creating modular object pools.
+           </li>
+           <li>
+            Several general purpose pool implementations.
+           </li>
+          </ol>
+         </p>
+      </section>
+
+      <section name="Releases">
+         <p>
+            See the <a href="downloads.html">downloads</a> page for information on obtaining releases.
+         </p>
+      </section>
+
+      <section name="Features">
+        <p>
+            The 
+            <a href="./apidocs/org/apache/commons/pool/package-summary.html">org.apache.commons.pool</a> 
+            package defines a handful of pooling interfaces and some base classes 
+            that may be useful when creating new pool implementations.
+        </p>
+        <subsection name="ObjectPool">
+          <p>
+             <a href="./apidocs/org/apache/commons/pool/ObjectPool.html"><code>ObjectPool</code></a>
+             defines a trivially simple pooling interface:
+          </p>
+<source>
+public interface ObjectPool {
+    Object borrowObject();
+    void returnObject(Object borrowed);
+}
+</source>           
+          <p>
+            Some client classes won't integrate with <i>Pool</i> any more than this.
+            Clients written to this interface can use arbitrary <code>ObjectPool</code> 
+            implementations interchangeably. 
+          </p>           
+          <p>
+             <a href="./apidocs/org/apache/commons/pool/BaseObjectPool.html"><code>BaseObjectPool</code></a>
+             provides an abstract base implementation of <code>ObjectPool</code>. Clients are
+             encouraged but not required to extend <code>BaseObjectPool</code> for new 
+             <code>ObjectPool</code> implementations.
+          </p>
+          <p>
+             <a href="./apidocs/org/apache/commons/pool/KeyedObjectPool.html"><code>KeyedObjectPool</code></a>
+             defines a similar interface for pools composed of heterogeneous objects:
+          </p>
+<source>
+public interface KeyedObjectPool {
+    Object borrowObject(Object key);
+    void returnObject(Object key, Object borrowed);
+}
+</source>           
+        </subsection>
+        <subsection name="PoolableObjectFactory">
+          <p>
+             The <i>Pool</i> package makes it possible separate the way in which instances
+             are pooled from the way in which instances are created and destroyed. 
+             <a href="./apidocs/org/apache/commons/pool/PoolableObjectFactory.html"><code>PoolableObjectFactory</code></a>
+             supports this by providing a generic interface for the lifecycle of a pooled object:
+          </p>
+<source>
+public interface PoolableObjectFactory {
+    Object makeObject();
+    void activateObject(Object obj);
+    void passivateObject(Object obj);
+    boolean validateObject(Object obj);
+    void destroyObject(Object obj);
+}
+</source>           
+          <p>
+             <code>ObjectPool</code> implementations may be written to accept arbitrary
+             <code>PoolableObjectFactory</code>s.
+             This makes is possible for clients to select pooling-behavior distinct 
+             from the kinds of objects that are pooled.  
+          </p>           
+          <p>
+             <a href="./apidocs/org/apache/commons/pool/BasePoolableObjectFactory.html"><code>BasePoolableObjectFactory</code></a>
+             provides an abstract base implementation of <code>PoolableObjectFactory</code> that
+             makes implementations a snap.
+          </p>
+          <p>
+             <a href="./apidocs/org/apache/commons/pool/KeyedPoolableObjectFactory.html"><code>KeyedPoolableObjectFactory</code></a>
+             defines a similar interface for <code>KeyedObjectPool</code>s:
+          </p>
+<source>
+public interface KeyedPoolableObjectFactory {
+    Object makeObject(Object key);
+    void activateObject(Object key, Object obj);
+    void passivateObject(Object key, Object obj);
+    boolean validateObject(Object key, Object obj);
+    void destroyObject(Object key, Object obj);
+}
+</source>           
+          <p>
+             <a href="./apidocs/org/apache/commons/pool/BaseKeyedPoolableObjectFactory.html"><code>BaseKeyedPoolableObjectFactory</code></a>
+             provides an abstract base implementation of <code>KeyedPoolableObjectFactory</code> that
+             makes implementations a snap.
+          </p>
+        </subsection>
+        <p>
+            The 
+            <a href="./apidocs/org/apache/commons/pool/impl/package-summary.html">org.apache.commons.pool.impl</a> 
+            package provides some <i>Pool</i> implementations.
+        </p>
+        <subsection name="StackObjectPool">
+          <p>
+             <a href="./apidocs/org/apache/commons/pool/impl/StackObjectPool.html"><code>StackObjectPool</code></a>
+             will pool a finite number of "idle" instances, but will create new instances a needed in 
+             order to support high demand.
+          </p>
+          <p>
+             <a href="./apidocs/org/apache/commons/pool/impl/StackKeyedObjectPool.html"><code>StackKeyedObjectPool</code></a>
+             offers the same behavior for keyed pools.
+          </p>
+        </subsection>
+        <subsection name="GenericObjectPool">
+          <p>
+             <a href="./apidocs/org/apache/commons/pool/impl/GenericObjectPool.html"><code>GenericObjectPool</code></a>
+             provides a wide variety of configuration options, including the ability to cap the number of idle or
+             active instances, to evict instances as they sit idle in the pool, etc.
+          </p>
+          <p>
+             <a href="./apidocs/org/apache/commons/pool/impl/GenericKeyedObjectPool.html"><code>GenericKeyedObjectPool</code></a>
+             offers the same behavior for keyed pools.
+          </p>
+        </subsection>
+        <subsection name="SoftReferenceObjectPool">
+          <p>
+             <a href="./apidocs/org/apache/commons/pool/impl/SoftReferenceObjectPool.html"><code>SoftReferenceObjectPool</code></a>
+             can grow as needed, but allows the garbage collector to evict idle instances from the pool as needed. 
+          </p>
+        </subsection>
+      </section>
+   </body>
+</document>

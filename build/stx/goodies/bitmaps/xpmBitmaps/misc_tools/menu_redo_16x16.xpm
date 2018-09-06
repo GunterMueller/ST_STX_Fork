@@ -1,0 +1,26 @@
+/* XPM */
+static char *menu_redo_16x16_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 3 1",
+/* colors */
+"a c black",
+"b c #000080",
+"c c none",
+/* pixels */
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"ccccbbbbcccccccc",
+"cccbccccbbcccbcc",
+"ccbcccccccbcbbcc",
+"ccbccccccccbbbcc",
+"ccbcccccccbbbbcc",
+"cccbcccccbbbbbcc",
+"cccbcccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+};

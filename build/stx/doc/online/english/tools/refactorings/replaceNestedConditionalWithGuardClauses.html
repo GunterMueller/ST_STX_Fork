@@ -1,0 +1,46 @@
+<html><head><title>Refactoring: 
+
+
+Replace Nested Conditional with Guard Clauses</title></head><body>
+
+
+<H1>
+
+
+Replace Nested Conditional with Guard Clauses</H1>
+<P><I><CENTER>
+
+A method has conditional behavior that does not make clear what the normal path of execution is</CENTER></I></P>
+<P><B><CENTER>
+
+Use Guard Clauses for all the special cases</CENTER></B></P>
+
+<PRE>
+double getPayAmount() {
+	double result;
+	if (_isDead) result = deadAmount();
+	else {
+		if (_isSeparated) result = separatedAmount();
+		else {
+			if (_isRetired) result = retiredAmount();
+			else result = normalPayAmount();
+		};
+	}
+return result;
+};	
+</PRE><P><CENTER><IMG SRC="arrow.gif"/></CENTER></P>
+<PRE>
+double getPayAmount() {
+	if (_isDead) return deadAmount();
+	if (_isSeparated) return separatedAmount();
+	if (_isRetired) return retiredAmount();
+	return normalPayAmount();
+};	
+</PRE>
+
+
+<P>For more information see page 
+	<font color="#FF0000">250</font>
+	of <I>Refactoring</I></P>
+
+<P /><P /><P><CENTER><A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A></CENTER></P></body></html>

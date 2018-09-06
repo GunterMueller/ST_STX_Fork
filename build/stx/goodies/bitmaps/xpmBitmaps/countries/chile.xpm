@@ -1,0 +1,30 @@
+/* XPM */
+static char *chile_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 20 3 1",
+/* colors */
+"a c #ff0000",
+"b c white",
+"c c #0000ff",
+/* pixels */
+"cccccccccccbbbbbbbbbbbbbbbbbbbbb",
+"cccccbcccccbbbbbbbbbbbbbbbbbbbbb",
+"cccccbcccccbbbbbbbbbbbbbbbbbbbbb",
+"ccbbbbbbbccbbbbbbbbbbbbbbbbbbbbb",
+"ccccbbbccccbbbbbbbbbbbbbbbbbbbbb",
+"cccbbcbbcccbbbbbbbbbbbbbbbbbbbbb",
+"ccbbcccbbccbbbbbbbbbbbbbbbbbbbbb",
+"cccccccccccbbbbbbbbbbbbbbbbbbbbb",
+"cccccccccccbbbbbbbbbbbbbbbbbbbbb",
+"cccccccccccbbbbbbbbbbbbbbbbbbbbb",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+};

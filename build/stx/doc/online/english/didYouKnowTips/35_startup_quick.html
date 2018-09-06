@@ -1,0 +1,32 @@
+<HTML>
+  <HEAD>
+    <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+    <TITLE>Quick Startup</Title>
+  </HEAD>
+  <BODY>
+
+Late notice: we have made quickstart the default; if you need the old behavior,
+use the new "<I>--autoload</I>"  option.
+<P>
+
+If you start ST/X with a "<I>--quick</I>" command line option, it will not scan the filesystem
+for autoloadable classes. This results in a <B>MUCH</B> faster startup.
+However, you must now ensure that the any missing classes are loaded from their package.
+<br>Packages can be loaded via the Launcher's <I>"Load Package"</I> menu item,
+or by evaluating:
+<BLOCKQUOTE><CODE>
+    Smalltalk loadPackage:&lt;nameOfPackage&gt;
+</CODE></BLOCKQUOTE>
+<P>
+A good place to keep such package-load instructions is "<CODE>MyWorkspace.wsp</CODE>",
+which - if such a file is present in the current directory -
+is shown automatically in the SystemWorkspace.
+<P>
+Another option is to edit the autoloaded-package's list in the Launcher's <I>"Settings"</I> - <I>"System"</I> - <I>"Autoloaded Packages"</I> list.
+<P>
+The quickstart option is also recommended to check if all required classes are present
+for a deployed stand-alone binary executable (which can/should not load missing
+classes dynamically).
+
+  </BODY>
+</HTML>

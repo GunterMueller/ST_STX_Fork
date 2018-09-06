@@ -1,0 +1,4 @@
+*.STH
+*.o
+libstx*.c
+

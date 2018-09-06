@@ -1,0 +1,39 @@
+<html><head><title>Refactoring:
+
+
+
+Change Unidirectional Association to Bidirectional</title></head><body>
+
+
+<H1>
+
+
+
+Change Unidirectional Association to Bidirectional</H1>
+<P><I><CENTER>
+
+You have two classes that need to use each other's features, but there is only a one-way link.</CENTER></I></P>
+<P><B><CENTER>
+
+Add back pointers, and change modifiers to update both sets.</CENTER></B></P>
+
+<CENTER><IMG SRC="changeUniToBi.gif"/></CENTER>
+
+
+<P>For more information see page
+	<font color="#FF0000">197</font>
+	of <I>Refactoring</I></P>
+<h2>Additional Comments</h2><h3>Doing a remove</h3>
+<P>
+In the example I showed an <I>addOrder</I> method, but I didn't show the <I>removeOrder</I> method. If you want to do a remove, you would write it like the add method but set the customer to null.</P>
+<PRE>
+Class Customer ...
+ void removeOrder( Order arg ) {
+  arg.setCustomer( null );
+}
+</PRE>
+
+<h2>Contributors</h2><UL><LI>Andy Bulka</LI><LI>Don Roberts</LI>
+</UL>
+
+<P /><P /><P><CENTER><A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A></CENTER></P></body></html>

@@ -1,0 +1,32 @@
+; View defaultStyle:#'motif_red_light' 
+;
+; red'ish motif
+;
+; another demo - not good to work with
+; (thats how the views look in the style-guide ;-)
+;
+; use this (instead of motif_red) on VGA displays,
+; where the colors are a bit darkish
+;
+; $Header: /cvs/stx/stx/libview/styles/motif_red_light.style,v 1.6 1999-10-27 13:28:03 stefan Exp $
+
+#if Screen current hasGreyscales
+viewGrey                    Color red:67 green:8 blue:8 
+#endif
+
+#include 'motif.common'
+
+comment  'like `motif_red'' style\\with brighter redish colors'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Wie `motif_red'' aber mit hellerem Rot'
+#endif
+
+selection.foregroundColor            Color white
+selection.backgroundColor            =shadowColor
+selection.shadowColor                Color black "/ =shadowColor darkened
+selection.hilightForegroundColor     =shadowColor
+selection.hilightBackgroundColor     Color white
+
+pullDownMenu.hilightForegroundColor  Color white
+

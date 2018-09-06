@@ -1,0 +1,43 @@
+# /bin/sh
+
+#
+# $Header: /cvs/stx/stx/rules/stbc,v 1.7 1999-09-14 07:31:51 cg Exp $
+#
+# a q&d frontend to create portable binary bytecode class files
+# from ST class sourcefiles.
+#
+# This is NOT the stc compiler (which creates machine code),
+# but a useful tool to create .cls files from Makefiles or batch
+# scripts.
+
+# echo 'ST/X bytecode compiler'
+# echo
+
+if [ "$1" = "" ]
+then
+    echo "usage: stbc [-r class1.st] class.st ..."
+    echo
+    echo "compiles class.st into a portable bytecode file class.cls."
+    echo "class.st should contain a single class, named <class>,"
+    echo "or a class with private classes."
+    echo "Multiple other prerequisite classes may be loaded by prefixing"
+    echo "them with -r (i.e. readOnly)."
+    exit 1
+fi
+
+if [ "$1" = "-s" ]
+then
+    shift
+    STX=$1
+    shift
+else
+    STX=smalltalk
+fi
+
+which=`which $STX`
+where=`dirname $which`
+
+LD_LIBRARY_PATH=$where/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH
+
+$STX -I -noInfoPrint -q -f $where/stbc.rc $*

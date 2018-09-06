@@ -1,0 +1,43 @@
+<?xml version="1.0" ?>
+<test-defs>
+
+  <test name="binding_simple" res="ok">
+    <schema>binding_simple.rng</schema>
+    <doc>binding_simple_1ok.xml</doc>
+    <assert msg="instvar not equal to 2">res instvar = 2</assert>
+  </test>
+  
+  <test name="binding_simple2" res="ok">
+    <schema>binding_simple2.rng</schema>
+    <doc>binding_simple_2ok.xml</doc>
+    <assert msg="instvar must ve set with 2 and 3">
+      res instvar = (Set with:3 with:2)
+    </assert>
+  </test>
+
+  <test name="xsinteger" res="ok">
+    <schema>xsinteger.rng</schema>
+    <doc>xsinteger_1ok.xml</doc>
+    <assert msg="instvar not equal to 2">res instvar = 2</assert>
+  </test>
+
+  <test name="list1_1" res="ok">
+    <schema>list1.rng</schema>
+    <doc>list1_1ok.xml</doc>
+    <assert msg="instvar not set with 1,2,3">res instvar = (Set with:1 with:2 with:3)</assert>
+  </test>
+  
+  <test name="list2_1" res="ok">
+    <schema>list2.rng</schema>
+    <doc>list2_1ok.xml</doc>
+    <assert msg="instvar not set with 1, 'string'">res instvar = (Set with:1 with:'string')</assert>
+  </test>
+
+  <test name="primitive_content_as_instvar_1" res="ok">
+    <schema>primitive_content_as_instvar.rng</schema>
+    <doc>primitive_content_as_instvar_1ok.xml</doc>
+    <assert msg="instvar not equal to 'string'">res instvar = 'string'</assert>
+  </test>
+
+  
+</test-defs>

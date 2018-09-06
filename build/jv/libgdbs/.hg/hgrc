@@ -1,0 +1,8 @@
+[phases]
+publish = false
+
+[paths]
+canonical = https://bitbucket.org/janvrany/jv-libgdbs
+staging = https://bitbucket.org/janvrany/jv-libgdbs
+default = https://bitbucket.org/janvrany/jv-libgdbs
+

@@ -1,0 +1,11 @@
+LIBRARY         libtool2
+DESCRIPTION     'Smalltalk/X Programmer Tool Classes 2'
+VERSION         3.5
+CODE            EXECUTE READ 
+DATA            READ WRITE
+SECTIONS
+    INITCODE    READ EXECUTE 
+    INITDATA    READ WRITE
+EXPORTS 
+    _libtool2_Init      @1
+IMPORTS

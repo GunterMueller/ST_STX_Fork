@@ -1,0 +1,138 @@
+<HTML>
+<HEAD>
+<TITLE>Tutorial - Tips & Tricks on Editing</TITLE>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="tut_8.html"> <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="tutorial.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="tut_end.html"> <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1><A NAME="EDITING">Tips & Tricks on Editing</A></H1>
+
+As you will spend most of your time in the editor,
+it is very helpful to know its capabilities.
+This document lists some of the less obvious features.
+
+
+<H2><A NAME="COPY_HISTORY">History of Copied Values</A></H2>
+
+Of course you know how to <CITE>copy</CITE>-<CITE>paste</CITE>.
+But ocasionally, you want to paste a previouly copied text.
+<br>You get the paste history either by:
+<ul>
+<li>"<I>Shift</I>"-selecting the "<I>Paste</I>" menu item.
+This is a bit tricky, because the shift key, if pressed
+while right-clicking, opens a different menu in some browsers.
+Therefore,
+<ol><li>press the right-button to get the editor's context menu.
+<li>after the menu is shown, press the <KBD>Shift</KBD> button.
+<li>then select the <I>"Paste"</I> menu item.
+</ol>
+<li>select the "<I>Paste Previous Text</I>" menu item from the editor's "<I>More</I>"-"<I>More</I>" menu.
+</ul>
+
+<H2><A NAME="PASTING_A_FILE">Inserting a Whole File</A></H2>
+
+Under the "<I>More</I>" menu item, you'll find another
+"<I>More</I>" submenu (sorry for that stupid name).
+There, select the "<I>Insert File Contents...</I>" menu item.
+
+<H2><A NAME="SORTING">Sorting a Range of Lines</A></H2>
+
+Select the lines (triple-click, then hold and move the mouse).
+Then, select one of the sorting menu items in the
+"<I>More</I>"-"<I>Tools</I>"-"<I>Sort</I>" sub-submenu.
+
+Alternatively, select a bunch of words (double-click, then hold and move the mouse)
+and select the <I>"Sort Words"</I> item in the same menu.
+
+<H2><A NAME="UNDO_REDO">Undo / Redo</A></H2>
+
+The editors support unlimited undo (<KBD>CTRL-z</KBD>) and redo (<KBD>CTRL-y</KBD>).
+
+<H2><A NAME="SELECTING">Selecting Words, Lines, ...</A></H2>
+
+Double click on a word to select it. Triple click to select a whole line.
+If you keep the mouse button pressed (i.e. double-click-and-hold),
+you can extent the selection word- or linewise.
+A quadruple click selects the whole text.
+<P>
+Double click on an opening or closing parenthesis, bracket or brace to
+select the surrounded text (including the brackets).
+<P>
+Press shift to extent an existing selection.
+Shift-click is even possible after you scrolled to another position in the text.
+<P>
+Moving the mouse out of the text area starts an automatic scroll operation.
+Move the mouse further out of the view to speed up the scroll speed.
+
+
+<H2><A NAME="FIND">Finding Text</A></H2>
+
+If the text is already shown or under the cursor,
+simply select the text and press "<I>Search Forward (F3 or ALT-f)</I>".
+Similar, "<I>ALT-b</I>" searches backward.
+<P>
+If the text is not shown, press "<I>CTRL-f</I>" to get a textbox.
+Alternatively, find the "<I>Search</I>" item in the the "<I>More</I>" submenu.
+
+<H2><A NAME="FIND_AND_REPLACE">Find and Replace</A></H2>
+
+As with most Smalltalk editors, find and replace is done by
+repeating the previous edit operation:
+<ol>
+<li>select some text (for example, a word, via double-click)
+<li>type the replacement text
+<li>press <KBD>Again (F8)</KBD> to search for the next string and replace again
+</ol>
+You can also <I>Repeat to the End</I> using the "<I>More</I>"-"<I>Again for All</I>"
+menu function.
+
+<H2><A NAME="FIND_AND_REPLACE">Find and Delete</A></H2>
+
+The same procedure as above:
+<ol>
+<li>select some text (for example, a word, via double-click)
+<li>press <KBD>Delete</KBD> or <KBD>Cut (Ctrl-x)</KBD>
+<li>press <KBD>Again (F8)</KBD> to search for the next string and delete again
+</ol>
+
+
+<H2><A NAME="MACROS">Macros - Learn and Execute</A></H2>
+
+A sequence of editing operations can be recorded (with <KBD>Ctrl-F2</KBD> and replayed with
+<KBD>ALT-F2</KBD>. A typical use for that is when pasted text has to be
+converted into a literal array or similar, so that replace and insert have to be applied to
+a number of lines multiple times.
+<ol>
+<li>position the text cursor somewhere before the text to be manipulated
+<li>press <KBD>Ctrl-F2</KBD> to start <I>Learn Mode</I>
+<li>using cursor keys, edit shortcuts and regular text insertions, edit the line of text
+<li>using cursor keys (and possibly SHIFT-Return), position the text cursor in front of the next
+line to be edited.
+<li>press <KBD>Ctrl-F2</KBD> to end <I>Learn Mode</I>
+<li>press <KBD>ALT-F2</KBD> to execute the macro again; possibly multiple times
+</ol>
+
+
+<P>
+<P>
+<HR>
+Continue in <A HREF="tut_end.html">"More Smalltalk"</A>.
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif" ALT="[stx-logo]">
+<BR>Copyright &copy; Claus Gittinger Development & Consulting
+<BR>Copyright &copy; eXept Software AG
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.5 $ $Date: 2015-11-20 03:37:50 $
+
+</BODY>
+</HTML>

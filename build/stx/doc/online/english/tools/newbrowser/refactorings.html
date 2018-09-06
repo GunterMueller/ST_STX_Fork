@@ -1,0 +1,639 @@
+<HEAD>
+<TITLE>Using the New System Browser - Refactorings</TITLE>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="accepting.html">  <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">    <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="codeGeneration.html"> <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+
+<H2><A NAME="REFACTORING" HREF="TOP.html#I_REFACTORING">Refactorings</A></H2>
+
+A number of code rewrite operations (refactorings) are supported by the
+browser. This functionality is provided by the refactoryBrowser package.
+<BR>
+For more detailed information, please refer to the refactoryBrowser documentation.
+
+<H3>New Refactorings</H3>
+  The following refactorings were not present in the original refactoryBrowser package
+  but added later:
+  <UL>
+    <LI><A NAME="I_REFACTORING.ELIMINATE_CONSTANT" HREF="#REFACTORING.ELIMINATE_CONSTANT">Eliminate Constant</A>
+    <LI><A NAME="I_REFACTORING.OLDSTYLEMETHODS" HREF="#REFACTORING.OLDSTYLEMETHODS">Rewrite Oldstyle Messages</A>
+  </UL>
+
+<H3>Refactorings By Name</H3>
+  <UL>
+    <LI><A NAME="I_REFACTORING.ABSTRACT_VARIABLE" HREF="#REFACTORING.ABSTRACT_VARIABLE">Abstract Variable</A>
+    <LI><A NAME="I_REFACTORING.ADD_PARAMETER" HREF="#REFACTORING.ADD_PARAMETER">Add Parameter to Method</A>
+    <LI><A NAME="I_REFACTORING.CHILDREN_TO_SIBLING" HREF="#REFACTORING.CHILDREN_TO_SIBLING">Children To Sibling</A>
+    <LI><A NAME="I_REFACTORING.CONVERT_TO_VALUEHOLDER" HREF="#REFACTORING.CONVERT_TO_VALUEHOLDER">Convert to Valueholder</A>
+    <LI><A NAME="I_REFACTORING.CREATE_VARIABLE_ACCESSORS" HREF="#REFACTORING.CREATE_VARIABLE_ACCESSORS">Create Variable Accessors</A>
+    <LI><A NAME="I_REFACTORING.ELIMINATE_CONSTANT" HREF="#REFACTORING.ELIMINATE_CONSTANT">Eliminate Constant</A>
+    <LI><A NAME="I_REFACTORING.EXTRACT_METHOD" HREF="#REFACTORING.EXTRACT_METHOD">Extract Method</A>
+    <LI><A NAME="I_REFACTORING.EXTRACT_METHOD_TO_COMPONENT" HREF="#REFACTORING.EXTRACT_METHOD_TO_COMPONENT">Extract Method to Component</A>
+    <LI><A NAME="I_REFACTORING.EXTRACT_TO_TEMP" HREF="#REFACTORING.EXTRACT_TO_TEMP">Extract to Temporary</A>
+    <LI><A NAME="I_REFACTORING.INLINE_ALL_SELF_SENDS" HREF="#REFACTORING.INLINE_ALL_SELF_SENDS">Inline All Self-Sends</A>
+    <LI><A NAME="I_REFACTORING.INLINE_METHOD" HREF="#REFACTORING.INLINE_METHOD">Inline Method</A>
+    <LI><A NAME="I_REFACTORING.INLINE_PARAMETER" HREF="#REFACTORING.INLINE_PARAMETER">Inline Parameter</A>
+    <LI><A NAME="I_REFACTORING.INLINE_TEMPORARY" HREF="#REFACTORING.INLINE_TEMPORARY">Inline Temporary</A>
+    <LI><A NAME="I_REFACTORING.INSERT_CLASS" HREF="#REFACTORING.INSERT_CLASS">Insert Superclass (Add Class)</A>
+    <LI><A NAME="I_REFACTORING.MOVE_METHOD" HREF="#REFACTORING.MOVE_METHOD">Move Method</A>
+    <LI><A NAME="I_REFACTORING.MOVE_TO_INNER_SCOPE" HREF="#REFACTORING.MOVE_TO_INNER_SCOPE">Move To Inner Scope</A>
+    <LI><A NAME="I_REFACTORING.OLDSTYLEMETHODS" HREF="#REFACTORING.OLDSTYLEMETHODS">Rewrite Oldstyle Messages</A>
+    <LI><A NAME="I_REFACTORING.PROTECT_INSTVAR" HREF="#REFACTORING.PROTECT_INSTVAR">Protect (Concrete) Instance Variable</A>
+    <LI><A NAME="I_REFACTORING.PULL_UP_METHOD" HREF="#REFACTORING.PULL_UP_METHOD">Pull Up Method</A>
+    <LI><A NAME="I_REFACTORING.PULL_UP_VAR" HREF="#REFACTORING.PULL_UP_VAR">Pull Up Variable</A>
+    <LI><A NAME="I_REFACTORING.PUSH_DOWN_METHOD" HREF="#REFACTORING.PUSH_DOWN_METHOD">Push Down Method</A>
+    <LI><A NAME="I_REFACTORING.PUSH_DOWN_VAR" HREF="#REFACTORING.PUSH_DOWN_VAR">Push Down Variable</A>
+    <LI><A NAME="I_REFACTORING.REMOVE_CLASS" HREF="#REFACTORING.REMOVE_CLASS">Remove Class</A>
+    <LI><A NAME="I_REFACTORING.REMOVE_METHOD" HREF="#REFACTORING.REMOVE_METHOD">Remove Method</A>
+    <LI><A NAME="I_REFACTORING.REMOVE_PARAMETER" HREF="#REFACTORING.REMOVE_PARAMETER">Remove Parameter from Method</A>
+    <LI><A NAME="I_REFACTORING.REMOVE_VARIABLE" HREF="#REFACTORING.REMOVE_VARIABLE">Remove Variable</A>
+    <LI><A NAME="I_REFACTORING.RENAME_CLASS" HREF="#REFACTORING.RENAME_CLASS">Rename Class</A>
+    <LI><A NAME="I_REFACTORING.RENAME_METHOD" HREF="#REFACTORING.RENAME_METHOD">Rename Method</A>
+    <LI><A NAME="I_REFACTORING.RENAME_TEMPORARY" HREF="#REFACTORING.RENAME_TEMPORARY">Rename Local Variable (Rename Temporary)</A>
+    <LI><A NAME="I_REFACTORING.RENAME_VARIABLE" HREF="#REFACTORING.RENAME_VARIABLE">Rename Variable</A>
+    <LI><A NAME="I_REFACTORING.TEMPORARY_TO_INSTANCE" HREF="#REFACTORING.TEMPORARY_TO_INSTANCE">Temporary to Instance Variable</A>
+  </UL>
+
+<H3>Refactorings By Problem To Solve</H3>
+
+ <UL>
+  <LI>Dealing with Long Methods</LI>
+    <UL>
+      <LI><A NAME="I_REFACTORING.EXTRACT_METHOD" HREF="#REFACTORING.EXTRACT_METHOD">Extract Method</A>
+      <LI><A NAME="I_REFACTORING.EXTRACT_METHOD_TO_COMPONENT" HREF="#REFACTORING.EXTRACT_METHOD_TO_COMPONENT">Extract Method to Component</A>
+      <LI><A NAME="I_REFACTORING.INLINE_METHOD" HREF="#REFACTORING.INLINE_METHOD">Inline Method</A>
+      <LI><A NAME="I_REFACTORING.INLINE_TEMPORARY" HREF="#REFACTORING.INLINE_TEMPORARY">Inline Temporary</A>
+      <LI><A NAME="I_REFACTORING.MOVE_TO_INNER_SCOPE" HREF="#REFACTORING.MOVE_TO_INNER_SCOPE">Move To Inner Scope</A>
+    </UL>
+<!--
+  <LI>Simplifying Conditional Expressions</LI>
+    <UL>
+    </UL>
+-->
+  <LI>Moving Features between Objects</LI>
+    <UL>
+      <LI><A NAME="I_REFACTORING.EXTRACT_METHOD_TO_COMPONENT" HREF="#REFACTORING.EXTRACT_METHOD_TO_COMPONENT">Extract Method to Component</A>
+      <LI><A NAME="I_REFACTORING.MOVE_METHOD" HREF="#REFACTORING.MOVE_METHOD">Move Method</A>
+    </UL>
+
+  <LI>Organizing Classes</LI>
+    <UL>
+      <LI><A NAME="I_REFACTORING.CHILDREN_TO_SIBLING" HREF="#REFACTORING.CHILDREN_TO_SIBLING">Children To Sibling</A>
+    <LI><A NAME="I_REFACTORING.INSERT_CLASS" HREF="#REFACTORING.INSERT_CLASS">Insert Superclass (Add Class)</A>
+      <LI><A NAME="I_REFACTORING.REMOVE_CLASS" HREF="#REFACTORING.REMOVE_CLASS">Remove Class</A>
+      <LI><A NAME="I_REFACTORING.REMOVE_METHOD" HREF="#REFACTORING.REMOVE_METHOD">Remove Method</A>
+      <LI><A NAME="I_REFACTORING.RENAME_CLASS" HREF="#REFACTORING.RENAME_CLASS">Rename Class</A>
+    </UL>
+
+  <LI>Organizing Methods</LI>
+    <UL>
+      <LI><A NAME="I_REFACTORING.ADD_PARAMETER" HREF="#REFACTORING.ADD_PARAMETER">Add Parameter to Method</A>
+      <LI><A NAME="I_REFACTORING.EXTRACT_METHOD_TO_COMPONENT" HREF="#REFACTORING.EXTRACT_METHOD_TO_COMPONENT">Extract Method to Component</A>
+      <LI><A NAME="I_REFACTORING.INLINE_ALL_SELF_SENDS" HREF="#REFACTORING.INLINE_ALL_SELF_SENDS">Inline All Self-Sends</A>
+      <LI><A NAME="I_REFACTORING.INLINE_PARAMETER" HREF="#REFACTORING.INLINE_PARAMETER">Inline Parameter</A>
+      <LI><A NAME="I_REFACTORING.RENAME_METHOD" HREF="#REFACTORING.RENAME_METHOD">Rename Method</A>
+      <LI><A NAME="I_REFACTORING.REMOVE_PARAMETER" HREF="#REFACTORING.REMOVE_PARAMETER">Remove Parameter from Method</A>
+      <LI><A NAME="I_REFACTORING.RENAME_TEMPORARY" HREF="#REFACTORING.RENAME_TEMPORARY">Rename Local Variable (Rename Temporary)</A>
+      <LI><A NAME="I_REFACTORING.RENAME_VARIABLE" HREF="#REFACTORING.RENAME_VARIABLE">Rename Variable</A>
+    </UL>
+
+  <LI>Organizing Data</LI>
+    <UL>
+      <LI><A NAME="I_REFACTORING.ABSTRACT_VARIABLE" HREF="#REFACTORING.ABSTRACT_VARIABLE">Abstract Variable</A>
+      <LI><A NAME="I_REFACTORING.CONVERT_TO_VALUEHOLDER" HREF="#REFACTORING.CONVERT_TO_VALUEHOLDER">Convert to ValueHolder</A>
+      <LI><A NAME="I_REFACTORING.CREATE_VARIABLE_ACCESSORS" HREF="#REFACTORING.CREATE_VARIABLE_ACCESSORS">Create Variable Accessors</A>
+      <LI><A NAME="I_REFACTORING.ELIMINATE_CONSTANT" HREF="#REFACTORING.ELIMINATE_CONSTANT">Eliminate Constant</A>
+      <LI><A NAME="I_REFACTORING.EXTRACT_TO_TEMP" HREF="#REFACTORING.EXTRACT_TO_TEMP">Extract to Temporary</A>
+      <LI><A NAME="I_REFACTORING.PROTECT_INSTVAR" HREF="#REFACTORING.PROTECT_INSTVAR">Protect (Concrete) Instance Variable</A>
+      <LI><A NAME="I_REFACTORING.REMOVE_VARIABLE" HREF="#REFACTORING.REMOVE_VARIABLE">Remove Variable</A>
+      <LI><A NAME="I_REFACTORING.TEMPORARY_TO_INSTANCE" HREF="#REFACTORING.TEMPORARY_TO_INSTANCE">Temporary to Instance Variable</A>
+    </UL>
+
+  <LI>Dealing with Generalization</LI>
+    <UL>
+      <LI><A NAME="I_REFACTORING.PULL_UP_METHOD" HREF="#REFACTORING.PULL_UP_METHOD">Pull Up Method</A>
+      <LI><A NAME="I_REFACTORING.PULL_UP_VAR" HREF="#REFACTORING.PULL_UP_VAR">Pull Up Variable</A>
+      <LI><A NAME="I_REFACTORING.PUSH_DOWN_METHOD" HREF="#REFACTORING.PUSH_DOWN_METHOD">Push Down Method</A>
+      <LI><A NAME="I_REFACTORING.PUSH_DOWN_VAR" HREF="#REFACTORING.PUSH_DOWN_VAR">Push Down Variable</A>
+    </UL>
+
+  </UL>
+
+
+<DL>
+
+<DT><A NAME="REFACTORING.ABSTRACT_VARIABLE" HREF="#I_REFACTORING.ABSTRACT_VARIABLE">Abstract Variable</A>
+<DD>Creates getter/setters for a variable, and then changes all direct
+references to the variables to go through the getter/setter methods.
+If getter/setter methods already exist, it will use the existing methods.
+However, they must be pure getter/setter methods (i.e., no lazy initialization getters).
+If no getter/setter methods exist it will create them based on the variable's name (see <A HREF="#REFACTORING.CREATE_VARIABLE_ACCESSORS">Create Variable Accessors</A>).
+If the class already defines a method with the variable name's then it will simply add an integer to the name.
+<P>
+The abstract instance variable refactoring is available from the <I>"SourceCode"</I> menu when
+you have selected an instance variable. It is also available from the <I>"Variables"</I> menu in
+the class definition when you have selected an instance variable. Finally, it is available
+from the <I>"Class"->"Instance Variables"</I> menu
+<P>
+Similarly, the abstract class variable refactoring is available from the <I>"SourceCode"</I> menu
+when you have selected a class variable. It is also available from the <I>"Variables"</I> menu
+in the class definition view when you have selected a class variable. Finally, it is
+available from the <I>"Class"->"Class variables"</I> menu.
+<P>
+Safety: The abstract variable refactorings are safe under normal circumstances.
+<P>
+<P>
+
+<DT><A NAME="REFACTORING.ADD_PARAMETER" HREF="#I_REFACTORING.ADD_PARAMETER">Add Parameter to Method</A>
+<DD>Adds a parameter to all senders of a method and adds the argument to all implementors of the method.
+This makes it easy to
+quickly add a needed object to a method.
+<P>
+The add parameter refactoring is available from the <I>"SourceCode"->"Other"->"Add Method Parameter..."</I> menu item.
+<P>
+Safety: The add parameter is relatively safe assuming that the code that is added as a parameter is safe
+(i.e., the code doesn't have side-effects).
+One area where it would be unsafe is to add a parameter to a method that is #perform:ed since we can't
+determine where the method is performed from (and the refactoring changes the name of the method).
+<P>
+<P>
+
+<DT><A NAME="REFACTORING.CHILDREN_TO_SIBLING" HREF="#I_REFACTORING.CHILDREN_TO_SIBLING">Children To Sibling</A>
+<DD>Converts a class to be a sibling of its subclasses.
+This is accomplished by adding a new class that is a superclass of
+the class and its subclasses.
+This new class will contain all the common methods between the class and its subclasses.
+Those methods that have been redefined in the subclasses will be defined
+as #subclassResponsibility methods in the new class.
+<P>
+This refactoring is available from <I>"Class"->"Other"->"Convert to Sibling"</I>.
+It is enabled, if a single class is selected, which contains at least one subclass.
+<P>
+Safety: This refactoring could fail if you check the class hierarchy of the superclass,
+since the class hierarchy is changed for the new class.
+<P>
+Before conversion of A to a sibling:
+<CODE><PRE>
+     A
++----+----+
+|    |    |
+B    C    D
+</PRE></CODE>
+<P>
+After:
+<CODE><PRE>
+	N
+	|
++----+--+--+----+
+|    |     |    |
+A    B     C    D
+</PRE></CODE>
+
+<P>
+
+<DT><A NAME="REFACTORING.CONVERT_TO_VALUEHOLDER" HREF="#I_REFACTORING.CONVERT_TO_VALUEHOLDER">Convert to ValueHolder</A>
+<DD>Creates an accessor for a valueHolder on a variable, and rewrites all accesses to the variable
+to fetch the value indirectly through the valueHolder. This includes existing accessor methods.
+<P>
+This code generator refactoring is available for individual variables (select one or more)
+from the <I>"Variables"->"Convert to ValueHolder"</I> menu.
+<P>
+Safety: This refactoring changes the behavior, if a corresponding message response is already
+inherited by a superclass.
+<P>
+<P>
+
+<DT><A NAME="REFACTORING.CREATE_VARIABLE_ACCESSORS" HREF="#I_REFACTORING.CREATE_VARIABLE_ACCESSORS">Create Variable Accessors</A>
+<DD>Creates getter/setters for a variable.
+If corresponding methods already exist, they will not be overwritten.
+<P>
+This code generator refactoring is available for individual variables (select one or more)
+from the <I>"Variables"->"Generate"->"Access Methods"</I> menu.
+It is also available from the <I>"Class"->"Generate"->"Access Methods"</I> menu, here, accessors for all variables
+are generated.
+<P>
+Safety: This refactoring changes the behavior, if a corresponding message response is already
+inherited by a superclass.
+<P>
+<P>
+
+<DT><A NAME="REFACTORING.ELIMINATE_CONSTANT" HREF="#I_REFACTORING.ELIMINATE_CONSTANT">Eliminate Constant</A>
+<DD>Replaces a literal constant by either an inst- or class variable or a getter message
+If corresponding variables/methods already exist, they will not be overwritten.
+<P>
+In the browser, select a literal constant and choose this refactoring from the code menu.
+Depending on the chosen replacement, class- or instance variables are added, and the corresponding
+initialize method is updated to properly set the variable. Then all references to that constant are reqritten
+to access the variable instead.
+<BR>
+You can also choose to rewrite the literal into a getter-call to either the instance or the class side.
+In that case, a corresponding getter method is created.
+<P>
+Safety: This refactoring changes the behavior, if a corresponding message response is already
+inherited by a superclass or redefined in a subclass. Use this if the same constant occurs multiple
+times within a class, or when it needs to be visible in other classes via a getter (typically, on the class side).
+<P>
+<P>
+
+<DT><A NAME="REFACTORING.EXTRACT_METHOD" HREF="#I_REFACTORING.EXTRACT_METHOD">Extract Method</A>
+<DD>Extract method is an easy refactoring to perform with the Refactoring Browser.
+When you are viewing a method, simply select the statements that you want to extract,
+and perform <I>"Code"->"Extract Method"</I> from the code editors pop-up menu.
+<P>
+The browser will determine if it is legal to extract the method by checking for return statements and
+temporary variable assignments.
+If everything is OK, it will prompt you for a method name.
+<BR>
+From this dialog, you can enter the new selector with the appropriate number
+of arguments (listed in the list box below the selector).
+You can also reorder the parameters from this dialog.
+Simply select a parameter and then use the arrow buttons
+beside the list to move the parameter up or down in the list.
+<P>
+<P>
+
+<DT><A NAME="REFACTORING.EXTRACT_METHOD_TO_COMPONENT" HREF="#I_REFACTORING.EXTRACT_METHOD_TO_COMPONENT">Extract Method to Component</A>
+<DD>Extract method to component is a more complicated refactoring,
+which extracts the selected code in the editor, and converts it
+to a message send to another component via a variable (i.e, in contrast to the above, not a self-send).
+<BR>
+The extracted code is converted to a new method (in one or more receiver classes),
+where all references to local variables are passed as argument, and references to instance variables
+are converted to accessor messages.
+<BR>
+To perform the reafctoring, select the statements that you want to extract,
+and perform <I>"Code"->"Extract Method to Component"</I> from the code editors pop-up menu.
+<P>
+The browser will ask for any additional information, which is required to execute the refactoring.
+<P>
+<P>
+
+<DT><A NAME="REFACTORING.EXTRACT_TO_TEMP" HREF="#I_REFACTORING.EXTRACT_TO_TEMP">Extract to Temporary</A>
+<DD>Extract the selected expression into a (new) temporary of the method
+(Intention revealing temporary variable).
+<P>
+This refactoring is available when you have selected the code of an expression (in the editor)
+that is used as part of another expression.
+After you have selected the expression, select the <I>"Code"->"Extract to Temporary"</I> menu choice.
+<P>
+Safety: Since this refactoring can change the evaluation order of the overall expression,
+it is not safe if there are side effects
+between those expression that are evaluated before the selected expression and the selected expression itself.
+<br>
+The refactoring fails, if the new temporary name hides an existing variables name
+(because this makes the code more error-prone)
+<P>
+<P>
+
+
+<DT><A NAME="REFACTORING.INLINE_ALL_SELF_SENDS" HREF="#I_REFACTORING.INLINE_ALL_SELF_SENDS">Inline All Self-Sends</A>
+<DD>Inlines the selected method wherever it is used in a self-send.
+<P>
+This refactoring is available from the <I>"Selector"->"Refactor"->"Inline All Self Sends"</I>
+menu when you select a message in the method list.
+<P>
+Safety: This refactoring is fairly safe.
+<P>
+<P>
+
+<DT><A NAME="REFACTORING.INLINE_METHOD" HREF="#I_REFACTORING.INLINE_METHOD">Inline Method</A>
+<DD>Inlines the selected message send into the method. If the method is defined on another class, it may need to create accessors for
+the variables referenced in the method to be inlined.
+<P>
+This refactoring is available from the <I>"Code"->"Inline Method"</I>
+menu when you select a message send in the code.
+<P>
+Safety: This refactoring is fairly safe. If the refactoring finds something that it considers unsafe, it will warn you before performing
+the refactoring. If you proceed through the warning it will still inline the method.
+<P>
+<P>
+
+<DT><A NAME="REFACTORING.INLINE_PARAMETER" HREF="#I_REFACTORING.INLINE_PARAMETER">Inline Parameter</A>
+<DD>Moves a constant literal parameter of a message send into the method that is sent.
+<P>
+This refactoring is available both from the <I>"Source"->"Inline Method Parameter"</I>
+and the codeviews <I>"Code"->"Inline Method Parameter"</I> menu,
+after you have selected the text of a parameter of the method in the codeView.
+<P>
+Safety: This refactoring is safe except when performing methods,
+since we can't convert the symbols that are performed (the name of the method is changed by this refactoring).
+<P>
+<P>
+
+<DT><A NAME="REFACTORING.INLINE_TEMPORARY" HREF="#I_REFACTORING.INLINE_TEMPORARY">Inline Temporary</A>
+<DD>Replaces all references to a temporary variable with its definition.
+<P>
+This refactoring is available from the <I>"Selection"->"Inline Temporary"</I> when you have an assignment statement selected.
+<P>
+Safety: This refactoring can be unsafe if the code you are inlining has side-effect or if any code between the assignment
+statement and the references have side effects on the inlined expression.
+<P>
+<P>
+
+
+<DT><A NAME="REFACTORING.INSERT_CLASS" HREF="#I_REFACTORING.INSERT_CLASS">Insert Superclass (Add Class)</A>
+<DD>Asks for a (possibly new) common superclass for a number of child classes.
+<P>
+This refactoring is available from <I>"Class"->"Move"->"Insert Common Superclass"</I>.
+It is enabled, if at least one class is selected, and all selected classes have a common superclass.
+
+<P>
+Safety: This refactoring could fail if you check the class hierarchy of the superclass,
+since the class hierarchy is changed for the new class.
+<P>
+Before insertion of N as a new superclass of A, B and C:
+<CODE><PRE>
+     S
++----+----+
+|    |    |
+A    C    D
+</PRE></CODE>
+<P>
+After:
+<CODE><PRE>
+     S
+     |
+     N
+     |
++----+----+
+|    |    |
+A    C    D
+</PRE></CODE>
+<P>
+<P>
+
+
+
+
+<DT><A NAME="REFACTORING.MOVE_METHOD" HREF="#I_REFACTORING.MOVE_METHOD">Move Method</A>
+<DD>Moves a method from one class to another.
+The original method will be replaced with a forwarder method.
+The method will be moved into an argument of the method
+or a variable of the original method's class.
+<P>
+This refactoring is available from <I>"Selector"->"Move"->"To Component"</I>.
+<P>
+Safety: This refactoring is safe assuming you select the correct class(es) of the variable that should contain the new method.
+<P>
+<P>
+
+
+<DT><A NAME="REFACTORING.MOVE_TO_INNER_SCOPE" HREF="#I_REFACTORING.MOVE_TO_INNER_SCOPE">Move To Inner Scope</A>
+<DD>Move a temporary variable's definition to the inner most block that completely defines its.
+<P>
+This refactoring is available from <I>"Selection"->"Move to Inner Scope"</I> when you have
+selected a temporary variable in a method.
+<P>
+Safety: This refactoring is safe unless someone is looking at the source code.
+<P>
+<P>
+
+
+<DT><A NAME="REFACTORING.OLDSTYLEMETHODS" HREF="#I_REFACTORING.OLDSTYLEMETHODS">Rewrite Oldstyle Messages</A>
+<DD>Rewrites sends to "handle:do:", "valueOnUnwindDo:" and "valueNowOrOnUnwindDo:"
+to corresponding ANSI messages "on:do:", "ifCurtailed:" and "ensure:".
+<P>
+Safety: This refactoring is safe and improves portability of your program.
+<P>
+<P>
+
+
+<DT><A NAME="REFACTORING.PROTECT_INSTVAR" HREF="#I_REFACTORING.PROTECT_INSTVAR">Protect (Concrete) Instance Variable</A>
+<DD>Removes indirect references through getter/setter methods to use direct variable referencing.
+If the getter/setter methods are no longer used, then they will be removed.
+<P>
+This refactoring is available from <I>"Class"->"Instance Variables"->"Concrete"</I>.
+<P>
+Safety: This refactoring is essentially an Inline All Self Sends,
+so it contains all the safe restrictions as Inline All Self Sends has.
+<P>
+<P>
+
+
+<DT><A NAME="REFACTORING.PULL_UP_VARIABLE" HREF="#I_REFACTORING.PULL_UP_VARIABLE">Pull Up Variable</A>
+<DD>Moves an instance/class variable up the hierarchy.
+<P>
+The pull up instance variable refactoring is available from the <I>"Class"->"Instance Variables"->"Pull Up"</I> menu. It is also
+available as "Push up" when you have selected the variable in either the class definition or a method under the "Variables" and
+"Selection" menus.
+<P>
+Similarly, the pull up class variable is available from the <I>"Class"->"Class Variables"->"Pull Up"</I> menu. It is also available
+as "Push up" when you have selected the variable in either the class definition or a method under the "Variables" and "Selection"
+menus.
+<P>
+Safety: This refactoring is not safe if you code that depends on the exact layout of the class. Such code normally uses the
+#instVarAt:{put:} methods.
+<P>
+<P>
+
+
+<DT><A NAME="REFACTORING.PUSH_DOWN_VARIABLE" HREF="#I_REFACTORING.PUSH_DOWN_VARIABLE">Push Down Variable</A>
+<DD>Moves a variable into the subclasses that use the variable.
+<P>
+The push down instance/class variable refactoring is available from the
+<I>"Class"->"Instance/Class variables"->"Push Down"</I> menu, and
+also from the <I>"Variables"->"Push Down"</I> menu when the variable is selected in the class definition.
+<P>
+Safety: This refactoring is safe unless one is accessing the variable using the #instVarAt:{put:} methods.
+<P>
+<P>
+
+
+<DT><A NAME="REFACTORING.PULL_UP_METHOD" HREF="#I_REFACTORING.PULL_UP_METHOD">Pull Up Method</A>
+<DD>Move a method into the superclass. If the superclass already defines the method, then the superclass must be abstract. In this
+case, the superclass' definition is copied down to the subclasses that do not define the method.
+<P>
+The push up method refactoring is available from the <I>"Selector"->"Move"->"Pull Up"</I> menu.
+<P>
+Safety: This refactoring is safe assuming that every class that sends #subclassResponsibility is abstract.
+<P>
+<P>
+
+
+<DT><A NAME="REFACTORING.PUSH_DOWN_METHOD" HREF="#I_REFACTORING.PUSH_DOWN_METHOD">Push Down Method</A>
+<DD>Moves a method into the subclasss that do not define the method. The method can only be moved, if the class that defines the
+method is an <A HREF="#ABSTRACT_CLASS">abstract class</A>.
+<P>
+The push down method refactoring is available from the <I>"Selector"->"Move"->"Push Down"</I> menu.
+<P>
+Safety: This refactoring is safe assuming that every class that sends #subclassResponsibility is abstract.
+<P>
+<P>
+
+<DT><A NAME="REFACTORING.REMOVE_CLASS" HREF="#I_REFACTORING.REMOVE_CLASS">Remove Class</A>
+<DD>Removes a class if it is not referenced. If the class contains subclasses, then the subclasses will be moved
+under the removed class' superclass.
+<P>
+The remove class refactoring is available from the <I>"Class"->"Safe Remove"</I> menu.
+<P>
+Safety: This refactoring is safe if they are no indirect references to the class. Such references maybe from the #subclasses
+method or from performing "Smalltalk at: ...".
+<P>
+Before removal of A:<CODE><PRE>
+     S
+     |
+     A
++----+----+
+|    |    |
+B    C    D
+</PRE></CODE>
+<P>
+After:
+<CODE><PRE>
+     S
++----+----+
+|    |    |
+B    C    D
+</PRE></CODE>
+<P>
+
+
+
+<DT><A NAME="REFACTORING.REMOVE_METHOD" HREF="#I_REFACTORING.REMOVE_METHOD">Remove Method</A>
+<DD>Remove a method if there are no references to the selector.
+<P>
+This refactoring is available from the <I>"Selector"->"Safe Remove"</I> menu.
+<P>
+Safety: This refactoring is not safe if you have constructed selectors that perform the method (e.g., "self perform: 'foo' asSymbol).
+However, if you have code such as "self perform: #foo" then it will consider the #foo method referenced.
+<P>
+<P>
+
+
+<DT><A NAME="REFACTORING.REMOVE_PARAMETER" HREF="#I_REFACTORING.REMOVE_PARAMETER">Remove Parameter from Method</A>
+<DD>Removes a parameter from a method if that parameter is not referenced in any implementation of that method.
+<P>
+This refactoring is available both from the <I>"Source"->"Remove Method Parameter"</I>
+and the codeviews <I>"Code"->"Remove Method Parameter"</I> menu,
+
+after you have selected the text of a parameter of the method in the codeView.
+<P>
+Safety: This refactoring is not safe when you are performing the method
+(the name of the method is changed by this refactoring).
+Also, it is not safe if the parameter that is removed,
+has side-effects at one of its call sites.
+<P>
+<P>
+
+
+<DT><A NAME="REFACTORING.REMOVE_VARIABLE" HREF="#I_REFACTORING.REMOVE_VARIABLE">Remove Variable</A>
+<DD>Removes an instance/class variable from a class if it is not referenced.
+<P>
+The remove instance variable refactoring is available from the
+<I>"Class"->"Instance variable"->"Remove..."</I> menu as well as the
+<I>"Variables"</I> menu.
+<P>
+Similarly, the remove class variable refactoring is available from the
+<I>"Class"->"Class variable"->"Remove..."</I> menu as well as
+the <I>"Variables"</I> menu.
+<P>
+Safety: This refactoring is safe under normal circumstances. However, if you have code that depends on the layout of the classes,
+then it may not be safe.
+<P>
+<P>
+
+
+<DT><A NAME="REFACTORING.RENAME_CLASS" HREF="#I_REFACTORING.RENAME_CLASS">Rename Class</A>
+<DD>Renames a class and all references to the class. Symbols are also renamed.
+<P>
+This refactoring is available from <I>"Class"->"Rename"</I>.
+<P>
+Safety: This refactoring is safe except when you have indirect class references
+(e.g., "Smalltalk at: 'Foo' asSymbol").
+<P>
+<P>
+
+
+
+
+
+
+
+<DT><A NAME="REFACTORING.RENAME_METHOD" HREF="#I_REFACTORING.RENAME_METHOD">Rename Method</A>
+<DD>Renames all implementors of the method and all references to the method. Symbols with the same name are also renamed.
+<P>
+This refactoring is available from <I>"Selector"->"Rename"</I>.
+<P>
+Safety: This refactoring is not safe for constructed selectors that are perform:ed. Also, if you reorder the parameters, this
+refactoring will not be safe if the parameters have side-effects on each other.
+<P>
+Notice that this operation is also able to change the order of the methods
+arguments (and rewrite all senders).
+<P>
+<P>
+
+
+<DT><A NAME="REFACTORING.RENAME_TEMPORARY" HREF="#I_REFACTORING.RENAME_TEMPORARY">Rename Local Variable (Rename Temporary)</A>
+<DD>Renames a temporary variable and all references to the temporary within the edited method.
+<P>
+This refactoring is available from the code editors <I>"Code"->"Rename Local Variable"</I>
+menu when you have a temporary variable or argument selected.
+<P>
+Safety: This refactoring is completely safe, unless someone is looking at the source code for the method.
+<P>
+<P>
+
+
+
+
+<DT><A NAME="REFACTORING.RENAME_VARIABLE" HREF="#I_REFACTORING.RENAME_VARIABLE">Rename Variable</A>
+<DD>Renames an instance/class variable and all references to the variable. It does not rename the getter/setter methods.
+<P>
+The rename instance variable refactoring is available from
+the <I>"Class"->"Instance Variables"->"Rename"</I> menu,
+and also the <I>"Variables"</I> menu.
+<P>
+Similarly, the rename class variable refactoring is available from
+<I>"Class"->"Class variables"->"Rename"</I> or the <I>"Variables"</I> menu.
+<P>
+Safety: This refactoring is safe except for classes that depend on the class layout since the positions of the variables may change.
+<P>
+<P>
+
+
+
+<DT><A NAME="REFACTORING.TEMPORARY_TO_INSTANCE" HREF="#I_REFACTORING.TEMPORARY_TO_INSTANCE">Temporary to Instance Variable</A>
+<DD>This refactoring converts a temporary variable into an instance variable.
+<P>
+This refactoring is available from the <I>"Code"->"Convert to Instance Variable"</I>
+menu, after you have selected the text of a temporary variable.
+<P>
+Safety: This refactoring is not safe if the method that defines the temporary is a recursive method.
+<P>
+<P>
+
+
+
+</DL>
+<P>
+
+<h3><A NAME="ABSTRACT_CLASS">Abstract class</A></h3>
+
+The refactorings considers a class abstract
+if it defines a method as subclassResponsibility or the class does not have any references.
+Since Metaclasses contain a living instance in the system,
+they are only considered abstract if they contain a method defined as a subclassResponsibility.
+
+
+<HR>
+<A HREF="codeGeneration.html">Next: Code Generation</A>
+
+
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif" ALT="[stx logo]">
+Copyright &copy; 2000 eXept Software AG, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+<HR>
+Doc $Revision: 1.25 $ $Date: 2016-08-16 12:43:24 $
+
+</BODY>
+</HTML>

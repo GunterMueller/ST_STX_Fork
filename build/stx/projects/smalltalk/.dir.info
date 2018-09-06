@@ -1,0 +1,61 @@
+This is the directory where your smalltalk executable is created.
+The TOP makefile arrives here and does a 'make' here as
+a final step.
+The make here will leave an executable 'smalltalk' here.
+This can be executed here or copied to use/local/bin (or whereever).
+For proper execution, smalltalk needs access to the sourcefiles (for the browser)
+and some config files (resources, styles and .rc files).
+The makefile here creates subdirectories containing symbolic links to
+these files. The searchpath (see Smalltalk>>systemPath) for all file accesses
+is set to access files either locally, or in usr/local/lib/smalltalk.
+Local operation:
+	files are installed as symbolic links in subdirectories.
+	The are accessed locally ('.' being in the path)
+Group operation (proper installation):
+	the files are installed as copies subdirs of in usr/local/lib/smalltalk
+	Users may override these by creating subdirectories locally
+	(for example: having a private 'smalltalk.rc')
+	Access is from local files or global files - whichever is found first
+
+
+Things you can do here:
+
+    make                compile a smalltalk, create symbolic links to
+			sourcefiles, bitmaps and resources.
+			The resulting executable (stx) is fit for local
+			execution (i.e. it does not require any installed
+			files from other places).
+			It can also be installed for shared usage (in /usr/local)
+			via the INSTALL script found in the TO directory.
+
+    make smalltalk      only compile; leave links alone
+
+    make smalltalk ADDITIONAL_CLASSES=<list of class names> \
+		   ADDITIONAL_OBJS=<list of object files>
+
+			compile (i.e. link) a smalltalk, which contains
+			additional user classes.
+			This can be used to make a bigger smalltalk, without
+			defining a PACK.
+			However, we recommend adding a package definition to the
+			configurations/PACKS directory, and doing a CONFIG.
+
+    make stx_fullstatic
+			generates a statically linked executable.
+			On some systems (solaris), this has a much faster
+			startup time, since the shared-library linker does not have
+			to patch the executable during startup (which creates lots of
+			copy-on-write actions).
+
+    make symLinks       only symbolic links are created
+
+    make install        install smalltalk, libraries, include-files
+			and sources in DESTBINDIR and DESTLIBDIR.
+			Check with 'make -n install' before doing so.
+			DESTBINDIR/DESTLIBDIR are typically set to
+				/usr/local/bin
+				/usr/local/lib/smalltalk
+			respectively.
+
+    make demoApp1       a 'hello world' non-graphical demo application
+			see more in ../demoApps

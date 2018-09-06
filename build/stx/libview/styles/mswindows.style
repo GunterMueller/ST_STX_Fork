@@ -1,0 +1,24 @@
+; View defaultStyle:#mswindows 
+;
+; this is not yet completed
+;
+; $Header: /cvs/stx/stx/libview/styles/mswindows.style,v 1.5 1998-08-29 15:16:40 cg Exp $
+
+;this seems not fully true, buttons
+;and scrollers show some 3D.
+;anyway, most other views are flat.
+
+viewGrey                  Color white
+
+#include 'mswindows.common'
+
+comment  'MS windows 3.1 look alike (not complete)'
+
+#if (Language == #german) or:[Language == #de]
+comment  'Angelehnt an MS Windows 3.1 (nicht vollständig)'
+#endif
+
+#if (Language == #french) or:[Language == #fr]
+comment  'Un style qui résemble MS Windows 3.1 (n''est pas complet)'
+#endif
+

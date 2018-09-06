@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?eclipse.ant.import?>
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="stx.libjava.tools.dependencies" default="dependencies">
+    <property name="ivy.jar" value="../../java/ivy-2.4.0.jar"/>
+    <property name="ivy.settings.xml" value="../../java/ivy-settings.xml"/>
+
+    <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpath="${ivy.jar}"/>
+    <ivy:settings file="${ivy.settings.xml}"/>
+
+    <target name="dependencies" description="Download required libraries">        
+         <ivy:retrieve 
+                conf="binaries" 
+                pattern="libs/[artifact]-[revision].[ext]"/>
+         <ivy:retrieve 
+                conf="sources" 
+                pattern="libs-src/[artifact]-[revision].[ext]"/>
+    </target>
+</project>

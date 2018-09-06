@@ -1,0 +1,29 @@
+/* XPM */
+static char *small_folder_yellow_search_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"20 16 6 1",
+/* colors */
+"a c black",
+"b c #818181",
+"c c yellow",
+"d c white",
+"e c #C2C2C2",
+"f c none",
+/* pixels */
+"ffffffffffffffffffff",
+"ffffffffffffffffffff",
+"ffffbbbbbfffffffffff",
+"fffbececebffffffffff",
+"ffbecececebbbbbbffff",
+"ffbddddddddddddbafff",
+"ffbdcecaaeaacecbafff",
+"ffbdeceaaaaaecebafff",
+"ffbdceaeadaeaecbafff",
+"ffbdecaaadaaacebafff",
+"ffbdceaeaaaeaecbafff",
+"ffbdecaaeceaacebafff",
+"ffbdceaacecaaecbafff",
+"ffbbbbbbbbbbbbbbafff",
+"fffaaaaaaaaaaaaaafff",
+"ffffffffffffffffffff",
+};

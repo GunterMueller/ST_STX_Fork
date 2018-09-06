@@ -1,0 +1,20 @@
+/* XPM */
+static char *link_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"11 11 2 1",
+/* colors */
+"a c black",
+"b c white",
+/* pixels */
+"aaaaaaaaaaa",
+"abbbbbbbbba",
+"abbbaaaabba",
+"abbbbaaabba",
+"abbbaaaabba",
+"abbaaababba",
+"abbaabbbbba",
+"abbabbbbbba",
+"abbbabbbbba",
+"abbbbbbbbba",
+"aaaaaaaaaaa",
+};

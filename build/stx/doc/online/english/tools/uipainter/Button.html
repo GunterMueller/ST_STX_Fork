@@ -1,0 +1,315 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+   <META NAME="Author" CONTENT="Thomas Zwick, eXept software AG, Germany">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.04 [en] (X11; I; Linux 2.0.30 i586) [Netscape]">
+   <TITLE>The Button Widget</TITLE>
+</HEAD>
+
+<BODY>
+<A HREF="TOP.html#TABLEOFTHEWIDGETS" NOPRINT><IMG SRC="../../../icons/DocsUpArrow.gif" ALT="Table of the Widgets" NOSAVE HEIGHT=30 WIDTH=30></A><A HREF="ModelButton.html" NOPRINT><IMG SRC="../../../icons/DocsRightArrow.gif" ALT="The Model Button Widget" NOSAVE HEIGHT=30 WIDTH=30></A>
+<BR>&nbsp;
+<BR>
+<HR ALIGN=LEFT WIDTH="100%">
+<H1>
+<FONT SIZE=+4>The Button and LinkButton Widgets</FONT></H1>
+<IMG SRC="../../../pictures/GUIPainterWidgetButton.gif" ALT="A View of a Button Widget" NOSAVE HEIGHT=25 WIDTH=129>
+<P>View Class: <TT>Button</TT>
+<BR>Spec Class: <TT>ActionButtonSpec</TT>
+
+<P>The <B>Button</B> <B>Widget</B> is used to provide simple push actions.
+<BR>
+LinkButtons have the same behavior, but display themself like a web-Browsers link
+(i.e. without 3D effect).
+<BR>&nbsp;
+<H3>
+
+<HR ALIGN=LEFT WIDTH="100%"></H3>
+
+<H3>
+The <I>Basics</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>ID</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Unique symbolic name (ID) of the button.&nbsp;</B>&nbsp;
+<BR>This ID can be used by the application to access the widget
+via<BR><TT>"builder&nbsp;componentAt:#ID"</TT>.</TD>
+</TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Text</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Label of the button.&nbsp;</B>&nbsp;
+<BR>If the <I>"Label Is Image"</I> check box is turned off,
+the fields value is the label string.
+<BR>Otherwise, the fields value is the name of the selector, which returns the actual label
+<BR>- either a string or a bitmap from the application.
+<BR>A labelChannel may overwrite this (see below).
+</TD>
+</TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>Disabled Label</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Label of the button shown when disabled.&nbsp;</B>&nbsp;
+<BR>Like the above. Allows for the button to change its label or bitmap image
+depending on its enable-state.
+</TD>
+</TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Action</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Name of the selector which is sent to the
+application when the button is pressed.
+</B><BR>If the selector is an one-arg selector, the argument (below) is passed as a
+string.</TD>
+</TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Argument1</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>An optional argument passed with the action selector (above).</B>&nbsp;
+<BR>The selector must be a 1-arg selector; i.e. it must end with a colon (':').</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Argument2</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Another optional argument passed with the action selector (above).</B>&nbsp;
+<BR>The selector must be a 2-arg selector.</TD>
+</TR>
+
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Be Default</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>If on, a default ("return bitmap image") is shown in the button
+after the label string.
+</B><BR>Typically, this is used to indicate a default button in a dialog
+<br>
+(i.e. the one which fires its action, when the return key is pressed).
+</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Size As Default</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>If on,
+the button computes its (preferred) size as if it was a default ("return") button</B>&nbsp;
+<BR>Useful for buttons which are initially not default buttons,
+<BR>but may become a default button dynamically.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Label Is Image</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the name of the label
+is taken as selector.</B>&nbsp;
+<BR>The method should return a string, text or bitmap image which will be used as the buttons logo.
+</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Translate Label</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the label string is translated
+</B>&nbsp;
+<BR>via the resource mechanism to a national language string.&nbsp;
+<BR>A translation for that string must be defined in the resource file of
+the application class.&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Details</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Font</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the font style of the button's
+label.</B>&nbsp;
+<BR>After selecting the check toggle the font style can be chosen by selecting
+one of the Family/Face/Style/Size buttons. If no font style is selected,
+the button takes its default font style from the style sheet.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>FG-Color</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the foreground color of the button,
+i.e. the color of the letters.</B>&nbsp;
+<BR>After selecting the check toggle the foreground color can be chosen
+by selecting the desired colored button. If no color&nbsp; is selected,
+the button takes its default foreground color from the style sheet.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD><B>BG-Color</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Defines the background color of the button,
+i.e. the color of the button's view.</B>&nbsp;
+<BR>After selecting the check toggle the background color can be chosen
+by selecting the desired colored button. If no color&nbsp; is selected,
+the button takes its default background color from the style sheet.</TD>
+</TR>
+
+<TR NOSAVE>
+<TD><B>Initially Disabled</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the button is initially disabled.
+</B><BR>An enableChannel may overwrite this (see below).
+</TD>
+</TR>
+
+<TR NOSAVE>
+<TD><B>Initially Invisible</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the button is initially invisible.
+</B><BR>A visibilityChannel may overwrite this (see below).
+</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Can Tab</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the button can be reached
+by tabbing.</B></TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Auto Repeat</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the action is evaluated
+repeatedly as long as the button is pressed.&nbsp;</B>&nbsp;
+<BR>To get this behavior, the check box <I>Triggered On Down</I> must be
+turned on.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Trigger On Down</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the action is evaluated
+when the button is pressed; otherwise, when released.</B></TD>
+</TR>
+
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Resize For Label</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Turns on/off that the button dynamically resizes itself
+whenever its logo changes.
+</B></TD>
+</TR>
+
+
+
+
+</TABLE>
+
+
+
+
+
+&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Channels</I> Section:</H3>
+
+<TABLE BORDER CELLPADDING=2 WIDTH="80%" BGCOLOR="#FFCC00" NOSAVE >
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Visible</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for making the button visible/invisible.</B>&nbsp;
+<BR>It should return one of:&nbsp;
+
+<P>&nbsp;&nbsp;&nbsp; - <TT>Boolean</TT> instance** (only for static behavior)&nbsp;
+<BR>&nbsp;&nbsp;&nbsp; - <TT>Block</TT> evaluating to a <TT>Boolean</TT> (evaluated once, at creation time of the widget)
+<BR>&nbsp;&nbsp;&nbsp; - <TT><A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance providing a <TT>Boolean</TT>**&nbsp;
+
+<P>A value model is used to make this feature dynamically changable.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Enable</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for en-/disabling
+the button.</B>&nbsp;
+<BR>It should return one of:&nbsp;
+
+<P>&nbsp;&nbsp;&nbsp; - <TT>Boolean</TT> instance** (only for static behavior)&nbsp;
+<BR>&nbsp;&nbsp;&nbsp; - <TT>Block</TT> evaluating to a <TT>Boolean</TT>
+<BR>&nbsp;&nbsp;&nbsp; - <TT><A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance providing a <TT>Boolean</TT>**&nbsp;
+
+<P>A value model is used to provide a dynamically changing of the ability
+of the button.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>Label&nbsp;</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for the label of the button.</B>&nbsp;
+<BR>It should return a <TT><A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance providing a <TT>String</TT>.&nbsp;
+<P>Can be used to dynamically change the label of the widget.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>FG-Color</B></TD>
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for the foreground color of the button.</B>&nbsp;
+<BR>It should return one of:&nbsp;
+
+<P>&nbsp;&nbsp;&nbsp; - <TT>Color</TT> instance&nbsp; (only for static behavior)&nbsp;
+<BR>&nbsp;&nbsp;&nbsp; - <TT>Block</TT> evaluating to a <TT>Color</TT>
+<BR>&nbsp;&nbsp;&nbsp; - <TT><A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance providing a <TT>Color</TT>.&nbsp;
+
+<P>A value model is used to dynamically change the widgets foreground color.</TD>
+</TR>
+
+<TR ALIGN=LEFT VALIGN=TOP NOSAVE>
+<TD NOSAVE><B>BG-Color</B></TD>
+
+<TD BGCOLOR="#FFFFFF" NOSAVE><B>Aspect selector or binding for the background color of the button.</B>&nbsp;
+<BR>It should return one of:&nbsp;
+
+<P>&nbsp;&nbsp;&nbsp; - <TT>Color</TT> instance&nbsp; (only for static behavior)&nbsp;
+<BR>&nbsp;&nbsp;&nbsp; - <TT>Block</TT> evaluating to a <TT>Color</TT>
+<BR>&nbsp;&nbsp;&nbsp; - <TT><A HREF="../../programming/vmodels.html#types_of_valuemodels">ValueModel</A></TT>*
+instance with a <TT>Color</TT> instance.&nbsp;
+
+<P>A value model is used to dynamically change the widgets background color.</TD>
+</TR>
+</TABLE>
+<TT>*&nbsp; = ValueHolder, AspectAdaptor, BufferedValueHolder, RangeAdaptor,
+TriggerValue</TT>
+<BR><TT>** = true, false</TT>
+
+<P>&nbsp;
+<H3>
+The <I>Help</I> Section:</H3>
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="HelpTool.html">Using the Help Tool</A>"
+<BR>&nbsp;
+<BR>&nbsp;
+<H3>
+The <I>Layout</I> Section:</H3>
+<IMG SRC="../../../icons/seeAlso.gif" NOSAVE HEIGHT=13 WIDTH=18>see document
+"<A HREF="LayoutTool.html">The Layout of the Widgets</A>"
+<BR>&nbsp;
+
+<P>
+<HR>
+
+<P><IMG SRC="../../../icons/stx.gif" ALT="[stx-logo]" NOSAVE NOPRINT HEIGHT=48 WIDTH=47 ALIGN=CENTER>
+<BR><TT>Copyright &copy; 1998 eXept Software AG, all rights reserved</TT>
+<BR>
+<HR>
+</BODY>
+</HTML>

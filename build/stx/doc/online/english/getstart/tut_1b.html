@@ -1,0 +1,211 @@
+<HTML>
+<HEAD>
+<TITLE>Tutorial - "Hello World" in 5 Minutes</TITLE>
+</HEAD>
+
+<BODY>
+
+<A HREF="tut_1.html"> <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[next]" NOPRINT></A>
+<A HREF="tutorial.html"> <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]" NOPRINT></A>
+<A HREF="tut_2.html"> <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]" NOPRINT></A>
+
+
+<H1>"Hello World" in 5 Minutes</H2>
+
+This chapter is a teaser: it will show you how to create
+a fully deployable, self installing "Hello World" GUI application (including Graphical User Interface) in 5 minutes
+(or less). You will not need any Smalltalk programming know-how (yet).
+
+<P>
+<B>Attention Windows Users:</B>
+<BR>
+Before trying the packager, make sure that you have the
+"Free Inprise/Borland Compiler Tools" (now Embarcadero)
+and the "NullSoft Installer" packages installed.
+New <CITE>ST/X</CITE> versions also allow building with the Microsoft Visual C/C++
+(also Visual Studio / Visual Studio Express).
+<P>
+<B>Attention Unix Users:</B>
+<BR>
+The screenshots below have been taken for a build under Windows. Things are
+slightly different under Unix. See the end of this document for Unix packaging infos.
+<P>
+<P>
+
+<H2><A NAME="OPENING_THE_PACKAGER">Opening the Packager</A></H2>
+
+The packager is a tool which interactively builds (compiles) an application and wraps it into
+a self-installing deployable executable.
+<CITE>ST/X</CITE> can also generate makefiles and build scripts for non-interactive building
+- this is described elsewhere.
+<br>The packager is found in the Launcher's "<I>Tools</I>"-menu:
+<P>
+<IMG SRC="../../pictures/Packager_01_opening.png" ALT="[Launcher's Tools Menu]">
+<P>
+
+<H2><A NAME="PACKAGER_OPERATION">Packager Operation</A></H2>
+
+When opened, it presents itself as an assistant-type application:
+<P>
+<IMG SRC="../../pictures/Packager_02_page1.png" ALT="[Packager's Type Selection]">
+<P>
+
+<P>
+Check the "<I>GUI-Application</I>" Toggle (if it is not already checked),
+and proceed by clicking on the "<I>Next</I>"-button to:
+<P>
+<IMG SRC="../../pictures/Packager_03_page2.png" ALT="[Packager's Project Selection]">
+<P>
+Here, you would be presented with a list of existing applications - if there were any.
+After an initial start, chances are high, that this list is empty.
+Therefore, we tell the packager, to create a new project for us.
+<BR>
+Enter the project's name into the upper input field.
+The format of the project-name is somewhat formalized;
+it must consist of a company part and a project-path part, separated by a colon.
+<P>
+For this example, enter "<CODE>xxx:HelloWorld</CODE>",
+replacing "<I>xxx</I>" with your name or initials, and press the "<I>Create</I>" button.
+ST/X will create an application-definition for you (which is initially empty).
+After a short delay, the name should appear in the list of existing projects.
+Experienced Smalltalkers may now click on the "<I>Browse Selected Project</I>" button, to
+peek into the created definition. All others may simply proceed by clicking on the "<I>Next</I>"-button.
+That button is disabled until a project is selected.
+<P>
+<IMG SRC="../../pictures/Packager_04_page3.png" ALT="[Application Selection]">
+<P>
+Next, we define the application class. That is the class which specifies the
+layout of the GUI and the user-interaction. In technical terms: it will be a subclass
+of <CODE>ApplicationModel</CODE>.
+<BR>
+The packager is able to create an initial (empty) application framework for us:
+enter a useful name such as "<CODE>HelloWorldApp</CODE>" into the upper input field,
+and press the "<I>Create</I>"-button.
+<P>
+After a short delay, the name of your new application-class appears in the list.
+You can open your application for a test-run by clicking on the "<I>Launch</I>" button.
+Or else, you can open a Systembrowser on it, and modify the Menu, the GUI or its
+behavior there. We will skip this here, but you will read more about
+this in a later chapter.
+<P>
+When you are happy with the look of your HelloWorld-Application,
+press the "<I>Next</I>"-button, to get to this page:
+<P>
+<IMG SRC="../../pictures/Packager_05_page4.png" ALT="[Startup Class Selection]">
+<P>
+The so called "StartUp class" is the class which initially gets control when the program
+is started as a standalone executable
+(i.e. outside the <SITE>Smalltalk/X</SITE> IDE).
+It is not used when your application runs inside the IDE.
+It takes the role of a "main" function in other languages.
+<BR>
+The startup class is probably not needed for very small helloWorld-type
+toy applications (so we don't really need it here).
+However, in a real world application, it will check and scan for command line arguments,
+check for configuration files being present or perform other required setup actions
+before actually launching the application.
+<P>
+Here, we specify a simple startup class, which we ask the packager to create for us;
+enter "<CODE>HelloWorldStartup</CODE>" as name, and click on "<I>Create</I>"
+The created class contains a single method,
+which opens the application window.
+All of the real functionality is inherited from its superclass.
+Please take a look at this StandaloneStartup-class later.
+<P>
+Then proceed to the next screen:
+<P>
+<IMG SRC="../../pictures/Packager_06_page5.png" ALT="[Contents Specification]">
+<P>
+In this page, other classes which should be packaged together with the application
+can be specified. In our tiny HelloWorld example, there is nothing else needed,
+but real world applications usually consist of more than one class.
+<P>
+We skip this page here, press the "<I>Next</I>"-button, and proceed directly to:
+<P>
+<IMG SRC="../../pictures/Packager_07_page6.png" ALT="[Build Directory Specification]">
+<P>
+here you get a chance to define the toolchain to use and to change the build directory.
+Although offered in the menu, please do not select Visual-C (vc) or LCC.
+These tools are not yet fully integrated (as of September 2009, when this document was written).
+<BR>
+Usually,
+the automatically generated temporary directory is fine,
+and you don't have to do anything here
+(change it, if the choosen directory is on a slow or full drive).
+<br>We immediately proceed to the next page:
+<P>
+<IMG SRC="../../pictures/Packager_08_page7.png" ALT="[Build]">
+<P>
+That is where the real build-process-show starts.
+Click on "<I>Make All</I>" and wait for a short time (depending on the speed of
+your disk and cpu, this may take from a few seconds to a few minutes).
+Most of the time
+is spent in the final packaging process (Nullsoft, package or dmg generation).
+Therefore, if you are only interested in an executable to try,
+but not in a self installing deployable,
+click on the "<I>Make EXE only</I>" button instead (which typically does its work in a few seconds).
+<P>
+If all went well (there are no red error messages in the console output),
+proceed to the final step:
+<P>
+<IMG SRC="../../pictures/Packager_09_page8.png" ALT="[Deploy or Run]">
+<p>
+That final page lists the generated executables and allows for a Windows Explorer
+to be opened on the build-directory (in order to copy the "<CODE>XXXSetup.exe</CODE>" file to
+whereever it is going to be deployed to).
+
+For a test run of the generated executable,
+open a Windows explorer (or Finder) there,
+and double-click on "<CODE>HelloWorld.exe</CODE>".
+<P>
+For deployment, all you need is the "<CODE>XXXSetup.exe</CODE>". Do not deploy the
+"<CODE>HelloWorld.exe</CODE>" alone
+- it will look rather ugly,
+because a few additional helper and configuration files
+(especially the GUI-style and the language definitions) are needed
+by the exe.
+<P>
+By the way:
+<BR>
+The name "<CODE>ProductName.exe</CODE>" results from not defining a proper product name in the
+ProjectDefinition class. Open a browser on that class and change the name as required.
+A later version of the application packager will include a form for these additional
+items (icon, product name, company name, etc.)
+
+
+<H2><A NAME="UNIX_DIFFERENCES">Packaging a UNIX application</A></H2>
+
+The Unix packaging process looks basically the same - however, currently a tarball is
+generated which has to be un-tared for deployment. As there are multiple different packaging
+schemes used with the various Unix variants, this seems to work for most systems (for now).
+We may add better packaging support for some Unix dialects in the future
+(or upon payed customer request).
+
+<H2><A NAME="OSX_DIFFERENCES">Packaging a Mac OS X application</A></H2>
+On a Mac, a dmg is generated for deployment.
+You can check the contents of the dmg and execute the app locally by
+first clicking on "Make APP only",
+then open a finder and navigate to the &lt;appName&gt;_dmg directory
+and double click on the app there.
+Of course, you can also mount the dmg and start the app from there.
+The generated dmg is self contained (meaning that it includes all required Smalltalk/X
+base framework libraries), and no further installation is required to run the app.
+
+<P>
+<HR>
+Continue in "<A HREF="tut_2.html">Smalltalk Basics</A>".
+
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif" ALT="[stx-logo]">
+<BR>Copyright &copy; Claus Gittinger Development & Consulting
+<BR>Copyright &copy; eXept Software AG
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:cg@exept.de">cg@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.17 $ $Date: 2016-03-15 21:29:31 $
+
+</BODY>
+</HTML>

@@ -1,0 +1,161 @@
+<HEAD>
+<TITLE>Using the New File Browser - Contents View</TITLE>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="dirContents.html"> <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">         <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="howTo.html">       <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[prev]"></A>
+
+<H2><A NAME="CONTENTS_VIEW" HREF="TOP.html#I_CONTENTSVIEW">Contents View</A></H2>
+
+The contents view shows a sub-page depending on the file's contents
+and the kind of information that is to be displayed. The contents is set from a selected
+file either via the "<I>Open File</I>" menu-function, or simply by double-clicking on a
+file in the fileList.
+
+The contents-view can be one of the following:
+
+
+
+
+<H2><A NAME="TEXT" HREF="TOP.html#I_TEXTTAB">Text</A></H2>
+
+The text contents view provides all editing and menu functions as known from other textViews.
+<P>
+The popup menu's
+<A HREF="../../misc/commonFunctions.html#ACCEPT">'Accept'</A>
+function saves your changed text back into the file.
+
+Usually, there is a
+<A HREF="../../custom/TOP.html#DEFAULTKEYS">keyboard shortcut</A>
+(such as <KBD>"<B>CTRL-s</B>"</KBD> or <KBD>"<B>CMD-a</B>"</KBD>)
+available for the accept function.
+<BR>(Try the right-button popup menu to see the key assignments.)
+
+<P>
+Unless <VAR>accepted</VAR>, changes made to the text do not affect the underlying file.
+<P>
+If you change your mind, and want your editing be undone, simple select the
+file again (double-click) or press the "<DFN>Reload</DFN>" button.
+This will bring the original or last accepted contents
+of the file back into the contents view.
+<P>
+In case you have unsaved modifications in the contents view,
+you will get a warning (and a chance to change your mind)
+when you try to change directories, get another files contents
+or close the fileBrowser window.
+
+
+<H2><A NAME="TERMINAL" HREF="TOP.html#I_TERMINALTAB">Terminal</A></H2>
+
+The terminal page allows for operating-system commands to be entered, executed,
+and the text-output of commands to be seen.
+<BR>
+It behaves similar to a command- or xterm window (actually, it emulates a VT100 terminal).
+(the terminal emulation is not 100% bug-free; there are some situations related to
+wrapping behavior at the line and screen end, which may lead to
+incorrect display.
+<P>
+Notice that the current Windows-version (NT, XP and Vista) still has a bug in that the command
+is not echoed while being typed - instead, it is shown when the <KBD>Return</KBD>-key
+is hit. The terminal emulator contains workaround code, which echoes entered keystrokes
+immediately and suppresses the echo from the Windows console.
+However, immediate key functions (such as command and filename completion)
+do not work correctly.
+<P>
+Do not report this as a bug, as it is a known bug, for which we still have no solution yet
+- please send us info in how to solve it, instead.
+<BR>
+(Strange enough: this used to work under Win95, but does no longer in NT, XP etc.
+Noone was able to tell us how this is done in those newer systems.)
+
+
+
+<H2><A NAME="SEARCH" HREF="TOP.html#I_SEARCHTAB">File Search</A></H2>
+
+The search page is one of the most powerful and most often used features of the
+FileBrowser; it allows for files to be searched by file contents, name or size.
+<P>
+You can search files which contain or do not contain a particular string;
+both caring and ignoring for case differences.
+<P>
+You can search files whose name matches a particular pattern (regex);
+both caring and ignoring for case differences.
+<P>
+You can search files which have a bigger (&gt;), smaller (&lt;),
+same (=), different (!=) and roughly-same (~) size than a given number.
+<P>
+You can also quickly search for files with the same contents as another file
+(sometimes, this is very useful to find a duplicate).
+<P>
+
+All matching files are incrementally shown in a list.
+A double click onto an entry adds another tab for editing.
+<BR>
+Notice also, that the match-list provides its own set of useful popup-menu functions.
+
+
+
+<H2><A NAME="IMAGE" HREF="TOP.html#I_IMAGETAB">Bitmap Image</A></H2>
+
+This simple bitmap viewer is used when a bitmap-image-file is double-clicked on.
+An edit button alows for the <A href="../uiPainter/ImageEditor.html">ImageEditor</A> to be opened on the file.
+
+
+<H2><A NAME="ARCHIVE" HREF="TOP.html#I_ARCHIVETAB">Archive</A></H2>
+
+This shows the contents of zip or tar archive files.
+
+
+<H2><A NAME="ENCODING_FIELD" HREF="TOP.html#I_ENCODING_FIELD">Encoding Field</A></H2>
+
+The encoding field shown in the lower information area displays the browser's
+encoding, which is used when reading/writing files.
+When reading a file,
+the browser tries to find the
+file's encoding by searching for a character sequence like
+<CODE><PRE>     encoding: <VAR>nameOfEncoding</VAR></PRE></CODE>
+near the beginning of the file's contents,
+where <VAR>nameOfEncoding</VAR> is something like
+"<CODE>utf-8</CODE>", "<CODE>iso8859-2</CODE>", "<CODE>jis</CODE>" etc.
+(for a full list of supported encodings,
+take a look at the "<CODE>CharacterEncoder  &#187;  initialize</CODE>" method).
+<P>
+The encoding can also be set explicitely, via the encoding-fields popup menu,
+which lists the most common encodings.
+<BR>
+It is also possible to lock the encoding, so that the automatic mechanism above
+is disabled. This is useful to prevent a wrong encoding guess to be taken from a file.
+
+
+<H2><A NAME="EDITMODE_FIELD" HREF="TOP.html#I_EDITMODE_FIELD">Edit Mode Field</A></H2>
+
+The edit mode field (which is also shown in the lower information area) displays the text-editors
+text-replacement mode. This can be one of "<DFN>Insert</DFN>",
+"<DFN>Overwrite</DFN>" or "<DFN>Insert & Select</DFN>".
+<BR>
+The "overwrite" mode is especially useful when editing tabular data.
+
+
+<H2><A NAME="CURSOR_FIELD" HREF="TOP.html#I_CURSOR_FIELD">Cursor Position Fields</A></H2>
+
+These two fields are found at the lower right and display the text-cursors line and column number.
+The cursor-line-field also provides a (right-click) dialog for cursor positioning.
+
+<HR>
+<A HREF="howTo.html">Next: How to Perform Common Tasks</A>
+<HR>
+
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../../icons/stx.gif" ALT="[stx logo]">
+Copyright &copy; 2002 eXept Software AG, all rights reserved
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+<HR>
+Doc $Revision: 1.11 $ $Date: 2016-11-05 17:38:36 $
+
+</BODY>
+</HTML>

@@ -1,0 +1,15 @@
+Real time 3D data visualizer (requires libopengl to be available & loaded).
+
+To load:
+	fileIn: loadAll
+
+On the latest ST/X versions, the classes may already be installed as
+autoloaded stubs in the TDV namespace. Look there in the browser,
+before attempting a fileIn.
+
+
+To start the sensor-data visualizer:
+	TDV::ApplicationColumn3D open
+
+To start the matrix data visualizer:
+	TDV::ApplicationMatrix3D open

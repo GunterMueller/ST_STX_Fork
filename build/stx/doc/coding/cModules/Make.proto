@@ -1,0 +1,43 @@
+# $Header: /cvs/stx/stx/doc/coding/cModules/Make.proto,v 1.7 2016-10-03 21:32:53 cg Exp $
+#
+# Warning: manually created
+# do not regenerate via the browser
+
+#--------- no need to modify anything below -------
+
+TOP=../../..
+INCLUDE_TOP=$(TOP)/..
+PACKAGE=stx:doc/coding/cModules
+LOCALINCLUDES=-I$(INCLUDE_TOP)/stx/libbasic
+
+LIBNAME=libstx_doc_coding_cModules
+LOCALINCLUDES=-I$(INCLUDE_TOP)/stx/libbasic
+STCLOCALOPT=-package=$(PACKAGE) -I. $(LOCALINCLUDES) $(STCLOCALOPTIMIZATIONS) $(STCWARNINGS) $(LOCALDEFINES) -headerDir=. -varPrefix=$(LIBNAME)
+CLINK_LIBS=$(LIBFILES) import32.lib $(RT_LIB)
+
+include Make.spec
+
+RCSSOURCES=Make.proto *.st
+
+# NOAUTOLOAD=1
+
+OBJS=   CModuleDemo.$(O)
+COBJS=  demoCLib1 demoCLib2 demoCLib3
+
+all::   $(OBJS) classLibRule $(COBJS)
+
+demoCLib1: demo1.$(O)
+	echo   "$(CLINK_LIBS)"
+	$(MAKE) cLibRule CLIB=demoCLib1 CLINK_LIBS="$(CLINK_LIBS)" COBJS="demo1.$(O)"
+
+demoCLib2: demo2.$(O)
+	$(MAKE) cLibRule CLIB=demoCLib2 CLINK_LIBS="$(CLINK_LIBS)" COBJS="demo2.$(O)"
+
+demoCLib3: demo3.$(O)
+	$(MAKE) cLibRule CLIB=demoCLib3 CLINK_LIBS="$(CLINK_LIBS)" COBJS="demo3.$(O)"
+
+clean::
+	-rm demo1.$(O) demo2.$(O) demo3.$(O)
+
+demo1.s: demo1.c
+	$(CC) -S demo1.c

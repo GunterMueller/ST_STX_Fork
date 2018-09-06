@@ -1,0 +1,30 @@
+/* XPM */
+static char *indonesia_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 20 2 1",
+/* colors */
+"c c #ff0000",
+"d c white",
+/* pixels */
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"dddddddddddddddddddddddddddddddd",
+"dddddddddddddddddddddddddddddddd",
+"dddddddddddddddddddddddddddddddd",
+"dddddddddddddddddddddddddddddddd",
+"dddddddddddddddddddddddddddddddd",
+"dddddddddddddddddddddddddddddddd",
+"dddddddddddddddddddddddddddddddd",
+"dddddddddddddddddddddddddddddddd",
+"dddddddddddddddddddddddddddddddd",
+"dddddddddddddddddddddddddddddddd",
+};
+

@@ -1,0 +1,115 @@
+# $Header: /cvs/stx/stx/support/tools/Make.proto,v 1.18 2017-06-21 13:26:37 mawalch Exp $
+#
+
+LOCALDEFS=$(SUPPORT_LOCALDEFS)
+
+#--------- no need to modify anything below -------
+
+TOP=../..
+SUBDIRS=
+ALLSUBDIRS=
+NOAUTOLOAD=1
+NOSUBAUTOLOAD=1
+SUPPRESS_LOCAL_ABBREVS="yes"
+
+RCSSOURCES=Make.proto
+LINKSOURCES=Make.proto
+
+DELIVERMISC=Makefile *.stc compface
+
+# not now
+SPLINT_MAKE=splint_make
+all::   ctags_make cscope_make $(SPLINT_MAKE)
+
+Makefiles::
+	$(MAKE) $(CTAGS_DIR)/Makefile
+	@-if [ ! -r ctags ]; then  \
+	    $(LNS) $(CTAGS_DIR) ctags;  \
+	fi
+	$(MAKE) $(CSCOPE_DIR)/Makefile
+	@-if [ ! -r cscope ]; then  \
+	    $(LNS) $(CSCOPE_DIR) cscope;  \
+	fi
+	$(MAKE) $(SPLINT_DIR)/Makefile
+	@-if [ ! -r splint ]; then  \
+	    $(LNS) $(SPLINT_DIR) splint;  \
+	fi
+
+$(CTAGS_DIR)/Makefile: Make.proto $(CTAGS_DIR)/configure
+	@-if [ -d $(CTAGS_DIR) ]; then \
+	    echo 'Making Makefile in '$(CTAGS_DIR)'...'; \
+	    (cd $(CTAGS_DIR) && ./configure CFLAGS="$(CCCONFOPT)" LDFLAGS="$(CCCONFOPT)"); \
+	fi
+
+$(CSCOPE_DIR)/Makefile: Make.proto $(CSCOPE_DIR)/configure
+	@-if [ -d $(CSCOPE_DIR) ]; then \
+	    echo 'Making Makefile in '$(CSCOPE_DIR)'...'; \
+	    (cd $(CSCOPE_DIR) && ./configure CFLAGS="$(CCCONFOPT)"); \
+	fi
+
+$(SPLINT_DIR)/Makefile: Make.proto $(SPLINT_DIR)/configure
+	@-if [ -d $(SPLINT_DIR) ]; then \
+	    echo 'Making Makefile in '$(SPLINT_DIR)'...'; \
+	    (cd $(SPLINT_DIR) && ./configure CFLAGS="$(CCCONFOPT)"); \
+	fi
+
+clean::
+	@-$(MAKE) ctags_clean cscope_clean splint_clean
+
+clobber::
+	@-$(MAKE) ctags_clobber cscope_clobber splint_clobber
+
+ctags_make: $(CTAGS_DIR)/Makefile
+	cd $(CTAGS_DIR) && $(MAKE)
+
+ctags_clean:
+	@-if [ -d $(CTAGS_DIR) ]; then \
+	    echo "cleaning ctags ..."; \
+	    (cd $(CTAGS_DIR) && $(MAKE) clean); \
+	fi
+
+ctags_clobber: ctags_clean
+	@-if [ -d $(CTAGS_DIR) ]; then \
+	    echo "clobbering ctags ..."; \
+	    (cd $(CTAGS_DIR) && $(MAKE) distclean); \
+	fi
+
+# ncurses offers an option to split off the terminfo library (libtinfo).
+# For that case, we ask pkg-config where to find it.
+# If there is no pkg-config or the command fails or it does not produce
+# any output, we fall back to just "-lncurses".
+# This is a hack. A proper fix belongs into upstream cscope.
+cscope_make: $(CSCOPE_DIR)/Makefile
+	@cd $(CSCOPE_DIR); \
+	CURSES_LIBS="$$(pkg-config --libs ncurses)"; \
+	if [ $$? -ne 0 ] || [ -z "$${CURSES_LIBS}" ]; then \
+	    CURSES_LIBS="-lncurses"; \
+	fi; \
+	$(MAKE) CURSES_LIBS="$${CURSES_LIBS}"
+
+cscope_clean:
+	@-if [ -d $(CSCOPE_DIR) ]; then \
+	    echo "cleaning cscope ..."; \
+	    (cd $(CSCOPE_DIR) && $(MAKE) clean); \
+	fi
+
+cscope_clobber: cscope_clean
+	@-if [ -d $(CSCOPE_DIR) ]; then \
+	    echo "clobbering cscope ..."; \
+	    (cd $(CSCOPE_DIR) && $(MAKE) distclean); \
+	fi
+
+splint_make: $(SPLINT_DIR)/Makefile
+	cd $(SPLINT_DIR) && $(MAKE)
+
+splint_clean:
+	@-if [ -d $(SPLINT_DIR) ]; then \
+	    echo "cleaning splint ..."; \
+	    (cd $(SPLINT_DIR) && $(MAKE) clean); \
+	fi
+
+splint_clobber: splint_clean
+	@-if [ -d $(SPLINT_DIR) ]; then \
+	    echo "clobbering splint ..."; \
+	    (cd $(SPLINT_DIR) && $(MAKE) distclean); \
+	fi

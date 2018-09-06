@@ -1,0 +1,30 @@
+<element
+    xmlns="http://relaxng.org/ns/structure/1.0"
+    xmlns:b="http://www.volny.cz/janfrog/xmlsuite/binding"
+    datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
+    name="addressbook"
+    b:class="AddressBook">
+    <oneOrMore>
+	<element name="group">
+
+		<element name="name">
+			<optional>
+			    <attribute name="value"><data type="integer" /></attribute>
+			</optional>
+			
+		</element>
+
+	    <optional>
+		<choice>
+		    <group>
+			<element name="content" >
+				<data type="integer" />
+			</element>
+			<element name="endcontent" ><empty /></element>
+		    </group>
+		    <element name="empty" ><empty /></element>
+		</choice>
+	    </optional>
+	</element>
+    </oneOrMore>
+</element>

@@ -1,0 +1,150 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Java Support - Installation & Configuration</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="java.html">   <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="java.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="java-getting-started.html">  <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Java Support - Installation & Configuration</H1>
+
+<h2>Requirements</h2>
+
+<p>
+<b>1. Smalltalk/X</b><br>
+You need recent <a href="http://swing.fit.cvut.cz/projects/stx-goodies/wiki/SmalltalkX">Smalltalk/X jv-branch</a> downloaded and 
+installed on your computer. STX:LIBJAVA won't run correctly on official eXept
+Smalltalk/X distribution downloaded from <a href="http://www.exept.de">http://www.exept.de</a>. STX:LIBJAVA is still considered as experimental, 
+work-in-progress and thus it is not yet included in official release.
+</p>
+
+<br>
+<p>
+<b>2. JRE/JDK class files</b><br>
+
+STX:LIBJAVA does not provide its own java class library, instead it uses 
+(now open-sourced) class library from <a href="http://openjdk.java.net/">OpenJDK</a>.
+Therefore You need the OpenJDK-based JRE/JDK class files be installed on your system.
+Class files from ordinary Java installation are just fine. If you have a JRE/JDK already
+installed on your system, STX:LIBJAVA will automatically use it. If it fails to detect it, you have to set it manually - see <a href="#config-basic">Configuration - Basic Settings</a>.
+</p>
+
+<h2>Installation</h2>
+
+As STX:LIBJAVA is included in <a href="http://swing.fit.cvut.cz/projects/stx-goodies/wiki/SmalltalkX">Smalltalk/X jv-branch</a> no extra installation steps are required. 
+
+<h2><a name="config">Configuration</a></h2>
+
+Basic STX:LIBJAVA configuration is done through user settings. In <a href="../tools/misc/TOP.html#LAUNCHER">Launcher</a>, select <span class="menu-item">System</span> / <span ckass="menu-item">Settings</span> and then select <span ckass="menu-item">Java</span>.
+
+<div class="figure">
+<img src="../../pictures/JavaSettingsApplication.png" alt="[missing image] Java Settings Application"/>
+<br/>
+<span class="figure-caption">Java Settings Dialog</span>
+</div>
+
+<h3><a name="config-basic">Basic Settings</a></h3>
+
+<p>
+<b>Release.</b><br>
+Defines which Java release (aka version) class library should be used. 
+Normally, STX:LIBJAVA tries to autodetect which release is installed on the
+system by searching standard paths for JRE/JDK files. 
+</p>
+
+<p>Available releases are:</p>
+<ul>
+  <li><em>OpenJDK 6 (preferred)</em></br>
+    <p>Searched paths:<p>
+      <ul>
+        <li>Linux: <code>/usr/lib/jvm/java-6-openjdk/jre</code>
+	</li>
+        <li>Windows: none, OpenJDK 6 was not released for Windows
+        </li>
+      </ul>
+  </li>
+  <li><em>SunJDK 6</em></br>
+    <p>Searched paths:<p>
+      <ul>
+        <li>Linux: <code>/usr/lib/jvm/java-6-sun</code>
+	</li>
+        <li>Windows: registry, <code>C:\Program Files\Java\jdk1.6*</code>, <code>C:\Program Files (x86)\Java\jdk1.6*</code>
+        </li>
+      </ul>
+  </li>
+  <li><em>OpenJDK 7</em></br>
+    <p>Searched paths:<p>
+      <ul>
+        <li>Linux: <code>/usr/lib/jvm/java-7-openjdk/jre</code>, <code>/usr/lib/jvm/java-7-openjdk-&lt;arch&gt;/jre</code>
+	</li>
+        <li>Windows: registry, <code>C:\Program Files\Java\jdk1.6*</code>, <code>C:\Program Files (x86)\Java\jdk1.6*</code>
+        </li>
+      </ul>
+  </li>
+  <li><em>Custom</em></br>
+    <p>Searched paths: none, you have to set <em>JAVA_HOME</em> manually. Use this if autodetection fails or if your Java is installed in a non-standard directory. If you think the directory is standard for given distribution, let us know, we'll add it into next STX:LIBJAVA release.
+  </li>
+</ul>
+
+<p>
+<b>JAVA_HOME</b><br>
+A path to JRE. Unless you choose <em>Custom</em> Java release, <em>JAVA_HOME</em> is autodetected. If the <em>JAVA_HOME</em> points into <code>jre</code> subdir in full JDK, STX:LIBJAVA automatically sets the paths and other runtime variables so it makes use of full JDK, including <code>javac</code> classes. Source path is also update accordingly.
+</p>
+
+
+<h3><a name="config-classpath">Classpath</a></h3>
+<p>Defines a class path for Java. A path to directory containing
+Java <code>.class</code> files or path to <code>.jar</code> or <code>.zip</code> containing classes can be defined here. When the checkbox is unticked.
+the path element is not taken into the account. 
+</p>
+
+<p>
+Alternatively, you may add an entry to STX:LIBJAVA's classpath by evaluating:
+</p>
+<pre class="code-snippet">
+Java addToClassPath:  '/path/to/my/classes'.
+</pre>
+
+<p>
+Class path entries defined by Java runtime (such as path to Java runtime library <code>rt.jar</code>) or entries defined by other Smalltalk/X packages are
+also shown, although they cannot be changed nor removed. 
+</p>
+
+
+<h3><a name="config-sources">Sources</a></h3>
+<p>Defines paths where to find sources for classes. Access to the sources
+is not required in order to run the code, but is useful when browsing and 
+debugging Java code within Smalltalk/X. 
+Entries could point to a directory with sources or to <code>.jar</code> or <code>.zip</code> containing <code>.java</code> files.
+</p>
+
+<p>
+Alternatively, you may add an entry to STX:LIBJAVA's source path by evaluating:
+</p>
+<pre class="code-snippet">
+Java addToSourcePath:  '/path/to/my/sources'.
+</pre>
+
+
+<h2>Compatibility Notes</h2>
+STX:LIBJAVA is being mainly developed and tested on Linux machines using 
+OpenJDK 6. Windows and Sun/Oracle JDK 6 should work, although not tested. 
+OpenJDK 7 is (currently) unsupported/untested.
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt> , <tt>&lt;stxlibjava-dev@googlegroups.com&gt;</tt>
+</ADDRESS>
+
+<HR>
+CVS: $Id: java-installation.html,v 1.5 2015-03-20 12:08:02 vrany Exp $
+</BODY>
+</HTML>

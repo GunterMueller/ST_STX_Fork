@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<installer-gui-script minSpecVersion="1">
+    <title>Smalltalk/X</title>
+    <background file="background.png" mime-type="image/png" />
+    <welcome file="LICENCE_FREE_STX.html" mime-type="text/html"/>
+    <options customize="always" require-scripts="false"/>
+    <pkg-ref id="stx.base">
+	<bundle-version/>
+    </pkg-ref>
+    <pkg-ref id="stx.base.headers">
+	<bundle-version/>
+    </pkg-ref>
+    <pkg-ref id="stx.base.source">
+	<bundle-version/>
+    </pkg-ref>
+    <pkg-ref id="stx.base.documentation">
+	<bundle-version/>
+    </pkg-ref>
+    <choices-outline>
+	    <line choice="stx.base"/>
+	    <line choice="stx.base.headers"/>
+	    <line choice="stx.base.source"/>
+	    <line choice="stx.base.documentation"/>
+    </choices-outline>
+
+    <choice title="Runtime Files" tooltip="Runtime Libraries" id="stx.base" description="Runtime libraries for standalone programs. Contains shared libraries which are needed by deployed stand-alone programs which are not deployed as bundled Apps">
+	<pkg-ref id="stx.base"/>
+    </choice>
+    <pkg-ref id="stx.base" version="7.1.0" onConclusion="none" installKBytes="83473">#SmalltalkX_Runtime_7.1.0.pkg</pkg-ref>
+
+    <choice title="Header Files" tooltip="Toggle to include/exclude header files" id="stx.base.headers" description="Header files. Required for development (i.e. to compile stand-alone programs)">
+	<pkg-ref id="stx.base.headers"/>
+    </choice>
+    <pkg-ref id="stx.base.headers" version="7.1.0" onConclusion="none" installKBytes="84493">#SmalltalkX_Headers_7.1.0.pkg</pkg-ref>
+
+    <choice title="Sources" tooltip="Toggle to include/exclude source code" id="stx.base.source" description="Smalltalk sources. If installed, the debugger can show more information">
+	<pkg-ref id="stx.base.source"/>
+    </choice>
+    <pkg-ref id="stx.base.source" version="7.1.0" onConclusion="none" installKBytes="132400">#SmalltalkX_Source_7.1.0.pkg</pkg-ref>
+
+    <choice title="Documentation" tooltip="Toggle to include/exclude the online documentation" id="stx.base.documentation" description="Online documentation">
+	<pkg-ref id="stx.base.documentation"/>
+    </choice>
+    <pkg-ref id="stx.base.documentation" version="7.1.0" onConclusion="none" installKBytes="144111">#SmalltalkX_Documentation_7.1.0.pkg</pkg-ref>
+</installer-gui-script>

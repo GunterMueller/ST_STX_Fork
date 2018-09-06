@@ -1,0 +1,25 @@
+
+syntax: glob
+*Init.c   
+makefile
+*.so
+*.so.debug
+*.H
+*.o
+*.STH
+*.sc
+objbc
+objvc
+objmingw
+*WINrc.obj
+*.class
+java/libs/*.jar
+java/libs-src/*.jar
+*-Test.xml
+st.chg
+
+tests/c/factorial1
+tests/c/factorial2
+tests/c/press_any_key
+tests/c/*.exe
+

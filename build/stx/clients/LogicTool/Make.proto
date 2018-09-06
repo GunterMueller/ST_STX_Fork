@@ -1,0 +1,77 @@
+# $Header: /cvs/stx/stx/clients/LogicTool/Make.proto,v 1.9 1999-12-01 15:29:42 cg Exp $
+#
+# -------------- no need to change anything below ----------
+
+TOP=../..
+MODULE=stx
+MODULE_DIR=clients/LogicTool
+PACKAGE=$(MODULE):$(MODULE_DIR)
+SUBDIRS=
+RCSSOURCES=*.st Make.proto bitmaps/*.xbm resources/*.rs examples/*.logic
+SYSLIBS    = -lX11
+
+STCOPT=$(CLIENT_STCOPT)
+OPT=
+CFLAGS     = -I$(INCLUDE) $(OS) $(OPT) $(DBG) $(DEFS)
+STCFLAGS   = -CC="$(CC)" -I. -H$(INCLUDE) $(STCOPT)
+
+LIBNAME=logicTool
+
+STARTUP_CLASS=LogicTool
+STARTUP_SELECTOR="start"
+
+PROGS      = LogicTool
+
+OBJS =      LogicTool.o                   \
+	    LogicView.o                   \
+	    LogicObj.o                 \
+	    Connect.o                  \
+	      SubCirc.o                \
+	      Input.o                     \
+	      Low.o                       \
+	      High.o                      \
+	      Output.o                    \
+	      AndGate.o                   \
+		AndGate2.o                \
+		  NandGate2.o             \
+		AndGate3.o                \
+	      OrGate.o                    \
+		OrGate2.o                 \
+		  NorGate2.o              \
+	      ExorGate2.o                 \
+	      Inverter.o                
+
+all::       $(PROGS)
+
+objs::                                      \
+	    LogicTool.o                     \
+	    LogicView.o                     \
+	    Connect.o                       \
+	    LogicObj.o                      \
+	      SubCirc.o                     \
+	      Input.o                       \
+	      Low.o                         \
+	      High.o                        \
+	      Output.o                      \
+	      AndGate.o                     \
+		AndGate2.o                  \
+		  NandGate2.o               \
+		AndGate3.o                  \
+	      OrGate.o                      \
+		OrGate2.o                   \
+		  NorGate2.o                \
+	      ExorGate2.o                   \
+	      Inverter.o
+
+LogicTool:  main.o autoClassInit obj
+	    $(LD) $(LDFLAGS) -o LogicTool \
+		  $(CRT0) main.o classList.o logicTool$(OBJNAME) \
+		  $(LIBBASICOBJ) $(LIBVIEWOBJ) $(LIBWIDGOBJ) \
+		  $(LIBRUNDIR)/hidata.o $(LIBRUN) \
+		  $(MATHLIB) $(SYSLIBS) $(OTHERLIBS) $(CRTN)
+	    @-rm -f main.o
+
+$(PROGS):   $(MAIN)
+
+# BEGINMAKEDEPEND
+# ENDMAKEDEPEND

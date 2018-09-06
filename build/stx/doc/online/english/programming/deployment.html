@@ -1,0 +1,456 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - Deploying an Application</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="startup.html">     <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">             <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="errormsg.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>Deploying an Application</H1>
+
+<H2>Contents</H2>
+<UL>
+ <LI><A HREF="#INTRO" NAME="I_INTRO">Introduction</A>
+ <LI><A HREF="#PROJECT_DEFINITION" NAME="I_PROJECT_DEFINITION">Project Definition</A>
+  <UL>
+   <LI><A HREF="#LIBRARY_DEFINITION" NAME="I_LIBRARY_DEFINITION">Library Definitions</A>
+   <LI><A HREF="#APPLICATION_DEFINITION" NAME="I_APPLICATION_DEFINITION">Application Definitions</A>
+  </UL>
+ <LI><A HREF="#SAMPLE_GUI_APP" NAME="I_SAMPLE_GUI_APP">A Sample GUI Application</A>
+ <LI><A HREF="#SAMPLE_NONGUI_APP" NAME="I_SAMPLE_NONGUI_APP">A Sample NON-GUI (Headless) Application</A>
+</UL>
+
+
+<H2><A HREF="#I_INTRO" NAME="INTRO">Introduction</A></H2>
+
+This document gives you some information and examples on how to
+build a stand-alone application for deployment.
+
+
+<H2><A HREF="#I_PROJECT_DEFINITION" NAME="PROJECT_DEFINITION">Project Definition</A></H2>
+
+A project is now described by a project-definition, which is implemented as
+a class with protocol to return the specification. We use a class instead of
+xml-files or other objects, in order to make it easy to compile, deliver and maintain
+project definitions much like any other compilable item in the stx environment.
+Especially, to be able to use the browser, cvs and the stc-compiler to embed these definitions
+into a compilation unit (such as a dll or an exe).
+<P>
+Project definitions can be created manually (by entering a corresponding class definition
+and accepting), via the browser's <I>"New-project"</I> menu function, or programmatically.
+<P>
+The <CODE>ProjectDescription</CODE> class, which is the superclass of all those specifications,
+knows how to generate the files which are required to build the target.
+Such files include makefiles, resource-specifications etc.
+
+<H3><A HREF="#I_LIBRARY_DEFINITION" NAME="LIBRARY_DEFINITION">Library Definitions</A></H3>
+
+A library definition specifies a <I>dll</I>-target (or <I>.so</I>-file, in the unix world).
+This consists of a number of classes, optional extension-methods for other classes,
+preRequisite libraries and optionally load/and unload actions.
+
+
+<H3><A HREF="#I_APPLICATION_DEFINITION" NAME="APPLICATION_DEFINITION">Application Definitions</A></H3>
+
+Much like a library, an application definition also may include classes and extensions,
+but also includes product information (vendor, release, copyrights),
+resource information (icons and documentation files),
+specifications for startup (startup class and selector) and finally,
+specifications to generate self-installable packages for delivery (NullSoft installer files).
+
+
+
+<H2><A HREF="#I_SAMPLE_GUI_APP" NAME="SAMPLE_GUI_APP">A Sample GUI Application</A></H2>
+
+Lets start with a very simple application: a simple GUI application, which shows
+"hello world" in its window.
+<br>The code presented below looks a bit more complicated as required:
+although this example could have been programmed easier using a Label-widget,
+we use a private GUI widget component.
+This was done in order to show how additional components (View-classes) can be added to an application.
+<P>
+First, we create (and debug) the application within the <CITE>Smalltalk/X</CITE> IDE:
+
+<H3><A HREF="#I_SAMPLE_GUI_APP_DEFINITION" NAME="SAMPLE_GUI_APP_DEFINITION">Defining the Sample GUI Application</A></H2>
+
+The initial applications code is generated automatically via the browser's <I>"New"</I>-<I>"Application"</I>
+menu function:
+<P>
+<IMG SRC="../../pictures/Deploy_01_newApp.gif">
+<BR>
+which eventually (after a few accept actions) gives us a skeletton application.
+<BR>
+We remove all but the <CODE>"openAboutThisApplication"</CODE> method from the instance protocol,
+and also remove most of the menu items (using the Menu-Editor, by double-clicking on the menuSpec method in the
+class protocol) to make the menu look like:
+<P>
+<IMG SRC="../../pictures/Deploy_02_menuEdit.gif">
+<BR>
+
+<BR>
+Using the UIPainter (double-click on the windowSpec-method in the class protocol),
+add a Nonscrollable-Arbitrary component to the UI, by dragging it from the gallery:
+<P>
+<IMG SRC="../../pictures/Deploy_03_widgetGallery.gif">
+<P>
+into the canvas, and change its view-class to HelloWorldView (which we will define in just a minute):
+<P>
+<IMG SRC="../../pictures/Deploy_04_ui1.gif">
+<P>
+The <CODE>HelloWorldView</CODE> is defined as simple subclass of <CODE>View</CODE>:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+View subclass:#DemoView
+	instanceVariableNames:''
+	classVariableNames:''
+	poolDictionaries:''
+	category:'demos-StandAlone'
+</PRE></CODE></TD></TR></TABLE>
+and has a single <CODE>redraw</CODE> method on the instance side:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+redraw
+    |x y msg|
+
+    msg := 'Hello World'.
+    x := (self width - (font widthOf:msg)) // 2.
+    y := (self height - (font heightOf:msg)) // 2.
+    self displayString:msg at:(x @ y)
+</PRE></CODE></TD></TR></TABLE>
+now, by double-clicking on the application (or the launch-icon in the UI-Painter),
+the following application window should appear:
+
+<P>
+<IMG SRC="../../pictures/Deploy_05_app.gif">
+<BR>
+
+
+<H3><A HREF="#I_SAMPLE_GUI_APP_CHECKIN" NAME="SAMPLE_GUI_APP_CHECKIN">Setting up the Source Code Repository</A></H2>
+
+Currently, the build and deployment process depends on a CVS repository to be available for checkin
+of smalltalk code. If not already done, you should now create a CVS-repository and configure <CITE>Smalltalk/X</CITE>
+to use it (at least for classes in the "demo"-module).
+<BR>
+Here, the following setup was used:
+<P>
+<IMG SRC="../../pictures/Deploy_06_cvsSetting.gif">
+<P>
+
+The build procedure as shown below depends on a cvs-repository to be present.
+Future releases of <CITE>Smalltalk/X</CITE> will allow for a deployment-build without a cvs repository,
+and also to allow for other repository types (i.e. non-CVS) to be used
+(especially, SubVersion and relational-DB-based storage will be supported).
+<BR>
+Once this is implemented, the build process will look similar to the one described below.
+
+<H3><A HREF="#I_SAMPLE_GUI_APP_PROJECT" NAME="SAMPLE_GUI_APP_PROJECT">Defining the demo-Project</A></H2>
+
+Next, we have to define the package where our classes are to be stored.
+Packages are organized in a hierarchical fashion.
+For traditional reasons (and due to the cvs-history), the top hierarchy level
+is called the "module", and the remaining levels are called the "package-directory".
+<BR>
+Module and directory are also visible in a package-identifier,
+which <B>MUST</B> be of the form <I>module</I>:<I>directory</I>,
+where <I>module</I> is a single word, and <I>directory</I> has the form of a unix path (i.e. components separated by slashes).
+<P>
+We recommend using different modules for the different applications -
+here, we use <I>"demo"</I> as module and <I>"demoApp1"</I> as directory.
+<BR>
+In the browser, move the classes to the "demo:demoApp1" project,
+and then switch the browser's display-mode to "project":
+<P>
+<IMG SRC="../../pictures/Deploy_07_projectView.gif">
+<P>
+and, using the projectViews <I>"New..."</I> menu, create a project-definition there:
+<P>
+<IMG SRC="../../pictures/Deploy_08_newProject.gif">
+<BR>
+(don't forget to check for the type to be "GUI-Application" and the
+projects name to be "demo:demoApp1" before pressing "OK".
+Although the browser tries hard to "do-what-you-mean", but sometimes
+its initial values are stupid...)
+<P>
+After that, you should see the new-generated project definition named "demo_demoApp1"
+(i.e. thats a class with the name of the package, with colons and slashes replaced by
+underlines in the name).
+<BR>
+This project definition class can be handled like any other class; especially, it
+can be checked-in and out of the repository and it can be compiled to a binary object
+using the "stc" compiler.
+
+<H3><A HREF="#I_SAMPLE_GUI_APP_DEFINITIONS" NAME="SAMPLE_GUI_APP_DEFINITIONS">Some more Project-Definitions</A></H2>
+
+Before we are able to generate the helper files required for dll- and exe-compilation,
+we need to have a more detailed look at the project definition. Especially, we
+have to tell it, which other packages (classLibraries) are to be packaged with the app,
+and also check for the correct definition of the start-up code.
+<BR>
+First change the two methods which specify the startup:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+startupClassName
+    ^ 'DemoApplication'
+</PRE></CODE></TD></TR></TABLE>
+and:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+startupSelector
+    ^ #'open'
+</PRE></CODE></TD></TR></TABLE>
+<P>
+Second, some definitions which will identify the generated binary files
+(especially, under windows, this information is displayed in the windows-explorer,
+when you click one of the dll or exe files):
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+companyName
+    ^ 'the wonder Company'
+</PRE></CODE></TD></TR></TABLE>
+<P>
+Finally, check the definition of the other required
+packages; the automatically generated code is almost always wrong.
+<BR>
+Edit the preRequisites method as appropriate:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+preRequisites
+    ^ #(
+	'stx:libview'
+	'stx:libwidg'
+	'stx:libview2'
+	'stx:libui'
+	'stx:libwidg2'
+	'stx:libcomp'
+	'stx:libbasic'
+    )
+</PRE></CODE></TD></TR></TABLE>
+
+<H3><A HREF="#I_SAMPLE_GUI_APP_CHECKIN" NAME="SAMPLE_GUI_APP_CHECKIN">Saving the Project in the Repository</A></H2>
+
+Now, we are ready to check the classes and generated build support files into the repository.
+In the browser's project view, select the <I>"Repository"</I>-<I>"Check In"</I> menu function.
+This will save all of the project classes and also generate build support files,
+which are also checked into the repository.
+<P>
+The support files are:
+<TABLE border width="100%">
+<TR>
+  <TH>File</TH>   <TH>Description</TH> <TH>Architecture</TH>
+</TR>
+
+<TR>
+  <TD>Make.spec</TD> <TD>List of (class-)object files which are compiled</TD> <TD>Shared among all architectures</TD>
+</TR>
+
+<TR>
+  <TD>Make.proto</TD> <TD>Makefile template; included by unix-Makefile<BR>uses Make.spec</TD> <TD>unix</TD>
+</TR>
+
+<TR>
+  <TD>nt.mak</TD> <TD>win32 makefile<BR>uses Make.spec</TD> <TD>win32</TD>
+</TR>
+
+<TR>
+  <TD>bc.def</TD> <TD>win32 dll-export definitions</TD> <TD>win32</TD>
+</TR>
+
+<TR>
+  <TD>&lt;lib&gt;.rc</TD> <TD>win32 resource definitions<BR>Contains vendor, version and copyright information</TD> <TD>win32</TD>
+</TR>
+
+<TR>
+  <TD>libInit.cc</TD> <TD>initialization vector for lib<BR>One entry per class in the dll</TD> <TD>Shared among all architectures</TD>
+</TR>
+
+<TR>
+  <TD>modules.c</TD> <TD>initialization vector for exe<BR>One entry per class in the exe</TD> <TD>Shared among all architectures</TD>
+</TR>
+
+<TR>
+  <TD>modules.stx</TD> <TD>required dll definition<BR>One entry per preRequisite classLib in the exe</TD> <TD>Shared among all architectures</TD>
+</TR>
+
+<TR>
+  <TD>&lt;app&gt;.nsi</TD> <TD>NullSoft installer definitions<BR>used to generate self-install executable</TD> <TD>win32</TD>
+</TR>
+
+</TABLE>
+
+To see the generated file(s) without actually checking them into the repository,
+select the browser's <I>"Build"</I> - <I>"Show Generated"</I> - <I>"&lt;file&gt;"</I> item from the project list menu.
+
+
+<H3><A HREF="#I_SAMPLE_GUI_APP_CHECKOUT" NAME="SAMPLE_GUI_APP_CHECKOUT">Checking out and building from the Repository</A></H2>
+
+<H4><A HREF="#I_SAMPLE_GUI_APP_BUILD_WIN32" NAME="SAMPLE_GUI_APP_BUILD_WIN32">Building under Windows</A></H2>
+
+For now, the build must be done in a directory which is beside the installed stx directory.
+Therefore, we open a command window, and execute the following commands there (user input in bold):
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+C:\...\work\stx><B>cd ..</B>
+C:\...\work><B>dir</B>
+17.08.2006  16:50    &lt;DIR&gt;          .
+17.08.2006  16:50    &lt;DIR&gt;          ..
+...
+17.08.2006  16:51    &lt;DIR&gt;          cg
+17.08.2006  16:52    &lt;DIR&gt;          exept
+13.09.2006  16:28    &lt;DIR&gt;          stx
+...
+C:\...\work><B>cvs -d :pserver:cg@exept.exept.de:/cvs/stx co demo</B>
+cvs checkout: Updating demo
+cvs checkout: Updating demo/demoApp1
+U demo/demoApp1/.cvsignore
+U demo/demoApp1/DemoApplication.st
+U demo/demoApp1/HelloWorldView.st
+U demo/demoApp1/Make.spec
+U demo/demoApp1/abbrev.stc
+U demo/demoApp1/bc.def
+U demo/demoApp1/bmake.bat
+U demo/demoApp1/demoApp1.nsi
+U demo/demoApp1/demoApp1WinRC.rc
+U demo/demoApp1/demo_demoApp1.st
+U demo/demoApp1/modules.c
+U demo/demoApp1/modules.stx
+U demo/demoApp1/nt.mak
+C:\...\work><B>cd demo\demoApp1</B>
+C:\...\work\demo\demoApp1><B>bmake</B>
+...
+</PRE></CODE></TD></TR></TABLE>
+
+<BR>"bmake" is a batch command to invoke make under the windows system.
+<BR>For unix, use "make" instead, as in:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+.../work/demo/demoApp1> <B>make</B>
+</PRE></CODE></TD></TR></TABLE>
+<P>
+Notice, that the above make commands generate a self-installing executable (under windows)
+or a zip-file (under unix) for deployment.
+<BR>If you only want to compile the application without generating
+a deployable, make the "exe" target. (i.e. type <CODE>"make exe"</CODE> or <CODE>"bmake exe"</CODE>).
+<P>
+
+You can also start a build from the browser, via the
+select the browser's <I>"Build"</I>-<I>"Binaries"</I> item from the project list menu.
+
+
+<H3><A HREF="#I_REBUILDING" NAME="REBUILDING">Rebuilding after a change</A></H2>
+
+If you keep the build directory around (i.e. you do not remove it after the build),
+a rebuild after a change is simply done by checking in the application in the browser,
+and re-checking out (in the command window) afterwards:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+C:\...\work\demo\demoApp1><B>cvs upd</B>
+cvs update: Updating .
+P Make.spec
+U abbrev.stc
+P demoApp1.nsi
+P demoApp1WinRC.rc
+P demo_demoApp1.st
+P modules.c
+P modules.stx
+P nt.mak
+P DemoApplication.st
+C:\...\work\demo\demoApp1><B>bmake</B>
+...
+</PRE></CODE></TD></TR></TABLE>
+
+
+<H2><A HREF="#I_SAMPLE_NONGUI_APP" NAME="SAMPLE_NONGUI_APP">A Sample NON-GUI Application</A></H2>
+
+Most of the above is the same when building a non-GUI application
+(i.e. a server or other application which does not open a window).
+<BR>
+As above, first create a "demo:demoApp2" project in the browser's project-list menu.
+Make sure, to choose <I>"NonGUI-Application"</I> from the combo list:
+<P>
+<IMG SRC="../../pictures/Deploy_09_newProject2.gif">
+<BR>
+and create a simple HelloWorld class, with a single #start method:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+Object subclass:#HelloWorld
+	instanceVariableNames:''
+	classVariableNames:''
+	poolDictionaries:''
+	category:'Demos'
+</PRE></CODE></TD></TR></TABLE>
+
+the start-method must be in the class protocol (NOT on the instance side):
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+start
+    Stdout nextPutAll: 'Hello World'
+</PRE></CODE></TD></TR></TABLE>
+
+in the project definition class "demo:demoApp2", change startupClassName and startUpSelector as:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+startupClassName
+    ^ #'HelloWorld'
+</PRE></CODE></TD></TR></TABLE>
+and
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+startupSelector
+    ^ #'start'
+</PRE></CODE></TD></TR></TABLE>
+and check the project into then repository.
+<P>
+Going back to the command window, check the new project out of the repository:
+
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+C:\Dokumente und Einstellungen\cg\work\demo\demoApp1><B>cd ..</B>
+C:\Dokumente und Einstellungen\cg\work\demo><B>dir</B>
+...
+20.09.2006  18:18    &lt;DIR&gt;          demoApp1
+...
+C:\Dokumente und Einstellungen\cg\work\demo><B>cvs upd -d demoApp2</B>
+cvs update: Updating demoApp2
+U demoApp2/.cvsignore
+U demoApp2/HelloWorld.st
+U demoApp2/Make.spec
+U demoApp2/abbrev.stc
+U demoApp2/bc.def
+U demoApp2/bmake.bat
+U demoApp2/demoApp2.nsi
+U demoApp2/demoApp2WinRC.rc
+U demoApp2/demo_demoApp2.st
+U demoApp2/modules.c
+U demoApp2/modules.stx
+U demoApp2/nt.mak
+C:\Dokumente und Einstellungen\cg\work\demo><B>dir</B>
+...
+20.09.2006  18:18    &lt;DIR&gt;          demoApp1
+20.09.2006  18:34    &lt;DIR&gt;          demoApp2
+...
+C:\...\work\demo><B>cd demoApp2</B>
+C:\...\work\demo\demoApp2><B>bmake</B>
+...
+</PRE></CODE></TD></TR></TABLE>
+
+Finally, execute the program with:
+<TABLE width="100%" bgcolor="#ddeedd"><TR><TD><CODE><PRE>
+C:\Dokumente und Einstellungen\cg\work\demo\demoApp2><B>demoApp2</B>
+Hello World
+C:\Dokumente und Einstellungen\cg\work\demo\demoApp2>
+</PRE></CODE></TD></TR></TABLE>
+
+Notice, that non-GUI applications are always console applications;
+they can read their standard-input and write to the standard-output and -error.
+<BR>
+In case of an error, a MiniDebugger is entered, which allows for some
+limited command-oriented debugging.
+<P>
+For GUI applications, we do NOT recommend deployment without the tool classes.
+Having a debugger around - even in a deployed end-user application - is of so
+much value, that you don't want to miss it, once you and your customers
+got used to simply pressing "Abort" in case of an error,
+instead of having to restart the application from the beginning !
+
+<P>
+<P>
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 2006 eXept Software AG
+<P>
+
+<HR>
+Doc $Revision: 1.8 $ $Date: 2016-07-11 09:24:05 $
+</BODY>
+</HTML>

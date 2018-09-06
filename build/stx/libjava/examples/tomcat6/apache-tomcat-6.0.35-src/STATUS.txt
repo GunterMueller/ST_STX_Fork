@@ -1,0 +1,159 @@
+================================================================================
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+================================================================================
+
+$Id: STATUS.txt,v 1.5 2015-03-20 12:08:03 vrany Exp $
+
+                         =================================
+                         Apache Tomcat 6.0 Patch Proposals
+                         =================================
+
+
+RELEASE SHOWSTOPPERS:
+
+
+PATCHES ACCEPTED TO BACKPORT:
+  [ start all new proposals below, under PATCHES PROPOSED. ]
+
+PATCHES PROPOSED TO BACKPORT:
+  [ New proposals should be added at the end of the list ]
+
+* Fix the maven stuff for the maven repo.
+  Before it does't find tomcat-juli.jar and the remoteRepository seems broken .
+  http://people.apache.org/~jfclere/patches/maven.patch.100711
+  +1: jfclere
+  -1: fhanik - easier to pass in the root path (lib/bin) to the macro instead of hacking around it
+               if we remove the SCP auto feature, then there should be something to replace it with
+               (http://ant.apache.org/manual/OptionalTasks/scp.html)
+  +1: kkolinko: +1 for the updated patch (maven.patch.100711)
+      I still think that it is not so good to remove the old code of <remoteRepository/>,
+      because it ignores ${maven.repo.url} parameter provided by deploy-snapshot,
+      deploy-staging and deploy-release targets. Maybe leave old code as a comment
+      and fix it later if needed? I think that actually nobody besides the release manager
+      uses this, so I am letting this pass.
+
+* Add StuckThreadDetectionValve
+  https://github.com/sylvainlaurent/tomcat60/commit/252334f958877221ecb2dc64ee0fd12bb77e360b
+  +1: slaurent
+  +1: kkolinko: several comments are below
+  -1:
+  kkolinko: To view/download this as a patch file you add ".diff" to the URL above. That is:
+  https://github.com/sylvainlaurent/tomcat60/commit/252334f958877221ecb2dc64ee0fd12bb77e360b.diff
+
+  kkolinko: Minor glitches:
+    - In mbeans-descriptors.xml:
+      - There are no properties "asyncSupported", "stateName" in TC6 version of this valve.
+    - In valve.xml:
+      - s/tomcat log/Tomcat log/ (or Apache Tomcat log)
+    - In StuckThreadDetectionValve.java:
+      - private classes CompletedStuckThread, MonitoredThread: make them static (r1175897)
+      - Use Long.valueOf() and explicit boxing/unboxing (r1138132, r1175897)
+      - getStuckThreadIds() returns a list of ids. It might be useful to
+        have a similar method that returns Thread.getName() names.
+
+* Fix https://issues.apache.org/bugzilla/show_bug.cgi?id=50570
+  Apply FIPS mode patch from TC7:
+  http://svn.apache.org/viewvc?rev=1199985&view=rev
+  http://svn.apache.org/viewvc?rev=1200004&view=rev
+  http://svn.apache.org/viewvc?rev=1200448&view=rev
+  +1: schultz, jfclere
+  -1: kkolinko: It needs to include more preceding and followup
+   changes. Updated patch proposed below.
+
+* Backport AprLifecycleListener improvements from TC7
+  This includes:
+   - Use consistent external synchronization object for private
+     initialization methods. Turn initialization flags to false after APR
+     has been terminated. That is, to terminate it only once.
+     (rev. 946671 + several after it)
+   - Use ExceptionUtils.handleThrowable() for fatal errors
+     (rev. 1001904)
+   - Do not allow to change SSL options if SSL engine has already been
+     initialised.
+     (rev. 1199985 + several after it)
+   - Fix https://issues.apache.org/bugzilla/show_bug.cgi?id=50570
+     Enable FIPS mode to be set in AprLifecycleListener.
+     Based upon a patch from Chris Beckey.
+     (rev. 1199985 + several after it)
+  kkolinko: I tested only that it does not break things with the current
+    released tcnative version 1.1.22 that does not have FIPS mode support.
+  http://people.apache.org/~kkolinko/patches/2011-11-12_tc6_AprLifecycleListener.patch
+  +1: kkolinko
+  -1:
+
+* Fix autodeployment of applications that have configuration errors.
+  If autodeployment fails, create DeployedApplication object and register
+  what we deployed (xml or war or dir - a single file) as redeployResource.
+  If it is updated the application will be redeployed.
+  + ContainerBase patch adds display of failed apps in manager. They can be
+  listed and undeployed.
+  http://people.apache.org/~kkolinko/patches/2011-11-14_tc6_HostConfig.patch
+  http://people.apache.org/~kkolinko/patches/2011-11-14_tc6_ContainerBase.patch
+  +1: kkolinko
+  -1:
+
+* Add denyStatus attribute to RequestFilterValve
+  (RemoteAddrValve, RemoteHostValve valves). It allows to use different
+  HTTP response code when rejecting denied request. E.g. 404 instead of 403.
+  http://people.apache.org/~kkolinko/patches/2011-11-16_tc6_RequestFilterValve_denyStatus.patch
+  (r1202565 in trunk, r1202570 in TC7)
+  +1: kkolinko
+  -1:
+
+* Reduce overhead from exception handling in UDecoder
+  http://people.apache.org/~kkolinko/patches/2011-11-17_tc6_UDecoder.patch
+  (r1203054 in TC7)
+  +1: kkolinko
+  -1:
+
+* Align %2f handling between implementations of UDecoder.convert()
+  http://svn.apache.org/viewvc?rev=1203091&view=rev
+  +1: kkolinko
+  -1:
+
+* Fix https://issues.apache.org/bugzilla/show_bug.cgi?id=52225
+  Fix ClassCastException in Alias added for existing host via JMX
+  http://svn.apache.org/viewvc?rev=1204856&view=rev
+  (without tests; it is r1204860 in TC7)
+  +1: kkolinko
+  -1:
+
+* Do not throw IllegalArgumentException from parseParameters() call when
+  chunked POST request is too large, but treat it like an IO error.
+  http://svn.apache.org/viewvc?rev=1206200&view=rev
+  (without tests; it is r1206205 in TC7)
+  +1: kkolinko
+  -1:
+
+
+PATCHES/ISSUES THAT ARE STALLED
+
+* Backport JSP unloading patch (BZ48358).
+  The patch has substantially changed since the original version.
+  Original revisions are: 937787, 1028377, 1028389, 1028396, 1028861, 1028862, 1028863,
+  1028935, 1028939, 1028940, 1028944, 1028950, 1030014, 1030037
+  Combined TC 6 patch:
+  http://people.apache.org/~rjung/patches/BZ48358-JSP_Unloading-TC6_20101118.patch
+  +1: rjung
+  -0: markt - http://markmail.org/thread/777be426ulcfmdd3 suggests there may be
+              a memory leak in this code somewhere. I'd like to get to the
+              bottom of that before porting this
+      rjung:  I started a discussion about JSPs and memory on the dev list.
+              The updated patch fixes a race condition.
+              We can stall this item until we get some feedback about 7.0.5.
+      markt - r1172614 needs to be included in this proposal. With that patch,
+              my testing shows that the unloading works as designed
+  -1:

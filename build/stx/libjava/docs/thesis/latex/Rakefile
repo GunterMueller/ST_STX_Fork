@@ -1,0 +1,110 @@
+require 'rake/clean'
+
+def dia_path_to_pdf_path(diaFile)
+  diaFile.pathmap("%{^#{DIADIR},#{FIGURESDIR}}X#{PDFEXT}")
+end
+
+PROJECT = 'hlopko-thesis'
+
+DIADIR = 'dia'
+FIGURESDIR = 'figures'
+
+PDFLATEX = 'pdflatex'
+DIA = 'dia'
+EPSTOPDF = 'epstopdf'
+PDFVIEWER = 'evince'
+SPELLCHECKPROG = 'aspell -t check'
+BIBTEX = 'bibtex'
+
+DIAEXT = '.dia'
+EPSEXT = '.eps'
+PDFEXT = '.pdf'
+BIBFILE = 'reference.bib'
+BBLFILE = "#{PROJECT}.bbl"
+AUXFILE = "#{PROJECT}.aux"
+PDFFILE = "#{PROJECT}.pdf"
+DIAFIGURES = FileList['dia/*.dia']
+TEXFILES = FileList['*.tex']
+BIBFILES = FileList['*.bib']
+CONVERTEDDIA = FileList.new.include(DIAFIGURES.collect {|each| dia_path_to_pdf_path(each)})
+
+CLEAN.include(['*.log','*.aux','*.bbl','*.blg','*.lof'])
+CLEAN.include(['*.dvi','*.toc','*.out','*.ps', '*.lot'])
+CLEAN.include(['*.lol'])
+CLEAN.include(CONVERTEDDIA)
+CLOBBER.include("#{PROJECT}.pdf")
+
+task :default => [:pdf]
+
+desc "export images, compile bibtex files, generate pdf"
+task :all => [:dia, :pdf, :bib ]
+
+desc "generate pdf from #{PROJECT}.tex"
+task :pdf => ["#{PROJECT}.pdf"]
+
+file AUXFILE => (TEXFILES + CONVERTEDDIA) do
+  build_pdf
+end
+
+file BBLFILE => [ AUXFILE, BIBFILE ] do
+  build_bib
+end
+
+file "#{PROJECT}.pdf" => [ AUXFILE, BBLFILE ] + TEXFILES + CONVERTEDDIA do
+  build_pdf
+  build_pdf
+  build_pdf #I'm not sure if its needed, but at least I'm sure index is built completely
+end
+
+desc "export dia figures from #{DIADIR}/* to #{FIGURESDIR}/ as #{EPSEXT}"
+task :dia => CONVERTEDDIA
+
+DIAFIGURES.each do |each|
+  file dia_path_to_pdf_path(each) => [each] do
+    build_dia each
+  end
+end
+
+desc "compile bibtex files"
+task :bib do
+  build_pdf
+  build_bib
+  build_pdf
+  build_pdf
+end
+
+desc "generate pdf and show it"
+task :view => [:pdf] do
+  sh "#{PDFVIEWER} #{PROJECT}.pdf > /dev/null 2>&1 &"
+end
+
+desc "check spelling"
+task :spellcheck do
+  spellcheck()
+end
+
+def build_dia(diaFile) 
+  epsFile = diaFile.ext(EPSEXT)
+  pdfFile = diaFile.pathmap("%{^#{DIADIR},#{FIGURESDIR}}X#{PDFEXT}")
+  sh "#{DIA} #{diaFile} -e #{epsFile}"
+  sh "#{EPSTOPDF} #{epsFile} --outfile=\"#{pdfFile}\""
+  rm epsFile
+end
+
+def build_pdf()
+  sh "#{PDFLATEX} #{PROJECT}"
+end
+
+def build_bib()
+  #hackety hack - mtime granularity in ruby(or linux & ruby) is second
+  puts 'sleeping for 2 seconds, because I\'m lazy'
+  sleep 2
+  sh "#{BIBTEX} #{PROJECT}"
+end
+
+def spellcheck() 
+  TEXFILES.each do
+    |each|
+    sh "#{SPELLCHECKPROG} #{each}"
+  end
+end

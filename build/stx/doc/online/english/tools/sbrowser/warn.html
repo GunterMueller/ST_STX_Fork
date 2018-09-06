@@ -1,0 +1,62 @@
+<HEAD>
+<TITLE>Using the System Browser - warning & problems</TITLE>
+</HEAD>
+
+<BODY>
+<A NOPRINT HREF="accept.html">  <IMG SRC="../../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">     <IMG SRC="../../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="hints.html">   <IMG SRC="../../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H2><A NAME="WARNING" HREF="TOP.html#I_WARNING">Warning</A></H2>
+
+  Especially beginners should not change the definition of any existing class, but
+  stick to their private ones. (even 'gurus' think twice before doing that :-)
+<BR>
+  The <CODE>"copy category"</CODE> function is very helpful when creating experimental versions
+  of new classes - it allows a very quick class duplication.
+<P>
+  So, instead of modifying any existing class, it is better to create a new one and
+  copy all methods over from the original one.
+<BR>
+  Then test & debug the new class until perfect.
+<BR>
+  When done, you can override the old one with the class <CODE>"rename"</CODE> function.
+<P>
+  This approach is especially suggested when you modify classes which are used by
+  the system itself, since bugs in those may lead to subtile errors or even crashes.
+<BR>
+  (just consider modifying <CODE>ScrollBar</CODE> to make it err somewhere; since the Debugger
+   uses scrollBars too, it may have problems coming up. As a result, you
+   might be forced to quit Smalltalk and restart your session).
+
+
+<H2><A NAME="PROBLEMS" HREF="TOP.html#I_PROBLEMS">Problems</A></H2>
+
+  It may happen, that the browser shows funny source code in the codeview (totally
+  wrong, empty code or off by some characters). This happens, when a sourcefile
+  has been changed or removed from outside the browser (i.e. with FileBrowser or
+  any other editor/program) and the system has not been recompiled or
+  relinked yet (i.e. the compiled class in the executable is not up-to-date).
+<P>
+  Since the source information in a method is simply the <VAR>filename</VAR>+<VAR>filePosition</VAR>,
+  this information is wrong after such a change.
+<P>
+  A recompile (using <VAR>stc</VAR>) followed by a relink of the Smalltalk executable, should
+  give you a version with correct (up-to-date) source information.
+  (however, the demo version does not include <VAR>stc</VAR> - here you have to undo any
+   outside world editing, and only change methods from within the SystemBrowser).
+<P>
+  The commercial versions include a sourceCode manager, which is able to access a classes
+  sourcecode from the source resository - it does not need any source files.
+<BR>
+  Here, the above problems are unlikely to occur (unless someone changes the classes
+  version identification manually ...)
+<P>
+<P>
+
+
+<HR>
+Doc $Revision: 1.9 $ $Date: 2016-09-14 09:41:13 $
+
+</BODY>
+</HTML>

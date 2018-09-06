@@ -1,0 +1,836 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Help - Compiler Settings</Title>
+</HEAD>
+
+<BODY>
+
+<H1>Compiler Settings</H1>
+
+The settings described below used to be presented in
+a single page within the settings dialog.
+This has been changed in one of the recent <CITE>ST/X</CITE> versions;
+you will find those flag settings
+in the "Translation", the "Bytecode" and "STC" subpages.
+
+<H2><A NAME="INDEX">Help Index</A></H2>
+
+<UL>
+  <LI>Methods & Sources</LI>
+  <UL>
+    <LI><A NAME="I_CATCH_METHOD_REDEFINITIONS" HREF="#CATCH_METHOD_REDEFINITIONS">Catch Method Redefinitions</A></LI>
+    <LI><A NAME="I_CATCH_CLASS_REDEFINITIONS" HREF="#CATCH_CLASS_REDEFINITIONS">Catch Class Redefinitions</A></LI>
+    <LI><A NAME="I_KEEP_HISTORY_LINE" HREF="#KEEP_HISTORY_LINE">Keep History Line in Methods</A></LI>
+    <LI><A NAME="I_KEEP_FULL_HISTORY" HREF="#KEEP_FULL_HISTORY">Keep Full Class History</A></LI>
+    <LI><A NAME="I_SOURCE_MODE" HREF="#SOURCE_MODE">FileIn Source Mode</A></LI>
+  </UL>
+  <P>
+
+<LI>Bytecode compilation
+  <UL>
+  <LI><A NAME="I_CONSTANT_FOLDING" HREF="#CONSTANT_FOLDING">Constant Folding</A>
+  <LI><A NAME="I_UNDERSCORES" HREF="#UNDERSCORES">Allow Underscores in Identifiers</A>
+  <LI><A NAME="I_DOLLARS" HREF="#DOLLARS">Allow Dollars in Identifiers</A>
+<!--
+  <LI><A NAME="I_LONG_BINARY_SELECTORS" HREF="#LONG_BINARY_SELECTORS">Allow Long Binary Selectors</A>
+-->
+  <LI><A NAME="I_EXTENDED_BINARY_SELECTORS" HREF="#EXTENDED_BINARY_SELECTORS">Allow Extended Binary Selectors</A>
+  <LI><A NAME="I_SQUEAKEXTENSIONS" HREF="#SQUEAKEXTENSIONS">Allow Squeak Extensions</A>
+  <LI><A NAME="I_DOLPHINEXTENSIONS" HREF="#DOLPHINEXTENSIONS">Allow Dolphin Extensions</A>
+  <LI><A NAME="I_VISUALAGEPRIMITIVES" HREF="#VISUALAGEPRIIMITIVES">Allow VisualAge Primitives</A>
+  <LI><A NAME="I_OLDSTYLEASSIGN" HREF="#OLDSTYLEASSIGN">Allow OldStyle Assignment</A>
+  <LI><A NAME="I_LITERALARRAYS" HREF="#LITERALARRAYS">Literal Arrays are Immutable</A>
+  <LI><A NAME="I_FULLDEBUGINFO" HREF="#FULLDEBUGINFO">Full Debug Info</A>
+  </UL>
+<P>
+
+  <LI>STC Compilation</LI>
+  <UL>
+<!--
+    <LI><A HREF="#LAZY_AUTOLOAD">Lazy Compilation when Autoloading</A></LI>
+-->
+    <LI><A HREF="#LOAD_BINARY">Load Binary if Present</A></LI>
+    <LI><A NAME="I_JIT_COMPILATION" HREF="#JIT_COMPILATION">Just in time compilation to Machine Code (not available on all systems)</A></LI>
+    <LI><A NAME="I_STC_COMPILATION" HREF="#STC_COMPILATION">Compile to Machine Code (not available on all systems)</A>
+      <UL>
+      <LI><A NAME="I_STC_INCLUDES" HREF="#STC_INCLUDES">STC Include Directories</A>
+      <LI><A NAME="I_STC_DEFINES" HREF="#STC_DEFINES">STC Defines</A>
+      <LI><A NAME="I_STC_OPTIONS" HREF="#STC_OPTIONS">STC Options</A>
+      <LI><A NAME="I_CC_OPTIONS" HREF="#CC_OPTIONS">CC Options</A>
+      <LI><A NAME="I_C_LIBRARIES" HREF="#C_LIBRARIES">C-Libraries</A>
+      </UL>
+    </UL></LI>
+<P>
+
+
+<LI><A NAME="I_WARNINGS" HREF="#WARNINGS">Warnings</A>
+  <UL>
+  <LI><A NAME="I_WARNINGS_EXT" HREF="#WARNINGS_EXT">ST/X language extensions</A>
+  <LI><A NAME="I_WARNINGS_US" HREF="#WARNINGS_US">Underscores in identifiers</A>
+  <LI><A NAME="I_WARNINGS_OLDSTYLE" HREF="#WARNINGS_OLDSTYLE">OldStyle assignments</A>
+  <LI><A NAME="I_WARNINGS_COMMON" HREF="#WARNINGS_COMMON">Common mistakes</A>
+  <LI><A NAME="I_WARNINGS_COMPAT" HREF="#WARNINGS_COMPAT">Possible incompatibilities</A>
+  <LI><A NAME="I_REENABLE_SUPPRESSED_WARNINGS" HREF="#REENABLE_SUPPRESSED_WARNINGS">Reenable Suppressed Warnings</A>
+  </UL>
+
+</UL>
+
+<HR>
+
+<H2><A NAME="CATCH_METHOD_REDEFINITIONS" HREF="#INDEX">Catch Method Redefinitions</A></H2>
+
+If enabled, the system will open a warnBox, if some existing method
+is redefined by a method from another package.
+This prevents system methods from being redefined by filedIn code.
+<BR>
+(useful, when alien code is loaded, and you want to make certain,
+ that is does no harm to any system class ...)
+<P>
+A methods package is determined by its
+packageSymbol (an instance variable in Method), and is either set by the
+<VAR>stc</VAR> compiler, or by the incremental compiler.
+<BR>
+For <VAR>stc</VAR> compilation, a command line argument is used to define
+the package; for incremental compilation, the active projects package symbol
+is used.
+<BR>
+Finally, a compiler directive can be used within the source file itself,
+to define the package. However, when compiling with stc, any package
+command line argument has higher priority.
+<P>
+When alien code (PD-code) is filed in, it is highly recommended to
+turn this flag on - to prevent any standard methods from being overwritten
+by code from the file.
+
+
+<H2><A NAME="CATCH_CLASS_REDEFINITIONS" HREF="#INDEX">Catch Class Redefinitions</A></H2>
+
+Like the above, but for redefinitions of a class.
+<BR>
+This is useful to prevent a classes definition from being overwritten
+by a loaded (alien) class, during a <I>fileIn</I>.
+
+
+
+
+<H2><A NAME="KEEP_HISTORY_LINE" HREF="#INDEX">Keep History Line in Methods</A></H2>
+
+If enabled, the HistoryManager is enabled, catching any method change,
+to automatically append a history comment to the end of the methods source
+code. Only the initial creation and the last modification (per user) are
+reported.
+<BR>
+In a development group,
+this helps in finding the person who made the very last modification to
+some method.
+<P>
+If a sourceCodeManagement system is used, this information is somewhat
+obsoleted by the classes revision log.
+<BR>
+However, the HistoryManager provides a more finegrained modification history
+(per method) than the sourceCodeManager (which only records checkin dates
+for the complete class).
+<P>
+Using the HistoryManager may lead to a small performance overhead in the system browsers.
+
+
+<H2><A NAME="KEEP_FULL_HISTORY" HREF="#INDEX">Keep full Class History</A></H2>
+
+If enabled, the HistoryManager will maintain a method called
+<CODE>#history</CODE> in a classes documentation category, adding
+a comment for every change made in the class.
+<BR>
+This is much like the method-history lines described above, but
+all history lines are concentrated in one place.
+<BR>
+(this makes it very easy, to track and auto-document changes made to a class).
+<P>
+Using the HistoryManager may lead to a small performance overhead in the system browsers.
+
+
+
+<H2><A NAME="SOURCE_MODE" HREF="#INDEX">FileIn Source Mode</A></H2>
+
+When loading methods from a sourceFile, there are various possibilities,
+on how the methods sourceCode should be kept for later browsing.
+The sourceCode may be either kept as a string in the objectMemory,
+or as a reference (fileName + filePosition).
+<BR>
+The following modes are available:
+<BR>
+
+<UL>
+<LI>keep as string (#keep)
+<BR>
+when methods are fileIn (or compiled in the browser), a methods sourceCode
+is kept as a string (held in the method object).
+<BR>
+This has the advantage, that the image is fully self contained - moving it
+to another machine or copying it, will also move all source information with it.
+<BR>
+The disadvantage is that it may require a lot of memory to keep all those
+source strings in the computers memory.
+<P>
+But don't panic: the MemoryMonitor has a menu function to copy out all inmemory
+sources to a file and release those strings, if you later run out of memory,
+or if the paging performance becomes unacceptable.
+<P>
+
+
+<LI>reference to filename (#reference)
+only a reference to the fileName (from which the method is filedIn) is
+kept with the method.
+<BR>
+To access the methods sourceCode later, that file must be found along
+the source file path.
+<BR>
+If a snapshot image is moved, you have to make certain, that
+those files are found along the source path - otherwise, the browser
+will not be able to show any sourceCode.
+<BR>
+This is the recommended setting.
+<BR>
+However, be careful when filing in classes from a file contained
+in a directory which is NOT in the sourcePath. Either add the directories
+path to the searchPath, or switch to the full-path mode (described below)
+before the fileIn is performed.
+<P>
+
+
+<LI>reference to full path (#absReference)
+a reference to the files full pathName (from which the method is filedIn) is
+kept with the method.
+<BR>
+To access the methods sourceCode later, that directory must be present.
+<BR>
+If a snapshot image is moved to another machine, you have to make certain, that
+those directories exist on the target machine.
+<BR>
+This setting is useful in networks where all hosts mount their
+server files on a common path.
+<P>
+
+
+<LI>append and reference in ``st.src''  (#sourceReference)
+the methods source is appended to a file named ``st.src'' and
+a reference to that file is kept in the method.
+<BR>
+To access the methods sourceCode later, this ``st.src'' file must be present.
+<BR>
+If a snapshot image is moved to another machine, you have to move the corresponding
+``st.src'' file with it - otherwise, no sources will be available on
+the target machine.
+<P>
+Be careful to keep distinct source files if you have multiple images in
+one directory. Also, do never edit, compress or otherwise modify this
+source file.
+<P>
+
+
+
+<LI>discard   (#discard)
+does not keep any source information in methods.
+<P>
+No browsing or fileOut of those methods is possible.
+<P>
+This is only useful with completely tested applications,
+if huge amounts of code must be loaded.
+<BR>
+Do not set this sourceMode during development.
+
+</UL>
+
+<HR>
+
+<!--
+<H2><A NAME="LAZY_AUTOLOAD" HREF="#INDEX">Lazy Compilation when Autoloading</A></H2>
+
+If enabled, autoloaded classes are compiled lazily. This means, that during fileIn,
+only the methods source is read, but not compiled. Instead, a trapping stub method
+is installed which compiles itself when first executed.
+<BR>
+Lazy loading leads to faster autoloading response; however, execution will
+be slowed down until all of the busy methods have been finally compiled.
+<BR>
+Lazy loading is great for huge classes, where only a subset of its methods is
+actually required.
+
+-->
+
+
+<H2><A NAME="LOAD_BINARY" HREF="#INDEX">Load Binary if Present</A></H2>
+
+If enabled, autoloaded classes will first be searchied in existing
+compiled class libraries (binary compiled object files).
+The sourceFile will only be consulted if no such compiled binary is found.
+<P>
+This option is only available if the system supports dynamic loading of
+machinecode classes (i.e. dynamic object loading).
+
+
+
+<H2><A NAME="JIT_COMPILATION" HREF="#INDEX">Just in Time Compilation</A></H2>
+
+This enables the just-in-time (JIT-) compiler, which compiles internal bytecode
+methods into fast machine code when a method is called for the first
+time. Typically, this results in a 2-20 fold speedup of the executed byte code,
+but leads to a short (usually unnoticable) delay, when the method
+is called the first time. (However, these times may add up to a noticable
+delay during startup ...)
+<P>
+Although faster than interpreted bytecode, JIT compiled code is typically
+somewhat slower than statically compiled (stc-compiled) code.
+<P>
+The just-in-time compilation feature is relatively new,
+and is still tested. For production, we recommend, to compile the classes
+using the stc compiler and to disable the JIT compiler.
+<BR>
+Please report any strange effects, which may appear with this enabled.
+<P>
+JIT compilation is not avaliable with all systems.
+Please refer to the
+<A HREF="../../overview/featurelist.html">``Architecture specific features''</A> section for more information.
+<P>
+Notice, that the presence of a JIT-compiler has less effect on the
+overall performance in <CITE>ST/X</CITE> than in other (Smalltalk-) systems.
+<BR>
+The reason is that in <CITE>ST/X</CITE>, most methods are already present as statically (stc-)
+compiled machine code, when Smalltalk starts.
+Here, JIT-compilation only affects methods which have been
+modified (i.e. accepted or loaded) after the initial startup.
+
+
+
+
+<P>
+<H2><A NAME="STC_COMPILATION" HREF="#INDEX">Compile to Machine Code</A></H2>
+
+This controls if methods are to be (stc-) compiled to machine code (using <VAR>stc</VAR>)
+when accepted in the browser or loaded via a fileIn.
+<BR>
+<VAR>Stc</VAR> compilation takes much longer (seconds or even minutes),
+compared to bytecode compilation; but results in faster execution
+of those methods (3-100 times faster; often even faster than JIT-compiled code).
+<P>
+Not all systems support dynamic machine code compilation
+(i.e. from within the browser);
+on some, machine code compilation will always be disabled
+(those that do not support dynamic loading of object files).
+<BR>
+Read the
+<A HREF="../../overview/featurelist.html">``Architecture specific features''</A> section for more information.
+<P>
+The following modes are available:
+<BR>
+
+<UL>
+<LI>primitive code only
+<BR>
+All methods which do NOT contain primitive code, are compiled using the
+fast bytecode compiler. When such a method is evaluated, these bytecodes
+will be executed by a builtin interpreter. This interpretation is slower
+than machine code execution, but the methods take less space (a factor of 6 to 10),
+and compilation is pretty fast.
+<BR>
+This is the recommended mode.
+<P>
+
+<LI>always
+<BR>
+All methods are compiled using the machine code compiler.
+<BR>
+This creates high performance methods, but takes very long to compile.
+
+<BR>
+You should only switch to this mode for performance measurements.
+<P>
+
+
+<LI>never
+<BR>
+Methods which do NOT contain primitive code are compiled to a bytecode
+version as described above.
+<BR>
+However, methods which do contain primitive code are not compiled at all.
+Instead, a trapping stub method is created which enters the debugger,
+whenever executed.
+
+<BR>
+This mode is useful, to enter primitive code without being slowed down
+by long computation pauses.
+<BR>
+It also allows primitive code to be entered, edited and saved (filedOut)
+on systems which do not support dynamic loading.
+<BR>
+(I.e. you have to leave & rebuild the system using the <VAR>stc</VAR> batch
+compiler).
+</UL>
+
+
+
+<H2><A NAME="STC_INCLUDES" HREF="#INDEX">STC Include Directories</A></H2>
+
+This defines any (-I) include directories for <VAR>stc</VAR>-compilation.
+This string is passed literally to both the STC- and the C-compilers.
+<BR>
+The list should at least include the path to the <CITE>ST/X</CITE> include
+directory (i.e. where the "<CODE>stc.h</CODE>" file is found).
+In the default development environment (as found on the installation medium),
+this file is found in the
+"<CODE>include</CODE>"-subdirectory of
+"<CODE>projects/smalltalk</CODE>".
+<P>
+If any method to be compiled includes inline-C code, which needs definitions
+from some other include file, you have to add the files directory to the list,
+and add a #include-directive to the classes primitiveIncludes section.
+<P>
+This is not used with bytecode compilation.
+
+
+
+<H2><A NAME="STC_DEFINES" HREF="#INDEX">STC Defines</A></H2>
+
+This defines any (-D) define arguments for <VAR>stc</VAR>-compilation.
+This string is passed literally to the C-compiler.
+<BR>
+This is not used with bytecode compilation.
+
+
+
+<H2><A NAME="STC_OPTIONS" HREF="#INDEX">STC Options</A></H2>
+
+This defines any compiler options for <VAR>stc</VAR>-compilation.
+This string is passed literally to the stc-compiler.
+<BR>
+Read the <A HREF="../../programming/stc.man.html">stc manual page</A> for
+possible options.
+<BR>
+This is not used with bytecode compilation.
+
+
+
+<H2><A NAME="CC_OPTIONS" HREF="#INDEX">CC Options</A></H2>
+
+This defines any compiler options for <VAR>stc</VAR>-compilation.
+This string is passed literally to the CC-compiler.
+<BR>
+Read your systems cc manual page for possible options.
+<BR>
+This is not used with bytecode compilation.
+
+
+
+<H2><A NAME="C_LIBRARIES" HREF="#INDEX">C-Libraries</A></H2>
+
+This lists additional libraries, which are consulted to resolve
+undefined symbols when compiled machine code is dynamically loaded
+into the system.
+<BR>
+On systems which support true shared libraries (SGI, Linux-ELF, Solaris and Unixware),
+this is not required iff the loaded object has been prelinked with any
+other shared library (however, the LD_LIBRARY_PATH must be correct for the system
+to find those shared libraries).
+<BR>
+On systems which do not support shared libraries (Linux pre ELF),
+the loaded objects should NOT be prelinked (to avoid multiple definitions),
+and any required libraries are to be set here.
+<BR>
+This is not used with bytecode compilation.
+
+
+<HR>
+
+<P>
+The following settings affect the bytecode compiler,
+which is invoked when a method is accepted in the browser.
+Changes on those have no effect on methods which have already
+been accepted - you should re-accept your methods,
+or change things at the beginning of your session.
+
+<H2><A NAME="CONSTANT_FOLDING" HREF="#INDEX">Constant Folding</A></H2>
+
+This controls if and how the incremental bytecode compiler
+should perform constant folding (i.e. compute constants at compile
+time).
+<BR>
+The following modes are available:
+<BR>
+<UL>
+<LI>disabled
+<BR>
+no constant folding is performed
+<P>
+
+<LI>level1 (always safe)
+<BR>
+ simple arithmetic & trigonometric
+messages to numeric constants are folded, which are considered safe,
+(such as <CODE>"1.0 + 0.5"</CODE> or <CODE>"Float pi / 2"</CODE>).
+<BR>
+Also, constant character messages (i.e. <CODE>"Character cr"</CODE>)
+are preevaluated and a constant is generated instead of the message send.
+<P>
+
+<LI>level2 (usually safe)
+<BR>
+in addition to above, also conversion of constant arrays via
+<CODE>#asFloatArray</CODE> or <CODE>#asDoubleArray</CODE>
+are performed.
+
+<P>
+<LI>full (can be unsafe)
+<BR>
+in addition to above, also creation of points
+(i.e. <CODE>"1.0 @ 0.5"</CODE>) and some other more obscure messages
+are performed at compile time. Since this can result in strange program behavior,
+it is not recommend to enable this.
+</UL>
+
+Constant folding in Smalltalk is possibly unsafe, because redefined
+methods to which sends were folded before are never executed;
+therefore, the default behavior is to be very conservative (level1).
+<P>
+
+Note:
+<BR>
+it is questionable whether it makes sense to allow control
+over this setting - false settings may lead to obscure bugs and interesting
+behavior (changing literal constants) to appear.
+<BR>
+Consider the case where <CODE>"1.0 @ 0.5"</CODE> got folded into a
+constant point, which is passed to some method, and sent an <CODE>"x:"</CODE>
+message there. This modifies the ``constant'' point, which is certainly not
+the expected behavior.
+
+
+<H2><A NAME="UNDERSCORES" HREF="#INDEX">Allow Underscores in Identifiers</A></H2>
+
+Controls if the underscore character is valid in identifiers.
+<BR>
+Disabling this, allows old ST-80 code (where underscore was the
+assignment character) to be filedIn.
+<BR>
+When loading such code, no automatic translation into
+new syntax is performed by the system.
+<P>
+This functionality has been added to support import of alien code,
+it is not useful for production code.
+<BR>
+After loading such code, we recommend rewriting it into portable ANSI Smalltalk.
+
+
+
+
+<H2><A NAME="SQUEAKEXTENSIONS" HREF="#INDEX">Allow Squeak Extensions</A></H2>
+
+Controls if the constructed array syntactic sugar extension is recognized.
+<BR>
+This extension allows for arrays to be constructed via
+<CODE><PRE>
+    { e1. e2.  ...  eN }
+</PRE></CODE>
+where each ei is aa valid Smalltalk expression.
+<BR>
+For example:
+<CODE><PRE>
+    { (1@2). ('hello' , 'world') asLowercase. }
+</PRE></CODE>
+generates an array with 2 elements, the first being a point, the second a string.
+<BR>
+Notice that this does NOT generate a literal constant; instead, the generated code
+constructs that array at run time.
+<BR>
+Enabling this, allows for Squeak code using this syntax extension to be filedIn.
+<BR>
+When loading such code, no automatic translation into
+new syntax is performed by the system - it should be manually rewritten if the code
+should be portable among all Smalltalk versions.
+<P>
+This functionality has been added to support import of alien code,
+it is not useful for production code.
+<BR>
+After loading such code, we recommend rewriting it into portable ANSI Smalltalk.
+
+
+
+<H2><A NAME="DOLPHINEXTENSIONS" HREF="#INDEX">Allow Dolphin Extensions</A></H2>
+
+Allows reading (a subset) of dolphins compileTime constants.
+<BR>
+This is a q&amp;d hack to support fileIn of dolphin class files.
+Currently only computed Character- and ByteArray-Constants are supported.
+<BR>
+For example:
+<CODE><PRE>
+    ##( Character value:123 )
+</PRE></CODE>
+generates a character constant,
+<BR>
+or,
+<CODE><PRE>
+    ##( 'this is revision ' , Smalltalk revisionNr printString )
+</PRE></CODE>
+generates a string constant.
+
+
+<P>
+Notice: as the ST/X compiler does some constant folding anyway, the first example above is
+ equivalent to:
+<CODE><PRE>
+    Character value:123
+</PRE></CODE>
+
+<P>
+This functionality has been added to support import of alien code,
+it is not useful for production code.
+<BR>
+After loading such code, we recommend rewriting it into portable ANSI Smalltalk.
+
+
+
+
+<H2><A NAME="VISUALAGEPRIIMITIVES" HREF="#INDEX">Allow VisualAge Primitives</A></H2>
+
+Allows reading visualAge primitive code specifications.
+<BR>
+This is a q&amp;d hack to support fileIn of v'age class files.
+No code to execeute the primitive is generated; instead, the method will
+report an error at execution time.
+<P>
+This functionality has been added to support import of alien code,
+it is not useful for production code.
+<BR>
+After loading such code, we recommend rewriting those methods.
+
+
+
+
+<H2><A NAME="DOLLARS" HREF="#INDEX">Allow Dollars in Identifiers</A></H2>
+
+Controls if the dollar character is valid in identifiers.
+<BR>
+This allows fileIn of methods which where written for
+Smalltalk dialects where dollars are valid and treated like
+a letter in an identifier (i.e. some VMS Smalltalk versions).
+<BR>
+When loading such code, no automatic translation into
+a portable syntax is performed by the system.
+<P>
+We do not recommend use of this feature - it makes your
+programs highly unportable.
+<P>
+This functionality has been added to support import of alien code,
+it is not useful for production code.
+<BR>
+After loading such code, we recommend rewriting it into portable ANSI Smalltalk.
+
+
+
+
+
+<H2><A NAME="EXTENDED_BINARY_SELECTORS" HREF="#INDEX">Allow Extended Binary Selectors</A></H2>
+
+If enabled, some additional special characters are recognized as binary selectors.
+These are: &#177; (plus-minus), &#215; (times),  &#183; (centered dot) and &#247; (divide).
+<P>
+We do not recommend use of this feature - it makes your
+programs highly unportable. It has been mainly added to allow for alien code to be loaded.
+<BR>
+After loading such code, we recommend rewriting it into portable ANSI Smalltalk.
+
+
+
+
+<!--
+<H2><A NAME="LONG_BINARY_SELECTORS" HREF="#INDEX">Allow Long Binary Selectors</A></H2>
+
+The original ST-80 specification defined binary selectors to consist of 1 or 2 special characters.
+Modern versions of Smalltalk allow up to four characters to be used. This makes it possible to
+use selectors like '--&gt;', '&lt;==&gt;' or '+++'. However, be aware, that if such selectors are used,
+you may have problems getting the code to execute on some other Smalltalk implementations.
+<P>
+We do not recommend use of this feature - it makes your
+programs somewhat unportable. It has been mainly added to allow for alien code to be loaded.
+<BR>
+After loading such code, we recommend rewriting it into portable ANSI Smalltalk.
+-->
+
+
+
+
+<H2><A NAME="OLDSTYLEASSIGN" HREF="#INDEX">Allow Oldstyle Assignment</A></H2>
+
+Controls if oldStyle assignments via the leftArrow- or underline-character are recognized.
+The default is on.
+<BR>
+Disabling this, allows VW code with degenerated variableNames (consistig of a single underline only)
+to be filedIn.
+<BR>
+When loading such code, no automatic translation into
+new syntax is performed by the system - after loading, the code should be manually rewritten.
+<P>
+This functionality has been added to support import of alien code,
+it is not useful for production code.
+<BR>
+After loading such code, we recommend rewriting it into portable ANSI Smalltalk.
+
+
+
+<H2><A NAME="LITERALARRAYS" HREF="#INDEX">Literal Arrays are Immutable</A></H2>
+
+Controls if array constants are to be created as instances
+of <CODE>Array</CODE> or as instances of <CODE>ImmutableArray</CODE>.
+<BR>
+A typical beginners errror is to return a reference to a
+constant array from some method, and later modify that array
+using <CODE>#at:put:</CODE> messages. When this method is called again,
+the modified array is returned and the programmers eyebrows are raised.
+<BR>
+<CODE>ImmutableArrays</CODE> will raise an exception whenever modified,
+which helps to track down this error more easily.
+
+<BR>
+If you encounter strangely self modifying array constants,
+recompile your methods with this option enabled, and wait for a debugger to come up.
+<P>
+Be reminded, that mutable literal arrays are the language standard.
+
+
+<H2><A NAME="FULLDEBUGINFO" HREF="#INDEX">Full Debug Info</A></H2>
+
+If enabled, the bytecode compiler inserts more line number information
+and the just-in-time compiler generates code
+which supports full single stepping. When single stepping in the debugger,
+it will stop on variable modifications, simple increments/decrements, simple
+integer addition and method returns.
+<BR>
+If disabled, these operations will be invisible, and a single step will
+run up to the next message send or loop-jump.
+<P>
+If disabled, the code executes a bit faster, but may be harder to debug,
+since the granularity of single stepping is slightly larger.
+<P>
+Change of this setting has no effect on methods which  have already
+been compiled to machine code - you should reaccept your methods,
+or change this setting at the beginning of your session.
+<P>
+Should be enabled during development.
+
+
+
+
+<H2><A NAME="WARNINGS" HREF="#INDEX">Warnings</A></H2>
+
+Enables/disables various warning messages in the incremental
+compiler.
+
+
+<H3><A NAME="WARNINGS_EXT" HREF="#I_WARNINGS_EXT">ST/X Language Extensions</A></H3>
+
+Enables/disables warnings if non-standard <CITE>ST/X</CITE> language extensions
+are used.
+<BR>
+(end-of-line comments or 'here'-sends, for example)
+<P>
+This should be enabled,
+if you plan to port your program to other systems later, since
+the use of ST/X
+language extensions will certainly affect the portability.
+<P>
+
+
+<H3><A NAME="WARNINGS_US" HREF="#I_WARNINGS_US">Underscores in Identifiers</A></H3>
+
+Enables/disables warnings when identifiers with underscores are encountered.
+<BR>
+These may not be allowed in other vendors' older Smalltalk systems
+(i.e. ST-80 rel 2.x).
+
+
+<H3><A NAME="WARNINGS_DOLLAR" HREF="#I_WARNINGS_DOLLAR">Dollars in Identifiers</A></H3>
+
+Enables/disables warnings when identifiers with dollars are encountered.
+<BR>
+These are most unlikely to be allowed
+in most other vendors' Smalltalk systems.
+
+
+
+<H3><A NAME="WARNINGS_OLDSTYLE" HREF="#I?WARNINGS_OLDSTYLE">OldStyle Assignments</A></H3>
+
+Enables/disables warnings if an oldStyle assignement is encountered.
+<BR>
+(i.e. using the underscore, ``_'' instead of the assignment ``:='' token).
+<BR>
+These were used by some old Smalltalk systems (i.e. ST-80 rel 2.x).
+
+
+
+<H3><A NAME="WARNINGS_COMMON" HREF="#INDEX">Common Mistakes</A></H3>
+
+Enables/disables warnings about code which may lead
+to a runtime error when executed, and often results from typing errors.
+<BR>
+For example, constructs such as: <CODE>"(a > 1) whileTrue:[...]"</CODE>
+(receiver is not a block) will generate this type of warning.
+<BR>
+You should check the code carefully, since a redefined <CODE>#></CODE> method
+may theoretically return a block object - so the above is not incorrect in the
+strict sense, and can therefore not be flagged as an error by the compiler.
+
+
+<H3><A NAME="WARNINGS_COMPAT" HREF="#I_WARNINGS_COMPAT">Possible Incompatibilities</A></H3>
+
+Enables/disables warnings about constructs which are possibly incompatible
+with other Smalltalk systems. For example, the expression <CODE>"1-2"</CODE>
+is invalid on some systems (requires a space before the minus to be recognized
+as a selector).
+<P>
+This should be enabled (in addition to the ST/X language extension warnings),
+if you plan to port your program to other systems later,
+since the use of those constructs may affect the portability.
+<P>
+It is not guaranteed, that all possibly incompatible constructs are warned
+about, as we depend on user feedback for more information about other systems.
+<P>
+<P>
+
+<H2><A NAME="REENABLE_SUPPRESSED_WARNINGS" HREF="#I_REENABLE_SUPPRESSED_WARNINGS">Reenable Suppressed Warnings</A></H3>
+
+Sometimes, you are not interested in some warnings for a particular method.
+For example, during development, the "unused variable warning" may be annoying
+if a method's code is accepted repeatedly during an explorative development session,
+and you get the same warning over and over again.
+<P>
+Therefore, some warnings can be suppressed on a per-method basis,
+via a checkbox in the parser's warn dialog.
+For disabled warnings,
+the classname and selector is kept and remembered in a table of the ParserFlags class.
+<P>
+Pressing this button clears that table,
+so that the parser will issue the warning
+as usual in the future.
+<P>
+Only some warnings can be suppressed temporarily on a per-method basis.
+Temporarily means, that after some time (currently 30 minutes),
+warnings of this type are automatically reenabled after that time.
+Currently, these are:
+<UL>
+<LI>unused variable
+<LI>possible operator precidence mistake
+<LI>local hides instance variable or argument
+</UL>
+
+<HR>
+<P>
+<P>
+Copyright &copy; Claus Gittinger Development & Consulting, all rights reserved
+<P>
+<P>
+
+<HR>
+Doc $Revision: 1.35 $ $Date: 2016-12-09 12:01:38 $
+
+</BODY>
+</HTML>

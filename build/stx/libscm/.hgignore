@@ -1,0 +1,23 @@
+syntax: glob
+*.chg
+*~
+*.orig
+*.o
+*.so
+*.sc
+*Init.c
+*.H
+*.STH
+*/makefile
+*/docs/output/*
+*/docs/*.xml.profiled
+
+*/objbc
+*/objvc
+*/objmingw
+*.res
+*-Test.xml
+*.base
+*.orig
+*.local
+*.other

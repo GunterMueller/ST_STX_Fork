@@ -1,0 +1,328 @@
+<HTML>
+<HEAD>
+  <TITLE>Making Animated GIFs (part 1 of 3)</TITLE>
+</HEAD>
+<BODY background="recycpap.gif" BGCOLOR=#FFFFFF TEXT=#000000 VLINK=#000040
+LINK=#0000FF ALINK=#FF0000 >
+<! ================ REV3 Standard Header! ================ >
+<P>
+<!-- Commonwealth Network HTML Code Version 3.2 -->
+<CENTER>
+  <A target=_top href="http://commonwealth.riddler.com/Commonwealth/bin/statthru?268406"><IMG
+      height=60 width=460 border=0 src="http://commonwealth.riddler.com/Commonwealth/bin/statdeploy?268406"
+      alt="Check out our sponsor!"></A> <BR>
+  <FONT size=1><I>
+  <A href="http://commonwealth.riddler.com/Commonwealth/doc/bannersplash.html">
+  Commonwealth Network</A></I></FONT>
+</CENTER>
+<P>
+<A NAME="top"></A>
+<TABLE ALIGN=right>
+  <TR ALIGN=center VALIGN="bottom">
+    <TD><A NAME="top"><A HREF="toolbox.htm">
+      <IMG SRC="backarrw.gif" height=60 width=60 border=0 ALT="Previous Page"><BR>
+      <FONT SIZE="2">[Previous]</FONT></A></A></TD>
+    <TD><A HREF="find.htm"><IMG SRC="4wayarrw.gif" height=50 width=50 border=0
+	  align="absmiddle" ALT="Search &amp; Find"><BR>
+      <FONT SIZE="2">[Find]</FONT></A></TD>
+    <TD><A HREF="gifmakf.htm"><IMG SRC="forwarrw.gif" height=60 width=60 border=0
+	  ALT="Previous Page" align="top"><BR>
+      <FONT SIZE="2">[Next]</FONT></A></TD>
+  </TR>
+</TABLE>
+<P align=left>
+<FONT SIZE="2" COLOR="BLUE"><B>Royal Frazier's</B></FONT><BR>
+<IMG SRC="g-gifani.gif" align="top"><BR>
+<A HREF="mirrors.htm"><FONT SIZE="2">- MIRROR sites: closer, faster, non-English
+-</FONT></A> <BR clear=all>
+<P align=center>
+<A HREF="royal.htm">[Home]</A> <A HREF="gifanim.htm">[Introduction]</A> 
+<A HREF="find.htm">[Find]</A> <A HREF="urlmindr.htm">[UrlMinder]</A> 
+<A HREF="userguid.htm">[Viewing]</A> 
+<A HREF="toolbox.htm">[Software]</A> <A HREF="gifmake.htm"><NOBR>[How to
+make GIF Animations]</NOBR></A> <A HREF="gifhtml.htm">[HTML]</A> 
+<A HREF="conserva.htm">[Smaller GIFs]</A> <A HREF="topten.htm">[Common Problems]</A> 
+<A HREF="problem.htm">[GIF Bugs]</A> <A HREF="gifabout.htm">[Technical]</A> 
+<A HREF="http://members.aol.com/royalef1/galframe.htm">[Gallery]</A> 
+<A HREF="aboutgaw.htm">[About]</A>
+<P><I>If you have a few minutes, please fill out the <A HREF="http://members.aol.com/royalef1/survey.htm" TARGET="_TOP">Visitor Survey</A>. It will help in making this site better.</I><BR>
+  <HR size="3" noshade>
+<FONT COLOR="TEAL"><FONT SIZE="+1"><FONT SIZE="+2">N</FONT>OTE
+<FONT SIZE="+2">T</FONT>O <FONT SIZE="+2">T</FONT>HE
+<FONT SIZE="+2">R</FONT>EADER:</FONT> The next three pages cover the entire process of creating an animation.</FONT>
+<UL>
+  <LI>
+    First, the preparation of individual frames and what to consider
+  <LI>
+    Second, putting together an animated GIF file
+  <LI>
+    Third, looping animated GIFs and other information
+</UL>
+<P>
+At some point you will need to go to the <A HREF="toolbox.htm">SOFTWARE TOOLBOX</A> to get software
+for your computer. If you run into a problem, go to the Common Problems of GIF Bugs pages for
+a listing of solvable and unsolvable bugs. 
+  <HR>
+<H2>
+  Constructing Animations
+</H2>
+<UL>
+  <LI>
+    PART ONE : <A HREF="gifmake.htm">Preparing All the Pieces</A>
+  <LI>
+    <A HREF="gifmake.htm#thoughts">Some Thoughts about GIF Animations on the
+    Web</A>
+  <LI>
+    <A HREF="gifmake.htm#sequence">Making a Sequence of Animations</A>
+  <LI>
+    <A HREF="gifmake.htm#tips">Scattered Tips &amp; Tricks</A>
+</UL>
+<UL>
+  <LI>
+    PART TWO : <A HREF="gifmakf.htm">Making a Basic Animation</A>
+  <LI>
+    <A HREF="gifmakf.htm#create">Creating A GIF89A Animation File</A>
+</UL>
+<UL>
+  <LI>
+    PART THREE : <A HREF="gifmakg.htm">Netscape Extensions and Troubleshooting</A>
+  <LI>
+    <A href="gifmakg.htm#looping">Making a Animated GIF Loop</A>
+  <LI>
+    <A HREF="gifmakg.htm#trouble">Troubleshooting</A>
+</UL>
+<P>
+<B>NOTE:</B> <I>Due to excessive size, this tutorial is now in three parts.</I>
+  <HR>
+<A name="thoughts"></A><IMG SRC="anicon4.gif" ALIGN=right BORDER=0 width=100
+    height=85>
+<H4>
+  Some Thoughts about GIF Animations on the Web
+</H4>
+<P>
+1st Thought: make your images the right size, number of colors, and appropriate. The <a href="conserva.htm">Conservation on the Web</A> discusses this in length, explaining terms, concepts and what you can do to make your GIFs smaller. The <A HREF="conserva.htm">Conservation</A> page has a great example of
+how you or better software can reduce images greatly. On that page, a blackboard with an Apple next to it is animated over with the letters:
+A, N, I, M, A, T, E. Animating the whole blackborad, each time adding one
+letters would result in eight 2K 256-color images, or about 16000 bytes of animation. But by using the blackboard on the first image and adding images of <B>just</b> the letters (positioned with x,y coordinates) the same animation can be done in 3,960 bytes total(also speeded up the animation without any timed delays). Editing each image block allows for
+x and y positioning to place the letters where they belong. Not very difficult
+to do and extremely effective in conserving bandwidth. The animation looks
+identical. Some programs will let you input the seven large images and calculate
+the parts that change or add to each image. This is often called calculating
+"dirty rectangles". 
+<P>
+GIF allows for any number of colors between 2 and 256. The fewer colors the
+less data and the smaller the graphic files. Not all software will let you
+set the bits per pixel for GIFs. Some programs will let you do 256 color, 16 colors, or black and white. Not all do adaptive palettes-that is construct a palette that is specifically for the colors you used in your image. 
+  <HR>
+<A name="sequence"></A><IMG SRC="anicon4.gif" ALIGN=right BORDER=0 width=100
+    height=85>
+<H4>
+  Making A Sequence of Animations
+</H4>
+<P>
+Well, first thing you'll need is a series of images that look like an animation
+sequence. Like this series of counter-clockwise spinning stars:
+<P>
+<IMG SRC="gifanim1.gif" ALT="Animation sequence example" width=349 width=96>
+<P>
+Each cell or frame of the animation changes slightly. Notice each star is
+in an identical "bounding box" of red. This gives a frame of reference for
+the animation, like the edge of a movie screen. <a name="sequenceerror">If you don't work with a
+fixed-size "bounding box" each frame of your animation will shrink and grow
+by a few pixels as the object changes shape. When inserted into a GIF sequence,
+the object will shift up, down, right and left with each change of size.
+Like
+so...<A HREF="gifmake.htm#sequenceerror"><IMG align="top" SRC="gifanim2.gif"
+    ALT="Sliding error" border=2 width=46 height=49></A><I>(CLICK to replay)</I>
+<P>
+I use Corel Draw, but you can use anything that you are comfortable with.
+You'll need to save each frame of the animated sequence into a separate GIF
+or other bitmap format. It you are using GIF Construction Set or another
+GIF assembly program, you may be able to save your animations into any format
+and import them when you insert the images into the final GIF. Each program accepts different images. Some only accepts GIFs. Some now accepts other movie formats, such as QuickTime MOV, AVIs, MPEGs, & FLiCs and convert them straight to a GIF89a animation. Newer software is also adding special effects, transitions, morphs, and other features which will generate in between images on certain simple types of animation. This saves you from producing individual images. Many of them are simple like, a sliding image, dissolving image, fade in/out. Advanced 2d and 3d animation programs will allow you to create models and vector paths to execute "actor" along. Some of them can be complex others simple, but more restricted. 
+<P>
+Besides the above star animation, there is also another style that is a bit
+more difficult. The star works almost like a flip-book. It constantly replaces
+the entire "bounding box." But what if we wanted to show a ball bouncing
+around inside of a big box. To redraw the box every frame (GIF) would waste
+precious bandwidth in the download. Wouldn't it be nice if we could just
+draw the tiny ball and move it around the box. :-&gt;
+<P>
+<A HREF="gifmake.htm#ball"><IMG align="left" SRC="bounce2.gif" ALT="Bouncing ball"
+    height=147 width=201></A><A HREF="gifmake.htm#ball"><IMG align="right" SRC="bounce.gif"
+    ALT="Bouncing eraser" height=147 width=201></A><I>Click on either image to
+replay them.</I> Unfortunately Netscape doesn't allow this yet. The left
+image uses the Remove By Previous Image. The right Remove By Background.
+As you can see the right image of the ball is replaced by the background
+of the HTML page. This gives it the effect of an eraser. The left image should
+have had the effect of the ball bouncing in a box, but Netscape doesn't support
+Remove by Previous Image. Previous image should restore the image back to
+the way it was before the ball was painted on. I placed the last frame of
+the ball far below the box's bottom edge. This ball is outside the Header
+GIF89a Screen description of how big this GIF is. Consequently, since it
+has been placed "off-screen", it is not
+displayed.<IMG SRC="box.gif" ALIGN=right height=147 width=201>
+<A NAME="patches"></A>
+<P>
+But all is not lost. There is a way to do the above animation, with a little
+ingenuity.
+<P>
+The <EM>bouncing ball</EM> animation has the first GIF as a box. Then all
+the remaining GIFs as 32x32 pixel
+balls.<IMG SRC="ball.gif" ALIGN=left height=32 width=32> The same GIF of
+the ball is reinserted over and over. I edit each image block and change
+the top and left position of each ball image to simulate movement over the
+image of the box. <A NAME="fix"></A>This will reduce size greatly, but means
+more up front work in getting the animation done. However, we still have
+the problem of the trail of blacks balls. I could
+reinsert<IMG SRC="patch.gif" ALIGN=left height=32 width=32><A HREF="gifmake.htm#fix"><IMG
+    SRC="bounce3.gif" ALIGN=right height=147 width=201 border=2></A> a patch
+of the background after each ball's appearance. This would paint the background
+of the box over the ball. This effectively, is what the Previous Image setting
+would be doing. Yes, the flicker is annoying, but you may not have to paint
+over EVERY position like I did with this example. One way would be to have
+the ball's image include a "trail" of white that would paint over where it's
+been. Once again, planning and time can overcome what software can't (yet).
+This also brings up
+<IMG SRC="bug.gif" ALT="a bug" ALIGN=left WIDTH=36 HEIGHT=43><FONT COLOR="RED">a
+bug in GIF Construction Set for Windows</FONT>. The positioning of the images
+inside the GIF file is off by one pixel down and one pixel right. If you
+set the position at 0,0, GIFCon will position it at 1,1. Netscape does NOT
+make this mistake.
+<P>
+<B>How will all this look to non-AnimGIF clients?</B>
+<P>
+Non-animated GIF browsers will only show the first frame of your sequence.
+A few older ones show the last image but they have disappeared from the market. Having the first image being the only one seen can be a problem for certain effect. Say you want something to appear from nothing. The first frame is nothing and that's what non-animated browser will show-nothing. If I include a copy of the full end graphic it will ruin the effect. The best solution is a Javascript detection routine that will serve up different images, animated for known animation clients, non-animated for unknowns.
+  <HR>
+<A NAME="tips"></A><IMG SRC="anicon4.gif" ALIGN=right BORDER=0 width=100
+    height=85>
+<H4>
+  Scattered Tips &amp; Tricks
+</H4>
+<P>
+Okay, so I didn't know WHERE to fit these in!
+<P>
+If you <B>aren't</B> looping your animations:
+<P>
+remember the last frame will be the final one, the one that will stay on
+screen.
+<P>
+you can remove the last frame completely, having the graphic apparently vanish
+once it has played.
+<P>
+If you <B>are</B> looping you're animations:
+<P>
+The first frame should be the presentable one. Most browsers will display
+this as a static GIF so this will make the most pleasant appearance in the
+most browsers.
+<P>
+Want to fade an image out? An easy way is to take the image into a bitmap
+editor. Use a spray paint tool, like the rudimentary one in Paintbrush. Set
+it to hard settings, no transparency. You want it to paint random dots of
+a specific color. Pick the color that will be your transparent color. Paint
+some random dots on the image. Save as a frame. Paint some more. Save as
+a frame. Continue till there is nothing left of the image. When sequenced
+in the GIF this will look this the image is disintegrating or, if in reverse,
+materializing. I used this on my EMAIL animation for the fade in of the letter,
+and the fade out of the hand. Both looked good, and the process was extremely
+quick.
+<P>
+Trying to think up some animations?
+<A HREF="http://www.vivanet.com/~stevemd">Steve</A> shows up that animations
+can be more then decorative. He uses GIF animations to instruct home page
+visitors <A HREF="http://www.vivanet.com/~stevemd/juggle1.html">how to
+juggle</A>. There are definitely some exciting applications out there, so
+be creative.
+<P>
+I like to create a directory for each animation and EXPORT or SAVE each frame
+of the animation into it. If the final animation will be called STAR.GIF,
+name each animation STAR01, STAR02, STAR03. I often get lazy and just name
+them S01.GIF, S02.GIF, S03.GIF.
+<P>
+Looking to use animation programs to help out with the process. Here are
+some recommendations from other visitors:
+<P>
+<A HREF="mailto: heinz@xs4all.nl">Hans Huter</A> : When creating gif-animations
+on a mac, I found that nothing beats the combination of Macromedia Director
++ Gifbuilder :<BR>
+<PRE>
+- just animate your sprites in Director (keep the stage as
+  small as possible, and the frame-rate very low)
+- Then export the frames as picts (in a new folder)
+- Open Gifbuilder, drag the images into the gifbuilder-window
+- set the options and choose build from the file-menu..
+- voila !
+</PRE>
+<P>
+Although it may not be the most efficient in file-size, you can create animations
+in a matter of minutes rather than animating each frame in Photoshop, and
+corrections to the animation can be made in a few seconds if you have both
+the programs opened...
+<P>
+Glenn Steffler suggests using Gold Disk Animation Works Interactive, or better
+yet, Astound for Windows.
+<P>
+Fenil Patel suggests Egor to create animation on web by Sausage Software
+people. It is available to <A HREF="www.sausage.com">download</A>.
+<P>
+Lisa Carter suggest this: After reading your tutorial, I noticed one of the
+major sections was on tips and tricks to force your gifs into a single color
+palette - which can be a lot of work, particularly if your images dither
+badly. I would like to *highly recommend* a great utility called "Dave's
+Targa Animator".
+<P>
+Contrary to the name, DTA works with much more than Targas. It will both
+read and write GIF files, as well as TGA, BMP, TIF, FLC, FLI, PCX and a number
+of other formats. DTA is a DOS command-line utility that was designed to
+process a directory full of numbered images and turn them into an Autodesk
+animation - although it will write to another directory and created numbered
+pictures, instead if you want it to.
+<P>
+DTA would be very useful for GIF animations because it can read a directory
+full of GIF files, calculate a single, optimized color palette, and then
+re-write the GIF files with the new, optimized palette - a big time saver.
+<P>
+DTA can also bulk resize images (with anti-aliasing!), and can do many neat
+fade and transition effects. DTA will also interpolate frames. (say, for
+example, you had an animation with 30 frames and decided that was way too
+big. DTA can cut that down to 15 images from averaged frames.) It will also
+do rotations, red-blue 3d and many other features.
+<P>
+You can usually find the latest version of DTA at
+<A HREF="http://povray.org">http://povray.org</A>. 
+  <HR>
+<P align=center>
+<A HREF="gifmakf.htm">Continue on to the next page of the tutorial...</A>
+<P>
+  <HR>
+<P>
+Any ideas, suggestions,utilities, or examples, please mail them over for
+inclusion in this page.
+<P>
+<A HREF="mailto.htm">Royal Frazier</A> <BR CLEAR=ALL>
+<P align=center>
+(<A HREF="#top">Go to the TOP of PAGE for MENUS</A>) 
+<P align=center>
+<!-- BEGIN LINKEXCHANGE CODE -->
+<a href="http://ad.linkexchange.com/X231197/gotoad.map" 
+target="_top">
+<img width=440 height=40 border=1 ismap 
+alt="LinkExchange"
+src="http://ad.linkexchange.com/X231197/logoshowad?free"></a>
+<br><font size=1><a href="http://www.linkexchange.com/" 
+target="_top">
+LinkExchange Member</a></font><br>
+<!-- END LINKEXCHANGE CODE  -->  <HR size=4 noshade>
+<TABLE CELLPADDING=0 CELLSPACING=0 BORDER=0 WIDTH=100%>
+  <TR>
+    <TD width="40%"><FONT SIZE="1" COLOR="GRAY">Copyright 1996,1997 Royal E.
+      Frazier Jr.</FONT></TD>
+    <TD width=20% align=center></TD>
+    <TD width=20% align=center><IMG src="http://members.aol.com/cgi-bin/counter?royalef/ctutor/gifmake1"
+	  width=68 height=20></TD>
+    <TD width=40% align=right><FONT SIZE="1" COLOR="GRAY">Last Updated: March
+      1997</FONT></TD>
+  </TR>
+</TABLE>
+</BODY></HTML>

@@ -1,0 +1,90 @@
+<html>
+<head>
+<title>Refactoring: Move Method</title>
+</head>
+<body>
+<H1>Move Method</H1>
+<P>
+<I>
+<CENTER>
+	A method is, or will be, using or used by more
+	features of another class than the class on which it
+	is defined.
+</CENTER>
+</I>
+</P>
+<P>
+<B>
+<CENTER>
+	Create a new method with a similar body in the class it uses most. Either turn the old method into a simple delegation, or remove it altogether.
+</CENTER>
+</B>
+</P>
+<CENTER>
+<IMG SRC="moveMethod.gif"></CENTER>  
+
+<P>For more information see page 
+	<font color="#FF0000">142</font>
+	of <I>Refactoring</I>
+</P>
+<h2>Additional Comments</h2>
+<P>
+<A href="mailto:vittek@guma.ii.fmph.uniba.sk">Marian Vittek</A> sent an example  for moving a method to a method argument.
+</P>
+<PRE>
+class Project {
+  Person[] participants;
+}
+
+class Person {
+  int id;
+  boolean participate(Project p) {
+    for(int i=0; i&lt;p.participants.length; i++) {
+	  if (p.participants[i].id == id) return(true);
+    }
+    return(false);
+  }   
+}
+
+... if (x.participate(p)) ...
+
+</PRE>
+<P>After applying the move you end up with
+</P>
+<PRE>
+
+class Project {
+  Person[] participants;
+  boolean participate(Person x) {
+    for(int i=0; i&lt;participants.length; i++) {
+	  if (participants[i].id == x.id) return(true);
+    }
+    return(false);
+  }   
+}
+
+class Person {
+  int id;
+}
+
+... if (p.participate(x)) ...
+
+
+</PRE>
+<P>He also points out that the part of the Move Method mechanics that reads <I>Determine how to reference the correct target object from the source</I>, should be replaced by <I>Determine how to reference the correct 
+target object from the source or from arguments of the method</I> which is more general.
+</P>
+
+
+
+<P>
+</P>
+<P>
+</P>
+<P>
+<CENTER>
+<A HREF="../index.html"> | Refactoring Home |</A><A HREF="index.html"> | Alphabetical List |</A>
+</CENTER>
+</P>
+</body>
+</html>

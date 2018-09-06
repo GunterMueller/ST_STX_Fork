@@ -1,0 +1,97 @@
+<HTML>
+
+<HEAD>
+<TITLE>Smalltalk/X Programmers guide - XML Parser</Title>
+</HEAD>
+
+<BODY>
+
+<A NOPRINT HREF="goody_xpSwiki.html">     <IMG SRC="../../icons/DocsLeftArrow.gif" ALT="[prev]"></A>
+<A NOPRINT HREF="TOP.html">   <IMG SRC="../../icons/DocsUpArrow.gif" ALT="[up]"></A>
+<A NOPRINT HREF="xmlObjectStorage.html">   <IMG SRC="../../icons/DocsRightArrow.gif" ALT="[next]"></A>
+
+<H1>XML Parser(s)</H1>
+
+<H2>Overview</H2>
+
+These goodies implement XML Parsers and provide hierarchies of classes
+to represent XML documents/objects.
+<P>
+For historic reasons, there are actually three packages included, each one implementing an
+XML Parser and additional support classes (to represent a DOM tree, for example):
+<UL>
+<LI>The Indelv Free XML Parser
+<LI>VW - Cincoms Free validating XML Parser
+<LI>YAXO - Yet another XML framework
+</UL>
+
+<P>
+The Indelv Parser is only provided for backward compatibility, and no longer maintained.
+Please migrate existing projects to use one of the other parsers and do not use this one for new projects
+(unless you plan to maintain it yourself).
+We recommend using the YAXO framework for new projects.
+
+
+<H2>Documentation</H2>
+See the files in 'goodies/xml-indelv/', 'goodies/xml-vw/' and 'goodies/xml-yaxo/'
+or respectively the classes found under the categories XML-Indelv, XML-VW and XML-YAXO.
+<BR>
+Use the source - Luke.
+
+<H2>Example</H2>
+See usage examples in the classes <CODE>XMLReader</CODE> and <CODE>XMLWriter</CODE>.
+
+<H2>Licensing</H2>
+These addOn packages are NOT to be considered part of the base ST/X system.
+They are provided physically with the ST/X delivery, but only for your convenience.
+<P>
+Legally, they are freeware or public domain goodies, as specified in the corresponding
+goodies copyright notice.
+<BR>
+See the licence info files found in the above goodies directories and/or the class files'.
+
+<H2>No Warranty</H2>
+These goodies are provided AS-IS without any warranty whatsoever.
+
+
+
+
+<H2>Origin/Authors</H2>
+<P>
+<UL>
+<LI>XML-Indelv
+<BR>
+InDelv Inc (original VisualWorks version)
+<BR>
+open-source@indelv.com
+<P>
+Stefan Vogel (ST/X port)
+<P>
+
+<LI>XML-VW
+<BR>
+Cincom
+<P>
+
+<LI>YAXO
+<BR>
+original Squeak version:
+<BR>
+Authors: Duane Maxwell, Andres Valloud, Michael Rueger.
+</UL>
+
+<P>
+
+<HR>
+<P>
+<IMG NOPRINT ALIGN=middle SRC="../../icons/stx.gif">
+Copyright &copy; 1999 eXept Software AG
+<P>
+<ADDRESS>
+<tt>&lt;<a href="mailto:info@exept.de">info@exept.de</a>&gt;</tt>
+</ADDRESS>
+
+<HR>
+Doc $Revision: 1.11 $
+</BODY>
+</HTML>

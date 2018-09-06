@@ -1,0 +1,25 @@
+/* XPM */
+static char *ScrollThumb.xp_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"7 9 9 1",
+/* colors */
+"a c #C5D6FC",
+"b c #C2D5FC",
+"c c #EEF4FE",
+"d c #BAD1FC",
+"e c #C8D6FB",
+"f c #8CB0F8",
+"g c #BAD3FC",
+"h c #C5D5FC",
+"i c none",
+/* pixels */
+"ccccccd",
+"effffff",
+"ccccccd",
+"effffff",
+"ccccccg",
+"effffff",
+"ccccccg",
+"effffff",
+"eaahbbg",
+};
